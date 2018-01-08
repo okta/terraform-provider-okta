@@ -10,5 +10,6 @@ terraform provider for okta authentication service
 ```
 go build -o .terraform/plugins/linux_amd64/terraform-provider-okta
 ```
+```
 terraform init -plugin-dir=.terraform/plugins/linux_amd64
 ```
