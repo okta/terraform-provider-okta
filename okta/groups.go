@@ -1,20 +1,16 @@
 package okta
 
 import (
-	"encoding/json"
-	"log"
-	"time"
-
 	"github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func Users() *schema.Resource {
+func Groupss() *schema.Resource {
 	return &schema.Resource{
-		Create: UserCreate,
-		Read:   UserRead,
-		Update: UserUpdate,
-		Delete: UserDelete,
+		Create: GroupCreate,
+		Read:   GroupRead,
+		Update: GroupUpdate,
+		Delete: GroupDelete,
 
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
