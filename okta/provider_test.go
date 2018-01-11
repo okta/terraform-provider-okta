@@ -24,6 +24,10 @@ func TestProvider(t *testing.T) {
 	}
 }
 
+func TestProviderImpl(t *testing.T) {
+	var _ terraform.ResourceProvider = Provider()
+}
+
 func testAccPreCheck(t *testing.T) {
 	if v := os.Getenv("OKTA_ORGANIZATION"); v == "" {
 		t.Fatal("OKTA_ORGANIZATION must be set for acceptance tests")

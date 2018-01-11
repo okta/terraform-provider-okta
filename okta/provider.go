@@ -3,7 +3,7 @@ package okta
 import (
 	"log"
 
-	"github.com/chrismalek/oktasdk-go/okta"
+	"github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -31,7 +31,11 @@ func Provider() terraform.ResourceProvider {
 			},
 		},
 
-		ResourcesMap: map[string]*schema.Resource{},
+		ResourcesMap: map[string]*schema.Resource{
+			"groups": Groups(),
+			"users": Users(),
+
+		},
 
 		ConfigureFunc: providerConfigure,
 	}
