@@ -58,9 +58,9 @@ func UserCreate(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 
 		log.Println("[ERROR] Error Creating User:\n \t%v", err)
-		return
+		return err
 	}
-	printUser(*newUser)
+	return nil
 }
 
 func UserRead(d *schema.ResourceData, m interface{}) error {

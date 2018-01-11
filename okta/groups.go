@@ -1,11 +1,10 @@
 package okta
 
 import (
-	"github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func Groupss() *schema.Resource {
+func Groups() *schema.Resource {
 	return &schema.Resource{
 		Create: GroupCreate,
 		Read:   GroupRead,
