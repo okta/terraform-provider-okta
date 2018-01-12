@@ -32,9 +32,8 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"groups": Groups(),
-			"users": Users(),
-
+			"okta_users":  resourceUsers(),
+			"okta_groups": resourceGroups(),
 		},
 
 		ConfigureFunc: providerConfigure,

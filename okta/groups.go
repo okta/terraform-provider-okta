@@ -4,12 +4,12 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func Groups() *schema.Resource {
+func resourceGroups() *schema.Resource {
 	return &schema.Resource{
-		Create: GroupCreate,
-		Read:   GroupRead,
-		Update: GroupUpdate,
-		Delete: GroupDelete,
+		Create: resourceGroupCreate,
+		Read:   resourceGroupRead,
+		Update: resourceGroupUpdate,
+		Delete: resourceGroupDelete,
 
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
@@ -32,18 +32,18 @@ func Groups() *schema.Resource {
 	}
 }
 
-func GroupCreate(d *schema.ResourceData, m interface{}) error {
+func resourceGroupCreate(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func GroupRead(d *schema.ResourceData, m interface{}) error {
+func resourceGroupRead(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func GroupUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceGroupUpdate(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func GroupDelete(d *schema.ResourceData, m interface{}) error {
+func resourceGroupDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
