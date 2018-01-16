@@ -3,7 +3,6 @@ package okta
 import (
 	"log"
 
-	"github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -42,8 +41,13 @@ func Provider() terraform.ResourceProvider {
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	log.Println("[INFO] Initializing Okta client")
-	orgName := d.Get("org_name").(string)
-	domain := d.Get("base_url").(string)
-	apiToken := d.Get("api_token").(string)
-	return okta.NewClientWithDomain(nil, orgName, domain, apiToken)
+	config := Config{
+		orgName:  d.Get("org_name").(string),
+		domain:   d.Get("base_url").(string),
+		apiToken: d.Get("api_token").(string),
+	}
+	if err := config.loadAndValidate(); err != nil {
+		return nil, err
+	}
+	return &config, nil
 }
