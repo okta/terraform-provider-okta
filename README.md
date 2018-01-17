@@ -8,8 +8,9 @@ terraform provider for okta authentication service
 4. you *should* create a service user with superuser privileges and create the api token while logged in as that user
 
 ## Building the provider
+TODO: git clone? determine arch?
 ```
-go get
+go get -v
 ```
 ```
 go build -o .terraform/plugins/linux_amd64/terraform-provider-okta
