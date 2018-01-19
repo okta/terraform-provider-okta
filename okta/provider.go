@@ -1,3 +1,4 @@
+// Package okta terraform configuration for an okta site
 package okta
 
 import (
@@ -7,6 +8,8 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
+// Provider establishes a client connection to an okta site
+// determined by its schema string values
 func Provider() terraform.ResourceProvider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
@@ -47,6 +50,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		apiToken: d.Get("api_token").(string),
 	}
 	if err := config.loadAndValidate(); err != nil {
+		log.Println("[ERROR] Error initializing Okta client: \n \t%v", err)
 		return nil, err
 	}
 	return &config, nil

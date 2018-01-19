@@ -1,3 +1,4 @@
+// Package main terraform initial entrypoint & redirect to the okta package
 package main
 
 import (

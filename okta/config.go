@@ -1,11 +1,11 @@
 package okta
 
 import (
-	"log"
-
 	"github.com/articulate/oktasdk-go/okta"
 )
 
+// Config is a struct containing our provider schema values
+// plus the okta client object
 type Config struct {
 	orgName  string
 	domain   string
@@ -17,7 +17,6 @@ type Config struct {
 func (c *Config) loadAndValidate() error {
 	client, err := okta.NewClientWithDomain(nil, c.orgName, c.domain, c.apiToken)
 	if err != nil {
-		log.Println("[ERROR] Error Initializing Okta client:\n \t%v", err)
 		return err
 	}
 	c.oktaClient = client
