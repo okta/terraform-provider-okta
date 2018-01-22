@@ -3,6 +3,8 @@ package okta
 import (
 	"encoding/json"
 	"log"
+	"strings"
+	"unsafe"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -52,7 +54,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	// activate user but send an email to set their password
-	// okta user status will be "Password reset" until they complete
+	// okta user status will be "Password Reset" until they complete
 	// the okta signup process
 	createNewUserAsActive := true
 
@@ -62,7 +64,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	// set the resource ID in terraform
+	// add the user resource to terraform
 	d.SetId(d.Get("email").(string))
 
 	log.Println("[INFO] User Created: %v", *newUser)
@@ -73,22 +75,31 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	log.Println("[INFO] List User " + d.Get("email").(string))
 	client := m.(*Config).oktaClient
 
-	listFilter := client.Users.UserListFilterOptions()
-	listFilter.EmailEqualTo = d.Get("email").(string)
-
-	_, err := json.Marshal(listFilter)
+	userList, _, err := client.Users.GetByID(d.Get("email").(string))
 	if err != nil {
-		log.Println("[ERROR] Error json formatting user filter template: %v", err)
-		return err
-	}
-
-	userList, _, err := client.Users.ListWithFilter(&listFilter)
-	if err != nil {
+		// this is a placeholder
+		// need to add to the sdk spitting out okta error codes
+		type error interface {
+			Error() string
+		}
+		arr := strings.Split(err.Error(), ",")
+		brr := strings.Split(arr[1], ":")
+		log.Println("[ERROR] BRR: %v", brr[1])
+		if strings.TrimSpace(brr[1]) == "E0000007" {
+			d.SetId("")
+			return nil
+		}
 		log.Println("[ERROR] Error listing user: %v", err)
 		return err
 	}
 	log.Println("[INFO] User List: %v", userList)
 
+	// remove our user resource from terraform if our okta query
+	// results in an empty array
+	if unsafe.Sizeof(userList) == 0 {
+		d.SetId("")
+		return nil
+	}
 	return nil
 }
 
