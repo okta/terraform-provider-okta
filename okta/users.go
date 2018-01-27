@@ -3,8 +3,6 @@ package okta
 import (
 	"encoding/json"
 	"log"
-	"strings"
-	"unsafe"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -41,33 +39,48 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	log.Println("[INFO] Creating User" + d.Get("email").(string))
 	client := m.(*Config).oktaClient
 
-	newUserTemplate := client.Users.NewUser()
-	newUserTemplate.Profile.FirstName = d.Get("firstname").(string)
-	newUserTemplate.Profile.LastName = d.Get("lastname").(string)
-	newUserTemplate.Profile.Login = d.Get("email").(string)
-	newUserTemplate.Profile.Email = newUserTemplate.Profile.Login
+	_, _, err := client.Users.GetByID(d.Get("email").(string))
 
-	_, err := json.Marshal(newUserTemplate)
-	if err != nil {
-		log.Println("[ERROR] Error json formatting new user template: %v", err)
+	switch {
+
+	// only create the user in okta if they do not already exist
+	case client.OktaErrorCode == "E0000007":
+
+		newUserTemplate := client.Users.NewUser()
+		newUserTemplate.Profile.FirstName = d.Get("firstname").(string)
+		newUserTemplate.Profile.LastName = d.Get("lastname").(string)
+		newUserTemplate.Profile.Login = d.Get("email").(string)
+		newUserTemplate.Profile.Email = newUserTemplate.Profile.Login
+
+		_, err = json.Marshal(newUserTemplate)
+		if err != nil {
+			log.Println("[ERROR] Error json formatting new user template: %v", err)
+			return err
+		}
+
+		// activate user but send an email to set their password
+		// okta user status will be "Password Reset" until they complete
+		// the okta signup process
+		createNewUserAsActive := true
+
+		newUser, _, err := client.Users.Create(newUserTemplate, createNewUserAsActive)
+		if err != nil {
+			log.Println("[ERROR] Error Creating User: %v", err)
+			return err
+		}
+		log.Println("[INFO] Okta User Created: %v", *newUser)
+
+	case err != nil:
 		return err
-	}
 
-	// activate user but send an email to set their password
-	// okta user status will be "Password Reset" until they complete
-	// the okta signup process
-	createNewUserAsActive := true
-
-	newUser, _, err := client.Users.Create(newUserTemplate, createNewUserAsActive)
-	if err != nil {
-		log.Println("[ERROR] Error Creating User: %v", err)
-		return err
+	default:
+		log.Println("[INFO] User %v already exists in Okta. Adding to Terraform.",
+			d.Get("email").(string))
 	}
 
 	// add the user resource to terraform
 	d.SetId(d.Get("email").(string))
 
-	log.Println("[INFO] User Created: %v", *newUser)
 	return nil
 }
 
@@ -77,41 +90,52 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 
 	userList, _, err := client.Users.GetByID(d.Get("email").(string))
 	if err != nil {
-		// this is a placeholder
-		// need to add to the sdk spitting out okta error codes
-		type error interface {
-			Error() string
-		}
-		arr := strings.Split(err.Error(), ",")
-		brr := strings.Split(arr[1], ":")
-		log.Println("[ERROR] BRR: %v", brr[1])
-		if strings.TrimSpace(brr[1]) == "E0000007" {
+		// if the user does not exist in okta, delete from terraform
+		if client.OktaErrorCode == "E0000007" {
 			d.SetId("")
-			return nil
+		} else {
+			log.Println("[ERROR] Error listing user: %v", err)
+			return err
 		}
-		log.Println("[ERROR] Error listing user: %v", err)
-		return err
 	}
 	log.Println("[INFO] User List: %v", userList)
 
-	// remove our user resource from terraform if our okta query
-	// results in an empty array
-	if unsafe.Sizeof(userList) == 0 {
-		d.SetId("")
-		return nil
-	}
 	return nil
 }
 
 func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
+	log.Println("[INFO] Update User " + d.Get("email").(string))
+	client := m.(*Config).oktaClient
+
+	userList, _, err := client.Users.GetByID(d.Get("email").(string))
+	if err != nil {
+		return err
+	}
+	log.Println("[INFO] User List: %v", userList)
+
+	updateUserTemplate := client.Users.NewUser()
+	updateUserTemplate.Profile.FirstName = d.Get("firstname").(string)
+	updateUserTemplate.Profile.LastName = d.Get("lastname").(string)
+	updateUserTemplate.Profile.Login = d.Get("email").(string)
+	updateUserTemplate.Profile.Email = updateUserTemplate.Profile.Login
+
+	_, err = json.Marshal(updateUserTemplate)
+	if err != nil {
+		log.Println("[ERROR] Error json formatting update user template: %v", err)
+		return err
+	}
+
+	// need to loop thru template & update if there's a discrepancy
+	// terraform plan the difference
+	// need to add Update func to okta sdk
+
 	return nil
 }
 
 func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
-//	log.Println("[INFO] Destroy Managed Users")
-//	client := m.(*Config).oktaClient
+	log.Println("[INFO] Delete User Terraform Resource" + d.Get("email").(string))
 
-//	destroy user
-//	d.SetId(")
+	// how do we want to handle user deletion?
+
 	return nil
 }

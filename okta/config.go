@@ -13,7 +13,7 @@ type Config struct {
 	domain   string
 	apiToken string
 
-	oktaClient  *okta.Client
+	oktaClient *okta.Client
 }
 
 func (c *Config) loadAndValidate() error {
