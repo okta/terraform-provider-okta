@@ -105,29 +105,40 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	log.Println("[INFO] Update User " + d.Get("email").(string))
-	client := m.(*Config).oktaClient
 
-	userList, _, err := client.Users.GetByID(d.Get("email").(string))
-	if err != nil {
-		return err
+	if d.HasChange("firstname") || d.HasChange("lastname") {
+		client := m.(*Config).oktaClient
+
+		userList, _, err := client.Users.GetByID(d.Get("email").(string))
+		if err != nil {
+			return err
+		}
+		log.Println("[INFO] User List: %v", userList)
+
+		updateUserTemplate := client.Users.NewUser()
+		updateUserTemplate.Profile.FirstName = d.Get("firstname").(string)
+		updateUserTemplate.Profile.LastName = d.Get("lastname").(string)
+		updateUserTemplate.Profile.Login = d.Get("email").(string)
+		updateUserTemplate.Profile.Email = updateUserTemplate.Profile.Login
+
+		_, err = json.Marshal(updateUserTemplate)
+		if err != nil {
+			log.Println("[ERROR] Error json formatting update user template: %v", err)
+			return err
+		}
+
+		// update the user in okta
+		updateUser, _, err := client.Users.Update(updateUserTemplate, d.Get("email").(string))
+		if err != nil {
+			log.Println("[ERROR] Error Updating User: %v", err)
+			return err
+		}
+		log.Println("[INFO] Okta User Updated: %v", *updateUser)
+
+		// update the user resource in terraform with the new value(s)
+		d.Set("firstname", d.Get("firstname").(string))
+		d.Set("lastname", d.Get("lastname").(string))
 	}
-	log.Println("[INFO] User List: %v", userList)
-
-	updateUserTemplate := client.Users.NewUser()
-	updateUserTemplate.Profile.FirstName = d.Get("firstname").(string)
-	updateUserTemplate.Profile.LastName = d.Get("lastname").(string)
-	updateUserTemplate.Profile.Login = d.Get("email").(string)
-	updateUserTemplate.Profile.Email = updateUserTemplate.Profile.Login
-
-	_, err = json.Marshal(updateUserTemplate)
-	if err != nil {
-		log.Println("[ERROR] Error json formatting update user template: %v", err)
-		return err
-	}
-
-	// need to loop thru template & update if there's a discrepancy
-	// terraform plan the difference
-	// need to add Update func to okta sdk
 
 	return nil
 }
