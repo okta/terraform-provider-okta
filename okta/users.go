@@ -36,7 +36,7 @@ func resourceUsers() *schema.Resource {
 }
 
 func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
-	log.Println("[INFO] Creating User " + d.Get("email").(string))
+	log.Printf("[INFO] Creating User %v", d.Get("email").(string))
 	client := m.(*Config).oktaClient
 
 	_, _, err := client.Users.GetByID(d.Get("email").(string))
@@ -53,7 +53,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 
 		_, err = json.Marshal(newUserTemplate)
 		if err != nil {
-			log.Println("[ERROR] Error json formatting new user template: %v", err)
+			log.Printf("[ERROR] Error json formatting new user template: %v", err)
 			return err
 		}
 
@@ -64,17 +64,17 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 
 		newUser, _, err := client.Users.Create(newUserTemplate, createNewUserAsActive)
 		if err != nil {
-			log.Println("[ERROR] Error Creating User: %v", err)
+			log.Printf("[ERROR] Error Creating User: %v", err)
 			return err
 		}
-		log.Println("[INFO] Okta User Created: %v", *newUser)
+		log.Printf("[INFO] Okta User Created: %+v", newUser)
 
 	case err != nil:
-		log.Println("[ERROR] Error GetByID: %v", err)
+		log.Printf("[ERROR] Error GetByID: %v", err)
 		return err
 
 	default:
-		log.Println("[INFO] User %v already exists in Okta. Adding to Terraform.",
+		log.Printf("[INFO] User %v already exists in Okta. Adding to Terraform.",
 			d.Get("email").(string))
 	}
 
@@ -85,7 +85,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUserRead(d *schema.ResourceData, m interface{}) error {
-	log.Println("[INFO] List User " + d.Get("email").(string))
+	log.Printf("[INFO] List User %v", d.Get("email").(string))
 	client := m.(*Config).oktaClient
 
 	userList, _, err := client.Users.GetByID(d.Get("email").(string))
@@ -96,27 +96,27 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 			d.SetId("")
 			return nil
 		} else {
-			log.Println("[ERROR] Error GetByID: %v", err)
+			log.Printf("[ERROR] Error GetByID: %v", err)
 			return err
 		}
 	}
-	log.Println("[INFO] User List: %v", userList)
+	log.Printf("[INFO] User List: %+v", userList)
 
 	return nil
 }
 
 func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
-	log.Println("[INFO] Update User " + d.Get("email").(string))
+	log.Printf("[INFO] Update User %v", d.Get("email").(string))
 
 	if d.HasChange("firstname") || d.HasChange("lastname") {
 		client := m.(*Config).oktaClient
 
 		userList, _, err := client.Users.GetByID(d.Get("email").(string))
 		if err != nil {
-			log.Println("[ERROR] Error GetByID: %v", err)
+			log.Printf("[ERROR] Error GetByID: %v", err)
 			return err
 		}
-		log.Println("[INFO] User List: %v", userList)
+		log.Printf("[INFO] User List: %+v", userList)
 
 		updateUserTemplate := client.Users.NewUser()
 		updateUserTemplate.Profile.FirstName = d.Get("firstname").(string)
@@ -126,17 +126,17 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 		_, err = json.Marshal(updateUserTemplate)
 		if err != nil {
-			log.Println("[ERROR] Error json formatting update user template: %v", err)
+			log.Printf("[ERROR] Error json formatting update user template: %v", err)
 			return err
 		}
 
 		// update the user in okta
 		updateUser, _, err := client.Users.Update(updateUserTemplate, d.Get("email").(string))
 		if err != nil {
-			log.Println("[ERROR] Error Updating User: %v", err)
+			log.Printf("[ERROR] Error Updating User: %v", err)
 			return err
 		}
-		log.Println("[INFO] Okta User Updated: %v", *updateUser)
+		log.Printf("[INFO] Okta User Updated: %+v", updateUser)
 
 		// update the user resource in terraform
 		d.Set("firstname", d.Get("firstname").(string))
@@ -147,12 +147,12 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
-	log.Println("[INFO] Delete User " + d.Get("email").(string))
+	log.Printf("[INFO] Delete User %v", d.Get("email").(string))
 	client := m.(*Config).oktaClient
 
 	userList, _, err := client.Users.GetByID(d.Get("email").(string))
 	if err != nil {
-		log.Println("[ERROR] Error GetByID: %v", err)
+		log.Printf("[ERROR] Error GetByID: %v", err)
 		return err
 	}
 
@@ -160,7 +160,7 @@ func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
 	if userList.Status != "DEPROVISIONED" {
 		_, err := client.Users.Deactivate(d.Get("email").(string))
 		if err != nil {
-			log.Println("[ERROR] Error Deactivating user: %v", err)
+			log.Printf("[ERROR] Error Deactivating user: %v", err)
 			return err
 		}
 	}
@@ -168,10 +168,10 @@ func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
 	// now! delete the user
 	deleteUser, err := client.Users.Delete(d.Get("email").(string))
 	if err != nil {
-		log.Println("[ERROR] Error Deleting user: %v", err)
+		log.Printf("[ERROR] Error Deleting user: %v", err)
 		return err
 	}
-	log.Println("[INFO] Okta User Deleted: %v", *deleteUser)
+	log.Printf("[INFO] Okta User Deleted: %+v", deleteUser)
 
 	// delete the user resource from terraform
 	d.SetId("")
