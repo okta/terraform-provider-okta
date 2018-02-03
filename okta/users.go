@@ -36,11 +36,10 @@ func resourceUsers() *schema.Resource {
 }
 
 func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
-	log.Println("[INFO] Creating User" + d.Get("email").(string))
+	log.Println("[INFO] Creating User " + d.Get("email").(string))
 	client := m.(*Config).oktaClient
 
 	_, _, err := client.Users.GetByID(d.Get("email").(string))
-
 	switch {
 
 	// only create the user in okta if they do not already exist
@@ -71,6 +70,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		log.Println("[INFO] Okta User Created: %v", *newUser)
 
 	case err != nil:
+		log.Println("[ERROR] Error GetByID: %v", err)
 		return err
 
 	default:
@@ -91,10 +91,12 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	userList, _, err := client.Users.GetByID(d.Get("email").(string))
 	if err != nil {
 		// if the user does not exist in okta, delete from terraform
+		// results in a terraform plan to create the user
 		if client.OktaErrorCode == "E0000007" {
 			d.SetId("")
+			return nil
 		} else {
-			log.Println("[ERROR] Error listing user: %v", err)
+			log.Println("[ERROR] Error GetByID: %v", err)
 			return err
 		}
 	}
@@ -111,6 +113,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 		userList, _, err := client.Users.GetByID(d.Get("email").(string))
 		if err != nil {
+			log.Println("[ERROR] Error GetByID: %v", err)
 			return err
 		}
 		log.Println("[INFO] User List: %v", userList)
@@ -135,7 +138,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		}
 		log.Println("[INFO] Okta User Updated: %v", *updateUser)
 
-		// update the user resource in terraform with the new value(s)
+		// update the user resource in terraform
 		d.Set("firstname", d.Get("firstname").(string))
 		d.Set("lastname", d.Get("lastname").(string))
 	}
@@ -144,9 +147,34 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
-	log.Println("[INFO] Delete User Terraform Resource" + d.Get("email").(string))
+	log.Println("[INFO] Delete User " + d.Get("email").(string))
+	client := m.(*Config).oktaClient
 
-	// how do we want to handle user deletion?
+	userList, _, err := client.Users.GetByID(d.Get("email").(string))
+	if err != nil {
+		log.Println("[ERROR] Error GetByID: %v", err)
+		return err
+	}
+
+	// must deactivate the user before deletion
+	if userList.Status != "DEPROVISIONED" {
+		_, err := client.Users.Deactivate(d.Get("email").(string))
+		if err != nil {
+			log.Println("[ERROR] Error Deactivating user: %v", err)
+			return err
+		}
+	}
+
+	// now! delete the user
+	deleteUser, err := client.Users.Delete(d.Get("email").(string))
+	if err != nil {
+		log.Println("[ERROR] Error Deleting user: %v", err)
+		return err
+	}
+	log.Println("[INFO] Okta User Deleted: %v", *deleteUser)
+
+	// delete the user resource from terraform
+	d.SetId("")
 
 	return nil
 }
