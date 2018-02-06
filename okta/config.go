@@ -29,12 +29,12 @@ func (c *Config) loadAndValidate() error {
 	req, err := client.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Printf("[ERROR] Error initializing test connect to Okta: %v", err)
-		return fmt.Errorf("Error initializing test connect to Okta. Please verify your credentials.")
+		return fmt.Errorf("Error initializing test connect to Okta: %v", err)
 	}
 	_, err = client.Do(req, nil)
 	if err != nil {
-		log.Printf("[ERROR] Error testing connect to Okta: %v", err)
-		return fmt.Errorf("Error testing connection to Okta. Please verify your credentials.")
+		log.Printf("[ERROR] Error testing connection to Okta: %v", err)
+		return fmt.Errorf("Error testing connection to Okta. Please verify your credentials: %v", err)
 	}
 
 	// add our client object to Config

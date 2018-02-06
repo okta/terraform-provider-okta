@@ -50,6 +50,9 @@ func testOktaConfig(t *testing.T) *Config {
 		apiToken: os.Getenv("OKTA_API_TOKEN"),
 		domain:   url,
 	}
+	if err := config.loadAndValidate(); err != nil {
+		t.Fatal("Error initializing Okta client: %v", err)
+	}
 	return &config
 }
 
@@ -57,15 +60,16 @@ func TestAccOktaProviderRegistration(t *testing.T) {
 	c := testOktaConfig(t)
 	client, err := okta.NewClientWithDomain(nil, c.orgName, c.domain, c.apiToken)
 	if err != nil {
-		t.Fatalf("Error building Okta Client: %+v", err)
+		t.Fatalf("Error building Okta Client: %v", err)
 	}
+	// test credentials by listing our authorization servers
 	url := fmt.Sprintf("authorizationServers")
 	req, err := client.NewRequest("GET", url, nil)
 	if err != nil {
-		t.Fatalf("Error initializing test connect to Okta. Please verify your credentials.")
+		t.Fatalf("Error initializing test connection to Okta: %v", err)
 	}
 	_, err = client.Do(req, nil)
 	if err != nil {
-		t.Fatalf("Error testing connection to Okta. Please verify your credentials.")
+		t.Fatalf("Error testing connection to Okta. Please verify your credentials: %v", err)
 	}
 }
