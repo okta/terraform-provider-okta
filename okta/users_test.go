@@ -34,6 +34,40 @@ func TestAccOktaUsers_create(t *testing.T) {
 	})
 }
 
+func TestOktaUsers_update(t *testing.T) {
+	resourceName := "okta_users.test"
+	ri := acctest.RandInt()
+
+	config := testOktaUsers(ri)
+	updatedConfig := testOktaUsers_updated(ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testOktaUsersDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					testOktaUsersExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "firstname", "terraform_acc_test"),
+					resource.TestCheckResourceAttr(resourceName, "lastname", strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "email", "mmeyer+acceptancetest@articulate.com"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testOktaUsersExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "firstname", "terraform_acc_test_updated"),
+					resource.TestCheckResourceAttr(resourceName, "lastname", strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "email", "mmeyer+acceptancetest@articulate.com"),
+				),
+			},
+		},
+	})
+}
+
 func testOktaUsersExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
@@ -98,6 +132,16 @@ func testOktaUsers(rInt int) string {
 	return fmt.Sprintf(`
 resource "okta_users" "test" {
   firstname = "terraform_acc_test"
+  lastname  = "%d"
+  email     = "mmeyer+acceptancetest@articulate.com"
+}
+`, rInt)
+}
+
+func testOktaUsers_updated(rInt int) string {
+	return fmt.Sprintf(`
+resource "okta_users" "test" {
+  firstname = "terraform_acc_test_updated"
   lastname  = "%d"
   email     = "mmeyer+acceptancetest@articulate.com"
 }
