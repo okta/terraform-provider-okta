@@ -44,7 +44,7 @@ func testOktaConfig(t *testing.T) *Config {
 	config := Config{
 		orgName:  os.Getenv("OKTA_ORG_NAME"),
 		apiToken: os.Getenv("OKTA_API_TOKEN"),
-		domain: os.Getenv("OKTA_BASE_URL"),
+		domain:   os.Getenv("OKTA_BASE_URL"),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		t.Fatal("Error initializing Okta client: %v", err)
