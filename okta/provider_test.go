@@ -41,14 +41,10 @@ func testAccPreCheck(t *testing.T) {
 
 func testOktaConfig(t *testing.T) *Config {
 	testAccPreCheck(t)
-	url, exists := os.LookupEnv("OKTA_BASE_URL")
-	if !exists {
-		url = "okta.com"
-	}
 	config := Config{
 		orgName:  os.Getenv("OKTA_ORG_NAME"),
 		apiToken: os.Getenv("OKTA_API_TOKEN"),
-		domain:   url,
+		domain: os.Getenv("OKTA_BASE_URL"),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		t.Fatal("Error initializing Okta client: %v", err)
