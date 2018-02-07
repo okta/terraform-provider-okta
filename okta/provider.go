@@ -28,8 +28,7 @@ func Provider() terraform.ResourceProvider {
 			"base_url": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("OKTA_BASE_URL", nil),
-				Default:     "okta.com",
+				DefaultFunc: schema.EnvDefaultFunc("OKTA_BASE_URL", "okta.com"),
 				Description: "The Okta url. (Use 'oktapreview.com' for Okta testing)",
 			},
 		},
