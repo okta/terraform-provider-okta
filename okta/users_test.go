@@ -34,7 +34,7 @@ func TestAccOktaUsers_create(t *testing.T) {
 	})
 }
 
-func TestOktaUsers_update(t *testing.T) {
+func TestAccOktaUsers_update(t *testing.T) {
 	resourceName := "okta_users.test"
 	ri := acctest.RandInt()
 
