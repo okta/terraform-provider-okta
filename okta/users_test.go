@@ -10,6 +10,9 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
+// Witiz1932@teleworm.us is a fake email address created at fakemailgenerator.com
+// view inbox: http://www.fakemailgenerator.com/inbox/teleworm.us/witiz1932/
+
 func TestAccOktaUsers_create(t *testing.T) {
 	resourceName := "okta_users.test"
 	ri := acctest.RandInt()
@@ -27,7 +30,7 @@ func TestAccOktaUsers_create(t *testing.T) {
 					testOktaUsersExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "firstname", "terraform_acc_test"),
 					resource.TestCheckResourceAttr(resourceName, "lastname", strconv.Itoa(ri)),
-					resource.TestCheckResourceAttr(resourceName, "email", "mmeyer+acceptancetest@articulate.com"),
+					resource.TestCheckResourceAttr(resourceName, "email", "Witiz1932@teleworm.us"),
 				),
 			},
 		},
@@ -52,7 +55,7 @@ func TestAccOktaUsers_update(t *testing.T) {
 					testOktaUsersExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "firstname", "terraform_acc_test"),
 					resource.TestCheckResourceAttr(resourceName, "lastname", strconv.Itoa(ri)),
-					resource.TestCheckResourceAttr(resourceName, "email", "mmeyer+acceptancetest@articulate.com"),
+					resource.TestCheckResourceAttr(resourceName, "email", "Witiz1932@teleworm.us"),
 				),
 			},
 			{
@@ -61,7 +64,7 @@ func TestAccOktaUsers_update(t *testing.T) {
 					testOktaUsersExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "firstname", "terraform_acc_test_updated"),
 					resource.TestCheckResourceAttr(resourceName, "lastname", strconv.Itoa(ri)),
-					resource.TestCheckResourceAttr(resourceName, "email", "mmeyer+acceptancetest@articulate.com"),
+					resource.TestCheckResourceAttr(resourceName, "email", "Witiz1932@teleworm.us"),
 				),
 			},
 		},
@@ -133,7 +136,7 @@ func testOktaUsers(rInt int) string {
 resource "okta_users" "test" {
   firstname = "terraform_acc_test"
   lastname  = "%d"
-  email     = "mmeyer+acceptancetest@articulate.com"
+  email     = "Witiz1932@teleworm.us"
 }
 `, rInt)
 }
@@ -143,7 +146,7 @@ func testOktaUsers_updated(rInt int) string {
 resource "okta_users" "test" {
   firstname = "terraform_acc_test_updated"
   lastname  = "%d"
-  email     = "mmeyer+acceptancetest@articulate.com"
+  email     = "Witiz1932@teleworm.us"
 }
 `, rInt)
 }
