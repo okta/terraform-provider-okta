@@ -27,7 +27,7 @@ You can specify the inputs in your tf plan:
 
 ```
 provider "okta" {
-  org_name  = <okta instance name, e.g. dev-151148>
+  org_name  = <okta instance name, e.g. dev-XXXXXX>
   api_token = <okta instance api token with the Administrator role>
   base_url  = <okta base url, e.g. oktapreview.com>
 }
@@ -36,7 +36,7 @@ provider "okta" {
 OR you can specify environment variables:
 
 ```
-OKTA_ORG_NAME=<okta instance name, e.g. dev-151148>
+OKTA_ORG_NAME=<okta instance name, e.g. dev-XXXXXX>
 OKTA_API_TOKEN=<okta instance api token with the Administrator role>
 OKTA_BASE_URL=<okta base url, e.g. oktapreview.com>
 ```
