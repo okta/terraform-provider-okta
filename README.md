@@ -52,7 +52,7 @@ $ git clone git@github.com:terraform-providers/terraform-provider-okta
 ```
 
 Enter the provider directory and build the provider
-This provider has a dependency on the go okta sdk: https://github.com/articulate/oktasdk-go
+This provider has a dependency on the [Go Okta SDK](http://github.com/articulate/oktasdk-go)
 
 ```sh
 $ cd $GOPATH/src/github.com/terraform-providers/terraform-provider-okta
