@@ -2,6 +2,7 @@ package okta
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -30,6 +31,11 @@ func resourceUsers() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "User email address",
+			},
+			"role": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "User okta role",
 			},
 		},
 	}
@@ -69,6 +75,16 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		}
 		log.Printf("[INFO] Okta User Created: %+v", newUser)
 
+		// assign the user a role, if specified
+		if d.Get("role").(string) != "" {
+			log.Printf("[INFO] Assigning role: " + d.Get("role").(string))
+			_, err := client.Users.AssignRole(newUser.ID, d.Get("role").(string))
+			if err != nil {
+				log.Printf("[ERROR] Error assigning role to user: %v", err)
+				return err
+			}
+		}
+
 	case err != nil:
 		log.Printf("[ERROR] Error GetByID: %v", err)
 		return err
@@ -90,8 +106,7 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 
 	userList, _, err := client.Users.GetByID(d.Get("email").(string))
 	if err != nil {
-		// if the user does not exist in okta, delete from terraform
-		// results in a terraform plan to create the user
+		// if the user does not exist in okta, delete from terraform config
 		if client.OktaErrorCode == "E0000007" {
 			d.SetId("")
 			return nil
@@ -99,25 +114,41 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 			log.Printf("[ERROR] Error GetByID: %v", err)
 			return err
 		}
+	} else {
+		userRoles, _, err := client.Users.ListRoles(userList.ID)
+		if err != nil {
+			log.Printf("[ERROR] Error listing user role: %v", err)
+			return err
+		}
+		if userRoles != nil {
+			if len(userRoles.Role) > 1 {
+				log.Printf("[ERROR] User has more than one role. This terraform provider presently only supports a single role per user. Please review the role assignments in Okta for this user.")
+				return fmt.Errorf("User has more than one role. This terraform provider presently only supports a single role per user. Please review the role assignments in Okta for this user.")
+			}
+			log.Printf("[INFO] List Role: %+v", userRoles.Role[0])
+			// if they differ, change terraform user config role to okta user role
+			if d.Get("role").(string) != userRoles.Role[0].Type {
+				d.Set("role", userRoles.Role[0].Type)
+			}
+		}
 	}
-	log.Printf("[INFO] User List: %+v", userList)
+	log.Printf("[INFO] List User: %+v", userList)
 
 	return nil
 }
 
 func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Update User %v", d.Get("email").(string))
+	client := m.(*Config).oktaClient
+
+	userList, _, err := client.Users.GetByID(d.Get("email").(string))
+	if err != nil {
+		log.Printf("[ERROR] Error GetByID: %v", err)
+		return err
+	}
+	log.Printf("[INFO] User List: %+v", userList)
 
 	if d.HasChange("firstname") || d.HasChange("lastname") {
-		client := m.(*Config).oktaClient
-
-		userList, _, err := client.Users.GetByID(d.Get("email").(string))
-		if err != nil {
-			log.Printf("[ERROR] Error GetByID: %v", err)
-			return err
-		}
-		log.Printf("[INFO] User List: %+v", userList)
-
 		updateUserTemplate := client.Users.NewUser()
 		updateUserTemplate.Profile.FirstName = d.Get("firstname").(string)
 		updateUserTemplate.Profile.LastName = d.Get("lastname").(string)
@@ -141,6 +172,35 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		// update the user resource in terraform
 		d.Set("firstname", d.Get("firstname").(string))
 		d.Set("lastname", d.Get("lastname").(string))
+	}
+
+	if d.HasChange("role") {
+		userRoles, _, err := client.Users.ListRoles(userList.ID)
+		if err != nil {
+			log.Printf("[ERROR] Error listing user role: %v", err)
+			return err
+		}
+		if userRoles == nil && d.Get("role").(string) != "" {
+			log.Printf("[INFO] Assigning role: " + d.Get("role").(string))
+			_, err = client.Users.AssignRole(userList.ID, d.Get("role").(string))
+			if err != nil {
+				log.Printf("[ERROR] Error assigning role to user: %v", err)
+				return err
+			}
+		}
+		if userRoles != nil && d.Get("role").(string) != "" {
+			log.Printf("[INFO] Changing role: " + d.Get("role").(string) + " to " + userRoles.Role[0].Type)
+			_, err = client.Users.UnAssignRole(userList.ID, userRoles.Role[0].ID)
+			if err != nil {
+				log.Printf("[ERROR] Error removing role from user: %v", err)
+				return err
+			}
+			_, err = client.Users.AssignRole(userList.ID, d.Get("role").(string))
+			if err != nil {
+				log.Printf("[ERROR] Error assigning role to user: %v", err)
+				return err
+			}
+		}
 	}
 
 	return nil
