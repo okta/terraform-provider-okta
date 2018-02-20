@@ -180,15 +180,17 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 			log.Printf("[ERROR] Error listing user role: %v", err)
 			return err
 		}
-		if userRoles == nil && d.Get("role").(string) != "" {
+		switch {
+
+		case userRoles == nil && d.Get("role").(string) != "":
 			log.Printf("[INFO] Assigning role: " + d.Get("role").(string))
 			_, err = client.Users.AssignRole(userList.ID, d.Get("role").(string))
 			if err != nil {
 				log.Printf("[ERROR] Error assigning role to user: %v", err)
 				return err
 			}
-		}
-		if userRoles != nil && d.Get("role").(string) != "" {
+
+		case userRoles != nil && d.Get("role").(string) != "":
 			log.Printf("[INFO] Changing role: " + d.Get("role").(string) + " to " + userRoles.Role[0].Type)
 			_, err = client.Users.UnAssignRole(userList.ID, userRoles.Role[0].ID)
 			if err != nil {
@@ -200,6 +202,18 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 				log.Printf("[ERROR] Error assigning role to user: %v", err)
 				return err
 			}
+
+		case userRoles != nil && d.Get("role").(string) == "":
+			log.Printf("[INFO] Removing role: " + d.Get("role").(string))
+			_, err = client.Users.UnAssignRole(userList.ID, userRoles.Role[0].ID)
+			if err != nil {
+				log.Printf("[ERROR] Error removing role from user: %v", err)
+				return err
+			}
+
+		default:
+			log.Printf("[ERROR] User role changed but Terraform was unable to apply. Please investigate.")
+			return fmt.Errorf("User role changed but Terraform was unable to apply. Please investigate.")
 		}
 	}
 
