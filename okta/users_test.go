@@ -31,6 +31,7 @@ func TestAccOktaUsers_create(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "firstname", "terraform_acc_test"),
 					resource.TestCheckResourceAttr(resourceName, "lastname", strconv.Itoa(ri)),
 					resource.TestCheckResourceAttr(resourceName, "email", "Witiz1932@teleworm.us"),
+					resource.TestCheckResourceAttr(resourceName, "role", "SUPER_ADMIN"),
 				),
 			},
 		},
@@ -56,6 +57,7 @@ func TestAccOktaUsers_update(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "firstname", "terraform_acc_test"),
 					resource.TestCheckResourceAttr(resourceName, "lastname", strconv.Itoa(ri)),
 					resource.TestCheckResourceAttr(resourceName, "email", "Witiz1932@teleworm.us"),
+					resource.TestCheckResourceAttr(resourceName, "role", "SUPER_ADMIN"),
 				),
 			},
 			{
@@ -65,6 +67,7 @@ func TestAccOktaUsers_update(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "firstname", "terraform_acc_test_updated"),
 					resource.TestCheckResourceAttr(resourceName, "lastname", strconv.Itoa(ri)),
 					resource.TestCheckResourceAttr(resourceName, "email", "Witiz1932@teleworm.us"),
+					resource.TestCheckResourceAttr(resourceName, "role", "READ_ONLY_ADMIN"),
 				),
 			},
 		},
@@ -137,6 +140,7 @@ resource "okta_users" "test" {
   firstname = "terraform_acc_test"
   lastname  = "%d"
   email     = "Witiz1932@teleworm.us"
+  role      = "SUPER_ADMIN"
 }
 `, rInt)
 }
@@ -147,6 +151,7 @@ resource "okta_users" "test" {
   firstname = "terraform_acc_test_updated"
   lastname  = "%d"
   email     = "Witiz1932@teleworm.us"
+  role      = "READ_ONLY_ADMIN"
 }
 `, rInt)
 }
