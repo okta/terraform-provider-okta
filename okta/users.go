@@ -59,8 +59,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 
 		_, err = json.Marshal(newUserTemplate)
 		if err != nil {
-			log.Printf("[ERROR] Error json formatting new user template: %v", err)
-			return err
+			return fmt.Errorf("[ERROR] Error json formatting new user template: %v", err)
 		}
 
 		// activate user but send an email to set their password
@@ -70,8 +69,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 
 		newUser, _, err := client.Users.Create(newUserTemplate, createNewUserAsActive)
 		if err != nil {
-			log.Printf("[ERROR] Error Creating User: %v", err)
-			return err
+			return fmt.Errorf("[ERROR] Error Creating User: %v", err)
 		}
 		log.Printf("[INFO] Okta User Created: %+v", newUser)
 
@@ -80,14 +78,12 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 			log.Printf("[INFO] Assigning role: " + d.Get("role").(string))
 			_, err := client.Users.AssignRole(newUser.ID, d.Get("role").(string))
 			if err != nil {
-				log.Printf("[ERROR] Error assigning role to user: %v", err)
-				return err
+				return fmt.Errorf("[ERROR] Error assigning role to user: %v", err)
 			}
 		}
 
 	case err != nil:
-		log.Printf("[ERROR] Error GetByID: %v", err)
-		return err
+		return fmt.Errorf("[ERROR] Error GetByID: %v", err)
 
 	default:
 		log.Printf("[INFO] User %v already exists in Okta. Adding to Terraform.",
@@ -111,22 +107,19 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 			d.SetId("")
 			return nil
 		} else {
-			log.Printf("[ERROR] Error GetByID: %v", err)
-			return err
+			return fmt.Errorf("[ERROR] Error GetByID: %v", err)
 		}
 	} else {
 		userRoles, _, err := client.Users.ListRoles(userList.ID)
 		if err != nil {
-			log.Printf("[ERROR] Error listing user role: %v", err)
-			return err
+			return fmt.Errorf("[ERROR] Error listing user role: %v", err)
 		}
 		if userRoles != nil {
 			if len(userRoles.Role) > 1 {
-				log.Printf("[ERROR] User has more than one role. This terraform provider presently only supports a single role per user. Please review the role assignments in Okta for this user.")
-				return fmt.Errorf("User has more than one role. This terraform provider presently only supports a single role per user. Please review the role assignments in Okta for this user.")
+				return fmt.Errorf("[ERROR] User has more than one role. This terraform provider presently only supports a single role per user. Please review the role assignments in Okta for this user.")
 			}
 			log.Printf("[INFO] List Role: %+v", userRoles.Role[0])
-			// if they differ, change terraform user config role to okta user role
+			// if they differ, change terraform user state role to okta user role
 			if d.Get("role").(string) != userRoles.Role[0].Type {
 				d.Set("role", userRoles.Role[0].Type)
 			}
@@ -143,8 +136,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 	userList, _, err := client.Users.GetByID(d.Get("email").(string))
 	if err != nil {
-		log.Printf("[ERROR] Error GetByID: %v", err)
-		return err
+		return fmt.Errorf("[ERROR] Error GetByID: %v", err)
 	}
 	log.Printf("[INFO] User List: %+v", userList)
 
@@ -157,15 +149,13 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 		_, err = json.Marshal(updateUserTemplate)
 		if err != nil {
-			log.Printf("[ERROR] Error json formatting update user template: %v", err)
-			return err
+			return fmt.Errorf("[ERROR] Error json formatting update user template: %v", err)
 		}
 
 		// update the user in okta
 		updateUser, _, err := client.Users.Update(updateUserTemplate, d.Get("email").(string))
 		if err != nil {
-			log.Printf("[ERROR] Error Updating User: %v", err)
-			return err
+			return fmt.Errorf("[ERROR] Error Updating User: %v", err)
 		}
 		log.Printf("[INFO] Okta User Updated: %+v", updateUser)
 
@@ -177,8 +167,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	if d.HasChange("role") {
 		userRoles, _, err := client.Users.ListRoles(userList.ID)
 		if err != nil {
-			log.Printf("[ERROR] Error listing user role: %v", err)
-			return err
+			return fmt.Errorf("[ERROR] Error listing user role: %v", err)
 		}
 		switch {
 
@@ -186,33 +175,28 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 			log.Printf("[INFO] Assigning role: " + d.Get("role").(string))
 			_, err = client.Users.AssignRole(userList.ID, d.Get("role").(string))
 			if err != nil {
-				log.Printf("[ERROR] Error assigning role to user: %v", err)
-				return err
+				return fmt.Errorf("[ERROR] Error assigning role to user: %v", err)
 			}
 
 		case userRoles != nil && d.Get("role").(string) != "":
 			log.Printf("[INFO] Changing role: " + d.Get("role").(string) + " to " + userRoles.Role[0].Type)
 			_, err = client.Users.UnAssignRole(userList.ID, userRoles.Role[0].ID)
 			if err != nil {
-				log.Printf("[ERROR] Error removing role from user: %v", err)
-				return err
+				return fmt.Errorf("[ERROR] Error removing role from user: %v", err)
 			}
 			_, err = client.Users.AssignRole(userList.ID, d.Get("role").(string))
 			if err != nil {
-				log.Printf("[ERROR] Error assigning role to user: %v", err)
-				return err
+				return fmt.Errorf("[ERROR] Error assigning role to user: %v", err)
 			}
 
 		case userRoles != nil && d.Get("role").(string) == "":
 			log.Printf("[INFO] Removing role: " + d.Get("role").(string))
 			_, err = client.Users.UnAssignRole(userList.ID, userRoles.Role[0].ID)
 			if err != nil {
-				log.Printf("[ERROR] Error removing role from user: %v", err)
-				return err
+				return fmt.Errorf("[ERROR] Error removing role from user: %v", err)
 			}
 
 		default:
-			log.Printf("[ERROR] User role changed but Terraform was unable to apply. Please investigate.")
 			return fmt.Errorf("User role changed but Terraform was unable to apply. Please investigate.")
 		}
 	}
@@ -226,24 +210,21 @@ func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
 
 	userList, _, err := client.Users.GetByID(d.Get("email").(string))
 	if err != nil {
-		log.Printf("[ERROR] Error GetByID: %v", err)
-		return err
+		return fmt.Errorf("[ERROR] Error GetByID: %v", err)
 	}
 
 	// must deactivate the user before deletion
 	if userList.Status != "DEPROVISIONED" {
 		_, err := client.Users.Deactivate(d.Get("email").(string))
 		if err != nil {
-			log.Printf("[ERROR] Error Deactivating user: %v", err)
-			return err
+			return fmt.Errorf("[ERROR] Error Deactivating user: %v", err)
 		}
 	}
 
 	// now! delete the user
 	deleteUser, err := client.Users.Delete(d.Get("email").(string))
 	if err != nil {
-		log.Printf("[ERROR] Error Deleting user: %v", err)
-		return err
+		return fmt.Errorf("[ERROR] Error Deleting user: %v", err)
 	}
 	log.Printf("[INFO] Okta User Deleted: %+v", deleteUser)
 
