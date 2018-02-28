@@ -2,6 +2,7 @@
 package okta
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -50,8 +51,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		apiToken: d.Get("api_token").(string),
 	}
 	if err := config.loadAndValidate(); err != nil {
-		log.Printf("[ERROR] Error initializing Okta client: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("[ERROR] Error initializing Okta client: %v", err)
 	}
 	return &config, nil
 }
