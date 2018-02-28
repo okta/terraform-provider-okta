@@ -74,6 +74,42 @@ func TestAccOktaUsers_update(t *testing.T) {
 	})
 }
 
+func TestAccOktaUsersRole_delete(t *testing.T) {
+	resourceName := "okta_users.test"
+	ri := acctest.RandInt()
+
+	config := testOktaUsers(ri)
+	updatedConfig := testOktaUsersRole_delete(ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testOktaUsersDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					testOktaUsersExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "firstname", "terraform_acc_test"),
+					resource.TestCheckResourceAttr(resourceName, "lastname", strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "email", "Witiz1932@teleworm.us"),
+					resource.TestCheckResourceAttr(resourceName, "role", "SUPER_ADMIN"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testOktaUsersExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "firstname", "terraform_acc_test_role_deleted"),
+					resource.TestCheckResourceAttr(resourceName, "lastname", strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "email", "Witiz1932@teleworm.us"),
+					resource.TestCheckResourceAttr(resourceName, "role", ""),
+				),
+			},
+		},
+	})
+}
+
 func testOktaUsersExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
@@ -97,12 +133,20 @@ func testOktaUsersExists(name string) resource.TestCheckFunc {
 
 		client := testAccProvider.Meta().(*Config).oktaClient
 
-		_, _, err := client.Users.GetByID(email)
+		userList, _, err := client.Users.GetByID(email)
 		if err != nil {
 			if client.OktaErrorCode == "E0000007" {
 				return fmt.Errorf("Error: User %s does not exist", email)
 			}
 			return fmt.Errorf("Error: GetByID: %v", err)
+		}
+		userRoles, _, err := client.Users.ListRoles(userList.ID)
+		if err != nil {
+			return fmt.Errorf("Error: listing user role: %v", err)
+		}
+		role, _ := rs.Primary.Attributes["role"]
+		if role != "" && role != userRoles.Role[0].Type {
+			return fmt.Errorf("Error: Okta role %v does not match Terraform state role %v", userRoles.Role[0].Type, role)
 		}
 		return nil
 	}
@@ -152,6 +196,16 @@ resource "okta_users" "test" {
   lastname  = "%d"
   email     = "Witiz1932@teleworm.us"
   role      = "READ_ONLY_ADMIN"
+}
+`, rInt)
+}
+
+func testOktaUsersRole_delete(rInt int) string {
+	return fmt.Sprintf(`
+resource "okta_users" "test" {
+  firstname = "terraform_acc_test_role_deleted"
+  lastname  = "%d"
+  email     = "Witiz1932@teleworm.us"
 }
 `, rInt)
 }
