@@ -102,7 +102,7 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 
 	userList, _, err := client.Users.GetByID(d.Get("email").(string))
 	if err != nil {
-		// if the user does not exist in okta, delete from terraform config
+		// if the user does not exist in okta, delete from terraform state
 		if client.OktaErrorCode == "E0000007" {
 			d.SetId("")
 			return nil
