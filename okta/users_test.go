@@ -209,4 +209,3 @@ resource "okta_users" "test" {
 }
 `, rInt)
 }
-
