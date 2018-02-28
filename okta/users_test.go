@@ -145,8 +145,13 @@ func testOktaUsersExists(name string) resource.TestCheckFunc {
 			return fmt.Errorf("Error: listing user role: %v", err)
 		}
 		role, _ := rs.Primary.Attributes["role"]
-		if role != "" && role != userRoles.Role[0].Type {
-			return fmt.Errorf("Error: Okta role %v does not match Terraform state role %v", userRoles.Role[0].Type, role)
+		if userRoles != nil {
+			if role == "" {
+				return fmt.Errorf("Error: Okta role %v exists but Terraform state role does not", userRoles.Role[0].Type)
+			}
+			if role != userRoles.Role[0].Type {
+				return fmt.Errorf("Error: Okta role %v does not match Terraform state role %v", userRoles.Role[0].Type, role)
+			}
 		}
 		return nil
 	}
