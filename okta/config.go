@@ -24,7 +24,7 @@ func (c *Config) loadAndValidate() error {
 	}
 
 	// quick test of our credentials by listing our authorization server(s)
-	url := fmt.Sprintf("authorizationServers")
+	url := fmt.Sprintf("meta/schemas/user/default")
 	req, err := client.NewRequest("GET", url, nil)
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error initializing test connect to Okta: %v", err)
