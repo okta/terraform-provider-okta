@@ -58,7 +58,7 @@ func TestAccOktaProviderRegistration(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error building Okta Client: %v", err)
 	}
-	// test credentials by listing our authorization servers
+	// test credentials by listing our default user profile schema
 	url := fmt.Sprintf("meta/schemas/user/default")
 	req, err := client.NewRequest("GET", url, nil)
 	if err != nil {

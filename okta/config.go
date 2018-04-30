@@ -23,7 +23,7 @@ func (c *Config) loadAndValidate() error {
 		return fmt.Errorf("[ERROR] Error creating Okta client: %v", err)
 	}
 
-	// quick test of our credentials by listing our authorization server(s)
+	// quick test of our credentials by listing our default user profile schema
 	url := fmt.Sprintf("meta/schemas/user/default")
 	req, err := client.NewRequest("GET", url, nil)
 	if err != nil {
