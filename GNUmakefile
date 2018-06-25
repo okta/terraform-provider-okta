@@ -1,10 +1,15 @@
 TEST?=$$(go list ./... |grep -v 'vendor')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 
-default: build
+default: deps build
+
+deps: 
+	curl -s https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+	${GOPATH}/bin/dep ensure
+	${GOPATH}/bin/dep ensure -update github.com/articulate/oktasdk-go
 
 build: fmtcheck
-	go install
+	go build
 
 test: fmtcheck
 	go test -i $(TEST) || exit 1
