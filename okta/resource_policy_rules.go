@@ -356,6 +356,9 @@ func policyRuleExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	client := m.(*Config).oktaClient
 
 	_, _, err := client.Policies.GetPolicy(d.Get("policyid").(string))
+	if client.OktaErrorCode == "E0000007" {
+		return false, nil
+	}
 	if err != nil {
 		return false, fmt.Errorf("[ERROR] Error Listing Policy in Okta: %v", err)
 	}

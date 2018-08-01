@@ -40,19 +40,19 @@ func testAccPreCheck(t *testing.T) {
 }
 
 func testOktaConfig(t *testing.T) *Config {
-	testAccPreCheck(t)
 	config := Config{
 		orgName:  os.Getenv("OKTA_ORG_NAME"),
 		apiToken: os.Getenv("OKTA_API_TOKEN"),
 		domain:   os.Getenv("OKTA_BASE_URL"),
 	}
 	if err := config.loadAndValidate(); err != nil {
-		t.Fatal("Error initializing Okta client: %v", err)
+		t.Fatalf("Error initializing Okta client: %v", err)
 	}
 	return &config
 }
 
 func TestAccOktaProviderRegistration(t *testing.T) {
+	testAccPreCheck(t)
 	c := testOktaConfig(t)
 	client, err := okta.NewClientWithDomain(nil, c.orgName, c.domain, c.apiToken)
 	if err != nil {
