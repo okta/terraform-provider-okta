@@ -40,6 +40,7 @@ func Provider() terraform.ResourceProvider {
 			"okta_policies":     resourcePolicies(),
 			"okta_policy_rules": resourcePolicyRules(),
 			"okta_user_schemas": resourceUserSchemas(),
+			"okta_identity_provider": resourceIdentityProviders(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
