@@ -57,10 +57,51 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 
 	client := m.(*Config).oktaClient
 	idp := client.IdentityProviders.IdentityProvider()
-	protocol := &okta.Protocol{}
+
+	idpClient := &okta.IdpClient{}
+
+	credentials := &okta.Credentials{Client: idpClient}
+	protocol := &okta.Protocol{Credentials: credentials}
+
+	idpGroups := &okta.IdpGroups{Action:"NONE"}
+	deprovisioned := &okta.Deprovisioned{Action:"NONE"}
+	suspended := &okta.Suspended{Action:"NONE"}	
+	
+	conditions := &okta.Conditions{
+		Deprovisioned: deprovisioned,
+		Suspended: suspended,
+	}
+
+	provisioning := &okta.Provisioning{
+		Action: "AUTO",
+		ProfileMaster: true,
+		Groups: idpGroups,
+		Conditions: conditions,
+	}
+
+	accountLink := &okta.AccountLink{
+		Action: "AUTO",
+	}
+
+	userNameTemplate := &okta.UserNameTemplate{
+		Template: "idpuser.firstName",
+	}
+	
+	subject := &okta.Subject{
+		UserNameTemplate: userNameTemplate,
+		MatchType: "USERNAME",
+	}
+	
+	policy := &okta.IdpPolicy{
+		Provisioning: provisioning,
+		AccountLink: accountLink,
+		Subject: subject,
+		MaxClockSkew: 0,
+	}
 
 	idp.Type = d.Get("type").(string)
 	idp.Name = d.Get("name").(string)
+
 	protocol.Type = d.Get("protocol_type").(string)
 
 	if len(d.Get("protocol_scopes").([]interface{})) > 0 {
@@ -71,9 +112,11 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 		protocol.Scopes = scopes
 	}
 
-	protocol.Credentials.Client.ClientID = d.Get("client_id").(string)
+	protocol.Credentials.Client.ClientID     = d.Get("client_id").(string)
 	protocol.Credentials.Client.ClientSecret = d.Get("client_secret").(string)
-	// idp.Protocol = protocol
+
+	idp.Protocol = protocol
+	idp.Policy   = policy
 
 	_, _, err := client.IdentityProviders.CreateIdentityProvider(idp)
 	if err != nil {

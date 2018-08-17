@@ -38,5 +38,9 @@ func testAccIdentityProviderCreate(name string) string {
 resource "okta_identity_provider" "foo" {
   type = "GOOGLE"
   name = "%s"
+  protocol_type   = "OAUTH2"
+  protocol_scopes = ["profile", "email"]
+  client_id = "2780nfqgi7gioq39asdg"
+  client_secret = "134t98higlhalkgjhakj"
 }`, name)
 }
