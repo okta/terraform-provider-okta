@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+	"github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 )
@@ -26,138 +27,27 @@ func resourceIdentityProviders() *schema.Resource {
 				Required:    true,
 				Description: "Name of the Identity Provider Resource",
 			},
-			"protocol": {
+			"protocol_type": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "OAUTH2",
+				Description: "IDP Protocol type to use - ie. OAUTH2",
+			},
+			"protocol_scopes": &schema.Schema{
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "Conditions that must be met during Policy Evaluation",
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"type": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Default:     "OAUTH2",
-							Description: "IDP Protocol type to use - ie. OAUTH2",
-						},
-						"scopes": {
-							Type:        schema.TypeList,
-							Optional:    true,
-							Description: "Scopes provided to the Idp, e.g. 'openid', 'email', 'profile'",
-							Elem:        &schema.Schema{Type: schema.TypeString},
-						},
-						"credentials": {
-							Type:        schema.TypeList,
-							Optional:    true,
-							Description: "Credentials",
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"client": {
-										Type:        schema.TypeList,
-										Optional:    true,
-										Description: "",
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"client_id": {
-													Type:        schema.TypeString,
-													Optional:    true,
-													Description: "OAUTH2 client ID",
-												},
-												"client_secret": {
-													Type:        schema.TypeString,
-													Optional:    true,
-													Description: "OAUTH2 client secret",
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+				Description: "Scopes provided to the Idp, e.g. 'openid', 'email', 'profile'",
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			"policy": {
-				Type:        schema.TypeList,
-				Required:    true,
-				Description: "",
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"provisioning": {
-							Type:        schema.TypeList,
-							Required:    true,
-							Description: "",
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"action": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: "",
-										Default:     "AUTO",
-									},
-									"profile_master": {
-										Type:        schema.TypeBool,
-										Optional:    true,
-										Description: "",
-										Default:     true,
-									},
-									"groups": {
-										Type:        schema.TypeList,
-										Optional:    true,
-										Description: "",
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"action": {
-													Type:        schema.TypeString,
-													Optional:    true,
-													Default:     "NONE",
-													Description: "",
-												},
-											},
-										},
-									},
-									"conditions": {
-										Type:        schema.TypeList,
-										Optional:    true,
-										Description: "",
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"deprovisioned": {
-													Type:        schema.TypeList,
-													Optional:    true,
-													Description: "",
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"action": {
-																Type:        schema.TypeString,
-																Optional:    true,
-																Default:     "NONE",
-																Description: "",
-															},
-														},
-													},
-												},
-												"suspended": {
-													Type:        schema.TypeList,
-													Optional:    true,
-													Description: "",
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"action": {
-																Type:        schema.TypeString,
-																Optional:    true,
-																Default:     "NONE",
-																Description: "",
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+			"client_id": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "OAUTH2 client ID",
+			},
+			"client_secret": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "OAUTH2 client secret",
 			},
 		},
 	}
@@ -167,25 +57,23 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 
 	client := m.(*Config).oktaClient
 	idp := client.IdentityProviders.IdentityProvider()
+	protocol := &okta.Protocol{}
 
-	
 	idp.Type = d.Get("type").(string)
 	idp.Name = d.Get("name").(string)
-	idp.Protocol.Type = d.Get("protocol.type").(string)
-	idp.Protocol.Scopes = d.Get("protocol.scopes").([]string)
-	idp.Protocol.Credentials.Client.ClientID = d.Get("protocol.credentials.client.client_id").(string)
-	idp.Protocol.Credentials.Client.ClientSecret = d.Get("protocol.credentials.client.client_secret").(string)
-	idp.Policy.Provisioning.Action = d.Get("policy.provisioning.action").(string)
-	idp.Policy.Provisioning.ProfileMaster = d.Get("policy.provisioning.profile_master").(bool)
-	idp.Policy.Provisioning.Groups.Action = d.Get("policy.provisioning.groups.action").(string)
-	idp.Policy.Provisioning.Conditions.Deprovisioned.Action = d.Get("policy.provisioning.conditions.deprovisioned.action").(string)
-	idp.Policy.Provisioning.Conditions.Suspended.Action = d.Get("policy.provisioning.conditions.suspended.action").(string)
-	idp.Policy.AccountLink.Filter = ""
-	idp.Policy.AccountLink.Action = "AUTO"
-	idp.Policy.Subject.UserNameTemplate.Template = "idpuser.userPrincipalName"
-	idp.Policy.Subject.Filter = ""
-	idp.Policy.Subject.MatchType = "USERNAME"
-	idp.Policy.MaxClockSkew = 0
+	protocol.Type = d.Get("protocol_type").(string)
+
+	if len(d.Get("protocol_scopes").([]interface{})) > 0 {
+		scopes := make([]string, 0)
+		for _, vals := range d.Get("protocol_scopes").([]interface{}) {
+			scopes = append(scopes, vals.(string))
+		}
+		protocol.Scopes = scopes
+	}
+
+	protocol.Credentials.Client.ClientID = d.Get("client_id").(string)
+	protocol.Credentials.Client.ClientSecret = d.Get("client_secret").(string)
+	// idp.Protocol = protocol
 
 	_, _, err := client.IdentityProviders.CreateIdentityProvider(idp)
 	if err != nil {

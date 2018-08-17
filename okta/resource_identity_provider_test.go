@@ -17,8 +17,8 @@ func TestAccIdentityProvider_create(t *testing.T) {
 	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				// use a dynamic configuration with the random name from above
@@ -38,16 +38,5 @@ func testAccIdentityProviderCreate(name string) string {
 resource "okta_identity_provider" "foo" {
   type = "GOOGLE"
   name = "%s"
-  protocol = {
-    credentials = {
-      client = {
-        client_id = "fnord"
-        client_secret = "fnord"
-      }
-    }
-  }
-  policy = {
-    provisioning = {}
-  }
 }`, name)
 }
