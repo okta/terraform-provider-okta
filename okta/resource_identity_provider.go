@@ -119,7 +119,9 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 	idp.Protocol = protocol
 	idp.Policy   = policy
 
-	_, _, err := client.IdentityProviders.CreateIdentityProvider(idp)
+	returnedIdp, _, err := client.IdentityProviders.CreateIdentityProvider(idp)
+
+	d.SetId(returnedIdp.ID);
 	if err != nil {
 		fmt.Println("ERRORE OMG PROTECC ME!!!")
 		fmt.Println(err)
@@ -130,16 +132,18 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 
 func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List Identity Provider %v", d.Get("name").(string))
+	client := m.(*Config).oktaClient
 
-	exists, err := idpExists(d, m)
-	if err != nil {
-		return err
-	}
-	if exists == false {
-		// if the policy does not exist in okta, delete from terraform state
+	_, _, err := client.IdentityProviders.GetIdentityProvider(d.Id())
+	if client.OktaErrorCode == "E0000007" {
 		d.SetId("")
 		return nil
 	}
+
+	if err != nil {
+		return err
+	}
+
 
 	return nil
 }
@@ -151,7 +155,6 @@ func resourceIdentityProviderUpdate(d *schema.ResourceData, m interface{}) error
 func resourceIdentityProviderDelete(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Delete Identity Provider %v", d.Get("name").(string))
 	client := m.(*Config).oktaClient
-
 	exists, err := idpExists(d, m)
 	if err != nil {
 		return err
@@ -173,7 +176,6 @@ func resourceIdentityProviderDelete(d *schema.ResourceData, m interface{}) error
 // check if IDP exists in Okta
 func idpExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	client := m.(*Config).oktaClient
-
 	_, _, err := client.IdentityProviders.GetIdentityProvider(d.Id())
 	if client.OktaErrorCode == "E0000007" {
 		return false, nil
