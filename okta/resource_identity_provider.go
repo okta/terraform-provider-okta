@@ -123,28 +123,33 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 
 	d.SetId(returnedIdp.ID);
 	if err != nil {
-		fmt.Println("ERRORE OMG PROTECC ME!!!")
-		fmt.Println(err)
 		return err
 	}
-	return nil
+	return resourceIdentityProviderRead(d, m)
 }
 
 func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List Identity Provider %v", d.Get("name").(string))
+
+	var idp *okta.IdentityProvider
 	client := m.(*Config).oktaClient
-
-	_, _, err := client.IdentityProviders.GetIdentityProvider(d.Id())
-	if client.OktaErrorCode == "E0000007" {
-		d.SetId("")
-		return nil
-	}
-
+	exists, err := idpExists(d, m)
 	if err != nil {
 		return err
 	}
 
+	if exists == true {
+		idp, _, err = client.IdentityProviders.GetIdentityProvider(d.Id())
+	} else {
+		return fmt.Errorf("[ERROR] Error Identity Provider not found in Okta: %v", err)
+	}
 
+	d.Set("type", idp.Type)
+	d.Set("name", idp.Name)
+	d.Set("protocol_type", idp.Protocol.Type)
+	d.Set("protocol_scopes", idp.Protocol.Scopes)
+	d.Set("client_id", idp.Protocol.Credentials.Client.ClientID)
+	d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
 	return nil
 }
 
@@ -167,9 +172,6 @@ func resourceIdentityProviderDelete(d *schema.ResourceData, m interface{}) error
 	} else {
 		return fmt.Errorf("[ERROR] Error Identity Provider not found in Okta: %v", err)
 	}
-	// remove the idp resource from terraform
-	d.SetId("")
-
 	return nil
 }
 
