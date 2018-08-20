@@ -5,6 +5,7 @@ import (
 	"github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
+	"log"
 )
 
 func resourceIdentityProviders() *schema.Resource {
@@ -128,6 +129,18 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 }
 
 func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] List Identity Provider %v", d.Get("name").(string))
+
+	exists, err := idpExists(d, m)
+	if err != nil {
+		return err
+	}
+	if exists == false {
+		// if the policy does not exist in okta, delete from terraform state
+		d.SetId("")
+		return nil
+	}
+
 	return nil
 }
 
@@ -136,5 +149,37 @@ func resourceIdentityProviderUpdate(d *schema.ResourceData, m interface{}) error
 }
 
 func resourceIdentityProviderDelete(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] Delete Identity Provider %v", d.Get("name").(string))
+	client := m.(*Config).oktaClient
+
+	exists, err := idpExists(d, m)
+	if err != nil {
+		return err
+	}
+	if exists == true {
+		_, err = client.IdentityProviders.DeleteIdentityProvider(d.Id())
+		if err != nil {
+			return fmt.Errorf("[ERROR] Error Deleting Identity Providers from Okta: %v", err)
+		}
+	} else {
+		return fmt.Errorf("[ERROR] Error Identity Provider not found in Okta: %v", err)
+	}
+	// remove the idp resource from terraform
+	d.SetId("")
+
 	return nil
+}
+
+// check if IDP exists in Okta
+func idpExists(d *schema.ResourceData, m interface{}) (bool, error) {
+	client := m.(*Config).oktaClient
+
+	_, _, err := client.IdentityProviders.GetIdentityProvider(d.Id())
+	if client.OktaErrorCode == "E0000007" {
+		return false, nil
+	}
+	if err != nil {
+		return false, fmt.Errorf("[ERROR] Error Listing Identity Provider in Okta: %v", err)
+	}
+	return true, nil
 }
