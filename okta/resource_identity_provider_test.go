@@ -35,12 +35,12 @@ func TestAccIdentityProvider_create(t *testing.T) {
 // testAccExampleResource returns an configuration for an Example Widget with the provided name
 func testAccIdentityProviderCreate(name string) string {
 	return fmt.Sprintf(`
-resource "okta_identity_provider" "foo" {
+resource "okta_identity_provider" "test-%s" {
   type = "GOOGLE"
   name = "%s"
   protocol_type   = "OAUTH2"
   protocol_scopes = ["profile", "email"]
   client_id = "2780nfqgi7gioq39asdg"
   client_secret = "134t98higlhalkgjhakj"
-}`, name)
+}`, name, name)
 }
