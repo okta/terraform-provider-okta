@@ -50,6 +50,18 @@ func resourceIdentityProviders() *schema.Resource {
 				Optional:    true,
 				Description: "OAUTH2 client secret",
 			},
+			"status": &schema.Schema{
+				Type: schema.TypeString,
+				Computed: true,
+			},
+			"authorization_url": &schema.Schema{
+				Type: schema.TypeString,
+				Computed: true,
+			},
+			"authorization_url_binding": &schema.Schema{
+				Type: schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -149,8 +161,6 @@ func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("status", idp.Status)
 	d.Set("authorization_url", idp.Protocol.Endpoints.Authorization.Url)
 	d.Set("authorization_url_binding", idp.Protocol.Endpoints.Authorization.Binding)
-	d.Set("authorization_url", idp.Protocol.Endpoints.Token.Url)
-	d.Set("authorization_url_binding", idp.Protocol.Endpoints.Token.Binding)
 	d.Set("protocol_type", idp.Protocol.Type)	
 	d.Set("protocol_scopes", idp.Protocol.Scopes)
 	d.Set("policy_provisioning_action", idp.Policy.Provisioning.Action)
