@@ -22,8 +22,13 @@ func TestAccIdentityProvider_create(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				// use a dynamic configuration with the random name from above
 				Config: testAccIdentityProviderCreate(rName),
+			},
+			{
+				Config: testAccIdentityProviderUpdate(rName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_identity_provider.test-" + rName, "client_id", "newClientID"),
+				),
 			},
 		},
 	})
@@ -63,6 +68,18 @@ resource "okta_identity_provider" "test-%s" {
   protocol_type   = "OIDC"
   protocol_scopes = ["profile", "email"]
   client_id = "2780nfqgi7gioq39asdg"
+  client_secret = "134t98higlhalkgjhakj"
+}`, name, name)
+}
+
+func testAccIdentityProviderUpdate(name string) string {
+	return fmt.Sprintf(`
+resource "okta_identity_provider" "test-%s" {
+  type = "GOOGLE"
+  name = "%s"
+  protocol_type   = "OIDC"
+  protocol_scopes = ["profile", "email"]
+  client_id = "newClientID"
   client_secret = "134t98higlhalkgjhakj"
 }`, name, name)
 }

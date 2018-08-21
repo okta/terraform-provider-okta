@@ -10,10 +10,10 @@ import (
 
 func resourceIdentityProviders() *schema.Resource {
 	return &schema.Resource{
-		Create:        resourceIdentityProviderCreate,
-		Read:          resourceIdentityProviderRead,
-		Update:        resourceIdentityProviderUpdate,
-		Delete:        resourceIdentityProviderDelete,
+		Create: resourceIdentityProviderCreate,
+		Read:   resourceIdentityProviderRead,
+		Update: resourceIdentityProviderUpdate,
+		Delete: resourceIdentityProviderDelete,
 
 		Schema: map[string]*schema.Schema{
 			"type": &schema.Schema{
@@ -151,19 +151,20 @@ func resourceIdentityProviders() *schema.Resource {
 	}
 }
 
-func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error {
+func assembleIdentityProvider() *okta.IdentityProvider {
+	idp := &okta.IdentityProvider{}
 
-	client := m.(*Config).oktaClient
-	idp := client.IdentityProviders.IdentityProvider()
-
-	idpClient := &okta.IdpClient{}
-
-	credentials := &okta.Credentials{Client: idpClient}
-	protocol := &okta.Protocol{Credentials: credentials}
-
-	idpGroups := &okta.IdpGroups{Action: "NONE"}
-	deprovisioned := &okta.Deprovisioned{Action: "NONE"}
-	suspended := &okta.Suspended{Action: "NONE"}
+	client := &okta.IdpClient{}
+	credentials := &okta.Credentials{Client: client}
+	authorization := &okta.Authorization{}
+	endpoints := &okta.Endpoints{Authorization: authorization}
+	protocol := &okta.Protocol{
+		Credentials: credentials,
+		Endpoints: endpoints,
+	}
+	idpGroups := &okta.IdpGroups{}
+	deprovisioned := &okta.Deprovisioned{}
+	suspended := &okta.Suspended{}
 
 	conditions := &okta.Conditions{
 		Deprovisioned: deprovisioned,
@@ -171,23 +172,17 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 	}
 
 	provisioning := &okta.Provisioning{
-		Action:        "AUTO",
 		ProfileMaster: true,
 		Groups:        idpGroups,
 		Conditions:    conditions,
 	}
 
-	accountLink := &okta.AccountLink{
-		Action: "AUTO",
-	}
+	accountLink := &okta.AccountLink{}
 
-	userNameTemplate := &okta.UserNameTemplate{
-		Template: "idpuser.firstName",
-	}
+	userNameTemplate := &okta.UserNameTemplate{}
 
 	subject := &okta.Subject{
 		UserNameTemplate: userNameTemplate,
-		MatchType:        "USERNAME",
 	}
 
 	policy := &okta.IdpPolicy{
@@ -197,26 +192,90 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 		MaxClockSkew: 0,
 	}
 
+	authorize := &okta.Authorize{
+		Hints: &okta.Hints{},
+	}
+
+	clientRedirectUri := &okta.ClientRedirectUri{
+		Hints: &okta.Hints{},
+	}
+
+	idpLinks := &okta.IdpLinks{
+		Authorize:         authorize,
+		ClientRedirectUri: clientRedirectUri,
+	}
+
+	idp.Protocol = protocol
+	idp.Policy = policy
+	idp.Links = idpLinks
+
+	return idp
+}
+
+func populateIdentityProvider(idp *okta.IdentityProvider, d *schema.ResourceData) *okta.IdentityProvider {
+	idp.Type = d.Get("type").(string)
+	idp.Name = d.Get("name").(string)
+	idp.Status = d.Get("status").(string)
+	idp.Protocol.Endpoints.Authorization.Url = d.Get("authorization_url").(string)
+	idp.Protocol.Endpoints.Authorization.Binding = d.Get("authorization_url_binding").(string)
+	idp.Protocol.Type = d.Get("protocol_type").(string)
+
+	scopes := make([]string, 0)
+	for _, vals := range d.Get("protocol_scopes").([]interface{}) {
+		scopes = append(scopes, vals.(string))
+	}
+	idp.Protocol.Scopes = scopes
+	idp.Policy.Provisioning.Action = d.Get("policy_provisioning_action").(string)
+	idp.Policy.Provisioning.ProfileMaster = d.Get("policy_provisioning_profile_master").(bool)
+	idp.Policy.Provisioning.Groups.Action = d.Get("policy_provisioning_groups_action").(string)
+	idp.Policy.Provisioning.Conditions.Deprovisioned.Action = d.Get("policy_provisioning_conditions_deprovisioned_action").(string)
+	idp.Policy.Provisioning.Conditions.Suspended.Action = d.Get("policy_provisioning_conditions_suspended_action").(string)
+	idp.Policy.AccountLink.Filter = d.Get("policy_account_link_filter").(string)
+	idp.Policy.AccountLink.Action = d.Get("policy_account_link_action").(string)
+	idp.Policy.Subject.UserNameTemplate.Template = d.Get("policy_subject_username_template").(string)
+	idp.Policy.Subject.Filter = d.Get("policy_subject_filter").(string)
+	idp.Policy.Subject.MatchType = d.Get("policy_subject_match_type").(string)
+	idp.Policy.MaxClockSkew = d.Get("policy_max_clock_skew").(int)
+	idp.Links.Authorize.Href = d.Get("links_authorized_href").(string)
+	idp.Links.Authorize.Templated = d.Get("links_authorized_templated").(bool)
+	idp.Links.ClientRedirectUri.Href = d.Get("links_client_redirect_uri_href").(string)
+	idp.Protocol.Credentials.Client.ClientID = d.Get("client_id").(string)
+	idp.Protocol.Credentials.Client.ClientSecret = d.Get("client_secret").(string)
+
+	return idp
+}
+
+func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error {
+
+	client := m.(*Config).oktaClient
+	idp := assembleIdentityProvider()
+
 	idp.Type = d.Get("type").(string)
 	idp.Name = d.Get("name").(string)
 
-	protocol.Type = d.Get("protocol_type").(string)
+	idp.Protocol.Type = d.Get("protocol_type").(string)
 
 	if len(d.Get("protocol_scopes").([]interface{})) > 0 {
 		scopes := make([]string, 0)
 		for _, vals := range d.Get("protocol_scopes").([]interface{}) {
 			scopes = append(scopes, vals.(string))
 		}
-		protocol.Scopes = scopes
+		idp.Protocol.Scopes = scopes
 	}
 
-	protocol.Credentials.Client.ClientID = d.Get("client_id").(string)
-	protocol.Credentials.Client.ClientSecret = d.Get("client_secret").(string)
+	idp.Protocol.Credentials.Client.ClientID = d.Get("client_id").(string)
+	idp.Protocol.Credentials.Client.ClientSecret = d.Get("client_secret").(string)
 
-	idp.Protocol = protocol
-	idp.Policy = policy
+	// Hardcode required values
+	idp.Policy.Provisioning.Action = d.Get("policy_provisioning_action").(string)
+	idp.Policy.Provisioning.Groups.Action = d.Get("policy_provisioning_groups_action").(string)
+	idp.Policy.Provisioning.Conditions.Deprovisioned.Action = d.Get("policy_provisioning_conditions_deprovisioned_action").(string)
+	idp.Policy.Provisioning.Conditions.Suspended.Action = d.Get("policy_provisioning_conditions_suspended_action").(string)
+	idp.Policy.AccountLink.Action = d.Get("policy_account_link_action").(string)
+	idp.Policy.Subject.UserNameTemplate.Template = d.Get("policy_subject_username_template").(string)
+	idp.Policy.Subject.MatchType = d.Get("policy_subject_match_type").(string)
 
-	returnedIdp, _, err := client.IdentityProviders.CreateIdentityProvider(idp)
+	returnedIdp, _, err := client.IdentityProviders.CreateIdentityProvider(*idp)
 
 	d.SetId(returnedIdp.ID)
 	if err != nil {
@@ -271,7 +330,28 @@ func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceIdentityProviderUpdate(d *schema.ResourceData, m interface{}) error {
-	return nil
+	log.Printf("[INFO] List Identity Provider %v", d.Get("name").(string))
+
+	var idp = assembleIdentityProvider()
+	populateIdentityProvider(idp, d)
+
+	client := m.(*Config).oktaClient
+	exists, err := idpExists(d, m)
+	if err != nil {
+		return err
+	}
+
+	if exists == true {
+		idp, _, err = client.IdentityProviders.UpdateIdentityProvider(d.Id(), idp)
+		if err != nil {
+			return fmt.Errorf("[ERROR] Error Updating Identity Provider with Okta: %v", err)
+		}
+	} else {
+		d.SetId("")
+		return nil
+	}
+
+	return resourceIdentityProviderRead(d, m)
 }
 
 func resourceIdentityProviderDelete(d *schema.ResourceData, m interface{}) error {
