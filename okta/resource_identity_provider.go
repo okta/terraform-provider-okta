@@ -33,12 +33,12 @@ func resourceIdentityProviders() *schema.Resource {
 			},
 			"client_id": &schema.Schema{
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				Description: "OAUTH2 client ID",
 			},
 			"client_secret": &schema.Schema{
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				Description: "OAUTH2 client secret",
 				Sensitive: true,
 			},
