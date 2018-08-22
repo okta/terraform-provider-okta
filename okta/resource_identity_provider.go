@@ -23,28 +23,13 @@ func resourceIdentityProviders() *schema.Resource {
 				Default:     true,
 				Description: "Whether the IDP is active or not - can only be issued post-creation",
 			},
-			"type": &schema.Schema{
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"GOOGLE"}, false),
-				Description:  "Identity Provider Type: GOOGLE",
+			"authorization_url": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
 			},
-			"name": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Name of the Identity Provider Resource",
-			},
-			"protocol_type": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     "OIDC",
-				Description: "IDP Protocol type to use - ie. OAUTH2",
-			},
-			"protocol_scopes": &schema.Schema{
-				Type:        schema.TypeList,
-				Optional:    true,
-				Description: "Scopes provided to the Idp, e.g. 'openid', 'email', 'profile'",
-				Elem:        &schema.Schema{Type: schema.TypeString},
+			"authorization_url_binding": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"client_id": &schema.Schema{
 				Type:        schema.TypeString,
@@ -56,31 +41,55 @@ func resourceIdentityProviders() *schema.Resource {
 				Optional:    true,
 				Description: "OAUTH2 client secret",
 			},
-			"authorization_url": &schema.Schema{
+			"links_authorized_hints_allow": &schema.Schema{
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+			"links_authorized_href": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"authorization_url_binding": &schema.Schema{
+			"links_authorized_templated": &schema.Schema{
+				Type:     schema.TypeBool,
+				Computed: true,
+			},
+			"links_client_redirect_uri_hints_allow": &schema.Schema{
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+			"links_client_redirect_uri_href": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
+			},
+			"name": &schema.Schema{
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Name of the Identity Provider Resource",
+			},
+			"policy_account_link_action": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "AUTO",
+				Description: "Policy Account Link Action",
+			},
+			"policy_account_link_filter": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Policy Account Link Filter",
+			},
+			"policy_max_clock_skew": &schema.Schema{
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Default:     0,
+				Description: "Policy Max Clock Skew",
 			},
 			"policy_provisioning_action": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "AUTO",
 				Description: "Policy Provisioning Action",
-			},
-			"policy_provisioning_profile_master": &schema.Schema{
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     true,
-				Description: "Policy Provisioning Profile Master",
-			},
-			"policy_provisioning_groups_action": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     "NONE",
-				Description: "Policy Provisioning Groups Action",
 			},
 			"policy_provisioning_conditions_deprovisioned_action": &schema.Schema{
 				Type:        schema.TypeString,
@@ -94,22 +103,17 @@ func resourceIdentityProviders() *schema.Resource {
 				Default:     "NONE",
 				Description: "Policy Provisioning Conditions Suspended Action",
 			},
-			"policy_account_link_filter": &schema.Schema{
+			"policy_provisioning_groups_action": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Policy Account Link Filter",
+				Default:     "NONE",
+				Description: "Policy Provisioning Groups Action",
 			},
-			"policy_account_link_action": &schema.Schema{
-				Type:        schema.TypeString,
+			"policy_provisioning_profile_master": &schema.Schema{
+				Type:        schema.TypeBool,
 				Optional:    true,
-				Default:     "AUTO",
-				Description: "Policy Account Link Action",
-			},
-			"policy_subject_username_template": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     "idpuser.firstName",
-				Description: "Policy Subject Username Template",
+				Default:     true,
+				Description: "Policy Provisioning Profile Master",
 			},
 			"policy_subject_filter": &schema.Schema{
 				Type:        schema.TypeString,
@@ -122,33 +126,29 @@ func resourceIdentityProviders() *schema.Resource {
 				Default:     "USERNAME",
 				Description: "Policy Subject Match Type",
 			},
-			"policy_max_clock_skew": &schema.Schema{
-				Type:        schema.TypeInt,
+			"policy_subject_username_template": &schema.Schema{
+				Type:        schema.TypeString,
 				Optional:    true,
-				Default:     0,
-				Description: "Policy Max Clock Skew",
+				Default:     "idpuser.firstName",
+				Description: "Policy Subject Username Template",
 			},
-			"links_authorized_href": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
+			"protocol_scopes": &schema.Schema{
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Scopes provided to the Idp, e.g. 'openid', 'email', 'profile'",
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			"links_authorized_templated": &schema.Schema{
-				Type:     schema.TypeBool,
-				Computed: true,
+			"protocol_type": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "OIDC",
+				Description: "IDP Protocol type to use - ie. OAUTH2",
 			},
-			"links_authorized_hints_allow": &schema.Schema{
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
-			"links_client_redirect_uri_href": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"links_client_redirect_uri_hints_allow": &schema.Schema{
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+			"type": &schema.Schema{
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringInSlice([]string{"GOOGLE"}, false),
+				Description:  "Identity Provider Type: GOOGLE",
 			},
 		},
 	}
