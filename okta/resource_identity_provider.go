@@ -225,6 +225,7 @@ func assembleIdentityProvider() *okta.IdentityProvider {
 	return idp
 }
 
+// Populates the IdentityProvider struct (used by the Okta SDK for API operaations) with the state provided by TF
 func populateIdentityProvider(idp *okta.IdentityProvider, d *schema.ResourceData) *okta.IdentityProvider {
 
 	idp.Type = d.Get("type").(string)
@@ -265,33 +266,9 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 
 	client := m.(*Config).oktaClient
 	idp := assembleIdentityProvider()
+	populateIdentityProvider(idp, d)
 
-	idp.Type = d.Get("type").(string)
-	idp.Name = d.Get("name").(string)
-
-	idp.Protocol.Type = d.Get("protocol_type").(string)
-
-	if len(d.Get("protocol_scopes").([]interface{})) > 0 {
-		scopes := make([]string, 0)
-		for _, vals := range d.Get("protocol_scopes").([]interface{}) {
-			scopes = append(scopes, vals.(string))
-		}
-		idp.Protocol.Scopes = scopes
-	}
-
-	idp.Protocol.Credentials.Client.ClientID = d.Get("client_id").(string)
-	idp.Protocol.Credentials.Client.ClientSecret = d.Get("client_secret").(string)
-
-	// Hardcode required values
-	idp.Policy.Provisioning.Action = d.Get("policy_provisioning_action").(string)
-	idp.Policy.Provisioning.Groups.Action = d.Get("policy_provisioning_groups_action").(string)
-	idp.Policy.Provisioning.Conditions.Deprovisioned.Action = d.Get("policy_provisioning_conditions_deprovisioned_action").(string)
-	idp.Policy.Provisioning.Conditions.Suspended.Action = d.Get("policy_provisioning_conditions_suspended_action").(string)
-	idp.Policy.AccountLink.Action = d.Get("policy_account_link_action").(string)
-	idp.Policy.Subject.UserNameTemplate.Template = d.Get("policy_subject_username_template").(string)
-	idp.Policy.Subject.MatchType = d.Get("policy_subject_match_type").(string)
-
-	returnedIdp, _, err := client.IdentityProviders.CreateIdentityProvider(*idp)
+	returnedIdp, _, err := client.IdentityProviders.CreateIdentityProvider(idp)
 
 	d.SetId(returnedIdp.ID)
 	if err != nil {
