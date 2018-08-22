@@ -134,7 +134,8 @@ func resourceIdentityProviders() *schema.Resource {
 			},
 			"protocol_scopes": &schema.Schema{
 				Type:        schema.TypeList,
-				Optional:    true,
+				MinItems:    1,
+				Required:    true,
 				Description: "Scopes provided to the Idp, e.g. 'openid', 'email', 'profile'",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},

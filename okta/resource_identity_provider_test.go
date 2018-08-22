@@ -65,7 +65,7 @@ resource "okta_identity_provider" "test-%s" {
   type = "GOOGLE"
   name = "%s"
   protocol_type   = "OIDC"
-  protocol_scopes = ["profile", "email"]
+  protocol_scopes = ["profile", "email", "openid"]
   client_id = "2780nfqgi7gioq39asdg"
   client_secret = "134t98higlhalkgjhakj"
 }`, name, name)
