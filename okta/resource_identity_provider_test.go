@@ -59,7 +59,6 @@ func testOktaIdentityProviderExists(name string) resource.TestCheckFunc {
 	return nil
 }
 
-// testAccExampleResource returns an configuration for an Example Widget with the provided name
 func testAccIdentityProviderCreate(name string) string {
 	return fmt.Sprintf(`
 resource "okta_identity_provider" "test-%s" {

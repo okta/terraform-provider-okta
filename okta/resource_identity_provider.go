@@ -14,7 +14,7 @@ func resourceIdentityProviders() *schema.Resource {
 		Read:   resourceIdentityProviderRead,
 		Update: resourceIdentityProviderUpdate,
 		Delete: resourceIdentityProviderDelete,
-
+		Exists: idpExists,
 		Schema: map[string]*schema.Schema{
 			"type": &schema.Schema{
 				Type:         schema.TypeString,
