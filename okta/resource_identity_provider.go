@@ -40,6 +40,7 @@ func resourceIdentityProviders() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "OAUTH2 client secret",
+				Sensitive: true,
 			},
 			"links_authorized_hints_allow": &schema.Schema{
 				Type:     schema.TypeList,
