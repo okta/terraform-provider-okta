@@ -27,7 +27,7 @@ func TestAccIdentityProvider_create(t *testing.T) {
 			{
 				Config: testAccIdentityProviderUpdate(rName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("okta_identity_provider.test-" + rName, "client_id", "newClientID"),
+					resource.TestCheckResourceAttr("okta_identity_provider.test-"+rName, "client_id", "newClientID"),
 				),
 			},
 		},
@@ -76,6 +76,7 @@ func testAccIdentityProviderUpdate(name string) string {
 resource "okta_identity_provider" "test-%s" {
   type = "GOOGLE"
   name = "%s"
+  active = false
   protocol_type   = "OIDC"
   protocol_scopes = ["profile", "email"]
   client_id = "newClientID"

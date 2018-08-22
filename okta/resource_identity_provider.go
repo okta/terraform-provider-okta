@@ -15,7 +15,14 @@ func resourceIdentityProviders() *schema.Resource {
 		Update: resourceIdentityProviderUpdate,
 		Delete: resourceIdentityProviderDelete,
 		Exists: idpExists,
+
 		Schema: map[string]*schema.Schema{
+			"active": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+				Description: "Whether the IDP is active or not - can only be issued post-creation",
+			},
 			"type": &schema.Schema{
 				Type:         schema.TypeString,
 				Required:     true,
@@ -48,10 +55,6 @@ func resourceIdentityProviders() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "OAUTH2 client secret",
-			},
-			"status": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
 			},
 			"authorization_url": &schema.Schema{
 				Type:     schema.TypeString,
@@ -151,6 +154,14 @@ func resourceIdentityProviders() *schema.Resource {
 	}
 }
 
+func activationStatus(active bool) string {
+	if active {
+		return "ACTIVE"
+	}
+
+	return "INACTIVE"
+}
+
 func assembleIdentityProvider() *okta.IdentityProvider {
 	idp := &okta.IdentityProvider{}
 
@@ -160,7 +171,7 @@ func assembleIdentityProvider() *okta.IdentityProvider {
 	endpoints := &okta.Endpoints{Authorization: authorization}
 	protocol := &okta.Protocol{
 		Credentials: credentials,
-		Endpoints: endpoints,
+		Endpoints:   endpoints,
 	}
 	idpGroups := &okta.IdpGroups{}
 	deprovisioned := &okta.Deprovisioned{}
@@ -213,9 +224,9 @@ func assembleIdentityProvider() *okta.IdentityProvider {
 }
 
 func populateIdentityProvider(idp *okta.IdentityProvider, d *schema.ResourceData) *okta.IdentityProvider {
+
 	idp.Type = d.Get("type").(string)
 	idp.Name = d.Get("name").(string)
-	idp.Status = d.Get("status").(string)
 	idp.Protocol.Endpoints.Authorization.Url = d.Get("authorization_url").(string)
 	idp.Protocol.Endpoints.Authorization.Binding = d.Get("authorization_url_binding").(string)
 	idp.Protocol.Type = d.Get("protocol_type").(string)
@@ -246,6 +257,9 @@ func populateIdentityProvider(idp *okta.IdentityProvider, d *schema.ResourceData
 }
 
 func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error {
+	if !d.Get("active").(bool) {
+		return fmt.Errorf("[ERROR] Okta will not allow an IDP to be created as INACTIVE. Can set to false for existing IDPs only.")
+	}
 
 	client := m.(*Config).oktaClient
 	idp := assembleIdentityProvider()
@@ -303,7 +317,7 @@ func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
 
 	d.Set("type", idp.Type)
 	d.Set("name", idp.Name)
-	d.Set("status", idp.Status)
+	d.Set("active", idp.Status == "ACTIVE")
 	d.Set("authorization_url", idp.Protocol.Endpoints.Authorization.Url)
 	d.Set("authorization_url_binding", idp.Protocol.Endpoints.Authorization.Binding)
 	d.Set("protocol_type", idp.Protocol.Type)
@@ -334,6 +348,10 @@ func resourceIdentityProviderUpdate(d *schema.ResourceData, m interface{}) error
 
 	var idp = assembleIdentityProvider()
 	populateIdentityProvider(idp, d)
+
+	// can only update IDP status in Update operation
+	status := activationStatus(d.Get("active").(bool))
+	idp.Status = status
 
 	client := m.(*Config).oktaClient
 	exists, err := idpExists(d, m)
