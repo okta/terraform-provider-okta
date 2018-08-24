@@ -270,10 +270,12 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 
 	returnedIdp, _, err := client.IdentityProviders.CreateIdentityProvider(idp)
 
-	d.SetId(returnedIdp.ID)
 	if err != nil {
-		return err
+		return fmt.Errorf("[ERROR] %v.", err)
 	}
+
+  d.SetId(returnedIdp.ID)
+
 	return resourceIdentityProviderRead(d, m)
 }
 
