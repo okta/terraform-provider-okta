@@ -24,7 +24,7 @@ func TestAccOktaUsers_emailErrors(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
-				ExpectError: regexp.MustCompile("Login field not a valid email address"),
+				ExpectError: regexp.MustCompile("okta_users.test-" + strconv.Itoa(ri) + ": login field not a valid email address"),
 				PlanOnly:    true,
 			},
 		},
@@ -329,7 +329,7 @@ func testOktaUsersRole_delete(rInt int) string {
 resource "okta_users" "test-%d" {
   firstname = "testAcc_role_delete"
   lastname  = "%d"
-  login     = "Witiz1932@teleworm.us"
+  login     = "Witiz1932@teleworm.com"
 }
 `, rInt, rInt)
 }
