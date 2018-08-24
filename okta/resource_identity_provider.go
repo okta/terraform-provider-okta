@@ -274,7 +274,7 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 		return fmt.Errorf("[ERROR] %v.", err)
 	}
 
-  d.SetId(returnedIdp.ID)
+	d.SetId(returnedIdp.ID)
 
 	return resourceIdentityProviderRead(d, m)
 }
