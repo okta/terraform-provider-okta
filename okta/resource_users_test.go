@@ -31,27 +31,6 @@ func TestAccOktaUsers_emailErrors(t *testing.T) {
 	})
 }
 
-func TestAccOktaUsers_loginErrors(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testOktaUsers(ri)
-	//updatedConfig := testOktaUsers_loginChange(ri)
-	resourceName := "okta_users.test-" + strconv.Itoa(ri)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testOktaUsersDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					testOktaUsersExists(resourceName),
-				),
-			},
-		},
-	})
-}
-
 func TestAccOktaUsers(t *testing.T) {
 	ri := acctest.RandInt()
 	resourceName := "okta_users.test-" + strconv.Itoa(ri)
@@ -142,7 +121,7 @@ func TestAccOktaUsersRole_delete(t *testing.T) {
 					testOktaUsersExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "firstname", "testAcc_role_delete"),
 					resource.TestCheckResourceAttr(resourceName, "lastname", strconv.Itoa(ri)),
-					resource.TestCheckResourceAttr(resourceName, "login", "Witiz1932@teleworm.us"),
+					resource.TestCheckResourceAttr(resourceName, "login", "Witiz1932@teleworm.com"),
 					resource.TestCheckResourceAttr(resourceName, "role", ""),
 				),
 			},
@@ -290,17 +269,6 @@ resource "okta_users" "test-%d" {
   department    = "cookies"
   managerid     = "2"
   manager       = "David Brent"
-}
-`, rInt, rInt)
-}
-
-func testOktaUsers_loginChange(rInt int) string {
-	return fmt.Sprintf(`
-resource "okta_users" "test-%d" {
-  firstname = "testAcc"
-  lastname  = "%d"
-  login     = "Witiz666@teleworm.us"
-  role      = "SUPER_ADMIN"
 }
 `, rInt, rInt)
 }
