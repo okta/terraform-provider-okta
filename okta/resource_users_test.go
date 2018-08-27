@@ -94,41 +94,6 @@ func TestAccOktaUsers(t *testing.T) {
 	})
 }
 
-func TestAccOktaUsersRole_delete(t *testing.T) {
-	ri := acctest.RandInt()
-	resourceName := "okta_users.test-" + strconv.Itoa(ri)
-	config := testOktaUsers(ri)
-	updatedConfig := testOktaUsersRole_delete(ri)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testOktaUsersDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					testOktaUsersExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "firstname", "testAcc"),
-					resource.TestCheckResourceAttr(resourceName, "lastname", strconv.Itoa(ri)),
-					resource.TestCheckResourceAttr(resourceName, "login", "Witiz1932@teleworm.us"),
-					resource.TestCheckResourceAttr(resourceName, "role", "SUPER_ADMIN"),
-				),
-			},
-			{
-				Config: updatedConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testOktaUsersExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "firstname", "testAcc_role_delete"),
-					resource.TestCheckResourceAttr(resourceName, "lastname", strconv.Itoa(ri)),
-					resource.TestCheckResourceAttr(resourceName, "login", "Witiz1932@teleworm.com"),
-					resource.TestCheckResourceAttr(resourceName, "role", ""),
-				),
-			},
-		},
-	})
-}
-
 func testOktaUsersExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
@@ -280,16 +245,6 @@ resource "okta_users" "test-%d" {
   lastname  = "%d"
   login     = "notavalidemail"
   role      = "SUPER_ADMIN"
-}
-`, rInt, rInt)
-}
-
-func testOktaUsersRole_delete(rInt int) string {
-	return fmt.Sprintf(`
-resource "okta_users" "test-%d" {
-  firstname = "testAcc_role_delete"
-  lastname  = "%d"
-  login     = "Witiz1932@teleworm.com"
 }
 `, rInt, rInt)
 }
