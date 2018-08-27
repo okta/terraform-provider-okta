@@ -121,7 +121,7 @@ func TestAccOktaUsersRole_delete(t *testing.T) {
 					testOktaUsersExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "firstname", "testAcc_role_delete"),
 					resource.TestCheckResourceAttr(resourceName, "lastname", strconv.Itoa(ri)),
-					resource.TestCheckResourceAttr(resourceName, "login", "Witiz1932@teleworm.com"),
+					resource.TestCheckResourceAttr(resourceName, "login", "Witiz1932@teleworm.us"),
 					resource.TestCheckResourceAttr(resourceName, "role", ""),
 				),
 			},
