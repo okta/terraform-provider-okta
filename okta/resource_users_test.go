@@ -31,35 +31,6 @@ func TestAccOktaUsers_emailErrors(t *testing.T) {
 	})
 }
 
-func TestAccOktaUsers_loginErrors(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testOktaUsers(ri)
-	updatedConfig := testOktaUsers_loginChange(ri)
-	resourceName := "okta_users.test-" + strconv.Itoa(ri)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testOktaUsersDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					testOktaUsersExists(resourceName),
-				),
-			},
-			{
-				Config:      updatedConfig,
-				ExpectError: regexp.MustCompile("You cannot change the login field for an existing User"),
-				PlanOnly:    true,
-				Check: resource.ComposeTestCheckFunc(
-					testOktaUsersExists(resourceName),
-				),
-			},
-		},
-	})
-}
-
 func TestAccOktaUsers(t *testing.T) {
 	ri := acctest.RandInt()
 	resourceName := "okta_users.test-" + strconv.Itoa(ri)
@@ -298,17 +269,6 @@ resource "okta_users" "test-%d" {
   department    = "cookies"
   managerid     = "2"
   manager       = "David Brent"
-}
-`, rInt, rInt)
-}
-
-func testOktaUsers_loginChange(rInt int) string {
-	return fmt.Sprintf(`
-resource "okta_users" "test-%d" {
-  firstname = "testAcc"
-  lastname  = "%d"
-  login     = "Witiz666@teleworm.us"
-  role      = "SUPER_ADMIN"
 }
 `, rInt, rInt)
 }
