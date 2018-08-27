@@ -99,7 +99,7 @@ func testOktaUsersExists(name string) resource.TestCheckFunc {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("Not found: %s", name)
+			return fmt.Errorf("[ERROR] Not found: %s", name)
 		}
 
 		userID, hasID := rs.Primary.Attributes["id"]
@@ -108,11 +108,11 @@ func testOktaUsersExists(name string) resource.TestCheckFunc {
 		}
 		firstName, hasFirstName := rs.Primary.Attributes["firstname"]
 		if !hasFirstName {
-			return fmt.Errorf("Error: no firstname found in state")
+			return fmt.Errorf("[ERROR] No firstname found in state")
 		}
 		lastName, hasLastName := rs.Primary.Attributes["lastname"]
 		if !hasLastName {
-			return fmt.Errorf("Error: no lastname found in state")
+			return fmt.Errorf("[ERROR] No lastname found in state")
 		}
 
 		err := testUserExists(true, userID, firstName, lastName)
@@ -123,15 +123,15 @@ func testOktaUsersExists(name string) resource.TestCheckFunc {
 		client := testAccProvider.Meta().(*Config).oktaClient
 		userRoles, _, err := client.Users.ListRoles(userID)
 		if err != nil {
-			return fmt.Errorf("Error: listing user role: %v", err)
+			return fmt.Errorf("[ERROR] listing user role: %v", err)
 		}
 		role, hasRole := rs.Primary.Attributes["role"]
 		if userRoles != nil {
 			if !hasRole {
-				return fmt.Errorf("Error: Okta role %v exists but Terraform state role does not", userRoles.Role[0].Type)
+				return fmt.Errorf("[ERROR] Okta role %v exists but Terraform state role does not", userRoles.Role[0].Type)
 			}
 			if role != userRoles.Role[0].Type {
-				return fmt.Errorf("Error: Okta role %v does not match Terraform state role %v", userRoles.Role[0].Type, role)
+				return fmt.Errorf("[ERROR] Okta role %v does not match Terraform state role %v", userRoles.Role[0].Type, role)
 			}
 		}
 		return nil
@@ -151,11 +151,11 @@ func testOktaUsersDestroy(s *terraform.State) error {
 		}
 		firstName, hasFirstName := rs.Primary.Attributes["firstname"]
 		if !hasFirstName {
-			return fmt.Errorf("Error: no firstname found in state")
+			return fmt.Errorf("[ERROR] No firstname found in state")
 		}
 		lastName, hasLastName := rs.Primary.Attributes["lastname"]
 		if !hasLastName {
-			return fmt.Errorf("Error: no lastname found in state")
+			return fmt.Errorf("[ERROR] No lastname found in state")
 		}
 
 		err := testUserExists(false, userID, firstName, lastName)
