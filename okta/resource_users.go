@@ -17,16 +17,16 @@ func resourceUsers() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"login": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "User Okta login (must be an email address)",
-				ForceNew:    true,
+				Type:         schema.TypeString,
+				Required:     true,
+				Description:  "User Okta login (must be an email address)",
+				ForceNew:     true,
 				ValidateFunc: matchesEmailRegexp,
 			},
 			"email": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "User primary email address. Default = user login",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "User primary email address. Default = user login",
 				ValidateFunc: matchesEmailRegexp,
 			},
 			"firstname": &schema.Schema{
@@ -432,7 +432,6 @@ func userTemplate(action string, d *schema.ResourceData, m interface{}) error {
 
 	return nil
 
-	
 }
 
 func matchesEmailRegexp(val interface{}, key string) (warnings []string, errors []error) {
@@ -442,4 +441,5 @@ func matchesEmailRegexp(val interface{}, key string) (warnings []string, errors 
 	}
 	return warnings, errors
 }
+
 //regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
