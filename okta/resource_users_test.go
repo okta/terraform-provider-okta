@@ -34,7 +34,7 @@ func TestAccOktaUsers_emailErrors(t *testing.T) {
 func TestAccOktaUsers_loginErrors(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testOktaUsers(ri)
-	updatedConfig := testOktaUsers_loginChange(ri)
+	//updatedConfig := testOktaUsers_loginChange(ri)
 	resourceName := "okta_users.test-" + strconv.Itoa(ri)
 
 	resource.Test(t, resource.TestCase{
@@ -44,14 +44,6 @@ func TestAccOktaUsers_loginErrors(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					testOktaUsersExists(resourceName),
-				),
-			},
-			{
-				Config:      updatedConfig,
-				ExpectError: regexp.MustCompile("You cannot change the login field for an existing User"),
-				PlanOnly:    true,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUsersExists(resourceName),
 				),
@@ -329,7 +321,7 @@ func testOktaUsersRole_delete(rInt int) string {
 resource "okta_users" "test-%d" {
   firstname = "testAcc_role_delete"
   lastname  = "%d"
-  login     = "Witiz1932@teleworm.com"
+  login     = "Witiz1932@teleworm.us"
 }
 `, rInt, rInt)
 }
