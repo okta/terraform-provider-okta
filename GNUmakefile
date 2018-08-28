@@ -1,3 +1,5 @@
+VERSION=v1.1.2
+
 TEST?=$$(go list ./... |grep -v 'vendor')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 
@@ -8,8 +10,17 @@ deps:
 	${GOPATH}/bin/dep ensure
 	${GOPATH}/bin/dep ensure -update github.com/articulate/oktasdk-go
 
-build: fmtcheck
-	go build
+build: fmtcheck build-macos build-linux
+
+build-macos:
+	GOOS=darwin GOARCH=amd64 go build -o terraform-provider-okta_${VERSION}
+	mkdir -p ~/.terraform.d/plugins/darwin_amd64/
+	cp terraform-provider-okta_${VERSION} ~/.terraform.d/plugins/darwin_amd64/
+
+build-linux:
+	GOOS=linux GOARCH=amd64 go build -o terraform-provider-okta_${VERSION}
+	mkdir -p ~/.terraform.d/plugins/linux_amd64/
+	cp terraform-provider-okta_${VERSION} ~/.terraform.d/plugins/linux_amd64/
 
 test: fmtcheck
 	go test -i $(TEST) || exit 1
