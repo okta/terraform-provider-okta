@@ -15,35 +15,19 @@ func resourceUsers() *schema.Resource {
 		Update: resourceUserUpdate,
 		Delete: resourceUserDelete,
 
-		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
-			//for an existing user, the login field cannot change
-			prev, _ := d.GetChange("login")
-			if prev.(string) != "" && d.HasChange("login") {
-				return fmt.Errorf("You cannot change the login field for an existing User")
-			}
-			//regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
-			re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-			if re.MatchString(d.Get("login").(string)) == false {
-				return fmt.Errorf("Login field not a valid email address")
-			}
-			if _, ok := d.GetOk("email"); ok {
-				if re.MatchString(d.Get("email").(string)) == false {
-					return fmt.Errorf("Email field not a valid email address")
-				}
-			}
-			return nil
-		},
-
 		Schema: map[string]*schema.Schema{
 			"login": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "User Okta login (must be an email address)",
+				Type:         schema.TypeString,
+				Required:     true,
+				Description:  "User Okta login (must be an email address)",
+				ForceNew:     true,
+				ValidateFunc: matchesEmailRegexp,
 			},
 			"email": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "User primary email address. Default = user login",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "User primary email address. Default = user login",
+				ValidateFunc: matchesEmailRegexp,
 			},
 			"firstname": &schema.Schema{
 				Type:        schema.TypeString,
@@ -447,4 +431,15 @@ func userTemplate(action string, d *schema.ResourceData, m interface{}) error {
 	}
 
 	return nil
+
 }
+
+func matchesEmailRegexp(val interface{}, key string) (warnings []string, errors []error) {
+	re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+	if re.MatchString(val.(string)) == false {
+		errors = append(errors, fmt.Errorf("%s field not a valid email address", key))
+	}
+	return warnings, errors
+}
+
+//regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
