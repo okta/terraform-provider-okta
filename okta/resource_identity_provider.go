@@ -326,7 +326,7 @@ func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("policy_provisioning_profile_master", idp.Policy.Provisioning.ProfileMaster)
 	d.Set("policy_provisioning_groups_action", idp.Policy.Provisioning.Groups.Action)
 
-	if _, ok := d.GetOk("policy_provisioning_group_assignments"); ok {
+	if len(idp.Policy.Provisioning.Groups.Assignments) > 0 {
 		d.Set("policy_provisioning_group_assignments", idp.Policy.Provisioning.Groups.Assignments)
 	}
 
