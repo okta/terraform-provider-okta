@@ -15,6 +15,9 @@ func resourceIdentityProviders() *schema.Resource {
 		Update: resourceIdentityProviderUpdate,
 		Delete: resourceIdentityProviderDelete,
 		Exists: idpExists,
+		Importer: &schema.ResourceImporter{
+			State: resourceOktaIdentityProviderImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"active": &schema.Schema{
@@ -323,7 +326,7 @@ func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("policy_provisioning_profile_master", idp.Policy.Provisioning.ProfileMaster)
 	d.Set("policy_provisioning_groups_action", idp.Policy.Provisioning.Groups.Action)
 
-	if _, ok := d.GetOk("policy_provisioning_group_assignments"); ok {
+	if len(idp.Policy.Provisioning.Groups.Assignments) > 0 {
 		d.Set("policy_provisioning_group_assignments", idp.Policy.Provisioning.Groups.Assignments)
 	}
 
@@ -411,4 +414,11 @@ func idpExists(d *schema.ResourceData, m interface{}) (bool, error) {
 		return false, fmt.Errorf("[ERROR] Error Listing Identity Provider in Okta: %v", err)
 	}
 	return true, nil
+}
+
+func resourceOktaIdentityProviderImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	if err := resourceIdentityProviderRead(d, meta); err != nil {
+		return nil, err
+	}
+	return []*schema.ResourceData{d}, nil
 }
