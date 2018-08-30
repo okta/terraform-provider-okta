@@ -68,6 +68,7 @@ resource "okta_identity_provider" "test-%s" {
   protocol_scopes = ["profile", "email", "openid"]
   client_id = "2780nfqgi7gioq39asdg"
   client_secret = "134t98higlhalkgjhakj"
+  policy_provisioning_group_assignments = ["banana"]
 }`, name, name)
 }
 
