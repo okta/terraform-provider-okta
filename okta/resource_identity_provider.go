@@ -104,10 +104,15 @@ func resourceIdentityProviders() *schema.Resource {
 				Default:     "NONE",
 				Description: "Policy Provisioning Conditions Suspended Action",
 			},
+			"policy_provisioning_group_assignments": &schema.Schema{
+				Type:        schema.TypeList,
+				Optional:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "Policy Provisioning Groups Assignment",
+			},
 			"policy_provisioning_groups_action": &schema.Schema{
 				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     "NONE",
+				Computed:    true,
 				Description: "Policy Provisioning Groups Action",
 			},
 			"policy_provisioning_profile_master": &schema.Schema{
@@ -241,7 +246,18 @@ func populateIdentityProvider(idp *okta.IdentityProvider, d *schema.ResourceData
 	idp.Protocol.Scopes = scopes
 	idp.Policy.Provisioning.Action = d.Get("policy_provisioning_action").(string)
 	idp.Policy.Provisioning.ProfileMaster = d.Get("policy_provisioning_profile_master").(bool)
-	idp.Policy.Provisioning.Groups.Action = d.Get("policy_provisioning_groups_action").(string)
+
+	if vals, ok := d.GetOk("policy_provisioning_group_assignments"); ok {
+		groupAssignments := make([]string, 0)
+		for _, val := range vals.([]interface{}) {
+			groupAssignments = append(groupAssignments, val.(string))
+		}
+		idp.Policy.Provisioning.Groups.Action = "ASSIGN"
+		idp.Policy.Provisioning.Groups.Assignments = groupAssignments
+	} else {
+		idp.Policy.Provisioning.Groups.Action = "NONE"
+	}
+
 	idp.Policy.Provisioning.Conditions.Deprovisioned.Action = d.Get("policy_provisioning_conditions_deprovisioned_action").(string)
 	idp.Policy.Provisioning.Conditions.Suspended.Action = d.Get("policy_provisioning_conditions_suspended_action").(string)
 	idp.Policy.AccountLink.Filter = d.Get("policy_account_link_filter").(string)
@@ -306,6 +322,11 @@ func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("policy_provisioning_action", idp.Policy.Provisioning.Action)
 	d.Set("policy_provisioning_profile_master", idp.Policy.Provisioning.ProfileMaster)
 	d.Set("policy_provisioning_groups_action", idp.Policy.Provisioning.Groups.Action)
+
+	if _, ok := d.GetOk("policy_provisioning_group_assignments"); ok {
+		d.Set("policy_provisioning_group_assignments", idp.Policy.Provisioning.Groups.Assignments)
+	}
+
 	d.Set("policy_provisioning_conditions_deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
 	d.Set("policy_provisioning_conditions_suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
 	d.Set("policy_account_link_filter", idp.Policy.AccountLink.Filter)
