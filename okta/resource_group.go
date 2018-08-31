@@ -1,10 +1,12 @@
 package okta
 
 import (
+	"fmt"
+	"github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func resourceGroups() *schema.Resource {
+func resourceGroup() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceGroupCreate,
 		Read:   resourceGroupRead,
@@ -32,7 +34,38 @@ func resourceGroups() *schema.Resource {
 	}
 }
 
+func assembleGroup() *okta.Group {
+	group := &okta.Group{}
+	profile := &okta.GroupProfile{}
+	links := &okta.GroupLinks{}
+
+	group.GroupProfile = profile
+	group.GroupLinks = links
+
+	return group
+}
+
+func populateGroup(group *okta.Group, d *schema.ResourceData) error {
+	group.GroupProfile.Name = d.Get("name").(string)
+	group.GroupProfile.Description = d.Get("description").(string)
+
+	return nil
+}
+
 func resourceGroupCreate(d *schema.ResourceData, m interface{}) error {
+	client := m.(*Config).oktaClient
+	
+	group := assembleGroup()
+	populateGroup(group, d)
+
+	returnedGroup, _, err := client.Groups.Add(group.GroupProfile.Name, group.GroupProfile.Description)
+
+	if err != nil {
+		return fmt.Errorf("[ERROR] %v.", err)
+	}
+
+	d.SetId(returnedGroup.ID)
+	
 	return nil
 }
 
