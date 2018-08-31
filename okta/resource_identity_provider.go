@@ -16,7 +16,7 @@ func resourceIdentityProviders() *schema.Resource {
 		Delete: resourceIdentityProviderDelete,
 		Exists: idpExists,
 		Importer: &schema.ResourceImporter{
-			State: resourceOktaIdentityProviderImport,
+			State: schema.ImportStatePassthrough,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -414,11 +414,4 @@ func idpExists(d *schema.ResourceData, m interface{}) (bool, error) {
 		return false, fmt.Errorf("[ERROR] Error Listing Identity Provider in Okta: %v", err)
 	}
 	return true, nil
-}
-
-func resourceOktaIdentityProviderImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	if err := resourceIdentityProviderRead(d, meta); err != nil {
-		return nil, err
-	}
-	return []*schema.ResourceData{d}, nil
 }
