@@ -74,9 +74,30 @@ func resourceGroupRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceGroupUpdate(d *schema.ResourceData, m interface{}) error {
+	client := m.(*Config).oktaClient
+
+	group := assembleGroup()
+	populateGroup(group, d)
+
+	_, _, err := client.Groups.Update(d.Id(), group)
+
+	if err != nil {
+		return fmt.Errorf("[ERROR] %v.", err)
+	}
+
 	return nil
 }
 
 func resourceGroupDelete(d *schema.ResourceData, m interface{}) error {
+	client := m.(*Config).oktaClient
+
+	_, err := client.Groups.Delete(d.Id())
+
+	if err != nil {
+		return fmt.Errorf("[ERROR] %v.", err)
+	}
+
+	d.SetId("")
+	
 	return nil
 }
