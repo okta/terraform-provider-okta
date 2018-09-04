@@ -2,10 +2,10 @@ package okta
 
 import (
 	"fmt"
-	"testing"
-	"strconv"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
+	"strconv"
+	"testing"
 	//"github.com/hashicorp/terraform/terraform"
 )
 
@@ -31,7 +31,6 @@ func TestAccOktaGroupsCreate(t *testing.T) {
 	})
 }
 
-
 func testOktaGroups_create(rInt int) string {
 	return fmt.Sprintf(`
 resource "okta_group" "test-%d" {
@@ -49,4 +48,3 @@ resource "okta_group" "test-%d" {
 }
 `, rInt)
 }
-

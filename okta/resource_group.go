@@ -56,7 +56,7 @@ func populateGroup(group *okta.Group, d *schema.ResourceData) error {
 
 func resourceGroupCreate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Config).oktaClient
-	
+
 	group := assembleGroup()
 	populateGroup(group, d)
 
@@ -67,7 +67,7 @@ func resourceGroupCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	d.SetId(returnedGroup.ID)
-	
+
 	return nil
 }
 
@@ -100,6 +100,6 @@ func resourceGroupDelete(d *schema.ResourceData, m interface{}) error {
 	}
 
 	d.SetId("")
-	
+
 	return nil
 }
