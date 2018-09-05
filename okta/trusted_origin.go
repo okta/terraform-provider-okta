@@ -2,6 +2,7 @@ package okta
 
 import (
   "fmt"
+  "log"
   "github.com/articulate/oktasdk-go/okta"
   "github.com/hashicorp/terraform/helper/schema"
 )
@@ -89,6 +90,31 @@ func resourceTrustedOriginCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceTrustedOriginRead(d *schema.ResourceData, m interface{}) error {
+  log.Printf("[INFO] List Identity Provider %v", d.Get("name").(string))
+
+  var trustedOrigin *okta.TrustedOrigin
+
+  client := m.(*Config).oktaClient
+
+  exists, err := trustedOriginExists(d, m)
+  if err != nil {
+    return err
+  }
+
+  if exists == true {
+    trustedOrigin, _, err = client.TrustedOrigins.GetTrustedOrigin(d.Id())
+  } else {
+    d.SetId("")
+    return nil
+  }
+
+
+  fmt.Println(trustedOrigin)
+
+  d.Set("active", trustedOrigin.Status == "ACTIVE")
+  d.Set("origin", trustedOrigin.Origin)
+  d.Set("name", trustedOrigin.Name)
+
   return nil
 }
 
