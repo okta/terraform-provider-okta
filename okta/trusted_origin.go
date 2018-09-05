@@ -1,6 +1,7 @@
 package okta
 
 import (
+  "fmt"
   "github.com/articulate/oktasdk-go/okta"
   "github.com/hashicorp/terraform/helper/schema"
 )
@@ -101,5 +102,14 @@ func resourceTrustedOriginDelete(d *schema.ResourceData, m interface{}) error {
 
 // check if Trusted Origin exists in Okta
 func trustedOriginExists(d *schema.ResourceData, m interface{}) (bool, error) {
+  client := m.(*Config).oktaClient
+  _, _, err := client.TrustedOrigins.GetTrustedOrigin(d.Id())
+
+  if client.OktaErrorCode == "E0000007" {
+    return false, nil
+  }
+  if err != nil {
+    return false, fmt.Errorf("[ERROR] Error Getting Trusted Origin in Okta: %v", err)
+  }
   return true, nil
 }
