@@ -74,7 +74,7 @@ func populateTrustedOrigin(trustedOrigin *okta.TrustedOrigin, d *schema.Resource
   var scopes []map[string]string
 
   for _, vals := range d.Get("scopes").([]interface{}) {
-    scopes = append(scopes, map[string]string{"Type": vals.(string)})
+    scopes = append(scopes, map[string]string{"type": vals.(string)})
   }
 
   trustedOrigin.Scopes = scopes
