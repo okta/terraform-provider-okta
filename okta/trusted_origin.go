@@ -83,7 +83,25 @@ func populateTrustedOrigin(trustedOrigin *okta.TrustedOrigin, d *schema.Resource
 }
 
 func resourceTrustedOriginCreate(d *schema.ResourceData, m interface{}) error {
-  return nil
+  if !d.Get("active").(bool) {
+    return fmt.Errorf("[ERROR] Okta will not allow a Trusted Origin to be created as INACTIVE. Can set to false for existing Trusted Origins only.")
+  }
+
+  client := m.(*Config).oktaClient
+  trustedOrigin := assembleTrustedOrigin()
+  populateTrustedOrigin(trustedOrigin, d)
+
+  fmt.Println(trustedOrigin)
+
+  returnedTrustedOrigin, _, err := client.TrustedOrigins.CreateTrustedOrigin(trustedOrigin)
+
+  if err != nil {
+    return fmt.Errorf("[ERROR] %v.", err)
+  }
+
+  d.SetId(returnedTrustedOrigin.ID)
+
+  return resourceTrustedOriginRead(d, m)
 }
 
 func resourceTrustedOriginRead(d *schema.ResourceData, m interface{}) error {
