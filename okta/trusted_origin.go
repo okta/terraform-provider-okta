@@ -91,8 +91,6 @@ func resourceTrustedOriginCreate(d *schema.ResourceData, m interface{}) error {
   trustedOrigin := assembleTrustedOrigin()
   populateTrustedOrigin(trustedOrigin, d)
 
-  fmt.Println(trustedOrigin)
-
   returnedTrustedOrigin, _, err := client.TrustedOrigins.CreateTrustedOrigin(trustedOrigin)
 
   if err != nil {
@@ -105,7 +103,7 @@ func resourceTrustedOriginCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceTrustedOriginRead(d *schema.ResourceData, m interface{}) error {
-  log.Printf("[INFO] List Identity Provider %v", d.Get("name").(string))
+  log.Printf("[INFO] Read Trusted Origin %v", d.Get("name").(string))
 
   var trustedOrigin *okta.TrustedOrigin
 
@@ -122,9 +120,6 @@ func resourceTrustedOriginRead(d *schema.ResourceData, m interface{}) error {
     d.SetId("")
     return nil
   }
-
-
-  fmt.Println(trustedOrigin)
 
   d.Set("active", trustedOrigin.Status == "ACTIVE")
   d.Set("origin", trustedOrigin.Origin)
