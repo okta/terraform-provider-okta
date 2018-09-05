@@ -68,7 +68,6 @@ func assembleTrustedOrigin() *okta.TrustedOrigin {
 
 // Populates the Trusted Origin struct (used by the Okta SDK for API operaations) with the data resource provided by TF
 func populateTrustedOrigin(trustedOrigin *okta.TrustedOrigin, d *schema.ResourceData) *okta.TrustedOrigin {
-  trustedOrigin.ID = d.Get("id").(string)
   trustedOrigin.Name = d.Get("name").(string)
   trustedOrigin.Origin = d.Get("origin").(string)
 
