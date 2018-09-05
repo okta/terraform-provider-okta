@@ -26,7 +26,7 @@ func TestAccTrustedOrigin(t *testing.T) {
       {
         Config: testAccTrustedOriginUpdate(rName),
         Check: resource.ComposeTestCheckFunc(
-          resource.TestCheckResourceAttr("okta_trusted_origin.test-"+rName, "origin", "https://example2.com"),
+          resource.TestCheckResourceAttr("okta_trusted_origin.test-"+rName, "origin", "https://example2-"+rName+".com"),
         ),
       },
     },
@@ -37,18 +37,18 @@ func testAccTrustedOriginCreate(name string) string {
   return fmt.Sprintf(`
 resource "okta_trusted_origin" "test-%s" {
   name = "%s"
-  origin = "https://example.com"
+  origin = "https://example-%s.com"
   scopes = ["CORS"]
-}`, name, name)
+}`, name, name, name)
 }
 
 func testAccTrustedOriginUpdate(name string) string {
   return fmt.Sprintf(`
 resource "okta_trusted_origin" "test-%s" {
   name = "%s"
-  origin = "https://example2.com"
+  origin = "https://example2-%s.com"
   scopes = ["CORS"]
-}`, name, name)
+}`, name, name, name)
 }
 
 
