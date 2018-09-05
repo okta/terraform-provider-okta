@@ -46,14 +46,12 @@ func resourceTrustedOrigin() *schema.Resource {
 }
 
 func assembleTrustedOrigin() *okta.TrustedOrigin {
-  hints := &okta.TrustedOriginHints{}
-
   deactivate := &okta.TrustedOriginDeactive{
-    Hints: hints,
+    Hints: &okta.TrustedOriginHints{},
   }
 
   self := &okta.TrustedOriginSelf{
-    Hints: hints,
+    Hints: &okta.TrustedOriginHints{},
   }
 
   links := &okta.TrustedOriginLinks{
