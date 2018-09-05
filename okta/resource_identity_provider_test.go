@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
 )
 
 func TestAccIdentityProvider_create(t *testing.T) {
@@ -32,31 +31,6 @@ func TestAccIdentityProvider_create(t *testing.T) {
 			},
 		},
 	})
-}
-
-func testOktaIdentityProviderExists(name string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[name]
-		if !ok {
-			return fmt.Errorf("[ERROR] Resource Not found: %s", name)
-		}
-
-		IdpID, hasID := rs.Primary.Attributes["id"]
-		if !hasID {
-			return fmt.Errorf("[ERROR] No id found in state for Identity Provider")
-		}
-		IdpName, hasName := rs.Primary.Attributes["name"]
-		if !hasName {
-			return fmt.Errorf("[ERROR] No name found in state for Identity Provider")
-		}
-
-		err := testPolicyExists(true, IdpID, IdpName)
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-	return nil
 }
 
 func testAccIdentityProviderCreate(name string) string {
