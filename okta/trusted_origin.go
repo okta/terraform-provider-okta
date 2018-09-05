@@ -3,7 +3,6 @@ package okta
 import (
   "github.com/articulate/oktasdk-go/okta"
   "github.com/hashicorp/terraform/helper/schema"
-  "github.com/hashicorp/terraform/helper/validation"
 )
 
 func resourceTrustedOrigin() *schema.Resource {
@@ -38,7 +37,6 @@ func resourceTrustedOrigin() *schema.Resource {
         Type:        schema.TypeList,
         Optional:    true,
         Elem:        &schema.Schema{Type: schema.TypeString},
-        ValidateFunc: validation.StringInSlice([]string{"CORS", "Redirect"}, false),
         Description: "Scopes of the Trusted Origin - can either be CORS or Redirect only",
       },
     },
