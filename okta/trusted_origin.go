@@ -24,11 +24,6 @@ func resourceTrustedOrigin() *schema.Resource {
         Default:     true,
         Description: "Whether the Trusted Origin is active or not - can only be issued post-creation",
       },
-      "id": &schema.Schema{
-        Type:        schema.TypeString,
-        Computed:    true,
-        Description: "ID of the Trusted Origin",
-      },
       "name": &schema.Schema{
         Type:        schema.TypeString,
         Required:    true,
