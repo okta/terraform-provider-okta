@@ -8,7 +8,7 @@ import (
 	"log"
 )
 
-func resourceIdentityProviders() *schema.Resource {
+func resourceIdentityProvider() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceIdentityProviderCreate,
 		Read:   resourceIdentityProviderRead,

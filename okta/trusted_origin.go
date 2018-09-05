@@ -6,7 +6,7 @@ import (
   "github.com/hashicorp/terraform/helper/validation"
 )
 
-func resourceTrustedOrigins() *schema.Resource {
+func resourceTrustedOrigin() *schema.Resource {
   return &schema.Resource{
     Create: resourceTrustedOriginCreate,
     Read:   resourceTrustedOriginRead,
