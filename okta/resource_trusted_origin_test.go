@@ -55,9 +55,6 @@ resource "okta_trusted_origin" "test_%s" {
 func testAccCheckTrustedOriginDestroy(s *terraform.State) error {
   client := testAccProvider.Meta().(*Config).oktaClient
 
-  fmt.Println("THIS IS THE STATE")
-  fmt.Println(s)
-
   for _, r := range s.RootModule().Resources {
     if _, _, err := client.TrustedOrigins.GetTrustedOrigin(r.Primary.ID); err != nil {
       if client.OktaErrorCode == "E0000007" {
