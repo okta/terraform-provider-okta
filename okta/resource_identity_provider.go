@@ -399,7 +399,7 @@ func resourceIdentityProviderDelete(d *schema.ResourceData, m interface{}) error
 	}
 
 	if updatedExists == true {
-		return fmt.Errorf("%v", "Resource Still Exits after Destroy called")
+		return fmt.Errorf("%v", "Resource still exists after destroy called")
 	}
 	return nil
 }
