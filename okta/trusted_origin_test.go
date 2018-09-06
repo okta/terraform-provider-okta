@@ -35,8 +35,8 @@ func TestAccTrustedOrigin(t *testing.T) {
 
 func testAccTrustedOriginCreate(name string) string {
   return fmt.Sprintf(`
-resource "okta_trusted_origin" "test-%s" {
-  name = "%s"
+resource "okta_trusted_origin" "test_%s" {
+  name = "test-%s"
   origin = "https://example-%s.com"
   scopes = ["CORS"]
 }`, name, name, name)
@@ -44,8 +44,8 @@ resource "okta_trusted_origin" "test-%s" {
 
 func testAccTrustedOriginUpdate(name string) string {
   return fmt.Sprintf(`
-resource "okta_trusted_origin" "test-%s" {
-  name = "%s"
+resource "okta_trusted_origin" "test_%s" {
+  name = "test-%s"
   origin = "https://example2-%s.com"
   scopes = ["CORS"]
 }`, name, name, name)
