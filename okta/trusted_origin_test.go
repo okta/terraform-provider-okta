@@ -26,7 +26,7 @@ func TestAccTrustedOrigin(t *testing.T) {
       {
         Config: testAccTrustedOriginUpdate(rName),
         Check: resource.ComposeTestCheckFunc(
-          resource.TestCheckResourceAttr("okta_trusted_origin.test-"+rName, "origin", "https://example2-"+rName+".com"),
+          resource.TestCheckResourceAttr("okta_trusted_origin.test_"+rName, "origin", "https://example2-"+rName+".com"),
         ),
       },
     },
@@ -47,7 +47,7 @@ func testAccTrustedOriginUpdate(name string) string {
 resource "okta_trusted_origin" "test_%s" {
   name = "test-%s"
   origin = "https://example2-%s.com"
-  scopes = ["CORS"]
+  scopes = ["CORS", "REDIRECT"]
 }`, name, name, name)
 }
 
