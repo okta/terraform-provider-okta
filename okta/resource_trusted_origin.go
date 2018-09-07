@@ -123,9 +123,15 @@ func resourceTrustedOriginRead(d *schema.ResourceData, m interface{}) error {
     return nil
   }
 
+  scopes := make([]string, 0)
+  for _, scope := range trustedOrigin.Scopes {
+    scopes = append(scopes, scope["type"])
+  }
+
   d.Set("active", trustedOrigin.Status == "ACTIVE")
   d.Set("origin", trustedOrigin.Origin)
   d.Set("name", trustedOrigin.Name)
+  d.Set("scopes", scopes)
 
   return nil
 }
