@@ -8,7 +8,6 @@ default: deps build
 deps:
 	curl -s https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 	${GOPATH}/bin/dep ensure
-	${GOPATH}/bin/dep ensure -update github.com/articulate/oktasdk-go
 
 build: fmtcheck build-macos build-linux
 
