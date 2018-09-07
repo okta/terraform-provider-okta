@@ -157,6 +157,21 @@ func resourceTrustedOriginUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceTrustedOriginDelete(d *schema.ResourceData, m interface{}) error {
+  log.Printf("[INFO] Delete Trusted Origin %v", d.Get("name").(string))
+
+  client := m.(*Config).oktaClient
+
+  exists, err := trustedOriginExists(d, m)
+  if err != nil {
+    return err
+  }
+  if exists == true {
+    _, err = client.TrustedOrigins.DeleteTrustedOrigin(d.Id())
+    if err != nil {
+      return fmt.Errorf("[ERROR] Error Deleting Trusted Origin from Okta: %v", err)
+    }
+  }
+
   return nil
 }
 
