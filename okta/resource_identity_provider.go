@@ -8,7 +8,7 @@ import (
 	"log"
 )
 
-func resourceIdentityProviders() *schema.Resource {
+func resourceIdentityProvider() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceIdentityProviderCreate,
 		Read:   resourceIdentityProviderRead,
@@ -279,6 +279,8 @@ func populateIdentityProvider(idp *okta.IdentityProvider, d *schema.ResourceData
 }
 
 func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] Create Identity Provider %v", d.Get("name").(string))
+
 	if !d.Get("active").(bool) {
 		return fmt.Errorf("[ERROR] Okta will not allow an IDP to be created as INACTIVE. Can set to false for existing IDPs only.")
 	}
@@ -299,7 +301,7 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 }
 
 func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] List Identity Provider %v", d.Get("name").(string))
+	log.Printf("[INFO] Read Identity Provider %v", d.Get("name").(string))
 
 	var idp *okta.IdentityProvider
 	client := m.(*Config).oktaClient
@@ -349,7 +351,7 @@ func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceIdentityProviderUpdate(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] List Identity Provider %v", d.Get("name").(string))
+	log.Printf("[INFO] Update Identity Provider %v", d.Get("name").(string))
 
 	var idp = assembleIdentityProvider()
 	populateIdentityProvider(idp, d)
@@ -397,7 +399,7 @@ func resourceIdentityProviderDelete(d *schema.ResourceData, m interface{}) error
 	}
 
 	if updatedExists == true {
-		return fmt.Errorf("%v", "Resource Still Exits after Destroy called")
+		return fmt.Errorf("%v", "Resource still exists after destroy called")
 	}
 	return nil
 }
