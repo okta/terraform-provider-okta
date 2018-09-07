@@ -47,6 +47,7 @@ func testAccTrustedOriginUpdate(name string) string {
   return fmt.Sprintf(`
 resource "okta_trusted_origin" "test_%s" {
   name = "test-%s"
+  active = false
   origin = "https://example2-%s.com"
   scopes = ["CORS", "REDIRECT"]
 }`, name, name, name)

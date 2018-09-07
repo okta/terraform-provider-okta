@@ -144,7 +144,15 @@ func resourceTrustedOriginUpdate(d *schema.ResourceData, m interface{}) error {
   }
 
   if exists == true {
+    if d.HasChange("active") {
+      _, err = client.TrustedOrigins.ActivateTrustedOrigin(d.Id(), d.Get("active").(bool))
+      if err != nil {
+        return fmt.Errorf("[ERROR] Error Updating Trusted Origin with Okta: %v", err)
+      }
+    }
+
     _, _, err = client.TrustedOrigins.UpdateTrustedOrigin(d.Id(), trustedOrigin)
+
     if err != nil {
       return fmt.Errorf("[ERROR] Error Updating Trusted Origin with Okta: %v", err)
     }
