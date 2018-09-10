@@ -15,7 +15,7 @@ type Config struct {
 	apiToken string
 
 	articulateOktaClient *articulateOkta.Client
-	oktaClient *okta.Client
+	oktaClient           *okta.Client
 }
 
 func (c *Config) loadAndValidate() error {
