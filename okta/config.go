@@ -3,7 +3,7 @@ package okta
 import (
 	"fmt"
 
-	"github.com/articulate/oktasdk-go/okta"
+	articulateOkta "github.com/articulate/oktasdk-go/okta"
 )
 
 // Config is a struct containing our provider schema values
@@ -13,12 +13,12 @@ type Config struct {
 	domain   string
 	apiToken string
 
-	oktaClient *okta.Client
+	articulateOktaClient *articulateOkta.Client
 }
 
-func (c *Config) loadAndValidate() error {
+func (c *Config) loadAndValidateArticulateSDK() error {
 
-	client, err := okta.NewClientWithDomain(nil, c.orgName, c.domain, c.apiToken)
+	client, err := articulateOkta.NewClientWithDomain(nil, c.orgName, c.domain, c.apiToken)
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error creating Okta client: %v", err)
 	}
@@ -35,6 +35,6 @@ func (c *Config) loadAndValidate() error {
 	}
 
 	// add our client object to Config
-	c.oktaClient = client
+	c.articulateOktaClient = client
 	return nil
 }

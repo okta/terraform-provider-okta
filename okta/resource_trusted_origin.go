@@ -2,7 +2,7 @@ package okta
 
 import (
 	"fmt"
-	"github.com/articulate/oktasdk-go/okta"
+	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 	"log"
 )
@@ -45,21 +45,21 @@ func resourceTrustedOrigin() *schema.Resource {
 	}
 }
 
-func assembleTrustedOrigin() *okta.TrustedOrigin {
-	deactivate := &okta.TrustedOriginDeactive{
-		Hints: &okta.TrustedOriginHints{},
+func assembleTrustedOrigin() *articulateOkta.TrustedOrigin {
+	deactivate := &articulateOkta.TrustedOriginDeactive{
+		Hints: &articulateOkta.TrustedOriginHints{},
 	}
 
-	self := &okta.TrustedOriginSelf{
-		Hints: &okta.TrustedOriginHints{},
+	self := &articulateOkta.TrustedOriginSelf{
+		Hints: &articulateOkta.TrustedOriginHints{},
 	}
 
-	links := &okta.TrustedOriginLinks{
+	links := &articulateOkta.TrustedOriginLinks{
 		Self:       self,
 		Deactivate: deactivate,
 	}
 
-	trustedOrigin := &okta.TrustedOrigin{
+	trustedOrigin := &articulateOkta.TrustedOrigin{
 		Links: links,
 	}
 
@@ -67,7 +67,7 @@ func assembleTrustedOrigin() *okta.TrustedOrigin {
 }
 
 // Populates the Trusted Origin struct (used by the Okta SDK for API operaations) with the data resource provided by TF
-func populateTrustedOrigin(trustedOrigin *okta.TrustedOrigin, d *schema.ResourceData) *okta.TrustedOrigin {
+func populateTrustedOrigin(trustedOrigin *articulateOkta.TrustedOrigin, d *schema.ResourceData) *articulateOkta.TrustedOrigin {
 	trustedOrigin.Name = d.Get("name").(string)
 	trustedOrigin.Origin = d.Get("origin").(string)
 
@@ -89,7 +89,7 @@ func resourceTrustedOriginCreate(d *schema.ResourceData, m interface{}) error {
 		return fmt.Errorf("[ERROR] Okta will not allow a Trusted Origin to be created as INACTIVE. Can set to false for existing Trusted Origins only.")
 	}
 
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 	trustedOrigin := assembleTrustedOrigin()
 	populateTrustedOrigin(trustedOrigin, d)
 
@@ -107,9 +107,9 @@ func resourceTrustedOriginCreate(d *schema.ResourceData, m interface{}) error {
 func resourceTrustedOriginRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Read Trusted Origin %v", d.Get("name").(string))
 
-	var trustedOrigin *okta.TrustedOrigin
+	var trustedOrigin *articulateOkta.TrustedOrigin
 
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	exists, err := trustedOriginExists(d, m)
 	if err != nil {
@@ -142,7 +142,7 @@ func resourceTrustedOriginUpdate(d *schema.ResourceData, m interface{}) error {
 	var trustedOrigin = assembleTrustedOrigin()
 	populateTrustedOrigin(trustedOrigin, d)
 
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	exists, err := trustedOriginExists(d, m)
 	if err != nil {
@@ -173,7 +173,7 @@ func resourceTrustedOriginUpdate(d *schema.ResourceData, m interface{}) error {
 func resourceTrustedOriginDelete(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Delete Trusted Origin %v", d.Get("name").(string))
 
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	exists, err := trustedOriginExists(d, m)
 	if err != nil {
@@ -191,7 +191,7 @@ func resourceTrustedOriginDelete(d *schema.ResourceData, m interface{}) error {
 
 // check if Trusted Origin exists in Okta
 func trustedOriginExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 	_, _, err := client.TrustedOrigins.GetTrustedOrigin(d.Id())
 
 	if client.OktaErrorCode == "E0000007" {

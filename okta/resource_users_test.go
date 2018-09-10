@@ -120,7 +120,7 @@ func testOktaUsersExists(name string) resource.TestCheckFunc {
 			return err
 		}
 
-		client := testAccProvider.Meta().(*Config).oktaClient
+		client := testAccProvider.Meta().(*Config).articulateOktaClient
 		userRoles, _, err := client.Users.ListRoles(userID)
 		if err != nil {
 			return fmt.Errorf("[ERROR] listing user role: %v", err)
@@ -168,7 +168,7 @@ func testOktaUsersDestroy(s *terraform.State) error {
 }
 
 func testUserExists(expected bool, userID string, firstName string, lastName string) error {
-	client := testAccProvider.Meta().(*Config).oktaClient
+	client := testAccProvider.Meta().(*Config).articulateOktaClient
 
 	exists := false
 	_, _, err := client.Users.GetByID(userID)

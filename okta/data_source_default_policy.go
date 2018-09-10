@@ -27,7 +27,7 @@ func dataSourceDefaultPolicies() *schema.Resource {
 
 func dataSourceDefaultPolicyRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Data Source Default Policy Read %v", d.Get("type").(string))
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	set := false
 	currentPolicies, _, err := client.Policies.GetPoliciesByType(d.Get("type").(string))

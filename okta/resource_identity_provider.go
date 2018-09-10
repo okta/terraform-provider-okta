@@ -2,7 +2,7 @@ package okta
 
 import (
 	"fmt"
-	"github.com/articulate/oktasdk-go/okta"
+	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"log"
@@ -172,56 +172,56 @@ func activationStatus(active bool) string {
 	return "INACTIVE"
 }
 
-func assembleIdentityProvider() *okta.IdentityProvider {
-	idp := &okta.IdentityProvider{}
+func assembleIdentityProvider() *articulateOkta.IdentityProvider {
+	idp := &articulateOkta.IdentityProvider{}
 
-	client := &okta.IdpClient{}
-	credentials := &okta.Credentials{Client: client}
-	authorization := &okta.Authorization{}
-	endpoints := &okta.Endpoints{Authorization: authorization}
-	protocol := &okta.Protocol{
+	client := &articulateOkta.IdpClient{}
+	credentials := &articulateOkta.Credentials{Client: client}
+	authorization := &articulateOkta.Authorization{}
+	endpoints := &articulateOkta.Endpoints{Authorization: authorization}
+	protocol := &articulateOkta.Protocol{
 		Credentials: credentials,
 		Endpoints:   endpoints,
 	}
-	idpGroups := &okta.IdpGroups{}
-	deprovisioned := &okta.Deprovisioned{}
-	suspended := &okta.Suspended{}
+	idpGroups := &articulateOkta.IdpGroups{}
+	deprovisioned := &articulateOkta.Deprovisioned{}
+	suspended := &articulateOkta.Suspended{}
 
-	conditions := &okta.Conditions{
+	conditions := &articulateOkta.Conditions{
 		Deprovisioned: deprovisioned,
 		Suspended:     suspended,
 	}
 
-	provisioning := &okta.Provisioning{
+	provisioning := &articulateOkta.Provisioning{
 		ProfileMaster: true,
 		Groups:        idpGroups,
 		Conditions:    conditions,
 	}
 
-	accountLink := &okta.AccountLink{}
+	accountLink := &articulateOkta.AccountLink{}
 
-	userNameTemplate := &okta.UserNameTemplate{}
+	userNameTemplate := &articulateOkta.UserNameTemplate{}
 
-	subject := &okta.Subject{
+	subject := &articulateOkta.Subject{
 		UserNameTemplate: userNameTemplate,
 	}
 
-	policy := &okta.IdpPolicy{
+	policy := &articulateOkta.IdpPolicy{
 		Provisioning: provisioning,
 		AccountLink:  accountLink,
 		Subject:      subject,
 		MaxClockSkew: 0,
 	}
 
-	authorize := &okta.Authorize{
-		Hints: &okta.Hints{},
+	authorize := &articulateOkta.Authorize{
+		Hints: &articulateOkta.Hints{},
 	}
 
-	clientRedirectUri := &okta.ClientRedirectUri{
-		Hints: &okta.Hints{},
+	clientRedirectUri := &articulateOkta.ClientRedirectUri{
+		Hints: &articulateOkta.Hints{},
 	}
 
-	idpLinks := &okta.IdpLinks{
+	idpLinks := &articulateOkta.IdpLinks{
 		Authorize:         authorize,
 		ClientRedirectUri: clientRedirectUri,
 	}
@@ -234,7 +234,7 @@ func assembleIdentityProvider() *okta.IdentityProvider {
 }
 
 // Populates the IdentityProvider struct (used by the Okta SDK for API operaations) with the state provided by TF
-func populateIdentityProvider(idp *okta.IdentityProvider, d *schema.ResourceData) *okta.IdentityProvider {
+func populateIdentityProvider(idp *articulateOkta.IdentityProvider, d *schema.ResourceData) *articulateOkta.IdentityProvider {
 
 	idp.Type = d.Get("type").(string)
 	idp.Name = d.Get("name").(string)
@@ -285,7 +285,7 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 		return fmt.Errorf("[ERROR] Okta will not allow an IDP to be created as INACTIVE. Can set to false for existing IDPs only.")
 	}
 
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 	idp := assembleIdentityProvider()
 	populateIdentityProvider(idp, d)
 
@@ -303,8 +303,8 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Read Identity Provider %v", d.Get("name").(string))
 
-	var idp *okta.IdentityProvider
-	client := m.(*Config).oktaClient
+	var idp *articulateOkta.IdentityProvider
+	client := m.(*Config).articulateOktaClient
 	exists, err := idpExists(d, m)
 	if err != nil {
 		return err
@@ -360,7 +360,7 @@ func resourceIdentityProviderUpdate(d *schema.ResourceData, m interface{}) error
 	status := activationStatus(d.Get("active").(bool))
 	idp.Status = status
 
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 	exists, err := idpExists(d, m)
 	if err != nil {
 		return err
@@ -381,7 +381,7 @@ func resourceIdentityProviderUpdate(d *schema.ResourceData, m interface{}) error
 
 func resourceIdentityProviderDelete(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Delete Identity Provider %v", d.Get("name").(string))
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 	exists, err := idpExists(d, m)
 	if err != nil {
 		return err
@@ -406,7 +406,7 @@ func resourceIdentityProviderDelete(d *schema.ResourceData, m interface{}) error
 
 // check if IDP exists in Okta
 func idpExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 	_, _, err := client.IdentityProviders.GetIdentityProvider(d.Id())
 
 	if client.OktaErrorCode == "E0000007" {
