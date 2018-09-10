@@ -61,8 +61,8 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		domain:   d.Get("base_url").(string),
 		apiToken: d.Get("api_token").(string),
 	}
-	if err := config.loadAndValidateArticulateSDK(); err != nil {
-		return nil, fmt.Errorf("[ERROR] Error initializing Articulate Okta SDK client: %v", err)
+	if err := config.loadAndValidate(); err != nil {
+		return nil, fmt.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)
 	}
 	return &config, nil
 }

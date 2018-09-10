@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
+	"github.com/okta/okta-sdk-golang/okta"
 )
 
 // Config is a struct containing our provider schema values
@@ -14,27 +15,25 @@ type Config struct {
 	apiToken string
 
 	articulateOktaClient *articulateOkta.Client
+	oktaClient *okta.Client
 }
 
-func (c *Config) loadAndValidateArticulateSDK() error {
+func (c *Config) loadAndValidate() error {
+	articulateClient, err := articulateOkta.NewClientWithDomain(nil, c.orgName, c.domain, c.apiToken)
 
-	client, err := articulateOkta.NewClientWithDomain(nil, c.orgName, c.domain, c.apiToken)
+	// add the Articulaet Okta client object to Config
+	c.articulateOktaClient = articulateClient
+
 	if err != nil {
-		return fmt.Errorf("[ERROR] Error creating Okta client: %v", err)
+		return fmt.Errorf("[ERROR] Error creating Articulate Okta client: %v", err)
 	}
 
-	// quick test of our credentials by listing our default user profile schema
-	url := fmt.Sprintf("meta/schemas/user/default")
-	req, err := client.NewRequest("GET", url, nil)
-	if err != nil {
-		return fmt.Errorf("[ERROR] Error initializing test connect to Okta: %v", err)
-	}
-	_, err = client.Do(req, nil)
-	if err != nil {
-		return fmt.Errorf("[ERROR] Error testing connection to Okta. Please verify your credentials: %v", err)
-	}
+	orgUrl := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
 
-	// add our client object to Config
-	c.articulateOktaClient = client
+	config := okta.NewConfig().WithOrgUrl(orgUrl).WithToken(c.apiToken)
+	client := okta.NewClient(config, nil, nil)
+
+	// add the Okta SDK client object to Config
+	c.oktaClient = client
 	return nil
 }

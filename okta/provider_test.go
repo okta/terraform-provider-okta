@@ -5,7 +5,6 @@ import (
 	"os"
 	"testing"
 
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -45,7 +44,7 @@ func testOktaConfig(t *testing.T) *Config {
 		apiToken: os.Getenv("OKTA_API_TOKEN"),
 		domain:   os.Getenv("OKTA_BASE_URL"),
 	}
-	if err := config.loadAndValidateArticulateSDK(); err != nil {
+	if err := config.loadAndValidate(); err != nil {
 		t.Fatalf("Error initializing Okta client: %v", err)
 	}
 	return &config
@@ -54,19 +53,30 @@ func testOktaConfig(t *testing.T) *Config {
 func TestAccOktaProviderRegistration_articulateSDK(t *testing.T) {
 	testAccPreCheck(t)
 	c := testOktaConfig(t)
-	client, err := articulateOkta.NewClientWithDomain(nil, c.orgName, c.domain, c.apiToken)
-	if err != nil {
-		t.Fatalf("Error building Okta Client: %v", err)
-	}
+
 	// test credentials by listing our default user profile schema
 	url := fmt.Sprintf("meta/schemas/user/default")
 
-	req, err := client.NewRequest("GET", url, nil)
+	req, err := c.articulateOktaClient.NewRequest("GET", url, nil)
+
 	if err != nil {
 		t.Fatalf("Error initializing test connection to Okta: %v", err)
 	}
-	_, err = client.Do(req, nil)
+	_, err = c.articulateOktaClient.Do(req, nil)
 	if err != nil {
-		t.Fatalf("Error testing connection to Okta. Please verify your credentials: %v", err)
+		t.Fatalf("Error testing connection to Okta via the Articulate SDK. Please verify your credentials: %v", err)
+	}
+}
+
+func TestAccOktaProviderRegistration_oktaSDK(t *testing.T) {
+	testAccPreCheck(t)
+	c := testOktaConfig(t)
+
+  // test credentials by listing users in account
+  // will limit to 1 user when this gets merged - https://github.com/okta/okta-sdk-golang/pull/28
+	_, _, err := c.oktaClient.User.ListUsers(nil)
+
+	if err != nil {
+		t.Fatalf("Error testing connection to Okta via the Official Okta SDK. Please verify your credentials: %v", err)
 	}
 }
