@@ -21,7 +21,7 @@ type Config struct {
 func (c *Config) loadAndValidate() error {
 	articulateClient, err := articulateOkta.NewClientWithDomain(nil, c.orgName, c.domain, c.apiToken)
 
-	// add the Articulaet Okta client object to Config
+	// add the Articulate Okta client object to Config
 	c.articulateOktaClient = articulateClient
 
 	if err != nil {
