@@ -185,7 +185,7 @@ func resourceUsers() *schema.Resource {
 
 func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Creating User %v", d.Get("login").(string))
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	// check if our user exists in Okta, search by login
 	filter := client.Users.UserListFilterOptions()
@@ -210,7 +210,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 
 func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List User %v", d.Get("login").(string))
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	_, _, err := client.Users.GetByID(d.Id())
 	if err != nil {
@@ -238,7 +238,7 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Update User %v", d.Get("login").(string))
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 	d.Partial(true)
 
 	_, _, err := client.Users.GetByID(d.Id())
@@ -256,7 +256,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Delete User %v", d.Get("login").(string))
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	userList, _, err := client.Users.GetByID(d.Id())
 	if err != nil {
@@ -281,7 +281,7 @@ func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
 }
 
 func userTemplate(action string, d *schema.ResourceData, m interface{}) error {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	template := client.Users.NewUser()
 	template.Profile.Login = d.Get("login").(string)

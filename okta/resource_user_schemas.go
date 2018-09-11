@@ -225,7 +225,7 @@ func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
 
 func resourceUserSchemaDelete(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Delete User Schema %v", d.Get("index").(string))
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	exists, err := userSchemaExists(d.Get("index").(string), d, m)
 	if err != nil {
@@ -251,7 +251,7 @@ func resourceUserSchemaDelete(d *schema.ResourceData, m interface{}) error {
 
 // verify if custom subschema exists in Okta
 func userSchemaExists(index string, d *schema.ResourceData, m interface{}) (bool, error) {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	exists := false
 	subschemas, _, err := client.Schemas.GetUserSubSchemaIndex(d.Get("subschema").(string))
@@ -269,7 +269,7 @@ func userSchemaExists(index string, d *schema.ResourceData, m interface{}) (bool
 
 // create or modify a custom subschema
 func userCustomSchemaTemplate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	perms := client.Schemas.Permissions()
 	perms.Principal = "SELF"

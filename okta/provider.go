@@ -55,13 +55,14 @@ func Provider() terraform.ResourceProvider {
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	log.Printf("[INFO] Initializing Okta client")
+
 	config := Config{
 		orgName:  d.Get("org_name").(string),
 		domain:   d.Get("base_url").(string),
 		apiToken: d.Get("api_token").(string),
 	}
 	if err := config.loadAndValidate(); err != nil {
-		return nil, fmt.Errorf("[ERROR] Error initializing Okta client: %v", err)
+		return nil, fmt.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)
 	}
 	return &config, nil
 }

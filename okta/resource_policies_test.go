@@ -284,7 +284,7 @@ func testOktaPolicyDestroy(s *terraform.State) error {
 }
 
 func testPolicyExists(expected bool, policyID string, policyName string) error {
-	client := testAccProvider.Meta().(*Config).oktaClient
+	client := testAccProvider.Meta().(*Config).articulateOktaClient
 
 	exists := false
 	_, _, err := client.Policies.GetPolicy(policyID)

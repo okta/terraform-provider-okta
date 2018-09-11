@@ -19,7 +19,7 @@ func dataSourceEveryoneGroup() *schema.Resource {
 
 func dataSourceEveryoneGroupRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Data Source Everyone Group Read")
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	groups, _, err := client.Groups.ListGroups("q=Everyone")
 	if err != nil {

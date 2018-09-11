@@ -334,7 +334,7 @@ func testOktaUserSchemasDestroy(s *terraform.State) error {
 }
 
 func testUserSchemaExists(expected bool, scope string, index string) error {
-	client := testAccProvider.Meta().(*Config).oktaClient
+	client := testAccProvider.Meta().(*Config).articulateOktaClient
 
 	exists := false
 	subschemas, _, err := client.Schemas.GetUserSubSchemaIndex(scope)

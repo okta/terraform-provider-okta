@@ -256,7 +256,7 @@ func resourcePolicies() *schema.Resource {
 
 func resourcePolicyCreate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Creating Policy %v", d.Get("name").(string))
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	var policyID string
 	exists := false
@@ -357,7 +357,7 @@ func resourcePolicyUpdate(d *schema.ResourceData, m interface{}) error {
 
 func resourcePolicyDelete(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Delete Policy %v", d.Get("name").(string))
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	exists, err := policyExists(d, m)
 	if err != nil {
@@ -383,7 +383,7 @@ func resourcePolicyDelete(d *schema.ResourceData, m interface{}) error {
 
 // check if policy exists in Okta
 func policyExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	policy, _, err := client.Policies.GetPolicy(d.Id())
 	if client.OktaErrorCode == "E0000007" {
@@ -412,7 +412,7 @@ func policyConditions(d *schema.ResourceData) ([]string, error) {
 
 // activate or deactivate a policy according to the terraform schema status field
 func policyActivate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	if d.Get("status").(string) == "ACTIVE" {
 		_, err := client.Policies.ActivatePolicy(d.Id())
@@ -431,7 +431,7 @@ func policyActivate(d *schema.ResourceData, m interface{}) error {
 
 // create or update a password policy
 func policyPassword(action string, d *schema.ResourceData, m interface{}) error {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	template := client.Policies.PasswordPolicy()
 	template.Name = d.Get("name").(string)
@@ -573,7 +573,7 @@ func policyPassword(action string, d *schema.ResourceData, m interface{}) error 
 
 // create or update a signon policy
 func policySignOn(action string, d *schema.ResourceData, m interface{}) error {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	template := client.Policies.SignOnPolicy()
 	template.Name = d.Get("name").(string)

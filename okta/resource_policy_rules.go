@@ -225,7 +225,7 @@ func resourcePolicyRules() *schema.Resource {
 
 func resourcePolicyRuleCreate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Creating Policy Rule %v", d.Get("name").(string))
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	var ruleID string
 	exists := false
@@ -327,7 +327,7 @@ func resourcePolicyRuleUpdate(d *schema.ResourceData, m interface{}) error {
 
 func resourcePolicyRuleDelete(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Delete Policy Rule %v", d.Get("name").(string))
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	exists, err := policyRuleExists(d, m)
 	if err != nil {
@@ -353,7 +353,7 @@ func resourcePolicyRuleDelete(d *schema.ResourceData, m interface{}) error {
 
 // check if policy rule exists in Okta
 func policyRuleExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	_, _, err := client.Policies.GetPolicy(d.Get("policyid").(string))
 	if client.OktaErrorCode == "E0000007" {
@@ -394,7 +394,7 @@ func policyRuleConditions(d *schema.ResourceData) ([]string, error) {
 
 // activate or deactivate a policy rule according to the terraform schema status field
 func policyRuleActivate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	if d.Get("status").(string) == "ACTIVE" {
 		_, err := client.Policies.ActivatePolicyRule(d.Get("policyid").(string), d.Id())
@@ -413,7 +413,7 @@ func policyRuleActivate(d *schema.ResourceData, m interface{}) error {
 
 // create or update a password policy rule
 func policyRulePassword(action string, d *schema.ResourceData, m interface{}) error {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	template := client.Policies.PasswordRule()
 	template.Name = d.Get("name").(string)
@@ -483,7 +483,7 @@ func policyRulePassword(action string, d *schema.ResourceData, m interface{}) er
 
 // create or update a signon policy rule
 func policyRuleSignOn(action string, d *schema.ResourceData, m interface{}) error {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	template := client.Policies.SignOnRule()
 	template.Name = d.Get("name").(string)

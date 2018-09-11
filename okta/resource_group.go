@@ -2,7 +2,7 @@ package okta
 
 import (
 	"fmt"
-	"github.com/articulate/oktasdk-go/okta"
+	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -36,10 +36,10 @@ func resourceGroup() *schema.Resource {
 	}
 }
 
-func assembleGroup() *okta.Group {
-	group := &okta.Group{}
-	profile := &okta.GroupProfile{}
-	links := &okta.GroupLinks{}
+func assembleGroup() *articulateOkta.Group {
+	group := &articulateOkta.Group{}
+	profile := &articulateOkta.GroupProfile{}
+	links := &articulateOkta.GroupLinks{}
 
 	group.GroupProfile = profile
 	group.GroupLinks = links
@@ -47,7 +47,7 @@ func assembleGroup() *okta.Group {
 	return group
 }
 
-func populateGroup(group *okta.Group, d *schema.ResourceData) error {
+func populateGroup(group *articulateOkta.Group, d *schema.ResourceData) error {
 	group.GroupProfile.Name = d.Get("name").(string)
 	group.GroupProfile.Description = d.Get("description").(string)
 
@@ -55,7 +55,7 @@ func populateGroup(group *okta.Group, d *schema.ResourceData) error {
 }
 
 func resourceGroupCreate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	group := assembleGroup()
 	populateGroup(group, d)
@@ -76,7 +76,7 @@ func resourceGroupRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceGroupUpdate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	group := assembleGroup()
 	populateGroup(group, d)
@@ -91,7 +91,7 @@ func resourceGroupUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceGroupDelete(d *schema.ResourceData, m interface{}) error {
-	client := m.(*Config).oktaClient
+	client := m.(*Config).articulateOktaClient
 
 	_, err := client.Groups.Delete(d.Id())
 
