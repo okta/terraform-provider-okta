@@ -2,9 +2,11 @@ package okta
 
 import (
 	"fmt"
+	"log"
+
+	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"log"
 )
 
 // global var to determine if our policy is a system policy
@@ -448,11 +450,21 @@ func policyPassword(action string, d *schema.ResourceData, m interface{}) error 
 	if err != nil {
 		return err
 	}
-	template.Conditions.AuthProvider.Provider = "OKTA" // okta required default
-	template.Conditions.People.Groups.Include = groups
+	template.Conditions = &articulateOkta.PolicyConditions{
+		AuthProvider: &articulateOkta.AuthProvider{
+			Provider: "OKTA", // Okta required default
+		},
+		People: getIncludedGroups(groups),
+	}
 
 	// Okta defaults
 	// we add the defaults here & not in the schema map to avoid defaults appearing in the terraform plan diff
+	template.Settings = &articulateOkta.PolicySettings{
+		Password:   &articulateOkta.Password{},
+		Recovery:   &articulateOkta.Recovery{},
+		Delegation: &articulateOkta.Delegation{},
+	}
+
 	template.Settings.Password.Complexity.MinLength = 8
 	template.Settings.Password.Complexity.MinLowerCase = 1
 	template.Settings.Password.Complexity.MinUpperCase = 1
@@ -590,7 +602,9 @@ func policySignOn(action string, d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
-	template.Conditions.People.Groups.Include = groups
+	template.Conditions = &articulateOkta.PolicyConditions{
+		People: getIncludedGroups(groups),
+	}
 
 	switch action {
 	case "create":

@@ -35,14 +35,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:4ce2142224e220f1c214a178d9e69de0b85ae6aef7763fabf0818f5a83740f31"
+  digest = "1:41eb3b645274fa6f928c3ab172de50c8a86f259caa1aea2a5782797b41f0ce34"
   name = "github.com/articulate/oktasdk-go"
   packages = ["okta"]
   pruneopts = "UT"
-  revision = "f0196c426bdaf0de87333e778356fee6d223050a"
+  revision = "8dc4ff3f98ecee4b09111ed7f0c5b691444705ac"
 
 [[projects]]
-  digest = "1:d128bb41bb76745c62ffc652051f6800117dde46601db31d29df291fea10d0d5"
+  digest = "1:1808bbdc0c45b7a2beae51e52c6cf96ce72bd006246b4e78a289a7e0b709d4b0"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -78,8 +78,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "3e9c4ca8d7fc8d22f0d21d50120186f73d2fdf1a"
-  version = "v1.15.27"
+  revision = "1186f7e6f000ce13edff71ed5ecc8b0e27ba38d7"
+  version = "v1.15.33"
 
 [[projects]]
   branch = "master"
@@ -128,6 +128,14 @@
   pruneopts = "UT"
   revision = "5cf292cae48347c2490ac1a58fe36735fb78df7e"
   version = "v1.38.2"
+
+[[projects]]
+  digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
+  name = "github.com/go-yaml/yaml"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
+  version = "v2.2.1"
 
 [[projects]]
   digest = "1:4c0989ca0bcd10799064318923b9bc2db6b4d6338dd75f3f2d86c3511aaaf5cf"
@@ -180,11 +188,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:37630fa6a9fe688c7b654228adb4b064cba73ae3ca0437aa1568b1cf7d27606f"
+  digest = "1:d900a5ae66a3181783dbf38e4a23505cdabd3e8e881c3d49ae8aa498b571b886"
   name = "github.com/hashicorp/go-hclog"
   packages = ["."]
   pruneopts = "UT"
-  revision = "75ecd6e6d64509d675da33386b15e1174566177b"
+  revision = "e45cbeb79f0411b1cfedd3f226ff69d5d433c762"
 
 [[projects]]
   digest = "1:f668349b83f7d779567c880550534addeca7ebadfdcf44b0b9c39be61864b4b7"
@@ -333,6 +341,14 @@
   revision = "0b12d6b5"
 
 [[projects]]
+  digest = "1:edbef42561faa44c19129b68d1e109fbc1647f63239250391eadc8d0e7c9f669"
+  name = "github.com/kelseyhightower/envconfig"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "f611eb38b3875cc3bd991ca91c51d06446afa14c"
+  version = "v1.3.0"
+
+[[projects]]
   digest = "1:c658e84ad3916da105a761660dcaeb01e63416c8ec7bc62256a9b411a05fcd67"
   name = "github.com/mattn/go-colorable"
   packages = ["."]
@@ -421,6 +437,26 @@
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:db79c2d101602e47f6c1b1be7fdf66a32b39f2c50e7d3dec746df1f1536bf8cc"
+  name = "github.com/okta/okta-sdk-golang"
+  packages = [
+    "okta",
+    "okta/cache",
+    "okta/query",
+  ]
+  pruneopts = "UT"
+  revision = "2395a5f0ddc8840b41566277432f0589f2570108"
+  version = "v0.1.0"
+
+[[projects]]
+  digest = "1:808cdddf087fb64baeae67b8dfaee2069034d9704923a3cb8bd96a995421a625"
+  name = "github.com/patrickmn/go-cache"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "a3647f8e31d79543b2d0f0ae2fe5c379d72cedc0"
+  version = "v2.1.0"
+
+[[projects]]
   digest = "1:963772912b1d71f582a78a3f55a0e83bbd88777335a07a57cfbe0f01df2df06b"
   name = "github.com/posener/complete"
   packages = [
@@ -448,7 +484,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:9623f056e29a32b06790bae1960c8e771f06d01568061fe1212118b09c57c6ed"
+  digest = "1:60c543e7c7783a581e5e77042475dbaa0401e35fef21efca77911ffbb70c4e53"
   name = "github.com/zclconf/go-cty"
   packages = [
     "cty",
@@ -460,11 +496,11 @@
     "cty/set",
   ]
   pruneopts = "UT"
-  revision = "752f6a689f5e6cd7836c7bd0e1ac9b757814a2c7"
+  revision = "cc054f996f8b732f7205fd6f1ef84c39f2720461"
 
 [[projects]]
   branch = "master"
-  digest = "1:9a97873ac79f9d07a944dfcd36e4e8b30599377453b24875d391eae5ab0bde5c"
+  digest = "1:6e0c89ec0bdf64ff214b843c311cec2a65785e12dd74fa7ecaca6cd65d1da767"
   name = "golang.org/x/crypto"
   packages = [
     "bcrypt",
@@ -485,11 +521,11 @@
     "ssh",
   ]
   pruneopts = "UT"
-  revision = "0709b304e793a5edb4a2c0145f281ecdc20838a4"
+  revision = "0e37d006457bf46f9e6692014ba72ef82c33022c"
 
 [[projects]]
   branch = "master"
-  digest = "1:07037360fbd8c966f74836e3306f18505ea31cd0e4b8a861294cba2b53c2aa1c"
+  digest = "1:d6c783aadd017eac31b9872bf54213be93c2306e8664ac2c684a88620429d0bc"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -503,15 +539,15 @@
     "trace",
   ]
   pruneopts = "UT"
-  revision = "8a410e7b638dca158bf9e766925842f6651ff828"
+  revision = "26e67e76b6c3f6ce91f7c52def5af501b4e0f3a2"
 
 [[projects]]
   branch = "master"
-  digest = "1:a9e9a5da9c877870b0feb5975c1e30dddb236562f912e9e9b0515ac9465f951b"
+  digest = "1:6eb2645d74b43d9c87b51947df39f7c668a4f422cd512053f7f6f75bfaad0197"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "ebe1bf3edb3325c393447059974de898d5133eb8"
+  revision = "d0be0721c37eeb5299f245a996a483160fc36940"
 
 [[projects]]
   digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
@@ -542,10 +578,10 @@
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
   pruneopts = "UT"
-  revision = "11092d34479b07829b72e10713b159248caf5dad"
+  revision = "36d5787dc5356b711fe8f3040271aaf51c35955b"
 
 [[projects]]
-  digest = "1:047efbc3c9a51f3002b0002f92543857d372654a676fb6b01931982cd80467dd"
+  digest = "1:1b6d2676ea895d33cbd1999c75dfc8e25b103c754ccfc66dc06ae845ce3a47bc"
   name = "google.golang.org/grpc"
   packages = [
     ".",
@@ -578,8 +614,8 @@
     "tap",
   ]
   pruneopts = "UT"
-  revision = "32fb0ac620c32ba40a4626ddf94d90d12cce3455"
-  version = "v1.14.0"
+  revision = "8dea3dc473e90c8179e519d91302d0597c0ca1d1"
+  version = "v1.15.0"
 
 [solve-meta]
   analyzer-name = "dep"
@@ -593,6 +629,7 @@
     "github.com/hashicorp/terraform/helper/validation",
     "github.com/hashicorp/terraform/plugin",
     "github.com/hashicorp/terraform/terraform",
+    "github.com/okta/okta-sdk-golang/okta",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
