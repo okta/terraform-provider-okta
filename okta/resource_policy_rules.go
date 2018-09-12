@@ -2,9 +2,11 @@ package okta
 
 import (
 	"fmt"
+	"log"
+
+	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"log"
 )
 
 // global var to determine if our policy rule is a system policy rule
@@ -411,6 +413,34 @@ func policyRuleActivate(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
+func getDefaultNetwork() *articulateOkta.Network {
+	return &articulateOkta.Network{
+		Connection: "ANYWHERE", // Okta required default
+	}
+}
+
+func getExcludedUsers(excludedUsers []string) *articulateOkta.People {
+	return &articulateOkta.People{
+		Users: &articulateOkta.Users{
+			Exclude: excludedUsers,
+		},
+	}
+}
+
+func getIncludedGroups(includedGroups []string) *articulateOkta.People {
+	return &articulateOkta.People{
+		Groups: &articulateOkta.Groups{
+			Include: includedGroups,
+		},
+	}
+}
+
+func getDefaultAuthContext() *articulateOkta.AuthContext {
+	return &articulateOkta.AuthContext{
+		AuthType: "ANY", // Okta required default
+	}
+}
+
 // create or update a password policy rule
 func policyRulePassword(action string, d *schema.ResourceData, m interface{}) error {
 	client := m.(*Config).articulateOktaClient
@@ -423,12 +453,14 @@ func policyRulePassword(action string, d *schema.ResourceData, m interface{}) er
 		template.Priority = priority.(int)
 	}
 
-	template.Conditions.Network.Connection = "ANYWHERE" // Okta required default
 	users, err := policyRuleConditions(d)
 	if err != nil {
 		return err
 	}
-	template.Conditions.People.Users.Exclude = users
+	template.Conditions = &articulateOkta.PolicyConditions{
+		Network: getDefaultNetwork(),
+		People:  getExcludedUsers(users),
+	}
 
 	// Okta defaults
 	// we add the defaults here & not in the schema map to avoid defaults appearing in the terraform plan diff
@@ -493,13 +525,16 @@ func policyRuleSignOn(action string, d *schema.ResourceData, m interface{}) erro
 		template.Priority = priority.(int)
 	}
 
-	template.Conditions.Network.Connection = "ANYWHERE" // Okta required default
-	template.Conditions.AuthContext.AuthType = "ANY"    // Okta required default
 	users, err := policyRuleConditions(d)
 	if err != nil {
 		return err
 	}
-	template.Conditions.People.Users.Exclude = users
+
+	template.Conditions = &articulateOkta.PolicyConditions{
+		Network:     getDefaultNetwork(),
+		AuthContext: getDefaultAuthContext(),
+		People:      getExcludedUsers(users),
+	}
 
 	// Okta defaults
 	// we add the defaults here & not in the schema map to avoid defaults appearing in the terraform plan diff
