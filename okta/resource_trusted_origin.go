@@ -2,9 +2,10 @@ package okta
 
 import (
 	"fmt"
+	"log"
+
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
-	"log"
 )
 
 func resourceTrustedOrigin() *schema.Resource {
@@ -131,9 +132,10 @@ func resourceTrustedOriginRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("active", trustedOrigin.Status == "ACTIVE")
 	d.Set("origin", trustedOrigin.Origin)
 	d.Set("name", trustedOrigin.Name)
-	d.Set("scopes", scopes)
 
-	return nil
+	return setNonPrimitives(d, map[string]interface{}{
+		"scopes": scopes,
+	})
 }
 
 func resourceTrustedOriginUpdate(d *schema.ResourceData, m interface{}) error {

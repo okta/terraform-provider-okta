@@ -32,7 +32,7 @@ func TestAccDataSourceDefaultPolicy(t *testing.T) {
 func testAccDataSourceDefaultPolicyConfig(rInt int) string {
 	return fmt.Sprintf(`
 data "okta_default_policies" "default-%d" {
-  type = "PASSWORD"
+  type = "%s"
 }
-`, rInt)
+`, rInt, passwordPolicyType)
 }

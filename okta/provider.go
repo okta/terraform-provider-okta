@@ -9,6 +9,11 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
+const signOnPolicyRule = "okta_signon_policy_rule"
+const passwordPolicyRule = "okta_password_policy_rule"
+const passwordPolicy = "okta_password_policy"
+const signOnPolicy = "okta_signon_policy"
+
 // Provider establishes a client connection to an okta site
 // determined by its schema string values
 func Provider() terraform.ResourceProvider {
@@ -37,8 +42,10 @@ func Provider() terraform.ResourceProvider {
 		ResourcesMap: map[string]*schema.Resource{
 			"okta_group":             resourceGroup(),
 			"okta_identity_provider": resourceIdentityProvider(),
-			"okta_policies":          resourcePolicies(),
-			"okta_policy_rules":      resourcePolicyRules(),
+			passwordPolicy:           resourcePasswordPolicy(),
+			signOnPolicy:             resourceSignOnPolicy(),
+			signOnPolicyRule:         resourceSignOnPolicyRule(),
+			passwordPolicyRule:       resourcePasswordPolicyRule(),
 			"okta_trusted_origin":    resourceTrustedOrigin(),
 			"okta_user_schemas":      resourceUserSchemas(),
 			"okta_users":             resourceUsers(),
