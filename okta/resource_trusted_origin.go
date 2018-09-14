@@ -37,7 +37,7 @@ func resourceTrustedOrigin() *schema.Resource {
 			},
 			"scopes": &schema.Schema{
 				Type:        schema.TypeList,
-				Optional:    true,
+				Required:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "Scopes of the Trusted Origin - can either be CORS or REDIRECT only",
 			},
