@@ -25,6 +25,14 @@ func TestAccOktaUserNew(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
 				),
 			},
+      {
+        Config: testOktaUserConfig_updated(rName),
+        Check: resource.ComposeTestCheckFunc(
+          resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+          resource.TestCheckResourceAttr(resourceName, "last_name", rName),
+          resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
+        ),
+      },
 		},
 	})
 }
@@ -36,6 +44,18 @@ resource "okta_user" "test_acc_%s" {
   first_name  = "TestAcc"
   last_name   = "%s"
   login       = "test-acc-%s@testing.com"
+}
+`, r, r, r)
+}
+
+func testOktaUserConfig_updated(r string) string {
+  return fmt.Sprintf(`
+resource "okta_user" "test_acc_%s" {
+  admin_roles      = ["APP_ADMIN", "USER_ADMIN"]
+  first_name       = "TestAcc"
+  last_name        = "%s"
+  login            = "test-acc-%s@testing.com"
+  honorific_prefix = "Dr."
 }
 `, r, r, r)
 }
