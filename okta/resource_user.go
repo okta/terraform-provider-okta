@@ -210,7 +210,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 
 	d.SetId(user.Id)
 
-	return nil
+	return resourceUserRead(d, m)
 }
 
 func resourceUserRead(d *schema.ResourceData, m interface{}) error {
