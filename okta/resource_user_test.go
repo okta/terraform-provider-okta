@@ -56,6 +56,7 @@ resource "okta_user" "test_acc_%s" {
   last_name        = "%s"
   login            = "test-acc-%s@testing.com"
   honorific_prefix = "Dr."
+  honorific_suffix = "Jr."
 }
 `, r, r, r)
 }

@@ -217,6 +217,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List User %v", d.Get("login").(string))
 	client := m.(*Config).oktaClient
+	profile := populateUserProfile(d)
 
 	user, resp, err := client.User.GetUser(d.Id(), nil)
 
@@ -229,13 +230,13 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 		return nil
 	}
 
-	for k, v := range *user.Profile {
+	for k, v := range *profile {
 		if v != nil {
 			attribute := camelCaseToUnderscore(k)
 
 			if _, ok := d.GetOk(attribute); ok {
-				log.Printf("[INFO] Setting %v to %v", attribute, v)
-				d.Set(attribute, v)
+				log.Printf("[INFO] Setting %v to %v", attribute, (*user.Profile)[k])
+				d.Set(attribute, (*user.Profile)[k])
 	    }
     }
   }
