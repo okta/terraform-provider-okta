@@ -2,13 +2,12 @@ package okta
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func resourceUsers() *schema.Resource {
+func resourceUser() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceUserCreate,
 		Read:   resourceUserRead,
@@ -20,6 +19,7 @@ func resourceUsers() *schema.Resource {
 				Type:        schema.TypeList,
 				Optional:    true,
 				Description: "User Okta admin roles - ie. ['APP_ADMIN', 'USER_ADMIN']",
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"city": &schema.Schema{
 				Type:        schema.TypeString,
@@ -55,7 +55,7 @@ func resourceUsers() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "User primary email address. Default = user login",
-				ValidateFunc: matchesEmailRegexp,
+				ValidateFunc: matchEmailRegexp,
 			},
 			"employee_number": &schema.Schema{
 				Type:        schema.TypeString,
@@ -97,7 +97,7 @@ func resourceUsers() *schema.Resource {
 				Required:     true,
 				Description:  "User Okta login (must be an email address)",
 				ForceNew:     true,
-				ValidateFunc: matchesEmailRegexp,
+				ValidateFunc: matchEmailRegexp,
 			},
 			"manager": &schema.Schema{
 				Type:        schema.TypeString,
@@ -184,26 +184,26 @@ func resourceUsers() *schema.Resource {
 }
 
 func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
-
+	return nil
 }
 
 func resourceUserRead(d *schema.ResourceData, m interface{}) error {
-
+	return nil
 }
 
 func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
-
+	return nil
 }
 
 func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
-
+	return nil
 }
 
-// validate if oneof value is a json string
-// this function lovingly lifted from the aws terraform provider
-func validateJsonString(v interface{}, k string) (ws []string, errors []error) {
-	if _, err := structure.NormalizeJsonString(v); err != nil {
-		errors = append(errors, fmt.Errorf("[ERROR] %q contains an invalid JSON: %s", k, err))
+//regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
+func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []error) {
+	re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+	if re.MatchString(val.(string)) == false {
+		errors = append(errors, fmt.Errorf("%s field not a valid email address", key))
 	}
-	return
+	return warnings, errors
 }

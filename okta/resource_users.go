@@ -10,10 +10,10 @@ import (
 
 func resourceUsers() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceUserCreate,
-		Read:   resourceUserRead,
-		Update: resourceUserUpdate,
-		Delete: resourceUserDelete,
+		Create: resourceUsersCreate,
+		Read:   resourceUsersRead,
+		Update: resourceUsersUpdate,
+		Delete: resourceUsersDelete,
 
 		Schema: map[string]*schema.Schema{
 			"login": &schema.Schema{
@@ -183,7 +183,7 @@ func resourceUsers() *schema.Resource {
 	}
 }
 
-func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
+func resourceUsersCreate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Creating User %v", d.Get("login").(string))
 	client := m.(*Config).articulateOktaClient
 
@@ -208,7 +208,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceUserRead(d *schema.ResourceData, m interface{}) error {
+func resourceUsersRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List User %v", d.Get("login").(string))
 	client := m.(*Config).articulateOktaClient
 
@@ -236,7 +236,7 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceUsersUpdate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Update User %v", d.Get("login").(string))
 	client := m.(*Config).articulateOktaClient
 	d.Partial(true)
@@ -254,7 +254,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
+func resourceUsersDelete(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Delete User %v", d.Get("login").(string))
 	client := m.(*Config).articulateOktaClient
 
