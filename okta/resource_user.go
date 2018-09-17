@@ -247,7 +247,12 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("admin_roles", roles)
+	r := make([]string, 0)
+	for _, role := range roles {
+		r = append(r, role.Type)
+	}
+
+	d.Set("admin_roles", r)
 
 	return nil
 }
