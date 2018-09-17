@@ -20,8 +20,8 @@ func TestAccOktaUserNew(t *testing.T) {
       {
         Config: testOktaUserConfig(rName),
         Check: resource.ComposeTestCheckFunc(
-          resource.TestCheckResourceAttr(resourceName, "firstname", "TestAcc"),
-          resource.TestCheckResourceAttr(resourceName, "lastname", rName),
+          resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+          resource.TestCheckResourceAttr(resourceName, "last_name", rName),
           resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
         ),
       },
