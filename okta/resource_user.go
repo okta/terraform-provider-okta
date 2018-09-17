@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"strings"
 	"unicode"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -217,10 +218,15 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List User %v", d.Get("login").(string))
 	client := m.(*Config).oktaClient
 
-	user, _, err := client.User.GetUser(d.Id(), nil)
+	user, resp, err := client.User.GetUser(d.Id(), nil)
 
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Getting User from Okta: %v", err)
+	}
+
+	if strings.Contains(resp.Response.Status, "404") {
+		d.SetId("")
+		return nil
 	}
 
 	for k, v := range *user.Profile {
