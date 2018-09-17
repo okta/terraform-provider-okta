@@ -51,7 +51,7 @@ resource "okta_user" "test_acc_%s" {
 func testOktaUserConfig_updated(r string) string {
   return fmt.Sprintf(`
 resource "okta_user" "test_acc_%s" {
-  admin_roles      = ["APP_ADMIN", "USER_ADMIN"]
+  admin_roles      = ["APP_ADMIN"]
   first_name       = "TestAcc"
   last_name        = "%s"
   login            = "test-acc-%s@testing.com"

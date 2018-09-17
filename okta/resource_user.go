@@ -241,14 +241,36 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
     }
   }
 
+  roles, _, err := client.User.ListAssignedRoles(d.Id(), nil)
+
+	if err != nil {
+		return err
+	}
+
+	d.Set("admin_roles", roles)
+
 	return nil
 }
 
 func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Update User %v", d.Get("login").(string))
 	client := m.(*Config).oktaClient
-	profile := populateUserProfile(d)
 
+	if d.HasChange("admin_roles") {
+		err := unassignAdminRolesFromUser(d.Id(), m)
+
+		if err != nil {
+			return fmt.Errorf("[ERROR] Error Unassigning Admin Roles from User: %v", err)
+		}
+
+		err = assignAdminRolesToUser(d.Id(), d.Get("admin_roles").([]interface{}), m)
+
+		if err != nil {
+			return fmt.Errorf("[ERROR] Error Assigning Admin Roles to User: %v", err)
+		}
+	}
+
+	profile := populateUserProfile(d)
 	userBody := okta.User{Profile: profile}
 
 	_, _, err := client.User.UpdateUser(d.Id(), userBody, nil)
@@ -390,6 +412,26 @@ func assignAdminRolesToUser(u string, r []interface{}, m interface{}) error {
 	for _, role := range r {
 		roleStruct := okta.Role{Type: role.(string)}
 		_, _, err := client.User.AddRoleToUser(u, roleStruct, nil)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func unassignAdminRolesFromUser(u string, m interface{}) error {
+	client := m.(*Config).oktaClient
+
+	roles, _, err := client.User.ListAssignedRoles(u, nil)
+
+	if err != nil {
+		return err
+	}
+
+	for _, role := range roles {
+		_, err := client.User.RemoveRoleFromUser(u, role.Id, nil)
 
 		if err != nil {
 			return err
