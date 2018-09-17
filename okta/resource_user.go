@@ -199,6 +199,14 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		return fmt.Errorf("[ERROR] Error Creating User from Okta: %v", err)
 	}
 
+	if len(d.Get("admin_roles").([]interface{})) > 0 {
+		err := assignAdminRolesToUser(user.Id, d.Get("admin_roles").([]interface{}), m)
+
+		if err != nil {
+			return fmt.Errorf("[ERROR] Error Assigning Admin Roles to User: %v", err)
+		}
+	}
+
 	d.SetId(user.Id)
 
 	return nil
@@ -334,6 +342,22 @@ func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 	}
 
 	return &profile
+}
+
+func assignAdminRolesToUser(u string, r []interface{}, m interface{}) error {
+	client := m.(*Config).oktaClient
+	fmt.Println(client)
+
+	for _, role := range r {
+		roleStruct := okta.Role{Type: role.(string)}
+		_, _, err := client.User.AddRoleToUser(u, roleStruct, nil)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 //regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
