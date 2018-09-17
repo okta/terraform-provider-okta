@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"unicode"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/okta/okta-sdk-golang/okta"
@@ -213,6 +214,26 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUserRead(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] List User %v", d.Get("login").(string))
+	client := m.(*Config).oktaClient
+
+	user, _, err := client.User.GetUser(d.Id(), nil)
+
+	if err != nil {
+		return fmt.Errorf("[ERROR] Error Getting User from Okta: %v", err)
+	}
+
+	for k, v := range *user.Profile {
+		if v != nil {
+			attribute := camelCaseToUnderscore(k)
+
+			if _, ok := d.GetOk(attribute); ok {
+				log.Printf("[INFO] Setting %v to %v", attribute, v)
+				d.Set(attribute, v)
+	    }
+    }
+  }
+
 	return nil
 }
 
@@ -346,7 +367,6 @@ func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 
 func assignAdminRolesToUser(u string, r []interface{}, m interface{}) error {
 	client := m.(*Config).oktaClient
-	fmt.Println(client)
 
 	for _, role := range r {
 		roleStruct := okta.Role{Type: role.(string)}
@@ -358,6 +378,25 @@ func assignAdminRolesToUser(u string, r []interface{}, m interface{}) error {
 	}
 
 	return nil
+}
+
+//camel cased strings from Okta responses become underscore separated to match
+//the terraform configs for state file setting
+func camelCaseToUnderscore(s string) string {
+	a := []rune(s)
+
+	for i, r := range a {
+		if !unicode.IsLower(r) {
+			a = append(a, 0)
+			a[i] = unicode.ToLower(r)
+			copy(a[i+1:], a[i:])
+			a[i] = []rune("_")[0]
+		}
+	}
+
+	s = string(a)
+
+	return s
 }
 
 //regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
