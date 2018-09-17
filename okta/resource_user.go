@@ -245,7 +245,19 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
-	return nil
+	log.Printf("[INFO] Update User %v", d.Get("login").(string))
+	client := m.(*Config).oktaClient
+	profile := populateUserProfile(d)
+
+	userBody := okta.User{Profile: profile}
+
+	_, _, err := client.User.UpdateUser(d.Id(), userBody, nil)
+
+	if err != nil {
+		return fmt.Errorf("[ERROR] Error Updating User in Okta: %v", err)
+	}
+
+	return resourceUserRead(d, m)
 }
 
 func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
