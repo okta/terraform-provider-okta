@@ -186,6 +186,21 @@ func resourceUser() *schema.Resource {
 }
 
 func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] Create User for %v", d.Get("login").(string))
+
+	client := m.(*Config).oktaClient
+	profile := populateUserProfile(d)
+
+	userBody := okta.User{Profile: profile}
+
+	user, _, err := client.User.CreateUser(userBody, nil)
+
+  if err != nil {
+		return fmt.Errorf("[ERROR] Error Creating User from Okta: %v", err)
+	}
+
+	d.SetId(user.Id)
+
 	return nil
 }
 
