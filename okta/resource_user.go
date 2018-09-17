@@ -195,7 +195,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 
 	user, _, err := client.User.CreateUser(userBody, nil)
 
-  if err != nil {
+	if err != nil {
 		return fmt.Errorf("[ERROR] Error Creating User from Okta: %v", err)
 	}
 
@@ -219,8 +219,8 @@ func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
 func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 	profile := okta.UserProfile{}
 
-  profile["firstName"] = d.Get("first_name").(string)
-  profile["lastName"] = d.Get("last_name").(string)
+	profile["firstName"] = d.Get("first_name").(string)
+	profile["lastName"] = d.Get("last_name").(string)
 	profile["login"] = d.Get("login").(string)
 
 	if _, ok := d.GetOk("email"); ok {
@@ -230,107 +230,107 @@ func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 	}
 
 	if _, ok := d.GetOk("city"); ok {
-	  profile["city"] = d.Get("city").(string)
+		profile["city"] = d.Get("city").(string)
 	}
 
 	if _, ok := d.GetOk("cost_center"); ok {
-	  profile["costCenter"] = d.Get("cost_center").(string)
+		profile["costCenter"] = d.Get("cost_center").(string)
 	}
 
 	if _, ok := d.GetOk("country_code"); ok {
-	  profile["countryCode"] = d.Get("country_code").(string)
+		profile["countryCode"] = d.Get("country_code").(string)
 	}
 
 	if _, ok := d.GetOk("department"); ok {
-	  profile["department"] = d.Get("department").(string)
+		profile["department"] = d.Get("department").(string)
 	}
 
 	if _, ok := d.GetOk("display_name"); ok {
-	  profile["displayName"] = d.Get("display_name").(string)
+		profile["displayName"] = d.Get("display_name").(string)
 	}
 
 	if _, ok := d.GetOk("division"); ok {
-	  profile["division"] = d.Get("division").(string)
+		profile["division"] = d.Get("division").(string)
 	}
 
 	if _, ok := d.GetOk("employee_number"); ok {
-	  profile["employeeNumber"] = d.Get("employee_number").(string)
+		profile["employeeNumber"] = d.Get("employee_number").(string)
 	}
 
 	if _, ok := d.GetOk("honorific_prefix"); ok {
-	  profile["honorificPrefix"] = d.Get("honorific_prefix").(string)
+		profile["honorificPrefix"] = d.Get("honorific_prefix").(string)
 	}
 
 	if _, ok := d.GetOk("honorific_suffix"); ok {
-	  profile["honorificSuffix"] = d.Get("honorific_suffix").(string)
+		profile["honorificSuffix"] = d.Get("honorific_suffix").(string)
 	}
 
 	if _, ok := d.GetOk("locale"); ok {
-	  profile["locale"] = d.Get("locale").(string)
+		profile["locale"] = d.Get("locale").(string)
 	}
 
 	if _, ok := d.GetOk("manager_id"); ok {
-	  profile["managerId"] = d.Get("manager_id").(string)
+		profile["managerId"] = d.Get("manager_id").(string)
 	}
 
 	if _, ok := d.GetOk("middle_name"); ok {
-	  profile["middleName"] = d.Get("middle_name").(string)
+		profile["middleName"] = d.Get("middle_name").(string)
 	}
 
 	if _, ok := d.GetOk("mobile_phone"); ok {
-	  profile["mobilePhone"] = d.Get("mobile_phone").(string)
+		profile["mobilePhone"] = d.Get("mobile_phone").(string)
 	}
 
 	if _, ok := d.GetOk("nick_name"); ok {
-	  profile["nickName"] = d.Get("nick_name").(string)
+		profile["nickName"] = d.Get("nick_name").(string)
 	}
 
 	if _, ok := d.GetOk("organization"); ok {
-	  profile["organization"] = d.Get("organization").(string)
+		profile["organization"] = d.Get("organization").(string)
 	}
 
 	if _, ok := d.GetOk("postal_address"); ok {
-	  profile["postalAddress"] = d.Get("postal_address").(string)
+		profile["postalAddress"] = d.Get("postal_address").(string)
 	}
 
 	if _, ok := d.GetOk("preferred_language"); ok {
-	  profile["preferredLanguage"] = d.Get("preferred_language").(string)
+		profile["preferredLanguage"] = d.Get("preferred_language").(string)
 	}
 
 	if _, ok := d.GetOk("primary_phone"); ok {
-	  profile["primaryPhone"] = d.Get("primary_phone").(string)
+		profile["primaryPhone"] = d.Get("primary_phone").(string)
 	}
 
 	if _, ok := d.GetOk("profile_url"); ok {
-	  profile["profileUrl"] = d.Get("profile_url").(string)
+		profile["profileUrl"] = d.Get("profile_url").(string)
 	}
 
 	if _, ok := d.GetOk("second_email"); ok {
-	  profile["secondEmail"] = d.Get("second_email").(string)
+		profile["secondEmail"] = d.Get("second_email").(string)
 	}
 
 	if _, ok := d.GetOk("state"); ok {
-	  profile["state"] = d.Get("state").(string)
+		profile["state"] = d.Get("state").(string)
 	}
 
 	if _, ok := d.GetOk("street_address"); ok {
-	  profile["streetAddress"] = d.Get("street_address").(string)
+		profile["streetAddress"] = d.Get("street_address").(string)
 	}
 
 	if _, ok := d.GetOk("timezone"); ok {
-	  profile["timezone"] = d.Get("timezone").(string)
+		profile["timezone"] = d.Get("timezone").(string)
 	}
 
 	if _, ok := d.GetOk("title"); ok {
-	  profile["title"] = d.Get("title").(string)
+		profile["title"] = d.Get("title").(string)
 	}
 
 	if _, ok := d.GetOk("user_type"); ok {
-	  profile["userType"] = d.Get("user_type").(string)
+		profile["userType"] = d.Get("user_type").(string)
 	}
 
 	if _, ok := d.GetOk("zip_code"); ok {
-	  profile["zipCode"] = d.Get("zip_code").(string)
+		profile["zipCode"] = d.Get("zip_code").(string)
 	}
 
 	return &profile
