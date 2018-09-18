@@ -44,6 +44,7 @@ resource "okta_user" "test_acc_%s" {
   first_name  = "TestAcc"
   last_name   = "%s"
   login       = "test-acc-%s@testing.com"
+  status      = "STAGED"
 }
 `, r, r, r)
 }

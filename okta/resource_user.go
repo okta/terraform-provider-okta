@@ -5,10 +5,13 @@ import (
 	"log"
 	"regexp"
 	"strings"
+	"time"
 	"unicode"
 
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/okta/query"
 )
 
 func resourceUser() *schema.Resource {
@@ -158,6 +161,19 @@ func resourceUser() *schema.Resource {
 				Optional:    true,
 				Description: "User state or region",
 			},
+			"status": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The status of the User in Okta - remove to set user back to active/provisioned",
+				Default:     "ACTIVE",
+				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "STAGED", "DEPROVISIONED", "SUSPENDED"}, false),
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+			    if old == "PROVISIONED" {
+			      return true
+			    }
+			    return false
+			  },
+			},
 			"street_address": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -193,9 +209,15 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Config).oktaClient
 	profile := populateUserProfile(d)
 
+	qp := query.NewQueryParams()
+
+	if d.Get("status").(string) == "STAGED" {
+		qp = query.NewQueryParams(query.WithActivate(false))
+	}
+
 	userBody := okta.User{Profile: profile}
 
-	user, _, err := client.User.CreateUser(userBody, nil)
+	user, _, err := client.User.CreateUser(userBody, qp)
 
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Creating User from Okta: %v", err)
@@ -206,6 +228,14 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Assigning Admin Roles to User: %v", err)
+		}
+	}
+
+	if d.Get("status").(string) == "SUSPENDED" || d.Get("status").(string) == "DEPROVISIONED" {
+		err := updateUserStatus(user.Id, d.Get("status").(string), user.Status, m)
+
+		if err != nil {
+			return fmt.Errorf("[ERROR] Error Updating Status for User: %v", err)
 		}
 	}
 
@@ -228,6 +258,22 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	if strings.Contains(resp.Response.Status, "404") {
 		d.SetId("")
 		return nil
+	}
+
+	for {
+		if user.TransitioningToStatus == "" {
+			d.Set("status", user.Status)
+			break
+		} else {
+			log.Printf("[INFO] Transitioning to status = %v; waiting for 5 more seconds...", user.TransitioningToStatus)
+			time.Sleep(5 * time.Second)
+
+			user, resp, err = client.User.GetUser(d.Id(), nil)
+
+			if err != nil {
+				return fmt.Errorf("[ERROR] Error Getting User from Okta: %v", err)
+			}
+		}
 	}
 
 	for k, v := range *profile {
@@ -259,7 +305,17 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Update User %v", d.Get("login").(string))
+
+	if d.Get("status").(string) == "STAGED" {
+		return fmt.Errorf("[ERROR] Okta will not allow a User to be updated to STAGED. Can set to STAGED on User creation only.")
+	}
+
 	client := m.(*Config).oktaClient
+
+	profile := populateUserProfile(d)
+	userBody := okta.User{Profile: profile}
+
+	user, _, err := client.User.UpdateUser(d.Id(), userBody, nil)
 
 	if d.HasChange("admin_roles") {
 		err := unassignAdminRolesFromUser(d.Id(), m)
@@ -275,10 +331,13 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		}
 	}
 
-	profile := populateUserProfile(d)
-	userBody := okta.User{Profile: profile}
+	if d.HasChange("status") {
+		err := updateUserStatus(d.Id(), d.Get("status").(string), user.Status, m)
 
-	_, _, err := client.User.UpdateUser(d.Id(), userBody, nil)
+		if err != nil {
+			return fmt.Errorf("[ERROR] Error Updating Status for User: %v", err)
+		}
+	}
 
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Updating User in Okta: %v", err)
@@ -472,4 +531,39 @@ func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []
 		errors = append(errors, fmt.Errorf("%s field not a valid email address", key))
 	}
 	return warnings, errors
+}
+
+func updateUserStatus(u string, d string, s string, m interface{}) error {
+	client := m.(*Config).oktaClient
+
+	switch d {
+		case "SUSPENDED":
+		_, err := client.User.SuspendUser(u, nil)
+
+		if err != nil {
+			return err
+		}
+		case "DEPROVISIONED":
+		_, err := client.User.DeactivateUser(u, nil)
+
+		if err != nil {
+			return err
+		}
+		case "ACTIVE":
+		if s == "SUSPENDED" {
+			_, err := client.User.UnsuspendUser(u, nil)
+
+			if err != nil {
+				return err
+			}
+		} else {
+			_, _, err := client.User.ActivateUser(u, nil)
+
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
