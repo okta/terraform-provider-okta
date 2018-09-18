@@ -224,15 +224,15 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if len(d.Get("admin_roles").([]interface{})) > 0 {
-		err := assignAdminRolesToUser(user.Id, d.Get("admin_roles").([]interface{}), m)
+		err = assignAdminRolesToUser(user.Id, d.Get("admin_roles").([]interface{}), client)
 
 		if err != nil {
-			return fmt.Errorf("[ERROR] Error Assigning Admin Roles to User: %v", err)
+			return err
 		}
 	}
 
 	if d.Get("status").(string) == "SUSPENDED" || d.Get("status").(string) == "DEPROVISIONED" {
-		err := updateUserStatus(user.Id, d.Get("status").(string), user.Status, m)
+		err := updateUserStatus(user.Id, d.Get("status").(string), client)
 
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating Status for User: %v", err)
@@ -260,21 +260,7 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 		return nil
 	}
 
-	for {
-		if user.TransitioningToStatus == "" {
-			d.Set("status", user.Status)
-			break
-		} else {
-			log.Printf("[INFO] Transitioning to status = %v; waiting for 5 more seconds...", user.TransitioningToStatus)
-			time.Sleep(5 * time.Second)
-
-			user, resp, err = client.User.GetUser(d.Id(), nil)
-
-			if err != nil {
-				return fmt.Errorf("[ERROR] Error Getting User from Okta: %v", err)
-			}
-		}
-	}
+	d.Set("status", user.Status)
 
 	for k, v := range *profile {
 		if v != nil {
@@ -312,35 +298,33 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 	client := m.(*Config).oktaClient
 
-	profile := populateUserProfile(d)
-	userBody := okta.User{Profile: profile}
-
-	user, _, err := client.User.UpdateUser(d.Id(), userBody, nil)
-
-	if d.HasChange("admin_roles") {
-		err := unassignAdminRolesFromUser(d.Id(), m)
-
-		if err != nil {
-			return fmt.Errorf("[ERROR] Error Unassigning Admin Roles from User: %v", err)
-		}
-
-		err = assignAdminRolesToUser(d.Id(), d.Get("admin_roles").([]interface{}), m)
-
-		if err != nil {
-			return fmt.Errorf("[ERROR] Error Assigning Admin Roles to User: %v", err)
-		}
-	}
-
 	if d.HasChange("status") {
-		err := updateUserStatus(d.Id(), d.Get("status").(string), user.Status, m)
+		err := updateUserStatus(d.Id(), d.Get("status").(string), client)
 
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating Status for User: %v", err)
 		}
 	}
 
-	if err != nil {
-		return fmt.Errorf("[ERROR] Error Updating User in Okta: %v", err)
+	if d.Get("status") == "DEPROVISIONED" {
+		return fmt.Errorf("[ERROR] Cannot update a DEPROVISIONED user")
+	} else {
+		profile := populateUserProfile(d)
+		userBody := okta.User{Profile: profile}
+
+		_, _, err := client.User.UpdateUser(d.Id(), userBody, nil)
+
+		if d.HasChange("admin_roles") {
+			err := updateAdminRolesOnUser(d.Id(), d.Get("admin_roles").([]interface{}), client)
+
+			if err != nil {
+				return err
+			}
+		}
+
+		if err != nil {
+			return fmt.Errorf("[ERROR] Error Updating User in Okta: %v", err)
+		}
 	}
 
 	return resourceUserRead(d, m)
@@ -487,36 +471,56 @@ func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 	return &profile
 }
 
-func assignAdminRolesToUser(u string, r []interface{}, m interface{}) error {
-	client := m.(*Config).oktaClient
+func assignAdminRolesToUser(u string, r []interface{}, c *okta.Client) error {
+	var valid bool
 
 	for _, role := range r {
-		roleStruct := okta.Role{Type: role.(string)}
-		_, _, err := client.User.AddRoleToUser(u, roleStruct, nil)
+		valid = roleValidator(role.(string))
+		if valid {
+			roleStruct := okta.Role{Type: role.(string)}
+			_, _, err := c.User.AddRoleToUser(u, roleStruct, nil)
 
-		if err != nil {
-			return err
+			if err != nil {
+				return fmt.Errorf("[ERROR] Error Assigning Admin Roles to User: %v", err)
+			}
+		} else {
+			return fmt.Errorf("[ERROR] %v is not a valid Okta role", role)
 		}
 	}
 
 	return nil
 }
 
-func unassignAdminRolesFromUser(u string, m interface{}) error {
-	client := m.(*Config).oktaClient
+func roleValidator(r string) bool {
+	validRoles := []string{"SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN", "HELP_DESK_ADMIN"}
 
-	roles, _, err := client.User.ListAssignedRoles(u, nil)
+  for _, v := range validRoles {
+    if v == r {
+        return true
+    }
+  }
+  return false
+}
+
+func updateAdminRolesOnUser(u string, r []interface{}, c *okta.Client) error {
+	roles, _, err := c.User.ListAssignedRoles(u, nil)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("[ERROR] Error Updating Admin Roles On User: %v", err)
 	}
 
 	for _, role := range roles {
-		_, err := client.User.RemoveRoleFromUser(u, role.Id, nil)
+		_, err := c.User.RemoveRoleFromUser(u, role.Id, nil)
 
 		if err != nil {
-			return err
+			return fmt.Errorf("[ERROR] Error Updating Admin Roles On User: %v", err)
 		}
+	}
+
+	err = assignAdminRolesToUser(u, r, c)
+
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -550,31 +554,36 @@ func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []
 	return warnings, errors
 }
 
-func updateUserStatus(u string, d string, s string, m interface{}) error {
-	client := m.(*Config).oktaClient
+func updateUserStatus(u string, d string, c *okta.Client) error {
+	user, _, err := c.User.GetUser(u, nil)
+
+	if err != nil {
+		return err
+	}
 
 	switch d {
-		case "SUSPENDED":
-		_, err := client.User.SuspendUser(u, nil)
+			case "SUSPENDED":
+			_, err := c.User.SuspendUser(u, nil)
 
-		if err != nil {
-			return err
-		}
+			if err != nil {
+				return err
+			}
+			fallthrough
 		case "DEPROVISIONED":
-		_, err := client.User.DeactivateUser(u, nil)
+		_, err := c.User.DeactivateUser(u, nil)
 
 		if err != nil {
 			return err
 		}
 		case "ACTIVE":
-		if s == "SUSPENDED" {
-			_, err := client.User.UnsuspendUser(u, nil)
+		if user.Status == "SUSPENDED" {
+			_, err := c.User.UnsuspendUser(u, nil)
 
 			if err != nil {
 				return err
 			}
 		} else {
-			_, _, err := client.User.ActivateUser(u, nil)
+			_, _, err := c.User.ActivateUser(u, nil)
 
 			if err != nil {
 				return err
@@ -582,5 +591,34 @@ func updateUserStatus(u string, d string, s string, m interface{}) error {
 		}
 	}
 
+	err = waitingForStatusTransition(u, c)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
+}
+
+func waitingForStatusTransition(u string, c *okta.Client) error {
+	user, _, err := c.User.GetUser(u, nil)
+
+	if err != nil {
+		return err
+	}
+
+	for {
+		if user.TransitioningToStatus == "" {
+			return nil
+		} else {
+			log.Printf("[INFO] Transitioning to status = %v; waiting for 5 more seconds...", user.TransitioningToStatus)
+			time.Sleep(5 * time.Second)
+
+			user, _, err = c.User.GetUser(u, nil)
+
+			if err != nil {
+				return err
+			}
+		}
+	}
 }
