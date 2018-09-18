@@ -2,10 +2,12 @@ package okta
 
 import (
 	"fmt"
+  "strings"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
+  "github.com/hashicorp/terraform/terraform"
 )
 
 func TestAccOktaUserNew(t *testing.T) {
@@ -15,7 +17,7 @@ func TestAccOktaUserNew(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testOktaUsersDestroy,
+		CheckDestroy: testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testOktaUserConfig(rName),
@@ -60,4 +62,20 @@ resource "okta_user" "test_acc_%s" {
   honorific_suffix = "Jr."
 }
 `, r, r, r)
+}
+
+func testAccCheckUserDestroy(s *terraform.State) error {
+  client := testAccProvider.Meta().(*Config).oktaClient
+
+  for _, r := range s.RootModule().Resources {
+    if _, resp, err := client.User.GetUser(r.Primary.ID, nil); err != nil {
+      if strings.Contains(resp.Response.Status, "404") {
+        continue
+      }
+      return fmt.Errorf("[ERROR] Error Getting User in Okta: %v", err)
+    }
+    return fmt.Errorf("User still exists")
+  }
+
+  return nil
 }

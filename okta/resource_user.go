@@ -347,6 +347,23 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] Delete User %v", d.Get("login").(string))
+	client := m.(*Config).oktaClient
+
+	passes := 2
+
+	if d.Get("status") == "DEPROVISIONED" {
+		passes = 1
+	}
+
+	for i := 0; i < passes; i += 1 {
+		_, err := client.User.DeactivateOrDeleteUser(d.Id(), nil)
+
+		if err != nil {
+			return fmt.Errorf("[ERROR] Error Deleting User in Okta: %v", err)
+		}
+	}
+
 	return nil
 }
 
