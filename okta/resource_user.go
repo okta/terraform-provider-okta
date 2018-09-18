@@ -162,17 +162,17 @@ func resourceUser() *schema.Resource {
 				Description: "User state or region",
 			},
 			"status": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "The status of the User in Okta - remove to set user back to active/provisioned",
-				Default:     "ACTIVE",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "The status of the User in Okta - remove to set user back to active/provisioned",
+				Default:      "ACTIVE",
 				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "STAGED", "DEPROVISIONED", "SUSPENDED"}, false),
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-			    if old == "PROVISIONED" {
-			      return true
-			    }
-			    return false
-			  },
+					if old == "PROVISIONED" {
+						return true
+					}
+					return false
+				},
 			},
 			"street_address": &schema.Schema{
 				Type:        schema.TypeString,
@@ -269,11 +269,11 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 			if _, ok := d.GetOk(attribute); ok {
 				log.Printf("[INFO] Setting %v to %v", attribute, (*user.Profile)[k])
 				d.Set(attribute, (*user.Profile)[k])
-	    }
-    }
-  }
+			}
+		}
+	}
 
-  roles, _, err := client.User.ListAssignedRoles(d.Id(), nil)
+	roles, _, err := client.User.ListAssignedRoles(d.Id(), nil)
 
 	if err != nil {
 		return err
@@ -494,12 +494,12 @@ func assignAdminRolesToUser(u string, r []interface{}, c *okta.Client) error {
 func roleValidator(r string) bool {
 	validRoles := []string{"SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN", "HELP_DESK_ADMIN"}
 
-  for _, v := range validRoles {
-    if v == r {
-        return true
-    }
-  }
-  return false
+	for _, v := range validRoles {
+		if v == r {
+			return true
+		}
+	}
+	return false
 }
 
 func updateAdminRolesOnUser(u string, r []interface{}, c *okta.Client) error {
@@ -562,20 +562,20 @@ func updateUserStatus(u string, d string, c *okta.Client) error {
 	}
 
 	switch d {
-			case "SUSPENDED":
-			_, err := c.User.SuspendUser(u, nil)
+	case "SUSPENDED":
+		_, err := c.User.SuspendUser(u, nil)
 
-			if err != nil {
-				return err
-			}
-			fallthrough
-		case "DEPROVISIONED":
+		if err != nil {
+			return err
+		}
+		fallthrough
+	case "DEPROVISIONED":
 		_, err := c.User.DeactivateUser(u, nil)
 
 		if err != nil {
 			return err
 		}
-		case "ACTIVE":
+	case "ACTIVE":
 		if user.Status == "SUSPENDED" {
 			_, err := c.User.UnsuspendUser(u, nil)
 

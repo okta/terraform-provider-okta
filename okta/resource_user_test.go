@@ -2,12 +2,12 @@ package okta
 
 import (
 	"fmt"
-  "strings"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
-  "github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform/terraform"
 )
 
 func TestAccOktaUserNew(t *testing.T) {
@@ -27,14 +27,14 @@ func TestAccOktaUserNew(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
 				),
 			},
-      {
-        Config: testOktaUserConfig_updated(rName),
-        Check: resource.ComposeTestCheckFunc(
-          resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
-          resource.TestCheckResourceAttr(resourceName, "last_name", rName),
-          resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
-        ),
-      },
+			{
+				Config: testOktaUserConfig_updated(rName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr(resourceName, "last_name", rName),
+					resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
+				),
+			},
 		},
 	})
 }
@@ -52,7 +52,7 @@ resource "okta_user" "test_acc_%s" {
 }
 
 func testOktaUserConfig_updated(r string) string {
-  return fmt.Sprintf(`
+	return fmt.Sprintf(`
 resource "okta_user" "test_acc_%s" {
   admin_roles      = ["ORG_ADMIN"]
   first_name       = "TestAcc"
@@ -65,17 +65,17 @@ resource "okta_user" "test_acc_%s" {
 }
 
 func testAccCheckUserDestroy(s *terraform.State) error {
-  client := testAccProvider.Meta().(*Config).oktaClient
+	client := testAccProvider.Meta().(*Config).oktaClient
 
-  for _, r := range s.RootModule().Resources {
-    if _, resp, err := client.User.GetUser(r.Primary.ID, nil); err != nil {
-      if strings.Contains(resp.Response.Status, "404") {
-        continue
-      }
-      return fmt.Errorf("[ERROR] Error Getting User in Okta: %v", err)
-    }
-    return fmt.Errorf("User still exists")
-  }
+	for _, r := range s.RootModule().Resources {
+		if _, resp, err := client.User.GetUser(r.Primary.ID, nil); err != nil {
+			if strings.Contains(resp.Response.Status, "404") {
+				continue
+			}
+			return fmt.Errorf("[ERROR] Error Getting User in Okta: %v", err)
+		}
+		return fmt.Errorf("User still exists")
+	}
 
-  return nil
+	return nil
 }
