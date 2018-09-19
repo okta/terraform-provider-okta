@@ -417,6 +417,10 @@ func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 		profile["locale"] = d.Get("locale").(string)
 	}
 
+	if _, ok := d.GetOk("manager"); ok {
+		profile["manager"] = d.Get("manager").(string)
+	}
+
 	if _, ok := d.GetOk("manager_id"); ok {
 		profile["managerId"] = d.Get("manager_id").(string)
 	}
