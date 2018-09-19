@@ -228,6 +228,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		return fmt.Errorf("[ERROR] Error Creating User from Okta: %v", err)
 	}
 
+	// set the user id into state before setting roles and status in case they fail
 	d.SetId(user.Id)
 
 	// role assigning can only happen after the user is created so order matters here
