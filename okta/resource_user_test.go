@@ -19,7 +19,7 @@ func TestAccOktaUser_emailError(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:      testOktaUser_emailError(rName),
+				Config:      testOktaUserConfig_emailError(rName),
 				ExpectError: regexp.MustCompile("login field not a valid email address"),
 				PlanOnly:    true,
 			},
@@ -35,17 +35,32 @@ func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testOktaUser_deprovisioned(rName),
+				Config: testOktaUserConfig_deprovisioned(rName),
 			},
 			{
-				Config:      testOktaUser_updateDeprovisioned(rName),
+				Config:      testOktaUserConfig_updateDeprovisioned(rName),
 				ExpectError: regexp.MustCompile("Cannot update a DEPROVISIONED user"),
 			},
 		},
 	})
 }
 
-func TestAccOktaUserNew(t *testing.T) {
+func TestAccOktaUser_validRole(t *testing.T) {
+	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testOktaUserConfig_validRole(rName),
+				ExpectError: regexp.MustCompile("GROUP_ADMIN is not a valid Okta role"),
+			},
+		},
+	})
+}
+
+func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
 	resourceName := "okta_user.test_acc_" + rName
 
@@ -118,7 +133,7 @@ func testAccCheckUserDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testOktaUser_emailError(r string) string {
+func testOktaUserConfig_emailError(r string) string {
 	return fmt.Sprintf(`
 resource "okta_user" "test_%s" {
   firstname = "testAcc"
@@ -129,7 +144,7 @@ resource "okta_user" "test_%s" {
 `, r, r)
 }
 
-func testOktaUser_deprovisioned(r string) string {
+func testOktaUserConfig_deprovisioned(r string) string {
 	return fmt.Sprintf(`
 resource "okta_user" "test_acc_%s" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
@@ -141,7 +156,7 @@ resource "okta_user" "test_acc_%s" {
 `, r, r, r)
 }
 
-func testOktaUser_updateDeprovisioned(r string) string {
+func testOktaUserConfig_updateDeprovisioned(r string) string {
 	return fmt.Sprintf(`
 resource "okta_user" "test_acc_%s" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
@@ -150,6 +165,17 @@ resource "okta_user" "test_acc_%s" {
   login       = "test-acc-%s@testing.com"
   status      = "DEPROVISIONED"
   email       = "hello@testing.com"
+}
+`, r, r, r)
+}
+
+func testOktaUserConfig_validRole(r string) string {
+	return fmt.Sprintf(`
+resource "okta_user" "test_acc_%s" {
+  admin_roles = ["APP_ADMIN", "USER_ADMIN", "GROUP_ADMIN"]
+  first_name  = "TestAcc"
+  last_name   = "%s"
+  login       = "test-acc-%s@testing.com"
 }
 `, r, r, r)
 }
