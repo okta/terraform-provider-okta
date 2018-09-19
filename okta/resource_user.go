@@ -228,6 +228,8 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		return fmt.Errorf("[ERROR] Error Creating User from Okta: %v", err)
 	}
 
+	d.SetId(user.Id)
+
 	// role assigning can only happen after the user is created so order matters here
 	if len(d.Get("admin_roles").([]interface{})) > 0 {
 		err = assignAdminRolesToUser(user.Id, d.Get("admin_roles").([]interface{}), client)
@@ -245,8 +247,6 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 			return fmt.Errorf("[ERROR] Error Updating Status for User: %v", err)
 		}
 	}
-
-	d.SetId(user.Id)
 
 	return resourceUserRead(d, m)
 }
