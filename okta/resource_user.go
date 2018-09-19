@@ -167,6 +167,8 @@ func resourceUser() *schema.Resource {
 				Description:  "The status of the User in Okta - remove to set user back to active/provisioned",
 				Default:      "ACTIVE",
 				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "STAGED", "DEPROVISIONED", "SUSPENDED"}, false),
+				// ignore diff changing to ACTIVE if state is set to PROVISIONED
+				// since this is a similar status in Okta terms
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					if old == "PROVISIONED" {
 						return true
@@ -211,18 +213,19 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 
 	qp := query.NewQueryParams()
 
+	// setting activate to false on user creation will leave the user with a status of STAGED
 	if d.Get("status").(string) == "STAGED" {
 		qp = query.NewQueryParams(query.WithActivate(false))
 	}
 
 	userBody := okta.User{Profile: profile}
-
 	user, _, err := client.User.CreateUser(userBody, qp)
 
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Creating User from Okta: %v", err)
 	}
 
+	// role assigning can only happen after the user is created so order matters here
 	if len(d.Get("admin_roles").([]interface{})) > 0 {
 		err = assignAdminRolesToUser(user.Id, d.Get("admin_roles").([]interface{}), client)
 
@@ -231,6 +234,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		}
 	}
 
+	// status changing can only happen after user is created as well
 	if d.Get("status").(string) == "SUSPENDED" || d.Get("status").(string) == "DEPROVISIONED" {
 		err := updateUserStatus(user.Id, d.Get("status").(string), client)
 
@@ -247,7 +251,6 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List User %v", d.Get("login").(string))
 	client := m.(*Config).oktaClient
-	profile := populateUserProfile(d)
 
 	user, resp, err := client.User.GetUser(d.Id(), nil)
 
@@ -255,6 +258,7 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 		return fmt.Errorf("[ERROR] Error Getting User from Okta: %v", err)
 	}
 
+	// set Id to "" if the user can't be found to remove from state
 	if strings.Contains(resp.Response.Status, "404") {
 		d.SetId("")
 		return nil
@@ -262,17 +266,19 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 
 	d.Set("status", user.Status)
 
-	for k, v := range *profile {
+	// set all the attributes in state that were returned from user.Profile
+	for k, v := range *user.Profile {
 		if v != nil {
 			attribute := camelCaseToUnderscore(k)
 
 			if _, ok := d.GetOk(attribute); ok {
-				log.Printf("[INFO] Setting %v to %v", attribute, (*user.Profile)[k])
-				d.Set(attribute, (*user.Profile)[k])
+				log.Printf("[INFO] Setting %v to %v", attribute, v)
+				d.Set(attribute, v)
 			}
 		}
 	}
 
+	// set all roles currently attached to user in state
 	roles, _, err := client.User.ListAssignedRoles(d.Id(), nil)
 
 	if err != nil {
@@ -293,11 +299,13 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Update User %v", d.Get("login").(string))
 
 	if d.Get("status").(string) == "STAGED" {
-		return fmt.Errorf("[ERROR] Okta will not allow a User to be updated to STAGED. Can set to STAGED on User creation only.")
+		return fmt.Errorf("[ERROR] Okta will not allow a user to be updated to STAGED. Can set to STAGED on user creation only.")
 	}
 
 	client := m.(*Config).oktaClient
 
+	// run the update status func first so a user that was previously deprovisioned
+	// can be updated further if it's status changed in it's terraform configs
 	if d.HasChange("status") {
 		err := updateUserStatus(d.Id(), d.Get("status").(string), client)
 
@@ -334,6 +342,8 @@ func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Delete User %v", d.Get("login").(string))
 	client := m.(*Config).oktaClient
 
+	// only deprovisioned users can be deleted fully from okta
+	// make two passes on the user if they aren't deprovisioned already to deprovision them first
 	passes := 2
 
 	if d.Get("status") == "DEPROVISIONED" {
@@ -491,6 +501,7 @@ func assignAdminRolesToUser(u string, r []interface{}, c *okta.Client) error {
 	return nil
 }
 
+// ValidateFunc in the schema package isn't supported for schema.TypeList yet so we'll use this helper function
 func roleValidator(r string) bool {
 	validRoles := []string{"SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN", "HELP_DESK_ADMIN"}
 
@@ -502,6 +513,7 @@ func roleValidator(r string) bool {
 	return false
 }
 
+// need to remove from all current admin roles and reassign based on terraform configs when a change is detected
 func updateAdminRolesOnUser(u string, r []interface{}, c *okta.Client) error {
 	roles, _, err := c.User.ListAssignedRoles(u, nil)
 
@@ -526,8 +538,8 @@ func updateAdminRolesOnUser(u string, r []interface{}, c *okta.Client) error {
 	return nil
 }
 
-//camel cased strings from Okta responses become underscore separated to match
-//the terraform configs for state file setting
+// camel cased strings from okta responses become underscore separated to match
+// the terraform configs for state file setting (ie. firstName from okta response becomes first_name)
 func camelCaseToUnderscore(s string) string {
 	a := []rune(s)
 
@@ -545,7 +557,7 @@ func camelCaseToUnderscore(s string) string {
 	return s
 }
 
-//regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
+// regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
 func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []error) {
 	re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 	if re.MatchString(val.(string)) == false {
@@ -554,6 +566,9 @@ func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []
 	return warnings, errors
 }
 
+// handle setting of user status based on what the current status is because okta
+// only allows transitions to certain statuses from other statuses - consul okta User API docs for more info
+// https://developer.okta.com/docs/api/resources/users#lifecycle-operations
 func updateUserStatus(u string, d string, c *okta.Client) error {
 	user, _, err := c.User.GetUser(u, nil)
 
@@ -591,7 +606,7 @@ func updateUserStatus(u string, d string, c *okta.Client) error {
 		}
 	}
 
-	err = waitingForStatusTransition(u, c)
+	err = waitForStatusTransition(u, c)
 
 	if err != nil {
 		return err
@@ -600,7 +615,9 @@ func updateUserStatus(u string, d string, c *okta.Client) error {
 	return nil
 }
 
-func waitingForStatusTransition(u string, c *okta.Client) error {
+// need to wait for user.TransitioningToStatus field to be empty before allowing Terraform to continue
+// so the proper current status gets set in the state during the Read operation after a Status update
+func waitForStatusTransition(u string, c *okta.Client) error {
 	user, _, err := c.User.GetUser(u, nil)
 
 	if err != nil {
