@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -9,6 +10,22 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
+
+func TestAccOktaUser_emailError(t *testing.T) {
+	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testOktaUser_emailError(rName),
+				ExpectError: regexp.MustCompile("login field not a valid email address"),
+				PlanOnly:    true,
+			},
+		},
+	})
+}
 
 func TestAccOktaUserNew(t *testing.T) {
 	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
@@ -67,6 +84,33 @@ func TestAccOktaUserNew(t *testing.T) {
 	})
 }
 
+func testAccCheckUserDestroy(s *terraform.State) error {
+	client := testAccProvider.Meta().(*Config).oktaClient
+
+	for _, r := range s.RootModule().Resources {
+		if _, resp, err := client.User.GetUser(r.Primary.ID, nil); err != nil {
+			if strings.Contains(resp.Response.Status, "404") {
+				continue
+			}
+			return fmt.Errorf("[ERROR] Error Getting User in Okta: %v", err)
+		}
+		return fmt.Errorf("User still exists")
+	}
+
+	return nil
+}
+
+func testOktaUser_emailError(r string) string {
+	return fmt.Sprintf(`
+resource "okta_user" "test_%s" {
+  firstname = "testAcc"
+  lastname  = "%s"
+  login     = "notavalidemail"
+  role      = ["SUPER_ADMIN"]
+}
+`, r, r)
+}
+
 func testOktaUserConfig(r string) string {
 	return fmt.Sprintf(`
 resource "okta_user" "test_acc_%s" {
@@ -116,20 +160,4 @@ resource "okta_user" "test_acc_%s" {
   zip_code           = "11111"
 }
 `, r, r, r, r, r, r)
-}
-
-func testAccCheckUserDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*Config).oktaClient
-
-	for _, r := range s.RootModule().Resources {
-		if _, resp, err := client.User.GetUser(r.Primary.ID, nil); err != nil {
-			if strings.Contains(resp.Response.Status, "404") {
-				continue
-			}
-			return fmt.Errorf("[ERROR] Error Getting User in Okta: %v", err)
-		}
-		return fmt.Errorf("User still exists")
-	}
-
-	return nil
 }
