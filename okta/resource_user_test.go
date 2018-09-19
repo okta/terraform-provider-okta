@@ -27,6 +27,24 @@ func TestAccOktaUser_emailError(t *testing.T) {
 	})
 }
 
+func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
+	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testOktaUser_deprovisioned(rName),
+			},
+			{
+				Config:      testOktaUser_updateDeprovisioned(rName),
+				ExpectError: regexp.MustCompile("Cannot update a DEPROVISIONED user"),
+			},
+		},
+	})
+}
+
 func TestAccOktaUserNew(t *testing.T) {
 	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
 	resourceName := "okta_user.test_acc_" + rName
@@ -109,6 +127,31 @@ resource "okta_user" "test_%s" {
   role      = ["SUPER_ADMIN"]
 }
 `, r, r)
+}
+
+func testOktaUser_deprovisioned(r string) string {
+	return fmt.Sprintf(`
+resource "okta_user" "test_acc_%s" {
+  admin_roles = ["APP_ADMIN", "USER_ADMIN"]
+  first_name  = "TestAcc"
+  last_name   = "%s"
+  login       = "test-acc-%s@testing.com"
+  status      = "DEPROVISIONED"
+}
+`, r, r, r)
+}
+
+func testOktaUser_updateDeprovisioned(r string) string {
+	return fmt.Sprintf(`
+resource "okta_user" "test_acc_%s" {
+  admin_roles = ["APP_ADMIN", "USER_ADMIN"]
+  first_name  = "TestAcc"
+  last_name   = "%s"
+  login       = "test-acc-%s@testing.com"
+  status      = "DEPROVISIONED"
+  email       = "hello@testing.com"
+}
+`, r, r, r)
 }
 
 func testOktaUserConfig(r string) string {
