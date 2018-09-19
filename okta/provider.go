@@ -49,7 +49,6 @@ func Provider() terraform.ResourceProvider {
 			"okta_trusted_origin":    resourceTrustedOrigin(),
 			"okta_user_schemas":      resourceUserSchemas(),
 			"okta_user":              resourceUser(),
-			"okta_users":             resourceUsers(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
