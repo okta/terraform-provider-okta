@@ -615,7 +615,6 @@ func updateUserStatus(u string, d string, c *okta.Client) error {
 		if err != nil {
 			return err
 		}
-		fallthrough
 	case "DEPROVISIONED":
 		_, err := c.User.DeactivateUser(u, nil)
 
