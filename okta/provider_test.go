@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"testing"
@@ -29,31 +30,52 @@ func TestProviderImpl(t *testing.T) {
 	var _ terraform.ResourceProvider = Provider()
 }
 
-func testAccPreCheck(t *testing.T) {
+func accPreCheck() error {
 	if v := os.Getenv("OKTA_ORG_NAME"); v == "" {
-		t.Fatal("OKTA_ORG_NAME must be set for acceptance tests")
+		return errors.New("OKTA_ORG_NAME must be set for acceptance tests")
 	}
 	if v := os.Getenv("OKTA_API_TOKEN"); v == "" {
-		t.Fatal("OKTA_API_TOKEN must be set for acceptance tests")
+		return errors.New("OKTA_API_TOKEN must be set for acceptance tests")
 	}
+
+	return nil
 }
 
-func testOktaConfig(t *testing.T) *Config {
-	config := Config{
+func oktaConfig() (*Config, error) {
+	config := &Config{
 		orgName:  os.Getenv("OKTA_ORG_NAME"),
 		apiToken: os.Getenv("OKTA_API_TOKEN"),
 		domain:   os.Getenv("OKTA_BASE_URL"),
 	}
+
 	if err := config.loadAndValidate(); err != nil {
-		t.Fatalf("Error initializing Okta client: %v", err)
+		return config, fmt.Errorf("Error initializing Okta client: %v", err)
 	}
-	return &config
+
+	return config, nil
+}
+
+func testOktaConfig(t *testing.T) *Config {
+	c, err := oktaConfig()
+
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+
+	return c
+}
+
+func testAccPreCheck(t *testing.T) {
+	err := accPreCheck()
+
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
 }
 
 func TestAccOktaProviderRegistration_articulateSDK(t *testing.T) {
 	testAccPreCheck(t)
 	c := testOktaConfig(t)
-
 	// test credentials by listing our default user profile schema
 	url := fmt.Sprintf("meta/schemas/user/default")
 

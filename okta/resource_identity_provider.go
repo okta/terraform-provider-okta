@@ -2,10 +2,11 @@ package okta
 
 import (
 	"fmt"
+	"log"
+
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"log"
 )
 
 func resourceIdentityProvider() *schema.Resource {
@@ -323,15 +324,9 @@ func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("authorization_url", idp.Protocol.Endpoints.Authorization.Url)
 	d.Set("authorization_url_binding", idp.Protocol.Endpoints.Authorization.Binding)
 	d.Set("protocol_type", idp.Protocol.Type)
-	d.Set("protocol_scopes", idp.Protocol.Scopes)
 	d.Set("policy_provisioning_action", idp.Policy.Provisioning.Action)
 	d.Set("policy_provisioning_profile_master", idp.Policy.Provisioning.ProfileMaster)
 	d.Set("policy_provisioning_groups_action", idp.Policy.Provisioning.Groups.Action)
-
-	if len(idp.Policy.Provisioning.Groups.Assignments) > 0 {
-		d.Set("policy_provisioning_group_assignments", idp.Policy.Provisioning.Groups.Assignments)
-	}
-
 	d.Set("policy_provisioning_conditions_deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
 	d.Set("policy_provisioning_conditions_suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
 	d.Set("policy_account_link_filter", idp.Policy.AccountLink.Filter)
@@ -342,12 +337,22 @@ func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("policy_max_clock_skew", idp.Policy.MaxClockSkew)
 	d.Set("links_authorized_href", idp.Links.Authorize.Href)
 	d.Set("links_authorized_templated", idp.Links.Authorize.Templated)
-	d.Set("links_authorized_hints_allow", idp.Links.Authorize.Hints.Allow)
 	d.Set("links_client_redirect_uri_href", idp.Links.ClientRedirectUri.Href)
-	d.Set("links_client_redirect_uri_hints_allow", idp.Links.ClientRedirectUri.Hints.Allow)
 	d.Set("client_id", idp.Protocol.Credentials.Client.ClientID)
 	d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
-	return nil
+
+	agTypeMap := map[string]interface{}{
+		"protocol_scopes":                       idp.Protocol.Scopes,
+		"links_authorized_hints_allow":          idp.Links.Authorize.Hints.Allow,
+		"links_client_redirect_uri_hints_allow": idp.Links.ClientRedirectUri.Hints.Allow,
+	}
+	assignmentList := idp.Policy.Provisioning.Groups.Assignments
+
+	if len(assignmentList) > 0 {
+		agTypeMap["policy_provisioning_group_assignments"] = assignmentList
+	}
+
+	return setNonPrimitives(d, agTypeMap)
 }
 
 func resourceIdentityProviderUpdate(d *schema.ResourceData, m interface{}) error {
