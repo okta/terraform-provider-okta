@@ -69,12 +69,7 @@ func resourceUser() *schema.Resource {
 				ValidateFunc: matchEmailRegexp,
 				// supress diff if no email value is given since it defauls to login
 				// and it's technically required by Okta
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					if new == "" {
-						return true
-					}
-					return false
-				},
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool { return new == "" },
 			},
 			"employee_number": &schema.Schema{
 				Type:        schema.TypeString,
@@ -182,10 +177,7 @@ func resourceUser() *schema.Resource {
 				// ignore diff changing to ACTIVE if state is set to PROVISIONED
 				// since this is a similar status in Okta terms
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					if old == "PROVISIONED" && new == "ACTIVE" {
-						return true
-					}
-					return false
+					return old == "PROVISIONED" && new == "ACTIVE"
 				},
 			},
 			"street_address": &schema.Schema{
@@ -616,33 +608,22 @@ func updateUserStatus(u string, d string, c *okta.Client) error {
 		return err
 	}
 
+	var statusErr error
 	switch d {
 	case "SUSPENDED":
-		_, err := c.User.SuspendUser(u, nil)
-
-		if err != nil {
-			return err
-		}
+		_, statusErr = c.User.SuspendUser(u, nil)
 	case "DEPROVISIONED":
-		_, err := c.User.DeactivateUser(u, nil)
-
-		if err != nil {
-			return err
-		}
+		_, statusErr = c.User.DeactivateUser(u, nil)
 	case "ACTIVE":
 		if user.Status == "SUSPENDED" {
-			_, err := c.User.UnsuspendUser(u, nil)
-
-			if err != nil {
-				return err
-			}
+			_, statusErr = c.User.UnsuspendUser(u, nil)
 		} else {
-			_, _, err := c.User.ActivateUser(u, nil)
-
-			if err != nil {
-				return err
-			}
+			_, _, statusErr = c.User.ActivateUser(u, nil)
 		}
+	}
+
+	if statusErr != nil {
+		return statusErr
 	}
 
 	err = waitForStatusTransition(u, c)
