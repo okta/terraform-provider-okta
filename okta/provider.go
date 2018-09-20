@@ -48,7 +48,7 @@ func Provider() terraform.ResourceProvider {
 			passwordPolicyRule:       resourcePasswordPolicyRule(),
 			"okta_trusted_origin":    resourceTrustedOrigin(),
 			"okta_user_schemas":      resourceUserSchemas(),
-			"okta_users":             resourceUsers(),
+			"okta_user":              resourceUser(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{

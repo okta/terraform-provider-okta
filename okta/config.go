@@ -30,7 +30,7 @@ func (c *Config) loadAndValidate() error {
 
 	orgUrl := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
 
-	config := okta.NewConfig().WithOrgUrl(orgUrl).WithToken(c.apiToken)
+	config := okta.NewConfig().WithOrgUrl(orgUrl).WithToken(c.apiToken).WithCache(false)
 	client := okta.NewClient(config, nil, nil)
 
 	// add the Okta SDK client object to Config
