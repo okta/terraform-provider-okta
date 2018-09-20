@@ -557,25 +557,6 @@ func updateAdminRolesOnUser(u string, r []interface{}, c *okta.Client) error {
 	return nil
 }
 
-// camel cased strings from okta responses become underscore separated to match
-// the terraform configs for state file setting (ie. firstName from okta response becomes first_name)
-func camelCaseToUnderscore(s string) string {
-	a := []rune(s)
-
-	for i, r := range a {
-		if !unicode.IsLower(r) {
-			a = append(a, 0)
-			a[i] = unicode.ToLower(r)
-			copy(a[i+1:], a[i:])
-			a[i] = []rune("_")[0]
-		}
-	}
-
-	s = string(a)
-
-	return s
-}
-
 // regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
 func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []error) {
 	re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")

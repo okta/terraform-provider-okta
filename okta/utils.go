@@ -91,3 +91,22 @@ func validatePriority(in int, out int) error {
 func is404(client *articulateOkta.Client) bool {
 	return client.OktaErrorCode == "E0000007"
 }
+
+// camel cased strings from okta responses become underscore separated to match
+// the terraform configs for state file setting (ie. firstName from okta response becomes first_name)
+func camelCaseToUnderscore(s string) string {
+	a := []rune(s)
+
+	for i, r := range a {
+		if !unicode.IsLower(r) {
+			a = append(a, 0)
+			a[i] = unicode.ToLower(r)
+			copy(a[i+1:], a[i:])
+			a[i] = []rune("_")[0]
+		}
+	}
+
+	s = string(a)
+
+	return s
+}
