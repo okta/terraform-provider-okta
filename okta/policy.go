@@ -147,13 +147,14 @@ func createPolicy(d *schema.ResourceData, meta interface{}, template articulateO
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Creating Policy: %v", err)
 	}
+	log.Printf("[INFO] Okta Policy Created: %+v. Adding Policy to Terraform.", policy)
+	d.SetId(policy.ID)
+
+	// Even if priority is invalid we want to add the policy to Terraform to reflect upstream.
 	err = validatePriority(template.Priority, policy.Priority)
 	if err != nil {
 		return err
 	}
-
-	log.Printf("[INFO] Okta Policy Created: %+v. Adding Policy to Terraform.", policy)
-	d.SetId(policy.ID)
 
 	return policyActivate(d, meta)
 }

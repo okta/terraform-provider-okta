@@ -97,11 +97,12 @@ func resourceSignOnPolicyRuleCreate(d *schema.ResourceData, m interface{}) error
 		return err
 	}
 
+	// We want to put this under Terraform's control even if priority is invalid.
+	d.SetId(rule.ID)
 	err = validatePriority(template.Priority, rule.Priority)
 	if err != nil {
 		return err
 	}
-	d.SetId(rule.ID)
 
 	return resourceSignOnPolicyRuleRead(d, m)
 }

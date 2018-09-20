@@ -87,8 +87,7 @@ func TestAccOktaPolicyRulePasswordPriorityError(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
-				ExpectError: regexp.MustCompile("provided priority was not valid, got: 2, API responded with: 1. See schema for attribute details"),
-				Destroy:     true,
+				ExpectError: regexp.MustCompile("provided priority was not valid, got: 999, API responded with: 1. See schema for attribute details"),
 			},
 		},
 	})
@@ -261,7 +260,7 @@ data "okta_default_policies" "default-%d" {
 resource "%s" "%s" {
 	policyid = "${data.okta_default_policies.default-%d.id}"
 	name     = "%s"
-	priority = 2
+	priority = 999 
 	status   = "ACTIVE"
 }
 `, rInt, passwordPolicyType, passwordPolicyRule, name, rInt, name)
