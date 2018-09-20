@@ -20,6 +20,7 @@ func resourceUser() *schema.Resource {
 		Read:   resourceUserRead,
 		Update: resourceUserUpdate,
 		Delete: resourceUserDelete,
+		Exists: resourceUserExists,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
@@ -256,16 +257,22 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List User %v", d.Get("login").(string))
 	client := m.(*Config).oktaClient
 
-	user, resp, err := client.User.GetUser(d.Id(), nil)
+	exists, err := resourceUserExists(d, m)
 
 	if err != nil {
-		return fmt.Errorf("[ERROR] Error Getting User from Okta: %v", err)
+		return err
 	}
 
 	// set Id to "" if the user can't be found to remove from state
-	if strings.Contains(resp.Response.Status, "404") {
+	if exists != true {
 		d.SetId("")
 		return nil
+	}
+
+	user, _, err := client.User.GetUser(d.Id(), nil)
+
+	if err != nil {
+		return fmt.Errorf("[ERROR] Error Getting User from Okta: %v", err)
 	}
 
 	d.Set("status", user.Status)
@@ -363,6 +370,23 @@ func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
 	}
 
 	return nil
+}
+
+func resourceUserExists(d *schema.ResourceData, m interface{}) (bool, error) {
+	log.Printf("[INFO] Checking Exists for User %v", d.Get("login").(string))
+	client := m.(*Config).oktaClient
+
+	_, resp, err := client.User.GetUser(d.Id(), nil)
+
+	if err != nil {
+		return false, fmt.Errorf("[ERROR] Error Getting User from Okta: %v", err)
+	}
+
+	if strings.Contains(resp.Response.Status, "404") {
+		return false, nil
+	}
+
+	return true, nil
 }
 
 func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
