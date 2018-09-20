@@ -70,12 +70,24 @@ func suppressDefaultedArrayDiff(k, old, new string, d *schema.ResourceData) bool
 	return new == "0"
 }
 
-func createConditionalValueSuppression(defaultVal string) schema.SchemaDiffSuppressFunc {
+func createValueDiffSuppression(newValueToIgnore string) schema.SchemaDiffSuppressFunc {
 	return func(k, old, new string, d *schema.ResourceData) bool {
-		return new == "" && old == defaultVal
+		return new == newValueToIgnore
 	}
 }
 
 func getClientFromMetadata(meta interface{}) *articulateOkta.Client {
 	return meta.(*Config).articulateOktaClient
+}
+
+func validatePriority(in int, out int) error {
+	if in > 0 && in != out {
+		return fmt.Errorf("provided priority was not valid, got: %d, API responded with: %d. See schema for attribute details", in, out)
+	}
+
+	return nil
+}
+
+func is404(client *articulateOkta.Client) bool {
+	return client.OktaErrorCode == "E0000007"
 }

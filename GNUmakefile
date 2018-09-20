@@ -1,6 +1,6 @@
 VERSION=v1.1.5
 
-SWEEP?=us-east-1
+SWEEP?=global
 TEST?=$$(go list ./... |grep -v 'vendor')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 

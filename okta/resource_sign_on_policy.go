@@ -110,11 +110,11 @@ func resourceSignOnPolicyDelete(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
-	if policy.ID != "" {
+	if policy != nil && policy.ID != "" {
 		if policy.System == true {
 			log.Printf("[INFO] Policy %v is a System Policy, cannot delete from Okta", d.Get("name").(string))
 		} else {
-			_, err = client.Policies.DeletePolicy(d.Id())
+			_, err = client.Policies.DeletePolicy(policy.ID)
 			if err != nil {
 				return fmt.Errorf("[ERROR] Error Deleting Policy from Okta: %v", err)
 			}
@@ -138,6 +138,9 @@ func buildSignOnPolicy(d *schema.ResourceData, m interface{}) articulateOkta.Pol
 	template.Type = signOnPolicyType
 	if description, ok := d.GetOk("description"); ok {
 		template.Description = description.(string)
+	}
+	if priority, ok := d.GetOk("priority"); ok {
+		template.Priority = priority.(int)
 	}
 
 	template.Conditions = &articulateOkta.PolicyConditions{

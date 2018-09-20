@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+	"log"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -26,11 +27,12 @@ var baseRuleSchema = map[string]*schema.Schema{
 		Required:    true,
 		Description: "Policy Rule Name",
 	},
-	// Need to add an enhancement here, maybe we can provide a hierarchy system, priorityBefore = <refRule>
 	"priority": &schema.Schema{
 		Type:        schema.TypeInt,
-		Computed:    true,
-		Description: "Policy Rule Priority",
+		Optional:    true,
+		Description: "Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last/lowest if not there.",
+		// Suppress diff if config is empty.
+		DiffSuppressFunc: createValueDiffSuppression("0"),
 	},
 	"status": &schema.Schema{
 		Type:         schema.TypeString,
@@ -100,10 +102,11 @@ func syncRuleFromUpstream(d *schema.ResourceData, rule *articulateOkta.Rule) err
 
 func getPolicyRule(d *schema.ResourceData, m interface{}) (*articulateOkta.Rule, error) {
 	client := m.(*Config).articulateOktaClient
+	policyID := d.Get("policyid").(string)
 
-	_, _, err := client.Policies.GetPolicy(d.Get("policyid").(string))
+	_, _, err := client.Policies.GetPolicy(policyID)
 
-	if client.OktaErrorCode == "E0000007" {
+	if is404(client) {
 		return nil, nil
 	}
 
@@ -111,8 +114,8 @@ func getPolicyRule(d *schema.ResourceData, m interface{}) (*articulateOkta.Rule,
 		return nil, fmt.Errorf("[ERROR] Error Listing Policy in Okta: %v", err)
 	}
 
-	rule, _, err := client.Policies.GetPolicyRule(d.Get("policyid").(string), d.Id())
-	if client.OktaErrorCode == "E0000007" {
+	rule, _, err := client.Policies.GetPolicyRule(policyID, d.Id())
+	if is404(client) {
 		return nil, nil
 	}
 	if err != nil {
@@ -159,4 +162,56 @@ func getUsers(d *schema.ResourceData) *articulateOkta.People {
 	}
 
 	return people
+}
+
+func updateRule(d *schema.ResourceData, meta interface{}, updatedRule interface{}) (*articulateOkta.Rule, error) {
+	client := getClientFromMetadata(meta)
+	_, err := getPolicyRule(d, meta)
+	if err != nil {
+		return nil, err
+	}
+
+	rule, _, err := client.Policies.UpdatePolicyRule(d.Get("policyid").(string), d.Id(), updatedRule)
+	if err != nil {
+		return nil, fmt.Errorf("[ERROR] Error runing update against Sign On Policy Rule: %v", err)
+	}
+	d.Partial(false)
+	err = policyRuleActivate(d, meta)
+
+	return rule, err
+}
+
+func createRule(d *schema.ResourceData, meta interface{}, template interface{}) (*articulateOkta.Rule, error) {
+	client := getClientFromMetadata(meta)
+	policyID := d.Get("policyid").(string)
+
+	_, _, err := client.Policies.GetPolicy(policyID)
+	if err != nil {
+		return nil, fmt.Errorf("[ERROR] Error Listing Policy in Okta: %v", err)
+	}
+
+	currentPolicyRules, _, err := client.Policies.GetPolicyRules(policyID)
+	if err != nil {
+		return nil, fmt.Errorf("[ERROR] Error Listing Policy Rules in Okta: %v", err)
+	}
+
+	if currentPolicyRules != nil {
+		for _, rule := range currentPolicyRules.Rules {
+			ruleName := d.Get("name").(string)
+
+			if rule.Name == ruleName {
+				log.Printf("[INFO] Policy Rule %v already exists in Okta. Adding to Terraform.", ruleName)
+				d.SetId(rule.ID)
+
+				return &rule, nil
+			}
+		}
+	}
+
+	rule, _, err := client.Policies.CreatePolicyRule(policyID, template)
+	if err != nil {
+		return nil, err
+	}
+
+	return rule, err
 }

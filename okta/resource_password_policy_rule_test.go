@@ -27,7 +27,7 @@ func deletePolicyRulesByType(ruleType string, artClient *articulateOkta.Client, 
 	for _, policy := range policies.Policies {
 		rules, _, err := artClient.Policies.GetPolicyRules(policy.ID)
 
-		if err == nil {
+		if err == nil && rules != nil {
 			// Tests have always used default policy, I don't really think that is necessarily a good idea but
 			// leaving for now, that means we only delete the rules and not the policy, we can keep it around.
 			for _, rule := range rules.Rules {
@@ -50,12 +50,12 @@ func TestAccOktaPolicyRulePassword(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testOktaPolicyRuleDestroy,
+		CheckDestroy: createRuleCheckDestroy(passwordPolicyRule),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyRuleExists(resourceName),
+					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 				),
@@ -63,7 +63,7 @@ func TestAccOktaPolicyRulePassword(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyRuleExists(resourceName),
+					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "password_change", "DENY"),
@@ -74,6 +74,53 @@ func TestAccOktaPolicyRulePassword(t *testing.T) {
 		},
 	})
 }
+
+// Testing the logic that errors when an invalid priority is provided
+func TestAccOktaPolicyRulePasswordPriorityError(t *testing.T) {
+	ri := acctest.RandInt()
+	config := testOktaPolicyRulePriorityError(ri)
+	resourceName := buildResourceFQN(passwordPolicyRule, ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createRuleCheckDestroy(passwordPolicyRule),
+		Steps: []resource.TestStep{
+			{
+				Config:      config,
+				ExpectError: regexp.MustCompile("provided priority was not valid, got: 2, API responded with: 1. See schema for attribute details"),
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+				),
+			},
+		},
+	})
+}
+
+// Testing the successful setting of priority
+func TestAccOktaPolicyRulePasswordPriority(t *testing.T) {
+	ri := acctest.RandInt()
+	config := testOktaPolicyRulePriority(ri)
+	resourceName := buildResourceFQN(passwordPolicyRule, ri)
+	name := buildResourceName(ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createRuleCheckDestroy(passwordPolicyRule),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "priority", "1"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccOktaPolicyRulePassword_signonErrors(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testOktaPolicyRulePassword(ri)
@@ -83,12 +130,12 @@ func TestAccOktaPolicyRulePassword_signonErrors(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testOktaPolicyRuleDestroy,
+		CheckDestroy: createRuleCheckDestroy(passwordPolicyRule),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyRuleExists(resourceName),
+					ensureRuleExists(resourceName),
 				),
 			},
 			{
@@ -96,7 +143,7 @@ func TestAccOktaPolicyRulePassword_signonErrors(t *testing.T) {
 				ExpectError: regexp.MustCompile("config is invalid: .* invalid or unknown key: session_idle"),
 				PlanOnly:    true,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyRuleExists(resourceName),
+					ensureRuleExists(resourceName),
 				),
 			},
 		},
@@ -111,12 +158,12 @@ func TestAccOktaPolicyRulePassword_authErrors(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testOktaPolicyRuleDestroy,
+		CheckDestroy: createRuleCheckDestroy(passwordPolicyRule),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyRuleExists(resourceName),
+					ensureRuleExists(resourceName),
 				),
 			},
 			{
@@ -124,94 +171,67 @@ func TestAccOktaPolicyRulePassword_authErrors(t *testing.T) {
 				ExpectError: regexp.MustCompile("config is invalid: .* : invalid or unknown key: auth_type"),
 				PlanOnly:    true,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyRuleExists(resourceName),
+					ensureRuleExists(resourceName),
 				),
 			},
 		},
 	})
 }
 
-func testOktaPolicyRuleExists(name string) resource.TestCheckFunc {
+func ensureRuleExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
+		missingErr := fmt.Errorf("resource not found: %s", name)
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("[ERROR] Resource Not found: %s", name)
+			return missingErr
 		}
 
-		policyID, hasP := rs.Primary.Attributes["policyid"]
-		if !hasP {
-			return fmt.Errorf("[ERROR] No policy ID found in state for Policy Rule")
-		}
-		ruleID, hasR := rs.Primary.Attributes["id"]
-		if !hasR {
-			return fmt.Errorf("[ERROR] No rule ID found in state for Policy Rule")
-		}
-		ruleName, hasName := rs.Primary.Attributes["name"]
-		if !hasName {
-			return fmt.Errorf("[ERROR] No name found in state for Policy Rule")
-		}
-
-		err := testPolicyRuleExists(true, policyID, ruleID, ruleName)
+		policyID := rs.Primary.Attributes["policyid"]
+		ID := rs.Primary.ID
+		exist, err := doesRuleExistsUpstream(policyID, ID)
 		if err != nil {
 			return err
+		} else if !exist {
+			return missingErr
+		}
+
+		return nil
+	}
+}
+
+func createRuleCheckDestroy(ruleType string) func(*terraform.State) error {
+	return func(s *terraform.State) error {
+		for _, rs := range s.RootModule().Resources {
+			if rs.Type != ruleType {
+				continue
+			}
+
+			policyID := rs.Primary.Attributes["policyid"]
+			ID := rs.Primary.ID
+			exists, err := doesRuleExistsUpstream(policyID, ID)
+			if err != nil {
+				return err
+			}
+
+			if exists {
+				return fmt.Errorf("Rule still exists, ID: %s, PolicyID: %s", ID, policyID)
+			}
 		}
 		return nil
 	}
 }
 
-func testOktaPolicyRuleDestroy(s *terraform.State) error {
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "okta_policy_rules" {
-			continue
-		}
+func doesRuleExistsUpstream(policyID string, ID string) (bool, error) {
+	client := getClientFromMetadata(testAccProvider.Meta())
 
-		policyID, hasP := rs.Primary.Attributes["policyid"]
-		if !hasP {
-			return fmt.Errorf("[ERROR] No policy ID found in state for Policy Rule")
-		}
-		ruleID, hasR := rs.Primary.Attributes["id"]
-		if !hasR {
-			return fmt.Errorf("[ERROR] No rule ID found in state for Policy Rule")
-		}
-		ruleName, hasName := rs.Primary.Attributes["name"]
-		if !hasName {
-			return fmt.Errorf("[ERROR] No name found in state for Policy Rule")
-		}
-
-		err := testPolicyRuleExists(false, policyID, ruleID, ruleName)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func testPolicyRuleExists(expected bool, policyID string, ruleID, ruleName string) error {
-	client := testAccProvider.Meta().(*Config).articulateOktaClient
-
-	exists := false
-	_, _, err := client.Policies.GetPolicy(policyID)
-	if err != nil {
-		if client.OktaErrorCode != "E0000007" {
-			return fmt.Errorf("[ERROR] Error Listing Policy in Okta: %v", err)
-		}
-	} else {
-		_, _, err := client.Policies.GetPolicyRule(policyID, ruleID)
-		if err != nil {
-			if client.OktaErrorCode != "E0000007" {
-				return fmt.Errorf("[ERROR] Error Listing Policy Rule in Okta: %v", err)
-			}
-		} else {
-			exists = true
-		}
+	rule, _, err := client.Policies.GetPolicyRule(policyID, ID)
+	if is404(client) {
+		return false, nil
+	} else if err != nil {
+		return false, err
 	}
 
-	if expected == true && exists == false {
-		return fmt.Errorf("[ERROR] Policy Rule %v not found in Okta", ruleName)
-	} else if expected == false && exists == true {
-		return fmt.Errorf("[ERROR] Policy Rule %v still exists in Okta", ruleName)
-	}
-	return nil
+	return rule.ID != "", nil
 }
 
 func testOktaPolicyRulePassword(rInt int) string {
@@ -225,6 +245,40 @@ data "okta_default_policies" "default-%d" {
 resource "%s" "%s" {
 	policyid = "${data.okta_default_policies.default-%d.id}"
 	name     = "%s"
+	status   = "ACTIVE"
+}
+`, rInt, passwordPolicyType, passwordPolicyRule, name, rInt, name)
+}
+
+func testOktaPolicyRulePriority(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+data "okta_default_policies" "default-%d" {
+	type = "%s"
+}
+
+resource "%s" "%s" {
+	policyid = "${data.okta_default_policies.default-%d.id}"
+	name     = "%s"
+	priority = 1
+	status   = "ACTIVE"
+}
+`, rInt, passwordPolicyType, passwordPolicyRule, name, rInt, name)
+}
+
+func testOktaPolicyRulePriorityError(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+data "okta_default_policies" "default-%d" {
+	type = "%s"
+}
+
+resource "%s" "%s-1" {
+	policyid = "${data.okta_default_policies.default-%d.id}"
+	name     = "%s-1"
+	priority = 2
 	status   = "ACTIVE"
 }
 `, rInt, passwordPolicyType, passwordPolicyRule, name, rInt, name)

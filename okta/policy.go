@@ -22,11 +22,12 @@ var basePolicySchema = map[string]*schema.Schema{
 		Optional:    true,
 		Description: "Policy Description",
 	},
-	// Need to add an enhancement here, maybe we can provide a hierarchy system, priorityBefore = <refPolicy>
 	"priority": &schema.Schema{
 		Type:        schema.TypeInt,
-		Computed:    true,
-		Description: "Policy Priority",
+		Optional:    true,
+		Description: "Policy Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last/lowest if not there.",
+		// Suppress diff if config is empty.
+		DiffSuppressFunc: createValueDiffSuppression("0"),
 	},
 	"status": &schema.Schema{
 		Type:         schema.TypeString,
@@ -48,9 +49,7 @@ var basePolicySchema = map[string]*schema.Schema{
 		Elem: &schema.Schema{
 			Type: schema.TypeString,
 			// Suppress diff if config is empty, the API will apply the default.
-			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-				return new == ""
-			},
+			DiffSuppressFunc: createValueDiffSuppression(""),
 		},
 		// Suppress diff if config is empty, the API will apply the default.
 		DiffSuppressFunc: suppressDefaultedArrayDiff,
@@ -132,6 +131,11 @@ func updatePolicy(d *schema.ResourceData, meta interface{}, template articulateO
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Updating Policy: %v", err)
 	}
+	// avoiding perpetual diffs by erroring when the configured priority is not valid and the API defaults it.
+	err = validatePriority(template.Priority, policy.Priority)
+	if err != nil {
+		return err
+	}
 	log.Printf("[INFO] Okta Policy Updated: %+v", policy)
 
 	return policyActivate(d, meta)
@@ -143,6 +147,11 @@ func createPolicy(d *schema.ResourceData, meta interface{}, template articulateO
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Creating Policy: %v", err)
 	}
+	err = validatePriority(template.Priority, policy.Priority)
+	if err != nil {
+		return err
+	}
+
 	log.Printf("[INFO] Okta Policy Created: %+v. Adding Policy to Terraform.", policy)
 	d.SetId(policy.ID)
 

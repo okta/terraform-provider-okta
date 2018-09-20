@@ -43,18 +43,18 @@ func TestAccOktaPoliciesRename(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testOktaPolicyDestroy,
+		CheckDestroy: createPolicyCheckDestroy(passwordPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyExists(resourceName),
+					ensurePolicyExists(resourceName),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyExists(resourceName),
+					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 				),
 			},
@@ -70,12 +70,12 @@ func TestAccOktaPolicySignOn(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testOktaPolicyDestroy,
+		CheckDestroy: createPolicyCheckDestroy(passwordPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyExists(resourceName),
+					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test SignOn Policy"),
@@ -84,7 +84,7 @@ func TestAccOktaPolicySignOn(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyExists(resourceName),
+					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test SignOn Policy Updated"),
@@ -103,12 +103,12 @@ func TestAccOktaPolicySignOn_passErrors(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testOktaPolicyDestroy,
+		CheckDestroy: createPolicyCheckDestroy(passwordPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyExists(resourceName),
+					ensurePolicyExists(resourceName),
 				),
 			},
 			{
@@ -116,7 +116,7 @@ func TestAccOktaPolicySignOn_passErrors(t *testing.T) {
 				ExpectError: regexp.MustCompile("config is invalid: .* : invalid or unknown key: password_min_length"),
 				PlanOnly:    true,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyExists(resourceName),
+					ensurePolicyExists(resourceName),
 				),
 			},
 		},
@@ -132,12 +132,12 @@ func TestAccOktaPolicySignOn_authpErrors(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testOktaPolicyDestroy,
+		CheckDestroy: createPolicyCheckDestroy(passwordPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyExists(resourceName),
+					ensurePolicyExists(resourceName),
 				),
 			},
 			{
@@ -145,7 +145,7 @@ func TestAccOktaPolicySignOn_authpErrors(t *testing.T) {
 				ExpectError: regexp.MustCompile("config is invalid: .* : invalid or unknown key: auth_provider"),
 				PlanOnly:    true,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyExists(resourceName),
+					ensurePolicyExists(resourceName),
 				),
 			},
 		},

@@ -42,12 +42,12 @@ func TestAccOktaPolicyPassword(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testOktaPolicyDestroy,
+		CheckDestroy: createPolicyCheckDestroy(passwordPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyExists(resourceName),
+					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test Password Policy"),
@@ -56,7 +56,7 @@ func TestAccOktaPolicyPassword(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaPolicyExists(resourceName),
+					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test Password Policy Updated"),
@@ -85,72 +85,58 @@ func TestAccOktaPolicyPassword(t *testing.T) {
 	})
 }
 
-func testOktaPolicyExists(name string) resource.TestCheckFunc {
+func ensurePolicyExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
+		missingErr := fmt.Errorf("resource not found: %s", name)
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("[ERROR] Resource Not found: %s", name)
+			return missingErr
 		}
 
-		policyID, hasID := rs.Primary.Attributes["id"]
-		if !hasID {
-			return fmt.Errorf("[ERROR] No id found in state for Policy")
-		}
-		policyName, hasName := rs.Primary.Attributes["name"]
-		if !hasName {
-			return fmt.Errorf("[ERROR] No name found in state for Policy")
-		}
-
-		err := testPolicyExists(true, policyID, policyName)
+		ID := rs.Primary.ID
+		exist, err := doesPolicyExistsUpstream(ID)
 		if err != nil {
 			return err
+		} else if !exist {
+			return missingErr
+		}
+
+		return nil
+	}
+}
+
+func createPolicyCheckDestroy(policyType string) func(*terraform.State) error {
+	return func(s *terraform.State) error {
+		for _, rs := range s.RootModule().Resources {
+			if rs.Type != policyType {
+				continue
+			}
+
+			ID := rs.Primary.ID
+			exists, err := doesPolicyExistsUpstream(ID)
+			if err != nil {
+				return err
+			}
+
+			if exists {
+				return fmt.Errorf("policy still exists, ID: %s", ID)
+			}
 		}
 		return nil
 	}
 }
 
-func testOktaPolicyDestroy(s *terraform.State) error {
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != passwordPolicy {
-			continue
-		}
-
-		policyID, hasID := rs.Primary.Attributes["id"]
-		if !hasID {
-			return fmt.Errorf("[ERROR] No id found in state for Policy")
-		}
-		policyName, hasName := rs.Primary.Attributes["name"]
-		if !hasName {
-			return fmt.Errorf("[ERROR] No name found in state for Policy")
-		}
-
-		err := testPolicyExists(false, policyID, policyName)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func testPolicyExists(expected bool, policyID string, policyName string) error {
+func doesPolicyExistsUpstream(ID string) (bool, error) {
 	client := getClientFromMetadata(testAccProvider.Meta())
 
-	exists := false
-	_, _, err := client.Policies.GetPolicy(policyID)
-	if err != nil {
-		if client.OktaErrorCode != "E0000007" {
-			return fmt.Errorf("[ERROR] Error Listing Policy in Okta: %v", err)
-		}
-	} else {
-		exists = true
+	policy, _, err := client.Policies.GetPolicy(ID)
+	if is404(client) {
+		return false, nil
+	} else if err != nil {
+		return false, err
 	}
 
-	if expected == true && exists == false {
-		return fmt.Errorf("[ERROR] Policy %v not found in Okta", policyName)
-	} else if expected == false && exists == true {
-		return fmt.Errorf("[ERROR] Policy %v still exists in Okta", policyName)
-	}
-	return nil
+	return policy.ID != "", nil
 }
 
 func testOktaPolicyPassword(rInt int) string {

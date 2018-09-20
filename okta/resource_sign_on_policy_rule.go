@@ -87,45 +87,21 @@ func resourceSignOnPolicyRule() *schema.Resource {
 
 func resourceSignOnPolicyRuleCreate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Creating Policy Rule %v", d.Get("name").(string))
-	client := m.(*Config).articulateOktaClient
-
-	var ruleID string
-	exists := false
-	_, _, err := client.Policies.GetPolicy(d.Get("policyid").(string))
+	template, err := buildSignOnPolicyRule(d, m)
 	if err != nil {
-		return fmt.Errorf("[ERROR] Error Listing Policy in Okta: %v", err)
+		return err
 	}
 
-	currentPolicyRules, _, err := client.Policies.GetPolicyRules(d.Get("policyid").(string))
+	rule, err := createRule(d, m, template)
 	if err != nil {
-		return fmt.Errorf("[ERROR] Error Listing Policy Rules in Okta: %v", err)
-	}
-	if currentPolicyRules != nil {
-		for _, rule := range currentPolicyRules.Rules {
-			if rule.Name == d.Get("name").(string) {
-				ruleID = rule.ID
-				exists = true
-				break
-			}
-		}
+		return err
 	}
 
-	if exists == true {
-		log.Printf("[INFO] Policy Rule %v already exists in Okta. Adding to Terraform.", d.Get("name").(string))
-		d.SetId(ruleID)
-	} else {
-		template, err := buildSignOnPolicyRule(d, m)
-		if err != nil {
-			return err
-		}
-
-		rule, _, err := client.Policies.CreatePolicyRule(d.Get("policyid").(string), template)
-		if err != nil {
-			return err
-		}
-
-		d.SetId(rule.ID)
+	err = validatePriority(template.Priority, rule.Priority)
+	if err != nil {
+		return err
 	}
+	d.SetId(rule.ID)
 
 	return resourceSignOnPolicyRuleRead(d, m)
 }
@@ -162,26 +138,17 @@ func resourceSignOnPolicyRuleRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceSignOnPolicyRuleUpdate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Update Policy Rule %v", d.Get("name").(string))
-	client := getClientFromMetadata(m)
-	d.Partial(true)
-
-	_, err := getPolicyRule(d, m)
-	if err != nil {
-		return err
-	}
-
 	template, err := buildSignOnPolicyRule(d, m)
 	if err != nil {
 		return err
 	}
 
-	_, _, err = client.Policies.UpdatePolicyRule(d.Get("policyid").(string), d.Id(), template)
+	rule, err := updateRule(d, m, template)
 	if err != nil {
-		return fmt.Errorf("[ERROR] Error runing update against Sign On Policy Rule: %v", err)
+		return err
 	}
-	d.Partial(false)
-	err = policyRuleActivate(d, m)
 
+	err = validatePriority(template.Priority, rule.Priority)
 	if err != nil {
 		return err
 	}
@@ -199,11 +166,11 @@ func resourceSignOnPolicyRuleDelete(d *schema.ResourceData, m interface{}) error
 		return err
 	}
 
-	if rule.ID != "" {
+	if rule != nil && rule.ID != "" {
 		if rule.System == true {
 			log.Printf("[INFO] Policy Rule %v is a System Policy, cannot delete from Okta", d.Get("name").(string))
 		} else {
-			_, err = client.Policies.DeletePolicyRule(d.Get("policyid").(string), d.Id())
+			_, err = client.Policies.DeletePolicyRule(d.Get("policyid").(string), rule.ID)
 			if err != nil {
 				return fmt.Errorf("[ERROR] Error Deleting Policy Rule from Okta: %v", err)
 			}
@@ -224,6 +191,9 @@ func buildSignOnPolicyRule(d *schema.ResourceData, m interface{}) (articulateOkt
 	template.Name = d.Get("name").(string)
 	template.Status = d.Get("status").(string)
 	template.Type = singOnPolicyRuleType
+	if priority, ok := d.GetOk("priority"); ok {
+		template.Priority = priority.(int)
+	}
 
 	template.Conditions = &articulateOkta.PolicyConditions{
 		Network: getNetwork(d),
