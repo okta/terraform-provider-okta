@@ -174,7 +174,7 @@ func resourceUser() *schema.Resource {
 				// ignore diff changing to ACTIVE if state is set to PROVISIONED
 				// since this is a similar status in Okta terms
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					if old == "PROVISIONED" {
+					if old == "PROVISIONED" && new == "ACTIVE" {
 						return true
 					}
 					return false
@@ -599,7 +599,7 @@ func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []
 }
 
 // handle setting of user status based on what the current status is because okta
-// only allows transitions to certain statuses from other statuses - consul okta User API docs for more info
+// only allows transitions to certain statuses from other statuses - consult okta User API docs for more info
 // https://developer.okta.com/docs/api/resources/users#lifecycle-operations
 func updateUserStatus(u string, d string, c *okta.Client) error {
 	user, _, err := c.User.GetUser(u, nil)
