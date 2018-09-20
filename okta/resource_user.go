@@ -67,6 +67,14 @@ func resourceUser() *schema.Resource {
 				Optional:     true,
 				Description:  "User primary email address. Default = user login",
 				ValidateFunc: matchEmailRegexp,
+				// supress diff if no email value is given since it defauls to login
+				// and it's technically required by Okta
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					if new == "" {
+						return true
+					}
+					return false
+				},
 			},
 			"employee_number": &schema.Schema{
 				Type:        schema.TypeString,
@@ -282,9 +290,9 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 		if v != nil {
 			attribute := camelCaseToUnderscore(k)
 
-			if _, ok := d.GetOk(attribute); ok {
-				log.Printf("[INFO] Setting %v to %v", attribute, v)
-				d.Set(attribute, v)
+			log.Printf("[INFO] Setting %v to %v", attribute, v)
+			if err := d.Set(attribute, v); err != nil {
+				return fmt.Errorf("error setting %s for resource %s: %s", attribute, d.Id(), err)
 			}
 		}
 	}
