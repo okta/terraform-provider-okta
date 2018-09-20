@@ -36,7 +36,7 @@ func deletePolicyByType(t string, artClient *articulateOkta.Client, client *okta
 func TestAccOktaPolicyPassword(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testOktaPolicyPassword(ri)
-	updatedConfig := testOktaPolicyPassword_updated(ri)
+	updatedConfig := testOktaPolicyPasswordUpdated(ri)
 	resourceName := buildResourceFQN(passwordPolicy, ri)
 
 	resource.Test(t, resource.TestCase{
@@ -155,7 +155,7 @@ resource "%s" "%s" {
 // cannot change skipunlock to "true" if the authprovider is OKTA
 // unless PASSWORD_POLICY_SOFT_LOCK is enabled
 // (not supported in this TF provider at this time)
-func testOktaPolicyPassword_updated(rInt int) string {
+func testOktaPolicyPasswordUpdated(rInt int) string {
 	name := buildResourceName(rInt)
 
 	// Adding another resource so I can ensure the priority preference works

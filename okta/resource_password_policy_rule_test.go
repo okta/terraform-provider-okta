@@ -44,7 +44,7 @@ func deletePolicyRulesByType(ruleType string, artClient *articulateOkta.Client, 
 func TestAccOktaPolicyRulePassword(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testOktaPolicyRulePassword(ri)
-	updatedConfig := testOktaPolicyRulePassword_updated(ri)
+	updatedConfig := testOktaPolicyRulePasswordUpdated(ri)
 	resourceName := buildResourceFQN(passwordPolicyRule, ri)
 
 	resource.Test(t, resource.TestCase{
@@ -79,7 +79,6 @@ func TestAccOktaPolicyRulePassword(t *testing.T) {
 func TestAccOktaPolicyRulePasswordPriorityError(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testOktaPolicyRulePriorityError(ri)
-	resourceName := buildResourceFQN(passwordPolicyRule, ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -89,9 +88,7 @@ func TestAccOktaPolicyRulePasswordPriorityError(t *testing.T) {
 			{
 				Config:      config,
 				ExpectError: regexp.MustCompile("provided priority was not valid, got: 2, API responded with: 1. See schema for attribute details"),
-				Check: resource.ComposeTestCheckFunc(
-					ensureRuleExists(resourceName),
-				),
+				Destroy:     true,
 			},
 		},
 	})
@@ -121,10 +118,9 @@ func TestAccOktaPolicyRulePasswordPriority(t *testing.T) {
 	})
 }
 
-func TestAccOktaPolicyRulePassword_signonErrors(t *testing.T) {
+func TestAccOktaPolicyRulePasswordSignOnErrors(t *testing.T) {
 	ri := acctest.RandInt()
-	config := testOktaPolicyRulePassword(ri)
-	updatedConfig := testOktaPolicyRulePassword_signonErrors(ri)
+	config := testOktaPolicyRulePasswordSignOnErrors(ri)
 	resourceName := buildResourceFQN(passwordPolicyRule, ri)
 
 	resource.Test(t, resource.TestCase{
@@ -133,13 +129,7 @@ func TestAccOktaPolicyRulePassword_signonErrors(t *testing.T) {
 		CheckDestroy: createRuleCheckDestroy(passwordPolicyRule),
 		Steps: []resource.TestStep{
 			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					ensureRuleExists(resourceName),
-				),
-			},
-			{
-				Config:      updatedConfig,
+				Config:      config,
 				ExpectError: regexp.MustCompile("config is invalid: .* invalid or unknown key: session_idle"),
 				PlanOnly:    true,
 				Check: resource.ComposeTestCheckFunc(
@@ -149,10 +139,9 @@ func TestAccOktaPolicyRulePassword_signonErrors(t *testing.T) {
 		},
 	})
 }
-func TestAccOktaPolicyRulePassword_authErrors(t *testing.T) {
+func TestAccOktaPolicyRulePasswordAuthErrors(t *testing.T) {
 	ri := acctest.RandInt()
-	config := testOktaPolicyRulePassword(ri)
-	updatedConfig := testOktaPolicyRulePassword_authtErrors(ri)
+	config := testOktaPolicyRulePasswordAuthErrors(ri)
 	resourceName := buildResourceFQN(passwordPolicyRule, ri)
 
 	resource.Test(t, resource.TestCase{
@@ -161,13 +150,7 @@ func TestAccOktaPolicyRulePassword_authErrors(t *testing.T) {
 		CheckDestroy: createRuleCheckDestroy(passwordPolicyRule),
 		Steps: []resource.TestStep{
 			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					ensureRuleExists(resourceName),
-				),
-			},
-			{
-				Config:      updatedConfig,
+				Config:      config,
 				ExpectError: regexp.MustCompile("config is invalid: .* : invalid or unknown key: auth_type"),
 				PlanOnly:    true,
 				Check: resource.ComposeTestCheckFunc(
@@ -275,16 +258,16 @@ data "okta_default_policies" "default-%d" {
 	type = "%s"
 }
 
-resource "%s" "%s-1" {
+resource "%s" "%s" {
 	policyid = "${data.okta_default_policies.default-%d.id}"
-	name     = "%s-1"
+	name     = "%s"
 	priority = 2
 	status   = "ACTIVE"
 }
 `, rInt, passwordPolicyType, passwordPolicyRule, name, rInt, name)
 }
 
-func testOktaPolicyRulePassword_updated(rInt int) string {
+func testOktaPolicyRulePasswordUpdated(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
@@ -303,7 +286,7 @@ resource "%s" "%s" {
 `, rInt, passwordPolicyType, passwordPolicyRule, name, rInt, name)
 }
 
-func testOktaPolicyRulePassword_signonErrors(rInt int) string {
+func testOktaPolicyRulePasswordSignOnErrors(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
@@ -320,7 +303,7 @@ resource "%s" "%s" {
 `, rInt, passwordPolicyType, passwordPolicyRule, name, rInt, name)
 }
 
-func testOktaPolicyRulePassword_authtErrors(rInt int) string {
+func testOktaPolicyRulePasswordAuthErrors(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`

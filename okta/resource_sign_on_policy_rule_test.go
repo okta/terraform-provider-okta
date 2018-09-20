@@ -15,8 +15,8 @@ func deleteSignOnPolicyRules(artClient *articulateOkta.Client, client *okta.Clie
 	return deletePolicyRulesByType(signOnPolicyType, artClient, client)
 }
 
-func TestAccOktaPolicyRule_defaultErrors(t *testing.T) {
-	config := testOktaPolicyRuleSignOn_defaultErrors(acctest.RandInt())
+func TestAccOktaPolicyRuleDefaultErrors(t *testing.T) {
+	config := testOktaPolicyRuleSignOnDefaultErrors(acctest.RandInt())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -89,7 +89,7 @@ func TestAccOktaPolicyRulesNewPolicy(t *testing.T) {
 func TestAccOktaPolicyRuleSignOn(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testOktaPolicyRuleSignOn(ri)
-	updatedConfig := testOktaPolicyRuleSignOn_updated(ri)
+	updatedConfig := testOktaPolicyRuleSignOnUpdated(ri)
 	resourceName := buildResourceFQN(signOnPolicyRule, ri)
 
 	resource.Test(t, resource.TestCase{
@@ -121,11 +121,9 @@ func TestAccOktaPolicyRuleSignOn(t *testing.T) {
 	})
 }
 
-func TestAccOktaPolicyRuleSignOn_passErrors(t *testing.T) {
+func TestAccOktaPolicyRuleSignOnPassErrors(t *testing.T) {
 	ri := acctest.RandInt()
-	config := testOktaPolicyRuleSignOn(ri)
-	updatedConfig := testOktaPolicyRuleSignOn_passErrors(ri)
-	resourceName := buildResourceFQN(signOnPolicyRule, ri)
+	config := testOktaPolicyRuleSignOnPassErrors(ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -133,18 +131,9 @@ func TestAccOktaPolicyRuleSignOn_passErrors(t *testing.T) {
 		CheckDestroy: createRuleCheckDestroy(signOnPolicyRule),
 		Steps: []resource.TestStep{
 			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					ensureRuleExists(resourceName),
-				),
-			},
-			{
-				Config:      updatedConfig,
+				Config:      config,
 				ExpectError: regexp.MustCompile("config is invalid: .*: : invalid or unknown key: password_change"),
 				PlanOnly:    true,
-				Check: resource.ComposeTestCheckFunc(
-					ensureRuleExists(resourceName),
-				),
 			},
 		},
 	})
@@ -166,7 +155,7 @@ resource "%s" "%s" {
 `, rInt, signOnPolicyType, signOnPolicyRule, name, rInt, name)
 }
 
-func testOktaPolicyRuleSignOn_updated(rInt int) string {
+func testOktaPolicyRuleSignOnUpdated(rInt int) string {
 	name := buildResourceName(rInt)
 
 	// Adding a second resource here to test the priority preference
@@ -187,7 +176,7 @@ resource "%s" "%s" {
 `, rInt, signOnPolicyType, signOnPolicyRule, name, rInt, name)
 }
 
-func testOktaPolicyRuleSignOn_defaultErrors(rInt int) string {
+func testOktaPolicyRuleSignOnDefaultErrors(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
@@ -236,7 +225,7 @@ resource "%s" "%s" {
 `, rInt, signOnPolicyType, signOnPolicy, name, name, signOnPolicyRule, name, name, name)
 }
 
-func testOktaPolicyRuleSignOn_passErrors(rInt int) string {
+func testOktaPolicyRuleSignOnPassErrors(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`

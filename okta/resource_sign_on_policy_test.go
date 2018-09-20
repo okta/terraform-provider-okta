@@ -16,9 +16,9 @@ func deleteSignOnPolicies(artClient *articulateOkta.Client, client *okta.Client)
 	return deletePolicyByType(signOnPolicyType, artClient, client)
 }
 
-func TestAccOktaPolicies_defaultErrors(t *testing.T) {
+func TestAccOktaPoliciesDefaultErrors(t *testing.T) {
 	ri := acctest.RandInt()
-	config := testOktaPolicySignOn_defaultErrors(ri)
+	config := testOktaPolicySignOnDefaultErrors(ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -64,7 +64,7 @@ func TestAccOktaPoliciesRename(t *testing.T) {
 func TestAccOktaPolicySignOn(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testOktaPolicySignOn(ri)
-	updatedConfig := testOktaPolicySignOn_updated(ri)
+	updatedConfig := testOktaPolicySignOnUpdated(ri)
 	resourceName := buildResourceFQN(signOnPolicy, ri)
 
 	resource.Test(t, resource.TestCase{
@@ -94,11 +94,9 @@ func TestAccOktaPolicySignOn(t *testing.T) {
 	})
 }
 
-func TestAccOktaPolicySignOn_passErrors(t *testing.T) {
+func TestAccOktaPolicySignOnPassErrors(t *testing.T) {
 	ri := acctest.RandInt()
-	config := testOktaPolicySignOn(ri)
-	updatedConfig := testOktaPolicySignOn_passErrors(ri)
-	resourceName := buildResourceFQN(signOnPolicy, ri)
+	config := testOktaPolicySignOnPassErrors(ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -106,28 +104,17 @@ func TestAccOktaPolicySignOn_passErrors(t *testing.T) {
 		CheckDestroy: createPolicyCheckDestroy(passwordPolicy),
 		Steps: []resource.TestStep{
 			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					ensurePolicyExists(resourceName),
-				),
-			},
-			{
-				Config:      updatedConfig,
+				Config:      config,
 				ExpectError: regexp.MustCompile("config is invalid: .* : invalid or unknown key: password_min_length"),
 				PlanOnly:    true,
-				Check: resource.ComposeTestCheckFunc(
-					ensurePolicyExists(resourceName),
-				),
 			},
 		},
 	})
 }
 
-func TestAccOktaPolicySignOn_authpErrors(t *testing.T) {
+func TestAccOktaPolicySignOnAuthErrors(t *testing.T) {
 	ri := acctest.RandInt()
-	config := testOktaPolicySignOn(ri)
-	updatedConfig := testOktaPolicySignOn_authpErrors(ri)
-	resourceName := buildResourceFQN(signOnPolicy, ri)
+	config := testOktaPolicySignOnAuthErrors(ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -135,18 +122,9 @@ func TestAccOktaPolicySignOn_authpErrors(t *testing.T) {
 		CheckDestroy: createPolicyCheckDestroy(passwordPolicy),
 		Steps: []resource.TestStep{
 			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					ensurePolicyExists(resourceName),
-				),
-			},
-			{
-				Config:      updatedConfig,
+				Config:      config,
 				ExpectError: regexp.MustCompile("config is invalid: .* : invalid or unknown key: auth_provider"),
 				PlanOnly:    true,
-				Check: resource.ComposeTestCheckFunc(
-					ensurePolicyExists(resourceName),
-				),
 			},
 		},
 	})
@@ -164,7 +142,7 @@ resource "%s" "%s" {
 `, signOnPolicy, name, name)
 }
 
-func testOktaPolicySignOn_updated(rInt int) string {
+func testOktaPolicySignOnUpdated(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
@@ -179,7 +157,7 @@ resource "%s" "%s" {
 `, rInt, signOnPolicy, name, name, rInt)
 }
 
-func testOktaPolicySignOn_defaultErrors(rInt int) string {
+func testOktaPolicySignOnDefaultErrors(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
@@ -203,7 +181,7 @@ resource "%s" "%s" {
 `, signOnPolicy, name, updatedName)
 }
 
-func testOktaPolicySignOn_passErrors(rInt int) string {
+func testOktaPolicySignOnPassErrors(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
@@ -216,7 +194,7 @@ resource "%s" "%s" {
 `, signOnPolicy, name, name)
 }
 
-func testOktaPolicySignOn_authpErrors(rInt int) string {
+func testOktaPolicySignOnAuthErrors(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
