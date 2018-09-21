@@ -68,7 +68,6 @@ func TestAccOktaPolicyPassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "password_exclude_username", "false"),
 					resource.TestCheckResourceAttr(resourceName, "password_exclude_first_name", "true"),
 					resource.TestCheckResourceAttr(resourceName, "password_exclude_last_name", "true"),
-					resource.TestCheckResourceAttr(resourceName, "password_dictionary_lookup", "true"),
 					resource.TestCheckResourceAttr(resourceName, "password_max_age_days", "60"),
 					resource.TestCheckResourceAttr(resourceName, "password_expire_warn_days", "15"),
 					resource.TestCheckResourceAttr(resourceName, "password_min_age_minutes", "60"),
@@ -175,7 +174,6 @@ resource "%s" "%s" {
 	password_exclude_username = false
 	password_exclude_first_name = true 
 	password_exclude_last_name = true 
-	password_dictionary_lookup = true
 	password_max_age_days = 60
 	password_expire_warn_days = 15
 	password_min_age_minutes = 60

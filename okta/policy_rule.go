@@ -2,7 +2,7 @@ package okta
 
 import (
 	"fmt"
-	"log"
+	"strings"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -181,7 +181,7 @@ func updateRule(d *schema.ResourceData, meta interface{}, updatedRule interface{
 	return rule, err
 }
 
-func createRule(d *schema.ResourceData, meta interface{}, template interface{}) (*articulateOkta.Rule, error) {
+func createRule(d *schema.ResourceData, meta interface{}, template interface{}, ruleType string) (*articulateOkta.Rule, error) {
 	client := getClientFromMetadata(meta)
 	policyID := d.Get("policyid").(string)
 
@@ -200,10 +200,7 @@ func createRule(d *schema.ResourceData, meta interface{}, template interface{}) 
 			ruleName := d.Get("name").(string)
 
 			if rule.Name == ruleName {
-				log.Printf("[INFO] Policy Rule %v already exists in Okta. Adding to Terraform.", ruleName)
-				d.SetId(rule.ID)
-
-				return &rule, nil
+				return nil, fmt.Errorf("policy rule %v already exists in Okta. Please use import to import it into terrafrom. terraform import %s.%s %s/%s", rule.Name, ruleType, rule.Name, policyID, rule.ID)
 			}
 		}
 	}
@@ -214,4 +211,30 @@ func createRule(d *schema.ResourceData, meta interface{}, template interface{}) 
 	}
 
 	return rule, err
+}
+
+func resourcePolicyRuleExists(d *schema.ResourceData, m interface{}) (b bool, e error) {
+	// Exists - This is called to verify a resource still exists. It is called prior to Read,
+	// and lowers the burden of Read to be able to assume the resource exists.
+	policy, err := getPolicyRule(d, m)
+
+	if err != nil || policy == nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func createPolicyRuleImporter() *schema.ResourceImporter {
+	return &schema.ResourceImporter{
+		State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+			parts := strings.Split(d.Id(), "/")
+			if len(parts) != 2 {
+				return nil, fmt.Errorf("Invalid policy rule specifier. Expecting {policyID}/{ruleID}")
+			}
+			d.Set("policyid", parts[0])
+			d.SetId(parts[1])
+			return []*schema.ResourceData{d}, nil
+		},
+	}
 }
