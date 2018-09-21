@@ -11,10 +11,12 @@ import (
 
 func resourcePasswordPolicyRule() *schema.Resource {
 	return &schema.Resource{
-		Create: resourcePasswordPolicyRuleCreate,
-		Read:   resourcePasswordPolicyRuleRead,
-		Update: resourcePasswordPolicyRuleUpdate,
-		Delete: resourcePasswordPolicyRuleDelete,
+		Exists:   resourcePolicyRuleExists,
+		Create:   resourcePasswordPolicyRuleCreate,
+		Read:     resourcePasswordPolicyRuleRead,
+		Update:   resourcePasswordPolicyRuleUpdate,
+		Delete:   resourcePasswordPolicyRuleDelete,
+		Importer: createPolicyRuleImporter(),
 
 		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
 			// user cannot edit a default policy rule
@@ -55,7 +57,7 @@ func resourcePasswordPolicyRuleCreate(d *schema.ResourceData, m interface{}) err
 	log.Printf("[INFO] Creating Policy Rule %v", d.Get("name").(string))
 	client := getClientFromMetadata(m)
 	template := buildPasswordPolicyRule(d, client)
-	rule, err := createRule(d, m, template)
+	rule, err := createRule(d, m, template, passwordPolicyRule)
 	if err != nil {
 		return err
 	}
@@ -76,11 +78,6 @@ func resourcePasswordPolicyRuleRead(d *schema.ResourceData, m interface{}) error
 	rule, err := getPolicyRule(d, m)
 	if err != nil {
 		return err
-	}
-	if rule == nil {
-		// if the policy rule does not exist in okta, delete from terraform state
-		d.SetId("")
-		return nil
 	}
 
 	// Update with upstream state to prevent stale state
@@ -111,23 +108,11 @@ func resourcePasswordPolicyRuleUpdate(d *schema.ResourceData, m interface{}) err
 
 func resourcePasswordPolicyRuleDelete(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Delete Policy Rule %v", d.Get("name").(string))
-	client := m.(*Config).articulateOktaClient
+	client := getClientFromMetadata(m)
 
-	rule, err := getPolicyRule(d, m)
+	_, err := client.Policies.DeletePolicyRule(d.Get("policyid").(string), d.Id())
 	if err != nil {
-		return err
-	}
-	if rule != nil && rule.ID != "" {
-		if rule.System == true {
-			log.Printf("[INFO] Policy Rule %v is a System Policy, cannot delete from Okta", d.Get("name").(string))
-		} else {
-			_, err = client.Policies.DeletePolicyRule(d.Get("policyid").(string), rule.ID)
-			if err != nil {
-				return fmt.Errorf("[ERROR] Error Deleting Policy Rule from Okta: %v", err)
-			}
-		}
-	} else {
-		log.Printf("[INFO] Policy Rule not found in Okta, removing from terraform")
+		return fmt.Errorf("[ERROR] Error Deleting Policy Rule from Okta: %v", err)
 	}
 
 	// remove the policy rule resource from terraform

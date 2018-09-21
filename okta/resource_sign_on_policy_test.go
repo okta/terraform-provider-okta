@@ -43,7 +43,7 @@ func TestAccOktaPoliciesRename(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createPolicyCheckDestroy(passwordPolicy),
+		CheckDestroy: createPolicyCheckDestroy(signOnPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -70,7 +70,7 @@ func TestAccOktaPolicySignOn(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createPolicyCheckDestroy(passwordPolicy),
+		CheckDestroy: createPolicyCheckDestroy(signOnPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -101,7 +101,7 @@ func TestAccOktaPolicySignOnPassErrors(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createPolicyCheckDestroy(passwordPolicy),
+		CheckDestroy: createPolicyCheckDestroy(signOnPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -119,7 +119,7 @@ func TestAccOktaPolicySignOnAuthErrors(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createPolicyCheckDestroy(passwordPolicy),
+		CheckDestroy: createPolicyCheckDestroy(signOnPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,

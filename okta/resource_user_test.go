@@ -123,7 +123,7 @@ func testAccCheckUserDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*Config).oktaClient
 
 	for _, r := range s.RootModule().Resources {
-		if _, resp, err := client.User.GetUser(r.Primary.ID, nil); err != nil {
+		if _, resp, err := client.User.GetUser(r.Primary.ID); err != nil {
 			if strings.Contains(resp.Response.Status, "404") {
 				continue
 			}

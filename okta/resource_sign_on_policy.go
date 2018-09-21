@@ -10,10 +10,14 @@ import (
 
 func resourceSignOnPolicy() *schema.Resource {
 	return &schema.Resource{
+		Exists: resourcePolicyExists,
 		Create: resourceSignOnPolicyCreate,
 		Read:   resourceSignOnPolicyRead,
 		Update: resourceSignOnPolicyUpdate,
 		Delete: resourceSignOnPolicyDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
 			// user cannot edit a default policy
@@ -32,33 +36,11 @@ func resourceSignOnPolicy() *schema.Resource {
 
 func resourceSignOnPolicyCreate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Creating Policy %v", d.Get("name").(string))
-	client := m.(*Config).articulateOktaClient
 
-	var policyID string
-	exists := false
-	currentPolicies, _, err := client.Policies.GetPoliciesByType(signOnPolicyType)
+	template := buildSignOnPolicy(d, m)
+	err := createPolicy(d, m, template)
 	if err != nil {
-		return fmt.Errorf("[ERROR] Error Listing Policy in Okta: %v", err)
-	}
-	if currentPolicies != nil {
-		for _, policy := range currentPolicies.Policies {
-			if policy.Name == d.Get("name").(string) {
-				policyID = policy.ID
-				exists = true
-				break
-			}
-		}
-	}
-
-	if exists == true {
-		log.Printf("[INFO] Policy %v already exists in Okta. Adding to Terraform.", d.Get("name").(string))
-		d.SetId(policyID)
-	} else {
-		template := buildSignOnPolicy(d, m)
-		err = createPolicy(d, m, template)
-		if err != nil {
-			return err
-		}
+		return err
 	}
 
 	return resourceSignOnPolicyRead(d, m)
@@ -71,11 +53,6 @@ func resourceSignOnPolicyRead(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
-	if policy == nil {
-		// if the policy does not exist in Okta, delete from terraform state
-		d.SetId("")
-		return nil
-	}
 
 	return syncPolicyFromUpstream(d, policy)
 }
@@ -83,19 +60,10 @@ func resourceSignOnPolicyRead(d *schema.ResourceData, m interface{}) error {
 func resourceSignOnPolicyUpdate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Update Policy %v", d.Get("name").(string))
 	d.Partial(true)
-
-	policy, err := getPolicy(d, m)
+	template := buildSignOnPolicy(d, m)
+	err := updatePolicy(d, m, template)
 	if err != nil {
 		return err
-	}
-	if policy.ID != "" {
-		template := buildSignOnPolicy(d, m)
-		err = updatePolicy(d, m, template)
-		if err != nil {
-			return err
-		}
-	} else {
-		return fmt.Errorf("[ERROR] Error Policy not found in Okta: %v", err)
 	}
 	d.Partial(false)
 
@@ -105,22 +73,9 @@ func resourceSignOnPolicyUpdate(d *schema.ResourceData, m interface{}) error {
 func resourceSignOnPolicyDelete(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Delete Policy %v", d.Get("name").(string))
 	client := m.(*Config).articulateOktaClient
-
-	policy, err := getPolicy(d, m)
+	_, err := client.Policies.DeletePolicy(d.Id())
 	if err != nil {
-		return err
-	}
-	if policy != nil && policy.ID != "" {
-		if policy.System == true {
-			log.Printf("[INFO] Policy %v is a System Policy, cannot delete from Okta", d.Get("name").(string))
-		} else {
-			_, err = client.Policies.DeletePolicy(policy.ID)
-			if err != nil {
-				return fmt.Errorf("[ERROR] Error Deleting Policy from Okta: %v", err)
-			}
-		}
-	} else {
-		return fmt.Errorf("[ERROR] Error Policy not found in Okta: %v", err)
+		return fmt.Errorf("[ERROR] Error Deleting Policy from Okta: %v", err)
 	}
 	// remove the policy resource from terraform
 	d.SetId("")
