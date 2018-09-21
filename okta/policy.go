@@ -81,6 +81,10 @@ func getPolicy(d *schema.ResourceData, m interface{}) (*articulateOkta.Policy, e
 	client := m.(*Config).articulateOktaClient
 	policy, _, err := client.Policies.GetPolicy(d.Id())
 
+	if is404(client) {
+		return policy, nil
+	}
+
 	return policy, err
 }
 
@@ -157,4 +161,16 @@ func createPolicy(d *schema.ResourceData, meta interface{}, template articulateO
 	}
 
 	return policyActivate(d, meta)
+}
+
+func resourcePolicyExists(d *schema.ResourceData, m interface{}) (b bool, e error) {
+	// Exists - This is called to verify a resource still exists. It is called prior to Read,
+	// and lowers the burden of Read to be able to assume the resource exists.
+	policy, err := getPolicy(d, m)
+
+	if err != nil || policy == nil {
+		return false, err
+	}
+
+	return true, nil
 }

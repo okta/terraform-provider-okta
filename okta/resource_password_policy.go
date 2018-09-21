@@ -11,10 +11,14 @@ import (
 
 func resourcePasswordPolicy() *schema.Resource {
 	return &schema.Resource{
+		Exists: resourcePolicyExists,
 		Create: resourcePasswordPolicyCreate,
 		Read:   resourcePasswordPolicyRead,
 		Update: resourcePasswordPolicyUpdate,
 		Delete: resourcePasswordPolicyDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
 			// user cannot edit a default policy
@@ -117,7 +121,7 @@ func resourcePasswordPolicy() *schema.Resource {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: "Number of unsuccessful login attempts allowed before lockout: 0 = no limit.",
-				Default:     0,
+				Default:     10,
 			},
 			"password_auto_unlock_minutes": {
 				Type:        schema.TypeInt,
@@ -137,6 +141,13 @@ func resourcePasswordPolicy() *schema.Resource {
 				Description: "Min length of the password recovery question answer.",
 				Default:     4,
 			},
+			"email_recovery": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
+				Description:  "Enable or disable email password recovery: ACTIVE or INACTIVE.",
+				Default:      "ACTIVE",
+			},
 			"recovery_email_token": {
 				Type:        schema.TypeInt,
 				Optional:    true,
@@ -150,6 +161,13 @@ func resourcePasswordPolicy() *schema.Resource {
 				Description:  "Enable or disable SMS password recovery: ACTIVE or INACTIVE.",
 				Default:      "INACTIVE",
 			},
+			"question_recovery": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
+				Description:  "Enable or disable security question password recovery: ACTIVE or INACTIVE.",
+				Default:      "ACTIVE",
+			},
 			"skip_unlock": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -162,33 +180,10 @@ func resourcePasswordPolicy() *schema.Resource {
 
 func resourcePasswordPolicyCreate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Creating Policy %v", d.Get("name").(string))
-	client := getClientFromMetadata(m)
-
-	var policyID string
-	exists := false
-	currentPolicies, _, err := client.Policies.GetPoliciesByType(passwordPolicyType)
+	template := buildPasswordPolicy(d, m)
+	err := createPolicy(d, m, template)
 	if err != nil {
-		return fmt.Errorf("[ERROR] Error Listing Policy in Okta: %v", err)
-	}
-	if currentPolicies != nil {
-		for _, policy := range currentPolicies.Policies {
-			if policy.Name == d.Get("name").(string) {
-				policyID = policy.ID
-				exists = true
-				break
-			}
-		}
-	}
-
-	if exists == true {
-		log.Printf("[INFO] Policy %v already exists in Okta. Adding to Terraform.", d.Get("name").(string))
-		d.SetId(policyID)
-	} else {
-		template := buildSignOnPolicy(d, m)
-		err = createPolicy(d, m, template)
-		if err != nil {
-			return err
-		}
+		return err
 	}
 
 	return resourcePasswordPolicyRead(d, m)
@@ -200,11 +195,6 @@ func resourcePasswordPolicyRead(d *schema.ResourceData, m interface{}) error {
 	policy, err := getPolicy(d, m)
 	if err != nil {
 		return err
-	}
-	if policy == nil {
-		// if the policy does not exist in Okta, delete from terraform state
-		d.SetId("")
-		return nil
 	}
 
 	// Update with upstream state when it is manually updated from Okta UI or API directly.
@@ -231,6 +221,7 @@ func resourcePasswordPolicyRead(d *schema.ResourceData, m interface{}) error {
 		d.Set("question_min_length", policy.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLength)
 		d.Set("recovery_email_token", policy.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutes)
 		d.Set("sms_recovery", policy.Settings.Recovery.Factors.OktaSms.Status)
+		d.Set("email_recovery", policy.Settings.Recovery.Factors.OktaEmail.Status)
 		d.Set("skip_unlock", policy.Settings.Delegation.Options.SkipUnlock)
 
 		valueMap := map[string]interface{}{}
@@ -260,18 +251,10 @@ func resourcePasswordPolicyUpdate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Update Policy %v", d.Get("name").(string))
 	d.Partial(true)
 
-	policy, err := getPolicy(d, m)
+	template := buildPasswordPolicy(d, m)
+	err := updatePolicy(d, m, template)
 	if err != nil {
 		return err
-	}
-	if policy.ID != "" {
-		template := buildSignOnPolicy(d, m)
-		err = updatePolicy(d, m, template)
-		if err != nil {
-			return err
-		}
-	} else {
-		return fmt.Errorf("[ERROR] Error Policy not found in Okta: %v", err)
 	}
 	d.Partial(false)
 
@@ -282,22 +265,9 @@ func resourcePasswordPolicyDelete(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Delete Policy %v", d.Get("name").(string))
 	client := m.(*Config).articulateOktaClient
 
-	policy, err := getPolicy(d, m)
+	_, err := client.Policies.DeletePolicy(d.Id())
 	if err != nil {
-		return err
-	}
-
-	if policy != nil && policy.ID != "" {
-		if policy.System == true {
-			log.Printf("[INFO] Policy %v is a System Policy, cannot delete from Okta", d.Get("name").(string))
-		} else {
-			_, err = client.Policies.DeletePolicy(policy.ID)
-			if err != nil {
-				return fmt.Errorf("[ERROR] Error Deleting Policy from Okta: %v", err)
-			}
-		}
-	} else {
-		return fmt.Errorf("[ERROR] Error Policy not found in Okta: %v", err)
+		return fmt.Errorf("[ERROR] Error Deleting Policy from Okta: %v", err)
 	}
 	// remove the policy resource from terraform
 	d.SetId("")
@@ -312,6 +282,7 @@ func buildPasswordPolicy(d *schema.ResourceData, m interface{}) articulateOkta.P
 	template := client.Policies.PasswordPolicy()
 	template.Name = d.Get("name").(string)
 	template.Status = d.Get("status").(string)
+	template.Type = passwordPolicyType
 	if description, ok := d.GetOk("description"); ok {
 		template.Description = description.(string)
 	}
@@ -347,10 +318,12 @@ func buildPasswordPolicy(d *schema.ResourceData, m interface{}) articulateOkta.P
 	template.Settings.Password.Lockout.MaxAttempts = d.Get("password_max_lockout_attempts").(int)
 	template.Settings.Password.Lockout.AutoUnlockMinutes = d.Get("password_auto_unlock_minutes").(int)
 	template.Settings.Password.Lockout.ShowLockoutFailures = d.Get("password_show_lockout_failures").(bool)
-	template.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLength = d.Get("password_question_min_length").(int)
-	template.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutes = d.Get("password_recovery_email_token").(int)
-	template.Settings.Recovery.Factors.OktaSms.Status = d.Get("password_sms_recovery").(string)
-	template.Settings.Delegation.Options.SkipUnlock = d.Get("password_skip_unlock").(bool)
+	template.Settings.Recovery.Factors.RecoveryQuestion.Status = d.Get("question_recovery").(string)
+	template.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLength = d.Get("question_min_length").(int)
+	template.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutes = d.Get("recovery_email_token").(int)
+	template.Settings.Recovery.Factors.OktaSms.Status = d.Get("sms_recovery").(string)
+	template.Settings.Recovery.Factors.OktaEmail.Status = d.Get("email_recovery").(string)
+	template.Settings.Delegation.Options.SkipUnlock = d.Get("skip_unlock").(bool)
 
 	return template
 }

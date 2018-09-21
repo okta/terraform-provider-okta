@@ -11,10 +11,12 @@ import (
 
 func resourceSignOnPolicyRule() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceSignOnPolicyRuleCreate,
-		Read:   resourceSignOnPolicyRuleRead,
-		Update: resourceSignOnPolicyRuleUpdate,
-		Delete: resourceSignOnPolicyRuleDelete,
+		Exists:   resourcePolicyRuleExists,
+		Create:   resourceSignOnPolicyRuleCreate,
+		Read:     resourceSignOnPolicyRuleRead,
+		Update:   resourceSignOnPolicyRuleUpdate,
+		Delete:   resourceSignOnPolicyRuleDelete,
+		Importer: createPolicyRuleImporter(),
 
 		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
 			// user cannot edit a default policy rule
@@ -92,7 +94,7 @@ func resourceSignOnPolicyRuleCreate(d *schema.ResourceData, m interface{}) error
 		return err
 	}
 
-	rule, err := createRule(d, m, template)
+	rule, err := createRule(d, m, template, signOnPolicyRule)
 	if err != nil {
 		return err
 	}
