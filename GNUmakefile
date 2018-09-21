@@ -22,6 +22,14 @@ build-linux:
 	mkdir -p ~/.terraform.d/plugins/linux_amd64/
 	mv terraform-provider-okta_${VERSION} ~/.terraform.d/plugins/linux_amd64/
 
+ship: build
+	exists=$$(aws s3api list-objects --bucket articulate-terraform-providers --profile prod --prefix terraform-provider-okta --query Contents[].Key | jq 'contains(["${VERSION}"])' ) \
+	&& if [ $$exists == "true" ]; then \
+	  echo "[ERROR] terraform-provider-okta_${VERSION} already exists in s3://${TERRAFORM_PLUGINS_BUCKET} - don't forget to bump the version."; else \
+		echo "copying terraform-provider-okta_${VERSION} to s3://${TERRAFORM_PLUGINS_BUCKET}"; \
+	  aws s3 cp ~/.terraform.d/plugins/linux_amd64/terraform-provider-okta_${VERSION}  s3://${TERRAFORM_PLUGINS_BUCKET}/ --profile ${TERRAFORM_PLUGINS_PROFILE}; \
+	fi
+
 test: fmtcheck
 	go test -i $(TEST) || exit 1
 	echo $(TEST) | \
