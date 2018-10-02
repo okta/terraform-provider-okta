@@ -1,63 +1,72 @@
 package okta
 
 import (
-	"fmt"
-
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"strings"
+	"testing"
 )
 
-type CheckUpstream func(string) (bool, error)
+func TestContainsAll(t *testing.T) {
+	testArr := []string{"1", "2", "3"}
+	tests := []struct {
+		elements []string
+		expected bool
+	}{
+		{[]string{"2", "3"}, true},
+		{[]string{"1", "2"}, true},
+		{[]string{"1", "4"}, false},
+		{[]string{"1"}, true},
+		{[]string{"10"}, false},
+	}
 
-func ensureResourceExists(name string, checkUpstream CheckUpstream) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		missingErr := fmt.Errorf("resource not found: %s", name)
-		rs, ok := s.RootModule().Resources[name]
-		if !ok {
-			return missingErr
+	for _, test := range tests {
+		actual := containsAll(testArr, test.elements...)
+
+		if actual != test.expected {
+			t.Errorf("containsAll test failed, test array: %s, elements %s, expected %t, actual %t", strings.Join(testArr, ", "), strings.Join(test.elements, ", "), test.expected, actual)
 		}
-
-		ID := rs.Primary.ID
-		exist, err := checkUpstream(ID)
-		if err != nil {
-			return err
-		} else if !exist {
-			return missingErr
-		}
-
-		return nil
 	}
 }
 
-func createCheckResourceDestroy(typeName string, checkUpstream CheckUpstream) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		for _, rs := range s.RootModule().Resources {
-			if rs.Type != typeName {
-				continue
-			}
+func TestContainsOne(t *testing.T) {
+	testArr := []string{"1", "2", "3"}
+	tests := []struct {
+		elements []string
+		expected bool
+	}{
+		{[]string{"2", "3"}, true},
+		{[]string{"1", "2"}, true},
+		{[]string{"1", "4"}, true},
+		{[]string{"1"}, true},
+		{[]string{"10"}, false},
+	}
 
-			ID := rs.Primary.ID
-			exists, err := checkUpstream(ID)
-			if err != nil {
-				return err
-			}
+	for _, test := range tests {
+		actual := containsOne(testArr, test.elements...)
 
-			if exists {
-				return fmt.Errorf("resource still exists, ID: %s", ID)
-			}
+		if actual != test.expected {
+			t.Errorf("containsOne test failed, test array: %s, elements %s, expected %t, actual %t", strings.Join(testArr, ", "), strings.Join(test.elements, ", "), test.expected, actual)
 		}
-		return nil
 	}
 }
 
-// Composes a TestCheckFunc for a slice of strings.
-func testCheckResourceSliceAttr(name string, field string, value []string) resource.TestCheckFunc {
-	var args []resource.TestCheckFunc
-
-	for i, val := range value {
-		fieldName := fmt.Sprintf("%s.%d", field, i)
-		args = append(args, resource.TestCheckResourceAttr(name, fieldName, val))
+func TestContains(t *testing.T) {
+	testArr := []string{"1", "2", "3"}
+	tests := []struct {
+		element  string
+		expected bool
+	}{
+		{"3", true},
+		{"1", true},
+		{"4", false},
+		{"10", false},
+		{"", false},
 	}
 
-	return resource.ComposeTestCheckFunc(args...)
+	for _, test := range tests {
+		actual := containsOne(testArr, test.element)
+
+		if actual != test.expected {
+			t.Errorf("contains test failed, test array: %s, elements %s, expected %t, actual %t", strings.Join(testArr, ", "), test.element, test.expected, actual)
+		}
+	}
 }
