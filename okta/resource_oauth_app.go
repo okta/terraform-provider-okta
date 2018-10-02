@@ -216,7 +216,7 @@ func resourceOAuthAppCreate(d *schema.ResourceData, m interface{}) error {
 
 	d.SetId(app.Id)
 
-	return resourceGroupRead(d, m)
+	return resourceOAuthAppRead(d, m)
 }
 
 func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
@@ -267,7 +267,7 @@ func resourceOAuthAppUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	return resourceGroupRead(d, m)
+	return resourceOAuthAppRead(d, m)
 }
 
 func resourceOAuthAppDelete(d *schema.ResourceData, m interface{}) error {
