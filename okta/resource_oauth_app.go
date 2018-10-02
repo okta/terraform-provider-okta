@@ -83,7 +83,7 @@ func resourceOAuthApp() *schema.Resource {
 				Computed:    true,
 				Description: "Name of resource.",
 			},
-			"signon_mode": &schema.Schema{
+			"sign_on_mode": &schema.Schema{
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "Sign on mode of application.",
@@ -228,7 +228,7 @@ func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
 
 	d.Set("name", app.Name)
 	d.Set("status", app.Status)
-	d.Set("signon_mode", app.SignOnMode)
+	d.Set("sign_on_mode", app.SignOnMode)
 	d.Set("label", app.Label)
 	d.Set("type", app.Settings.OauthClient.ApplicationType)
 	d.Set("client_id", app.Credentials.OauthClient.ClientId)

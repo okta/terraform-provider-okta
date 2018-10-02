@@ -6,15 +6,14 @@ import (
 	"strings"
 	"testing"
 
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
 )
 
-func deleteOAuthApps(artClient *articulateOkta.Client, client *okta.Client) error {
-	appList, _, err := client.Application.ListApplications(nil)
+func deleteOAuthApps(client *testClient) error {
+	appList, _, err := client.oktaClient.Application.ListApplications(nil)
 
 	if err != nil {
 		return err
@@ -23,7 +22,7 @@ func deleteOAuthApps(artClient *articulateOkta.Client, client *okta.Client) erro
 	for _, app := range appList {
 		if app, ok := app.(*okta.Application); ok {
 			if strings.HasPrefix(app.Label, testResourcePrefix) {
-				_, appErr := client.Application.DeleteApplication(app.Id)
+				_, appErr := client.oktaClient.Application.DeleteApplication(app.Id)
 
 				if appErr != nil {
 					err = appErr

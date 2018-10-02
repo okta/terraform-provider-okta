@@ -10,6 +10,11 @@ import (
 	"github.com/okta/okta-sdk-golang/okta"
 )
 
+type testClient struct {
+	oktaClient *okta.Client
+	artClient  *articulateOkta.Client
+}
+
 var testResourcePrefix = "testAcc"
 
 // TestMain overridden main testing function. Package level BeforeAll and AfterAll.
@@ -26,7 +31,7 @@ func TestMain(m *testing.M) {
 }
 
 // Sets up sweeper to clean up dangling resources
-func setupSweeper(resourceType string, del func(*articulateOkta.Client, *okta.Client) error) {
+func setupSweeper(resourceType string, del func(*testClient) error) {
 	resource.AddTestSweepers(resourceType, &resource.Sweeper{
 		Name: resourceType,
 		F: func(region string) error {
@@ -36,7 +41,7 @@ func setupSweeper(resourceType string, del func(*articulateOkta.Client, *okta.Cl
 				return err
 			}
 
-			return del(articulateOktaClient, client)
+			return del(&testClient{client, articulateOktaClient})
 		},
 	})
 }

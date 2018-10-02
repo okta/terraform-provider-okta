@@ -5,20 +5,17 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/okta/okta-sdk-golang/okta"
-
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func deletePasswordPolicies(artClient *articulateOkta.Client, client *okta.Client) error {
-	return deletePolicyByType(passwordPolicyType, artClient, client)
+func deletePasswordPolicies(client *testClient) error {
+	return deletePolicyByType(passwordPolicyType, client)
 }
 
-func deletePolicyByType(t string, artClient *articulateOkta.Client, client *okta.Client) error {
-	col, _, err := artClient.Policies.GetPoliciesByType(t)
+func deletePolicyByType(t string, client *testClient) error {
+	col, _, err := client.artClient.Policies.GetPoliciesByType(t)
 
 	if err != nil {
 		return fmt.Errorf("Failed to retrieve policies in order to properly destroy. Error: %s", err)
@@ -26,7 +23,7 @@ func deletePolicyByType(t string, artClient *articulateOkta.Client, client *okta
 
 	for _, policy := range col.Policies {
 		if strings.HasPrefix(policy.Name, testResourcePrefix) {
-			_, err = artClient.Policies.DeletePolicy(policy.ID)
+			_, err = client.artClient.Policies.DeletePolicy(policy.ID)
 		}
 	}
 
