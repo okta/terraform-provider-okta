@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 	"unicode"
 
@@ -194,4 +195,18 @@ func conditionalValidator(field string, typeValue string, require []string, vali
 	}
 
 	return nil
+}
+
+func validateIsURL(val interface{}, b string) ([]string, []error) {
+	val = val.(string)
+	re := regexp.MustCompile()
+	doesMatch, err := regexp.Match(`^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`)
+
+	if err != nil {
+		return nil, []error{err}
+	} else if !doesMatch {
+		return nil, []error{fmt.Errorf("failed to validate url, \"%s\"", val)}
+	}
+
+	return nil, nil
 }
