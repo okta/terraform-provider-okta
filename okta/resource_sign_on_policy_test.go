@@ -5,15 +5,12 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/okta/okta-sdk-golang/okta"
-
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func deleteSignOnPolicies(artClient *articulateOkta.Client, client *okta.Client) error {
-	return deletePolicyByType(signOnPolicyType, artClient, client)
+func deleteSignOnPolicies(client *testClient) error {
+	return deletePolicyByType(signOnPolicyType, client)
 }
 
 func TestAccOktaPoliciesDefaultErrors(t *testing.T) {
@@ -43,7 +40,7 @@ func TestAccOktaPoliciesRename(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createPolicyCheckDestroy(passwordPolicy),
+		CheckDestroy: createPolicyCheckDestroy(signOnPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -70,7 +67,7 @@ func TestAccOktaPolicySignOn(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createPolicyCheckDestroy(passwordPolicy),
+		CheckDestroy: createPolicyCheckDestroy(signOnPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -101,7 +98,7 @@ func TestAccOktaPolicySignOnPassErrors(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createPolicyCheckDestroy(passwordPolicy),
+		CheckDestroy: createPolicyCheckDestroy(signOnPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -119,7 +116,7 @@ func TestAccOktaPolicySignOnAuthErrors(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createPolicyCheckDestroy(passwordPolicy),
+		CheckDestroy: createPolicyCheckDestroy(signOnPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,

@@ -268,7 +268,7 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 		return nil
 	}
 
-	user, _, err := client.User.GetUser(d.Id(), nil)
+	user, _, err := client.User.GetUser(d.Id())
 
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Getting User from Okta: %v", err)
@@ -330,7 +330,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		profile := populateUserProfile(d)
 		userBody := okta.User{Profile: profile}
 
-		_, _, err := client.User.UpdateUser(d.Id(), userBody, nil)
+		_, _, err := client.User.UpdateUser(d.Id(), userBody)
 
 		if d.HasChange("admin_roles") {
 			err := updateAdminRolesOnUser(d.Id(), d.Get("admin_roles").([]interface{}), client)
@@ -360,8 +360,8 @@ func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
 		passes = 1
 	}
 
-	for i := 0; i < passes; i += 1 {
-		_, err := client.User.DeactivateOrDeleteUser(d.Id(), nil)
+	for i := 0; i < passes; i++ {
+		_, err := client.User.DeactivateOrDeleteUser(d.Id())
 
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Deleting User in Okta: %v", err)
@@ -375,7 +375,7 @@ func resourceUserExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	log.Printf("[INFO] Checking Exists for User %v", d.Get("login").(string))
 	client := m.(*Config).oktaClient
 
-	_, resp, err := client.User.GetUser(d.Id(), nil)
+	_, resp, err := client.User.GetUser(d.Id())
 
 	if err != nil {
 		return false, fmt.Errorf("[ERROR] Error Getting User from Okta: %v", err)
@@ -518,7 +518,7 @@ func assignAdminRolesToUser(u string, r []interface{}, c *okta.Client) error {
 	for _, role := range r {
 		if contains(validRoles, role.(string)) {
 			roleStruct := okta.Role{Type: role.(string)}
-			_, _, err := c.User.AddRoleToUser(u, roleStruct, nil)
+			_, _, err := c.User.AddRoleToUser(u, roleStruct)
 
 			if err != nil {
 				return fmt.Errorf("[ERROR] Error Assigning Admin Roles to User: %v", err)
@@ -540,7 +540,7 @@ func updateAdminRolesOnUser(u string, r []interface{}, c *okta.Client) error {
 	}
 
 	for _, role := range roles {
-		_, err := c.User.RemoveRoleFromUser(u, role.Id, nil)
+		_, err := c.User.RemoveRoleFromUser(u, role.Id)
 
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating Admin Roles On User: %v", err)
@@ -569,7 +569,7 @@ func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []
 // only allows transitions to certain statuses from other statuses - consult okta User API docs for more info
 // https://developer.okta.com/docs/api/resources/users#lifecycle-operations
 func updateUserStatus(u string, d string, c *okta.Client) error {
-	user, _, err := c.User.GetUser(u, nil)
+	user, _, err := c.User.GetUser(u)
 
 	if err != nil {
 		return err
@@ -578,12 +578,12 @@ func updateUserStatus(u string, d string, c *okta.Client) error {
 	var statusErr error
 	switch d {
 	case "SUSPENDED":
-		_, statusErr = c.User.SuspendUser(u, nil)
+		_, statusErr = c.User.SuspendUser(u)
 	case "DEPROVISIONED":
-		_, statusErr = c.User.DeactivateUser(u, nil)
+		_, statusErr = c.User.DeactivateUser(u)
 	case "ACTIVE":
 		if user.Status == "SUSPENDED" {
-			_, statusErr = c.User.UnsuspendUser(u, nil)
+			_, statusErr = c.User.UnsuspendUser(u)
 		} else {
 			_, _, statusErr = c.User.ActivateUser(u, nil)
 		}
@@ -605,7 +605,7 @@ func updateUserStatus(u string, d string, c *okta.Client) error {
 // need to wait for user.TransitioningToStatus field to be empty before allowing Terraform to continue
 // so the proper current status gets set in the state during the Read operation after a Status update
 func waitForStatusTransition(u string, c *okta.Client) error {
-	user, _, err := c.User.GetUser(u, nil)
+	user, _, err := c.User.GetUser(u)
 
 	if err != nil {
 		return err
@@ -618,7 +618,7 @@ func waitForStatusTransition(u string, c *okta.Client) error {
 			log.Printf("[INFO] Transitioning to status = %v; waiting for 5 more seconds...", user.TransitioningToStatus)
 			time.Sleep(5 * time.Second)
 
-			user, _, err = c.User.GetUser(u, nil)
+			user, _, err = c.User.GetUser(u)
 
 			if err != nil {
 				return err

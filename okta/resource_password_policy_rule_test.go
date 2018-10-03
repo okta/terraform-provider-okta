@@ -6,33 +6,31 @@ import (
 	"strings"
 	"testing"
 
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/okta/okta-sdk-golang/okta"
 )
 
-func deletePasswordPolicyRules(artClient *articulateOkta.Client, client *okta.Client) error {
-	return deletePolicyRulesByType(passwordPolicyType, artClient, client)
+func deletePasswordPolicyRules(client *testClient) error {
+	return deletePolicyRulesByType(passwordPolicyType, client)
 }
 
-func deletePolicyRulesByType(ruleType string, artClient *articulateOkta.Client, client *okta.Client) error {
-	policies, _, err := artClient.Policies.GetPoliciesByType(ruleType)
+func deletePolicyRulesByType(ruleType string, client *testClient) error {
+	policies, _, err := client.artClient.Policies.GetPoliciesByType(ruleType)
 
 	if err != nil {
 		return err
 	}
 
 	for _, policy := range policies.Policies {
-		rules, _, err := artClient.Policies.GetPolicyRules(policy.ID)
+		rules, _, err := client.artClient.Policies.GetPolicyRules(policy.ID)
 
 		if err == nil && rules != nil {
 			// Tests have always used default policy, I don't really think that is necessarily a good idea but
 			// leaving for now, that means we only delete the rules and not the policy, we can keep it around.
 			for _, rule := range rules.Rules {
 				if strings.HasPrefix(rule.Name, testResourcePrefix) {
-					_, err = artClient.Policies.DeletePolicyRule(policy.ID, rule.ID)
+					_, err = client.artClient.Policies.DeletePolicyRule(policy.ID, rule.ID)
 				}
 			}
 		}

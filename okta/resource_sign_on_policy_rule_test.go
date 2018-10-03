@@ -5,14 +5,12 @@ import (
 	"regexp"
 	"testing"
 
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/okta/okta-sdk-golang/okta"
 )
 
-func deleteSignOnPolicyRules(artClient *articulateOkta.Client, client *okta.Client) error {
-	return deletePolicyRulesByType(signOnPolicyType, artClient, client)
+func deleteSignOnPolicyRules(client *testClient) error {
+	return deletePolicyRulesByType(signOnPolicyType, client)
 }
 
 func TestAccOktaPolicyRuleDefaultErrors(t *testing.T) {
