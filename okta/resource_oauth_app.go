@@ -275,10 +275,6 @@ func resourceOAuthAppUpdate(d *schema.ResourceData, m interface{}) error {
 		}
 	}
 
-	if err != nil {
-		return err
-	}
-
 	return resourceOAuthAppRead(d, m)
 }
 
