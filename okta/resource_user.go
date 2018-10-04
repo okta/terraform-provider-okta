@@ -45,8 +45,8 @@ func resourceUser() *schema.Resource {
 				Description: "User country code",
 			},
 			"custom_profile_attributes": &schema.Schema{
-				Type:          schema.TypeMap,
-				Optional:      true,
+				Type:     schema.TypeMap,
+				Optional: true,
 			},
 			"department": &schema.Schema{
 				Type:        schema.TypeString,
@@ -368,4 +368,3 @@ func resourceUserExists(d *schema.ResourceData, m interface{}) (bool, error) {
 
 	return true, nil
 }
-

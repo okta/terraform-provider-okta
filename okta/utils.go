@@ -170,11 +170,11 @@ func is404(client *articulateOkta.Client) bool {
 
 // regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
 func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []error) {
-  re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-  if re.MatchString(val.(string)) == false {
-    errors = append(errors, fmt.Errorf("%s field not a valid email address", key))
-  }
-  return warnings, errors
+	re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+	if re.MatchString(val.(string)) == false {
+		errors = append(errors, fmt.Errorf("%s field not a valid email address", key))
+	}
+	return warnings, errors
 }
 
 // The best practices states that aggregate types should have error handling (think non-primitive). This will not attempt to set nil values.

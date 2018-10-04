@@ -28,18 +28,18 @@ func TestAccOktaUser_emailError(t *testing.T) {
 }
 
 func TestAccOktaUser_invalidCustomProfileAttribute(t *testing.T) {
-  rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
 
-  resource.Test(t, resource.TestCase{
-    PreCheck:  func() { testAccPreCheck(t) },
-    Providers: testAccProviders,
-    Steps: []resource.TestStep{
-      {
-        Config:      testOktaUserConfig_invalidCustomProfileAttribute(rName),
-        ExpectError: regexp.MustCompile("Api validation failed: newUser"),
-      },
-    },
-  })
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testOktaUserConfig_invalidCustomProfileAttribute(rName),
+				ExpectError: regexp.MustCompile("Api validation failed: newUser"),
+			},
+		},
+	})
 }
 
 func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
@@ -130,49 +130,49 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "zip_code", "11111"),
 				),
 			},
-      {
-        Config: testOktaUserConfig_removeFields(rName),
-        Check: resource.ComposeTestCheckFunc(
-          resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
-          resource.TestCheckResourceAttr(resourceName, "last_name", rName),
-          resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
-          resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
-        ),
-      },
+			{
+				Config: testOktaUserConfig_removeFields(rName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr(resourceName, "last_name", rName),
+					resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
+					resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
+				),
+			},
 		},
 	})
 }
 
 func TestAccOktaUser_customProfileAttributes(t *testing.T) {
-  rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
-  resourceName := "okta_user.test_acc_" + rName
+	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+	resourceName := "okta_user.test_acc_" + rName
 
-  resource.Test(t, resource.TestCase{
-    PreCheck:     func() { testAccPreCheck(t) },
-    Providers:    testAccProviders,
-    CheckDestroy: testAccCheckUserDestroy,
-    Steps: []resource.TestStep{
-      {
-        Config: testOktaUserConfig_customProfileAttributes(rName),
-        Check: resource.ComposeTestCheckFunc(
-          resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
-          resource.TestCheckResourceAttr(resourceName, "last_name", rName),
-          resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
-          resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
-          resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes.testAcc"+rName, "testing-custom-attribute"),
-        ),
-      },
-      {
-        Config: testOktaUserConfig_removeCustomProfileAttributes(rName),
-        Check: resource.ComposeTestCheckFunc(
-          resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
-          resource.TestCheckResourceAttr(resourceName, "last_name", rName),
-          resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
-          resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
-        ),
-      },
-    },
-  })
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckUserDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testOktaUserConfig_customProfileAttributes(rName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr(resourceName, "last_name", rName),
+					resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
+					resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
+					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes.testAcc"+rName, "testing-custom-attribute"),
+				),
+			},
+			{
+				Config: testOktaUserConfig_removeCustomProfileAttributes(rName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr(resourceName, "last_name", rName),
+					resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
+					resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
+				),
+			},
+		},
+	})
 }
 
 func testAccCheckUserDestroy(s *terraform.State) error {
@@ -192,7 +192,7 @@ func testAccCheckUserDestroy(s *terraform.State) error {
 }
 
 func testOktaUserConfig(r string) string {
-  return fmt.Sprintf(`
+	return fmt.Sprintf(`
 resource "okta_user" "test_acc_%s" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
@@ -205,7 +205,7 @@ resource "okta_user" "test_acc_%s" {
 }
 
 func testOktaUserConfig_customProfileAttributes(r string) string {
-  return fmt.Sprintf(`
+	return fmt.Sprintf(`
 resource "okta_user_schemas" "test-%s" {
   subschema = "custom"
   index     = "testAcc%s"
@@ -243,7 +243,7 @@ resource "okta_user" "test_acc_%s" {
 }
 
 func testOktaUserConfig_emailError(r string) string {
-  return fmt.Sprintf(`
+	return fmt.Sprintf(`
 resource "okta_user" "test_%s" {
   firstname = "testAcc"
   lastname  = "%s"
@@ -255,7 +255,7 @@ resource "okta_user" "test_%s" {
 }
 
 func testOktaUserConfig_invalidCustomProfileAttribute(r string) string {
-  return fmt.Sprintf(`
+	return fmt.Sprintf(`
 resource "okta_user" "test_acc_%s" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
@@ -271,7 +271,7 @@ resource "okta_user" "test_acc_%s" {
 }
 
 func testOktaUserConfig_removeCustomProfileAttributes(r string) string {
-  return fmt.Sprintf(`
+	return fmt.Sprintf(`
 resource "okta_user_schemas" "test-%s" {
   subschema = "custom"
   index     = "testAcc%s"
@@ -290,7 +290,7 @@ resource "okta_user" "test_acc_%s" {
 }
 
 func testOktaUserConfig_removeFields(r string) string {
-  return fmt.Sprintf(`
+	return fmt.Sprintf(`
 resource "okta_user" "test_acc_%s" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
@@ -302,7 +302,7 @@ resource "okta_user" "test_acc_%s" {
 }
 
 func testOktaUserConfig_updated(r string) string {
-  return fmt.Sprintf(`
+	return fmt.Sprintf(`
 resource "okta_user" "test_acc_%s" {
   admin_roles        = ["ORG_ADMIN"]
   first_name         = "TestAcc"
