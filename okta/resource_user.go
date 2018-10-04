@@ -281,7 +281,9 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 		r = append(r, role.Type)
 	}
 
-	d.Set("admin_roles", r)
+	return setNonPrimitives(d, map[string]interface{}{
+		"admin_roles": r,
+	})
 
 	return nil
 }
