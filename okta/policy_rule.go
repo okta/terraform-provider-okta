@@ -238,3 +238,7 @@ func createPolicyRuleImporter() *schema.ResourceImporter {
 		},
 	}
 }
+
+func ensureNotDefaultRule(d *schema.ResourceData) error {
+	return ensureNotDefault(d, "Rule")
+}

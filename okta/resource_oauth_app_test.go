@@ -150,7 +150,6 @@ func TestAccOktaOAuthApplicationBadGrantTypes(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PlanOnly:    true,
 				Config:      config,
 				ExpectError: regexp.MustCompile(`failed conditional validation for field "grant_types" of type "service", it can contain client_credentials, received implicit`),
 			},

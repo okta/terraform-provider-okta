@@ -60,14 +60,6 @@ var appGrantTypeMap = map[string]*applicationMap{
 
 func resourceOAuthApp() *schema.Resource {
 	return &schema.Resource{
-		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
-			grantTypeList := convertInterfaceToStringArr(d.Get("grant_types"))
-			appType := d.Get("type").(string)
-			appMap := appGrantTypeMap[appType]
-
-			// There is some conditional validation around grant types depending on application type.
-			return conditionalValidator("grant_types", appType, appMap.RequiredGrantTypes, appMap.ValidGrantTypes, grantTypeList)
-		},
 		Create: resourceOAuthAppCreate,
 		Read:   resourceOAuthAppRead,
 		Update: resourceOAuthAppUpdate,
@@ -202,13 +194,28 @@ func resourceOAuthAppExists(d *schema.ResourceData, m interface{}) (bool, error)
 	return app != nil && app.Id != "", err
 }
 
+func validateGrantTypes(d *schema.ResourceData) error {
+	grantTypeList := convertInterfaceToStringArr(d.Get("grant_types"))
+	appType := d.Get("type").(string)
+	appMap := appGrantTypeMap[appType]
+
+	// There is some conditional validation around grant types depending on application type.
+	return conditionalValidator("grant_types", appType, appMap.RequiredGrantTypes, appMap.ValidGrantTypes, grantTypeList)
+}
+
 func resourceOAuthAppCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
+	err := validateGrantTypes(d)
+
+	if err != nil {
+		return err
+	}
+
 	app := buildOAuthApp(d, m)
 	desiredStatus := d.Get("status").(string)
 	activate := desiredStatus == "ACTIVE"
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(app, params)
+	_, _, err = client.Application.CreateApplication(app, params)
 
 	if err != nil {
 		return err
@@ -250,8 +257,16 @@ func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceOAuthAppUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
+	err := validateGrantTypes(d)
+
+	if err != nil {
+		return err
+	}
 	app := buildOAuthApp(d, m)
-	_, _, err := client.Application.UpdateApplication(d.Id(), app)
+	_, _, err = client.Application.UpdateApplication(d.Id(), app)
+	if err != nil {
+		return err
+	}
 
 	desiredStatus := d.Get("status").(string)
 

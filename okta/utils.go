@@ -195,3 +195,13 @@ func conditionalValidator(field string, typeValue string, require []string, vali
 
 	return nil
 }
+
+func ensureNotDefault(d *schema.ResourceData, t string) error {
+	thing := fmt.Sprintf("Default %s", t)
+
+	if d.Get("name").(string) == thing {
+		return fmt.Errorf("%s is immutable", thing)
+	}
+
+	return nil
+}
