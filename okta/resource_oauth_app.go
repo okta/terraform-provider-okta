@@ -196,7 +196,8 @@ func resourceOAuthApp() *schema.Resource {
 }
 
 func resourceOAuthAppExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	app, err := fetchApp(d, m)
+	app := okta.NewOpenIdConnectApplication()
+	err := fetchApp(d, m, app)
 
 	// Not sure if a non-nil app with an empty ID is possible but checking to avoid false positives.
 	return app != nil && app.Id != "", err
@@ -220,7 +221,8 @@ func resourceOAuthAppCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
-	app, err := fetchApp(d, m)
+	app := okta.NewOpenIdConnectApplication()
+	err := fetchApp(d, m, app)
 
 	if err != nil {
 		return err
@@ -252,16 +254,12 @@ func resourceOAuthAppUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	app := buildOAuthApp(d, m)
 	_, _, err := client.Application.UpdateApplication(d.Id(), app)
+	if err != nil {
+		return err
+	}
 
 	desiredStatus := d.Get("status").(string)
-
-	if app.Status != desiredStatus {
-		if desiredStatus == "INACTIVE" {
-			client.Application.DeactivateApplication(d.Id())
-		} else if desiredStatus == "ACTIVE" {
-			client.Application.ActivateApplication(d.Id())
-		}
-	}
+	err = setAppStatus(d, client, app.Status, desiredStatus)
 
 	if err != nil {
 		return err
@@ -282,18 +280,18 @@ func resourceOAuthAppDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func fetchApp(d *schema.ResourceData, m interface{}) (*okta.OpenIdConnectApplication, error) {
+func fetchApp(d *schema.ResourceData, m interface{}, app okta.App) error {
 	client := getOktaClientFromMetadata(m)
 	params := &query.Params{}
-	newApp := &okta.OpenIdConnectApplication{}
-	_, response, err := client.Application.GetApplication(d.Id(), newApp, params)
+	_, response, err := client.Application.GetApplication(d.Id(), app, params)
 
 	// We don't want to consider a 404 an error in some cases and thus the delineation
 	if response.StatusCode == 404 {
-		return nil, nil
+		app = nil
+		return nil
 	}
 
-	return newApp, err
+	return err
 }
 
 func buildOAuthApp(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApplication {
@@ -354,4 +352,17 @@ func buildOAuthApp(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 	}
 
 	return app
+}
+
+func setAppStatus(d *schema.ResourceData, client *okta.Client, status string, desiredStatus string) error {
+	var err error
+	if status != desiredStatus {
+		if desiredStatus == "INACTIVE" {
+			_, err = client.Application.DeactivateApplication(d.Id())
+		} else if desiredStatus == "ACTIVE" {
+			_, err = client.Application.ActivateApplication(d.Id())
+		}
+	}
+
+	return err
 }

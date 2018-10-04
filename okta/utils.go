@@ -198,9 +198,7 @@ func conditionalValidator(field string, typeValue string, require []string, vali
 }
 
 func validateIsURL(val interface{}, b string) ([]string, []error) {
-	val = val.(string)
-	re := regexp.MustCompile()
-	doesMatch, err := regexp.Match(`^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`)
+	doesMatch, err := regexp.Match(`^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`, []byte(val.(string)))
 
 	if err != nil {
 		return nil, []error{err}
