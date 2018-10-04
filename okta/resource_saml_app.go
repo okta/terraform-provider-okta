@@ -27,6 +27,9 @@ func resourceSamlApp() *schema.Resource {
 				Optional:    true,
 				Description: "Name of preexisting SAML application.",
 			},
+			"preconfigured": &schema.Schema{
+				Type: schema.TypeBool,
+			},
 			"sign_on_mode": &schema.Schema{
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -43,6 +46,24 @@ func resourceSamlApp() *schema.Resource {
 				Default:      "ACTIVE",
 				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
 				Description:  "Status of application.",
+			},
+			"auto_submit_toolbar": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Display auto submit toolbar",
+			},
+			"hide_ios": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Do not display application icon on mobile app",
+			},
+			"hide_web": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Do not display application icon to users",
 			},
 			"default_relay_state": &schema.Schema{
 				Type:        schema.TypeString,
@@ -106,9 +127,10 @@ func resourceSamlApp() *schema.Resource {
 				Description: "Template for app user's username when a user is assigned to the app",
 			},
 			"subject_name_id_format": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Identifies the SAML processing rules.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "Identifies the SAML processing rules.",
+				ValidateFunc: validation.StringInSlice([]string{"EmailAddress", "x509SubjectName", "Persistent", "Transient"}, false),
 			},
 			"response_signed": &schema.Schema{
 				Type:        schema.TypeBool,
@@ -271,9 +293,19 @@ func buildSamlApp(d *schema.ResourceData, m interface{}) *okta.SamlApplication {
 	responseSigned := d.Get("response_signed").(bool)
 	assertionSigned := d.Get("assertion_signed").(bool)
 	honorForce := d.Get("honor_force_authn").(bool)
+	autoSubmit := d.Get("auto_submit_toolbar").(bool)
+	hideMobile := d.Get("hide_ios").(bool)
+	hideWeb := d.Get("hide_web").(bool)
 	app.Label = d.Get("label").(string)
 	app.Name = d.Get("name").(string)
 	app.Settings = okta.NewSamlApplicationSettings()
+	app.Visibility = &okta.ApplicationVisibility{
+		AutoSubmitToolbar: &autoSubmit,
+		Hide: &okta.ApplicationVisibilityHide{
+			IOS: &hideMobile,
+			Web: &hideWeb,
+		},
+	}
 	app.Settings.SignOn = &okta.SamlApplicationSettingsSignOn{
 		DefaultRelayState:     d.Get("default_relay_state").(string),
 		SsoAcsUrl:             d.Get("sso_url").(string),

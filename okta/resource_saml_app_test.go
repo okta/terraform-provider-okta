@@ -62,3 +62,24 @@ resource "%s" "%s" {
 }
 `, samlApp, name, name)
 }
+
+func buildTestSamlConfig(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+resource "%s" "%s" {
+  label       = "%s"
+}
+`, samlApp, name, name)
+}
+
+func buildTestSamlConfigUpdated(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+resource "%s" "%s" {
+  label       = "%s"
+  status 	  = "INACTIVE"
+}
+`, samlApp, name, name)
+}
