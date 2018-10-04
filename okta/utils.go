@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 	"unicode"
 
@@ -30,20 +31,32 @@ func camelCaseToUnderscore(s string) string {
 	return s
 }
 
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
+// Conditionally validates a slice of strings for required and valid values.
+func conditionalValidator(field string, typeValue string, require []string, valid []string, actual []string) error {
+	explanation := fmt.Sprintf("failed conditional validation for field \"%s\" of type \"%s\", it can contain %s", field, typeValue, strings.Join(valid, ", "))
+
+	if len(require) > 0 {
+		explanation = fmt.Sprintf("%s and must contain %s", explanation, strings.Join(require, ", "))
+	}
+
+	for _, val := range require {
+		if !contains(actual, val) {
+			return fmt.Errorf("%s, received %s", explanation, strings.Join(actual, ", "))
 		}
 	}
 
-	return false
+	for _, val := range actual {
+		if !contains(valid, val) {
+			return fmt.Errorf("%s, received %s", explanation, strings.Join(actual, ", "))
+		}
+	}
+
+	return nil
 }
 
-// Ensures at least one element is contained in provided slice. More performant version of contains(..) || contains(..)
-func containsOne(s []string, elements ...string) bool {
+func contains(s []string, e string) bool {
 	for _, a := range s {
-		if contains(elements, a) {
+		if a == e {
 			return true
 		}
 	}
@@ -62,6 +75,17 @@ func containsAll(s []string, elements ...string) bool {
 	return true
 }
 
+// Ensures at least one element is contained in provided slice. More performant version of contains(..) || contains(..)
+func containsOne(s []string, elements ...string) bool {
+	for _, a := range s {
+		if contains(elements, a) {
+			return true
+		}
+	}
+
+	return false
+}
+
 func convertBoolToInt(b bool) int {
 	if b == true {
 		return 1
@@ -69,12 +93,12 @@ func convertBoolToInt(b bool) int {
 	return 0
 }
 
-func convertStringArrToInterface(stringList []string) []interface{} {
-	arr := make([]interface{}, len(stringList))
-	for i, str := range stringList {
-		arr[i] = str
+func convertIntToBool(i int) bool {
+	if i > 0 {
+		return true
 	}
-	return arr
+
+	return false
 }
 
 func convertInterfaceToStringArr(purportedList interface{}) []string {
@@ -102,12 +126,28 @@ func convertInterfaceToStringArrNullable(purportedList interface{}) []string {
 	return arr
 }
 
-func convertIntToBool(i int) bool {
-	if i > 0 {
-		return true
+func convertStringArrToInterface(stringList []string) []interface{} {
+	arr := make([]interface{}, len(stringList))
+	for i, str := range stringList {
+		arr[i] = str
 	}
+	return arr
+}
 
-	return false
+// Allows you to chain multiple validation functions
+func createValidationChain(validationChain ...schema.SchemaValidateFunc) schema.SchemaValidateFunc {
+	return func(val interface{}, key string) ([]string, []error) {
+		var warningList []string
+		var errorList []error
+
+		for _, cb := range validationChain {
+			warnings, errors := cb(val, key)
+			errorList = append(errorList, errors...)
+			warningList = append(warningList, warnings...)
+		}
+
+		return warningList, errorList
+	}
 }
 
 func createValueDiffSuppression(newValueToIgnore string) schema.SchemaDiffSuppressFunc {
@@ -120,8 +160,21 @@ func getClientFromMetadata(meta interface{}) *articulateOkta.Client {
 	return meta.(*Config).articulateOktaClient
 }
 
+func getOktaClientFromMetadata(meta interface{}) *okta.Client {
+	return meta.(*Config).oktaClient
+}
+
 func is404(client *articulateOkta.Client) bool {
 	return client.OktaErrorCode == "E0000007"
+}
+
+// regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
+func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []error) {
+  re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+  if re.MatchString(val.(string)) == false {
+    errors = append(errors, fmt.Errorf("%s field not a valid email address", key))
+  }
+  return warnings, errors
 }
 
 // The best practices states that aggregate types should have error handling (think non-primitive). This will not attempt to set nil values.
@@ -145,52 +198,9 @@ func suppressDefaultedDiff(k, old, new string, d *schema.ResourceData) bool {
 	return new == ""
 }
 
-func getOktaClientFromMetadata(meta interface{}) *okta.Client {
-	return meta.(*Config).oktaClient
-}
-
 func validatePriority(in int, out int) error {
 	if in > 0 && in != out {
 		return fmt.Errorf("provided priority was not valid, got: %d, API responded with: %d. See schema for attribute details", in, out)
-	}
-
-	return nil
-}
-
-// Allows you to chain multiple validation functions
-func createValidationChain(validationChain ...schema.SchemaValidateFunc) schema.SchemaValidateFunc {
-	return func(val interface{}, key string) ([]string, []error) {
-		var warningList []string
-		var errorList []error
-
-		for _, cb := range validationChain {
-			warnings, errors := cb(val, key)
-			errorList = append(errorList, errors...)
-			warningList = append(warningList, warnings...)
-		}
-
-		return warningList, errorList
-	}
-}
-
-// Conditionally validates a slice of strings for required and valid values.
-func conditionalValidator(field string, typeValue string, require []string, valid []string, actual []string) error {
-	explanation := fmt.Sprintf("failed conditional validation for field \"%s\" of type \"%s\", it can contain %s", field, typeValue, strings.Join(valid, ", "))
-
-	if len(require) > 0 {
-		explanation = fmt.Sprintf("%s and must contain %s", explanation, strings.Join(require, ", "))
-	}
-
-	for _, val := range require {
-		if !contains(actual, val) {
-			return fmt.Errorf("%s, received %s", explanation, strings.Join(actual, ", "))
-		}
-	}
-
-	for _, val := range actual {
-		if !contains(valid, val) {
-			return fmt.Errorf("%s, received %s", explanation, strings.Join(actual, ", "))
-		}
 	}
 
 	return nil
