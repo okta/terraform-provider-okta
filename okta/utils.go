@@ -208,3 +208,13 @@ func validateIsURL(val interface{}, b string) ([]string, []error) {
 
 	return nil, nil
 }
+
+func ensureNotDefault(d *schema.ResourceData, t string) error {
+	thing := fmt.Sprintf("Default %s", t)
+
+	if d.Get("name").(string) == thing {
+		return fmt.Errorf("%s is immutable", thing)
+	}
+
+	return nil
+}

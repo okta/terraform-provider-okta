@@ -20,9 +20,6 @@ func resourcePasswordPolicyRule() *schema.Resource {
 
 		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
 			// user cannot edit a default policy rule
-			if d.Get("name").(string) == "Default Rule" {
-				return fmt.Errorf("You cannot edit a default Policy Rule")
-			}
 
 			return nil
 		},
@@ -54,6 +51,10 @@ func resourcePasswordPolicyRule() *schema.Resource {
 }
 
 func resourcePasswordPolicyRuleCreate(d *schema.ResourceData, m interface{}) error {
+	if err := ensureNotDefaultRule(d); err != nil {
+		return err
+	}
+
 	log.Printf("[INFO] Creating Policy Rule %v", d.Get("name").(string))
 	client := getClientFromMetadata(m)
 	template := buildPasswordPolicyRule(d, client)
@@ -89,6 +90,10 @@ func resourcePasswordPolicyRuleRead(d *schema.ResourceData, m interface{}) error
 }
 
 func resourcePasswordPolicyRuleUpdate(d *schema.ResourceData, m interface{}) error {
+	if err := ensureNotDefaultRule(d); err != nil {
+		return err
+	}
+
 	log.Printf("[INFO] Update Policy Rule %v", d.Get("name").(string))
 	client := getClientFromMetadata(m)
 	template := buildPasswordPolicyRule(d, client)
@@ -107,6 +112,10 @@ func resourcePasswordPolicyRuleUpdate(d *schema.ResourceData, m interface{}) err
 }
 
 func resourcePasswordPolicyRuleDelete(d *schema.ResourceData, m interface{}) error {
+	if err := ensureNotDefaultRule(d); err != nil {
+		return err
+	}
+
 	log.Printf("[INFO] Delete Policy Rule %v", d.Get("name").(string))
 	client := getClientFromMetadata(m)
 

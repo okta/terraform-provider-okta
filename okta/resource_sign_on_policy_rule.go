@@ -18,15 +18,6 @@ func resourceSignOnPolicyRule() *schema.Resource {
 		Delete:   resourceSignOnPolicyRuleDelete,
 		Importer: createPolicyRuleImporter(),
 
-		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
-			// user cannot edit a default policy rule
-			if d.Get("name").(string) == "Default Rule" {
-				return fmt.Errorf("You cannot edit a default Policy Rule")
-			}
-
-			return nil
-		},
-
 		Schema: buildRuleSchema(map[string]*schema.Schema{
 			"authtype": {
 				Type:         schema.TypeString,
@@ -88,6 +79,10 @@ func resourceSignOnPolicyRule() *schema.Resource {
 }
 
 func resourceSignOnPolicyRuleCreate(d *schema.ResourceData, m interface{}) error {
+	if err := ensureNotDefaultRule(d); err != nil {
+		return err
+	}
+
 	log.Printf("[INFO] Creating Policy Rule %v", d.Get("name").(string))
 	template, err := buildSignOnPolicyRule(d, m)
 	if err != nil {
@@ -140,6 +135,10 @@ func resourceSignOnPolicyRuleRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceSignOnPolicyRuleUpdate(d *schema.ResourceData, m interface{}) error {
+	if err := ensureNotDefaultRule(d); err != nil {
+		return err
+	}
+
 	log.Printf("[INFO] Update Policy Rule %v", d.Get("name").(string))
 	template, err := buildSignOnPolicyRule(d, m)
 	if err != nil {
@@ -160,6 +159,10 @@ func resourceSignOnPolicyRuleUpdate(d *schema.ResourceData, m interface{}) error
 }
 
 func resourceSignOnPolicyRuleDelete(d *schema.ResourceData, m interface{}) error {
+	if err := ensureNotDefaultRule(d); err != nil {
+		return err
+	}
+
 	log.Printf("[INFO] Delete Policy Rule %v", d.Get("name").(string))
 	client := m.(*Config).articulateOktaClient
 

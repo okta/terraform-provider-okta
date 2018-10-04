@@ -60,14 +60,6 @@ var appGrantTypeMap = map[string]*applicationMap{
 
 func resourceOAuthApp() *schema.Resource {
 	return &schema.Resource{
-		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
-			grantTypeList := convertInterfaceToStringArr(d.Get("grant_types"))
-			appType := d.Get("type").(string)
-			appMap := appGrantTypeMap[appType]
-
-			// There is some conditional validation around grant types depending on application type.
-			return conditionalValidator("grant_types", appType, appMap.RequiredGrantTypes, appMap.ValidGrantTypes, grantTypeList)
-		},
 		Create: resourceOAuthAppCreate,
 		Read:   resourceOAuthAppRead,
 		Update: resourceOAuthAppUpdate,
@@ -203,8 +195,21 @@ func resourceOAuthAppExists(d *schema.ResourceData, m interface{}) (bool, error)
 	return app != nil && app.Id != "", err
 }
 
+func validateGrantTypes(d *schema.ResourceData) error {
+	grantTypeList := convertInterfaceToStringArr(d.Get("grant_types"))
+	appType := d.Get("type").(string)
+	appMap := appGrantTypeMap[appType]
+
+	// There is some conditional validation around grant types depending on application type.
+	return conditionalValidator("grant_types", appType, appMap.RequiredGrantTypes, appMap.ValidGrantTypes, grantTypeList)
+}
+
 func resourceOAuthAppCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
+	if err := validateGrantTypes(d); err != nil {
+		return err
+	}
+
 	app := buildOAuthApp(d, m)
 	desiredStatus := d.Get("status").(string)
 	activate := desiredStatus == "ACTIVE"
@@ -252,6 +257,10 @@ func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceOAuthAppUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
+	if err := validateGrantTypes(d); err != nil {
+		return err
+	}
+
 	app := buildOAuthApp(d, m)
 	_, _, err := client.Application.UpdateApplication(d.Id(), app)
 	if err != nil {
@@ -260,10 +269,6 @@ func resourceOAuthAppUpdate(d *schema.ResourceData, m interface{}) error {
 
 	desiredStatus := d.Get("status").(string)
 	err = setAppStatus(d, client, app.Status, desiredStatus)
-
-	if err != nil {
-		return err
-	}
 
 	return resourceOAuthAppRead(d, m)
 }

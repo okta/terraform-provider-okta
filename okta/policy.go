@@ -174,3 +174,7 @@ func resourcePolicyExists(d *schema.ResourceData, m interface{}) (b bool, e erro
 
 	return true, nil
 }
+
+func ensureNotDefaultPolicy(d *schema.ResourceData) error {
+	return ensureNotDefault(d, "Policy")
+}
