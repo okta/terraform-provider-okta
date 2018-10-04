@@ -20,15 +20,6 @@ func resourcePasswordPolicy() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
-		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
-			// user cannot edit a default policy
-			if d.Get("name").(string) == "Default Policy" {
-				return fmt.Errorf("You cannot edit a default Policy")
-			}
-
-			return nil
-		},
-
 		Schema: buildPolicySchema(map[string]*schema.Schema{
 			"auth_provider": {
 				Type:         schema.TypeString,
@@ -179,6 +170,10 @@ func resourcePasswordPolicy() *schema.Resource {
 }
 
 func resourcePasswordPolicyCreate(d *schema.ResourceData, m interface{}) error {
+	if err := ensureNotDefaultPolicy(d); err != nil {
+		return err
+	}
+
 	log.Printf("[INFO] Creating Policy %v", d.Get("name").(string))
 	template := buildPasswordPolicy(d, m)
 	err := createPolicy(d, m, template)
@@ -248,6 +243,10 @@ func resourcePasswordPolicyRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourcePasswordPolicyUpdate(d *schema.ResourceData, m interface{}) error {
+	if err := ensureNotDefaultPolicy(d); err != nil {
+		return err
+	}
+
 	log.Printf("[INFO] Update Policy %v", d.Get("name").(string))
 	d.Partial(true)
 
@@ -262,6 +261,10 @@ func resourcePasswordPolicyUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourcePasswordPolicyDelete(d *schema.ResourceData, m interface{}) error {
+	if err := ensureNotDefaultPolicy(d); err != nil {
+		return err
+	}
+
 	log.Printf("[INFO] Delete Policy %v", d.Get("name").(string))
 	client := m.(*Config).articulateOktaClient
 

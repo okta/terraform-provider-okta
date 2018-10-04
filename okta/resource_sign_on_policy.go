@@ -19,22 +19,15 @@ func resourceSignOnPolicy() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
-		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
-			// user cannot edit a default policy
-			// editing default Password Policies not supported in the Okta api
-			// please upvote the support request here: https://support.okta.com/help/ideas/viewIdea.apexp?id=0870Z000000SS6mQAG
-			if d.Get("name").(string) == "Default Policy" {
-				return fmt.Errorf("You cannot edit a default Policy")
-			}
-
-			return nil
-		},
-
 		Schema: basePolicySchema,
 	}
 }
 
 func resourceSignOnPolicyCreate(d *schema.ResourceData, m interface{}) error {
+	if err := ensureNotDefaultPolicy(d); err != nil {
+		return err
+	}
+
 	log.Printf("[INFO] Creating Policy %v", d.Get("name").(string))
 
 	template := buildSignOnPolicy(d, m)
@@ -58,6 +51,10 @@ func resourceSignOnPolicyRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceSignOnPolicyUpdate(d *schema.ResourceData, m interface{}) error {
+	if err := ensureNotDefaultPolicy(d); err != nil {
+		return err
+	}
+
 	log.Printf("[INFO] Update Policy %v", d.Get("name").(string))
 	d.Partial(true)
 	template := buildSignOnPolicy(d, m)
@@ -71,6 +68,10 @@ func resourceSignOnPolicyUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceSignOnPolicyDelete(d *schema.ResourceData, m interface{}) error {
+	if err := ensureNotDefaultPolicy(d); err != nil {
+		return err
+	}
+
 	log.Printf("[INFO] Delete Policy %v", d.Get("name").(string))
 	client := m.(*Config).articulateOktaClient
 	_, err := client.Policies.DeletePolicy(d.Id())

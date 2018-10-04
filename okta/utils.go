@@ -156,6 +156,16 @@ func createValueDiffSuppression(newValueToIgnore string) schema.SchemaDiffSuppre
 	}
 }
 
+func ensureNotDefault(d *schema.ResourceData, t string) error {
+	thing := fmt.Sprintf("Default %s", t)
+
+	if d.Get("name").(string) == thing {
+		return fmt.Errorf("%s is immutable", thing)
+	}
+
+	return nil
+}
+
 func getClientFromMetadata(meta interface{}) *articulateOkta.Client {
 	return meta.(*Config).articulateOktaClient
 }

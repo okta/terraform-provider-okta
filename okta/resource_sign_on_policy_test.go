@@ -18,13 +18,13 @@ func TestAccOktaPoliciesDefaultErrors(t *testing.T) {
 	config := testOktaPolicySignOnDefaultErrors(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createPolicyCheckDestroy(signOnPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
-				ExpectError: regexp.MustCompile("You cannot edit a default Policy"),
-				PlanOnly:    true,
+				ExpectError: regexp.MustCompile("Default Policy is immutable"),
 			},
 		},
 	})
