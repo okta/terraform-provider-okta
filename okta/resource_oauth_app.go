@@ -205,9 +205,7 @@ func validateGrantTypes(d *schema.ResourceData) error {
 
 func resourceOAuthAppCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	err := validateGrantTypes(d)
-
-	if err != nil {
+	if err := validateGrantTypes(d); err != nil {
 		return err
 	}
 
@@ -215,7 +213,7 @@ func resourceOAuthAppCreate(d *schema.ResourceData, m interface{}) error {
 	desiredStatus := d.Get("status").(string)
 	activate := desiredStatus == "ACTIVE"
 	params := &query.Params{Activate: &activate}
-	_, _, err = client.Application.CreateApplication(app, params)
+	_, _, err := client.Application.CreateApplication(app, params)
 
 	if err != nil {
 		return err
@@ -257,13 +255,12 @@ func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceOAuthAppUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	err := validateGrantTypes(d)
-
-	if err != nil {
+	if err := validateGrantTypes(d); err != nil {
 		return err
 	}
+
 	app := buildOAuthApp(d, m)
-	_, _, err = client.Application.UpdateApplication(d.Id(), app)
+	_, _, err := client.Application.UpdateApplication(d.Id(), app)
 	if err != nil {
 		return err
 	}
