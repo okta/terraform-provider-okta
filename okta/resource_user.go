@@ -278,9 +278,13 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 
 	d.Set("status", user.Status)
 
-	if err = setUserProfileAttributes(d, user); err != nil { return err }
+	if err = setUserProfileAttributes(d, user); err != nil {
+		return err
+	}
 
-	if err = setAdminRoles(d, client); err != nil { return err }
+	if err = setAdminRoles(d, client); err != nil {
+		return err
+	}
 
 	return setGroups(d, client)
 }

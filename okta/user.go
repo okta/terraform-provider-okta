@@ -282,7 +282,9 @@ func updateGroupsOnUser(u string, g []interface{}, c *okta.Client) error {
 		}
 	}
 
-	if err = assignGroupsToUser(u, g, c); err != nil { return err }
+	if err = assignGroupsToUser(u, g, c); err != nil {
+		return err
+	}
 
 	return nil
 }
