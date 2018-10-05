@@ -59,50 +59,48 @@ func TestAccOktaUser_emailError(t *testing.T) {
 	})
 }
 
-func TestAccOktaUser_groupMembership(t *testing.T) {
-	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
-	resourceName := "okta_user.test_acc_" + rName
+// func TestAccOktaUser_groupMembership(t *testing.T) {
+// 	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+// 	resourceName := "okta_user.test_acc_" + rName
 
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckUserDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testOktaUserConfig_groupAssign(rName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
-					resource.TestCheckResourceAttr(resourceName, "last_name", rName),
-					resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
-					resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
-					resource.TestCheckResourceAttr(resourceName, "group_memberships.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "group_memberships.0", "00gelojjimp9rOokb0h7"),
-				),
-			},
-			{
-				Config: testOktaUserConfig_groupUnassign(rName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
-					resource.TestCheckResourceAttr(resourceName, "last_name", rName),
-					resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
-					resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
-					resource.TestCheckResourceAttr(resourceName, "group_memberships.#", "0"),
-				),
-			},
-			{
-				Config: testOktaUserConfig_groupAssign(rName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
-					resource.TestCheckResourceAttr(resourceName, "last_name", rName),
-					resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
-					resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
-					resource.TestCheckResourceAttr(resourceName, "group_memberships.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "group_memberships.0", "00gelojjimp9rOokb0h7"),
-				),
-			},
-		},
-	})
-}
+// 	resource.Test(t, resource.TestCase{
+// 		PreCheck:     func() { testAccPreCheck(t) },
+// 		Providers:    testAccProviders,
+// 		CheckDestroy: testAccCheckUserDestroy,
+// 		Steps: []resource.TestStep{
+// 			{
+// 				Config: testOktaUserConfig_groupAssign(rName),
+// 				Check: resource.ComposeTestCheckFunc(
+// 					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+// 					resource.TestCheckResourceAttr(resourceName, "last_name", rName),
+// 					resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
+// 					resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
+// 					resource.TestCheckResourceAttr(resourceName, "group_memberships.#", "1"),
+// 				),
+// 			},
+// 			{
+// 				Config: testOktaUserConfig_groupUnassign(rName),
+// 				Check: resource.ComposeTestCheckFunc(
+// 					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+// 					resource.TestCheckResourceAttr(resourceName, "last_name", rName),
+// 					resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
+// 					resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
+// 					resource.TestCheckResourceAttr(resourceName, "group_memberships.#", "0"),
+// 				),
+// 			},
+// 			{
+// 				Config: testOktaUserConfig_groupAssign(rName),
+// 				Check: resource.ComposeTestCheckFunc(
+// 					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+// 					resource.TestCheckResourceAttr(resourceName, "last_name", rName),
+// 					resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
+// 					resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
+// 					resource.TestCheckResourceAttr(resourceName, "group_memberships.#", "1"),
+// 				),
+// 			},
+// 		},
+// 	})
+// }
 
 func TestAccOktaUser_invalidCustomProfileAttribute(t *testing.T) {
 	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
@@ -306,29 +304,39 @@ resource "okta_user" "test_%s" {
 `, r, r, r)
 }
 
-func testOktaUserConfig_groupAssign(r string) string {
-	return fmt.Sprintf(`
-resource "okta_user" "test_acc_%s" {
-  first_name  = "TestAcc"
-  last_name   = "%s"
-  login       = "test-acc-%s@testing.com"
-  email       = "test-acc-%s@testing.com"
+// func testOktaUserConfig_groupAssign(r string) string {
+// 	return fmt.Sprintf(`
+// resource "okta_group" "test_acc_%s" {
+//   name        = "TestACC-%s"
+//   description = "An acceptance test created group"
+// }
 
-  group_memberships = ["00gelojjimp9rOokb0h7"]
-}
-`, r, r, r, r)
-}
+// resource "okta_user" "test_acc_%s" {
+//   first_name  = "TestAcc"
+//   last_name   = "%s"
+//   login       = "test-acc-%s@testing.com"
+//   email       = "test-acc-%s@testing.com"
 
-func testOktaUserConfig_groupUnassign(r string) string {
-	return fmt.Sprintf(`
-resource "okta_user" "test_acc_%s" {
-  first_name  = "TestAcc"
-  last_name   = "%s"
-  login       = "test-acc-%s@testing.com"
-  email       = "test-acc-%s@testing.com"
-}
-`, r, r, r, r)
-}
+//   group_memberships = ["${okta_group.test_acc_%s.id}"]
+// }
+// `, r, r, r, r, r, r, r)
+// }
+
+// func testOktaUserConfig_groupUnassign(r string) string {
+// 	return fmt.Sprintf(`
+// resource "okta_group" "test_acc_%s" {
+//   name        = "TestACC-%s"
+//   description = "An acceptance test created group"
+// }
+
+// resource "okta_user" "test_acc_%s" {
+//   first_name  = "TestAcc"
+//   last_name   = "%s"
+//   login       = "test-acc-%s@testing.com"
+//   email       = "test-acc-%s@testing.com"
+// }
+// `, r, r, r, r, r, r)
+// }
 
 func testOktaUserConfig_invalidCustomProfileAttribute(r string) string {
 	return fmt.Sprintf(`
