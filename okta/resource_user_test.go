@@ -89,6 +89,17 @@ func TestAccOktaUser_groupMembership(t *testing.T) {
           resource.TestCheckResourceAttr(resourceName, "group_memberships.#", "0"),
         ),
       },
+      {
+        Config: testOktaUserConfig_groupAssign(rName),
+        Check: resource.ComposeTestCheckFunc(
+          resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+          resource.TestCheckResourceAttr(resourceName, "last_name", rName),
+          resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
+          resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
+          resource.TestCheckResourceAttr(resourceName, "group_memberships.#", "1"),
+          resource.TestCheckResourceAttr(resourceName, "group_memberships.0", "00gelojjimp9rOokb0h7"),
+        ),
+      },
     },
   })
 }
