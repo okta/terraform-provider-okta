@@ -29,6 +29,18 @@ func assignAdminRolesToUser(u string, r []interface{}, c *okta.Client) error {
 	return nil
 }
 
+func assignGroupsToUser(u string, g []interface{}, c *okta.Client) error {
+	for _, group := range g {
+		_, err := c.Group.AddUserToGroup(group.(string), u)
+
+		if err != nil {
+			return fmt.Errorf("[ERROR] Error Assigning Group to User: %v", err)
+		}
+	}
+
+	return nil
+}
+
 func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 	profile := okta.UserProfile{}
 
@@ -158,6 +170,48 @@ func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 	return &profile
 }
 
+func setAdminRoles(d *schema.ResourceData, c *okta.Client) error {
+	// set all roles currently attached to user in state
+	roles, _, err := c.User.ListAssignedRoles(d.Id(), nil)
+
+	if err != nil {
+		return err
+	}
+
+	roleTypes := make([]string, 0)
+	for _, role := range roles {
+		roleTypes = append(roleTypes, role.Type)
+	}
+
+	// set the custom_profile_attributes values
+	return setNonPrimitives(d, map[string]interface{}{
+		"admin_roles": roleTypes,
+	})
+}
+
+func setGroups(d *schema.ResourceData, c *okta.Client) error {
+	// set all groups currently attached to user in state
+	groups, _, err := c.User.ListUserGroups(d.Id(), nil)
+
+	groupIds := make([]string, 0)
+
+	// ignore saving the Everyone group into state so we don't end up with perpetual diffs
+	for _, group := range groups {
+		if group.Profile.Name != "Everyone" {
+			groupIds = append(groupIds, group.Id)
+		}
+	}
+
+	if err != nil {
+		return err
+	}
+
+	// set the custom_profile_attributes values
+	return setNonPrimitives(d, map[string]interface{}{
+		"group_memberships": groupIds,
+	})
+}
+
 func setUserProfileAttributes(d *schema.ResourceData, u *okta.User) error {
 	// any profile attributes that aren't explicitly outlined in the okta_user schema
 	// (ie. first_name) can be considered customAttributes
@@ -206,6 +260,29 @@ func updateAdminRolesOnUser(u string, r []interface{}, c *okta.Client) error {
 	if err != nil {
 		return err
 	}
+
+	return nil
+}
+
+// need to remove from all current groups and reassign based on terraform configs when a change is detected
+func updateGroupsOnUser(u string, g []interface{}, c *okta.Client) error {
+	groups, _, err := c.User.ListUserGroups(u, nil)
+
+	if err != nil {
+		return fmt.Errorf("[ERROR] Error Updating Groups On User: %v", err)
+	}
+
+	for _, group := range groups {
+		if group.Profile.Name != "Everyone" {
+			_, err := c.Group.RemoveGroupUser(group.Id, u)
+
+			if err != nil {
+				return fmt.Errorf("[ERROR] Error Updating Groups On User: %v", err)
+			}
+		}
+	}
+
+	if err = assignGroupsToUser(u, g, c); err != nil { return err }
 
 	return nil
 }

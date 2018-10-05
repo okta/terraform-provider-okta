@@ -79,6 +79,12 @@ func resourceUser() *schema.Resource {
 				Required:    true,
 				Description: "User first name",
 			},
+			"group_memberships": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "The groups that you want this user to be a part of",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"honorific_prefix": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -239,6 +245,15 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		}
 	}
 
+	// group assigning can only happen after the user is created as well
+	if len(d.Get("group_memberships").([]interface{})) > 0 {
+		err = assignGroupsToUser(user.Id, d.Get("group_memberships").([]interface{}), client)
+
+		if err != nil {
+			return err
+		}
+	}
+
 	// status changing can only happen after user is created as well
 	if d.Get("status").(string) == "SUSPENDED" || d.Get("status").(string) == "DEPROVISIONED" {
 		err := updateUserStatus(user.Id, d.Get("status").(string), client)
@@ -263,29 +278,11 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 
 	d.Set("status", user.Status)
 
-	err = setUserProfileAttributes(d, user)
+	if err = setUserProfileAttributes(d, user); err != nil { return err }
 
-	if err != nil {
-		return err
-	}
+	if err = setAdminRoles(d, client); err != nil { return err }
 
-	// set all roles currently attached to user in state
-	roles, _, err := client.User.ListAssignedRoles(d.Id(), nil)
-
-	if err != nil {
-		return err
-	}
-
-	r := make([]string, 0)
-	for _, role := range roles {
-		r = append(r, role.Type)
-	}
-
-	return setNonPrimitives(d, map[string]interface{}{
-		"admin_roles": r,
-	})
-
-	return nil
+	return setGroups(d, client)
 }
 
 func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
@@ -321,6 +318,18 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 			if err != nil {
 				return err
 			}
+		}
+
+		if d.HasChange("group_memberships") {
+			err := updateGroupsOnUser(d.Id(), d.Get("group_memberships").([]interface{}), client)
+
+			if err != nil {
+				return err
+			}
+		}
+
+		if len(d.Get("group_memberships").([]interface{})) > 0 {
+			return nil
 		}
 
 		if err != nil {
