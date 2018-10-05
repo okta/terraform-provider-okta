@@ -174,9 +174,7 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "last_name", rName),
 					resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
 					resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
-          resource.TestCheckResourceAttr(resourceName, "admin_roles.#", "2"),
-          resource.TestCheckResourceAttr(resourceName, "admin_roles.0", "APP_ADMIN"),
-          resource.TestCheckResourceAttr(resourceName, "admin_roles.1", "USER_ADMIN"),
+          resource.TestCheckResourceAttr(resourceName, "admin_roles.#", "0"),
 				),
 			},
 		},
@@ -359,7 +357,6 @@ resource "okta_user" "test_acc_%s" {
 func testOktaUserConfig_removeFields(r string) string {
 	return fmt.Sprintf(`
 resource "okta_user" "test_acc_%s" {
-  admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "%s"
   login       = "test-acc-%s@testing.com"
