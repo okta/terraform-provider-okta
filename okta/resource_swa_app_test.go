@@ -9,7 +9,7 @@ import (
 	"github.com/okta/okta-sdk-golang/okta"
 )
 
-// Test creation of a simple AWS app. The preconfigured apps are created by name.
+// Test creation of a simple AWS SWA app. The preconfigured apps are created by name.
 func TestAccOktaSamlApplicationPreconfig(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSamlConfigPreconfig(ri)
@@ -113,43 +113,6 @@ resource "%s" "%s" {
   label       = "%s"
   sso_url      = "http://google.com"
   status 	  = "INACTIVE"
-}
-`, samlApp, name, name)
-}
-
-func buildTestSamlConfigAllFields(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  label       				= "%s"
-  sso_url      				= "http://google.com"
-  sso_url_override 			= "http://override.com/test"
-  recipient 				= "http://here.com"
-  recipient_override 		= "http://no-here.com"
-  destination 				= "http://its-about-the-journey.com"
-  destination_override 		= "http://out-of-order.com"
-  audience 					= "http://audience.com"
-  audience_override	 		= "http://stuff.com"
-  idp_issuer 				= "idhere123"
-  subject_name_id_template 	= "${source.login}"
-  subject_name_id_format 	= "EmailAddress"
-  response_signed 			= true
-  assertion_signed 			= true
-  signature_algorithm 		= "RSA-SHA1"
-  digest_algorithm 			= "SHA1"
-  honor_force_authn			= true
-  authn_context_class_ref 	= "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
-  attribute_statements 		= [
-	  {
-		  type      = "EXPRESSION"
-		  name 		= "Attribute"
-		  namespace = "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
-		  values	= [
-			  "value"
-		  ] 
-	  }
-  ]
 }
 `, samlApp, name, name)
 }

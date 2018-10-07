@@ -1,6 +1,8 @@
 package okta
 
 import (
+	"runtime"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
@@ -9,9 +11,6 @@ import (
 
 func resourceSamlApp() *schema.Resource {
 	return &schema.Resource{
-		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
-			return nil
-		},
 		Create: resourceSamlAppCreate,
 		Read:   resourceSamlAppRead,
 		Update: resourceSamlAppUpdate,
@@ -26,9 +25,6 @@ func resourceSamlApp() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Name of preexisting SAML application.",
-			},
-			"preconfigured": &schema.Schema{
-				Type: schema.TypeBool,
 			},
 			"sign_on_mode": &schema.Schema{
 				Type:        schema.TypeString,
@@ -107,24 +103,32 @@ func resourceSamlApp() *schema.Resource {
 				ValidateFunc: validateIsURL,
 			},
 			"audience": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Audience URI",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "Audience URI",
+				ValidateFunc: validateIsURL,
 			},
 			"audience_override": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Audience URI override",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "Audience URI override",
+				ValidateFunc: validateIsURL,
 			},
 			"idp_issuer": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "SAML issuer ID",
 			},
+			"sp_issuer": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "SAML SP issuer ID",
+			},
 			"subject_name_id_template": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Template for app user's username when a user is assigned to the app",
+				// Can I validate that it is an interpolation template ${}
 			},
 			"subject_name_id_format": &schema.Schema{
 				Type:         schema.TypeString,
@@ -136,6 +140,11 @@ func resourceSamlApp() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "Determines whether the SAML auth response message is digitally signed",
+			},
+			"request_compressed": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Denotes whether the request is compressed or not.",
 			},
 			"assertion_signed": &schema.Schema{
 				Type:        schema.TypeBool,
@@ -171,6 +180,12 @@ func resourceSamlApp() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeMap,
 					Elem: map[string]*schema.Schema{
+						"type": &schema.Schema{
+							Type:         schema.TypeString,
+							Required:     true,
+							Description:  "The type of attribute statement.",
+							ValidateFunc: validation.StringInSlice([]string{"EXPRESSION"}, false),
+						},
 						"name": &schema.Schema{
 							Type:        schema.TypeString,
 							Required:    true,
@@ -198,7 +213,7 @@ func resourceSamlApp() *schema.Resource {
 }
 
 func resourceSamlAppExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	app := okta.NewSamlApplication()
+	app := okta.NewApplication()
 	err := fetchApp(d, m, app)
 
 	// Not sure if a non-nil app with an empty ID is possible but checking to avoid false positives.
@@ -206,8 +221,9 @@ func resourceSamlAppExists(d *schema.ResourceData, m interface{}) (bool, error) 
 }
 
 func resourceSamlAppCreate(d *schema.ResourceData, m interface{}) error {
+	runtime.Breakpoint()
 	client := getOktaClientFromMetadata(m)
-	app := buildSamlApp(d, m)
+	app := buildApp(d, m)
 	activate := d.Get("status").(string) == "ACTIVE"
 	params := &query.Params{Activate: &activate}
 	_, _, err := client.Application.CreateApplication(app, params)
@@ -257,7 +273,7 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceSamlAppUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildSamlApp(d, m)
+	app := buildApp(d, m)
 	_, _, err := client.Application.UpdateApplication(d.Id(), app)
 
 	if err != nil {
@@ -286,9 +302,12 @@ func resourceSamlAppDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func buildSamlApp(d *schema.ResourceData, m interface{}) *okta.SamlApplication {
+func buildApp(d *schema.ResourceData, m interface{}) *okta.SamlApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewSamlApplication()
+	app.Label = d.Get("label").(string)
+	app.Name = d.Get("name").(string)
+	app.SignOnMode = "SAML_2_0"
 
 	responseSigned := d.Get("response_signed").(bool)
 	assertionSigned := d.Get("assertion_signed").(bool)
@@ -296,8 +315,6 @@ func buildSamlApp(d *schema.ResourceData, m interface{}) *okta.SamlApplication {
 	autoSubmit := d.Get("auto_submit_toolbar").(bool)
 	hideMobile := d.Get("hide_ios").(bool)
 	hideWeb := d.Get("hide_web").(bool)
-	app.Label = d.Get("label").(string)
-	app.Name = d.Get("name").(string)
 	app.Settings = okta.NewSamlApplicationSettings()
 	app.Visibility = &okta.ApplicationVisibility{
 		AutoSubmitToolbar: &autoSubmit,
@@ -325,9 +342,6 @@ func buildSamlApp(d *schema.ResourceData, m interface{}) *okta.SamlApplication {
 		HonorForceAuthn:       &honorForce,
 		AuthnContextClassRef:  d.Get("authn_context_class_ref").(string),
 	}
-	app.Credentials = okta.NewApplicationCredentials()
-	app.Credentials.Signing = okta.NewApplicationCredentialsSigning()
-	app.Credentials.UserNameTemplate = okta.NewApplicationCredentialsUsernameTemplate()
 
 	return app
 }
