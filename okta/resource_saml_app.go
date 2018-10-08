@@ -1,11 +1,28 @@
 package okta
 
 import (
+	"errors"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
 )
+
+// Fields required if preconfigured_app is not provided
+var customSamlAppRequiredFields = []string{
+	"sso_url",
+	"recipient",
+	"destination",
+	"audience",
+	"idp_issuer",
+	"subject_name_id_template",
+	"subject_name_id_format",
+	"signature_algorithm",
+	"digest_algorithm",
+	"honor_force_authn",
+	"authn_context_class_ref",
+}
 
 func resourceSamlApp() *schema.Resource {
 	return &schema.Resource{
@@ -19,10 +36,15 @@ func resourceSamlApp() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"preconfigured_app": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Name of preexisting SAML application. This field should be omitted for custom SAML apps as it will be computed.",
+				Description: "Name of preexisting SAML application.",
+			},
+			"name": &schema.Schema{
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "App name.",
 			},
 			"sign_on_mode": &schema.Schema{
 				Type:        schema.TypeString,
@@ -70,22 +92,10 @@ func resourceSamlApp() *schema.Resource {
 				Description:  "Single Sign On URL",
 				ValidateFunc: validateIsURL,
 			},
-			"sso_url_override": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Single Sign On URL override",
-				ValidateFunc: validateIsURL,
-			},
 			"recipient": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "The location where the app may present the SAML assertion",
-				ValidateFunc: validateIsURL,
-			},
-			"recipient_override": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Recipient override URL",
 				ValidateFunc: validateIsURL,
 			},
 			"destination": &schema.Schema{
@@ -94,22 +104,10 @@ func resourceSamlApp() *schema.Resource {
 				Description:  "Identifies the location where the SAML response is intended to be sent inside of the SAML assertion",
 				ValidateFunc: validateIsURL,
 			},
-			"destination_override": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Destination URL override",
-				ValidateFunc: validateIsURL,
-			},
 			"audience": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "Audience URI",
-				ValidateFunc: validateIsURL,
-			},
-			"audience_override": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Audience URI override",
 				ValidateFunc: validateIsURL,
 			},
 			"idp_issuer": &schema.Schema{
@@ -129,10 +127,19 @@ func resourceSamlApp() *schema.Resource {
 				// Can I validate that it is an interpolation template ${}
 			},
 			"subject_name_id_format": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Identifies the SAML processing rules.",
-				ValidateFunc: validation.StringInSlice([]string{"EmailAddress", "x509SubjectName", "Persistent", "Transient"}, false),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Identifies the SAML processing rules.",
+				ValidateFunc: validation.StringInSlice(
+					[]string{
+						"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+						"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+						"urn:oasis:names:tc:SAML:1.1:nameid-format:x509SubjectName",
+						"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
+						"urn:oasis:names:tc:SAML:2.0:nameid-format:transient",
+					},
+					false,
+				),
 			},
 			"response_signed": &schema.Schema{
 				Type:        schema.TypeBool,
@@ -153,7 +160,7 @@ func resourceSamlApp() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "Signature algorithm used ot digitally sign the assertion and response",
-				ValidateFunc: validation.StringInSlice([]string{"RSA-SHA256", "RSA-SHA1"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"RSA_SHA256", "RSA_SHA1"}, false),
 			},
 			"digest_algorithm": &schema.Schema{
 				Type:         schema.TypeString,
@@ -189,45 +196,6 @@ func resourceSamlApp() *schema.Resource {
 				Description:  "Custom login page URL",
 				ValidateFunc: validateIsURL,
 			},
-			// There is a bug in the Okta SDK, they have the wrong type specified for AttributeStatements and
-			// due to this, these cannot be sent to the API. I want to leave this code commented out as well
-			// since the work is already done
-			// https://github.com/articulate/terraform-provider-okta/issues/80
-			// "attribute_statements": &schema.Schema{
-			// 	Type:        schema.TypeList,
-			// 	Optional:    true,
-			// 	Description: "SAML attributes. https://developer.okta.com/docs/api/resources/apps#attribute-statements-object",
-			// 	Elem: &schema.Schema{
-			// 		Type: schema.TypeMap,
-			// 		Elem: map[string]*schema.Schema{
-			// 			"type": &schema.Schema{
-			// 				Type:         schema.TypeString,
-			// 				Required:     true,
-			// 				Description:  "The type of attribute statement.",
-			// 				ValidateFunc: validation.StringInSlice([]string{"EXPRESSION"}, false),
-			// 			},
-			// 			"name": &schema.Schema{
-			// 				Type:        schema.TypeString,
-			// 				Required:    true,
-			// 				Description: "The reference name of the attribute statement.",
-			// 			},
-			// 			"namespace": &schema.Schema{
-			// 				Type:        schema.TypeString,
-			// 				Required:    true,
-			// 				Description: "The name format of the attribute.",
-			// 			},
-			// 			"values": &schema.Schema{
-			// 				Type:        schema.TypeList,
-			// 				Required:    true,
-			// 				Description: "The value of the attribute.",
-			// 				Elem: &schema.Schema{
-			// 					Type:     schema.TypeString,
-			// 					Required: true,
-			// 				},
-			// 			},
-			// 		},
-			// 	},
-			// },
 		},
 	}
 }
@@ -242,10 +210,15 @@ func resourceSamlAppExists(d *schema.ResourceData, m interface{}) (bool, error) 
 
 func resourceSamlAppCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildApp(d, m)
+	app, err := buildApp(d, m)
+
+	if err != nil {
+		return err
+	}
+
 	activate := d.Get("status").(string) == "ACTIVE"
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(app, params)
+	_, _, err = client.Application.CreateApplication(app, params)
 
 	if err != nil {
 		return err
@@ -270,23 +243,19 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("label", app.Label)
 	d.Set("default_relay_state", app.Settings.SignOn.DefaultRelayState)
 	d.Set("sso_url", app.Settings.SignOn.SsoAcsUrl)
-	d.Set("sso_url_override", app.Settings.SignOn.SsoAcsUrlOverride)
 	d.Set("recipient", app.Settings.SignOn.Recipient)
-	d.Set("recipient_override", app.Settings.SignOn.RecipientOverride)
 	d.Set("destination", app.Settings.SignOn.Destination)
-	d.Set("destination_override", app.Settings.SignOn.DestinationOverride)
 	d.Set("audience", app.Settings.SignOn.Audience)
-	d.Set("audience_override", app.Settings.SignOn.AudienceOverride)
 	d.Set("idp_issuer", app.Settings.SignOn.IdpIssuer)
 	d.Set("subject_name_id_template", app.Settings.SignOn.SubjectNameIdTemplate)
 	d.Set("subject_name_id_format", app.Settings.SignOn.SubjectNameIdFormat)
-	d.Set("response_signed", *app.Settings.SignOn.ResponseSigned)
-	d.Set("assertion_signed", *app.Settings.SignOn.AssertionSigned)
+	d.Set("response_signed", app.Settings.SignOn.ResponseSigned)
+	d.Set("assertion_signed", app.Settings.SignOn.AssertionSigned)
 	d.Set("signature_algorithm", app.Settings.SignOn.SignatureAlgorithm)
 	d.Set("digest_algorithm", app.Settings.SignOn.DigestAlgorithm)
-	d.Set("honor_force_authn", *app.Settings.SignOn.HonorForceAuthn)
+	d.Set("honor_force_authn", app.Settings.SignOn.HonorForceAuthn)
 	d.Set("authn_context_class_ref", app.Settings.SignOn.AuthnContextClassRef)
-	d.Set("accessibility_self_service", *app.Accessibility.SelfService)
+	d.Set("accessibility_self_service", app.Accessibility.SelfService)
 	d.Set("accessibility_login_redirect_url", app.Accessibility.LoginRedirectUrl)
 	d.Set("accessibility_error_redirect_url", app.Accessibility.ErrorRedirectUrl)
 
@@ -295,8 +264,13 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceSamlAppUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildApp(d, m)
-	_, _, err := client.Application.UpdateApplication(d.Id(), app)
+	app, err := buildApp(d, m)
+
+	if err != nil {
+		return err
+	}
+
+	_, _, err = client.Application.UpdateApplication(d.Id(), app)
 
 	if err != nil {
 		return err
@@ -324,15 +298,32 @@ func resourceSamlAppDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func buildApp(d *schema.ResourceData, m interface{}) *okta.SamlApplication {
+func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, error) {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewSamlApplication()
 	app.Label = d.Get("label").(string)
-	app.Name = d.Get("name").(string)
 	app.SignOnMode = "SAML_2_0"
-
 	responseSigned := d.Get("response_signed").(bool)
 	assertionSigned := d.Get("assertion_signed").(bool)
+
+	preconfigName, isPreconfig := d.GetOkExists("preconfigured_app")
+
+	if isPreconfig {
+		app.Name = preconfigName.(string)
+	} else {
+		app.Name = d.Get("name").(string)
+
+		reason := "Custom SAML applications must contain these fields"
+		// Need to verify the fields that are now required since it is not preconfigured
+		if err := conditionalRequire(d, customSamlAppRequiredFields, reason); err != nil {
+			return app, err
+		}
+
+		if !responseSigned && !assertionSigned {
+			return app, errors.New("custom SAML apps must either have response_signed or assertion_signed set to true")
+		}
+	}
+
 	honorForce := d.Get("honor_force_authn").(bool)
 	autoSubmit := d.Get("auto_submit_toolbar").(bool)
 	hideMobile := d.Get("hide_ios").(bool)
@@ -349,12 +340,9 @@ func buildApp(d *schema.ResourceData, m interface{}) *okta.SamlApplication {
 	app.Settings.SignOn = &okta.SamlApplicationSettingsSignOn{
 		DefaultRelayState:     d.Get("default_relay_state").(string),
 		SsoAcsUrl:             d.Get("sso_url").(string),
-		SsoAcsUrlOverride:     d.Get("sso_url_override").(string),
 		Recipient:             d.Get("recipient").(string),
 		Destination:           d.Get("destination").(string),
-		DestinationOverride:   d.Get("destination_override").(string),
 		Audience:              d.Get("audience").(string),
-		AudienceOverride:      d.Get("audience_override").(string),
 		IdpIssuer:             d.Get("idp_issuer").(string),
 		SubjectNameIdTemplate: d.Get("subject_name_id_template").(string),
 		SubjectNameIdFormat:   d.Get("subject_name_id_format").(string),
@@ -371,5 +359,5 @@ func buildApp(d *schema.ResourceData, m interface{}) *okta.SamlApplication {
 		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
 	}
 
-	return app
+	return app, nil
 }
