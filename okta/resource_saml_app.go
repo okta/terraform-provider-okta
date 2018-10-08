@@ -1,8 +1,6 @@
 package okta
 
 import (
-	"runtime"
-
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
@@ -24,7 +22,7 @@ func resourceSamlApp() *schema.Resource {
 			"name": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Name of preexisting SAML application.",
+				Description: "Name of preexisting SAML application. This field should be omitted for custom SAML apps as it will be computed.",
 			},
 			"sign_on_mode": &schema.Schema{
 				Type:        schema.TypeString,
@@ -173,41 +171,63 @@ func resourceSamlApp() *schema.Resource {
 				Optional:    true,
 				Description: "Identifies the SAML authentication context class for the assertion’s authentication statement",
 			},
-			"attribute_statements": &schema.Schema{
-				Type:        schema.TypeList,
+			"accessibility_self_service": &schema.Schema{
+				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "SAML attributes. https://developer.okta.com/docs/api/resources/apps#attribute-statements-object",
-				Elem: &schema.Schema{
-					Type: schema.TypeMap,
-					Elem: map[string]*schema.Schema{
-						"type": &schema.Schema{
-							Type:         schema.TypeString,
-							Required:     true,
-							Description:  "The type of attribute statement.",
-							ValidateFunc: validation.StringInSlice([]string{"EXPRESSION"}, false),
-						},
-						"name": &schema.Schema{
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "The reference name of the attribute statement.",
-						},
-						"namespace": &schema.Schema{
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "The name format of the attribute.",
-						},
-						"values": &schema.Schema{
-							Type:        schema.TypeList,
-							Required:    true,
-							Description: "The value of the attribute.",
-							Elem: &schema.Schema{
-								Type:     schema.TypeString,
-								Required: true,
-							},
-						},
-					},
-				},
+				Default:     false,
+				Description: "Enable self service",
 			},
+			"accessibility_error_redirect_url": &schema.Schema{
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "Custom error page URL",
+				ValidateFunc: validateIsURL,
+			},
+			"accessibility_login_redirect_url": &schema.Schema{
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "Custom login page URL",
+				ValidateFunc: validateIsURL,
+			},
+			// There is a bug in the Okta SDK, they have the wrong type specified for AttributeStatements and
+			// due to this, these cannot be sent to the API. I want to leave this code commented out as well
+			// since the work is already done
+			// https://github.com/articulate/terraform-provider-okta/issues/80
+			// "attribute_statements": &schema.Schema{
+			// 	Type:        schema.TypeList,
+			// 	Optional:    true,
+			// 	Description: "SAML attributes. https://developer.okta.com/docs/api/resources/apps#attribute-statements-object",
+			// 	Elem: &schema.Schema{
+			// 		Type: schema.TypeMap,
+			// 		Elem: map[string]*schema.Schema{
+			// 			"type": &schema.Schema{
+			// 				Type:         schema.TypeString,
+			// 				Required:     true,
+			// 				Description:  "The type of attribute statement.",
+			// 				ValidateFunc: validation.StringInSlice([]string{"EXPRESSION"}, false),
+			// 			},
+			// 			"name": &schema.Schema{
+			// 				Type:        schema.TypeString,
+			// 				Required:    true,
+			// 				Description: "The reference name of the attribute statement.",
+			// 			},
+			// 			"namespace": &schema.Schema{
+			// 				Type:        schema.TypeString,
+			// 				Required:    true,
+			// 				Description: "The name format of the attribute.",
+			// 			},
+			// 			"values": &schema.Schema{
+			// 				Type:        schema.TypeList,
+			// 				Required:    true,
+			// 				Description: "The value of the attribute.",
+			// 				Elem: &schema.Schema{
+			// 					Type:     schema.TypeString,
+			// 					Required: true,
+			// 				},
+			// 			},
+			// 		},
+			// 	},
+			// },
 		},
 	}
 }
@@ -221,7 +241,6 @@ func resourceSamlAppExists(d *schema.ResourceData, m interface{}) (bool, error) 
 }
 
 func resourceSamlAppCreate(d *schema.ResourceData, m interface{}) error {
-	runtime.Breakpoint()
 	client := getOktaClientFromMetadata(m)
 	app := buildApp(d, m)
 	activate := d.Get("status").(string) == "ACTIVE"
@@ -261,12 +280,15 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("idp_issuer", app.Settings.SignOn.IdpIssuer)
 	d.Set("subject_name_id_template", app.Settings.SignOn.SubjectNameIdTemplate)
 	d.Set("subject_name_id_format", app.Settings.SignOn.SubjectNameIdFormat)
-	d.Set("response_signed", app.Settings.SignOn.ResponseSigned)
-	d.Set("assertion_signed", app.Settings.SignOn.AssertionSigned)
+	d.Set("response_signed", *app.Settings.SignOn.ResponseSigned)
+	d.Set("assertion_signed", *app.Settings.SignOn.AssertionSigned)
 	d.Set("signature_algorithm", app.Settings.SignOn.SignatureAlgorithm)
 	d.Set("digest_algorithm", app.Settings.SignOn.DigestAlgorithm)
-	d.Set("honor_force_authn", app.Settings.SignOn.HonorForceAuthn)
+	d.Set("honor_force_authn", *app.Settings.SignOn.HonorForceAuthn)
 	d.Set("authn_context_class_ref", app.Settings.SignOn.AuthnContextClassRef)
+	d.Set("accessibility_self_service", *app.Accessibility.SelfService)
+	d.Set("accessibility_login_redirect_url", app.Accessibility.LoginRedirectUrl)
+	d.Set("accessibility_error_redirect_url", app.Accessibility.ErrorRedirectUrl)
 
 	return nil
 }
@@ -315,6 +337,7 @@ func buildApp(d *schema.ResourceData, m interface{}) *okta.SamlApplication {
 	autoSubmit := d.Get("auto_submit_toolbar").(bool)
 	hideMobile := d.Get("hide_ios").(bool)
 	hideWeb := d.Get("hide_web").(bool)
+	a11ySelfService := d.Get("accessibility_self_service").(bool)
 	app.Settings = okta.NewSamlApplicationSettings()
 	app.Visibility = &okta.ApplicationVisibility{
 		AutoSubmitToolbar: &autoSubmit,
@@ -341,6 +364,11 @@ func buildApp(d *schema.ResourceData, m interface{}) *okta.SamlApplication {
 		DigestAlgorithm:       d.Get("digest_algorithm").(string),
 		HonorForceAuthn:       &honorForce,
 		AuthnContextClassRef:  d.Get("authn_context_class_ref").(string),
+	}
+	app.Accessibility = &okta.ApplicationAccessibility{
+		SelfService:      &a11ySelfService,
+		ErrorRedirectUrl: d.Get("accessibility_error_redirect_url").(string),
+		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
 	}
 
 	return app

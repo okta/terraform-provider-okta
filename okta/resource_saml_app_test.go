@@ -71,6 +71,36 @@ func TestAccOktaSamlApplication(t *testing.T) {
 	})
 }
 
+func TestAccOktaSamlApplicationAllFields(t *testing.T) {
+	ri := acctest.RandInt()
+	config := buildTestSamlConfig(ri)
+	allFields := buildTestSamlConfigAllFields(ri)
+	resourceName := buildResourceFQN(samlApp, ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(samlApp, createDoesAppExist(okta.NewSamlApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: allFields,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+				),
+			},
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+				),
+			},
+		},
+	})
+}
+
 func buildTestSamlConfigPreconfig(rInt int) string {
 	name := buildResourceName(rInt)
 
@@ -100,7 +130,15 @@ func buildTestSamlConfig(rInt int) string {
 	return fmt.Sprintf(`
 resource "%s" "%s" {
   label       = "%s"
-  sso_url      = "http://google.com"
+  sso_url      				= "http://google.com"
+  sso_url_override 			= "http://override.com/test"
+  recipient 				= "http://here.com"
+  recipient_override 		= "http://no-here.com"
+  destination 				= "http://its-about-the-journey.com"
+  destination_override 		= "http://out-of-order.com"
+  audience 					= "http://audience.com"
+  audience_override	 		= "http://stuff.com"
+  idp_issuer 				= "idhere123"
 }
 `, samlApp, name, name)
 }
@@ -111,7 +149,15 @@ func buildTestSamlConfigUpdated(rInt int) string {
 	return fmt.Sprintf(`
 resource "%s" "%s" {
   label       = "%s"
-  sso_url      = "http://google.com"
+  sso_url      				= "http://google.com"
+  sso_url_override 			= "http://override.com/test"
+  recipient 				= "http://here.com"
+  recipient_override 		= "http://no-here.com"
+  destination 				= "http://its-about-the-journey.com"
+  destination_override 		= "http://out-of-order.com"
+  audience 					= "http://audience.com"
+  audience_override	 		= "http://stuff.com"
+  idp_issuer 				= "idhere123"
   status 	  = "INACTIVE"
 }
 `, samlApp, name, name)
@@ -132,7 +178,7 @@ resource "%s" "%s" {
   audience 					= "http://audience.com"
   audience_override	 		= "http://stuff.com"
   idp_issuer 				= "idhere123"
-  subject_name_id_template 	= "${source.login}"
+  subject_name_id_template 	= "${fn:substringBefore(source.login, \"@\")}"
   subject_name_id_format 	= "EmailAddress"
   response_signed 			= true
   assertion_signed 			= true
@@ -140,16 +186,6 @@ resource "%s" "%s" {
   digest_algorithm 			= "SHA1"
   honor_force_authn			= true
   authn_context_class_ref 	= "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
-  attribute_statements 		= [
-	  {
-		  type      = "EXPRESSION"
-		  name 		= "Attribute"
-		  namespace = "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
-		  values	= [
-			  "value"
-		  ] 
-	  }
-  ]
 }
 `, samlApp, name, name)
 }
