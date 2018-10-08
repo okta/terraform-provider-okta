@@ -237,12 +237,9 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	d.SetId(user.Id)
 
 	// role assigning can only happen after the user is created so order matters here
-	if len(d.Get("admin_roles").([]interface{})) > 0 {
-		err = assignAdminRolesToUser(user.Id, d.Get("admin_roles").([]interface{}), client)
-
-		if err != nil {
-			return err
-		}
+	roles := convertInterfaceToStringArrNullable(d.Get("admin_roles"))
+	if roles != nil {
+		if err = assignAdminRolesToUser(user.Id, roles, client); err != nil { return err }
 	}
 
 	// group assigning can only happen after the user is created as well
@@ -318,11 +315,8 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		}
 
 		if d.HasChange("admin_roles") {
-			err := updateAdminRolesOnUser(d.Id(), d.Get("admin_roles").([]interface{}), client)
-
-			if err != nil {
-				return err
-			}
+			roles := convertInterfaceToStringArr(d.Get("admin_roles"))
+			if err := updateAdminRolesOnUser(d.Id(), roles, client); err != nil { return err }
 		}
 
 		if d.HasChange("group_memberships") {

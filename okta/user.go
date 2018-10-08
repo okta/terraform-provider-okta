@@ -10,12 +10,12 @@ import (
 	"github.com/okta/okta-sdk-golang/okta"
 )
 
-func assignAdminRolesToUser(u string, r []interface{}, c *okta.Client) error {
+func assignAdminRolesToUser(u string, r []string, c *okta.Client) error {
 	validRoles := []string{"SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN", "HELP_DESK_ADMIN"}
 
 	for _, role := range r {
-		if contains(validRoles, role.(string)) {
-			roleStruct := okta.Role{Type: role.(string)}
+		if contains(validRoles, role) {
+			roleStruct := okta.Role{Type: role}
 			_, _, err := c.User.AddRoleToUser(u, roleStruct)
 
 			if err != nil {
@@ -240,7 +240,7 @@ func setUserProfileAttributes(d *schema.ResourceData, u *okta.User) error {
 }
 
 // need to remove from all current admin roles and reassign based on terraform configs when a change is detected
-func updateAdminRolesOnUser(u string, r []interface{}, c *okta.Client) error {
+func updateAdminRolesOnUser(u string, r []string, c *okta.Client) error {
 	roles, _, err := c.User.ListAssignedRoles(u, nil)
 
 	if err != nil {
