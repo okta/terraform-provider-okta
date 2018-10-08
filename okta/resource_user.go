@@ -239,13 +239,17 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	// role assigning can only happen after the user is created so order matters here
 	roles := convertInterfaceToStringArrNullable(d.Get("admin_roles"))
 	if roles != nil {
-		if err = assignAdminRolesToUser(user.Id, roles, client); err != nil { return err }
+		if err = assignAdminRolesToUser(user.Id, roles, client); err != nil {
+			return err
+		}
 	}
 
 	// group assigning can only happen after the user is created as well
 	groups := convertInterfaceToStringArrNullable(d.Get("group_memberships"))
 	if groups != nil {
-		if err = assignGroupsToUser(user.Id, groups, client); err != nil { return err }
+		if err = assignGroupsToUser(user.Id, groups, client); err != nil {
+			return err
+		}
 	}
 
 	// status changing can only happen after user is created as well
@@ -316,12 +320,16 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 		if d.HasChange("admin_roles") {
 			roles := convertInterfaceToStringArr(d.Get("admin_roles"))
-			if err := updateAdminRolesOnUser(d.Id(), roles, client); err != nil { return err }
+			if err := updateAdminRolesOnUser(d.Id(), roles, client); err != nil {
+				return err
+			}
 		}
 
 		if d.HasChange("group_memberships") {
 			groups := convertInterfaceToStringArr(d.Get("group_memberships"))
-			if err := updateGroupsOnUser(d.Id(), groups, client); err != nil { return err }
+			if err := updateGroupsOnUser(d.Id(), groups, client); err != nil {
+				return err
+			}
 		}
 	}
 
