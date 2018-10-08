@@ -316,6 +316,10 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 		_, _, err := client.User.UpdateUser(d.Id(), userBody)
 
+		if err != nil {
+			return fmt.Errorf("[ERROR] Error Updating User in Okta: %v", err)
+		}
+
 		if d.HasChange("admin_roles") {
 			err := updateAdminRolesOnUser(d.Id(), d.Get("admin_roles").([]interface{}), client)
 
@@ -330,14 +334,6 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 			if err != nil {
 				return err
 			}
-		}
-
-		if len(d.Get("group_memberships").([]interface{})) > 0 {
-			return nil
-		}
-
-		if err != nil {
-			return fmt.Errorf("[ERROR] Error Updating User in Okta: %v", err)
 		}
 	}
 
