@@ -11,6 +11,38 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
+func TestAccOktaUser_customProfileAttributes(t *testing.T) {
+  rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+  resourceName := "okta_user.test_acc_" + rName
+
+  resource.Test(t, resource.TestCase{
+    PreCheck:     func() { testAccPreCheck(t) },
+    Providers:    testAccProviders,
+    CheckDestroy: testAccCheckUserDestroy,
+    Steps: []resource.TestStep{
+      {
+        Config: testOktaUserConfig_customProfileAttributes(rName),
+        Check: resource.ComposeTestCheckFunc(
+          resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+          resource.TestCheckResourceAttr(resourceName, "last_name", rName),
+          resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
+          resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
+          resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes.testAcc"+rName, "testing-custom-attribute"),
+        ),
+      },
+      {
+        Config: testOktaUserConfig_removeCustomProfileAttributes(rName),
+        Check: resource.ComposeTestCheckFunc(
+          resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+          resource.TestCheckResourceAttr(resourceName, "last_name", rName),
+          resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
+          resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
+        ),
+      },
+    },
+  })
+}
+
 func TestAccOktaUser_emailError(t *testing.T) {
 	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
 
@@ -37,41 +69,6 @@ func TestAccOktaUser_invalidCustomProfileAttribute(t *testing.T) {
 			{
 				Config:      testOktaUserConfig_invalidCustomProfileAttribute(rName),
 				ExpectError: regexp.MustCompile("Api validation failed: newUser"),
-			},
-		},
-	})
-}
-
-func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
-	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckUserDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testOktaUserConfig_deprovisioned(rName),
-			},
-			{
-				Config:      testOktaUserConfig_updateDeprovisioned(rName),
-				ExpectError: regexp.MustCompile("Cannot update a DEPROVISIONED user"),
-			},
-		},
-	})
-}
-
-func TestAccOktaUser_validRole(t *testing.T) {
-	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckUserDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config:      testOktaUserConfig_validRole(rName),
-				ExpectError: regexp.MustCompile("GROUP_ADMIN is not a valid Okta role"),
 			},
 		},
 	})
@@ -143,36 +140,39 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 	})
 }
 
-func TestAccOktaUser_customProfileAttributes(t *testing.T) {
-	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
-	resourceName := "okta_user.test_acc_" + rName
+func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
+  rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
 
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckUserDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testOktaUserConfig_customProfileAttributes(rName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
-					resource.TestCheckResourceAttr(resourceName, "last_name", rName),
-					resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
-					resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
-					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes.testAcc"+rName, "testing-custom-attribute"),
-				),
-			},
-			{
-				Config: testOktaUserConfig_removeCustomProfileAttributes(rName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
-					resource.TestCheckResourceAttr(resourceName, "last_name", rName),
-					resource.TestCheckResourceAttr(resourceName, "login", "test-acc-"+rName+"@testing.com"),
-					resource.TestCheckResourceAttr(resourceName, "email", "test-acc-"+rName+"@testing.com"),
-				),
-			},
-		},
-	})
+  resource.Test(t, resource.TestCase{
+    PreCheck:     func() { testAccPreCheck(t) },
+    Providers:    testAccProviders,
+    CheckDestroy: testAccCheckUserDestroy,
+    Steps: []resource.TestStep{
+      {
+        Config: testOktaUserConfig_deprovisioned(rName),
+      },
+      {
+        Config:      testOktaUserConfig_updateDeprovisioned(rName),
+        ExpectError: regexp.MustCompile("Cannot update a DEPROVISIONED user"),
+      },
+    },
+  })
+}
+
+func TestAccOktaUser_validRole(t *testing.T) {
+  rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+
+  resource.Test(t, resource.TestCase{
+    PreCheck:     func() { testAccPreCheck(t) },
+    Providers:    testAccProviders,
+    CheckDestroy: testAccCheckUserDestroy,
+    Steps: []resource.TestStep{
+      {
+        Config:      testOktaUserConfig_validRole(rName),
+        ExpectError: regexp.MustCompile("GROUP_ADMIN is not a valid Okta role"),
+      },
+    },
+  })
 }
 
 func testAccCheckUserDestroy(s *terraform.State) error {
