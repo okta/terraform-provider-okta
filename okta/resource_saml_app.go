@@ -124,7 +124,6 @@ func resourceSamlApp() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Template for app user's username when a user is assigned to the app",
-				// Can I validate that it is an interpolation template ${}
 			},
 			"subject_name_id_format": &schema.Schema{
 				Type:        schema.TypeString,
