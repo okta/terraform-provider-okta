@@ -246,12 +246,9 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	// group assigning can only happen after the user is created as well
-	if len(d.Get("group_memberships").([]interface{})) > 0 {
-		err = assignGroupsToUser(user.Id, d.Get("group_memberships").([]interface{}), client)
-
-		if err != nil {
-			return err
-		}
+	groups := convertInterfaceToStringArrNullable(d.Get("group_memberships"))
+	if groups != nil {
+		if err = assignGroupsToUser(user.Id, groups, client); err != nil { return err }
 	}
 
 	// status changing can only happen after user is created as well
@@ -329,11 +326,8 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		}
 
 		if d.HasChange("group_memberships") {
-			err := updateGroupsOnUser(d.Id(), d.Get("group_memberships").([]interface{}), client)
-
-			if err != nil {
-				return err
-			}
+			groups := convertInterfaceToStringArr(d.Get("group_memberships"))
+			if err := updateGroupsOnUser(d.Id(), groups, client); err != nil { return err }
 		}
 	}
 

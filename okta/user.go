@@ -29,9 +29,9 @@ func assignAdminRolesToUser(u string, r []interface{}, c *okta.Client) error {
 	return nil
 }
 
-func assignGroupsToUser(u string, g []interface{}, c *okta.Client) error {
+func assignGroupsToUser(u string, g []string, c *okta.Client) error {
 	for _, group := range g {
-		_, err := c.Group.AddUserToGroup(group.(string), u)
+		_, err := c.Group.AddUserToGroup(group, u)
 
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Assigning Group to User: %v", err)
@@ -265,7 +265,7 @@ func updateAdminRolesOnUser(u string, r []interface{}, c *okta.Client) error {
 }
 
 // need to remove from all current groups and reassign based on terraform configs when a change is detected
-func updateGroupsOnUser(u string, g []interface{}, c *okta.Client) error {
+func updateGroupsOnUser(u string, g []string, c *okta.Client) error {
 	groups, _, err := c.User.ListUserGroups(u, nil)
 
 	if err != nil {
