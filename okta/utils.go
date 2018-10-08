@@ -31,6 +31,22 @@ func camelCaseToUnderscore(s string) string {
 	return s
 }
 
+func conditionalRequire(d *schema.ResourceData, propList []string, reason string) error {
+	var missing []string
+
+	for _, prop := range propList {
+		if _, ok := d.GetOkExists(prop); !ok {
+			missing = append(missing, prop)
+		}
+	}
+
+	if len(missing) > 0 {
+		return fmt.Errorf("missing conditionally required fields, reason: %s, missing fields: %s", reason, strings.Join(missing, ", "))
+	}
+
+	return nil
+}
+
 // Conditionally validates a slice of strings for required and valid values.
 func conditionalValidator(field string, typeValue string, require []string, valid []string, actual []string) error {
 	explanation := fmt.Sprintf("failed conditional validation for field \"%s\" of type \"%s\", it can contain %s", field, typeValue, strings.Join(valid, ", "))
@@ -187,6 +203,16 @@ func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []
 	return warnings, errors
 }
 
+func requireOneOf(d *schema.ResourceData, propList ...string) error {
+	for _, prop := range propList {
+		if _, ok := d.GetOkExists(prop); !ok {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("One of the following fields must be set: %s", strings.Join(propList, ", "))
+}
+
 // The best practices states that aggregate types should have error handling (think non-primitive). This will not attempt to set nil values.
 func setNonPrimitives(data *schema.ResourceData, valueMap map[string]interface{}) error {
 	for k, v := range valueMap {
@@ -226,30 +252,4 @@ func validatePriority(in int, out int) error {
 	}
 
 	return nil
-}
-
-func conditionalRequire(d *schema.ResourceData, propList []string, reason string) error {
-	var missing []string
-
-	for _, prop := range propList {
-		if _, ok := d.GetOkExists(prop); !ok {
-			missing = append(missing, prop)
-		}
-	}
-
-	if len(missing) > 0 {
-		return fmt.Errorf("missing conditionally required fields, reason: %s, missing fields: %s", reason, strings.Join(missing, ", "))
-	}
-
-	return nil
-}
-
-func requireOneOf(d *schema.ResourceData, propList ...string) error {
-	for _, prop := range propList {
-		if _, ok := d.GetOkExists(prop); !ok {
-			return nil
-		}
-	}
-
-	return fmt.Errorf("One of the following fields must be set: %s", strings.Join(propList, ", "))
 }
