@@ -59,6 +59,24 @@ func TestAccOktaSamlApplicationConditionalRequire(t *testing.T) {
 	})
 }
 
+// Ensure conditional require logic causes this plan to fail
+func TestAccOktaSamlApplicationInvalidUrl(t *testing.T) {
+	ri := acctest.RandInt()
+	config := buildTestSamlConfigInvalidUrl(ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(samlApp, createDoesAppExist(okta.NewSamlApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config:      config,
+				ExpectError: regexp.MustCompile("config is invalid: okta_saml_app.testAcc-.*: failed to validate url, \"123\""),
+			},
+		},
+	})
+}
+
 // Test creation of a custom SAML app.
 func TestAccOktaSamlApplication(t *testing.T) {
 	ri := acctest.RandInt()
@@ -172,6 +190,18 @@ func buildTestSamlConfigMissingFields(rInt int) string {
 resource "%s" "%s" {
   label         		= "%s"
   status 	    	    = "INACTIVE"
+}
+`, samlApp, name, name)
+}
+
+func buildTestSamlConfigInvalidUrl(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+resource "%s" "%s" {
+  label         		= "%s"
+  status 	    	    = "INACTIVE"
+  sso_url      			= "123"
 }
 `, samlApp, name, name)
 }
