@@ -30,7 +30,7 @@ func resourceSamlApp() *schema.Resource {
 		Read:   resourceSamlAppRead,
 		Update: resourceSamlAppUpdate,
 		Delete: resourceSamlAppDelete,
-		Exists: resourceSamlAppExists,
+		Exists: resourceAppExists,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
@@ -199,14 +199,6 @@ func resourceSamlApp() *schema.Resource {
 	}
 }
 
-func resourceSamlAppExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	app := okta.NewApplication()
-	err := fetchApp(d, m, app)
-
-	// Not sure if a non-nil app with an empty ID is possible but checking to avoid false positives.
-	return app != nil && app.Id != "", err
-}
-
 func resourceSamlAppCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	app, err := buildApp(d, m)
@@ -236,10 +228,6 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", app.Name)
-	d.Set("status", app.Status)
-	d.Set("sign_on_mode", app.SignOnMode)
-	d.Set("label", app.Label)
 	d.Set("default_relay_state", app.Settings.SignOn.DefaultRelayState)
 	d.Set("sso_url", app.Settings.SignOn.SsoAcsUrl)
 	d.Set("recipient", app.Settings.SignOn.Recipient)
@@ -254,9 +242,7 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("digest_algorithm", app.Settings.SignOn.DigestAlgorithm)
 	d.Set("honor_force_authn", app.Settings.SignOn.HonorForceAuthn)
 	d.Set("authn_context_class_ref", app.Settings.SignOn.AuthnContextClassRef)
-	d.Set("accessibility_self_service", app.Accessibility.SelfService)
-	d.Set("accessibility_login_redirect_url", app.Accessibility.LoginRedirectUrl)
-	d.Set("accessibility_error_redirect_url", app.Accessibility.ErrorRedirectUrl)
+	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 
 	return nil
 }

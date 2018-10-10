@@ -14,24 +14,25 @@ func TestAccOktaSwaApplicationPreconfig(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSwaConfigPreconfig(ri)
 	updatedConfig := buildTestSwaConfigPreconfigUpdated(ri)
-	resourceName := buildResourceFQN(samlApp, ri)
+	resourceName := buildResourceFQN(swaApp, ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(samlApp, createDoesAppExist(okta.NewSamlApplication())),
+		CheckDestroy: createCheckResourceDestroy(swaApp, createDoesAppExist(okta.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaApplication())),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
 				),
@@ -45,26 +46,34 @@ func TestAccOktaSwaApplication(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSwaConfig(ri)
 	updatedConfig := buildTestSwaConfigUpdated(ri)
-	resourceName := buildResourceFQN(samlApp, ri)
+	resourceName := buildResourceFQN(swaApp, ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(samlApp, createDoesAppExist(okta.NewSamlApplication())),
+		CheckDestroy: createCheckResourceDestroy(swaApp, createDoesAppExist(okta.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "button_field", "btn-login"),
+					resource.TestCheckResourceAttr(resourceName, "password_field", "txtbox-password"),
+					resource.TestCheckResourceAttr(resourceName, "username_field", "txtbox-username"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://example.com/login.html"),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://example.com/login.html"),
+					resource.TestCheckResourceAttr(resourceName, "button_field", "btn-login"),
+					resource.TestCheckResourceAttr(resourceName, "password_field", "txtbox-password"),
+					resource.TestCheckResourceAttr(resourceName, "username_field", "txtbox-username"),
 				),
 			},
 		},
@@ -76,10 +85,10 @@ func buildTestSwaConfigPreconfig(rInt int) string {
 
 	return fmt.Sprintf(`
 resource "%s" "%s" {
-  name		    = "amazon_aws"
-  label         = "%s"
+  preconfigured_app		= "aws_console"
+  label         		= "%s"
 }
-`, samlApp, name, name)
+`, swaApp, name, name)
 }
 
 func buildTestSwaConfigPreconfigUpdated(rInt int) string {
@@ -87,11 +96,11 @@ func buildTestSwaConfigPreconfigUpdated(rInt int) string {
 
 	return fmt.Sprintf(`
 resource "%s" "%s" {
-  name		    = "amazon_aws"
-  label         = "%s"
-  status 	    = "INACTIVE"
+  preconfigured_app		= "aws_console"
+  label         		= "%s"
+  status 	   	 		= "INACTIVE"
 }
-`, samlApp, name, name)
+`, swaApp, name, name)
 }
 
 func buildTestSwaConfig(rInt int) string {
@@ -99,10 +108,13 @@ func buildTestSwaConfig(rInt int) string {
 
 	return fmt.Sprintf(`
 resource "%s" "%s" {
-  label       = "%s"
-  sso_url      = "http://google.com"
+  label         	 	= "%s"
+  button_field			= "btn-login"
+  password_field		= "txtbox-password"
+  username_field	 	= "txtbox-username"
+  url					= "https://example.com/login.html"
 }
-`, samlApp, name, name)
+`, swaApp, name, name)
 }
 
 func buildTestSwaConfigUpdated(rInt int) string {
@@ -111,8 +123,11 @@ func buildTestSwaConfigUpdated(rInt int) string {
 	return fmt.Sprintf(`
 resource "%s" "%s" {
   label       = "%s"
-  sso_url      = "http://google.com"
   status 	  = "INACTIVE"
+  button_field			= "btn-login"
+  password_field		= "txtbox-password"
+  username_field	 	= "txtbox-username"
+  url					= "https://example.com/login.html"
 }
-`, samlApp, name, name)
+`, swaApp, name, name)
 }

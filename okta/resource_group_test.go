@@ -2,11 +2,11 @@ package okta
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/acctest"
-	"github.com/hashicorp/terraform/helper/resource"
 	"strconv"
 	"testing"
-	//"github.com/hashicorp/terraform/terraform"
+
+	"github.com/hashicorp/terraform/helper/acctest"
+	"github.com/hashicorp/terraform/helper/resource"
 )
 
 // Witiz1932@teleworm.us is a fake email address created at fakemailgenerator.com

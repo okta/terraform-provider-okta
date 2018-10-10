@@ -285,20 +285,6 @@ func resourceOAuthAppDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func fetchApp(d *schema.ResourceData, m interface{}, app okta.App) error {
-	client := getOktaClientFromMetadata(m)
-	params := &query.Params{}
-	_, response, err := client.Application.GetApplication(d.Id(), app, params)
-
-	// We don't want to consider a 404 an error in some cases and thus the delineation
-	if response.StatusCode == 404 {
-		app = nil
-		return nil
-	}
-
-	return err
-}
-
 func buildOAuthApp(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewOpenIdConnectApplication()
@@ -357,17 +343,4 @@ func buildOAuthApp(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 	}
 
 	return app
-}
-
-func setAppStatus(d *schema.ResourceData, client *okta.Client, status string, desiredStatus string) error {
-	var err error
-	if status != desiredStatus {
-		if desiredStatus == "INACTIVE" {
-			_, err = client.Application.DeactivateApplication(d.Id())
-		} else if desiredStatus == "ACTIVE" {
-			_, err = client.Application.ActivateApplication(d.Id())
-		}
-	}
-
-	return err
 }

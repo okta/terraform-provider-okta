@@ -234,6 +234,11 @@ func suppressDefaultedDiff(k, old, new string, d *schema.ResourceData) bool {
 	return new == ""
 }
 
+// Not universal but good enough for my use case.
+func suppressEscapedProperties(k, old, new string, d *schema.ResourceData) bool {
+	return strings.Replace(new, "$$", "$", -1) == old
+}
+
 // Matching level of validation done by Okta API
 func validateIsURL(val interface{}, b string) ([]string, []error) {
 	doesMatch, err := regexp.Match(`^(http|https):\/\/.*`, []byte(val.(string)))
