@@ -80,6 +80,42 @@ func TestAccOktaAutoLoginApplication(t *testing.T) {
 	})
 }
 
+func TestAccOktaAutoLoginApplicationCredsSchemes(t *testing.T) {
+	ri := acctest.RandInt()
+	config := buildTestAutoLoginConfigAdmin(ri)
+	updatedConfig := buildTestAutoLoginConfigExternalSync(ri)
+	resourceName := buildResourceFQN(autoLoginApp, ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(autoLoginApp, createDoesAppExist(okta.NewAutoLoginApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewAutoLoginApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "sign_on_url", "https://exampleupdate.com/login.html"),
+					resource.TestCheckResourceAttr(resourceName, "sign_on_redirect_url", "https://exampleupdate.com"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_scheme", "ADMIN_SETS_CREDENTIALS"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewAutoLoginApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "sign_on_url", "https://exampleupdate.com/login.html"),
+					resource.TestCheckResourceAttr(resourceName, "sign_on_redirect_url", "https://exampleupdate.com"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_scheme", "EXTERNAL_PASSWORD_SYNC"),
+				),
+			},
+		},
+	})
+}
+
 func buildTestAutoLoginConfigPreconfig(rInt int) string {
 	name := buildResourceName(rInt)
 
@@ -130,6 +166,33 @@ resource "%s" "%s" {
   credentials_scheme 	= "SHARED_USERNAME_AND_PASSWORD"
   shared_username 		= "sharedusername"
   shared_password		= "sharedpassword"
+}
+`, autoLoginApp, name, name)
+}
+
+func buildTestAutoLoginConfigAdmin(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+resource "%s" "%s" {
+  label       			= "%s"
+  sign_on_url			= "https://exampleupdate.com/login.html"
+  sign_on_redirect_url	= "https://exampleupdate.com"
+  credentials_scheme 	= "ADMIN_SETS_CREDENTIALS"
+}
+`, autoLoginApp, name, name)
+}
+
+func buildTestAutoLoginConfigExternalSync(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+resource "%s" "%s" {
+  label       			= "%s"
+  status 	  			= "INACTIVE"
+  sign_on_url			= "https://exampleupdate.com/login.html"
+  sign_on_redirect_url	= "https://exampleupdate.com"
+  credentials_scheme 	= "EXTERNAL_PASSWORD_SYNC"
 }
 `, autoLoginApp, name, name)
 }
