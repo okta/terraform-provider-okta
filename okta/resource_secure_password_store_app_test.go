@@ -124,8 +124,8 @@ func buildTestSecurePasswordStoreConfigAdmin(rInt int) string {
 	return fmt.Sprintf(`
 resource "%s" "%s" {
   label       			= "%s"
-  username_field		= "user1"
-  password_field		= "pass1"
+  username_field		= "user"
+  password_field		= "pass"
   url					= "http://test.com"
   credentials_scheme 	= "ADMIN_SETS_CREDENTIALS"
 }
@@ -137,9 +137,10 @@ func buildTestSecurePasswordStoreConfigExternalSync(rInt int) string {
 
 	return fmt.Sprintf(`
 resource "%s" "%s" {
+  status 	  			= "INACTIVE"
   label       			= "%s"
-  username_field		= "user1"
-  password_field		= "pass1"
+  username_field		= "user"
+  password_field		= "pass"
   url					= "http://test.com"
   credentials_scheme 	= "EXTERNAL_PASSWORD_SYNC"
 }
