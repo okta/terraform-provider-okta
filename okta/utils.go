@@ -12,6 +12,14 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+func buildSchema(s, t map[string]*schema.Schema) map[string]*schema.Schema {
+	for key, val := range s {
+		t[key] = val
+	}
+
+	return t
+}
+
 // camel cased strings from okta responses become underscore separated to match
 // the terraform configs for state file setting (ie. firstName from okta response becomes first_name)
 func camelCaseToUnderscore(s string) string {
@@ -232,11 +240,6 @@ func suppressDefaultedArrayDiff(k, old, new string, d *schema.ResourceData) bool
 
 func suppressDefaultedDiff(k, old, new string, d *schema.ResourceData) bool {
 	return new == ""
-}
-
-// Not universal but good enough for my use case.
-func suppressEscapedProperties(k, old, new string, d *schema.ResourceData) bool {
-	return strings.Replace(new, "$$", "$", -1) == old
 }
 
 // Matching level of validation done by Okta API

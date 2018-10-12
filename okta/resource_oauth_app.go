@@ -69,29 +69,7 @@ func resourceOAuthApp() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
-		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Name of resource.",
-			},
-			"sign_on_mode": &schema.Schema{
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Sign on mode of application.",
-			},
-			"label": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Application label.",
-			},
-			"status": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "ACTIVE",
-				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
-				Description:  "Status of application.",
-			},
+		Schema: buildAppSchema(map[string]*schema.Schema{
 			"type": &schema.Schema{
 				Type:         schema.TypeString,
 				ValidateFunc: validation.StringInSlice([]string{"web", "native", "browser", "service"}, false),
@@ -183,7 +161,7 @@ func resourceOAuthApp() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{"REQUIRED", "TRUSTED"}, false),
 				Description:  "*Beta Okta Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED",
 			},
-		},
+		}),
 	}
 }
 
@@ -221,6 +199,11 @@ func resourceOAuthAppCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	d.SetId(app.Id)
+	err = handleAppGroupsAndUsers(app.Id, d, m)
+
+	if err != nil {
+		return err
+	}
 
 	return resourceOAuthAppRead(d, m)
 }
@@ -247,6 +230,11 @@ func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("logo_uri", app.Settings.OauthClient.LogoUri)
 	d.Set("tos_uri", app.Settings.OauthClient.TosUri)
 	d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
+	err = syncGroupsAndUsers(app.Id, d, m)
+
+	if err != nil {
+		return err
+	}
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"redirect_uris":  app.Settings.OauthClient.RedirectUris,
@@ -269,6 +257,11 @@ func resourceOAuthAppUpdate(d *schema.ResourceData, m interface{}) error {
 
 	desiredStatus := d.Get("status").(string)
 	err = setAppStatus(d, client, app.Status, desiredStatus)
+	err = handleAppGroupsAndUsers(app.Id, d, m)
+
+	if err != nil {
+		return err
+	}
 
 	return resourceOAuthAppRead(d, m)
 }
@@ -281,8 +274,12 @@ func resourceOAuthAppDelete(d *schema.ResourceData, m interface{}) error {
 	}
 
 	_, err = client.Application.DeleteApplication(d.Id())
+	if err != nil {
+		return err
+	}
+	d.SetId("")
 
-	return err
+	return nil
 }
 
 func buildOAuthApp(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApplication {

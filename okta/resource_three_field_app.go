@@ -17,7 +17,7 @@ func resourceThreeFieldApp() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
-		Schema: buildAppSchema(map[string]*schema.Schema{
+		Schema: buildSwaAppSchema(map[string]*schema.Schema{
 			"button_selector": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,

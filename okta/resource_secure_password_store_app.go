@@ -18,7 +18,7 @@ func resourceSecurePasswordStoreApp() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
-		Schema: buildAppSchema(map[string]*schema.Schema{
+		Schema: buildSwaAppSchema(map[string]*schema.Schema{
 			"password_field": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,

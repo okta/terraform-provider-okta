@@ -3,7 +3,6 @@ package okta
 import (
 	"fmt"
 	"regexp"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
@@ -11,28 +10,6 @@ import (
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
 )
-
-func deleteOAuthApps(client *testClient) error {
-	appList, _, err := client.oktaClient.Application.ListApplications(nil)
-
-	if err != nil {
-		return err
-	}
-
-	for _, app := range appList {
-		if app, ok := app.(*okta.Application); ok {
-			if strings.HasPrefix(app.Label, testResourcePrefix) {
-				_, appErr := client.oktaClient.Application.DeleteApplication(app.Id)
-
-				if appErr != nil {
-					err = appErr
-				}
-			}
-		}
-	}
-
-	return err
-}
 
 // Tests a standard OAuth application with an updated type. This tests the ForceNew on type and tests creating an
 // ACTIVE and INACTIVE application via the create action.
@@ -134,6 +111,44 @@ func TestAccOktaOAuthApplicationUpdateStatus(t *testing.T) {
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+				),
+			},
+		},
+	})
+}
+
+// Add and remove groups/users
+func TestAccOktaOAuthApplicationUserGroups(t *testing.T) {
+	ri := acctest.RandInt()
+	config := buildTestOAuthGroupsUsers(ri)
+	updatedConfig := buildTestOAuthRemoveGroupsUsers(ri)
+	resourceName := buildResourceFQN(oAuthApp, ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(oAuthApp, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "type", "web"),
+					resource.TestCheckResourceAttrSet(resourceName, "users.0.id"),
+					resource.TestCheckResourceAttrSet(resourceName, "groups.0"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "type", "web"),
+					resource.TestCheckNoResourceAttr(resourceName, "users.0"),
+					resource.TestCheckNoResourceAttr(resourceName, "groups.0"),
 				),
 			},
 		},
@@ -255,4 +270,64 @@ resource "%s" "%s" {
   redirect_uris = ["http://d.com/"]
 }
 `, oAuthApp, name, name)
+}
+
+func buildTestOAuthGroupsUsers(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+resource "okta_group" "group-%d" {
+	name = "testAcc-%d"
+}
+resource "okta_user" "user-%d" {
+  admin_roles = ["APP_ADMIN", "USER_ADMIN"]
+  first_name  = "TestAcc"
+  last_name   = "blah"
+  login       = "test-acc-%d@testing.com"
+  email       = "test-acc-%d@testing.com"
+  status      = "ACTIVE"
+}
+
+resource "%s" "%s" {
+  label       = "%s"
+  type		  = "web"
+  grant_types = [ "implicit", "authorization_code" ]
+  redirect_uris = ["http://d.com/"]
+  response_types = ["code", "token", "id_token"]
+  users = [
+	  {
+		  id = "${okta_user.user-%d.id}"
+		  username = "${okta_user.user-%d.email}"
+	  }
+  ]
+  groups = ["${okta_group.group-%d.id}"]
+}
+`, rInt, rInt, rInt, rInt, rInt, oAuthApp, name, name, rInt, rInt, rInt)
+}
+
+func buildTestOAuthRemoveGroupsUsers(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+resource "okta_group" "group-%d" {
+	name = "testAcc-%d"
+}
+
+resource "okta_user" "user-%d" {
+  admin_roles = ["APP_ADMIN", "USER_ADMIN"]
+  first_name  = "TestAcc"
+  last_name   = "blah"
+  login       = "test-acc-%d@testing.com"
+  email       = "test-acc-%d@testing.com"
+  status      = "ACTIVE"
+}
+
+resource "%s" "%s" {
+  label       = "%s"
+  type		  = "web"
+  grant_types = [ "implicit", "authorization_code" ]
+  redirect_uris = ["http://d.com/"]
+  response_types = ["code", "token", "id_token"]
+}
+`, rInt, rInt, rInt, rInt, rInt, oAuthApp, name, name)
 }

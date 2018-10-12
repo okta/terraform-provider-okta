@@ -20,7 +20,7 @@ func resourceSwaApp() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
-		Schema: buildAppSchema(map[string]*schema.Schema{
+		Schema: buildSwaAppSchema(map[string]*schema.Schema{
 			"preconfigured_app": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -69,6 +69,12 @@ func resourceSwaAppCreate(d *schema.ResourceData, m interface{}) error {
 
 	d.SetId(app.Id)
 
+	err = handleAppGroupsAndUsers(app.Id, d, m)
+
+	if err != nil {
+		return err
+	}
+
 	return resourceSwaAppRead(d, m)
 }
 
@@ -89,7 +95,7 @@ func resourceSwaAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 
-	return nil
+	return syncGroupsAndUsers(app.Id, d, m)
 }
 
 func resourceSwaAppUpdate(d *schema.ResourceData, m interface{}) error {
@@ -103,6 +109,12 @@ func resourceSwaAppUpdate(d *schema.ResourceData, m interface{}) error {
 
 	desiredStatus := d.Get("status").(string)
 	err = setAppStatus(d, client, app.Status, desiredStatus)
+
+	if err != nil {
+		return err
+	}
+
+	err = handleAppGroupsAndUsers(app.Id, d, m)
 
 	if err != nil {
 		return err

@@ -35,33 +35,11 @@ func resourceSamlApp() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
-		Schema: map[string]*schema.Schema{
+		Schema: buildAppSchema(map[string]*schema.Schema{
 			"preconfigured_app": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Name of preexisting SAML application.",
-			},
-			"name": &schema.Schema{
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "App name.",
-			},
-			"sign_on_mode": &schema.Schema{
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Sign on mode of application.",
-			},
-			"label": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Application label.",
-			},
-			"status": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "ACTIVE",
-				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
-				Description:  "Status of application.",
 			},
 			"auto_submit_toolbar": &schema.Schema{
 				Type:        schema.TypeBool,
@@ -195,7 +173,7 @@ func resourceSamlApp() *schema.Resource {
 				Description:  "Custom login page URL",
 				ValidateFunc: validateIsURL,
 			},
-		},
+		}),
 	}
 }
 

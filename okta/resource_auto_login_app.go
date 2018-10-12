@@ -18,7 +18,7 @@ func resourceAutoLoginApp() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
-		Schema: buildAppSchema(map[string]*schema.Schema{
+		Schema: buildSwaAppSchema(map[string]*schema.Schema{
 			"preconfigured_app": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
