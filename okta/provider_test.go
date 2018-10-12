@@ -45,13 +45,13 @@ func accPreCheck() error {
 func oktaConfig() (*Config, error) {
 	var err error
 	concurrent := 1
-	con := os.Getenv("OKTA_CONCURRENCY")
+	con := os.Getenv("OKTA_PARALLELISM")
 
 	if con != "" {
 		concurrent, err = strconv.Atoi(con)
 
 		if err != nil {
-			return nil, fmt.Errorf("Failed to parse OKTA_CONCURRENCY, %v", err)
+			return nil, fmt.Errorf("Failed to parse OKTA_PARALLELISM, %v", err)
 		}
 	}
 
@@ -59,7 +59,7 @@ func oktaConfig() (*Config, error) {
 		orgName:     os.Getenv("OKTA_ORG_NAME"),
 		apiToken:    os.Getenv("OKTA_API_TOKEN"),
 		domain:      os.Getenv("OKTA_BASE_URL"),
-		concurrency: concurrent,
+		parallelism: concurrent,
 	}
 
 	if err := config.loadAndValidate(); err != nil {

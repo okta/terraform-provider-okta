@@ -13,7 +13,7 @@ type Config struct {
 	orgName     string
 	domain      string
 	apiToken    string
-	concurrency int
+	parallelism int
 
 	articulateOktaClient *articulateOkta.Client
 	oktaClient           *okta.Client

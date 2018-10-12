@@ -80,6 +80,42 @@ func TestAccOktaSwaApplication(t *testing.T) {
 	})
 }
 
+// Add and remove groups/users
+func TestAccOktaSwaApplicationUserGroups(t *testing.T) {
+	ri := acctest.RandInt()
+	config := buildTestSwaGroupsUsers(ri)
+	updatedConfig := buildTestSwaRemoveGroupsUsers(ri)
+	resourceName := buildResourceFQN(swaApp, ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(swaApp, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttrSet(resourceName, "users.0.id"),
+					resource.TestCheckResourceAttrSet(resourceName, "groups.0"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckNoResourceAttr(resourceName, "users.0"),
+					resource.TestCheckNoResourceAttr(resourceName, "groups.0"),
+				),
+			},
+		},
+	})
+}
+
 func buildTestSwaConfigPreconfig(rInt int) string {
 	name := buildResourceName(rInt)
 
@@ -101,6 +137,60 @@ resource "%s" "%s" {
   status 	   	 		= "INACTIVE"
 }
 `, swaApp, name, name)
+}
+
+func buildTestSwaGroupsUsers(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+resource "okta_group" "group-%d" {
+  name = "testAcc-%d"
+}
+resource "okta_user" "user-%d" {
+  admin_roles = ["APP_ADMIN", "USER_ADMIN"]
+  first_name  = "TestAcc"
+  last_name   = "blah"
+  login       = "test-acc-%d@testing.com"
+  email       = "test-acc-%d@testing.com"
+  status      = "ACTIVE"
+}
+
+resource "%s" "%s" {
+  preconfigured_app	    = "aws_console"
+  label       = "%s"
+  users = [
+	  {
+		  id = "${okta_user.user-%d.id}"
+		  username = "${okta_user.user-%d.email}"
+	  }
+  ]
+  groups = ["${okta_group.group-%d.id}"]
+}
+`, rInt, rInt, rInt, rInt, rInt, swaApp, name, name, rInt, rInt, rInt)
+}
+
+func buildTestSwaRemoveGroupsUsers(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+resource "okta_group" "group-%d" {
+  name = "testAcc-%d"
+}
+
+resource "okta_user" "user-%d" {
+  admin_roles = ["APP_ADMIN", "USER_ADMIN"]
+  first_name  = "TestAcc"
+  last_name   = "blah"
+  login       = "test-acc-%d@testing.com"
+  email       = "test-acc-%d@testing.com"
+  status      = "ACTIVE"
+}
+
+resource "%s" "%s" {
+  preconfigured_app	    = "aws_console"
+  label       = "%s"
+}
+`, rInt, rInt, rInt, rInt, rInt, swaApp, name, name)
 }
 
 func buildTestSwaConfig(rInt int) string {

@@ -232,7 +232,7 @@ func handleAppGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) e
 
 	groupHandlers := handleAppGroups(id, d, client)
 	userHandlers := handleAppUsers(id, d, client)
-	con := getConcurrencyFromMetadata(m)
+	con := getParallelismFromMetadata(m)
 	promiseAll(con, &wg, resultChan, append(groupHandlers, userHandlers...)...)
 	wg.Wait()
 
