@@ -79,6 +79,12 @@ func resourceUser() *schema.Resource {
 				Required:    true,
 				Description: "User first name",
 			},
+			"group_memberships": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "The groups that you want this user to be a part of",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"honorific_prefix": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -231,10 +237,17 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	d.SetId(user.Id)
 
 	// role assigning can only happen after the user is created so order matters here
-	if len(d.Get("admin_roles").([]interface{})) > 0 {
-		err = assignAdminRolesToUser(user.Id, d.Get("admin_roles").([]interface{}), client)
+	roles := convertInterfaceToStringArrNullable(d.Get("admin_roles"))
+	if roles != nil {
+		if err = assignAdminRolesToUser(user.Id, roles, client); err != nil {
+			return err
+		}
+	}
 
-		if err != nil {
+	// group assigning can only happen after the user is created as well
+	groups := convertInterfaceToStringArrNullable(d.Get("group_memberships"))
+	if groups != nil {
+		if err = assignGroupsToUser(user.Id, groups, client); err != nil {
 			return err
 		}
 	}
@@ -263,29 +276,15 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 
 	d.Set("status", user.Status)
 
-	err = setUserProfileAttributes(d, user)
-
-	if err != nil {
+	if err = setUserProfileAttributes(d, user); err != nil {
 		return err
 	}
 
-	// set all roles currently attached to user in state
-	roles, _, err := client.User.ListAssignedRoles(d.Id(), nil)
-
-	if err != nil {
+	if err = setAdminRoles(d, client); err != nil {
 		return err
 	}
 
-	r := make([]string, 0)
-	for _, role := range roles {
-		r = append(r, role.Type)
-	}
-
-	return setNonPrimitives(d, map[string]interface{}{
-		"admin_roles": r,
-	})
-
-	return nil
+	return setGroups(d, client)
 }
 
 func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
@@ -315,16 +314,22 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 		_, _, err := client.User.UpdateUser(d.Id(), userBody)
 
-		if d.HasChange("admin_roles") {
-			err := updateAdminRolesOnUser(d.Id(), d.Get("admin_roles").([]interface{}), client)
+		if err != nil {
+			return fmt.Errorf("[ERROR] Error Updating User in Okta: %v", err)
+		}
 
-			if err != nil {
+		if d.HasChange("admin_roles") {
+			roles := convertInterfaceToStringArr(d.Get("admin_roles"))
+			if err := updateAdminRolesOnUser(d.Id(), roles, client); err != nil {
 				return err
 			}
 		}
 
-		if err != nil {
-			return fmt.Errorf("[ERROR] Error Updating User in Okta: %v", err)
+		if d.HasChange("group_memberships") {
+			groups := convertInterfaceToStringArr(d.Get("group_memberships"))
+			if err := updateGroupsOnUser(d.Id(), groups, client); err != nil {
+				return err
+			}
 		}
 	}
 
