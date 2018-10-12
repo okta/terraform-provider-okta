@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -42,10 +43,23 @@ func accPreCheck() error {
 }
 
 func oktaConfig() (*Config, error) {
+	var err error
+	concurrent := 1
+	con := os.Getenv("OKTA_CONCURRENCY")
+
+	if con != "" {
+		concurrent, err = strconv.Atoi(con)
+
+		if err != nil {
+			return nil, fmt.Errorf("Failed to parse OKTA_CONCURRENCY, %v", err)
+		}
+	}
+
 	config := &Config{
-		orgName:  os.Getenv("OKTA_ORG_NAME"),
-		apiToken: os.Getenv("OKTA_API_TOKEN"),
-		domain:   os.Getenv("OKTA_BASE_URL"),
+		orgName:     os.Getenv("OKTA_ORG_NAME"),
+		apiToken:    os.Getenv("OKTA_API_TOKEN"),
+		domain:      os.Getenv("OKTA_BASE_URL"),
+		concurrency: concurrent,
 	}
 
 	if err := config.loadAndValidate(); err != nil {

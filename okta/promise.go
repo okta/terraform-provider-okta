@@ -6,23 +6,30 @@ import (
 	"sync"
 )
 
+// Basic result struct that can be expanded to support output
 type result struct {
 	err error
 }
 
 // Dead simple Promise all that will only work in very basic circumstances.
 // We could make the function return a generic result object as well.
-func promiseAll(wg *sync.WaitGroup, resp chan []*result, funcs ...func() error) {
+func promiseAll(limit int, wg *sync.WaitGroup, resp chan []*result, funcs ...func() error) {
+	jobIndex := 0
 	resultList := make([]*result, len(funcs))
 
-	for i, f := range funcs {
-		wg.Add(1)
-		go func(index int, cb func() error) {
-			defer wg.Done()
-			err := cb()
-			resultList[index] = &result{err}
-		}(i, f)
+	for jobIndex < len(funcs) {
+		for i := 0; i < limit; i++ {
+			wg.Add(1)
+			go func(index int, cb func() error) {
+				defer wg.Done()
+				err := cb()
+				resultList[index] = &result{err}
+			}(jobIndex, funcs[jobIndex])
+			jobIndex++
+		}
+		wg.Wait()
 	}
+
 	resp <- resultList
 }
 

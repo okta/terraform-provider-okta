@@ -43,6 +43,12 @@ func Provider() terraform.ResourceProvider {
 				DefaultFunc: schema.EnvDefaultFunc("OKTA_BASE_URL", "okta.com"),
 				Description: "The Okta url. (Use 'oktapreview.com' for Okta testing)",
 			},
+			"concurrency": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Default:     1,
+				Description: "Number of concurrent requests to make within a resource where bulk operations are not possible. Take note of https://developer.okta.com/docs/api/getting_started/rate-limits.",
+			},
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -77,9 +83,10 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	log.Printf("[INFO] Initializing Okta client")
 
 	config := Config{
-		orgName:  d.Get("org_name").(string),
-		domain:   d.Get("base_url").(string),
-		apiToken: d.Get("api_token").(string),
+		orgName:     d.Get("org_name").(string),
+		domain:      d.Get("base_url").(string),
+		apiToken:    d.Get("api_token").(string),
+		concurrency: d.Get("concurrency").(int),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, fmt.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)

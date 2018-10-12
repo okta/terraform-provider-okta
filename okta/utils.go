@@ -190,6 +190,10 @@ func ensureNotDefault(d *schema.ResourceData, t string) error {
 	return nil
 }
 
+func getConcurrencyFromMetadata(meta interface{}) int {
+	return meta.(*Config).concurrency
+}
+
 func getClientFromMetadata(meta interface{}) *articulateOkta.Client {
 	return meta.(*Config).articulateOktaClient
 }

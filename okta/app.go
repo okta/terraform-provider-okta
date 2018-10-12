@@ -232,7 +232,8 @@ func handleAppGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) e
 
 	groupHandlers := handleAppGroups(id, d, client)
 	userHandlers := handleAppUsers(id, d, client)
-	promiseAll(&wg, resultChan, append(groupHandlers, userHandlers...)...)
+	con := getConcurrencyFromMetadata(m)
+	promiseAll(con, &wg, resultChan, append(groupHandlers, userHandlers...)...)
 	wg.Wait()
 
 	return getPromiseError(<-resultChan, "failed to associate user or groups with application")
