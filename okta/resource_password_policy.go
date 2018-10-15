@@ -279,7 +279,7 @@ func resourcePasswordPolicyDelete(d *schema.ResourceData, m interface{}) error {
 }
 
 // create or update a password policy
-func buildPasswordPolicy(d *schema.ResourceData, m interface{}) articulateOkta.Policy {
+func buildPasswordPolicy(d *schema.ResourceData, m interface{}) *articulateOkta.Policy {
 	client := getClientFromMetadata(m)
 
 	template := client.Policies.PasswordPolicy()
@@ -328,7 +328,7 @@ func buildPasswordPolicy(d *schema.ResourceData, m interface{}) articulateOkta.P
 	template.Settings.Recovery.Factors.OktaEmail.Status = d.Get("email_recovery").(string)
 	template.Settings.Delegation.Options.SkipUnlock = d.Get("skip_unlock").(bool)
 
-	return template
+	return &template
 }
 
 func getExcludedAttrs(excludeFirstName bool, excludeLastName bool) []string {

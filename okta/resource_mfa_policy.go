@@ -3,6 +3,7 @@ package okta
 import (
 	"fmt"
 	"log"
+	"runtime"
 
 	"github.com/hashicorp/terraform/helper/validation"
 
@@ -10,22 +11,22 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var policyFactorSchema = &schema.Schema{
-	Type: schema.TypeMap,
-	Elem: &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"enroll": &schema.Schema{
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{"NOT_ALLOWED", "OPTIONAL", "REQUIRED"}, false),
-				Description:  "Requirements for use-initiated enrollment.",
-			},
-			"consent_type": &schema.Schema{
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{"NONE", "TERMS_OF_SERVICE"}, false),
-				Description:  "User consent type required before enrolling in the factor: NONE or TERMS_OF_SERVICE.",
-			},
+func getPolicyFactorSchema(key string) map[string]*schema.Schema {
+	// These are primitives to allow defaulting. Terraform still does not support aggregate defaults.
+	return map[string]*schema.Schema{
+		fmt.Sprintf("%s_enroll", key): &schema.Schema{
+			Type:         schema.TypeString,
+			Optional:     true,
+			ValidateFunc: validation.StringInSlice([]string{"NOT_ALLOWED", "OPTIONAL", "REQUIRED"}, false),
+			Description:  "Requirements for use-initiated enrollment.",
 		},
-	},
+		fmt.Sprintf("%s_consent_type", key): &schema.Schema{
+			Type:         schema.TypeString,
+			Optional:     true,
+			ValidateFunc: validation.StringInSlice([]string{"NONE", "TERMS_OF_SERVICE"}, false),
+			Description:  "User consent type required before enrolling in the factor: NONE or TERMS_OF_SERVICE.",
+		},
+	}
 }
 
 var factorProviders = []string{
@@ -46,7 +47,11 @@ var factorProviders = []string{
 
 func buildFactorProviders(target map[string]*schema.Schema) map[string]*schema.Schema {
 	for _, key := range factorProviders {
-		target[key] = policyFactorSchema
+		sMap := getPolicyFactorSchema(key)
+
+		for nestedKey, nestedVal := range sMap {
+			target[nestedKey] = nestedVal
+		}
 	}
 
 	return target
@@ -75,9 +80,9 @@ func resourceMfaPolicyCreate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	log.Printf("[INFO] Creating Policy %v", d.Get("name").(string))
-	template := buildMfaPolicy(d, m)
-	err := createPolicy(d, m, template)
+	policy := buildMfaPolicy(d, m)
+	runtime.Breakpoint()
+	err := createPolicy(d, m, policy)
 	if err != nil {
 		return err
 	}
@@ -96,8 +101,8 @@ func resourceMfaPolicyRead(d *schema.ResourceData, m interface{}) error {
 	syncFactor(d, "fido_u2f", policy.Settings.Factors.FidoU2f)
 	syncFactor(d, "fido_webauthn", policy.Settings.Factors.FidoWebauthn)
 	syncFactor(d, "google_otp", policy.Settings.Factors.GoogleOtp)
-	syncFactor(d, "okta_otp", policy.Settings.Factors.OktaOtp)
 	syncFactor(d, "okta_call", policy.Settings.Factors.OktaOtp)
+	syncFactor(d, "okta_otp", policy.Settings.Factors.OktaOtp)
 	syncFactor(d, "okta_password", policy.Settings.Factors.OktaPassword)
 	syncFactor(d, "okta_push", policy.Settings.Factors.OktaPush)
 	syncFactor(d, "okta_question", policy.Settings.Factors.OktaQuestion)
@@ -114,11 +119,9 @@ func resourceMfaPolicyUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	log.Printf("[INFO] Update Policy %v", d.Get("name").(string))
 	d.Partial(true)
-
-	template := buildMfaPolicy(d, m)
-	err := updatePolicy(d, m, template)
+	policy := buildMfaPolicy(d, m)
+	err := updatePolicy(d, m, policy)
 	if err != nil {
 		return err
 	}
@@ -144,7 +147,7 @@ func resourceMfaPolicyDelete(d *schema.ResourceData, m interface{}) error {
 }
 
 // create or update a password policy
-func buildMfaPolicy(d *schema.ResourceData, m interface{}) articulateOkta.Policy {
+func buildMfaPolicy(d *schema.ResourceData, m interface{}) *articulateOkta.Policy {
 	client := getClientFromMetadata(m)
 
 	policy := client.Policies.MfaPolicy()
@@ -158,32 +161,40 @@ func buildMfaPolicy(d *schema.ResourceData, m interface{}) articulateOkta.Policy
 
 	policy.Settings = &articulateOkta.PolicySettings{
 		Factors: &articulateOkta.Factors{
-
+			Duo:          buildFactorProvider(d, "duo"),
+			FidoU2f:      buildFactorProvider(d, "fido_u2f"),
+			FidoWebauthn: buildFactorProvider(d, "fido_webauthn"),
 			GoogleOtp:    buildFactorProvider(d, "google_otp"),
+			OktaCall:     buildFactorProvider(d, "okta_call"),
 			OktaOtp:      buildFactorProvider(d, "okta_otp"),
+			OktaPassword: buildFactorProvider(d, "okta_password"),
 			OktaPush:     buildFactorProvider(d, "okta_push"),
 			OktaQuestion: buildFactorProvider(d, "okta_question"),
 			OktaSms:      buildFactorProvider(d, "okta_sms"),
 			RsaToken:     buildFactorProvider(d, "rsa_token"),
 			SymantecVip:  buildFactorProvider(d, "symantec_vip"),
+			YubikeyToken: buildFactorProvider(d, "yubikey_token"),
 		},
 	}
+	policy.Conditions = &articulateOkta.PolicyConditions{
+		People: getGroups(d),
+	}
 
-	return policy
+	return &policy
 }
 
 func buildFactorProvider(d *schema.ResourceData, key string) *articulateOkta.FactorProvider {
 	return &articulateOkta.FactorProvider{
 		Consent: articulateOkta.Consent{
-			Type: d.Get(fmt.Sprintf("%s.consent_type", key)).(string),
+			Type: d.Get(fmt.Sprintf("%s_consent_type", key)).(string),
 		},
 		Enroll: articulateOkta.Enroll{
-			Self: d.Get(fmt.Sprintf("%s.enroll", key)).(string),
+			Self: d.Get(fmt.Sprintf("%s_enroll", key)).(string),
 		},
 	}
 }
 
 func syncFactor(d *schema.ResourceData, k string, f *articulateOkta.FactorProvider) {
-	d.Set(fmt.Sprintf("%s.consent_type", k), f.Consent.Type)
-	d.Set(fmt.Sprintf("%s.enroll", k), f.Enroll.Self)
+	d.Set(fmt.Sprintf("%s_consent_type", k), f.Consent.Type)
+	d.Set(fmt.Sprintf("%s_enroll", k), f.Enroll.Self)
 }

@@ -6,17 +6,16 @@ import (
 
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
 )
 
-func deletePasswordPolicies(client *testClient) error {
+func deleteMfaPolicies(client *testClient) error {
 	return deletePolicyByType(mfaPolicyType, client)
 }
 
-func TestAccOktaPolicyPassword(t *testing.T) {
+func TestAccOktaMfaPolicy(t *testing.T) {
 	ri := acctest.RandInt()
-	config := testOktaPolicyPassword(ri)
-	updatedConfig := testOktaPolicyPasswordUpdated(ri)
+	config := testOktaMfaPolicy(ri)
+	updatedConfig := testOktaMfaPolicyUpdated(ri)
 	resourceName := buildResourceFQN(mfaPolicy, ri)
 
 	resource.Test(t, resource.TestCase{
@@ -30,7 +29,8 @@ func TestAccOktaPolicyPassword(t *testing.T) {
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test Password Policy"),
+					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy"),
+					resource.TestCheckResourceAttr(resourceName, "google_otp_enroll", "REQUIRED"),
 				),
 			},
 			{
@@ -39,98 +39,40 @@ func TestAccOktaPolicyPassword(t *testing.T) {
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
-					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test Password Policy Updated"),
-					resource.TestCheckResourceAttr(resourceName, "password_min_length", "12"),
-					resource.TestCheckResourceAttr(resourceName, "password_min_lowercase", "0"),
-					resource.TestCheckResourceAttr(resourceName, "password_min_uppercase", "0"),
-					resource.TestCheckResourceAttr(resourceName, "password_min_number", "0"),
-					resource.TestCheckResourceAttr(resourceName, "password_min_symbol", "1"),
-					resource.TestCheckResourceAttr(resourceName, "password_exclude_username", "false"),
-					resource.TestCheckResourceAttr(resourceName, "password_exclude_first_name", "true"),
-					resource.TestCheckResourceAttr(resourceName, "password_exclude_last_name", "true"),
-					resource.TestCheckResourceAttr(resourceName, "password_max_age_days", "60"),
-					resource.TestCheckResourceAttr(resourceName, "password_expire_warn_days", "15"),
-					resource.TestCheckResourceAttr(resourceName, "password_min_age_minutes", "60"),
-					resource.TestCheckResourceAttr(resourceName, "password_history_count", "5"),
-					resource.TestCheckResourceAttr(resourceName, "password_max_lockout_attempts", "3"),
-					resource.TestCheckResourceAttr(resourceName, "password_auto_unlock_minutes", "2"),
-					resource.TestCheckResourceAttr(resourceName, "password_show_lockout_failures", "true"),
-					resource.TestCheckResourceAttr(resourceName, "question_min_length", "10"),
-					resource.TestCheckResourceAttr(resourceName, "recovery_email_token", "20160"),
-					resource.TestCheckResourceAttr(resourceName, "sms_recovery", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy Updated"),
+					resource.TestCheckResourceAttr(resourceName, "duo_enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "fido_u2f_enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "fido_webauthn_enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "google_otp_enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "okta_call_enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "okta_otp_enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "okta_password_enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "okta_push_enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "okta_question_enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "okta_sms_enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "rsa_token_enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "symantec_vip_enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "yubikey_token_enroll", "OPTIONAL"),
 				),
 			},
 		},
 	})
 }
 
-func ensurePolicyExists(name string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		missingErr := fmt.Errorf("resource not found: %s", name)
-		rs, ok := s.RootModule().Resources[name]
-		if !ok {
-			return missingErr
-		}
-
-		ID := rs.Primary.ID
-		exist, err := doesPolicyExistsUpstream(ID)
-		if err != nil {
-			return err
-		} else if !exist {
-			return missingErr
-		}
-
-		return nil
-	}
-}
-
-func createPolicyCheckDestroy(policyType string) func(*terraform.State) error {
-	return func(s *terraform.State) error {
-		for _, rs := range s.RootModule().Resources {
-			if rs.Type != policyType {
-				continue
-			}
-
-			ID := rs.Primary.ID
-			exists, err := doesPolicyExistsUpstream(ID)
-			if err != nil {
-				return err
-			}
-
-			if exists {
-				return fmt.Errorf("policy still exists, ID: %s", ID)
-			}
-		}
-		return nil
-	}
-}
-
-func doesPolicyExistsUpstream(ID string) (bool, error) {
-	client := getClientFromMetadata(testAccProvider.Meta())
-
-	policy, _, err := client.Policies.GetPolicy(ID)
-	if is404(client) {
-		return false, nil
-	} else if err != nil {
-		return false, err
-	}
-
-	return policy.ID != "", nil
-}
-
-func testOktaPolicyPassword(rInt int) string {
+func testOktaMfaPolicy(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
 resource "%s" "%s" {
-  name        = "%s"
-  status      = "ACTIVE"
-  description = "Terraform Acceptance Test Password Policy"
+  name        		= "%s"
+  status      		= "ACTIVE"
+  description 		= "Terraform Acceptance Test MFA Policy"
+  google_otp_enroll = "REQUIRED"
 }
 `, mfaPolicy, name, name)
 }
 
-func testOktaPolicyPasswordUpdated(rInt int) string {
+func testOktaMfaPolicyUpdated(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
@@ -139,26 +81,21 @@ data "okta_everyone_group" "everyone-%d" {}
 resource "%s" "%s" {
 	name        = "%s"
 	status      = "INACTIVE"
-	description = "Terraform Acceptance Test Password Policy Updated"
+	description = "Terraform Acceptance Test MFA Policy Updated"
 	groups_included = [ "${data.okta_everyone_group.everyone-%d.id}" ]
-	password_min_length = 12
-	password_min_lowercase = 0 
-	password_min_uppercase = 0 
-	password_min_number = 0
-	password_min_symbol = 1 
-	password_exclude_username = false
-	password_exclude_first_name = true 
-	password_exclude_last_name = true 
-	password_max_age_days = 60
-	password_expire_warn_days = 15
-	password_min_age_minutes = 60
-	password_history_count = 5
-	password_max_lockout_attempts = 3
-	password_auto_unlock_minutes = 2
-	password_show_lockout_failures = true
-	question_min_length = 10
-	recovery_email_token = 20160
-	sms_recovery = "ACTIVE"
+	duo_enroll 				= "OPTIONAL"
+	fido_u2f_enroll 		= "OPTIONAL"
+	fido_webauthn_enroll 	= "OPTIONAL"
+	google_otp_enroll	 	= "OPTIONAL"
+	okta_call_enroll 		= "OPTIONAL"
+	okta_otp_enroll 		= "OPTIONAL"
+	okta_password_enroll 	= "OPTIONAL"
+	okta_push_enroll 		= "OPTIONAL"
+	okta_question_enroll 	= "OPTIONAL"
+	okta_sms_enroll 		= "OPTIONAL"
+	rsa_token_enroll	 	= "OPTIONAL"
+	symantec_vip_enroll 	= "OPTIONAL"
+	yubikey_token_enroll 	= "OPTIONAL"
 }
 `, rInt, mfaPolicy, name, name, rInt)
 }

@@ -23,8 +23,10 @@ func TestMain(m *testing.M) {
 	// Acceptance test sweepers necessary to prevent dangling resources
 	setupSweeper(passwordPolicy, deletePasswordPolicies)
 	setupSweeper(signOnPolicy, deleteSignOnPolicies)
+	setupSweeper(mfaPolicy, deleteMfaPolicies)
 	setupSweeper(signOnPolicyRule, deleteSignOnPolicyRules)
 	setupSweeper(passwordPolicyRule, deletePasswordPolicyRules)
+	setupSweeper(mfaPolicyRule, deleteMfaPolicyRules)
 	// Cannot sweep application resources as there is a bug with listing applications.
 	// setupSweeper(oAuthApp, deleteOAuthApps)
 	resource.TestMain(m)
