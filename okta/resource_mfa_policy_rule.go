@@ -19,6 +19,8 @@ func resourceMfaPolicyRule() *schema.Resource {
 			"enroll": &schema.Schema{
 				Type:         schema.TypeString,
 				ValidateFunc: validation.StringInSlice([]string{"CHALLENGE", "LOGIN", "NEVER"}, false),
+				Default:      "CHALLENGE",
+				Optional:     true,
 				Description:  "Should the user be enrolled the first time they LOGIN, the next time they are CHALLENGEd, or NEVER?",
 			},
 		}),

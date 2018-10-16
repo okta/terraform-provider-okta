@@ -16,6 +16,7 @@ const signOnPolicy = "okta_signon_policy"
 const oAuthApp = "okta_oauth_app"
 const mfaPolicy = "okta_mfa_policy"
 const mfaPolicyRule = "okta_mfa_policy_rule"
+const factor = "okta_factor"
 
 // Provider establishes a client connection to an okta site
 // determined by its schema string values
@@ -55,6 +56,7 @@ func Provider() terraform.ResourceProvider {
 			"okta_user_schemas":      resourceUserSchemas(),
 			"okta_user":              resourceUser(),
 			oAuthApp:                 resourceOAuthApp(),
+			factor:                   resourceFactor(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
