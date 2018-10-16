@@ -52,7 +52,6 @@ func TestAccOktaMfaPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "okta_sms_enroll", "OPTIONAL"),
 					resource.TestCheckResourceAttr(resourceName, "rsa_token_enroll", "OPTIONAL"),
 					resource.TestCheckResourceAttr(resourceName, "symantec_vip_enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "yubikey_token_enroll", "OPTIONAL"),
 				),
 			},
 		},
@@ -77,6 +76,27 @@ func testOktaMfaPolicyUpdated(rInt int) string {
 
 	return fmt.Sprintf(`
 data "okta_everyone_group" "everyone-%d" {}
+resource "okta_factor" "google" {
+	provider_id = "google_otp" 
+}
+resource "okta_factor" "sms" {
+	provider_id = "okta_sms" 
+}
+resource "okta_factor" "otp" {
+	provider_id = "okta_otp" 
+}
+resource "okta_factor" "duo" {
+	provider_id = "duo" 
+}
+resource "okta_factor" "fido_u2f" {
+	provider_id = "fido_u2f" 
+}
+resource "okta_factor" "fido_webauthn" {
+	provider_id = "fido_webauthn" 
+}
+resource "okta_factor" "fido_webauthn" {
+	provider_id = "fido_webauthn" 
+}
 
 resource "%s" "%s" {
 	name        = "%s"
@@ -95,7 +115,6 @@ resource "%s" "%s" {
 	okta_sms_enroll 		= "OPTIONAL"
 	rsa_token_enroll	 	= "OPTIONAL"
 	symantec_vip_enroll 	= "OPTIONAL"
-	yubikey_token_enroll 	= "OPTIONAL"
 }
 `, rInt, mfaPolicy, name, name, rInt)
 }

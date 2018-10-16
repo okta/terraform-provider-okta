@@ -7,11 +7,15 @@ import (
 )
 
 // Predefined second authentication factors. They must be activated in order to use them in MFA policies.
+// This is not your standard resource as each factor provider is predefined and the create function simply puts it in
+// terraform state and activates it. Currently the API is in Beta and it only allows lifecycle interactions, and
+// no ability to configure them but the resource was built with future expansion in mind. Also keep in mind this
+// is an account level resource.
 func resourceFactor() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceFactorCreate,
+		Create: resourceFactorPut,
 		Read:   resourceFactorRead,
-		Update: resourceFactorUpdate,
+		Update: resourceFactorPut,
 		Exists: resourceFactorExists,
 		Delete: resourceFactorDelete,
 		Importer: &schema.ResourceImporter{
@@ -39,15 +43,14 @@ func resourceFactor() *schema.Resource {
 					},
 					false,
 				),
-				Description: "Factor provider name",
+				Description: "Factor provider ID",
 				ForceNew:    true,
 			},
-			"status": {
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE", "NOT_SETUP"}, false),
-				Description:  "Status of MFA provider",
-				Optional:     true,
-				Default:      "ACTIVE",
+			"active": {
+				Type:        schema.TypeBool,
+				Description: "Is this provider active?",
+				Optional:    true,
+				Default:     true,
 			},
 		},
 	}
@@ -59,22 +62,11 @@ func resourceFactorExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	return err == nil && factor != nil, err
 }
 
-func resourceFactorCreate(d *schema.ResourceData, m interface{}) error {
-	d.SetId(d.Get("provider_id").(string))
-	err := activateFactor(d, m)
-
-	if err != nil {
-		return err
-	}
-
-	return resourceFactorRead(d, m)
-}
-
 func resourceFactorDelete(d *schema.ResourceData, m interface{}) error {
 	var err error
 	client := getClientFromMetadata(m)
 
-	if d.Get("status").(string) == "ACTIVE" {
+	if d.Get("active").(bool) {
 		_, _, err = client.Org.DeactivateFactor(d.Id())
 	}
 
@@ -87,20 +79,26 @@ func resourceFactorRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("status", factor.Status)
+	d.Set("active", factor.Status == "ACTIVE")
 	d.Set("provider_id", factor.Id)
 
 	return nil
 }
 
-func resourceFactorUpdate(d *schema.ResourceData, m interface{}) error {
-	if d.HasChange("status") {
-		err := activateFactor(d, m)
+func resourceFactorPut(d *schema.ResourceData, m interface{}) error {
+	factor, err := findFactor(d, m)
+	if err != nil {
+		return err
+	}
 
+	// To avoid API errors we check downstream status
+	if statusMismatch(d, factor) {
+		err := activateFactor(d, m)
 		if err != nil {
 			return err
 		}
 	}
+	d.SetId(d.Get("provider_id").(string))
 
 	return resourceFactorRead(d, m)
 }
@@ -108,18 +106,19 @@ func resourceFactorUpdate(d *schema.ResourceData, m interface{}) error {
 func activateFactor(d *schema.ResourceData, m interface{}) error {
 	var err error
 	client := getClientFromMetadata(m)
-	id := d.Id()
+	id := d.Get("provider_id").(string)
 
-	switch d.Get("status").(string) {
-	case "ACTIVE":
+	if d.Get("active").(bool) {
 		_, _, err = client.Org.ActivateFactor(id)
-	case "INACTIVE":
+	} else {
 		_, _, err = client.Org.DeactivateFactor(id)
 	}
 
 	return err
 }
 
+// This API is in Beta hence the inability to do a single get. I must list then find.
+// Fear is clearly not a factor for me.
 func findFactor(d *schema.ResourceData, m interface{}) (*okta.Factor, error) {
 	client := getClientFromMetadata(m)
 	factorList, _, err := client.Org.ListFactors()
@@ -128,11 +127,24 @@ func findFactor(d *schema.ResourceData, m interface{}) (*okta.Factor, error) {
 		return nil, err
 	}
 
+	id := d.Get("provider_id").(string)
+
 	for _, f := range factorList {
-		if f.Id == d.Id() {
+		if f.Id == id {
 			return f, nil
 		}
 	}
 
 	return nil, nil
+}
+
+func statusMismatch(d *schema.ResourceData, factor *okta.Factor) bool {
+	status := d.Get("active").(bool)
+
+	// I miss ternary operators
+	if factor.Status == "ACTIVE" {
+		return !status
+	}
+
+	return status
 }

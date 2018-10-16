@@ -22,14 +22,14 @@ func TestAccOktaFactor(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "provider_id", "google_otp"),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "active", "true"),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "provider_id", "google_otp"),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "active", "false"),
 				),
 			},
 		},
@@ -42,7 +42,6 @@ func testOktaFactor(rInt int) string {
 	return fmt.Sprintf(`
 resource "%s" "%s" {
 	provider_id  = "google_otp"
-	status   	 = "ACTIVE"
 }
 `, factor, name)
 }
@@ -53,7 +52,7 @@ func testOktaFactorInactive(rInt int) string {
 	return fmt.Sprintf(`
 resource "%s" "%s" {
 	provider_id  = "google_otp"
-	status   	 = "INACTIVE"
+	active   	 = false 
 }
 `, factor, name)
 }
