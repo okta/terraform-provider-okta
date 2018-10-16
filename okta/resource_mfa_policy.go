@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"runtime"
@@ -81,6 +82,9 @@ func resourceMfaPolicyCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	policy := buildMfaPolicy(d, m)
+	b, _ := json.Marshal(policy)
+	s := string(b)
+	fmt.Print(s)
 	runtime.Breakpoint()
 	err := createPolicy(d, m, policy)
 	if err != nil {
@@ -184,14 +188,24 @@ func buildMfaPolicy(d *schema.ResourceData, m interface{}) *articulateOkta.Polic
 }
 
 func buildFactorProvider(d *schema.ResourceData, key string) *articulateOkta.FactorProvider {
-	return &articulateOkta.FactorProvider{
-		Consent: articulateOkta.Consent{
-			Type: d.Get(fmt.Sprintf("%s_consent_type", key)).(string),
-		},
-		Enroll: articulateOkta.Enroll{
-			Self: d.Get(fmt.Sprintf("%s_enroll", key)).(string),
-		},
+	consent := d.Get(fmt.Sprintf("%s_consent_type", key)).(string)
+	enroll := d.Get(fmt.Sprintf("%s_enroll", key)).(string)
+
+	if consent == "" && enroll == "" {
+		return nil
 	}
+
+	provider := &articulateOkta.FactorProvider{}
+
+	if consent != "" {
+		provider.Consent = articulateOkta.Consent{Type: consent}
+	}
+
+	if enroll != "" {
+		provider.Enroll = articulateOkta.Enroll{Self: enroll}
+	}
+
+	return provider
 }
 
 func syncFactor(d *schema.ResourceData, k string, f *articulateOkta.FactorProvider) {

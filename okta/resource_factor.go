@@ -1,6 +1,8 @@
 package okta
 
 import (
+	"runtime"
+
 	"github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
@@ -74,6 +76,7 @@ func resourceFactorDelete(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceFactorRead(d *schema.ResourceData, m interface{}) error {
+	runtime.Breakpoint()
 	factor, err := findFactor(d, m)
 	if err != nil {
 		return err
@@ -131,6 +134,7 @@ func findFactor(d *schema.ResourceData, m interface{}) (*okta.Factor, error) {
 
 	for _, f := range factorList {
 		if f.Id == id {
+			runtime.Breakpoint()
 			return f, nil
 		}
 	}

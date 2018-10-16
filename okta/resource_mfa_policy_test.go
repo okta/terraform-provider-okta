@@ -44,14 +44,9 @@ func TestAccOktaMfaPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "fido_u2f_enroll", "OPTIONAL"),
 					resource.TestCheckResourceAttr(resourceName, "fido_webauthn_enroll", "OPTIONAL"),
 					resource.TestCheckResourceAttr(resourceName, "google_otp_enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "okta_call_enroll", "OPTIONAL"),
 					resource.TestCheckResourceAttr(resourceName, "okta_otp_enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "okta_password_enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "okta_push_enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "okta_question_enroll", "OPTIONAL"),
 					resource.TestCheckResourceAttr(resourceName, "okta_sms_enroll", "OPTIONAL"),
 					resource.TestCheckResourceAttr(resourceName, "rsa_token_enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "symantec_vip_enroll", "OPTIONAL"),
 				),
 			},
 		},
@@ -62,6 +57,9 @@ func testOktaMfaPolicy(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
+resource "okta_factor" "google" {
+	provider_id = "google_otp" 
+}
 resource "%s" "%s" {
   name        		= "%s"
   status      		= "ACTIVE"
@@ -94,8 +92,8 @@ resource "okta_factor" "fido_u2f" {
 resource "okta_factor" "fido_webauthn" {
 	provider_id = "fido_webauthn" 
 }
-resource "okta_factor" "fido_webauthn" {
-	provider_id = "fido_webauthn" 
+resource "okta_factor" "rsa_token" {
+	provider_id = "rsa_token" 
 }
 
 resource "%s" "%s" {
@@ -107,14 +105,9 @@ resource "%s" "%s" {
 	fido_u2f_enroll 		= "OPTIONAL"
 	fido_webauthn_enroll 	= "OPTIONAL"
 	google_otp_enroll	 	= "OPTIONAL"
-	okta_call_enroll 		= "OPTIONAL"
 	okta_otp_enroll 		= "OPTIONAL"
-	okta_password_enroll 	= "OPTIONAL"
-	okta_push_enroll 		= "OPTIONAL"
-	okta_question_enroll 	= "OPTIONAL"
 	okta_sms_enroll 		= "OPTIONAL"
 	rsa_token_enroll	 	= "OPTIONAL"
-	symantec_vip_enroll 	= "OPTIONAL"
 }
 `, rInt, mfaPolicy, name, name, rInt)
 }
