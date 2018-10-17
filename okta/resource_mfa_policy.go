@@ -1,10 +1,8 @@
 package okta
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
-	"runtime"
 
 	"github.com/hashicorp/terraform/helper/validation"
 
@@ -15,17 +13,27 @@ import (
 func getPolicyFactorSchema(key string) map[string]*schema.Schema {
 	// These are primitives to allow defaulting. Terraform still does not support aggregate defaults.
 	return map[string]*schema.Schema{
-		fmt.Sprintf("%s_enroll", key): &schema.Schema{
-			Type:         schema.TypeString,
-			Optional:     true,
-			ValidateFunc: validation.StringInSlice([]string{"NOT_ALLOWED", "OPTIONAL", "REQUIRED"}, false),
-			Description:  "Requirements for use-initiated enrollment.",
-		},
-		fmt.Sprintf("%s_consent_type", key): &schema.Schema{
-			Type:         schema.TypeString,
-			Optional:     true,
-			ValidateFunc: validation.StringInSlice([]string{"NONE", "TERMS_OF_SERVICE"}, false),
-			Description:  "User consent type required before enrolling in the factor: NONE or TERMS_OF_SERVICE.",
+		key: &schema.Schema{
+			Optional: true,
+			Type:     schema.TypeMap,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"enroll": &schema.Schema{
+						Type:         schema.TypeString,
+						Optional:     true,
+						Default:      "OPTIONAL",
+						ValidateFunc: validation.StringInSlice([]string{"NOT_ALLOWED", "OPTIONAL", "REQUIRED"}, false),
+						Description:  "Requirements for use-initiated enrollment.",
+					},
+					"consent_type": &schema.Schema{
+						Type:         schema.TypeString,
+						Optional:     true,
+						Default:      "NONE",
+						ValidateFunc: validation.StringInSlice([]string{"NONE", "TERMS_OF_SERVICE"}, false),
+						Description:  "User consent type required before enrolling in the factor: NONE or TERMS_OF_SERVICE.",
+					},
+				},
+			},
 		},
 	}
 }
@@ -82,10 +90,6 @@ func resourceMfaPolicyCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	policy := buildMfaPolicy(d, m)
-	b, _ := json.Marshal(policy)
-	s := string(b)
-	fmt.Print(s)
-	runtime.Breakpoint()
 	err := createPolicy(d, m, policy)
 	if err != nil {
 		return err
@@ -188,8 +192,8 @@ func buildMfaPolicy(d *schema.ResourceData, m interface{}) *articulateOkta.Polic
 }
 
 func buildFactorProvider(d *schema.ResourceData, key string) *articulateOkta.FactorProvider {
-	consent := d.Get(fmt.Sprintf("%s_consent_type", key)).(string)
-	enroll := d.Get(fmt.Sprintf("%s_enroll", key)).(string)
+	consent := d.Get(fmt.Sprintf("%s.consent_type", key)).(string)
+	enroll := d.Get(fmt.Sprintf("%s.enroll", key)).(string)
 
 	if consent == "" && enroll == "" {
 		return nil
@@ -209,6 +213,8 @@ func buildFactorProvider(d *schema.ResourceData, key string) *articulateOkta.Fac
 }
 
 func syncFactor(d *schema.ResourceData, k string, f *articulateOkta.FactorProvider) {
-	d.Set(fmt.Sprintf("%s_consent_type", k), f.Consent.Type)
-	d.Set(fmt.Sprintf("%s_enroll", k), f.Enroll.Self)
+	if f != nil {
+		d.Set(fmt.Sprintf("%s.consent_type", k), f.Consent.Type)
+		d.Set(fmt.Sprintf("%s.enroll", k), f.Enroll.Self)
+	}
 }

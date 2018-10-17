@@ -71,6 +71,7 @@ resource "%s" "%s" {
 	policyid = "${data.okta_default_policies.default-%d.id}"
 	name     = "%s"
 	status   = "INACTIVE"
+	enroll	 = "LOGIN"
 }
 `, rInt, passwordPolicyType, passwordPolicyRule, name, rInt, name)
 }

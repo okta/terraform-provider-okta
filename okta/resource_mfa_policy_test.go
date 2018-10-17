@@ -30,7 +30,7 @@ func TestAccOktaMfaPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy"),
-					resource.TestCheckResourceAttr(resourceName, "google_otp_enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "google_otp.enroll", "REQUIRED"),
 				),
 			},
 			{
@@ -40,13 +40,11 @@ func TestAccOktaMfaPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy Updated"),
-					resource.TestCheckResourceAttr(resourceName, "duo_enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "fido_u2f_enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "fido_webauthn_enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "google_otp_enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "okta_otp_enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "okta_sms_enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "rsa_token_enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "fido_u2f.enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "fido_webauthn.enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "google_otp.enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "okta_otp.enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "okta_sms.enroll", "OPTIONAL"),
 				),
 			},
 		},
@@ -64,7 +62,12 @@ resource "%s" "%s" {
   name        		= "%s"
   status      		= "ACTIVE"
   description 		= "Terraform Acceptance Test MFA Policy"
-  google_otp_enroll = "REQUIRED"
+  google_otp = {
+	  enroll = "REQUIRED"
+  }
+  depends_on = [
+	"okta_factor.google",
+  ]	
 }
 `, mfaPolicy, name, name)
 }
@@ -83,17 +86,11 @@ resource "okta_factor" "sms" {
 resource "okta_factor" "otp" {
 	provider_id = "okta_otp" 
 }
-resource "okta_factor" "duo" {
-	provider_id = "duo" 
-}
 resource "okta_factor" "fido_u2f" {
 	provider_id = "fido_u2f" 
 }
 resource "okta_factor" "fido_webauthn" {
 	provider_id = "fido_webauthn" 
-}
-resource "okta_factor" "rsa_token" {
-	provider_id = "rsa_token" 
 }
 
 resource "%s" "%s" {
@@ -101,13 +98,28 @@ resource "%s" "%s" {
 	status      = "INACTIVE"
 	description = "Terraform Acceptance Test MFA Policy Updated"
 	groups_included = [ "${data.okta_everyone_group.everyone-%d.id}" ]
-	duo_enroll 				= "OPTIONAL"
-	fido_u2f_enroll 		= "OPTIONAL"
-	fido_webauthn_enroll 	= "OPTIONAL"
-	google_otp_enroll	 	= "OPTIONAL"
-	okta_otp_enroll 		= "OPTIONAL"
-	okta_sms_enroll 		= "OPTIONAL"
-	rsa_token_enroll	 	= "OPTIONAL"
+	fido_u2f 		= {
+		enroll = "OPTIONAL"
+	}
+	fido_webauthn 	= {
+		enroll = "OPTIONAL"
+	}
+	google_otp	 	= {
+		enroll = "OPTIONAL"
+	}
+	okta_otp 		= {
+		enroll = "OPTIONAL"
+	}
+	okta_sms 		= {
+		enroll = "OPTIONAL"
+	}
+	depends_on = [
+		"okta_factor.google",
+		"okta_factor.sms",
+		"okta_factor.otp",
+		"okta_factor.fido_u2f",
+		"okta_factor.fido_webauthn",
+	]
 }
 `, rInt, mfaPolicy, name, name, rInt)
 }
