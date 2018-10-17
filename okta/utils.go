@@ -134,11 +134,6 @@ func convertStringArrToInterface(stringList []string) []interface{} {
 	return arr
 }
 
-func convertToSchemaKey(jsonKey string) string {
-	re := regexp.MustCompile("([A-Z])")
-	return strings.ToLower(re.ReplaceAllString(jsonKey, "_$1"))
-}
-
 // Allows you to chain multiple validation functions
 func createValidationChain(validationChain ...schema.SchemaValidateFunc) schema.SchemaValidateFunc {
 	return func(val interface{}, key string) ([]string, []error) {

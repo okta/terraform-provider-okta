@@ -16,12 +16,12 @@ func TestAccOktaMfaPolicyRule(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testOktaMfaPolicyRule(ri)
 	updatedConfig := testOktaMfaPolicyRuleUpdated(ri)
-	resourceName := buildResourceFQN(passwordPolicyRule, ri)
+	resourceName := buildResourceFQN(mfaPolicyRule, ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createRuleCheckDestroy(passwordPolicyRule),
+		CheckDestroy: createRuleCheckDestroy(mfaPolicyRule),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -48,7 +48,7 @@ func testOktaMfaPolicyRule(rInt int) string {
 
 	return fmt.Sprintf(`
 data "okta_default_policies" "default-%d" {
-	type = "%s"
+	type = "MFA_ENROLL"
 }
 
 resource "%s" "%s" {
@@ -56,7 +56,7 @@ resource "%s" "%s" {
 	name     = "%s"
 	status   = "ACTIVE"
 }
-`, rInt, passwordPolicyType, passwordPolicyRule, name, rInt, name)
+`, rInt, mfaPolicyRule, name, rInt, name)
 }
 
 func testOktaMfaPolicyRuleUpdated(rInt int) string {
@@ -64,7 +64,7 @@ func testOktaMfaPolicyRuleUpdated(rInt int) string {
 
 	return fmt.Sprintf(`
 data "okta_default_policies" "default-%d" {
-	type = "%s"
+	type = "MFA_ENROLL"
 }
 
 resource "%s" "%s" {
@@ -73,5 +73,5 @@ resource "%s" "%s" {
 	status   = "INACTIVE"
 	enroll	 = "LOGIN"
 }
-`, rInt, passwordPolicyType, passwordPolicyRule, name, rInt, name)
+`, rInt, mfaPolicyRule, name, rInt, name)
 }
