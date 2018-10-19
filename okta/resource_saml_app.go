@@ -272,6 +272,8 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 		if err != nil {
 			return err
 		}
+		// This can clear out the metadata in cases where an app is deactivated. The API will not return metadata
+		// for inactive apps.
 		d.Set("key.metadata", key)
 	}
 
@@ -413,8 +415,10 @@ func getMetadata(d *schema.ResourceData, m interface{}, keyId string) (string, e
 	defer res.Body.Close()
 	if err != nil {
 		return "", err
+	} else if res.StatusCode == 404 {
+		return "", nil
 	} else if res.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("failed to find metadata for app ID: %s, key ID: %s, status: %s", d.Id(), keyId, res.Status)
+		return "", fmt.Errorf("failed to get metadata for app ID: %s, key ID: %s, status: %s", d.Id(), keyId, res.Status)
 	}
 	reader, err := ioutil.ReadAll(res.Body)
 
