@@ -180,6 +180,7 @@ func TestAccOktaSamlApplicationUserGroups(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttrSet(resourceName, "users.0.id"),
 					resource.TestCheckResourceAttrSet(resourceName, "groups.0"),
+					resource.TestCheckResourceAttr(resourceName, "key.years_valid", "3"),
 				),
 			},
 			{
@@ -190,6 +191,7 @@ func TestAccOktaSamlApplicationUserGroups(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckNoResourceAttr(resourceName, "users.0"),
 					resource.TestCheckNoResourceAttr(resourceName, "groups.0"),
+					resource.TestCheckNoResourceAttr(resourceName, "key.id"),
 				),
 			},
 		},
@@ -222,6 +224,9 @@ resource "%s" "%s" {
 	  }
   ]
   groups = ["${okta_group.group-%d.id}"]
+  key = {
+	  years_valid = 3
+  }
 }
 `, rInt, rInt, rInt, rInt, rInt, samlApp, name, name, rInt, rInt, rInt)
 }

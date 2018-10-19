@@ -34,6 +34,14 @@
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:acbc9c65e8f50296d264bff10657aa726d85f92abaa90b9f634cb751161a454e"
+  name = "github.com/articulate/okta-sdk-golang"
+  packages = ["okta/cache"]
+  pruneopts = "UT"
+  revision = "2395a5f0ddc8840b41566277432f0589f2570108"
+  version = "v0.1.0"
+
+[[projects]]
   branch = "master"
   digest = "1:7705ebe1fd5de256eaefcb59bce9d2bc9ae9ac0ad8a7786ebf8ee3221121fb9f"
   name = "github.com/articulate/oktasdk-go"
@@ -112,6 +120,14 @@
   pruneopts = "UT"
   revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
   version = "v1.1.1"
+
+[[projects]]
+  digest = "1:ace1aef6acdf2c4647365dc87c14fb8b71ed8bb0b3ae114ffb216614a24da219"
+  name = "github.com/dghubble/sling"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "eb56e89ac5088bebb12eef3cb4b293300f43608b"
+  version = "v1.1.0"
 
 [[projects]]
   digest = "1:865079840386857c809b72ce300be7580cb50d3d3129ce11bf9aa6ca2bc1934a"
@@ -349,6 +365,14 @@
   version = "v1.3.0"
 
 [[projects]]
+  digest = "1:c34de7e8f144a065dbcd5a5dab3dfc865d406545da86cd5a654fa720abfa8126"
+  name = "github.com/levigross/grequests"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "d0df86deffcb5d344ab23de5a958d41e44659568"
+  version = "0.10"
+
+[[projects]]
   digest = "1:c658e84ad3916da105a761660dcaeb01e63416c8ec7bc62256a9b411a05fcd67"
   name = "github.com/mattn/go-colorable"
   packages = ["."]
@@ -525,7 +549,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:d6c783aadd017eac31b9872bf54213be93c2306e8664ac2c684a88620429d0bc"
+  digest = "1:15602646c6a0f753dedf287b903aeae4520317773c98ed8ef653ba42f75476cd"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -536,6 +560,7 @@
     "http2/hpack",
     "idna",
     "internal/timeseries",
+    "publicsuffix",
     "trace",
   ]
   pruneopts = "UT"
@@ -621,7 +646,9 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/articulate/okta-sdk-golang/okta/cache",
     "github.com/articulate/oktasdk-go/okta",
+    "github.com/dghubble/sling",
     "github.com/hashicorp/terraform/helper/acctest",
     "github.com/hashicorp/terraform/helper/resource",
     "github.com/hashicorp/terraform/helper/schema",
@@ -629,7 +656,9 @@
     "github.com/hashicorp/terraform/helper/validation",
     "github.com/hashicorp/terraform/plugin",
     "github.com/hashicorp/terraform/terraform",
+    "github.com/levigross/grequests",
     "github.com/okta/okta-sdk-golang/okta",
+    "github.com/okta/okta-sdk-golang/okta/cache",
     "github.com/okta/okta-sdk-golang/okta/query",
   ]
   solver-name = "gps-cdcl"

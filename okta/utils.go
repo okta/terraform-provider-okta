@@ -8,6 +8,7 @@ import (
 
 	"github.com/okta/okta-sdk-golang/okta"
 
+	"github.com/articulate/okta-sdk-golang/okta/cache"
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -190,6 +191,15 @@ func ensureNotDefault(d *schema.ResourceData, t string) error {
 	return nil
 }
 
+func getApiToken(m interface{}) string {
+	return m.(*Config).apiToken
+}
+
+func getBaseUrl(m interface{}) string {
+	c := m.(*Config)
+	return fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
+}
+
 func getParallelismFromMetadata(meta interface{}) int {
 	return meta.(*Config).parallelism
 }
@@ -200,6 +210,15 @@ func getClientFromMetadata(meta interface{}) *articulateOkta.Client {
 
 func getOktaClientFromMetadata(meta interface{}) *okta.Client {
 	return meta.(*Config).oktaClient
+}
+
+func getRequestExecutor(m interface{}) *okta.RequestExecutor {
+	c := m.(*Config)
+	config := okta.NewConfig().
+		WithOrgUrl(getBaseUrl(m)).
+		WithToken(c.apiToken).
+		WithCache(false)
+	return okta.NewRequestExecutor(nil, cache.NewNoOpCache(), config)
 }
 
 func is404(client *articulateOkta.Client) bool {

@@ -2,7 +2,12 @@ package okta
 
 import (
 	"errors"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"strconv"
 
+	"github.com/dghubble/sling"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
@@ -40,6 +45,31 @@ func resourceSamlApp() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Name of preexisting SAML application.",
+			},
+			"key": &schema.Schema{
+				Type:        schema.TypeMap,
+				Description: "Certificate config",
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": &schema.Schema{
+							Type:        schema.TypeString,
+							Description: "Certificate ID",
+							Computed:    true,
+						},
+						"years_valid": &schema.Schema{
+							Type:         schema.TypeInt,
+							Optional:     true,
+							ValidateFunc: validation.IntAtLeast(1),
+							Description:  "Number of years the certificate is valid.",
+						},
+						"metadata": &schema.Schema{
+							Type:        schema.TypeString,
+							Description: "SAML App certificate payload",
+							Computed:    true,
+						},
+					},
+				},
 			},
 			"auto_submit_toolbar": &schema.Schema{
 				Type:        schema.TypeBool,
@@ -193,7 +223,22 @@ func resourceSamlAppCreate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
+	// Make sure to track in terraform prior to the creation of cert in case there is an error.
 	d.SetId(app.Id)
+
+	if _, ok := d.GetOk("key.years_valid"); ok {
+		key, err := generateCertificate(d, m, app.Id)
+		if err != nil {
+			return err
+		}
+
+		d.Set("key.id", key.Kid)
+		meta, err := getMetadata(d, m, key.Kid)
+		if err != nil {
+			return err
+		}
+		d.Set("key.metadata", meta)
+	}
 
 	return resourceSamlAppRead(d, m)
 }
@@ -201,7 +246,6 @@ func resourceSamlAppCreate(d *schema.ResourceData, m interface{}) error {
 func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 	app := okta.NewSamlApplication()
 	err := fetchApp(d, m, app)
-
 	if err != nil {
 		return err
 	}
@@ -220,6 +264,17 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("digest_algorithm", app.Settings.SignOn.DigestAlgorithm)
 	d.Set("honor_force_authn", app.Settings.SignOn.HonorForceAuthn)
 	d.Set("authn_context_class_ref", app.Settings.SignOn.AuthnContextClassRef)
+
+	if app.Credentials.Signing.Kid != "" {
+		keyId := app.Credentials.Signing.Kid
+		d.Set("key.id", keyId)
+		key, err := getMetadata(d, m, keyId)
+		if err != nil {
+			return err
+		}
+		d.Set("key.metadata", key)
+	}
+
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 
 	return nil
@@ -265,7 +320,6 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewSamlApplication()
 	app.Label = d.Get("label").(string)
-	app.SignOnMode = "SAML_2_0"
 	responseSigned := d.Get("response_signed").(bool)
 	assertionSigned := d.Get("assertion_signed").(bool)
 
@@ -322,5 +376,63 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
 	}
 
+	if id, ok := d.GetOk("key.id"); ok {
+		app.Credentials = &okta.ApplicationCredentials{
+			Signing: &okta.ApplicationCredentialsSigning{
+				Kid: id.(string),
+			},
+		}
+	}
+
 	return app, nil
+}
+
+func getCertificate(d *schema.ResourceData, m interface{}) (*okta.JsonWebKey, error) {
+	client := getOktaClientFromMetadata(m)
+	keyId := d.Get("key.id").(string)
+	key, resp, err := client.Application.GetApplicationKey(d.Id(), keyId)
+	if resp.StatusCode == 404 {
+		return nil, nil
+	}
+
+	return key, err
+}
+
+func getMetadata(d *schema.ResourceData, m interface{}, keyId string) (string, error) {
+	url := fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata?kid=%s", getBaseUrl(m), d.Id(), keyId)
+	req, err := sling.New().Get(url).Request()
+	req.Header.Add("Authorization", fmt.Sprintf("SSWS %s", getApiToken(m)))
+	req.Header.Add("User-Agent", "Terraform Okta Provider")
+	req.Header.Add("Accept", "application/xml")
+	if err != nil {
+		return "", err
+	}
+
+	httpClient := http.Client{}
+	res, err := httpClient.Do(req)
+	defer res.Body.Close()
+	if err != nil {
+		return "", err
+	} else if res.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("failed to find metadata for app ID: %s, key ID: %s, status: %s", d.Id(), keyId, res.Status)
+	}
+	reader, err := ioutil.ReadAll(res.Body)
+
+	return string(reader), err
+}
+
+// Keep in mind that at the time of writing this the official SDK did not support generating certs.
+func generateCertificate(d *schema.ResourceData, m interface{}, appId string) (*okta.JsonWebKey, error) {
+	requestExecutor := getRequestExecutor(m)
+	years, _ := strconv.Atoi(d.Get("key.years_valid").(string))
+	url := fmt.Sprintf("/api/v1/apps/%s/credentials/keys/generate?validityYears=%d", appId, years)
+	req, err := requestExecutor.NewRequest("POST", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	var key *okta.JsonWebKey
+
+	_, err = requestExecutor.Do(req, &key)
+
+	return key, err
 }

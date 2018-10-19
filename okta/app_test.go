@@ -27,7 +27,7 @@ func deleteTestApps(client *testClient) error {
 		WithToken(c.apiToken).
 		WithCache(false)
 	requestExecutor := okta.NewRequestExecutor(nil, cache.NewNoOpCache(), config)
-	req, err := requestExecutor.NewRequest("GET", fmt.Sprintf("/api/v1/apps"), nil)
+	req, err := requestExecutor.NewRequest("GET", "/api/v1/apps", nil)
 	if err != nil {
 		return err
 	}
