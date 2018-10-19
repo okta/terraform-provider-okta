@@ -52,6 +52,11 @@ func resourceSamlApp() *schema.Resource {
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"name": &schema.Schema{
+							Type:        schema.TypeString,
+							Description: "Certificate name. This modulates the rotation of keys. New name == new key.",
+							Required:    true,
+						},
 						"id": &schema.Schema{
 							Type:        schema.TypeString,
 							Description: "Certificate ID",
@@ -60,6 +65,7 @@ func resourceSamlApp() *schema.Resource {
 						"years_valid": &schema.Schema{
 							Type:         schema.TypeInt,
 							Optional:     true,
+							Default:      1,
 							ValidateFunc: validation.IntAtLeast(1),
 							Description:  "Number of years the certificate is valid.",
 						},
@@ -226,18 +232,10 @@ func resourceSamlAppCreate(d *schema.ResourceData, m interface{}) error {
 	// Make sure to track in terraform prior to the creation of cert in case there is an error.
 	d.SetId(app.Id)
 
-	if _, ok := d.GetOk("key.years_valid"); ok {
-		key, err := generateCertificate(d, m, app.Id)
-		if err != nil {
-			return err
-		}
+	err = tryCreateCertificate(d, m, app.Id)
 
-		d.Set("key.id", key.Kid)
-		meta, err := getMetadata(d, m, key.Kid)
-		if err != nil {
-			return err
-		}
-		d.Set("key.metadata", meta)
+	if err != nil {
+		return err
 	}
 
 	return resourceSamlAppRead(d, m)
@@ -301,6 +299,13 @@ func resourceSamlAppUpdate(d *schema.ResourceData, m interface{}) error {
 
 	if err != nil {
 		return err
+	}
+
+	if d.HasChange("key.name") {
+		err = tryCreateCertificate(d, m, app.Id)
+		if err != nil {
+			return err
+		}
 	}
 
 	return resourceSamlAppRead(d, m)
@@ -439,4 +444,18 @@ func generateCertificate(d *schema.ResourceData, m interface{}, appId string) (*
 	_, err = requestExecutor.Do(req, &key)
 
 	return key, err
+}
+
+func tryCreateCertificate(d *schema.ResourceData, m interface{}, appId string) error {
+	if _, ok := d.GetOk("key.name"); ok {
+		key, err := generateCertificate(d, m, appId)
+		if err != nil {
+			return err
+		}
+
+		// Set ID and the read done at the end of update and create will do the GET on metadata
+		d.Set("key.id", key.Kid)
+	}
+
+	return nil
 }
