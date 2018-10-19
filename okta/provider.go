@@ -19,7 +19,6 @@ const swaApp = "okta_swa_app"
 const autoLoginApp = "okta_auto_login_app"
 const securePasswordStoreApp = "okta_secure_password_store_app"
 const threeFieldApp = "okta_three_field_app"
-const appCertificate = "okta_app_certificate"
 
 // Provider establishes a client connection to an okta site
 // determined by its schema string values
