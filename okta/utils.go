@@ -8,9 +8,9 @@ import (
 
 	"github.com/okta/okta-sdk-golang/okta"
 
-	"github.com/articulate/okta-sdk-golang/okta/cache"
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/okta/okta-sdk-golang/okta/cache"
 )
 
 func buildSchema(s, t map[string]*schema.Schema) map[string]*schema.Schema {
