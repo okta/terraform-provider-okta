@@ -11,6 +11,7 @@ import (
 
 // Test creation of a simple AWS SWA app. The preconfigured apps are created by name.
 func TestAccOktaSwaApplicationPreconfig(t *testing.T) {
+	t.Skip("Currently skipping this test due to API rate limiting. This functionality is overlapping with the user/group test.")
 	ri := acctest.RandInt()
 	config := buildTestSwaConfigPreconfig(ri)
 	updatedConfig := buildTestSwaConfigPreconfigUpdated(ri)
@@ -156,13 +157,13 @@ resource "okta_user" "user-%d" {
 }
 
 resource "%s" "%s" {
-  preconfigured_app	    = "aws_console"
-  label       = "%s"
+  preconfigured_app = "aws_console"
+  label       	    = "%s"
   users = [
-	  {
-		  id = "${okta_user.user-%d.id}"
-		  username = "${okta_user.user-%d.email}"
-	  }
+    {
+      id = "${okta_user.user-%d.id}"
+      username = "${okta_user.user-%d.email}"
+    }
   ]
   groups = ["${okta_group.group-%d.id}"]
 }
@@ -187,8 +188,8 @@ resource "okta_user" "user-%d" {
 }
 
 resource "%s" "%s" {
-  preconfigured_app	    = "aws_console"
-  label       = "%s"
+  preconfigured_app  = "aws_console"
+  label              = "%s"
 }
 `, rInt, rInt, rInt, rInt, rInt, swaApp, name, name)
 }
@@ -198,11 +199,11 @@ func buildTestSwaConfig(rInt int) string {
 
 	return fmt.Sprintf(`
 resource "%s" "%s" {
-  label         	 	= "%s"
-  button_field			= "btn-login"
-  password_field		= "txtbox-password"
-  username_field	 	= "txtbox-username"
-  url					= "https://example.com/login.html"
+  label           = "%s"
+  button_field	  = "btn-login"
+  password_field  = "txtbox-password"
+  username_field  = "txtbox-username"
+  url		  = "https://example.com/login.html"
 }
 `, swaApp, name, name)
 }
@@ -212,12 +213,12 @@ func buildTestSwaConfigUpdated(rInt int) string {
 
 	return fmt.Sprintf(`
 resource "%s" "%s" {
-  label       = "%s"
+  label           = "%s"
   status 	  = "INACTIVE"
-  button_field			= "btn-login"
-  password_field		= "txtbox-password"
-  username_field	 	= "txtbox-username"
-  url					= "https://example.com/login.html"
+  button_field	  = "btn-login"
+  password_field  = "txtbox-password"
+  username_field  = "txtbox-username"
+  url		  = "https://example.com/login.html"
 }
 `, swaApp, name, name)
 }
