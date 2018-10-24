@@ -196,7 +196,6 @@ func buildSignOnPolicyRule(d *schema.ResourceData, m interface{}) (articulateOkt
 	template := client.Policies.SignOnRule()
 	template.Name = d.Get("name").(string)
 	template.Status = d.Get("status").(string)
-	template.Type = singOnPolicyRuleType
 	if priority, ok := d.GetOk("priority"); ok {
 		template.Priority = priority.(int)
 	}

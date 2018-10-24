@@ -23,9 +23,11 @@ func TestMain(m *testing.M) {
 	// Acceptance test sweepers necessary to prevent dangling resources
 	setupSweeper(passwordPolicy, deletePasswordPolicies)
 	setupSweeper(signOnPolicy, deleteSignOnPolicies)
+	setupSweeper(mfaPolicy, deleteMfaPolicies)
 	setupSweeper(signOnPolicyRule, deleteSignOnPolicyRules)
 	setupSweeper(passwordPolicyRule, deletePasswordPolicyRules)
 	setupSweeper("okta_*_apps", deleteTestApps)
+	setupSweeper(mfaPolicyRule, deleteMfaPolicyRules)
 	resource.TestMain(m)
 }
 

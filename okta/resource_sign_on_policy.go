@@ -85,7 +85,7 @@ func resourceSignOnPolicyDelete(d *schema.ResourceData, m interface{}) error {
 }
 
 // create or update a signon policy
-func buildSignOnPolicy(d *schema.ResourceData, m interface{}) articulateOkta.Policy {
+func buildSignOnPolicy(d *schema.ResourceData, m interface{}) *articulateOkta.Policy {
 	client := m.(*Config).articulateOktaClient
 
 	template := client.Policies.SignOnPolicy()
@@ -103,5 +103,5 @@ func buildSignOnPolicy(d *schema.ResourceData, m interface{}) articulateOkta.Pol
 		People: getGroups(d),
 	}
 
-	return template
+	return &template
 }

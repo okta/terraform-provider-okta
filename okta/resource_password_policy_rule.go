@@ -18,12 +18,6 @@ func resourcePasswordPolicyRule() *schema.Resource {
 		Delete:   resourcePasswordPolicyRuleDelete,
 		Importer: createPolicyRuleImporter(),
 
-		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
-			// user cannot edit a default policy rule
-
-			return nil
-		},
-
 		Schema: buildRuleSchema(map[string]*schema.Schema{
 			"password_change": {
 				Type:         schema.TypeString,
@@ -153,7 +147,6 @@ func policyRuleActivate(d *schema.ResourceData, m interface{}) error {
 func buildPasswordPolicyRule(d *schema.ResourceData, client *articulateOkta.Client) articulateOkta.PasswordRule {
 	template := client.Policies.PasswordRule()
 	template.Name = d.Get("name").(string)
-	template.Type = passwordPolicyType
 	template.Status = d.Get("status").(string)
 	if priority, ok := d.GetOk("priority"); ok {
 		template.Priority = priority.(int)

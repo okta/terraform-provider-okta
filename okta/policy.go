@@ -60,7 +60,7 @@ func buildPolicySchema(target map[string]*schema.Schema) map[string]*schema.Sche
 	return buildSchema(basePolicySchema, target)
 }
 
-func createPolicy(d *schema.ResourceData, meta interface{}, template articulateOkta.Policy) error {
+func createPolicy(d *schema.ResourceData, meta interface{}, template *articulateOkta.Policy) error {
 	client := getClientFromMetadata(meta)
 	policy, _, err := client.Policies.CreatePolicy(template)
 	if err != nil {
@@ -135,6 +135,22 @@ func policyActivate(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
+func updatePolicy(d *schema.ResourceData, meta interface{}, template *articulateOkta.Policy) error {
+	client := getClientFromMetadata(meta)
+	policy, _, err := client.Policies.UpdatePolicy(d.Id(), template)
+	if err != nil {
+		return fmt.Errorf("[ERROR] Error Updating Policy: %v", err)
+	}
+	// avoiding perpetual diffs by erroring when the configured priority is not valid and the API defaults it.
+	err = validatePriority(template.Priority, policy.Priority)
+	if err != nil {
+		return err
+	}
+	log.Printf("[INFO] Okta Policy Updated: %+v", policy)
+
+	return policyActivate(d, meta)
+}
+
 func resourcePolicyExists(d *schema.ResourceData, m interface{}) (b bool, e error) {
 	// Exists - This is called to verify a resource still exists. It is called prior to Read,
 	// and lowers the burden of Read to be able to assume the resource exists.
@@ -157,20 +173,4 @@ func syncPolicyFromUpstream(d *schema.ResourceData, policy *articulateOkta.Polic
 		"groups_excluded": convertStringArrToInterface(policy.Conditions.People.Groups.Exclude),
 		"groups_included": convertStringArrToInterface(policy.Conditions.People.Groups.Include),
 	})
-}
-
-func updatePolicy(d *schema.ResourceData, meta interface{}, template articulateOkta.Policy) error {
-	client := getClientFromMetadata(meta)
-	policy, _, err := client.Policies.UpdatePolicy(d.Id(), template)
-	if err != nil {
-		return fmt.Errorf("[ERROR] Error Updating Policy: %v", err)
-	}
-	// avoiding perpetual diffs by erroring when the configured priority is not valid and the API defaults it.
-	err = validatePriority(template.Priority, policy.Priority)
-	if err != nil {
-		return err
-	}
-	log.Printf("[INFO] Okta Policy Updated: %+v", policy)
-
-	return policyActivate(d, meta)
 }

@@ -19,6 +19,9 @@ const swaApp = "okta_swa_app"
 const autoLoginApp = "okta_auto_login_app"
 const securePasswordStoreApp = "okta_secure_password_store_app"
 const threeFieldApp = "okta_three_field_app"
+const mfaPolicy = "okta_mfa_policy"
+const mfaPolicyRule = "okta_mfa_policy_rule"
+const factor = "okta_factor"
 
 // Provider establishes a client connection to an okta site
 // determined by its schema string values
@@ -58,6 +61,8 @@ func Provider() terraform.ResourceProvider {
 			signOnPolicy:             resourceSignOnPolicy(),
 			signOnPolicyRule:         resourceSignOnPolicyRule(),
 			passwordPolicyRule:       resourcePasswordPolicyRule(),
+			mfaPolicy:                resourceMfaPolicy(),
+			mfaPolicyRule:            resourceMfaPolicyRule(),
 			"okta_trusted_origin":    resourceTrustedOrigin(),
 			"okta_user_schemas":      resourceUserSchemas(),
 			"okta_user":              resourceUser(),
@@ -68,6 +73,7 @@ func Provider() terraform.ResourceProvider {
 			// Bug in the SDK preventing the use of this resource https://github.com/okta/okta-sdk-golang/pull/40
 			//threeFieldApp:            resourceThreeFieldApp(),
 			swaApp: resourceSwaApp(),
+			factor: resourceFactor(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
