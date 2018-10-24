@@ -11,6 +11,7 @@ import (
 
 const passwordPolicyType = "PASSWORD"
 const signOnPolicyType = "OKTA_SIGN_ON"
+const mfaPolicyType = "MFA_ENROLL"
 const singOnPolicyRuleType = "SIGN_ON"
 
 // Basis of policy rules

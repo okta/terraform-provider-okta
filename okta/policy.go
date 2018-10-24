@@ -129,7 +129,7 @@ func policyActivate(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func updatePolicy(d *schema.ResourceData, meta interface{}, template articulateOkta.Policy) error {
+func updatePolicy(d *schema.ResourceData, meta interface{}, template *articulateOkta.Policy) error {
 	client := getClientFromMetadata(meta)
 	policy, _, err := client.Policies.UpdatePolicy(d.Id(), template)
 	if err != nil {
@@ -145,7 +145,7 @@ func updatePolicy(d *schema.ResourceData, meta interface{}, template articulateO
 	return policyActivate(d, meta)
 }
 
-func createPolicy(d *schema.ResourceData, meta interface{}, template articulateOkta.Policy) error {
+func createPolicy(d *schema.ResourceData, meta interface{}, template *articulateOkta.Policy) error {
 	client := getClientFromMetadata(meta)
 	policy, _, err := client.Policies.CreatePolicy(template)
 	if err != nil {
