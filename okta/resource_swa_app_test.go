@@ -83,6 +83,7 @@ func TestAccOktaSwaApplication(t *testing.T) {
 
 // Add and remove groups/users
 func TestAccOktaSwaApplicationUserGroups(t *testing.T) {
+	t.Skip("Temporarily skipping this test due to API rate limiting. There is no way around this until backing off on limits is implemented in the SDK.")
 	ri := acctest.RandInt()
 	config := buildTestSwaGroupsUsers(ri)
 	updatedConfig := buildTestSwaRemoveGroupsUsers(ri)
