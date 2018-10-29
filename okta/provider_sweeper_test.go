@@ -26,9 +26,8 @@ func TestMain(m *testing.M) {
 	setupSweeper(mfaPolicy, deleteMfaPolicies)
 	setupSweeper(signOnPolicyRule, deleteSignOnPolicyRules)
 	setupSweeper(passwordPolicyRule, deletePasswordPolicyRules)
+	setupSweeper("okta_*_apps", deleteTestApps)
 	setupSweeper(mfaPolicyRule, deleteMfaPolicyRules)
-	// Cannot sweep application resources as there is a bug with listing applications.
-	// setupSweeper(oAuthApp, deleteOAuthApps)
 	resource.TestMain(m)
 }
 

@@ -3,7 +3,6 @@ package okta
 import (
 	"fmt"
 	"regexp"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
@@ -11,28 +10,6 @@ import (
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
 )
-
-func deleteOAuthApps(client *testClient) error {
-	appList, _, err := client.oktaClient.Application.ListApplications(nil)
-
-	if err != nil {
-		return err
-	}
-
-	for _, app := range appList {
-		if app, ok := app.(*okta.Application); ok {
-			if strings.HasPrefix(app.Label, testResourcePrefix) {
-				_, appErr := client.oktaClient.Application.DeleteApplication(app.Id)
-
-				if appErr != nil {
-					err = appErr
-				}
-			}
-		}
-	}
-
-	return err
-}
 
 // Tests a standard OAuth application with an updated type. This tests the ForceNew on type and tests creating an
 // ACTIVE and INACTIVE application via the create action.
@@ -45,12 +22,12 @@ func TestAccOktaOAuthApplication(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(oAuthApp, doesAppExistUpstream),
+		CheckDestroy: createCheckResourceDestroy(oAuthApp, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, doesAppExistUpstream),
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "web"),
@@ -62,7 +39,7 @@ func TestAccOktaOAuthApplication(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, doesAppExistUpstream),
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
@@ -83,12 +60,12 @@ func TestAccOktaOAuthApplicationServiceNative(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(oAuthApp, doesAppExistUpstream),
+		CheckDestroy: createCheckResourceDestroy(oAuthApp, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, doesAppExistUpstream),
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "service"),
@@ -97,7 +74,7 @@ func TestAccOktaOAuthApplicationServiceNative(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, doesAppExistUpstream),
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "native"),
@@ -117,12 +94,12 @@ func TestAccOktaOAuthApplicationUpdateStatus(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(oAuthApp, doesAppExistUpstream),
+		CheckDestroy: createCheckResourceDestroy(oAuthApp, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, doesAppExistUpstream),
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "web"),
@@ -131,9 +108,47 @@ func TestAccOktaOAuthApplicationUpdateStatus(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, doesAppExistUpstream),
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+				),
+			},
+		},
+	})
+}
+
+// Add and remove groups/users
+func TestAccOktaOAuthApplicationUserGroups(t *testing.T) {
+	ri := acctest.RandInt()
+	config := buildTestOAuthGroupsUsers(ri)
+	updatedConfig := buildTestOAuthRemoveGroupsUsers(ri)
+	resourceName := buildResourceFQN(oAuthApp, ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(oAuthApp, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "type", "web"),
+					resource.TestCheckResourceAttrSet(resourceName, "users.0.id"),
+					resource.TestCheckResourceAttrSet(resourceName, "groups.0"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "type", "web"),
+					resource.TestCheckNoResourceAttr(resourceName, "users.0"),
+					resource.TestCheckNoResourceAttr(resourceName, "groups.0"),
 				),
 			},
 		},
@@ -157,21 +172,22 @@ func TestAccOktaOAuthApplicationBadGrantTypes(t *testing.T) {
 	})
 }
 
-func doesAppExistUpstream(id string) (bool, error) {
-	client := getOktaClientFromMetadata(testAccProvider.Meta())
-	newApp := &okta.OpenIdConnectApplication{}
-	_, response, err := client.Application.GetApplication(id, newApp, &query.Params{})
+func createDoesAppExist(app okta.App) func(string) (bool, error) {
+	return func(id string) (bool, error) {
+		client := getOktaClientFromMetadata(testAccProvider.Meta())
+		_, response, err := client.Application.GetApplication(id, app, &query.Params{})
 
-	// We don't want to consider a 404 an error in some cases and thus the delineation
-	if response.StatusCode == 404 {
-		return false, nil
+		// We don't want to consider a 404 an error in some cases and thus the delineation
+		if response.StatusCode == 404 {
+			return false, nil
+		}
+
+		if err != nil {
+			return false, err
+		}
+
+		return true, err
 	}
-
-	if err != nil {
-		return false, err
-	}
-
-	return true, err
 }
 
 func buildTestOAuthConfig(rInt int) string {
@@ -254,4 +270,64 @@ resource "%s" "%s" {
   redirect_uris = ["http://d.com/"]
 }
 `, oAuthApp, name, name)
+}
+
+func buildTestOAuthGroupsUsers(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+resource "okta_group" "group-%d" {
+	name = "testAcc-%d"
+}
+resource "okta_user" "user-%d" {
+  admin_roles = ["APP_ADMIN", "USER_ADMIN"]
+  first_name  = "TestAcc"
+  last_name   = "blah"
+  login       = "test-acc-%d@testing.com"
+  email       = "test-acc-%d@testing.com"
+  status      = "ACTIVE"
+}
+
+resource "%s" "%s" {
+  label       = "%s"
+  type		  = "web"
+  grant_types = [ "implicit", "authorization_code" ]
+  redirect_uris = ["http://d.com/"]
+  response_types = ["code", "token", "id_token"]
+  users = [
+	  {
+		  id = "${okta_user.user-%d.id}"
+		  username = "${okta_user.user-%d.email}"
+	  }
+  ]
+  groups = ["${okta_group.group-%d.id}"]
+}
+`, rInt, rInt, rInt, rInt, rInt, oAuthApp, name, name, rInt, rInt, rInt)
+}
+
+func buildTestOAuthRemoveGroupsUsers(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+resource "okta_group" "group-%d" {
+	name = "testAcc-%d"
+}
+
+resource "okta_user" "user-%d" {
+  admin_roles = ["APP_ADMIN", "USER_ADMIN"]
+  first_name  = "TestAcc"
+  last_name   = "blah"
+  login       = "test-acc-%d@testing.com"
+  email       = "test-acc-%d@testing.com"
+  status      = "ACTIVE"
+}
+
+resource "%s" "%s" {
+  label       = "%s"
+  type		  = "web"
+  grant_types = [ "implicit", "authorization_code" ]
+  redirect_uris = ["http://d.com/"]
+  response_types = ["code", "token", "id_token"]
+}
+`, rInt, rInt, rInt, rInt, rInt, oAuthApp, name, name)
 }

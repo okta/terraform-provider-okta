@@ -57,35 +57,29 @@ var basePolicySchema = map[string]*schema.Schema{
 }
 
 func buildPolicySchema(target map[string]*schema.Schema) map[string]*schema.Schema {
-	for k := range basePolicySchema {
-		target[k] = basePolicySchema[k]
-	}
-
-	return target
+	return buildSchema(basePolicySchema, target)
 }
 
-func syncPolicyFromUpstream(d *schema.ResourceData, policy *articulateOkta.Policy) error {
-	d.Set("name", policy.Name)
-	d.Set("description", policy.Description)
-	d.Set("status", policy.Status)
-	d.Set("priority", policy.Priority)
+func createPolicy(d *schema.ResourceData, meta interface{}, template *articulateOkta.Policy) error {
+	client := getClientFromMetadata(meta)
+	policy, _, err := client.Policies.CreatePolicy(template)
+	if err != nil {
+		return fmt.Errorf("[ERROR] Error Creating Policy: %v", err)
+	}
+	log.Printf("[INFO] Okta Policy Created: %+v. Adding Policy to Terraform.", policy)
+	d.SetId(policy.ID)
 
-	return setNonPrimitives(d, map[string]interface{}{
-		"groups_excluded": convertStringArrToInterface(policy.Conditions.People.Groups.Exclude),
-		"groups_included": convertStringArrToInterface(policy.Conditions.People.Groups.Include),
-	})
-}
-
-// Grabs policy from upstream, if the resource does not exist the returned policy will be nil which is not considered an error
-func getPolicy(d *schema.ResourceData, m interface{}) (*articulateOkta.Policy, error) {
-	client := m.(*Config).articulateOktaClient
-	policy, _, err := client.Policies.GetPolicy(d.Id())
-
-	if is404(client) {
-		return policy, nil
+	// Even if priority is invalid we want to add the policy to Terraform to reflect upstream.
+	err = validatePriority(template.Priority, policy.Priority)
+	if err != nil {
+		return err
 	}
 
-	return policy, err
+	return policyActivate(d, meta)
+}
+
+func ensureNotDefaultPolicy(d *schema.ResourceData) error {
+	return ensureNotDefault(d, "Policy")
 }
 
 func getGroups(d *schema.ResourceData) *articulateOkta.People {
@@ -108,6 +102,18 @@ func getGroups(d *schema.ResourceData) *articulateOkta.People {
 	}
 
 	return people
+}
+
+// Grabs policy from upstream, if the resource does not exist the returned policy will be nil which is not considered an error
+func getPolicy(d *schema.ResourceData, m interface{}) (*articulateOkta.Policy, error) {
+	client := m.(*Config).articulateOktaClient
+	policy, _, err := client.Policies.GetPolicy(d.Id())
+
+	if is404(client) {
+		return policy, nil
+	}
+
+	return policy, err
 }
 
 // activate or deactivate a policy according to the terraform schema status field
@@ -145,24 +151,6 @@ func updatePolicy(d *schema.ResourceData, meta interface{}, template *articulate
 	return policyActivate(d, meta)
 }
 
-func createPolicy(d *schema.ResourceData, meta interface{}, template *articulateOkta.Policy) error {
-	client := getClientFromMetadata(meta)
-	policy, _, err := client.Policies.CreatePolicy(template)
-	if err != nil {
-		return fmt.Errorf("[ERROR] Error Creating Policy: %v", err)
-	}
-	log.Printf("[INFO] Okta Policy Created: %+v. Adding Policy to Terraform.", policy)
-	d.SetId(policy.ID)
-
-	// Even if priority is invalid we want to add the policy to Terraform to reflect upstream.
-	err = validatePriority(template.Priority, policy.Priority)
-	if err != nil {
-		return err
-	}
-
-	return policyActivate(d, meta)
-}
-
 func resourcePolicyExists(d *schema.ResourceData, m interface{}) (b bool, e error) {
 	// Exists - This is called to verify a resource still exists. It is called prior to Read,
 	// and lowers the burden of Read to be able to assume the resource exists.
@@ -175,6 +163,14 @@ func resourcePolicyExists(d *schema.ResourceData, m interface{}) (b bool, e erro
 	return true, nil
 }
 
-func ensureNotDefaultPolicy(d *schema.ResourceData) error {
-	return ensureNotDefault(d, "Policy")
+func syncPolicyFromUpstream(d *schema.ResourceData, policy *articulateOkta.Policy) error {
+	d.Set("name", policy.Name)
+	d.Set("description", policy.Description)
+	d.Set("status", policy.Status)
+	d.Set("priority", policy.Priority)
+
+	return setNonPrimitives(d, map[string]interface{}{
+		"groups_excluded": convertStringArrToInterface(policy.Conditions.People.Groups.Exclude),
+		"groups_included": convertStringArrToInterface(policy.Conditions.People.Groups.Include),
+	})
 }

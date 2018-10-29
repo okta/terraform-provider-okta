@@ -1,5 +1,5 @@
 [[constraint]]
-  branch = "add-factor-admin"
+  branch = "master"
   name = "github.com/articulate/oktasdk-go"
 
 [[constraint]]
@@ -13,3 +13,7 @@
 [prune]
   go-tests = true
   unused-packages = true
+
+[[constraint]]
+  name = "github.com/dghubble/sling"
+  version = "1.1.0"

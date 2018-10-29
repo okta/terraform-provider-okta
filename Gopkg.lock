@@ -34,15 +34,15 @@
   version = "v1.0.0"
 
 [[projects]]
-  branch = "add-factor-admin"
+  branch = "master"
   digest = "1:6009ceb9f2d2ce7182dda2a68d551bd6a174f41488f8a36de08006ee89769829"
   name = "github.com/articulate/oktasdk-go"
   packages = ["okta"]
   pruneopts = "UT"
-  revision = "ae7277d4ceab1ab24b31978cef8473b56a454ef0"
+  revision = "3029eb880b8369d39cdf7c36c0ec6ca9695dded8"
 
 [[projects]]
-  digest = "1:bc2410ad4d4fb637698c3c71d514cdf38a43a8c5f83c3c415af1925e426abdc5"
+  digest = "1:f9135c94393e30a657b9e0dfbac0c037d25226ee0183fa20119ea5144ef3122f"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -62,6 +62,7 @@
     "aws/request",
     "aws/session",
     "aws/signer/v4",
+    "internal/ini",
     "internal/s3err",
     "internal/sdkio",
     "internal/sdkrand",
@@ -79,8 +80,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "bf8067ceb6e7f51e150c218972dccfeeed892b85"
-  version = "v1.15.54"
+  revision = "c446a547f59665b7ce54ac57bd8f8b04e5179563"
+  version = "v1.15.62"
 
 [[projects]]
   branch = "master"
@@ -115,20 +116,20 @@
   version = "v1.1.1"
 
 [[projects]]
+  digest = "1:ace1aef6acdf2c4647365dc87c14fb8b71ed8bb0b3ae114ffb216614a24da219"
+  name = "github.com/dghubble/sling"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "eb56e89ac5088bebb12eef3cb4b293300f43608b"
+  version = "v1.1.0"
+
+[[projects]]
   digest = "1:865079840386857c809b72ce300be7580cb50d3d3129ce11bf9aa6ca2bc1934a"
   name = "github.com/fatih/color"
   packages = ["."]
   pruneopts = "UT"
   revision = "5b77d2a35fb0ede96d138fc9a99f5c9b6aef11b4"
   version = "v1.7.0"
-
-[[projects]]
-  digest = "1:15e27372d379b45b18ac917b9dafc45c45485239490ece18cca97a12f9591146"
-  name = "github.com/go-ini/ini"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "9c8236e659b76e87bf02044d06fde8683008ff3e"
-  version = "v1.39.0"
 
 [[projects]]
   digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
@@ -290,7 +291,7 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:89633d01a35bd609331ed2930329b6755018a958ce74997e81a52df460c792a4"
+  digest = "1:be8fd19cfd4377f82ac9215a6c5be5d36d9307b5b17465339ea089126c2c1d4b"
   name = "github.com/hashicorp/terraform"
   packages = [
     "config",
@@ -323,8 +324,8 @@
     "version",
   ]
   pruneopts = "UT"
-  revision = "6dfc4d748de9cda23835bc5704307ed45e839622"
-  version = "v0.11.8"
+  revision = "17850e9a55d33c43d7c31fd6ac122ba97a51d899"
+  version = "v0.11.10"
 
 [[projects]]
   branch = "master"
@@ -458,7 +459,7 @@
   version = "v2.1.0"
 
 [[projects]]
-  digest = "1:963772912b1d71f582a78a3f55a0e83bbd88777335a07a57cfbe0f01df2df06b"
+  digest = "1:2ef797d5fe5b23bdcc75655d4a2a89577cdb61ad14698845bcc12a2d133c9f8f"
   name = "github.com/posener/complete"
   packages = [
     ".",
@@ -467,8 +468,8 @@
     "match",
   ]
   pruneopts = "UT"
-  revision = "dcda3199365ca2a5f24aea4c42aa56f6a197d117"
-  version = "v1.1.2"
+  revision = "ffc2cf5e958af5ac4156a886153c7cadd24a521a"
+  version = "v1.2.0"
 
 [[projects]]
   digest = "1:4aeb3860275fa1fd60cccfb5a6ef85da438bf17402e1e84412ade4d4b55066a0"
@@ -485,7 +486,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:ecc7fbde3d397eb26aa33028e133ca762f7da31f1c9a7ca86867761282913bbe"
+  digest = "1:e77fdd77613344e716e0ce6c7cc28d8f6ebf02d938fad00db4b5fa73cb3589fb"
   name = "github.com/zclconf/go-cty"
   packages = [
     "cty",
@@ -497,7 +498,7 @@
     "cty/set",
   ]
   pruneopts = "UT"
-  revision = "1f835aab79c29c842f2e8624541053e8ff618cd8"
+  revision = "01c5aba823a6c91fe3bc287fd6e493ca717a64b8"
 
 [[projects]]
   branch = "master"
@@ -522,7 +523,7 @@
     "ssh",
   ]
   pruneopts = "UT"
-  revision = "0c41d7ab0a0ee717d4590a44bcb987dfd9e183eb"
+  revision = "74cb1d3d52f4c01cbfb44c1b50d204462f3124c7"
 
 [[projects]]
   branch = "master"
@@ -540,15 +541,15 @@
     "trace",
   ]
   pruneopts = "UT"
-  revision = "49bb7cea24b1df9410e1712aa6433dae904ff66a"
+  revision = "9b4f9f5ad5197c79fd623a3638e70d8b26cef344"
 
 [[projects]]
   branch = "master"
-  digest = "1:0a40b0bdd57a93e741d8557465be3a2edeec408e9b6399586ad65bbe8e355796"
+  digest = "1:319824e5bacea4b7b1408522f7ee56a15fb21b9cb374baa77aecb44c4d1bd0f8"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "fa43e7bc11baaae89f3f902b2b4d832b68234844"
+  revision = "5cd93ef61a7c8f0f858690154eb6de2e69415fa1"
 
 [[projects]]
   digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
@@ -579,10 +580,10 @@
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
   pruneopts = "UT"
-  revision = "af9cb2a35e7f169ec875002c1829c9b315cddc04"
+  revision = "94acd270e44e65579b9ee3cdab25034d33fed608"
 
 [[projects]]
-  digest = "1:1b6d2676ea895d33cbd1999c75dfc8e25b103c754ccfc66dc06ae845ce3a47bc"
+  digest = "1:95550b4aa2a79019c2a832c1a7d6a5446b046e3ee8cce12a042778ac0ac47baf"
   name = "google.golang.org/grpc"
   packages = [
     ".",
@@ -615,14 +616,15 @@
     "tap",
   ]
   pruneopts = "UT"
-  revision = "8dea3dc473e90c8179e519d91302d0597c0ca1d1"
-  version = "v1.15.0"
+  revision = "2e463a05d100327ca47ac218281906921038fd95"
+  version = "v1.16.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
     "github.com/articulate/oktasdk-go/okta",
+    "github.com/dghubble/sling",
     "github.com/hashicorp/terraform/helper/acctest",
     "github.com/hashicorp/terraform/helper/resource",
     "github.com/hashicorp/terraform/helper/schema",
@@ -631,6 +633,7 @@
     "github.com/hashicorp/terraform/plugin",
     "github.com/hashicorp/terraform/terraform",
     "github.com/okta/okta-sdk-golang/okta",
+    "github.com/okta/okta-sdk-golang/okta/cache",
     "github.com/okta/okta-sdk-golang/okta/query",
   ]
   solver-name = "gps-cdcl"

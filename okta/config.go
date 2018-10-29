@@ -10,9 +10,10 @@ import (
 // Config is a struct containing our provider schema values
 // plus the okta client object
 type Config struct {
-	orgName  string
-	domain   string
-	apiToken string
+	orgName     string
+	domain      string
+	apiToken    string
+	parallelism int
 
 	articulateOktaClient *articulateOkta.Client
 	oktaClient           *okta.Client
