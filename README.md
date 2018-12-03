@@ -79,7 +79,7 @@ provider "okta" {
   base_url  = "oktapreview.com"
 }
 
-resource "okta_users" "blah" {
+resource "okta_user" "blah" {
   firstname = "blah"
   lastname  = "blergh"
   email     = "XXXXX@XXXXXXXX.XXX"
