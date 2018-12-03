@@ -70,10 +70,9 @@ func Provider() terraform.ResourceProvider {
 			samlApp:                  resourceSamlApp(),
 			autoLoginApp:             resourceAutoLoginApp(),
 			securePasswordStoreApp:   resourceSecurePasswordStoreApp(),
-			// Bug in the SDK preventing the use of this resource https://github.com/okta/okta-sdk-golang/pull/40
-			//threeFieldApp:            resourceThreeFieldApp(),
-			swaApp: resourceSwaApp(),
-			factor: resourceFactor(),
+			threeFieldApp:            resourceThreeFieldApp(),
+			swaApp:                   resourceSwaApp(),
+			factor:                   resourceFactor(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{

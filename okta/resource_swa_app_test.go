@@ -11,7 +11,6 @@ import (
 
 // Test creation of a simple AWS SWA app. The preconfigured apps are created by name.
 func TestAccOktaSwaApplicationPreconfig(t *testing.T) {
-	t.Skip("Currently skipping this test due to API rate limiting. This functionality is overlapping with the user/group test.")
 	ri := acctest.RandInt()
 	config := buildTestSwaConfigPreconfig(ri)
 	updatedConfig := buildTestSwaConfigPreconfigUpdated(ri)
@@ -83,7 +82,6 @@ func TestAccOktaSwaApplication(t *testing.T) {
 
 // Add and remove groups/users
 func TestAccOktaSwaApplicationUserGroups(t *testing.T) {
-	t.Skip("Temporarily skipping this test due to API rate limiting. There is no way around this until backing off on limits is implemented in the SDK.")
 	ri := acctest.RandInt()
 	config := buildTestSwaGroupsUsers(ri)
 	updatedConfig := buildTestSwaRemoveGroupsUsers(ri)
