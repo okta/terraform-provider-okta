@@ -76,7 +76,7 @@ func sharedClient(region string) (*articulateOkta.Client, *okta.Client, error) {
 
 	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
 
-	config := okta.NewConfig().WithOrgUrl(orgURL).WithToken(c.apiToken)
+	config := okta.NewConfig().WithOrgUrl(orgURL).WithToken(c.apiToken).WithBackoff(true).WithRetries(5)
 	client := okta.NewClient(config, nil, nil)
 
 	return articulateClient, client, nil
