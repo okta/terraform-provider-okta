@@ -71,6 +71,12 @@ var baseAppSchema = map[string]*schema.Schema{
 		ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
 		Description:  "Status of application.",
 	},
+	"app_settings": {
+		Type:        schema.TypeMap,
+		Optional:    true,
+		Description: "Application settings",
+		Elem:        schema.TypeString,
+	},
 }
 
 var baseSwaAppSchema = map[string]*schema.Schema{

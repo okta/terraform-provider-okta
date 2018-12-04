@@ -41,35 +41,35 @@ func resourceSamlApp() *schema.Resource {
 		},
 
 		Schema: buildAppSchema(map[string]*schema.Schema{
-			"preconfigured_app": &schema.Schema{
+			"preconfigured_app": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Name of preexisting SAML application.",
 			},
-			"key": &schema.Schema{
+			"key": {
 				Type:        schema.TypeMap,
 				Description: "Certificate config",
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": &schema.Schema{
+						"name": {
 							Type:        schema.TypeString,
 							Description: "Certificate name. This modulates the rotation of keys. New name == new key.",
 							Required:    true,
 						},
-						"id": &schema.Schema{
+						"id": {
 							Type:        schema.TypeString,
 							Description: "Certificate ID",
 							Computed:    true,
 						},
-						"years_valid": &schema.Schema{
+						"years_valid": {
 							Type:         schema.TypeInt,
 							Optional:     true,
 							Default:      1,
 							ValidateFunc: validation.IntAtLeast(1),
 							Description:  "Number of years the certificate is valid.",
 						},
-						"metadata": &schema.Schema{
+						"metadata": {
 							Type:        schema.TypeString,
 							Description: "SAML App certificate payload",
 							Computed:    true,
@@ -77,69 +77,69 @@ func resourceSamlApp() *schema.Resource {
 					},
 				},
 			},
-			"auto_submit_toolbar": &schema.Schema{
+			"auto_submit_toolbar": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
 				Description: "Display auto submit toolbar",
 			},
-			"hide_ios": &schema.Schema{
+			"hide_ios": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
 				Description: "Do not display application icon on mobile app",
 			},
-			"hide_web": &schema.Schema{
+			"hide_web": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
 				Description: "Do not display application icon to users",
 			},
-			"default_relay_state": &schema.Schema{
+			"default_relay_state": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Identifies a specific application resource in an IDP initiated SSO scenario.",
 			},
-			"sso_url": &schema.Schema{
+			"sso_url": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "Single Sign On URL",
 				ValidateFunc: validateIsURL,
 			},
-			"recipient": &schema.Schema{
+			"recipient": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "The location where the app may present the SAML assertion",
 				ValidateFunc: validateIsURL,
 			},
-			"destination": &schema.Schema{
+			"destination": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "Identifies the location where the SAML response is intended to be sent inside of the SAML assertion",
 				ValidateFunc: validateIsURL,
 			},
-			"audience": &schema.Schema{
+			"audience": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "Audience URI",
 				ValidateFunc: validateIsURL,
 			},
-			"idp_issuer": &schema.Schema{
+			"idp_issuer": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "SAML issuer ID",
 			},
-			"sp_issuer": &schema.Schema{
+			"sp_issuer": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "SAML SP issuer ID",
 			},
-			"subject_name_id_template": &schema.Schema{
+			"subject_name_id_template": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Template for app user's username when a user is assigned to the app",
 			},
-			"subject_name_id_format": &schema.Schema{
+			"subject_name_id_format": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Identifies the SAML processing rules.",
@@ -154,60 +154,98 @@ func resourceSamlApp() *schema.Resource {
 					false,
 				),
 			},
-			"response_signed": &schema.Schema{
+			"response_signed": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "Determines whether the SAML auth response message is digitally signed",
 			},
-			"request_compressed": &schema.Schema{
+			"request_compressed": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "Denotes whether the request is compressed or not.",
 			},
-			"assertion_signed": &schema.Schema{
+			"assertion_signed": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "Determines whether the SAML assertion is digitally signed",
 			},
-			"signature_algorithm": &schema.Schema{
+			"signature_algorithm": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "Signature algorithm used ot digitally sign the assertion and response",
 				ValidateFunc: validation.StringInSlice([]string{"RSA_SHA256", "RSA_SHA1"}, false),
 			},
-			"digest_algorithm": &schema.Schema{
+			"digest_algorithm": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "Determines the digest algorithm used to digitally sign the SAML assertion and response",
 				ValidateFunc: validation.StringInSlice([]string{"SHA256", "SHA1"}, false),
 			},
-			"honor_force_authn": &schema.Schema{
+			"honor_force_authn": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "Prompt user to re-authenticate if SP asks for it",
 			},
-			"authn_context_class_ref": &schema.Schema{
+			"authn_context_class_ref": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Identifies the SAML authentication context class for the assertion’s authentication statement",
 			},
-			"accessibility_self_service": &schema.Schema{
+			"accessibility_self_service": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
 				Description: "Enable self service",
 			},
-			"accessibility_error_redirect_url": &schema.Schema{
+			"accessibility_error_redirect_url": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "Custom error page URL",
 				ValidateFunc: validateIsURL,
 			},
-			"accessibility_login_redirect_url": &schema.Schema{
+			"accessibility_login_redirect_url": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "Custom login page URL",
 				ValidateFunc: validateIsURL,
+			},
+			"features": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "features to enable",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"attribute_statements": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:     schema.TypeString,
+							Default:  "EXPRESSION",
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"namespace": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+							ValidateFunc: validation.StringInSlice([]string{
+								"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+								"urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
+								"urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
+							}, false),
+						},
+						"values": {
+							Type:     schema.TypeList,
+							Required: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+						},
+					},
+				},
 			},
 		}),
 	}
@@ -233,7 +271,6 @@ func resourceSamlAppCreate(d *schema.ResourceData, m interface{}) error {
 	d.SetId(app.Id)
 
 	err = tryCreateCertificate(d, m, app.Id)
-
 	if err != nil {
 		return err
 	}
@@ -262,6 +299,7 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("digest_algorithm", app.Settings.SignOn.DigestAlgorithm)
 	d.Set("honor_force_authn", app.Settings.SignOn.HonorForceAuthn)
 	d.Set("authn_context_class_ref", app.Settings.SignOn.AuthnContextClassRef)
+	d.Set("features", app.Features)
 
 	if app.Credentials.Signing.Kid != "" {
 		keyId := app.Credentials.Signing.Kid
@@ -276,6 +314,13 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
+
+	for i, st := range app.Settings.SignOn.AttributeStatements {
+		d.Set(fmt.Sprintf("attribute_statements.%d.name", i), st.Name)
+		d.Set(fmt.Sprintf("attribute_statements.%d.namespace", i), st.Namespace)
+		d.Set(fmt.Sprintf("attribute_statements.%d.type", i), st.Type)
+		d.Set(fmt.Sprintf("attribute_statements.%d.values", i), st.Values)
+	}
 
 	return nil
 }
@@ -361,6 +406,7 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 			Web: &hideWeb,
 		},
 	}
+	app.Features = convertInterfaceToStringArr(d.Get("features"))
 	app.Settings.SignOn = &okta.SamlApplicationSettingsSignOn{
 		DefaultRelayState:     d.Get("default_relay_state").(string),
 		SsoAcsUrl:             d.Get("sso_url").(string),
@@ -381,6 +427,19 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 		SelfService:      &a11ySelfService,
 		ErrorRedirectUrl: d.Get("accessibility_error_redirect_url").(string),
 		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
+	}
+	statements := d.Get("attribute_statements").([]interface{})
+	if len(statements) > 0 {
+		samlAttr := make([]*okta.SamlAttributeStatement, len(statements))
+		for i, _ := range statements {
+			samlAttr[i] = &okta.SamlAttributeStatement{
+				Name:      d.Get(fmt.Sprintf("attribute_statements.%d.name", i)).(string),
+				Namespace: d.Get(fmt.Sprintf("attribute_statements.%d.namespace", i)).(string),
+				Type:      d.Get(fmt.Sprintf("attribute_statements.%d.type", i)).(string),
+				Values:    convertInterfaceToStringArr(d.Get(fmt.Sprintf("attribute_statements.%d.values", i))),
+			}
+		}
+		app.Settings.SignOn.AttributeStatements = samlAttr
 	}
 
 	if id, ok := d.GetOk("key.id"); ok {

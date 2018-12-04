@@ -49,8 +49,9 @@ func TestAccOktaSamlApplicationInvalidUrl(t *testing.T) {
 // Test creation of a custom SAML app.
 func TestAccOktaSamlApplication(t *testing.T) {
 	ri := acctest.RandInt()
-	config := buildTestSamlConfig(ri)
-	updatedConfig := buildTestSamlConfigUpdated(ri)
+	mgr := newFixtureManager(samlApp)
+	config := mgr.GetFixtures("custom_saml_app.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("custom_saml_app_updated.tf", ri, t)
 	resourceName := buildResourceFQN(samlApp, ri)
 
 	resource.Test(t, resource.TestCase{
@@ -83,8 +84,9 @@ func TestAccOktaSamlApplication(t *testing.T) {
 
 func TestAccOktaSamlApplicationAllFields(t *testing.T) {
 	ri := acctest.RandInt()
-	config := buildTestSamlConfig(ri)
-	allFields := buildTestSamlConfigAllFields(ri)
+	mgr := newFixtureManager(samlApp)
+	config := mgr.GetFixtures("custom_saml_app.tf", ri, t)
+	allFields := mgr.GetFixtures("custom_saml_app_all_fields.tf", ri, t)
 	resourceName := buildResourceFQN(samlApp, ri)
 
 	resource.Test(t, resource.TestCase{
@@ -110,6 +112,9 @@ func TestAccOktaSamlApplicationAllFields(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "digest_algorithm", "SHA1"),
 					resource.TestCheckResourceAttr(resourceName, "honor_force_authn", "true"),
 					resource.TestCheckResourceAttr(resourceName, "authn_context_class_ref", "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"),
+					resource.TestCheckResourceAttr(resourceName, "attribute_statements.0.name", "Attr One"),
+					resource.TestCheckResourceAttr(resourceName, "attribute_statements.0.namespace", "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"),
+					resource.TestCheckResourceAttr(resourceName, "attribute_statements.0.values.0", "val"),
 				),
 			},
 			{
@@ -132,8 +137,9 @@ func TestAccOktaSamlApplicationAllFields(t *testing.T) {
 // Add and remove groups/users
 func TestAccOktaSamlApplicationUserGroups(t *testing.T) {
 	ri := acctest.RandInt()
-	config := buildTestSamlGroupsUsers(ri)
-	updatedConfig := buildTestSamlRemoveGroupsUsers(ri)
+	mgr := newFixtureManager(samlApp)
+	config := mgr.GetFixtures("saml_app_with_groups_and_users.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("saml_app_with_groups_and_users_updated.tf", ri, t)
 	resourceName := buildResourceFQN(samlApp, ri)
 
 	resource.Test(t, resource.TestCase{
@@ -150,6 +156,8 @@ func TestAccOktaSamlApplicationUserGroups(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "users.0.id"),
 					resource.TestCheckResourceAttrSet(resourceName, "groups.0"),
 					resource.TestCheckResourceAttr(resourceName, "key.years_valid", "3"),
+					// resource.TestCheckResourceAttr(resourceName, "features.#", "1"),
+					// resource.TestCheckResourceAttr(resourceName, "features.0", "PUSH_NEW_USERS"),
 				),
 			},
 			{
@@ -165,86 +173,6 @@ func TestAccOktaSamlApplicationUserGroups(t *testing.T) {
 			},
 		},
 	})
-}
-
-func buildTestSamlGroupsUsers(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "okta_group" "group-%d" {
-  name = "testAcc-%d"
-}
-resource "okta_user" "user-%d" {
-  admin_roles = ["APP_ADMIN", "USER_ADMIN"]
-  first_name  = "TestAcc"
-  last_name   = "blah"
-  login       = "test-acc-%d@testing.com"
-  email       = "test-acc-%d@testing.com"
-  status      = "ACTIVE"
-}
-
-resource "%s" "%s" {
-  preconfigured_app	    = "amazon_aws"
-  label       = "%s"
-  users = [
-	  {
-		  id = "${okta_user.user-%d.id}"
-		  username = "${okta_user.user-%d.email}"
-	  }
-  ]
-  groups = ["${okta_group.group-%d.id}"]
-  key = {
-	  years_valid = 3
-  }
-}
-`, rInt, rInt, rInt, rInt, rInt, samlApp, name, name, rInt, rInt, rInt)
-}
-
-func buildTestSamlRemoveGroupsUsers(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "okta_group" "group-%d" {
-  name = "testAcc-%d"
-}
-
-resource "okta_user" "user-%d" {
-  admin_roles = ["APP_ADMIN", "USER_ADMIN"]
-  first_name  = "TestAcc"
-  last_name   = "blah"
-  login       = "test-acc-%d@testing.com"
-  email       = "test-acc-%d@testing.com"
-  status      = "ACTIVE"
-}
-
-resource "%s" "%s" {
-  preconfigured_app	    = "amazon_aws"
-  label       = "%s"
-}
-`, rInt, rInt, rInt, rInt, rInt, samlApp, name, name)
-}
-
-func buildTestSamlConfigPreconfig(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  preconfigured_app	    = "amazon_aws"
-  label         		= "%s"
-}
-`, samlApp, name, name)
-}
-
-func buildTestSamlConfigPreconfigUpdated(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  preconfigured_app	    = "amazon_aws"
-  label         		= "%s"
-  status 	    	    = "INACTIVE"
-}
-`, samlApp, name, name)
 }
 
 func buildTestSamlConfigMissingFields(rInt int) string {
@@ -266,74 +194,6 @@ resource "%s" "%s" {
   label         		= "%s"
   status 	    	    = "INACTIVE"
   sso_url      			= "123"
-}
-`, samlApp, name, name)
-}
-
-func buildTestSamlConfig(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  label       				= "%s"
-  sso_url      				= "http://google.com"
-  recipient 				= "http://here.com"
-  destination 				= "http://its-about-the-journey.com"
-  audience 					= "http://audience.com"
-  idp_issuer 				= "idhere123"
-  subject_name_id_template  = "$${user.userName}"
-  subject_name_id_format	= "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
-  response_signed 			= true
-  signature_algorithm 		= "RSA_SHA256"
-  digest_algorithm 			= "SHA256"
-  honor_force_authn			= false
-  authn_context_class_ref	= "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
-}
-`, samlApp, name, name)
-}
-
-func buildTestSamlConfigUpdated(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  label       = "%s"
-  sso_url      				= "http://google.com"
-  recipient 				= "http://here.com"
-  destination 				= "http://its-about-the-journey.com"
-  audience 					= "http://audience.com"
-  idp_issuer 				= "idhere123"
-  status 	  			    = "INACTIVE"
-  subject_name_id_template  = "$${user.userName}"
-  subject_name_id_format	= "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
-  signature_algorithm 		= "RSA_SHA256"
-  response_signed 			= true
-  digest_algorithm 			= "SHA256"
-  honor_force_authn			= false
-  authn_context_class_ref	= "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
-}
-`, samlApp, name, name)
-}
-
-func buildTestSamlConfigAllFields(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  label       				= "%s"
-  sso_url      				= "http://google.com"
-  recipient 				= "http://here.com"
-  destination 				= "http://its-about-the-journey.com"
-  audience 					= "http://audience.com"
-  idp_issuer 				= "idhere123"
-  subject_name_id_template 	= "$${source.login}"
-  subject_name_id_format	= "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
-  response_signed 			= true
-  assertion_signed 			= true
-  signature_algorithm 		= "RSA_SHA1"
-  digest_algorithm 			= "SHA1"
-  honor_force_authn			= true
-  authn_context_class_ref 	= "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
 }
 `, samlApp, name, name)
 }

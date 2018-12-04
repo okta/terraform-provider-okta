@@ -56,7 +56,7 @@ func testOktaMfaPolicy(rInt int) string {
 
 	return fmt.Sprintf(`
 resource "okta_factor" "google" {
-	provider_id = "google_otp" 
+	provider_id = "google_otp"
 }
 resource "%s" "%s" {
   name        		= "%s"
@@ -67,7 +67,7 @@ resource "%s" "%s" {
   }
   depends_on = [
 	"okta_factor.google",
-  ]	
+  ]
 }
 `, mfaPolicy, name, name)
 }
@@ -78,19 +78,19 @@ func testOktaMfaPolicyUpdated(rInt int) string {
 	return fmt.Sprintf(`
 data "okta_everyone_group" "everyone-%d" {}
 resource "okta_factor" "google" {
-	provider_id = "google_otp" 
+	provider_id = "google_otp"
 }
 resource "okta_factor" "sms" {
-	provider_id = "okta_sms" 
+	provider_id = "okta_sms"
 }
 resource "okta_factor" "otp" {
-	provider_id = "okta_otp" 
+	provider_id = "okta_otp"
 }
 resource "okta_factor" "fido_u2f" {
-	provider_id = "fido_u2f" 
+	provider_id = "fido_u2f"
 }
 resource "okta_factor" "fido_webauthn" {
-	provider_id = "fido_webauthn" 
+	provider_id = "fido_webauthn"
 }
 
 resource "%s" "%s" {
@@ -98,19 +98,19 @@ resource "%s" "%s" {
 	status      = "INACTIVE"
 	description = "Terraform Acceptance Test MFA Policy Updated"
 	groups_included = [ "${data.okta_everyone_group.everyone-%d.id}" ]
-	fido_u2f 		= {
+	fido_u2f = {
 		enroll = "OPTIONAL"
 	}
-	fido_webauthn 	= {
+	fido_webauthn = {
 		enroll = "OPTIONAL"
 	}
-	google_otp	 	= {
+	google_otp = {
 		enroll = "OPTIONAL"
 	}
-	okta_otp 		= {
+	okta_otp = {
 		enroll = "OPTIONAL"
 	}
-	okta_sms 		= {
+	okta_sms = {
 		enroll = "OPTIONAL"
 	}
 	depends_on = [

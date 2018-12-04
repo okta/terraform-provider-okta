@@ -21,7 +21,7 @@ Requirements
 Usage
 ---------------------
 
-This plugin requires two inputs to run: the okta organization name and the okta api token. The okta base url is not required and will default to "okta.com" if left out.
+This plugin requires two inputs to run: the okta organization name and the okta api token. The okta base url is not required and will default to "okta.com" if left out. For in depth usage please see [examples](./examples).
 
 You can specify the inputs in your tf plan:
 

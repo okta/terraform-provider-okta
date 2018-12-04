@@ -87,7 +87,7 @@ func resourceThreeFieldAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("username_selector", app.Settings.App.UserNameSelector)
 	d.Set("extra_field_selector", app.Settings.App.ExtraFieldSelector)
 	d.Set("extra_field_value", app.Settings.App.ExtraFieldValue)
-	d.Set("url", app.Settings.App.TargetUrl)
+	d.Set("url", app.Settings.App.TargetURL)
 	d.Set("url_regex", app.Settings.App.LoginUrlRegex)
 	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
@@ -133,7 +133,7 @@ func buildThreeFieldApplication(d *schema.ResourceData, m interface{}) *okta.Swa
 
 	app.Settings = &okta.SwaThreeFieldApplicationSettings{
 		App: &okta.SwaThreeFieldApplicationSettingsApplication{
-			TargetUrl:          d.Get("url").(string),
+			TargetURL:          d.Get("url").(string),
 			ButtonSelector:     d.Get("button_selector").(string),
 			UserNameSelector:   d.Get("username_selector").(string),
 			PasswordSelector:   d.Get("password_selector").(string),

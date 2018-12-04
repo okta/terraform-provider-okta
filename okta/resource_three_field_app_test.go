@@ -10,7 +10,6 @@ import (
 )
 
 func TestAccOktaThreeFieldApplication(t *testing.T) {
-	t.Skip("Skipping three field SWA app test due to bug in Okta SDK -- https://github.com/okta/okta-sdk-golang/pull/40")
 	ri := acctest.RandInt()
 	config := buildTestThreeFieldConfig(ri)
 	updatedConfig := buildTestThreeFieldConfigUpdated(ri)
