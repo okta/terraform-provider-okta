@@ -1,4 +1,4 @@
-VERSION=v2.2.2
+VERSION=v2.2.3
 
 SWEEP?=global
 TEST?=$$(go list ./... |grep -v 'vendor')
