@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/hashicorp/terraform/helper/validation"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -52,6 +54,13 @@ func Provider() terraform.ResourceProvider {
 				Default:     1,
 				Description: "Number of concurrent requests to make within a resource where bulk operations are not possible. Take note of https://developer.okta.com/docs/api/getting_started/rate-limits.",
 			},
+			"max_retries": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      5,
+				ValidateFunc: validation.IntAtMost(100), // Have to cut it off somewhere right?
+				Description:  "maximum number of retries to attempt before erroring out. This is also related to back offs when a 429 HTTP status code is received.",
+			},
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -92,6 +101,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		domain:      d.Get("base_url").(string),
 		apiToken:    d.Get("api_token").(string),
 		parallelism: d.Get("parallelism").(int),
+		retryCount:  d.Get("max_retries").(int),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, fmt.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)

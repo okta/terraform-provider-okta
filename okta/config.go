@@ -13,6 +13,7 @@ type Config struct {
 	orgName     string
 	domain      string
 	apiToken    string
+	retryCount  int
 	parallelism int
 
 	articulateOktaClient *articulateOkta.Client
@@ -31,7 +32,12 @@ func (c *Config) loadAndValidate() error {
 
 	orgUrl := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
 
-	config := okta.NewConfig().WithOrgUrl(orgUrl).WithToken(c.apiToken).WithCache(false)
+	config := okta.NewConfig().
+		WithOrgUrl(orgUrl).
+		WithToken(c.apiToken).
+		WithCache(false).
+		WithBackoff(true).
+		WithRetries(int32(c.retryCount))
 	client := okta.NewClient(config, nil, nil)
 
 	// add the Okta SDK client object to Config
