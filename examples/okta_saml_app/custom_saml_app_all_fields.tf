@@ -18,6 +18,11 @@ resource "okta_saml_app" "testAcc-%[1]d" {
       name      = "Attr One"
       namespace = "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
       values    = ["val"]
+    },
+    {
+      name        = "Attr Two"
+      filter_type  = "STARTS_WITH"
+      filter_value = "test"
     }
   ]
 }

@@ -115,6 +115,8 @@ func TestAccOktaSamlApplicationAllFields(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "attribute_statements.0.name", "Attr One"),
 					resource.TestCheckResourceAttr(resourceName, "attribute_statements.0.namespace", "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"),
 					resource.TestCheckResourceAttr(resourceName, "attribute_statements.0.values.0", "val"),
+					resource.TestCheckResourceAttr(resourceName, "attribute_statements.1.name", "Attr Two"),
+					resource.TestCheckResourceAttr(resourceName, "attribute_statements.1.namespace", "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"),
 				),
 			},
 			{

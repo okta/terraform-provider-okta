@@ -220,10 +220,15 @@ func resourceSamlApp() *schema.Resource {
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"type": {
-							Type:     schema.TypeString,
-							Default:  "EXPRESSION",
-							Optional: true,
+						"filter_type": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Type of group attribute filter",
+						},
+						"filter_value": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Filter value to use",
 						},
 						"name": {
 							Type:     schema.TypeString,
@@ -239,9 +244,18 @@ func resourceSamlApp() *schema.Resource {
 								"urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
 							}, false),
 						},
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "EXPRESSION",
+							ValidateFunc: validation.StringInSlice([]string{
+								"EXPRESSION",
+								"GROUP",
+							}, false),
+						},
 						"values": {
 							Type:     schema.TypeList,
-							Required: true,
+							Optional: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 						},
 					},
