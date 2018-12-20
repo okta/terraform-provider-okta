@@ -215,6 +215,24 @@ func resourceSamlApp() *schema.Resource {
 				Description: "features to enable",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"user_name_template": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "${source.login}",
+				Description: "Username template",
+			},
+			"user_name_template_suffix": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Username template suffix",
+			},
+			"user_name_template_type": &schema.Schema{
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      "BUILT_IN",
+				Description:  "Username template type",
+				ValidateFunc: validation.StringInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}, false),
+			},
 			"attribute_statements": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -314,6 +332,9 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("honor_force_authn", app.Settings.SignOn.HonorForceAuthn)
 	d.Set("authn_context_class_ref", app.Settings.SignOn.AuthnContextClassRef)
 	d.Set("features", app.Features)
+	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
+	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 
 	if app.Credentials.Signing.Kid != "" {
 		keyId := app.Credentials.Signing.Kid
@@ -436,6 +457,13 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 		DigestAlgorithm:       d.Get("digest_algorithm").(string),
 		HonorForceAuthn:       &honorForce,
 		AuthnContextClassRef:  d.Get("authn_context_class_ref").(string),
+	}
+	app.Credentials = &okta.ApplicationCredentials{
+		UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
+			Template: d.Get("user_name_template").(string),
+			Type:     d.Get("user_name_template_type").(string),
+			Suffix:   d.Get("user_name_template_suffix").(string),
+		},
 	}
 	app.Accessibility = &okta.ApplicationAccessibility{
 		SelfService:      &a11ySelfService,
