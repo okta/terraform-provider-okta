@@ -316,6 +316,11 @@ func resourceSamlAppCreate(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
+	err = handleAppGroupsAndUsers(app.Id, d, m)
+
+	if err != nil {
+		return err
+	}
 
 	return resourceSamlAppRead(d, m)
 }
@@ -371,7 +376,7 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 		d.Set(fmt.Sprintf("attribute_statements.%d.values", i), st.Values)
 	}
 
-	return nil
+	return syncGroupsAndUsers(app.Id, d, m)
 }
 
 func resourceSamlAppUpdate(d *schema.ResourceData, m interface{}) error {
@@ -400,6 +405,11 @@ func resourceSamlAppUpdate(d *schema.ResourceData, m interface{}) error {
 		if err != nil {
 			return err
 		}
+	}
+	err = handleAppGroupsAndUsers(app.Id, d, m)
+
+	if err != nil {
+		return err
 	}
 
 	return resourceSamlAppRead(d, m)

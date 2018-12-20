@@ -158,8 +158,6 @@ func TestAccOktaSamlApplicationUserGroups(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "users.0.id"),
 					resource.TestCheckResourceAttrSet(resourceName, "groups.0"),
 					resource.TestCheckResourceAttr(resourceName, "key.years_valid", "3"),
-					// resource.TestCheckResourceAttr(resourceName, "features.#", "1"),
-					// resource.TestCheckResourceAttr(resourceName, "features.0", "PUSH_NEW_USERS"),
 				),
 			},
 			{
