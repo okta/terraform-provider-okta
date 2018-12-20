@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"encoding/json"
 	"fmt"
 	"sync"
 
@@ -70,12 +71,6 @@ var baseAppSchema = map[string]*schema.Schema{
 		Default:      "ACTIVE",
 		ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
 		Description:  "Status of application.",
-	},
-	"app_settings": {
-		Type:        schema.TypeMap,
-		Optional:    true,
-		Description: "Application settings",
-		Elem:        schema.TypeString,
 	},
 }
 
@@ -371,4 +366,26 @@ func syncGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) error 
 	}
 
 	return setNonPrimitives(d, flatMap)
+}
+
+// setAppSettings available preconfigured SAML and OAuth applications vary wildly on potential app settings, thus
+// it is a generic map. This logic simply weeds out any empty string values.
+func setAppSettings(d *schema.ResourceData, settings *okta.ApplicationSettingsApplication) error {
+	flatMap := map[string]interface{}{}
+
+	for key, val := range *settings {
+		if str, ok := val.(string); ok {
+			if str != "" {
+				flatMap[key] = str
+			}
+		} else if val != nil {
+			flatMap[key] = val
+		}
+	}
+	payload, err := json.Marshal(flatMap)
+	if err != nil {
+		return err
+	}
+
+	return d.Set("app_settings_json", string(payload))
 }

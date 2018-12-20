@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -232,6 +233,16 @@ func resourceSamlApp() *schema.Resource {
 				Description:  "Username template type",
 				ValidateFunc: validation.StringInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}, false),
 			},
+			"app_settings_json": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "Application settings in JSON format",
+				ValidateFunc: validateDataJSON,
+				StateFunc:    normalizeDataJSON,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
+			},
 			"attribute_statements": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -334,6 +345,10 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
+	err = setAppSettings(d, app.Settings.App)
+	if err != nil {
+		return err
+	}
 
 	if app.Credentials.Signing.Kid != "" {
 		keyId := app.Credentials.Signing.Kid
@@ -439,6 +454,12 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 			IOS: &hideMobile,
 			Web: &hideWeb,
 		},
+	}
+	if appSettings, ok := d.GetOk("app_settings_json"); ok {
+		payload := map[string]interface{}{}
+		json.Unmarshal([]byte(appSettings.(string)), &payload)
+		settings := okta.ApplicationSettingsApplication(payload)
+		app.Settings.App = &settings
 	}
 	app.Features = convertInterfaceToStringArr(d.Get("features"))
 	app.Settings.SignOn = &okta.SamlApplicationSettingsSignOn{

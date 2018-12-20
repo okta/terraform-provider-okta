@@ -243,7 +243,6 @@ func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
 	d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
 	err = syncGroupsAndUsers(app.Id, d, m)
-
 	if err != nil {
 		return err
 	}

@@ -23,4 +23,14 @@ resource "okta_saml_app" "testAcc-%[1]d" {
   key = {
     years_valid = 3
   }
+  app_settings_json = <<EOT
+{
+  "awsEnvironmentType":"aws.amazon",
+  "groupFilter": "aws_(?{{accountid}}\\d+)_(?{{role}}[a-zA-Z0-9+=,.@\\-_]+)",
+  "joinAllRoles": false,
+  "loginURL": "https://console.aws.amazon.com/ec2/home",
+  "roleValuePattern": "arn:aws:iam::$${accountid}:saml-provider/OKTA,arn:aws:iam::$${accountid}:role/$${role}",
+  "sessionDuration": 3600
+}
+EOT
 }
