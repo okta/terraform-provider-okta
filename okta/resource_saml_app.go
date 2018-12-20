@@ -119,10 +119,9 @@ func resourceSamlApp() *schema.Resource {
 				ValidateFunc: validateIsURL,
 			},
 			"audience": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Audience URI",
-				ValidateFunc: validateIsURL,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Audience Restriction",
 			},
 			"idp_issuer": {
 				Type:        schema.TypeString,
