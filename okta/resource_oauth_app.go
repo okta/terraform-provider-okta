@@ -113,6 +113,11 @@ func resourceOAuthApp() *schema.Resource {
 				Optional:    true,
 				Description: "URI that references a logo for the client.",
 			},
+			"login_uri": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "URI that initiates login.",
+			},
 			"redirect_uris": &schema.Schema{
 				Type:        schema.TypeList,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -236,6 +241,7 @@ func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("logo_uri", app.Settings.OauthClient.LogoUri)
 	d.Set("tos_uri", app.Settings.OauthClient.TosUri)
 	d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
+	d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
 	err = syncGroupsAndUsers(app.Id, d, m)
 
 	if err != nil {
@@ -338,6 +344,7 @@ func buildOAuthApp(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 			ClientUri:              d.Get("client_uri").(string),
 			ConsentMethod:          d.Get("consent_method").(string),
 			GrantTypes:             grantTypes,
+			InitiateLoginUri:       d.Get("login_uri").(string),
 			LogoUri:                d.Get("logo_uri").(string),
 			PolicyUri:              d.Get("policy_uri").(string),
 			RedirectUris:           convertInterfaceToStringArrNullable(d.Get("redirect_uris")),
