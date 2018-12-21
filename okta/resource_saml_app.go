@@ -48,8 +48,6 @@ func resourceSamlApp() *schema.Resource {
 				Description: "Name of preexisting SAML application. For instance 'slack'",
 				// A new app type requires it be deleted and recreated
 				ForceNew: true,
-				// Ignoring updates when preconfigured_app is not specified
-				DiffSuppressFunc: suppressDefaultedDiff,
 			},
 			"key": {
 				Type:        schema.TypeMap,
@@ -354,7 +352,6 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
-	d.Set("preconfigured_app", app.Name)
 	err = setAppSettings(d, app.Settings.App)
 	if err != nil {
 		return err
