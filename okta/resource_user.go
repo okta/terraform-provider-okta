@@ -181,7 +181,7 @@ func resourceUser() *schema.Resource {
 				// ignore diff changing to ACTIVE if state is set to PROVISIONED or PASSWORD_EXPIRED
 				// since this is a similar status in Okta terms
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return old == "PROVISIONED" && new == "ACTIVE"
+					return old == "PROVISIONED" && new == "ACTIVE" || old == "PASSWORD_EXPIRED" && new == "ACTIVE"
 				},
 			},
 			"street_address": &schema.Schema{

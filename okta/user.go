@@ -308,6 +308,9 @@ func updateUserStatus(u string, d string, c *okta.Client) error {
 	case "ACTIVE":
 		if user.Status == "SUSPENDED" {
 			_, statusErr = c.User.UnsuspendUser(u)
+		} else if user.Status == "PASSWORD_EXPIRED" {
+			// Ignore password expired status. This status is already activated.
+			return nil
 		} else {
 			_, _, statusErr = c.User.ActivateUser(u, nil)
 		}
