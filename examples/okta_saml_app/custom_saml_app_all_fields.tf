@@ -13,11 +13,17 @@ resource "okta_saml_app" "testAcc-%[1]d" {
   digest_algorithm         = "SHA1"
   honor_force_authn        = true
   authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+  user_name_template       = "$${source.email}"
   attribute_statements = [
     {
       name      = "Attr One"
       namespace = "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
       values    = ["val"]
+    },
+    {
+      name        = "Attr Two"
+      filter_type  = "STARTS_WITH"
+      filter_value = "test"
     }
   ]
 }

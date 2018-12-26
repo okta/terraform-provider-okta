@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -44,7 +45,9 @@ func resourceSamlApp() *schema.Resource {
 			"preconfigured_app": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Name of preexisting SAML application.",
+				Description: "Name of preexisting SAML application. For instance 'slack'",
+				// A new app type requires it be deleted and recreated
+				ForceNew: true,
 			},
 			"key": {
 				Type:        schema.TypeMap,
@@ -119,10 +122,9 @@ func resourceSamlApp() *schema.Resource {
 				ValidateFunc: validateIsURL,
 			},
 			"audience": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Audience URI",
-				ValidateFunc: validateIsURL,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Audience Restriction",
 			},
 			"idp_issuer": {
 				Type:        schema.TypeString,
@@ -215,15 +217,48 @@ func resourceSamlApp() *schema.Resource {
 				Description: "features to enable",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"user_name_template": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "${source.login}",
+				Description: "Username template",
+			},
+			"user_name_template_suffix": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Username template suffix",
+			},
+			"user_name_template_type": &schema.Schema{
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      "BUILT_IN",
+				Description:  "Username template type",
+				ValidateFunc: validation.StringInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}, false),
+			},
+			"app_settings_json": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "Application settings in JSON format",
+				ValidateFunc: validateDataJSON,
+				StateFunc:    normalizeDataJSON,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
+			},
 			"attribute_statements": {
 				Type:     schema.TypeList,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"type": {
-							Type:     schema.TypeString,
-							Default:  "EXPRESSION",
-							Optional: true,
+						"filter_type": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Type of group attribute filter",
+						},
+						"filter_value": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Filter value to use",
 						},
 						"name": {
 							Type:     schema.TypeString,
@@ -239,9 +274,18 @@ func resourceSamlApp() *schema.Resource {
 								"urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
 							}, false),
 						},
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "EXPRESSION",
+							ValidateFunc: validation.StringInSlice([]string{
+								"EXPRESSION",
+								"GROUP",
+							}, false),
+						},
 						"values": {
 							Type:     schema.TypeList,
-							Required: true,
+							Optional: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 						},
 					},
@@ -274,6 +318,11 @@ func resourceSamlAppCreate(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
+	err = handleAppGroupsAndUsers(app.Id, d, m)
+
+	if err != nil {
+		return err
+	}
 
 	return resourceSamlAppRead(d, m)
 }
@@ -300,6 +349,13 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("honor_force_authn", app.Settings.SignOn.HonorForceAuthn)
 	d.Set("authn_context_class_ref", app.Settings.SignOn.AuthnContextClassRef)
 	d.Set("features", app.Features)
+	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
+	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
+	err = setAppSettings(d, app.Settings.App)
+	if err != nil {
+		return err
+	}
 
 	if app.Credentials.Signing.Kid != "" {
 		keyId := app.Credentials.Signing.Kid
@@ -322,7 +378,7 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 		d.Set(fmt.Sprintf("attribute_statements.%d.values", i), st.Values)
 	}
 
-	return nil
+	return syncGroupsAndUsers(app.Id, d, m)
 }
 
 func resourceSamlAppUpdate(d *schema.ResourceData, m interface{}) error {
@@ -351,6 +407,11 @@ func resourceSamlAppUpdate(d *schema.ResourceData, m interface{}) error {
 		if err != nil {
 			return err
 		}
+	}
+	err = handleAppGroupsAndUsers(app.Id, d, m)
+
+	if err != nil {
+		return err
 	}
 
 	return resourceSamlAppRead(d, m)
@@ -406,6 +467,12 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 			Web: &hideWeb,
 		},
 	}
+	if appSettings, ok := d.GetOk("app_settings_json"); ok {
+		payload := map[string]interface{}{}
+		json.Unmarshal([]byte(appSettings.(string)), &payload)
+		settings := okta.ApplicationSettingsApplication(payload)
+		app.Settings.App = &settings
+	}
 	app.Features = convertInterfaceToStringArr(d.Get("features"))
 	app.Settings.SignOn = &okta.SamlApplicationSettingsSignOn{
 		DefaultRelayState:     d.Get("default_relay_state").(string),
@@ -422,6 +489,13 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 		DigestAlgorithm:       d.Get("digest_algorithm").(string),
 		HonorForceAuthn:       &honorForce,
 		AuthnContextClassRef:  d.Get("authn_context_class_ref").(string),
+	}
+	app.Credentials = &okta.ApplicationCredentials{
+		UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
+			Template: d.Get("user_name_template").(string),
+			Type:     d.Get("user_name_template_type").(string),
+			Suffix:   d.Get("user_name_template_suffix").(string),
+		},
 	}
 	app.Accessibility = &okta.ApplicationAccessibility{
 		SelfService:      &a11ySelfService,

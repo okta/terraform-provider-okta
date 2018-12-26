@@ -113,11 +113,22 @@ func resourceOAuthApp() *schema.Resource {
 				Optional:    true,
 				Description: "URI that references a logo for the client.",
 			},
+			"login_uri": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "URI that initiates login.",
+			},
 			"redirect_uris": &schema.Schema{
 				Type:        schema.TypeList,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
 				Description: "List of URIs for use in the redirect-based flow. This is required for all application types except service.",
+			},
+			"post_logout_redirect_uris": &schema.Schema{
+				Type:        schema.TypeList,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Optional:    true,
+				Description: "List of URIs for redirection after logout",
 			},
 			"response_types": &schema.Schema{
 				Type: schema.TypeList,
@@ -230,16 +241,17 @@ func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("logo_uri", app.Settings.OauthClient.LogoUri)
 	d.Set("tos_uri", app.Settings.OauthClient.TosUri)
 	d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
+	d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
 	err = syncGroupsAndUsers(app.Id, d, m)
-
 	if err != nil {
 		return err
 	}
 
 	return setNonPrimitives(d, map[string]interface{}{
-		"redirect_uris":  app.Settings.OauthClient.RedirectUris,
-		"response_types": app.Settings.OauthClient.ResponseTypes,
-		"grant_types":    app.Settings.OauthClient.GrantTypes,
+		"redirect_uris":             app.Settings.OauthClient.RedirectUris,
+		"response_types":            app.Settings.OauthClient.ResponseTypes,
+		"grant_types":               app.Settings.OauthClient.GrantTypes,
+		"post_logout_redirect_uris": app.Settings.OauthClient.PostLogoutRedirectUris,
 	})
 }
 
@@ -327,15 +339,17 @@ func buildOAuthApp(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 	}
 	app.Settings = &okta.OpenIdConnectApplicationSettings{
 		OauthClient: &okta.OpenIdConnectApplicationSettingsClient{
-			ApplicationType: appType,
-			ClientUri:       d.Get("client_uri").(string),
-			ConsentMethod:   d.Get("consent_method").(string),
-			GrantTypes:      grantTypes,
-			LogoUri:         d.Get("logo_uri").(string),
-			PolicyUri:       d.Get("policy_uri").(string),
-			RedirectUris:    convertInterfaceToStringArrNullable(d.Get("redirect_uris")),
-			ResponseTypes:   responseTypes,
-			TosUri:          d.Get("tos_uri").(string),
+			ApplicationType:        appType,
+			ClientUri:              d.Get("client_uri").(string),
+			ConsentMethod:          d.Get("consent_method").(string),
+			GrantTypes:             grantTypes,
+			InitiateLoginUri:       d.Get("login_uri").(string),
+			LogoUri:                d.Get("logo_uri").(string),
+			PolicyUri:              d.Get("policy_uri").(string),
+			RedirectUris:           convertInterfaceToStringArrNullable(d.Get("redirect_uris")),
+			PostLogoutRedirectUris: convertInterfaceToStringArrNullable(d.Get("post_logout_redirect_uris")),
+			ResponseTypes:          responseTypes,
+			TosUri:                 d.Get("tos_uri").(string),
 		},
 	}
 

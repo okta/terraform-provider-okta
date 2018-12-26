@@ -115,6 +115,8 @@ func TestAccOktaSamlApplicationAllFields(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "attribute_statements.0.name", "Attr One"),
 					resource.TestCheckResourceAttr(resourceName, "attribute_statements.0.namespace", "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"),
 					resource.TestCheckResourceAttr(resourceName, "attribute_statements.0.values.0", "val"),
+					resource.TestCheckResourceAttr(resourceName, "attribute_statements.1.name", "Attr Two"),
+					resource.TestCheckResourceAttr(resourceName, "attribute_statements.1.namespace", "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"),
 				),
 			},
 			{
@@ -145,25 +147,23 @@ func TestAccOktaSamlApplicationUserGroups(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(samlApp, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		CheckDestroy: createCheckResourceDestroy(samlApp, createDoesAppExist(okta.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttrSet(resourceName, "users.0.id"),
 					resource.TestCheckResourceAttrSet(resourceName, "groups.0"),
 					resource.TestCheckResourceAttr(resourceName, "key.years_valid", "3"),
-					// resource.TestCheckResourceAttr(resourceName, "features.#", "1"),
-					// resource.TestCheckResourceAttr(resourceName, "features.0", "PUSH_NEW_USERS"),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckNoResourceAttr(resourceName, "users.0"),

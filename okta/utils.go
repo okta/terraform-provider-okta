@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strings"
@@ -234,6 +235,16 @@ func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []
 	return warnings, errors
 }
 
+func normalizeDataJSON(val interface{}) string {
+	dataMap := map[string]interface{}{}
+
+	// Ignoring errors since we know it is valid
+	json.Unmarshal([]byte(val.(string)), &dataMap)
+	ret, _ := json.Marshal(dataMap)
+
+	return string(ret)
+}
+
 func requireOneOf(d *schema.ResourceData, propList ...string) error {
 	for _, prop := range propList {
 		if _, ok := d.GetOkExists(prop); !ok {
@@ -263,6 +274,14 @@ func suppressDefaultedArrayDiff(k, old, new string, d *schema.ResourceData) bool
 
 func suppressDefaultedDiff(k, old, new string, d *schema.ResourceData) bool {
 	return new == ""
+}
+
+func validateDataJSON(val interface{}, k string) ([]string, []error) {
+	err := json.Unmarshal([]byte(val.(string)), &map[string]interface{}{})
+	if err != nil {
+		return nil, []error{err}
+	}
+	return nil, nil
 }
 
 // Matching level of validation done by Okta API

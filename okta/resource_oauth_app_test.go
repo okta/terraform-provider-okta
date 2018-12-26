@@ -138,6 +138,8 @@ func TestAccOktaOAuthApplicationUserGroups(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "web"),
 					resource.TestCheckResourceAttrSet(resourceName, "users.0.id"),
 					resource.TestCheckResourceAttrSet(resourceName, "groups.0"),
+					resource.TestCheckResourceAttr(resourceName, "login_uri", "http://test.com"),
+					testCheckResourceSliceAttr(resourceName, "post_logout_redirect_uris", []string{"http://d.com/post"}),
 				),
 			},
 			{
@@ -293,6 +295,8 @@ resource "%s" "%s" {
   type		  = "web"
   grant_types = [ "implicit", "authorization_code" ]
   redirect_uris = ["http://d.com/"]
+  post_logout_redirect_uris = ["http://d.com/post"]
+  login_uri = "http://test.com"
   response_types = ["code", "token", "id_token"]
   users = [
 	  {
