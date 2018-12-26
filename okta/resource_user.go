@@ -181,7 +181,7 @@ func resourceUser() *schema.Resource {
 				// ignore diff changing to ACTIVE if state is set to PROVISIONED or PASSWORD_EXPIRED
 				// since this is a similar status in Okta terms
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return old == "PROVISIONED" && new == "ACTIVE" || old == "ACTIVE" && new == "PASSWORD_EXPIRED"
+					return old == "PROVISIONED" && new == "ACTIVE"
 				},
 			},
 			"street_address": &schema.Schema{
@@ -211,6 +211,15 @@ func resourceUser() *schema.Resource {
 			},
 		},
 	}
+}
+
+func mapStatus(currentStatus string) string {
+	// PASSWORD_EXPIRED is effectively ACTIVE for our purposes
+	if currentStatus == "PASSWORD_EXPIRED" {
+		return "ACTIVE"
+	}
+
+	return currentStatus
 }
 
 func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
@@ -274,7 +283,7 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 		return fmt.Errorf("[ERROR] Error Getting User from Okta: %v", err)
 	}
 
-	d.Set("status", user.Status)
+	d.Set("status", mapStatus(user.Status))
 
 	if err = setUserProfileAttributes(d, user); err != nil {
 		return err
