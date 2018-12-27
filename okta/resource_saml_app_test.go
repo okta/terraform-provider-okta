@@ -40,7 +40,7 @@ func TestAccOktaSamlApplicationInvalidUrl(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
-				ExpectError: regexp.MustCompile("config is invalid: okta_saml_app.testAcc-.*: failed to validate url, \"123\""),
+				ExpectError: regexp.MustCompile("config is invalid: okta_saml_app.testAcc_.*: failed to validate url, \"123\""),
 			},
 		},
 	})

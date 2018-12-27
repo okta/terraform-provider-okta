@@ -21,7 +21,7 @@ Requirements
 Usage
 ---------------------
 
-This plugin requires two inputs to run: the okta organization name and the okta api token. The okta base url is not required and will default to "okta.com" if left out. For in depth usage please see [examples](./examples).
+This plugin requires two inputs to run: the okta organization name and the okta api token. The okta base url is not required and will default to "okta.com" if left out.
 
 You can specify the inputs in your tf plan:
 
@@ -40,6 +40,11 @@ OKTA_ORG_NAME=<okta instance name, e.g. dev-XXXXXX>
 OKTA_API_TOKEN=<okta instance api token with the Administrator role>
 OKTA_BASE_URL=<okta base url, e.g. oktapreview.com>
 ```
+
+Examples
+--------
+
+As we build out resources we build concomitant acceptance tests that require use to create resource config that actually creates and modifies real resources. We decided to put these test fixtures to good use and provide them [as examples here.](./examples)
 
 Building The Provider
 ---------------------

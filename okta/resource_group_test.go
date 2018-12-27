@@ -1,50 +1,31 @@
 package okta
 
 import (
-	"fmt"
-	"strconv"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-// Witiz1932@teleworm.us is a fake email address created at fakemailgenerator.com
-// view inbox: http://www.fakemailgenerator.com/inbox/teleworm.us/witiz1932/
-
 func TestAccOktaGroupsCreate(t *testing.T) {
 	ri := acctest.RandInt()
+	resourceName := buildResourceFQN(oktaGroup, ri)
+	mgr := newFixtureManager("okta_group")
+	config := mgr.GetFixtures("okta_group.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("okta_group_updated.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testOktaGroups_create(ri),
+				Config: config,
 			},
 			{
-				Config: testOktaGroups_update(ri),
+				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("okta_group.test-"+strconv.Itoa(ri), "name", "testgroupdifferent")),
+					resource.TestCheckResourceAttr(resourceName, "name", "testgroupdifferent")),
 			},
 		},
 	})
-}
-
-func testOktaGroups_create(rInt int) string {
-	return fmt.Sprintf(`
-resource "okta_group" "test-%d" {
-  name = "testgroup-%d"
-  description = "testing, testing"
-}
-`, rInt, rInt)
-}
-
-func testOktaGroups_update(rInt int) string {
-	return fmt.Sprintf(`
-resource "okta_group" "test-%d" {
-  name = "testgroupdifferent"
-  description = "testing, testing"
-}
-`, rInt)
 }

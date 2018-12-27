@@ -53,7 +53,7 @@ func buildResourceFQN(resourceType string, testID int) string {
 }
 
 func buildResourceName(testID int) string {
-	return testResourcePrefix + "-" + strconv.Itoa(testID)
+	return testResourcePrefix + "_" + strconv.Itoa(testID)
 }
 
 // sharedClient returns a common Okta Client for sweepers, which currently requires the original SDK and the official beta SDK

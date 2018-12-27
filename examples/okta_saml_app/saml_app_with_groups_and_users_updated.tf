@@ -11,7 +11,7 @@ resource "okta_user" "user-%[1]d" {
   status      = "ACTIVE"
 }
 
-resource "okta_saml_app" "testAcc-%[1]d" {
+resource "okta_saml_app" "testAcc_%[1]d" {
   preconfigured_app = "amazon_aws"
-  label             = "testAcc-%[1]d"
+  label             = "testAcc_%[1]d"
 }

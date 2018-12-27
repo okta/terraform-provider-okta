@@ -15,8 +15,9 @@ import (
 // ACTIVE and INACTIVE application via the create action.
 func TestAccOktaOAuthApplication(t *testing.T) {
 	ri := acctest.RandInt()
-	config := buildTestOAuthConfig(ri)
-	updatedConfig := buildTestOAuthConfigUpdated(ri)
+	mgr := newFixtureManager(oAuthApp)
+	config := mgr.GetFixtures("oauth_app.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("oauth_app_updated.tf", ri, t)
 	resourceName := buildResourceFQN(oAuthApp, ri)
 
 	resource.Test(t, resource.TestCase{
@@ -87,8 +88,9 @@ func TestAccOktaOAuthApplicationServiceNative(t *testing.T) {
 // Tests ACTIVE to INACTIVE OAuth application via the update action.
 func TestAccOktaOAuthApplicationUpdateStatus(t *testing.T) {
 	ri := acctest.RandInt()
-	config := buildTestOAuthConfig(ri)
-	updatedConfig := buildTestOAuthConfigUpdatedStatus(ri)
+	mgr := newFixtureManager(oAuthApp)
+	config := mgr.GetFixtures("oauth_app.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("oauth_app_updated_status.tf", ri, t)
 	resourceName := buildResourceFQN(oAuthApp, ri)
 
 	resource.Test(t, resource.TestCase{
@@ -120,8 +122,9 @@ func TestAccOktaOAuthApplicationUpdateStatus(t *testing.T) {
 // Add and remove groups/users
 func TestAccOktaOAuthApplicationUserGroups(t *testing.T) {
 	ri := acctest.RandInt()
-	config := buildTestOAuthGroupsUsers(ri)
-	updatedConfig := buildTestOAuthRemoveGroupsUsers(ri)
+	mgr := newFixtureManager(oAuthApp)
+	config := mgr.GetFixtures("oauth_app_groups_and_users.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("oauth_app_remove_groups_and_users.tf", ri, t)
 	resourceName := buildResourceFQN(oAuthApp, ri)
 
 	resource.Test(t, resource.TestCase{
@@ -192,50 +195,6 @@ func createDoesAppExist(app okta.App) func(string) (bool, error) {
 	}
 }
 
-func buildTestOAuthConfig(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  label       = "%s"
-  type		  = "web"
-  grant_types = [ "implicit", "authorization_code" ]
-  redirect_uris = ["http://d.com/"]
-  response_types = ["code", "token", "id_token"]
-}
-`, oAuthApp, name, name)
-}
-
-func buildTestOAuthConfigUpdated(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  label       = "%s"
-  status 	  = "INACTIVE"
-  type		  = "browser"
-  grant_types = [ "implicit" ]
-  redirect_uris = ["http://d.com/aaa"]
-  response_types = ["token", "id_token"]
-}
-`, oAuthApp, name, name)
-}
-
-func buildTestOAuthConfigUpdatedStatus(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  status      = "INACTIVE"
-  label       = "%s"
-  type		  = "web"
-  grant_types = [ "implicit", "authorization_code" ]
-  redirect_uris = ["http://d.com/"]
-  response_types = ["code", "token", "id_token"]
-}
-`, oAuthApp, name, name)
-}
-
 func buildTestOAuthConfigBadGrantTypes(rInt int) string {
 	name := buildResourceName(rInt)
 
@@ -272,66 +231,4 @@ resource "%s" "%s" {
   redirect_uris = ["http://d.com/"]
 }
 `, oAuthApp, name, name)
-}
-
-func buildTestOAuthGroupsUsers(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "okta_group" "group-%d" {
-	name = "testAcc-%d"
-}
-resource "okta_user" "user-%d" {
-  admin_roles = ["APP_ADMIN", "USER_ADMIN"]
-  first_name  = "TestAcc"
-  last_name   = "blah"
-  login       = "test-acc-%d@testing.com"
-  email       = "test-acc-%d@testing.com"
-  status      = "ACTIVE"
-}
-
-resource "%s" "%s" {
-  label       = "%s"
-  type		  = "web"
-  grant_types = [ "implicit", "authorization_code" ]
-  redirect_uris = ["http://d.com/"]
-  post_logout_redirect_uris = ["http://d.com/post"]
-  login_uri = "http://test.com"
-  response_types = ["code", "token", "id_token"]
-  users = [
-	  {
-		  id = "${okta_user.user-%d.id}"
-		  username = "${okta_user.user-%d.email}"
-	  }
-  ]
-  groups = ["${okta_group.group-%d.id}"]
-}
-`, rInt, rInt, rInt, rInt, rInt, oAuthApp, name, name, rInt, rInt, rInt)
-}
-
-func buildTestOAuthRemoveGroupsUsers(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "okta_group" "group-%d" {
-	name = "testAcc-%d"
-}
-
-resource "okta_user" "user-%d" {
-  admin_roles = ["APP_ADMIN", "USER_ADMIN"]
-  first_name  = "TestAcc"
-  last_name   = "blah"
-  login       = "test-acc-%d@testing.com"
-  email       = "test-acc-%d@testing.com"
-  status      = "ACTIVE"
-}
-
-resource "%s" "%s" {
-  label       = "%s"
-  type		  = "web"
-  grant_types = [ "implicit", "authorization_code" ]
-  redirect_uris = ["http://d.com/"]
-  response_types = ["code", "token", "id_token"]
-}
-`, rInt, rInt, rInt, rInt, rInt, oAuthApp, name, name)
 }
