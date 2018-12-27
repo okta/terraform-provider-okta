@@ -11,19 +11,27 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-const signOnPolicyRule = "okta_signon_policy_rule"
-const passwordPolicyRule = "okta_password_policy_rule"
-const passwordPolicy = "okta_password_policy"
-const signOnPolicy = "okta_signon_policy"
-const oAuthApp = "okta_oauth_app"
-const samlApp = "okta_saml_app"
-const swaApp = "okta_swa_app"
-const autoLoginApp = "okta_auto_login_app"
-const securePasswordStoreApp = "okta_secure_password_store_app"
-const threeFieldApp = "okta_three_field_app"
-const mfaPolicy = "okta_mfa_policy"
-const mfaPolicyRule = "okta_mfa_policy_rule"
-const factor = "okta_factor"
+// Resource names, defined in place, used throughout the provider and tests
+const (
+	autoLoginApp           = "okta_auto_login_app"
+	factor                 = "okta_factor"
+	identityProvider       = "okta_identity_provider"
+	mfaPolicy              = "okta_mfa_policy"
+	mfaPolicyRule          = "okta_mfa_policy_rule"
+	oAuthApp               = "okta_oauth_app"
+	oktaGroup              = "okta_group"
+	oktaUser               = "okta_user"
+	passwordPolicy         = "okta_password_policy"
+	passwordPolicyRule     = "okta_password_policy_rule"
+	samlApp                = "okta_saml_app"
+	securePasswordStoreApp = "okta_secure_password_store_app"
+	signOnPolicy           = "okta_signon_policy"
+	signOnPolicyRule       = "okta_signon_policy_rule"
+	swaApp                 = "okta_swa_app"
+	threeFieldApp          = "okta_three_field_app"
+	trustedOrigin          = "okta_trusted_origin"
+	userSchema             = "okta_user_schemas"
+)
 
 // Provider establishes a client connection to an okta site
 // determined by its schema string values
@@ -64,24 +72,24 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"okta_group":             resourceGroup(),
-			"okta_identity_provider": resourceIdentityProvider(),
-			passwordPolicy:           resourcePasswordPolicy(),
-			signOnPolicy:             resourceSignOnPolicy(),
-			signOnPolicyRule:         resourceSignOnPolicyRule(),
-			passwordPolicyRule:       resourcePasswordPolicyRule(),
-			mfaPolicy:                resourceMfaPolicy(),
-			mfaPolicyRule:            resourceMfaPolicyRule(),
-			"okta_trusted_origin":    resourceTrustedOrigin(),
-			"okta_user_schemas":      resourceUserSchemas(),
-			"okta_user":              resourceUser(),
-			oAuthApp:                 resourceOAuthApp(),
-			samlApp:                  resourceSamlApp(),
-			autoLoginApp:             resourceAutoLoginApp(),
-			securePasswordStoreApp:   resourceSecurePasswordStoreApp(),
-			threeFieldApp:            resourceThreeFieldApp(),
-			swaApp:                   resourceSwaApp(),
-			factor:                   resourceFactor(),
+			oktaGroup:              resourceGroup(),
+			identityProvider:       resourceIdentityProvider(),
+			passwordPolicy:         resourcePasswordPolicy(),
+			signOnPolicy:           resourceSignOnPolicy(),
+			signOnPolicyRule:       resourceSignOnPolicyRule(),
+			passwordPolicyRule:     resourcePasswordPolicyRule(),
+			mfaPolicy:              resourceMfaPolicy(),
+			mfaPolicyRule:          resourceMfaPolicyRule(),
+			trustedOrigin:          resourceTrustedOrigin(),
+			userSchema:             resourceUserSchemas(),
+			oktaUser:               resourceUser(),
+			oAuthApp:               resourceOAuthApp(),
+			samlApp:                resourceSamlApp(),
+			autoLoginApp:           resourceAutoLoginApp(),
+			securePasswordStoreApp: resourceSecurePasswordStoreApp(),
+			threeFieldApp:          resourceThreeFieldApp(),
+			swaApp:                 resourceSwaApp(),
+			factor:                 resourceFactor(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{

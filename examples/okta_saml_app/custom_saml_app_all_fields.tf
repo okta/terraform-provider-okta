@@ -1,5 +1,5 @@
-resource "okta_saml_app" "testAcc-%[1]d" {
-  label                    = "testAcc-%[1]d"
+resource "okta_saml_app" "testAcc_%[1]d" {
+  label                    = "testAcc_%[1]d"
   sso_url                  = "http://google.com"
   recipient                = "http://here.com"
   destination              = "http://its-about-the-journey.com"
