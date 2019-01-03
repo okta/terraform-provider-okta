@@ -42,7 +42,7 @@ func TestAccOktaThreeFieldApplication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "button_selector", "btn1"),
 					resource.TestCheckResourceAttr(resourceName, "username_selector", "user1"),
 					resource.TestCheckResourceAttr(resourceName, "password_selector", "pass1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "http://examplechanged.com"),
+					resource.TestCheckResourceAttr(resourceName, "url", "http://example.com"),
 					resource.TestCheckResourceAttr(resourceName, "extra_field_selector", "mfa"),
 					resource.TestCheckResourceAttr(resourceName, "extra_field_value", "mfa"),
 				),
@@ -60,8 +60,8 @@ resource "%s" "%s" {
   button_selector		= "btn"
   username_selector		= "user"
   password_selector		= "pass"
-  url					= "http://example.com"
-  extra_field_selector  = "third"
+  url			        = "http://example.com"
+  extra_field_selector          = "third"
   extra_field_value		= "third"
 }
 `, threeFieldApp, name, name)
@@ -73,12 +73,12 @@ func buildTestThreeFieldConfigUpdated(rInt int) string {
 	return fmt.Sprintf(`
 resource "%s" "%s" {
   label       			= "%s"
-  status 	  			= "INACTIVE"
+  status 	  		= "INACTIVE"
   button_selector		= "btn1"
   username_selector		= "user1"
   password_selector		= "pass1"
-  url					= "http://examplechanged.com"
-  extra_field_selector  = "mfa"
+  url			        = "http://example.com"
+  extra_field_selector 	        = "mfa"
   extra_field_value		= "mfa"
 }
 `, threeFieldApp, name, name)

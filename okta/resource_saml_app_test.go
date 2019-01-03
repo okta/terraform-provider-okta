@@ -1,14 +1,45 @@
 package okta
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
 	"github.com/okta/okta-sdk-golang/okta"
 )
+
+func TestAccSamlApplicationImport(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(samlApp)
+	config := mgr.GetFixtures("import.tf", ri, t)
+	resourceName := buildResourceFQN(samlApp, ri)
+
+	resource.Test(t, resource.TestCase{
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import into resource into state")
+					}
+					if s[0].Attributes["preconfigured_app"] != "pagerduty" {
+						return errors.New("failed to set required properties when import existing infrastructure")
+					}
+					return nil
+				},
+			},
+		},
+	})
+}
 
 // Ensure conditional require logic causes this plan to fail
 func TestAccOktaSamlApplicationConditionalRequire(t *testing.T) {
