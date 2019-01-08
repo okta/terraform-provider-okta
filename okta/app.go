@@ -216,8 +216,7 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 
 		if !contains {
 			asyncActionList = append(asyncActionList, func() error {
-				_, err := client.Application.DeleteApplicationGroupAssignment(id, group.Id)
-				return err
+				return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(id, group.Id))
 			})
 		}
 	}
@@ -295,9 +294,7 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 
 			if !contains {
 				asyncActionList = append(asyncActionList, func() error {
-					_, err := client.Application.DeleteApplicationUser(id, user.Id)
-
-					return err
+					return suppressErrorOn404(client.Application.DeleteApplicationUser(id, user.Id))
 				})
 			}
 		}

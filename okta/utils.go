@@ -3,6 +3,7 @@ package okta
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"regexp"
 	"strings"
 	"unicode"
@@ -190,6 +191,16 @@ func ensureNotDefault(d *schema.ResourceData, t string) error {
 	}
 
 	return nil
+}
+
+// Useful shortcut for suppressing errors from Okta's SDK when a resource does not exist. Usually used during deletion
+// of nested resources.
+func suppressErrorOn404(resp *okta.Response, err error) error {
+	if resp.StatusCode == http.StatusNotFound {
+		return nil
+	}
+
+	return err
 }
 
 func getApiToken(m interface{}) string {
