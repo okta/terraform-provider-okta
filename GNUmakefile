@@ -10,17 +10,11 @@ deps:
 	curl -s https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 	${GOPATH}/bin/dep ensure
 
-build: fmtcheck build-macos build-linux
+build: fmtcheck deps build-plugins
 
-build-macos:
-	GOOS=darwin GOARCH=amd64 go build -o terraform-provider-okta_${VERSION}
-	mkdir -p ~/.terraform.d/plugins/darwin_amd64/
-	mv terraform-provider-okta_${VERSION} ~/.terraform.d/plugins/darwin_amd64/
-
-build-linux:
-	GOOS=linux GOARCH=amd64 go build -o terraform-provider-okta_${VERSION}
-	mkdir -p ~/.terraform.d/plugins/linux_amd64/
-	mv terraform-provider-okta_${VERSION} ~/.terraform.d/plugins/linux_amd64/
+build-plugins:
+	gox -osarch="linux/amd64 darwin/amd64 windows/amd64" \
+	-output="~/.terraform.d/plugins/{{.OS}}_{{.Arch}}/terraform-provider-okta_${VERSION}" .
 
 ship: build
 	exists=$$(aws s3api list-objects --bucket articulate-terraform-providers --profile prod --prefix terraform-provider-okta --query Contents[].Key | jq 'contains(["${VERSION}"])' ) \

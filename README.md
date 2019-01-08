@@ -49,20 +49,12 @@ As we build out resources we build concomitant acceptance tests that require use
 Building The Provider
 ---------------------
 
-Clone repository to: `$GOPATH/src/github.com/terraform-providers/terraform-provider-okta`
+Simply clone the provider and run `make build`. The `make build` command, ensures all dependencies are pulled down, builds binaries for Linux, OSX, and Windows and drops them in the default unix terraform plugin directory `~/.terraform.d/plugins`. For custom build approaches you can simply run `go build` directly.
 
 ```sh
-$ mkdir -p $GOPATH/src/github.com/terraform-providers; cd $GOPATH/src/github.com/terraform-providers
-$ git clone git@github.com:terraform-providers/terraform-provider-okta
-```
-
-Enter the provider directory and build the provider
-This provider has a dependency on the [Go Okta SDK](http://github.com/articulate/oktasdk-go)
-
-```sh
-$ cd $GOPATH/src/github.com/terraform-providers/terraform-provider-okta
-$ go get -v
-$ make build
+$ go get -u github.com/articulate/terraform-provider-okta
+$ cd $GOPATH/src/github.com/articulate/terraform-provider-okta
+$ make build-plugin
 ```
 
 For local development, I've found the below commands helpful. Run them from inside the terraform-provider-okta directory
