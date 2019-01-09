@@ -49,7 +49,7 @@ As we build out resources we build concomitant acceptance tests that require use
 Building The Provider
 ---------------------
 
-Simply clone the provider and run `make build-plugin`. The `make build-plugin` command, ensures all dependencies are pulled down, builds binaries for Linux, OSX, and Windows and drops them in the default unix terraform plugin directory `~/.terraform.d/plugins`. Use `make build` for only a single binary for your host OS.
+Simply clone the provider and run `make build-plugins`. The `make build-plugins` command, ensures all dependencies are pulled down, builds binaries for Linux, OSX, and Windows and drops them in the default unix terraform plugin directory `~/.terraform.d/plugins`. Use `make build` for only a single binary for your host OS.
 
 ```sh
 $ go get -u github.com/articulate/terraform-provider-okta

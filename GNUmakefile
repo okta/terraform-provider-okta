@@ -10,11 +10,12 @@ deps:
 	curl -s https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 	${GOPATH}/bin/dep ensure
 
+# Builds a binary for current OS and Arch
 build: fmtcheck deps
 	@mkdir -p ~/.terraform.d/plugins/
 	@go build -o terraform-provider-okta_${VERSION}
-	@cp terraform-provider-okta_${VERSION} ~/.terraform.d/plugins/
 
+# Builds a binary for Linux, Windows, and OSX and installs it in the default terraform plugins directory
 build-plugins:
 	@mkdir -p ~/.terraform.d/plugins/
 	gox -osarch="linux/amd64 darwin/amd64 windows/amd64" \
