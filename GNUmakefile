@@ -10,13 +10,17 @@ deps:
 	curl -s https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 	${GOPATH}/bin/dep ensure
 
-build: fmtcheck deps build-plugins
+build: fmtcheck deps
+	@mkdir -p ~/.terraform.d/plugins/
+	@go build -o terraform-provider-okta_${VERSION}
+	@cp terraform-provider-okta_${VERSION} ~/.terraform.d/plugins/
 
 build-plugins:
+	@mkdir -p ~/.terraform.d/plugins/
 	gox -osarch="linux/amd64 darwin/amd64 windows/amd64" \
-	-output="~/.terraform.d/plugins/{{.OS}}_{{.Arch}}/terraform-provider-okta_${VERSION}" .
+	  -output="~/.terraform.d/plugins/{{.OS}}_{{.Arch}}/terraform-provider-okta_${VERSION}" .
 
-ship: build
+ship: build-plugins
 	exists=$$(aws s3api list-objects --bucket articulate-terraform-providers --profile prod --prefix terraform-provider-okta --query Contents[].Key | jq 'contains(["${VERSION}"])' ) \
 	&& if [ $$exists == "true" ]; then \
 	  echo "[ERROR] terraform-provider-okta_${VERSION} already exists in s3://${TERRAFORM_PLUGINS_BUCKET} - don't forget to bump the version."; else \
