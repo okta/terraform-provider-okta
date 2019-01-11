@@ -106,11 +106,10 @@ func resourceUser() *schema.Resource {
 				Description: "User default location",
 			},
 			"login": &schema.Schema{
-				Type:         schema.TypeString,
-				Required:     true,
-				Description:  "User Okta login (must be an email address)",
-				ForceNew:     true,
-				ValidateFunc: matchEmailRegexp,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "User Okta login",
+				ForceNew:    true,
 			},
 			"manager": &schema.Schema{
 				Type:        schema.TypeString,
