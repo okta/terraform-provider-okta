@@ -48,22 +48,6 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 	})
 }
 
-func TestAccOktaUser_emailError(t *testing.T) {
-	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config:      testOktaUserConfig_emailError(rName),
-				ExpectError: regexp.MustCompile("login field not a valid email address"),
-				PlanOnly:    true,
-			},
-		},
-	})
-}
-
 func TestAccOktaUser_groupMembership(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(oktaUser)
@@ -255,18 +239,6 @@ func testAccCheckUserDestroy(s *terraform.State) error {
 	}
 
 	return nil
-}
-
-func testOktaUserConfig_emailError(r string) string {
-	return fmt.Sprintf(`
-resource okta_user "testAcc_%s" {
-  firstname = "testAcc"
-  lastname  = "%s"
-  login     = "notavalidemail"
-  email     = "test-acc-%s@testing.com"
-  role      = ["SUPER_ADMIN"]
-}
-`, r, r, r)
 }
 
 func testOktaUserConfig_invalidCustomProfileAttribute(r string) string {
