@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -361,7 +362,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if status == "DEPROVISIONED" && (userChange || roleChange || groupChange) {
-		return fmt.Errorf("[ERROR] Only the status of a DEPROVISIONED user can be updated, we detected other change.")
+		return errors.New("[ERROR] Only the status of a DEPROVISIONED user can be updated, we detected other change")
 	}
 
 	if userChange {

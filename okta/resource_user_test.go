@@ -233,7 +233,7 @@ func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
 			},
 			{
 				Config:      testOktaUserConfig_updateDeprovisioned(strconv.Itoa(ri)),
-				ExpectError: regexp.MustCompile("[ERROR] Only the status of a DEPROVISIONED user can be updated, we detected other change."),
+				ExpectError: regexp.MustCompile(".*Only the status of a DEPROVISIONED user can be updated, we detected other change"),
 			},
 		},
 	})
