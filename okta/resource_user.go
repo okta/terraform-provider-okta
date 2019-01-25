@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -10,6 +11,44 @@ import (
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
 )
+
+// All profile properties here so we can do a diff against the config to see if any have changed before making the
+// request or before erring due to an update on a user that is DEPROVISIONED. Since we have core user props coupled
+// with group/user membership a few change requests go out in the Update function.
+var profileKeys = []string{
+	"city",
+	"cost_center",
+	"country_code",
+	"custom_profile_attributes",
+	"department",
+	"display_name",
+	"division",
+	"email",
+	"employee_number",
+	"first_name",
+	"honorific_prefix",
+	"honorific_suffix",
+	"last_name",
+	"locale",
+	"login",
+	"manager",
+	"manager_id",
+	"middle_name",
+	"mobile_phone",
+	"nick_name",
+	"organization",
+	"postal_address",
+	"preferred_language",
+	"primary_phone",
+	"profile_url",
+	"second_email",
+	"state",
+	"street_address",
+	"timezone",
+	"title",
+	"user_type",
+	"zip_code",
+}
 
 func resourceUser() *schema.Resource {
 	return &schema.Resource{
@@ -297,51 +336,75 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Update User %v", d.Get("login").(string))
+	status := d.Get("status").(string)
 
-	if d.Get("status").(string) == "STAGED" {
+	if status == "STAGED" {
 		return fmt.Errorf("[ERROR] Okta will not allow a user to be updated to STAGED. Can set to STAGED on user creation only.")
 	}
 
-	client := m.(*Config).oktaClient
+	client := getOktaClientFromMetadata(m)
+	// There are a few requests here so just making sure the state gets updated per successful downstream change
+	d.Partial(true)
+
+	roleChange := d.HasChange("admin_roles")
+	groupChange := d.HasChange("group_memberships")
+	statusChange := d.HasChange("status")
+	userChange := hasProfileChange(d)
 
 	// run the update status func first so a user that was previously deprovisioned
 	// can be updated further if it's status changed in it's terraform configs
-	if d.HasChange("status") {
-		err := updateUserStatus(d.Id(), d.Get("status").(string), client)
-
+	if statusChange {
+		err := updateUserStatus(d.Id(), status, client)
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating Status for User: %v", err)
 		}
+		d.SetPartial("status")
 	}
 
-	if d.Get("status") == "DEPROVISIONED" {
-		return fmt.Errorf("[ERROR] Cannot update a DEPROVISIONED user")
-	} else {
+	if status == "DEPROVISIONED" && (userChange || roleChange || groupChange) {
+		return errors.New("[ERROR] Only the status of a DEPROVISIONED user can be updated, we detected other change")
+	}
+
+	if userChange {
 		profile := populateUserProfile(d)
 		userBody := okta.User{Profile: profile}
 
 		_, _, err := client.User.UpdateUser(d.Id(), userBody)
-
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating User in Okta: %v", err)
 		}
-
-		if d.HasChange("admin_roles") {
-			roles := convertInterfaceToStringArr(d.Get("admin_roles"))
-			if err := updateAdminRolesOnUser(d.Id(), roles, client); err != nil {
-				return err
-			}
-		}
-
-		if d.HasChange("group_memberships") {
-			groups := convertInterfaceToStringArr(d.Get("group_memberships"))
-			if err := updateGroupsOnUser(d.Id(), groups, client); err != nil {
-				return err
-			}
-		}
 	}
 
+	if roleChange {
+		roles := convertInterfaceToStringArr(d.Get("admin_roles"))
+		if err := updateAdminRolesOnUser(d.Id(), roles, client); err != nil {
+			return err
+		}
+		d.SetPartial("admin_roles")
+	}
+
+	if groupChange {
+		groups := convertInterfaceToStringArr(d.Get("group_memberships"))
+		if err := updateGroupsOnUser(d.Id(), groups, client); err != nil {
+			return err
+		}
+		d.SetPartial("group_membership")
+	}
+	d.Partial(false)
+
 	return resourceUserRead(d, m)
+}
+
+// Checks whether any profile keys have changed, this is necessary since the profile is not nested. Also, necessary
+// to give a sensible user readable error when they attempt to update a DEPROVISIONED user. Previously
+// this error always occurred when you set a user's status to DEPROVISIONED.
+func hasProfileChange(d *schema.ResourceData) bool {
+	for _, k := range profileKeys {
+		if d.HasChange(k) {
+			return true
+		}
+	}
+	return false
 }
 
 func resourceUserDelete(d *schema.ResourceData, m interface{}) error {

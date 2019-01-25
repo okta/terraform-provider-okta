@@ -188,6 +188,36 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 	})
 }
 
+func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(oktaUser)
+	statusChanged := mgr.GetFixtures("okta_user_deprovisioned.tf", ri, t)
+	config := mgr.GetFixtures("okta_user_staged.tf", ri, t)
+	resourceName := buildResourceFQN(oktaUser, ri)
+	email := fmt.Sprintf("test-acc-%d@testing.com", ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckUserDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+			},
+			{
+				Config: statusChanged,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
+					resource.TestCheckResourceAttr(resourceName, "login", email),
+					resource.TestCheckResourceAttr(resourceName, "email", email),
+					resource.TestCheckResourceAttr(resourceName, "status", "DEPROVISIONED"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(oktaUser)
@@ -203,7 +233,7 @@ func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
 			},
 			{
 				Config:      testOktaUserConfig_updateDeprovisioned(strconv.Itoa(ri)),
-				ExpectError: regexp.MustCompile("Cannot update a DEPROVISIONED user"),
+				ExpectError: regexp.MustCompile(".*Only the status of a DEPROVISIONED user can be updated, we detected other change"),
 			},
 		},
 	})
@@ -243,41 +273,41 @@ func testAccCheckUserDestroy(s *terraform.State) error {
 
 func testOktaUserConfig_invalidCustomProfileAttribute(r string) string {
 	return fmt.Sprintf(`
-resource okta_user "testAcc_%s" {
+resource okta_user "testAcc_%[1]s" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
-  last_name   = "%s"
-  login       = "test-acc-%s@testing.com"
-  email       = "test-acc-%s@testing.com"
+  last_name   = "%[1]s"
+  login       = "test-acc-%[1]s@testing.com"
+  email       = "test-acc-%[1]s@testing.com"
 
   custom_profile_attributes {
     notValid = "this-isnt-valid"
   }
 }
-`, r, r, r, r)
+`, r)
 }
 
 func testOktaUserConfig_updateDeprovisioned(r string) string {
 	return fmt.Sprintf(`
-resource okta_user "testAcc_%s" {
+resource okta_user "testAcc_%[1]s" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
-  last_name   = "%s"
-  login       = "test-acc-%s@testing.com"
+  last_name   = "%[1]s"
+  login       = "test-acc-%[1]s@testing.com"
   status      = "DEPROVISIONED"
   email       = "hello@testing.com"
 }
-`, r, r, r)
+`, r)
 }
 
 func testOktaUserConfig_validRole(r string) string {
 	return fmt.Sprintf(`
-resource okta_user "testAcc_%s" {
+resource okta_user "testAcc_%[1]s" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN", "GROUP_ADMIN"]
   first_name  = "TestAcc"
-  last_name   = "%s"
-  login       = "test-acc-%s@testing.com"
-  email       = "test-acc-%s@testing.com"
+  last_name   = "Smith"
+  login       = "test-acc-%[1]s@testing.com"
+  email       = "test-acc-%[1]s@testing.com"
 }
-`, r, r, r, r)
+`, r)
 }
