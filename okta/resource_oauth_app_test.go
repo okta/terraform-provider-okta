@@ -142,6 +142,7 @@ func TestAccOktaOAuthApplicationUserGroups(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "group.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "login_uri", "http://test.com"),
+					resource.TestCheckResourceAttr(resourceName, "issuer_mode", "CUSTOM_URL"),
 					testCheckResourceSliceAttr(resourceName, "post_logout_redirect_uris", []string{"http://d.com/post"}),
 				),
 			},
