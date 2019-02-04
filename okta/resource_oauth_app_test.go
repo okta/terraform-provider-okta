@@ -153,8 +153,6 @@ func TestAccOktaOAuthApplicationUserGroups(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "web"),
-					resource.TestCheckResourceAttr(resourceName, "user.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "group.#", "0"),
 				),
 			},
 		},

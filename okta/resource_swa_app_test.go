@@ -99,7 +99,7 @@ func TestAccOktaSwaApplicationUserGroups(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttrSet(resourceName, "users.0.id"),
-					resource.TestCheckResourceAttrSet(resourceName, "groups.0"),
+					resource.TestCheckResourceAttr(resourceName, "groups.#", "1"),
 				),
 			},
 			{
@@ -108,8 +108,6 @@ func TestAccOktaSwaApplicationUserGroups(t *testing.T) {
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-					resource.TestCheckNoResourceAttr(resourceName, "users.0"),
-					resource.TestCheckNoResourceAttr(resourceName, "groups.0"),
 				),
 			},
 		},
