@@ -19,7 +19,6 @@ resource "okta_oauth_app" "testAcc_%[1]d" {
   post_logout_redirect_uris = ["http://d.com/post"]
   login_uri                 = "http://test.com"
   response_types            = ["code", "token", "id_token"]
-  issuer_mode               = "CUSTOM_URL"
 
   user = {
     id       = "${okta_user.testAcc_user_%[1]d.id}"
