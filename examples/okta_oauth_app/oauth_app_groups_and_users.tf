@@ -21,10 +21,10 @@ resource "okta_oauth_app" "testAcc_%[1]d" {
   response_types            = ["code", "token", "id_token"]
   issuer_mode               = "CUSTOM_URL"
 
-  user {
+  user = {
     id       = "${okta_user.testAcc_user_%[1]d.id}"
     username = "${okta_user.testAcc_user_%[1]d.email}"
   }
 
-  assigned_groups = ["${okta_group.testAcc_group_%[1]d.id}"]
+  groups = ["${okta_group.testAcc_group_%[1]d.id}"]
 }

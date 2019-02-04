@@ -57,12 +57,6 @@ var baseAppSchema = map[string]*schema.Schema{
 		Elem:        appUserResource,
 		Description: "Users associated with the application",
 	},
-	"assigned_groups": &schema.Schema{
-		Type:        schema.TypeSet,
-		Optional:    true,
-		Elem:        &schema.Schema{Type: schema.TypeString},
-		Description: "Groups associated with the application",
-	},
 	"users": &schema.Schema{
 		Type:     schema.TypeList,
 		Optional: true,
@@ -75,12 +69,10 @@ var baseAppSchema = map[string]*schema.Schema{
 		Deprecated:    "This property is deprecated in favor of user, which is a TypeSet",
 	},
 	"groups": &schema.Schema{
-		Type:          schema.TypeList,
-		Optional:      true,
-		Elem:          &schema.Schema{Type: schema.TypeString},
-		Description:   "*deprecated* Group associated with the application",
-		ConflictsWith: []string{"assigned_groups"},
-		Deprecated:    "This property is deprecated in favor of group, which is a TypeSet",
+		Type:        schema.TypeSet,
+		Optional:    true,
+		Elem:        &schema.Schema{Type: schema.TypeString},
+		Description: "Groups associated with the application",
 	},
 	"status": &schema.Schema{
 		Type:         schema.TypeString,
@@ -197,16 +189,13 @@ func fetchApp(d *schema.ResourceData, m interface{}, app okta.App) error {
 
 func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []func() error {
 	existingGroup, _, _ := client.Application.ListApplicationGroupAssignments(id, &query.Params{})
-	var asyncActionList []func() error
-	var rawArr []interface{}
+	var (
+		asyncActionList []func() error
+		rawArr          []interface{}
+	)
 
-	if set, ok := d.GetOk("assigned_groups"); ok {
-		rawArr = set.(*schema.Set).List()
-	} else if arr, arrOk := d.GetOk("groups"); arrOk {
-		rawArr = arr.([]interface{})
-	}
-
-	if rawArr != nil {
+	if arr, ok := d.GetOk("groups"); ok {
+		rawArr = arr.(*schema.Set).List()
 		for _, thing := range rawArr {
 			g := thing.(string)
 			contains := false
@@ -394,8 +383,7 @@ func syncGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) error 
 	}
 
 	if len(flatGroupList) > 0 {
-		prop, val := getGroupProp(d, flatGroupList)
-		flatMap[prop] = val
+		flatMap["groups"] = schema.NewSet(schema.HashString, flatGroupList)
 	}
 
 	return setNonPrimitives(d, flatMap)
@@ -408,14 +396,6 @@ func getUserProp(d *schema.ResourceData, userList []interface{}) (string, interf
 		return prop, schema.NewSet(schema.HashResource(appUserResource), userList)
 	}
 	return prop, userList
-}
-
-func getGroupProp(d *schema.ResourceData, groupList []interface{}) (string, interface{}) {
-	prop := chooseProp(d, "groups", "assigned_groups")
-	if prop == "assigned_groups" {
-		return prop, schema.NewSet(schema.HashString, groupList)
-	}
-	return prop, groupList
 }
 
 func chooseProp(d *schema.ResourceData, prop, newProp string) string {

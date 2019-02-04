@@ -132,8 +132,6 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "login", email),
 					resource.TestCheckResourceAttr(resourceName, "email", email),
 					resource.TestCheckResourceAttr(resourceName, "admin_roles.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "admin_roles.0", "APP_ADMIN"),
-					resource.TestCheckResourceAttr(resourceName, "admin_roles.1", "USER_ADMIN"),
 				),
 			},
 			{
@@ -144,7 +142,6 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "login", email),
 					resource.TestCheckResourceAttr(resourceName, "email", fmt.Sprintf("test1-%d@testing.com", ri)),
 					resource.TestCheckResourceAttr(resourceName, "admin_roles.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "admin_roles.0", "ORG_ADMIN"),
 					resource.TestCheckResourceAttr(resourceName, "city", "New York"),
 					resource.TestCheckResourceAttr(resourceName, "cost_center", "10"),
 					resource.TestCheckResourceAttr(resourceName, "country_code", "US"),
