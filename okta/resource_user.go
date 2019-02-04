@@ -63,7 +63,7 @@ func resourceUser() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"admin_roles": &schema.Schema{
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "User Okta admin roles - ie. ['APP_ADMIN', 'USER_ADMIN']",
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -119,7 +119,7 @@ func resourceUser() *schema.Resource {
 				Description: "User first name",
 			},
 			"group_memberships": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "The groups that you want this user to be a part of",
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -284,7 +284,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	d.SetId(user.Id)
 
 	// role assigning can only happen after the user is created so order matters here
-	roles := convertInterfaceToStringArrNullable(d.Get("admin_roles"))
+	roles := convertInterfaceToStringSetNullable(d.Get("admin_roles"))
 	if roles != nil {
 		if err = assignAdminRolesToUser(user.Id, roles, client); err != nil {
 			return err
@@ -292,7 +292,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	// group assigning can only happen after the user is created as well
-	groups := convertInterfaceToStringArrNullable(d.Get("group_memberships"))
+	groups := convertInterfaceToStringSetNullable(d.Get("group_memberships"))
 	if groups != nil {
 		if err = assignGroupsToUser(user.Id, groups, client); err != nil {
 			return err
@@ -376,7 +376,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if roleChange {
-		roles := convertInterfaceToStringArr(d.Get("admin_roles"))
+		roles := convertInterfaceToStringSet(d.Get("admin_roles"))
 		if err := updateAdminRolesOnUser(d.Id(), roles, client); err != nil {
 			return err
 		}
@@ -384,7 +384,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if groupChange {
-		groups := convertInterfaceToStringArr(d.Get("group_memberships"))
+		groups := convertInterfaceToStringSet(d.Get("group_memberships"))
 		if err := updateGroupsOnUser(d.Id(), groups, client); err != nil {
 			return err
 		}

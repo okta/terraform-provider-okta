@@ -4,16 +4,16 @@
 locals = {
   // Potentially could be scripted https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
   jwk_thumbprint = "myThumbprint"
-  uri = "https://something.com"
+  uri            = "https://something.com"
 }
 
 provider "okta" {
-  org_name  = "something"
-  base_url  = "okta.com"
+  org_name = "something"
+  base_url = "okta.com"
 }
 
 data "okta_group" "peeps" {
-  Name = "Peeps"
+  Name        = "Peeps"
   Description = "For my peeps"
 }
 
@@ -60,7 +60,6 @@ resource "aws_iam_openid_connect_provider" "openid" {
     "${local.jwk_thumbprint}",
   ]
 }
-
 
 resource "aws_iam_role" "authenticated" {
   name = "cognito_authenticated"
@@ -140,8 +139,9 @@ resource "aws_cognito_identity_pool_roles_attachment" "role_attachment" {
       claim      = "aud"
       match_type = "Equals"
       role_arn   = "${aws_iam_role.authenticated.arn}"
+
       // Need to add data source for apps to Okta provider, oauth app only created in stage so hardcoding for now
-      value      = "${okta_oauth_app.app.id}"
+      value = "${okta_oauth_app.app.id}"
     }
   }
 
