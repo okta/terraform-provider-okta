@@ -51,22 +51,11 @@ var baseAppSchema = map[string]*schema.Schema{
 		Computed:    true,
 		Description: "Sign on mode of application.",
 	},
-	"user": &schema.Schema{
+	"users": &schema.Schema{
 		Type:        schema.TypeSet,
 		Optional:    true,
 		Elem:        appUserResource,
 		Description: "Users associated with the application",
-	},
-	"users": &schema.Schema{
-		Type:     schema.TypeList,
-		Optional: true,
-		Elem: &schema.Schema{
-			Type: schema.TypeMap,
-			Elem: appUserResource,
-		},
-		Description:   "*deprecated* List of users associated with the application",
-		ConflictsWith: []string{"user"},
-		Deprecated:    "This property is deprecated in favor of user, which is a TypeSet",
 	},
 	"groups": &schema.Schema{
 		Type:        schema.TypeSet,
@@ -260,14 +249,8 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 		userIDList      []string
 	)
 
-	if set, ok := d.GetOk("user"); ok {
+	if set, ok := d.GetOk("users"); ok {
 		users = set.(*schema.Set).List()
-	} else if arr, arrOk := d.GetOk("users"); arrOk {
-		users = arr.([]interface{})
-
-	}
-
-	if len(users) > 0 {
 		userIDList = make([]string, len(users))
 
 		for i, user := range users {
@@ -378,8 +361,7 @@ func syncGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) error 
 	flatMap := map[string]interface{}{}
 
 	if len(flattenedUserList) > 0 {
-		prop, val := getUserProp(d, flattenedUserList)
-		flatMap[prop] = val
+		flatMap["users"] = schema.NewSet(schema.HashResource(appUserResource), flattenedUserList)
 	}
 
 	if len(flatGroupList) > 0 {
@@ -387,22 +369,6 @@ func syncGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) error 
 	}
 
 	return setNonPrimitives(d, flatMap)
-}
-
-// help support deprecation of users/groups
-func getUserProp(d *schema.ResourceData, userList []interface{}) (string, interface{}) {
-	prop := chooseProp(d, "users", "user")
-	if prop == "user" {
-		return prop, schema.NewSet(schema.HashResource(appUserResource), userList)
-	}
-	return prop, userList
-}
-
-func chooseProp(d *schema.ResourceData, prop, newProp string) string {
-	if _, exists := d.GetOkExists(prop); exists {
-		return prop
-	}
-	return newProp
 }
 
 // setAppSettings available preconfigured SAML and OAuth applications vary wildly on potential app settings, thus

@@ -19,7 +19,7 @@ build: fmtcheck deps
 build-plugins:
 	@mkdir -p ~/.terraform.d/plugins/
 	gox -osarch="linux/amd64 darwin/amd64 windows/amd64" \
-	  -output="~/.terraform.d/plugins/{{.OS}}_{{.Arch}}/terraform-provider-okta_${VERSION}" .
+	  -output="${HOME}/.terraform.d/plugins/{{.OS}}_{{.Arch}}/terraform-provider-okta_${VERSION}" .
 
 ship: build-plugins
 	exists=$$(aws s3api list-objects --bucket articulate-terraform-providers --profile prod --prefix terraform-provider-okta --query Contents[].Key | jq 'contains(["${VERSION}"])' ) \
