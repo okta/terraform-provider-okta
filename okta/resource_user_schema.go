@@ -58,14 +58,16 @@ func resourceUserSchema() *schema.Resource {
 				Description: "Whether the Subschema is required",
 			},
 			"min_length": &schema.Schema{
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "Subschema of type string minlength",
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Description:  "Subschema of type string minimum length",
+				ValidateFunc: validation.IntAtLeast(1),
 			},
 			"max_length": &schema.Schema{
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "Subschema of type string maxlength",
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Description:  "Subschema of type string maximum length",
+				ValidateFunc: validation.IntAtLeast(1),
 			},
 			"enum": &schema.Schema{
 				Type:        schema.TypeList,
@@ -114,25 +116,23 @@ func resourceUserSchema() *schema.Resource {
 }
 
 func resourceUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
-	id := d.Get("index").(string)
-	if err := userCustomSchemaTemplate(d, m); err != nil {
+	if err := updateSubschema(d, m); err != nil {
 		return err
 	}
-	d.SetId(id)
+	d.SetId(d.Get("index").(string))
 
 	return resourceUserSchemaRead(d, m)
 }
 
 func resourceUserSchemaExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	client := getClientFromMetadata(m)
-	id := d.Get("index").(string)
 
 	subschemas, _, err := client.Schemas.GetUserSubSchemaIndex(customSchema)
 	if err != nil {
 		return false, fmt.Errorf("Error Listing User Subschemas in Okta: %v", err)
 	}
 
-	return contains(subschemas, id), nil
+	return contains(subschemas, d.Get("index").(string)), nil
 }
 
 func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
@@ -147,10 +147,14 @@ func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("type", subschema.Type)
 	d.Set("description", subschema.Description)
 	d.Set("required", subschema.Required)
-	d.Set("min_length", subschema.MinLength)
-	d.Set("max_length", subschema.MaxLength)
-	d.Set("enum", subschema.Enum)
-	d.Set("one_of", subschema.OneOf)
+
+	if subschema.MinLength > 0 {
+		d.Set("min_length", subschema.MinLength)
+	}
+
+	if subschema.MaxLength > 0 {
+		d.Set("max_length", subschema.MaxLength)
+	}
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"enum":   subschema.Enum,
@@ -169,7 +173,7 @@ func getSubSchema(props []articulateOkta.CustomSubSchema, id string) *articulate
 
 func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
 	d.Partial(true)
-	if err := userCustomSchemaTemplate(d, m); err != nil {
+	if err := updateSubschema(d, m); err != nil {
 		return err
 	}
 	d.Partial(false)
@@ -185,7 +189,7 @@ func resourceUserSchemaDelete(d *schema.ResourceData, m interface{}) error {
 }
 
 // create or modify a custom subschema
-func userCustomSchemaTemplate(d *schema.ResourceData, m interface{}) error {
+func updateSubschema(d *schema.ResourceData, m interface{}) error {
 	client := getClientFromMetadata(m)
 
 	template := &articulateOkta.CustomSubSchema{
@@ -194,8 +198,6 @@ func userCustomSchemaTemplate(d *schema.ResourceData, m interface{}) error {
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
 		Required:    d.Get("required").(bool),
-		MinLength:   d.Get("min_length").(int),
-		MaxLength:   d.Get("max_length").(int),
 		Permissions: []articulateOkta.Permissions{
 			{
 				Action:    d.Get("permissions").(string),
@@ -205,7 +207,18 @@ func userCustomSchemaTemplate(d *schema.ResourceData, m interface{}) error {
 		Enum: convertInterfaceToStringArrNullable(d.Get("enum")),
 	}
 	template.Master.Type = d.Get("master").(string)
-	template.Items.Type = d.Get("array_type").(string)
+
+	if v, ok := d.GetOk("array_type"); ok {
+		template.Items.Type = v.(string)
+	}
+
+	if v, ok := d.GetOk("min_length"); ok {
+		template.MinLength = v.(int)
+	}
+
+	if v, ok := d.GetOk("max_length"); ok {
+		template.MaxLength = v.(int)
+	}
 
 	if oneOfList, ok := d.GetOk("one_of"); ok {
 		for _, v := range oneOfList.([]interface{}) {

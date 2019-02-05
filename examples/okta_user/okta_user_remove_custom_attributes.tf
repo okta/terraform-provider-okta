@@ -1,5 +1,4 @@
-resource "okta_user_schemas" "testAcc_schema_%[1]d" {
-  subschema = "custom"
+resource "okta_user_schema" "testAcc_schema_%[1]d" {
   index     = "customAttribute123"
   title     = "terraform acceptance test"
   type      = "string"

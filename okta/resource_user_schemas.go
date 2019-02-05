@@ -173,7 +173,7 @@ func resourceUserSchemasCreate(d *schema.ResourceData, m interface{}) error {
 		case "base":
 
 		case "custom":
-			err = userCustomSchemaTemplate(d, m)
+			err = userCustomSchemasTemplate(d, m)
 			if err != nil {
 				return err
 			}
@@ -214,7 +214,7 @@ func resourceUserSchemasUpdate(d *schema.ResourceData, m interface{}) error {
 		case "base":
 
 		case "custom":
-			err = userCustomSchemaTemplate(d, m)
+			err = userCustomSchemasTemplate(d, m)
 			if err != nil {
 				return err
 			}
