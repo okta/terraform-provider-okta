@@ -128,6 +128,14 @@ func convertIntToBool(i int) bool {
 	return false
 }
 
+func convertInterfaceToStringSet(purportedSet interface{}) []string {
+	return convertInterfaceToStringArr(purportedSet.(*schema.Set).List())
+}
+
+func convertInterfaceToStringSetNullable(purportedSet interface{}) []string {
+	return convertInterfaceToStringArrNullable(purportedSet.(*schema.Set).List())
+}
+
 func convertInterfaceToStringArr(purportedList interface{}) []string {
 	var arr []string
 	rawArr, ok := purportedList.([]interface{})
@@ -159,6 +167,14 @@ func convertStringArrToInterface(stringList []string) []interface{} {
 		arr[i] = str
 	}
 	return arr
+}
+
+func convertStringSetToInterface(stringList []string) *schema.Set {
+	arr := make([]interface{}, len(stringList))
+	for i, str := range stringList {
+		arr[i] = str
+	}
+	return schema.NewSet(schema.HashString, arr)
 }
 
 // Allows you to chain multiple validation functions

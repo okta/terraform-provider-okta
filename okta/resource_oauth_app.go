@@ -159,18 +159,24 @@ func resourceOAuthApp() *schema.Resource {
 			"tos_uri": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "*Beta Okta Property*. URI to web page providing client tos (terms of service).",
+				Description: "*Early Access Property*. URI to web page providing client tos (terms of service).",
 			},
 			"policy_uri": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "*Beta Okta Property*. URI to web page providing client policy document.",
+				Description: "*Early Access Property*. URI to web page providing client policy document.",
 			},
 			"consent_method": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"REQUIRED", "TRUSTED"}, false),
-				Description:  "*Beta Okta Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED",
+				Description:  "*Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED",
+			},
+			"issuer_mode": &schema.Schema{
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"CUSTOM_URL", "ORG_URL"}, false),
+				Description:  "*Early Access Property*. Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.",
 			},
 		}),
 	}
@@ -242,8 +248,9 @@ func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("tos_uri", app.Settings.OauthClient.TosUri)
 	d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
 	d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
-	err = syncGroupsAndUsers(app.Id, d, m)
-	if err != nil {
+	d.Set("issuer_mode", app.Settings.OauthClient.IssuerMode)
+
+	if err = syncGroupsAndUsers(app.Id, d, m); err != nil {
 		return err
 	}
 
@@ -350,6 +357,7 @@ func buildOAuthApp(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 			PostLogoutRedirectUris: convertInterfaceToStringArrNullable(d.Get("post_logout_redirect_uris")),
 			ResponseTypes:          responseTypes,
 			TosUri:                 d.Get("tos_uri").(string),
+			IssuerMode:             d.Get("issuer_mode").(string),
 		},
 	}
 

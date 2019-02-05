@@ -2,7 +2,6 @@ package okta
 
 import (
 	"encoding/json"
-	"fmt"
 	"sync"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -10,6 +9,31 @@ import (
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
 )
+
+var appUserResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"scope": &schema.Schema{
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Scope of application user.",
+		},
+		"id": &schema.Schema{
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "User ID.",
+		},
+		"username": &schema.Schema{
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Username for user.",
+		},
+		"password": &schema.Schema{
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Password for user application.",
+		},
+	},
+}
 
 var baseAppSchema = map[string]*schema.Schema{
 	"name": &schema.Schema{
@@ -28,42 +52,16 @@ var baseAppSchema = map[string]*schema.Schema{
 		Description: "Sign on mode of application.",
 	},
 	"users": &schema.Schema{
-		Type:     schema.TypeList,
-		Optional: true,
-		Elem: &schema.Schema{
-			Type: schema.TypeMap,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"scope": &schema.Schema{
-						Type:        schema.TypeString,
-						Computed:    true,
-						Description: "Scope of application user.",
-					},
-					"id": &schema.Schema{
-						Type:        schema.TypeString,
-						Required:    true,
-						Description: "User ID.",
-					},
-					"username": &schema.Schema{
-						Type:        schema.TypeString,
-						Required:    true,
-						Description: "Username for user.",
-					},
-					"password": &schema.Schema{
-						Type:        schema.TypeString,
-						Optional:    true,
-						Description: "Password for user application.",
-					},
-				},
-			},
-		},
-		Description: "List of users associated with the application",
+		Type:        schema.TypeSet,
+		Optional:    true,
+		Elem:        appUserResource,
+		Description: "Users associated with the application",
 	},
 	"groups": &schema.Schema{
-		Type:        schema.TypeList,
+		Type:        schema.TypeSet,
 		Optional:    true,
 		Elem:        &schema.Schema{Type: schema.TypeString},
-		Description: "List of groups associated with the application",
+		Description: "Groups associated with the application",
 	},
 	"status": &schema.Schema{
 		Type:         schema.TypeString,
@@ -180,10 +178,13 @@ func fetchApp(d *schema.ResourceData, m interface{}, app okta.App) error {
 
 func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []func() error {
 	existingGroup, _, _ := client.Application.ListApplicationGroupAssignments(id, &query.Params{})
-	var asyncActionList []func() error
-	rawArr, ok := d.Get("groups").([]interface{})
+	var (
+		asyncActionList []func() error
+		rawArr          []interface{}
+	)
 
-	if ok {
+	if arr, ok := d.GetOk("groups"); ok {
+		rawArr = arr.(*schema.Set).List()
 		for _, thing := range rawArr {
 			g := thing.(string)
 			contains := false
@@ -242,17 +243,19 @@ func handleAppGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) e
 func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []func() error {
 	// Looking upstream for existing user's, rather then the config for accuracy.
 	existingUsers, _, _ := client.Application.ListApplicationUsers(id, &query.Params{})
-	var asyncActionList []func() error
-	rawList, ok := d.GetOk("users")
-	var userIDList []string
+	var (
+		asyncActionList []func() error
+		users           []interface{}
+		userIDList      []string
+	)
 
-	if ok {
-		userLen := len(rawList.([]interface{}))
-		userIDList = make([]string, userLen)
+	if set, ok := d.GetOk("users"); ok {
+		users = set.(*schema.Set).List()
+		userIDList = make([]string, len(users))
 
-		for i := 0; i < userLen; i++ {
-			path := fmt.Sprintf("users.%v", i)
-			uID := d.Get(fmt.Sprintf("%s.id", path)).(string)
+		for i, user := range users {
+			u := user.(map[string]interface{})
+			uID := u["id"].(string)
 			userIDList[i] = uID
 			contains := false
 
@@ -264,13 +267,17 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 			}
 
 			if !contains {
+				username := u["username"].(string)
+				// Not required
+				password, _ := u["password"].(string)
+
 				asyncActionList = append(asyncActionList, func() error {
 					_, _, err := client.Application.AssignUserToApplication(id, okta.AppUser{
 						Id: uID,
 						Credentials: &okta.AppUserCredentials{
-							UserName: d.Get(fmt.Sprintf("%s.username", path)).(string),
+							UserName: username,
 							Password: &okta.AppUserPasswordCredential{
-								Value: d.Get(fmt.Sprintf("%s.password", path)).(string),
+								Value: password,
 							},
 						},
 					})
@@ -335,13 +342,12 @@ func syncGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) error 
 	if err != nil {
 		return err
 	}
-	flatGroupList := make([]string, len(groupList))
+	flatGroupList := make([]interface{}, len(groupList))
 
 	for i, g := range groupList {
 		flatGroupList[i] = g.Id
 	}
 
-	d.Set("groups", flatGroupList)
 	var flattenedUserList []interface{}
 
 	for _, user := range userList {
@@ -355,11 +361,11 @@ func syncGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) error 
 	flatMap := map[string]interface{}{}
 
 	if len(flattenedUserList) > 0 {
-		flatMap["users"] = flattenedUserList
+		flatMap["users"] = schema.NewSet(schema.HashResource(appUserResource), flattenedUserList)
 	}
 
 	if len(flatGroupList) > 0 {
-		flatMap["groups"] = flatGroupList
+		flatMap["groups"] = schema.NewSet(schema.HashString, flatGroupList)
 	}
 
 	return setNonPrimitives(d, flatMap)

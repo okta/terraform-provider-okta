@@ -178,22 +178,25 @@ func setAdminRoles(d *schema.ResourceData, c *okta.Client) error {
 		return err
 	}
 
-	roleTypes := make([]string, 0)
+	roleTypes := make([]interface{}, 0)
 	for _, role := range roles {
 		roleTypes = append(roleTypes, role.Type)
 	}
 
 	// set the custom_profile_attributes values
 	return setNonPrimitives(d, map[string]interface{}{
-		"admin_roles": roleTypes,
+		"admin_roles": schema.NewSet(schema.HashString, roleTypes),
 	})
 }
 
 func setGroups(d *schema.ResourceData, c *okta.Client) error {
 	// set all groups currently attached to user in state
 	groups, _, err := c.User.ListUserGroups(d.Id(), nil)
+	if err != nil {
+		return err
+	}
 
-	groupIds := make([]string, 0)
+	groupIds := make([]interface{}, 0)
 
 	// ignore saving the Everyone group into state so we don't end up with perpetual diffs
 	for _, group := range groups {
@@ -202,13 +205,9 @@ func setGroups(d *schema.ResourceData, c *okta.Client) error {
 		}
 	}
 
-	if err != nil {
-		return err
-	}
-
 	// set the custom_profile_attributes values
 	return setNonPrimitives(d, map[string]interface{}{
-		"group_memberships": groupIds,
+		"group_memberships": schema.NewSet(schema.HashString, groupIds),
 	})
 }
 

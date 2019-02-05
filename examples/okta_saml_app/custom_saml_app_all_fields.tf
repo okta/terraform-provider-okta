@@ -14,6 +14,7 @@ resource "okta_saml_app" "testAcc_%[1]d" {
   honor_force_authn        = true
   authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
   user_name_template       = "$${source.email}"
+
   attribute_statements = [
     {
       name      = "Attr One"
@@ -21,9 +22,9 @@ resource "okta_saml_app" "testAcc_%[1]d" {
       values    = ["val"]
     },
     {
-      name        = "Attr Two"
+      name         = "Attr Two"
       filter_type  = "STARTS_WITH"
       filter_value = "test"
-    }
+    },
   ]
 }
