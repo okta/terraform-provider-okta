@@ -186,7 +186,7 @@ func TestAccOktaSamlApplicationUserGroups(t *testing.T) {
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-					resource.TestCheckResourceAttrSet(resourceName, "users.0.id"),
+					resource.TestCheckResourceAttr(resourceName, "users.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "key.years_valid", "3"),
 				),
