@@ -10,12 +10,14 @@ import (
 	"github.com/hashicorp/terraform/helper/validation"
 )
 
+// This resource is DEPRECATED. Doesn't follow any of the best practices. New resource is okta_user_schema.
 func resourceUserSchemas() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceUserSchemaCreate,
-		Read:   resourceUserSchemaRead,
-		Update: resourceUserSchemaUpdate,
-		Delete: resourceUserSchemaDelete,
+		Create:             resourceUserSchemasCreate,
+		Read:               resourceUserSchemasRead,
+		Update:             resourceUserSchemasUpdate,
+		Delete:             resourceUserSchemasDelete,
+		DeprecationMessage: "Do not use this resource, it is deprecated. Please start using okta_user_schemas",
 
 		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
 
@@ -157,7 +159,7 @@ func resourceUserSchemas() *schema.Resource {
 	}
 }
 
-func resourceUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
+func resourceUserSchemasCreate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Creating User Schema %v", d.Get("index").(string))
 
 	exists, err := userSchemaExists(d.Get("index").(string), d, m)
@@ -171,7 +173,7 @@ func resourceUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
 		case "base":
 
 		case "custom":
-			err = userCustomSchemaTemplate(d, m)
+			err = userCustomSchemasTemplate(d, m)
 			if err != nil {
 				return err
 			}
@@ -182,7 +184,7 @@ func resourceUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
+func resourceUserSchemasRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List User Schema %v", d.Get("index").(string))
 
 	exists, err := userSchemaExists(d.Get("index").(string), d, m)
@@ -198,7 +200,7 @@ func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceUserSchemasUpdate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Update User Schema %v", d.Get("index").(string))
 
 	exists, err := userSchemaExists(d.Get("index").(string), d, m)
@@ -212,7 +214,7 @@ func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
 		case "base":
 
 		case "custom":
-			err = userCustomSchemaTemplate(d, m)
+			err = userCustomSchemasTemplate(d, m)
 			if err != nil {
 				return err
 			}
@@ -223,7 +225,7 @@ func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceUserSchemaDelete(d *schema.ResourceData, m interface{}) error {
+func resourceUserSchemasDelete(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Delete User Schema %v", d.Get("index").(string))
 	client := m.(*Config).articulateOktaClient
 
@@ -250,6 +252,24 @@ func resourceUserSchemaDelete(d *schema.ResourceData, m interface{}) error {
 }
 
 // verify if custom subschema exists in Okta
+func userSchemasExists(index string, d *schema.ResourceData, m interface{}) (bool, error) {
+	client := m.(*Config).articulateOktaClient
+
+	exists := false
+	subschemas, _, err := client.Schemas.GetUserSubSchemaIndex(d.Get("subschema").(string))
+	if err != nil {
+		return exists, fmt.Errorf("[ERROR] Error Listing User Subschemas in Okta: %v", err)
+	}
+	for _, key := range subschemas {
+		if key == d.Get("index").(string) {
+			exists = true
+			break
+		}
+	}
+	return exists, err
+}
+
+// verify if custom subschema exists in Okta
 func userSchemaExists(index string, d *schema.ResourceData, m interface{}) (bool, error) {
 	client := m.(*Config).articulateOktaClient
 
@@ -268,7 +288,7 @@ func userSchemaExists(index string, d *schema.ResourceData, m interface{}) (bool
 }
 
 // create or modify a custom subschema
-func userCustomSchemaTemplate(d *schema.ResourceData, m interface{}) error {
+func userCustomSchemasTemplate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Config).articulateOktaClient
 
 	perms := client.Schemas.Permissions()
