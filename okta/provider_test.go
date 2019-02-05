@@ -60,6 +60,7 @@ func oktaConfig() (*Config, error) {
 		apiToken:    os.Getenv("OKTA_API_TOKEN"),
 		domain:      os.Getenv("OKTA_BASE_URL"),
 		parallelism: concurrent,
+		retryCount:  10,
 	}
 
 	if err := config.loadAndValidate(); err != nil {
