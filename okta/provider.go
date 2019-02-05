@@ -30,7 +30,7 @@ const (
 	swaApp                 = "okta_swa_app"
 	threeFieldApp          = "okta_three_field_app"
 	trustedOrigin          = "okta_trusted_origin"
-	userSchema             = "okta_user_schemas"
+	userSchema             = "okta_user_schema"
 )
 
 // Provider establishes a client connection to an okta site
@@ -72,16 +72,18 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			oktaGroup:              resourceGroup(),
-			identityProvider:       resourceIdentityProvider(),
-			passwordPolicy:         resourcePasswordPolicy(),
-			signOnPolicy:           resourceSignOnPolicy(),
-			signOnPolicyRule:       resourceSignOnPolicyRule(),
-			passwordPolicyRule:     resourcePasswordPolicyRule(),
-			mfaPolicy:              resourceMfaPolicy(),
-			mfaPolicyRule:          resourceMfaPolicyRule(),
-			trustedOrigin:          resourceTrustedOrigin(),
-			userSchema:             resourceUserSchemas(),
+			oktaGroup:          resourceGroup(),
+			identityProvider:   resourceIdentityProvider(),
+			passwordPolicy:     resourcePasswordPolicy(),
+			signOnPolicy:       resourceSignOnPolicy(),
+			signOnPolicyRule:   resourceSignOnPolicyRule(),
+			passwordPolicyRule: resourcePasswordPolicyRule(),
+			mfaPolicy:          resourceMfaPolicy(),
+			mfaPolicyRule:      resourceMfaPolicyRule(),
+			trustedOrigin:      resourceTrustedOrigin(),
+			// Will be deprecated
+			"okta_user_schemas":    resourceUserSchemas(),
+			userSchema:             resourceUserSchema(),
 			oktaUser:               resourceUser(),
 			oAuthApp:               resourceOAuthApp(),
 			samlApp:                resourceSamlApp(),
