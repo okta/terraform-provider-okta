@@ -1,9 +1,7 @@
 package okta
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -122,7 +120,7 @@ func resourceUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
 	}
 	d.SetId(id)
 
-	return nil
+	return resourceUserSchemaRead(d, m)
 }
 
 func resourceUserSchemaExists(d *schema.ResourceData, m interface{}) (bool, error) {
@@ -170,28 +168,20 @@ func getSubSchema(props []articulateOkta.CustomSubSchema, id string) *articulate
 }
 
 func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] Update User Schema %v", d.Id())
-
 	d.Partial(true)
 	if err := userCustomSchemaTemplate(d, m); err != nil {
 		return err
 	}
 	d.Partial(false)
 
-	return resourceUserRead(d, m)
+	return resourceUserSchemaRead(d, m)
 }
 
 func resourceUserSchemaDelete(d *schema.ResourceData, m interface{}) error {
-	id := d.Id()
-	log.Printf("[INFO] Delete User Schema %v", id)
 	client := getClientFromMetadata(m)
 
-	_, _, err := client.Schemas.DeleteUserCustomSubSchema(id)
-	if err != nil {
-		return err
-	}
-
-	return resourceUserRead(d, m)
+	_, _, err := client.Schemas.DeleteUserCustomSubSchema(d.Id())
+	return err
 }
 
 // create or modify a custom subschema
@@ -199,7 +189,7 @@ func userCustomSchemaTemplate(d *schema.ResourceData, m interface{}) error {
 	client := getClientFromMetadata(m)
 
 	template := &articulateOkta.CustomSubSchema{
-		Index:       d.Id(),
+		Index:       d.Get("index").(string),
 		Title:       d.Get("title").(string),
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
@@ -217,22 +207,13 @@ func userCustomSchemaTemplate(d *schema.ResourceData, m interface{}) error {
 	template.Master.Type = d.Get("master").(string)
 	template.Items.Type = d.Get("array_type").(string)
 
-	if _, ok := d.GetOk("one_of"); ok {
-		var obj interface{}
-
-		// Will never error, we validate
-		json.Unmarshal([]byte(d.Get("one_of").(string)), &obj)
-		for _, v := range obj.([]interface{}) {
-			oneOf := client.Schemas.OneOf()
-			for k2, v2 := range v.(map[string]interface{}) {
-				switch k2 {
-				case "const":
-					oneOf.Const = v2.(string)
-				case "title":
-					oneOf.Title = v2.(string)
-				}
-			}
-			template.OneOf = append(template.OneOf, oneOf)
+	if oneOfList, ok := d.GetOk("one_of"); ok {
+		for _, v := range oneOfList.([]interface{}) {
+			valueMap := v.(map[string]interface{})
+			template.OneOf = append(template.OneOf, articulateOkta.OneOf{
+				Const: valueMap["const"].(string),
+				Title: valueMap["title"].(string),
+			})
 		}
 	}
 
