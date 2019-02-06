@@ -108,7 +108,7 @@ func resourceUserSchema() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"PROFILE_MASTER", "OKTA"}, false),
-				Description:  "SubSchema profile manager, if not set it will inherit its setting",
+				Description:  "SubSchema profile manager, if not set it will inherit its setting.",
 			},
 		},
 	}
