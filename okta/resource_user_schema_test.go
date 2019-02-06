@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"testing"
@@ -104,6 +105,33 @@ func TestAccOktaUserSchemas_arrayString(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_WRITE"),
 					resource.TestCheckResourceAttr(resourceName, "master", "OKTA"),
 				),
+			},
+		},
+	})
+}
+
+func TestAccUserSchemaImport(t *testing.T) {
+	ri := acctest.RandInt()
+	resourceName := buildResourceFQN(userSchema, ri)
+	mgr := newFixtureManager(userSchema)
+	config := mgr.GetFixtures("basic.tf", ri, t)
+
+	resource.Test(t, resource.TestCase{
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("Failed to import schema into state")
+					}
+
+					return nil
+				},
 			},
 		},
 	})
