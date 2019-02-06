@@ -126,13 +126,12 @@ func resourceUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
 
 func resourceUserSchemaExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	client := getClientFromMetadata(m)
-
 	subschemas, _, err := client.Schemas.GetUserSubSchemaIndex(customSchema)
 	if err != nil {
 		return false, fmt.Errorf("Error Listing User Subschemas in Okta: %v", err)
 	}
 
-	return contains(subschemas, d.Get("index").(string)), nil
+	return contains(subschemas, d.Id()), nil
 }
 
 func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
