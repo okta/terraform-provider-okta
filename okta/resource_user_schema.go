@@ -146,6 +146,12 @@ func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("type", subschema.Type)
 	d.Set("description", subschema.Description)
 	d.Set("required", subschema.Required)
+	d.Set("index", subschema.Index)
+	d.Set("master", subschema.Master.Type)
+
+	if len(subschema.Permissions) > 0 {
+		d.Set("permissions", subschema.Permissions[0].Action)
+	}
 
 	if subschema.MinLength > 0 {
 		d.Set("min_length", subschema.MinLength)
