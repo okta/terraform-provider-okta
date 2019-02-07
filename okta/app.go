@@ -19,12 +19,12 @@ var appUserResource = &schema.Resource{
 		},
 		"id": &schema.Schema{
 			Type:        schema.TypeString,
-			Required:    true,
+			Optional:    true,
 			Description: "User ID.",
 		},
 		"username": &schema.Schema{
 			Type:        schema.TypeString,
-			Required:    true,
+			Optional:    true,
 			Description: "Username for user.",
 		},
 		"password": &schema.Schema{

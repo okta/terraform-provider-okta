@@ -108,8 +108,7 @@ func resourceUserSchema() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"PROFILE_MASTER", "OKTA"}, false),
-				Description:  "SubSchema profile manager: PROFILE_MASTER or OKTA.",
-				Default:      "PROFILE_MASTER",
+				Description:  "SubSchema profile manager, if not set it will inherit its setting.",
 			},
 		},
 	}
@@ -147,7 +146,10 @@ func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("description", subschema.Description)
 	d.Set("required", subschema.Required)
 	d.Set("index", subschema.Index)
-	d.Set("master", subschema.Master.Type)
+
+	if subschema.Master != nil {
+		d.Set("master", subschema.Master.Type)
+	}
 
 	if len(subschema.Permissions) > 0 {
 		d.Set("permissions", subschema.Permissions[0].Action)
@@ -211,7 +213,10 @@ func updateSubschema(d *schema.ResourceData, m interface{}) error {
 		},
 		Enum: convertInterfaceToStringArrNullable(d.Get("enum")),
 	}
-	template.Master.Type = d.Get("master").(string)
+
+	if v, ok := d.GetOk("master"); ok {
+		template.Master = &articulateOkta.Master{Type: v.(string)}
+	}
 
 	if v, ok := d.GetOk("array_type"); ok {
 		template.Items.Type = v.(string)
