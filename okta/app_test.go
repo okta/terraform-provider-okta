@@ -3,37 +3,15 @@ package okta
 import (
 	"fmt"
 	"strings"
-
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/cache"
 )
 
-type AppID struct {
-	ID    string `json:"id"`
-	Label string `json:"label"`
-}
-
 func deleteTestApps(client *testClient) error {
-	// Due to https://github.com/okta/okta-sdk-golang/issues/41, have to manually make request to Okta. What a pain!
-	// I did not open a PR with a fix to them mostly due to the fact that it would require a design decision.
 	c, err := oktaConfig()
-
 	if err != nil {
 		return err
 	}
+	appList, err := listApps(c)
 
-	config := okta.NewConfig().
-		WithOrgUrl(fmt.Sprintf("https://%v.%v", c.orgName, c.domain)).
-		WithToken(c.apiToken).
-		WithCache(false)
-	requestExecutor := okta.NewRequestExecutor(nil, cache.NewNoOpCache(), config)
-	req, err := requestExecutor.NewRequest("GET", "/api/v1/apps", nil)
-	if err != nil {
-		return err
-	}
-
-	var appList []AppID
-	_, err = requestExecutor.Do(req, &appList)
 	if err != nil {
 		return err
 	}
