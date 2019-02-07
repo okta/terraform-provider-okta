@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -16,16 +17,34 @@ import (
 )
 
 type appID struct {
-	ID     string `json:"id"`
-	Label  string `json:"label"`
-	Name   string `json:"name"`
-	Status string `json:"status"`
+	ID          string `json:"id"`
+	Label       string `json:"label"`
+	Name        string `json:"name"`
+	Status      string `json:"status"`
+	Description string `json:"description"`
 }
 
 type appFilters struct {
-	ID          string
-	Label       string
-	LabelPrefix string
+	ID                string
+	Label             string
+	LabelPrefix       string
+	ShortCircuitCount int
+}
+
+func (f *appFilters) shouldShortCircuit(appList []*appID) bool {
+	if f.LabelPrefix != "" {
+		return false
+	}
+
+	if f.ID != "" && f.Label != "" {
+		return len(appList) > 1
+	}
+
+	if f.ID != "" || f.Label != "" {
+		return len(appList) > 0
+	}
+
+	return false
 }
 
 var appUserResource = &schema.Resource{
@@ -441,6 +460,9 @@ func collectApps(apps []*appID, qp *query.Params, requestExecutor *okta.RequestE
 	if linkList == nil {
 		return apps, nil
 	}
+	if filters.shouldShortCircuit(apps) {
+		return apps, nil
+	}
 
 	for _, l := range linkList {
 		if l.Rel == "next" {
@@ -463,8 +485,21 @@ func collectApps(apps []*appID, qp *query.Params, requestExecutor *okta.RequestE
 func filterApp(appList []*appID, filter *appFilters) []*appID {
 	filteredList := []*appID{}
 	for _, app := range appList {
-		if filter.ID
-		filteredList = append(filteredList, app)
+		if filter.ID == app.ID {
+			filteredList = append(filteredList, app)
+		}
+
+		if filter.Label == app.Label {
+			filteredList = append(filteredList, app)
+		}
+
+		if filter.LabelPrefix != "" && strings.HasPrefix(app.Label, filter.LabelPrefix) {
+			filteredList = append(filteredList, app)
+		}
+
+		if filter.Label == "" && filter.ID == "" && filter.LabelPrefix == "" {
+			filteredList = append(filteredList, app)
+		}
 	}
 	return filteredList
 }

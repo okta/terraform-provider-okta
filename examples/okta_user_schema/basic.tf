@@ -4,27 +4,28 @@ resource "okta_user_schema" "testAcc_%[1]d" {
   type        = "string"
   description = "terraform acceptance test"
   required    = false
-  min_length   = 1
-  max_length   = 50
+  min_length  = 1
+  max_length  = 50
   permissions = "READ_ONLY"
   master      = "PROFILE_MASTER"
-  enum        = [ "S","M","L","XL" ]
+  enum        = ["S", "M", "L", "XL"]
+
   one_of = [
     {
-      const = "S",
-      title = "Small",
+      const = "S"
+      title = "Small"
     },
     {
-      const = "M",
-      title = "Medium",
+      const = "M"
+      title = "Medium"
     },
     {
-      const= "L",
-       title = "Large",
+      const = "L"
+      title = "Large"
     },
     {
-      const= "XL",
-      title = "Extra Large",
+      const = "XL"
+      title = "Extra Large"
     },
   ]
 }

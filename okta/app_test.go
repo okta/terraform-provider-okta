@@ -10,7 +10,7 @@ func deleteTestApps(client *testClient) error {
 	if err != nil {
 		return err
 	}
-	appList, err := listApps(c)
+	appList, err := listApps(c, &appFilters{LabelPrefix: testResourcePrefix})
 
 	if err != nil {
 		return err
@@ -18,18 +18,16 @@ func deleteTestApps(client *testClient) error {
 
 	var warnings []string
 	for _, app := range appList {
-		if strings.HasPrefix(app.Label, testResourcePrefix) {
-			warn := fmt.Sprintf("failed to sweep an application, there may be dangling resources. ID %s, label %s", app.ID, app.Label)
-			_, err := client.oktaClient.Application.DeactivateApplication(app.ID)
-			if err != nil {
-				warnings = append(warnings, warn)
-			}
+		warn := fmt.Sprintf("failed to sweep an application, there may be dangling resources. ID %s, label %s", app.ID, app.Label)
+		_, err := client.oktaClient.Application.DeactivateApplication(app.ID)
+		if err != nil {
+			warnings = append(warnings, warn)
+		}
 
-			_, err = client.oktaClient.Application.DeleteApplication(app.ID)
+		_, err = client.oktaClient.Application.DeleteApplication(app.ID)
 
-			if err != nil {
-				warnings = append(warnings, warn)
-			}
+		if err != nil {
+			warnings = append(warnings, warn)
 		}
 	}
 
