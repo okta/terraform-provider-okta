@@ -7,7 +7,7 @@ resource "okta_oauth_app" "testAcc_%[1]d" {
 }
 
 data "okta_app" "test" {
-  label = "testAcc_%[1]d"
+  label = "${okta_oauth_app.testAcc_%[1]d.label}"
 }
 
 data "okta_app" "test2" {

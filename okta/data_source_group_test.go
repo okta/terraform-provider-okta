@@ -1,7 +1,6 @@
 package okta
 
 import (
-	"fmt"
 	"strconv"
 	"testing"
 
@@ -11,7 +10,8 @@ import (
 
 func TestAccDataSourceGroup(t *testing.T) {
 	ri := acctest.RandInt()
-	config := testAccDataSourceGroupConfig(ri)
+	mgr := newFixtureManager(oktaGroup)
+	config := mgr.GetFixtures("datasource.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -28,17 +28,4 @@ func TestAccDataSourceGroup(t *testing.T) {
 			},
 		},
 	})
-}
-
-func testAccDataSourceGroupConfig(ri int) string {
-	return fmt.Sprintf(`
-resource "okta_group" "testAcc_%[1]d" {
-	name        = "something new"
-	description = "testing, testing"
-}
-
-data "okta_group" "testAcc_%[1]d" {
-	name = "${okta_group.testAcc_%[1]d.name}"
-}
-`, ri)
 }

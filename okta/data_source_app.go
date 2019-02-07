@@ -53,7 +53,7 @@ func dataSourceAppRead(d *schema.ResourceData, m interface{}) error {
 		return fmt.Errorf("No application found with provided id or label. ID: %s, Label %s", id, label)
 	}
 	app := appList[0]
-	d.Set("id", app.ID)
+	d.SetId(app.ID)
 	d.Set("label", app.Label)
 	d.Set("description", app.Description)
 	d.Set("name", app.Name)

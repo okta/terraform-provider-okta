@@ -99,6 +99,7 @@ func Provider() terraform.ResourceProvider {
 			"okta_default_policies": dataSourceDefaultPolicies(),
 			"okta_group":            dataSourceGroup(),
 			"okta_app":              dataSourceApp(),
+			"okta_user":             dataSourceUser(),
 		},
 
 		ConfigureFunc: providerConfigure,
