@@ -2,13 +2,50 @@ package okta
 
 import (
 	"encoding/json"
+	"fmt"
+	"net/url"
+	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/okta/cache"
 	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/peterhellberg/link"
 )
+
+type appID struct {
+	ID          string `json:"id"`
+	Label       string `json:"label"`
+	Name        string `json:"name"`
+	Status      string `json:"status"`
+	Description string `json:"description"`
+}
+
+type appFilters struct {
+	ID                string
+	Label             string
+	LabelPrefix       string
+	ShortCircuitCount int
+}
+
+func (f *appFilters) shouldShortCircuit(appList []*appID) bool {
+	if f.LabelPrefix != "" {
+		return false
+	}
+
+	if f.ID != "" && f.Label != "" {
+		return len(appList) > 1
+	}
+
+	if f.ID != "" || f.Label != "" {
+		return len(appList) > 0
+	}
+
+	return false
+}
 
 var appUserResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
@@ -391,4 +428,78 @@ func setAppSettings(d *schema.ResourceData, settings *okta.ApplicationSettingsAp
 	}
 
 	return d.Set("app_settings_json", string(payload))
+}
+
+func listApps(c *Config, filters *appFilters) ([]*appID, error) {
+	// Due to https://github.com/okta/okta-sdk-golang/issues/41, have to manually make request to Okta. What a pain!
+	// I did not open a PR with a fix to them mostly due to the fact that it would require a design decision.
+	config := okta.NewConfig().
+		WithOrgUrl(fmt.Sprintf("https://%v.%v", c.orgName, c.domain)).
+		WithToken(c.apiToken).
+		WithCache(false)
+	requestExecutor := okta.NewRequestExecutor(nil, cache.NewNoOpCache(), config)
+
+	return collectApps([]*appID{}, &query.Params{}, requestExecutor, filters)
+}
+
+// Recursively list apps until no next links are returned
+func collectApps(apps []*appID, qp *query.Params, requestExecutor *okta.RequestExecutor, filters *appFilters) ([]*appID, error) {
+	req, err := requestExecutor.NewRequest("GET", "/api/v1/apps", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var appList []*appID
+	res, err := requestExecutor.Do(req, &appList)
+	if err != nil {
+		return nil, err
+	}
+
+	apps = append(apps, filterApp(appList, filters)...)
+	linkList := link.Parse(res.Header.Get("link"))
+	if linkList == nil {
+		return apps, nil
+	}
+	if filters.shouldShortCircuit(apps) {
+		return apps, nil
+	}
+
+	for _, l := range linkList {
+		if l.Rel == "next" {
+			parsedURL, err := url.Parse(l.URI)
+			if err != nil {
+				continue
+			}
+			q := parsedURL.Query()
+			qp.After = q.Get("after")
+			limit, err := strconv.ParseInt(q.Get("limit"), 10, 64)
+			if err == nil {
+				qp.Limit = limit
+			}
+			return collectApps(apps, qp, requestExecutor, filters)
+		}
+	}
+	return apps, err
+}
+
+func filterApp(appList []*appID, filter *appFilters) []*appID {
+	filteredList := []*appID{}
+	for _, app := range appList {
+		if filter.ID == app.ID {
+			filteredList = append(filteredList, app)
+		}
+
+		if filter.Label == app.Label {
+			filteredList = append(filteredList, app)
+		}
+
+		if filter.LabelPrefix != "" && strings.HasPrefix(app.Label, filter.LabelPrefix) {
+			filteredList = append(filteredList, app)
+		}
+
+		if filter.Label == "" && filter.ID == "" && filter.LabelPrefix == "" {
+			filteredList = append(filteredList, app)
+		}
+	}
+	return filteredList
 }

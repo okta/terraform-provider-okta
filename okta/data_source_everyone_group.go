@@ -1,9 +1,6 @@
 package okta
 
 import (
-	"fmt"
-	"log"
-
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -18,20 +15,5 @@ func dataSourceEveryoneGroup() *schema.Resource {
 }
 
 func dataSourceEveryoneGroupRead(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] Data Source Everyone Group Read")
-	client := m.(*Config).articulateOktaClient
-
-	groups, _, err := client.Groups.ListGroups("q=Everyone")
-	if err != nil {
-		return fmt.Errorf("[ERROR] ListGroups Everyone query error: %v", err)
-	}
-	if groups != nil {
-		if len(groups.Groups) > 1 {
-			return fmt.Errorf("[ERROR] Group Everyone query resulted in more than one group.")
-		}
-		d.SetId(groups.Groups[0].ID)
-	} else {
-		return fmt.Errorf("[ERROR] Group Everyone query resulted in no groups.")
-	}
-	return nil
+	return findGroup("Everyone", d, m)
 }

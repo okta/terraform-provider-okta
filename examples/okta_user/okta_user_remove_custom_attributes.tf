@@ -1,8 +1,8 @@
 resource "okta_user_schema" "testAcc_schema_%[1]d" {
-  index     = "customAttribute123"
-  title     = "terraform acceptance test"
-  type      = "string"
-  master    = "PROFILE_MASTER"
+  index  = "customAttribute123"
+  title  = "terraform acceptance test"
+  type   = "string"
+  master = "PROFILE_MASTER"
 }
 
 resource "okta_user" "testAcc_%[1]d" {

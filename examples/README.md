@@ -14,6 +14,7 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 
 * [okta_saml_app](./okta_saml_app) Supports the management of Okta SAML Applications.
 * [okta_oauth_app](./okta_oauth_app) Supports the management of Okta OIDC Applications.
+* [okta_app](./okta_app) Generic Application data source.
 * [okta_user](./okta_user) Supports the management of Okta Users.
 * [okta_group](./okta_group) Supports the management of Okta Groups.
 * [okta_trusted_origin](./okta_trusted_origin) Supports the management of Okta Trusted Sources and Origins.

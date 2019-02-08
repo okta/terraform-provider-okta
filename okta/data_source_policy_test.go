@@ -2,16 +2,15 @@ package okta
 
 import (
 	"fmt"
-	"strconv"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccDataSourceDefaultPolicy(t *testing.T) {
+func TestAccDataSourcePolicy(t *testing.T) {
 	ri := acctest.RandInt()
-	config := testAccDataSourceDefaultPolicyConfig(ri)
+	config := testAccDataSourcePolicyConfig(ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -22,17 +21,18 @@ func TestAccDataSourceDefaultPolicy(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_default_policy.default-"+strconv.Itoa(ri), "id"),
+					resource.TestCheckResourceAttrSet("data.okta_policy.test", "id"),
 				),
 			},
 		},
 	})
 }
 
-func testAccDataSourceDefaultPolicyConfig(rInt int) string {
+func testAccDataSourcePolicyConfig(rInt int) string {
 	return fmt.Sprintf(`
-data "okta_default_policy" "default-%d" {
+data "okta_policy" "test" {
   type = "%s"
+  name = "Default Policy"
 }
-`, rInt, passwordPolicyType)
+`, passwordPolicyType)
 }

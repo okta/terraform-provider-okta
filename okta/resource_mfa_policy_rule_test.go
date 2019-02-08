@@ -47,12 +47,12 @@ func testOktaMfaPolicyRule(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
-data "okta_default_policies" "default-%d" {
+data "okta_default_policy" "default-%d" {
 	type = "MFA_ENROLL"
 }
 
 resource "%s" "%s" {
-	policyid = "${data.okta_default_policies.default-%d.id}"
+	policyid = "${data.okta_default_policy.default-%d.id}"
 	name     = "%s"
 	status   = "ACTIVE"
 }
@@ -63,12 +63,12 @@ func testOktaMfaPolicyRuleUpdated(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
-data "okta_default_policies" "default-%d" {
+data "okta_default_policy" "default-%d" {
 	type = "MFA_ENROLL"
 }
 
 resource "%s" "%s" {
-	policyid = "${data.okta_default_policies.default-%d.id}"
+	policyid = "${data.okta_default_policy.default-%d.id}"
 	name     = "%s"
 	status   = "INACTIVE"
 	enroll	 = "LOGIN"
