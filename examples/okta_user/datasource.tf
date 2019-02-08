@@ -16,10 +16,3 @@ data "okta_user" "test" {
     value = "${okta_user.testAcc_%[1]d.last_name}"
   }
 }
-
-data "okta_user" "test2" {
-  search {
-    name  = "profile.login"
-    value = "${okta_user.testAcc_%[1]d.login}"
-  }
-}
