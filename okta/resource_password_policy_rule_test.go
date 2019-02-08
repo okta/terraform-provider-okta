@@ -218,12 +218,12 @@ func testOktaPolicyRulePassword(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
-data "okta_default_policies" "default-%d" {
+data "okta_default_policy" "default-%d" {
 	type = "%s"
 }
 
 resource "%s" "%s" {
-	policyid = "${data.okta_default_policies.default-%d.id}"
+	policyid = "${data.okta_default_policy.default-%d.id}"
 	name     = "%s"
 	status   = "ACTIVE"
 }
@@ -234,12 +234,12 @@ func testOktaPolicyRulePriority(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
-data "okta_default_policies" "default-%d" {
+data "okta_default_policy" "default-%d" {
 	type = "%s"
 }
 
 resource "%s" "%s" {
-	policyid = "${data.okta_default_policies.default-%d.id}"
+	policyid = "${data.okta_default_policy.default-%d.id}"
 	name     = "%s"
 	priority = 1
 	status   = "ACTIVE"
@@ -251,14 +251,14 @@ func testOktaPolicyRulePriorityError(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
-data "okta_default_policies" "default-%d" {
+data "okta_default_policy" "default-%d" {
 	type = "%s"
 }
 
 resource "%s" "%s" {
-	policyid = "${data.okta_default_policies.default-%d.id}"
+	policyid = "${data.okta_default_policy.default-%d.id}"
 	name     = "%s"
-	priority = 999 
+	priority = 999
 	status   = "ACTIVE"
 }
 `, rInt, passwordPolicyType, passwordPolicyRule, name, rInt, name)
@@ -268,12 +268,12 @@ func testOktaPolicyRulePasswordUpdated(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
-data "okta_default_policies" "default-%d" {
+data "okta_default_policy" "default-%d" {
 	type = "%s"
 }
 
 resource "%s" "%s" {
-	policyid = "${data.okta_default_policies.default-%d.id}"
+	policyid = "${data.okta_default_policy.default-%d.id}"
 	name     = "%s"
 	status   = "INACTIVE"
 	password_change = "DENY"
@@ -287,12 +287,12 @@ func testOktaPolicyRulePasswordSignOnErrors(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
-data "okta_default_policies" "default-%d" {
+data "okta_default_policy" "default-%d" {
 	type = "%s"
 }
 
 resource "%s" "%s" {
-	policyid = "${data.okta_default_policies.default-%d.id}"
+	policyid = "${data.okta_default_policy.default-%d.id}"
 	name     = "%s"
 	status   = "ACTIVE"
 	session_idle = 240
@@ -304,12 +304,12 @@ func testOktaPolicyRulePasswordAuthErrors(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
-data "okta_default_policies" "default-%d" {
+data "okta_default_policy" "default-%d" {
 	type = "%s"
 }
 
 resource "%s" "%s" {
-	policyid = "${data.okta_default_policies.default-%d.id}"
+	policyid = "${data.okta_default_policy.default-%d.id}"
 	name     = "%s"
 	status   = "ACTIVE"
 	auth_type = "RADIUS"

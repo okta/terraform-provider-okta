@@ -141,12 +141,12 @@ func testOktaPolicyRuleSignOn(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
-data "okta_default_policies" "default-%d" {
+data "okta_default_policy" "default-%d" {
 	type = "%s"
 }
 
 resource "%s" "%s" {
-	policyid = "${data.okta_default_policies.default-%d.id}"
+	policyid = "${data.okta_default_policy.default-%d.id}"
 	name     = "%s"
 	status   = "ACTIVE"
 }
@@ -158,12 +158,12 @@ func testOktaPolicyRuleSignOnUpdated(rInt int) string {
 
 	// Adding a second resource here to test the priority preference
 	return fmt.Sprintf(`
-data "okta_default_policies" "default-%d" {
+data "okta_default_policy" "default-%d" {
   	type = "%s"
 }
 
 resource "%s" "%s" {
-	policyid = "${data.okta_default_policies.default-%d.id}"
+	policyid = "${data.okta_default_policy.default-%d.id}"
 	name     = "%s"
 	status   = "INACTIVE"
 	access           = "DENY"
@@ -189,12 +189,12 @@ resource "%s" "%s" {
 func testOktaPolicyRuleSignOnRename(updatedName string, rInt int) string {
 	name := buildResourceName(rInt)
 	return fmt.Sprintf(`
-data "okta_default_policies" "default-%d" {
+data "okta_default_policy" "default-%d" {
 	type = "%s"
 }
 
 resource "%s" "%s" {
-	policyid = "${data.okta_default_policies.default-%d.id}"
+	policyid = "${data.okta_default_policy.default-%d.id}"
 	name     = "%s"
 	status   = "ACTIVE"
 }
@@ -205,7 +205,7 @@ func testOktaPolicyRuleSignOnNewPolicy(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
-data "okta_default_policies" "default-%d" {
+data "okta_default_policy" "default-%d" {
 	type = "%s"
 }
 
@@ -227,12 +227,12 @@ func testOktaPolicyRuleSignOnPassErrors(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`
-data "okta_default_policies" "default-%d" {
+data "okta_default_policy" "default-%d" {
 	type = "%s"
 }
 
 resource "%s" "%s" {
-  policyid = "${data.okta_default_policies.default-%d.id}"
+  policyid = "${data.okta_default_policy.default-%d.id}"
   name     = "%s"
   status   = "ACTIVE"
   password_change = "DENY"
