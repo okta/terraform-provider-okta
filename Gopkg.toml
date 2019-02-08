@@ -5,17 +5,13 @@ required = ["github.com/mitchellh/gox"]
   name = "github.com/articulate/oktasdk-go"
 
 [[constraint]]
-  branch = "develop"
+  branch = "master"
   name = "github.com/okta/okta-sdk-golang"
   source = "https://github.com/articulate/okta-sdk-golang.git"
 
 [[constraint]]
-  version = "0.11.7"
+  version = "0.11.11"
   name = "github.com/hashicorp/terraform"
-
-[prune]
-  go-tests = true
-  unused-packages = true
 
 [[constraint]]
   name = "github.com/dghubble/sling"
@@ -24,3 +20,11 @@ required = ["github.com/mitchellh/gox"]
 [[constraint]]
   name = "github.com/peterhellberg/link"
   version = "1.0.0"
+
+[[constraint]]
+  name = "github.com/mitchellh/gox"
+  branch = "master"
+
+[prune]
+  go-tests = true
+  unused-packages = true
