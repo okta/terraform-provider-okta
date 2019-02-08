@@ -36,6 +36,9 @@ const (
 // Provider establishes a client connection to an okta site
 // determined by its schema string values
 func Provider() terraform.ResourceProvider {
+	deprecatedPolicies := dataSourceDefaultPolicies()
+	deprecatedPolicies.DeprecationMessage = "This data source will be deprecated in favor of okta_default_policy or okta_policy data sources."
+
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"org_name": {
@@ -93,10 +96,11 @@ func Provider() terraform.ResourceProvider {
 			swaApp:                 resourceSwaApp(),
 			factor:                 resourceFactor(),
 		},
-
 		DataSourcesMap: map[string]*schema.Resource{
 			"okta_everyone_group":   dataSourceEveryoneGroup(),
-			"okta_default_policies": dataSourceDefaultPolicies(),
+			"okta_default_policies": deprecatedPolicies,
+			"okta_default_policy":   dataSourceDefaultPolicies(),
+			"okta_policy":           dataSourcePolicies(),
 			"okta_group":            dataSourceGroup(),
 			"okta_app":              dataSourceApp(),
 			"okta_user":             dataSourceUser(),
