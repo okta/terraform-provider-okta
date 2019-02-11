@@ -3,11 +3,10 @@ package okta
 import (
 	"net/http"
 
+	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 
 	"github.com/okta/okta-sdk-golang/okta"
-
-	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func resourceAuthServer() *schema.Resource {
