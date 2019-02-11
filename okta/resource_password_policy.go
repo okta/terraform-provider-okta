@@ -217,6 +217,7 @@ func resourcePasswordPolicyRead(d *schema.ResourceData, m interface{}) error {
 		d.Set("recovery_email_token", policy.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutes)
 		d.Set("sms_recovery", policy.Settings.Recovery.Factors.OktaSms.Status)
 		d.Set("email_recovery", policy.Settings.Recovery.Factors.OktaEmail.Status)
+		d.Set("question_recovery", policy.Settings.Recovery.Factors.RecoveryQuestion.Status)
 		d.Set("skip_unlock", policy.Settings.Delegation.Options.SkipUnlock)
 
 		valueMap := map[string]interface{}{}
