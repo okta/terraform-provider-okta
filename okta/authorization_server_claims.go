@@ -8,18 +8,18 @@ import (
 )
 
 type AuthorizationServerClaim struct {
-	Status               string        `json:"status,omitempty"`
-	ClaimType            string        `json:"claimType,omitempty"`
-	ValueType            string        `json:"valueType,omitempty"`
-	Value                string        `json:"value,omitempty"`
-	AlwaysIncludeInToken bool          `json:"alwaysIncludeInToken,omitempty"`
-	Name                 string        `json:"name,omitempty"`
-	Id                   string        `json:"id,omitempty"`
-	Conditions           []*Conditions `json:"conditions"`
+	Status               string      `json:"status,omitempty"`
+	ClaimType            string      `json:"claimType,omitempty"`
+	ValueType            string      `json:"valueType,omitempty"`
+	Value                string      `json:"value,omitempty"`
+	AlwaysIncludeInToken bool        `json:"alwaysIncludeInToken,omitempty"`
+	Name                 string      `json:"name,omitempty"`
+	Id                   string      `json:"id,omitempty"`
+	Conditions           *Conditions `json:"conditions"`
 }
 
 type Conditions struct {
-	Scope []string `json:"scope"`
+	Scopes []string `json:"scopes"`
 }
 
 func (m *ApiSupplement) DeleteAuthorizationServerClaim(authServerId, id string) (*okta.Response, error) {
@@ -31,6 +31,7 @@ func (m *ApiSupplement) DeleteAuthorizationServerClaim(authServerId, id string) 
 
 	return m.requestExecutor.Do(req, nil)
 }
+
 func (m *ApiSupplement) ListAuthorizationServerClaims(authServerId string) ([]*AuthorizationServerClaim, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%s/claims", authServerId)
 	req, err := m.requestExecutor.NewRequest("GET", url, nil)
@@ -42,6 +43,7 @@ func (m *ApiSupplement) ListAuthorizationServerClaims(authServerId string) ([]*A
 	resp, err := m.requestExecutor.Do(req, &auth)
 	return auth, resp, err
 }
+
 func (m *ApiSupplement) CreateAuthorizationServerClaim(authServerId string, body AuthorizationServerClaim, qp *query.Params) (*AuthorizationServerClaim, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%s/claims", authServerId)
 	if qp != nil {
