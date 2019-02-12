@@ -2,7 +2,6 @@ package okta
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -11,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/cache"
 	"github.com/okta/okta-sdk-golang/okta/query"
 	"github.com/peterhellberg/link"
 )
@@ -431,15 +429,7 @@ func setAppSettings(d *schema.ResourceData, settings *okta.ApplicationSettingsAp
 }
 
 func listApps(c *Config, filters *appFilters) ([]*appID, error) {
-	// Due to https://github.com/okta/okta-sdk-golang/issues/41, have to manually make request to Okta. What a pain!
-	// I did not open a PR with a fix to them mostly due to the fact that it would require a design decision.
-	config := okta.NewConfig().
-		WithOrgUrl(fmt.Sprintf("https://%v.%v", c.orgName, c.domain)).
-		WithToken(c.apiToken).
-		WithCache(false)
-	requestExecutor := okta.NewRequestExecutor(nil, cache.NewNoOpCache(), config)
-
-	return collectApps([]*appID{}, &query.Params{}, requestExecutor, filters)
+	return collectApps([]*appID{}, &query.Params{}, c.supplementClient.requestExecutor, filters)
 }
 
 // Recursively list apps until no next links are returned

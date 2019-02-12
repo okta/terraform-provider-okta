@@ -240,6 +240,10 @@ func getOktaClientFromMetadata(meta interface{}) *okta.Client {
 	return meta.(*Config).oktaClient
 }
 
+func getSupplementFromMetadata(meta interface{}) *ApiSupplement {
+	return meta.(*Config).supplementClient
+}
+
 func getRequestExecutor(m interface{}) *okta.RequestExecutor {
 	c := m.(*Config)
 	config := okta.NewConfig().
