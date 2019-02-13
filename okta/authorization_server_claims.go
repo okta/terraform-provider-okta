@@ -7,20 +7,22 @@ import (
 	"github.com/okta/okta-sdk-golang/okta/query"
 )
 
-type AuthorizationServerClaim struct {
-	Status               string      `json:"status,omitempty"`
-	ClaimType            string      `json:"claimType,omitempty"`
-	ValueType            string      `json:"valueType,omitempty"`
-	Value                string      `json:"value,omitempty"`
-	AlwaysIncludeInToken bool        `json:"alwaysIncludeInToken,omitempty"`
-	Name                 string      `json:"name,omitempty"`
-	Id                   string      `json:"id,omitempty"`
-	Conditions           *Conditions `json:"conditions"`
-}
+type (
+	AuthorizationServerClaim struct {
+		Status               string           `json:"status,omitempty"`
+		ClaimType            string           `json:"claimType,omitempty"`
+		ValueType            string           `json:"valueType,omitempty"`
+		Value                string           `json:"value,omitempty"`
+		AlwaysIncludeInToken bool             `json:"alwaysIncludeInToken,omitempty"`
+		Name                 string           `json:"name,omitempty"`
+		Id                   string           `json:"id,omitempty"`
+		Conditions           *ClaimConditions `json:"conditions,omitempty"`
+	}
 
-type Conditions struct {
-	Scopes []string `json:"scopes"`
-}
+	ClaimConditions struct {
+		Scopes []string `json:"scopes,omitempty"`
+	}
+)
 
 func (m *ApiSupplement) DeleteAuthorizationServerClaim(authServerId, id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%s/claims/%s", authServerId, id)

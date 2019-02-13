@@ -20,15 +20,16 @@ func resourceAuthServer() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
-				Type:        schema.TypeString,
+			"audiences": &schema.Schema{
+				Type:        schema.TypeSet,
 				Required:    true,
-				Description: "AuthServer name",
+				Description: "Currently Okta only supports a single value here",
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"credentials": &schema.Schema{
 				Type:        schema.TypeMap,
 				Optional:    true,
-				Description: "AuthServer credentials",
+				Description: "Auth Server credentials",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"kid": &schema.Schema{
@@ -55,16 +56,33 @@ func resourceAuthServer() *schema.Resource {
 			"description": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "AuthServer description",
+				Description: "Auth Server description",
+			},
+			"name": &schema.Schema{
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Auth Server name",
 			},
 		},
 	}
 }
 
-func buildAuthServer(d *schema.ResourceData) *okta.AuthorizationServer {
-	return &okta.AuthorizationServer{
-		Audiences: convertInterfaceToStringArrNullable(d.Get("audiences")),
-		Credentials: &okta.AuthServerCredentials{
+func handleAuthServerLifecycle(d *schema.ResourceData, m interface{}) error {
+	client := getSupplementFromMetadata(m)
+
+	if d.Get("status").(string) == "ACTIVE" {
+		_, err := client.ActivateAuthorizationServer(d.Id())
+		return err
+	}
+
+	_, err := client.DeactivateAuthorizationServer(d.Id())
+	return err
+}
+
+func buildAuthServer(d *schema.ResourceData) *AuthorizationServer {
+	return &AuthorizationServer{
+		Audiences: convertInterfaceToStringSet(d.Get("audiences")),
+		Credentials: &AuthServerCredentials{
 			Signing: &okta.ApplicationCredentialsSigning{
 				RotationMode: d.Get("credentials.rotation_mode").(string),
 			},
@@ -76,8 +94,12 @@ func buildAuthServer(d *schema.ResourceData) *okta.AuthorizationServer {
 
 func resourceAuthServerCreate(d *schema.ResourceData, m interface{}) error {
 	authServer := buildAuthServer(d)
-	responseAuthServer, _, err := getOktaClientFromMetadata(m).AuthorizationServer.CreateAuthorizationServer(*authServer, nil)
+	responseAuthServer, _, err := getSupplementFromMetadata(m).CreateAuthorizationServer(*authServer, nil)
 	if err != nil {
+		return err
+	}
+
+	if err := handleAuthServerLifecycle(d, m); err != nil {
 		return err
 	}
 
@@ -98,17 +120,22 @@ func resourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", authServer.Name)
-	d.Set("description", authServer.Description)
+	d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
 	d.Set("credentials", flattenCredentials(authServer.Credentials))
-	d.Set("audiences", authServer.Audiences)
+	d.Set("description", authServer.Description)
+	d.Set("name", authServer.Name)
 
 	return nil
 }
 
 func resourceAuthServerUpdate(d *schema.ResourceData, m interface{}) error {
+	client := getSupplementFromMetadata(m)
+	if d.HasChange("status") {
+		handleAuthServerLifecycle(d, m)
+	}
+
 	authServer := buildAuthServer(d)
-	_, _, err := getOktaClientFromMetadata(m).AuthorizationServer.UpdateAuthorizationServer(d.Id(), *authServer, nil)
+	_, _, err := client.UpdateAuthorizationServer(d.Id(), *authServer, nil)
 	if err != nil {
 		return err
 	}
@@ -117,13 +144,17 @@ func resourceAuthServerUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAuthServerDelete(d *schema.ResourceData, m interface{}) error {
-	_, err := getOktaClientFromMetadata(m).AuthorizationServer.DeleteAuthorizationServer(d.Id())
+	client := getSupplementFromMetadata(m)
+	if _, err := client.DeactivateAuthorizationServer(d.Id()); err != nil {
+		return err
+	}
+	_, err := client.DeleteAuthorizationServer(d.Id())
 
 	return err
 }
 
-func fetchAuthServer(d *schema.ResourceData, m interface{}) (*okta.AuthorizationServer, error) {
-	auth, resp, err := getOktaClientFromMetadata(m).AuthorizationServer.GetAuthorizationServer(d.Id(), okta.AuthorizationServer{})
+func fetchAuthServer(d *schema.ResourceData, m interface{}) (*AuthorizationServer, error) {
+	auth, resp, err := getSupplementFromMetadata(m).GetAuthorizationServer(d.Id(), AuthorizationServer{})
 
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil
@@ -132,7 +163,7 @@ func fetchAuthServer(d *schema.ResourceData, m interface{}) (*okta.Authorization
 	return auth, err
 }
 
-func flattenCredentials(creds *okta.AuthServerCredentials) interface{} {
+func flattenCredentials(creds *AuthServerCredentials) interface{} {
 	return map[string]interface{}{
 		"kid":           creds.Signing.Kid,
 		"last_rotated":  creds.Signing.LastRotated,

@@ -4,56 +4,120 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/okta/okta-sdk-golang/okta"
+
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 )
 
 // Basis of policy schema
-var basePolicySchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Type:        schema.TypeString,
-		Required:    true,
-		ForceNew:    true,
-		Description: "Policy Name",
-	},
-	"description": &schema.Schema{
-		Type:        schema.TypeString,
-		Optional:    true,
-		Description: "Policy Description",
-	},
-	"priority": &schema.Schema{
-		Type:        schema.TypeInt,
-		Optional:    true,
-		Description: "Policy Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last/lowest if not there.",
-		// Suppress diff if config is empty.
-		DiffSuppressFunc: createValueDiffSuppression("0"),
-	},
-	"status": &schema.Schema{
+var (
+	basePolicySchema = map[string]*schema.Schema{
+		"name": &schema.Schema{
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
+			Description: "Policy Name",
+		},
+		"description": &schema.Schema{
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Policy Description",
+		},
+		"priority": &schema.Schema{
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Description: "Policy Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last/lowest if not there.",
+			// Suppress diff if config is empty.
+			DiffSuppressFunc: createValueDiffSuppression("0"),
+		},
+		"status": &schema.Schema{
+			Type:         schema.TypeString,
+			Optional:     true,
+			Default:      "ACTIVE",
+			ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
+			Description:  "Policy Status: ACTIVE or INACTIVE.",
+		},
+		"groups_excluded": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "List of Group IDs to Include",
+			Elem:        &schema.Schema{Type: schema.TypeString},
+		},
+		"groups_included": {
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "List of Group IDs to Include",
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+				// Suppress diff if config is empty, the API will apply the default.
+				DiffSuppressFunc: createValueDiffSuppression(""),
+			},
+			// Suppress diff if config is empty, the API will apply the default.
+			DiffSuppressFunc: suppressDefaultedArrayDiff,
+		},
+	}
+
+	// Pattern used in a few spots, whitelisting/blacklisting users and groups
+	peopleSchema = &schema.Schema{
+		Type:     schema.TypeMap,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"user_whitelist": &schema.Schema{
+					Type:     schema.TypeSet,
+					Elem:     &schema.Schema{Type: schema.TypeString},
+					Optional: true,
+				},
+				"user_blacklist": &schema.Schema{
+					Type:     schema.TypeSet,
+					Elem:     &schema.Schema{Type: schema.TypeString},
+					Optional: true,
+				},
+				"group_whitelist": &schema.Schema{
+					Type:     schema.TypeSet,
+					Elem:     &schema.Schema{Type: schema.TypeString},
+					Optional: true,
+				},
+				"group_blacklist": &schema.Schema{
+					Type:     schema.TypeSet,
+					Elem:     &schema.Schema{Type: schema.TypeString},
+					Optional: true,
+				},
+			},
+		},
+	}
+
+	statusSchema = &schema.Schema{
 		Type:         schema.TypeString,
 		Optional:     true,
 		Default:      "ACTIVE",
 		ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
-		Description:  "Policy Status: ACTIVE or INACTIVE.",
-	},
-	"groups_excluded": {
-		Type:        schema.TypeList,
-		Optional:    true,
-		Description: "List of Group IDs to Include",
-		Elem:        &schema.Schema{Type: schema.TypeString},
-	},
-	"groups_included": {
-		Type:        schema.TypeList,
-		Optional:    true,
-		Description: "List of Group IDs to Include",
-		Elem: &schema.Schema{
-			Type: schema.TypeString,
-			// Suppress diff if config is empty, the API will apply the default.
-			DiffSuppressFunc: createValueDiffSuppression(""),
+	}
+)
+
+func flattenPeopleConditions(c *okta.GroupRulePeopleCondition) map[string]interface{} {
+	// Don't think the API omits these when they are empty thus the unguarded accessing
+	return map[string]interface{}{
+		"group_whitelist": convertStringSetToInterface(c.Groups.Include),
+		"group_blacklist": convertStringSetToInterface(c.Groups.Exclude),
+		"user_whitelist":  convertStringSetToInterface(c.Users.Include),
+		"user_blacklist":  convertStringSetToInterface(c.Users.Exclude),
+	}
+}
+
+func getPeopleConditions(d *schema.ResourceData) *okta.GroupRulePeopleCondition {
+	return &okta.GroupRulePeopleCondition{
+		Groups: &okta.GroupRuleGroupCondition{
+			Include: convertInterfaceToStringSetNullable(d.Get("people.group_whitelist")),
+			Exclude: convertInterfaceToStringSetNullable(d.Get("people.group_blacklist")),
 		},
-		// Suppress diff if config is empty, the API will apply the default.
-		DiffSuppressFunc: suppressDefaultedArrayDiff,
-	},
+		Users: &okta.GroupRuleUserCondition{
+			Include: convertInterfaceToStringSetNullable(d.Get("people.user_whitelist")),
+			Exclude: convertInterfaceToStringSetNullable(d.Get("people.user_blacklist")),
+		},
+	}
 }
 
 func buildPolicySchema(target map[string]*schema.Schema) map[string]*schema.Schema {

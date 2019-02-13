@@ -161,6 +161,28 @@ func convertInterfaceToStringArrNullable(purportedList interface{}) []string {
 	return arr
 }
 
+// Fields should be in order, for instance, []string{"auth_server_id", "policy_id", "id"}
+func createNestedResourceImporter(fields []string) *schema.ResourceImporter {
+	return &schema.ResourceImporter{
+		State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+			parts := strings.Split(d.Id(), "/")
+			if len(parts) != len(fields) {
+				return nil, fmt.Errorf("Invalid resource import specifier. Expecting the following format %s", strings.Join(fields, "/"))
+			}
+
+			for i, field := range fields {
+				if field == "id" {
+					d.SetId(parts[i])
+					continue
+				}
+				d.Set(field, parts[i])
+			}
+
+			return []*schema.ResourceData{d}, nil
+		},
+	}
+}
+
 func convertStringArrToInterface(stringList []string) []interface{} {
 	arr := make([]interface{}, len(stringList))
 	for i, str := range stringList {

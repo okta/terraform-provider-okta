@@ -4,9 +4,11 @@ package okta
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/peterhellberg/link"
 )
 
 type AuthorizationServer struct {
@@ -99,4 +101,60 @@ func (m *ApiSupplement) DeactivateAuthorizationServer(id string) (*okta.Response
 	}
 
 	return m.requestExecutor.Do(req, nil)
+}
+
+func (c *ApiSupplement) FindAuthServer(name string, qp *query.Params) (*AuthorizationServer, error) {
+	authServerList, res, err := c.ListAuthorizationServers()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, authServer := range authServerList {
+		if authServer.Name == name {
+			return authServer, nil
+		}
+	}
+
+	if after := getNextLinkOffset(res); after != "" {
+		qp.After = after
+		return c.FindAuthServer(name, qp)
+	}
+	return nil, nil
+}
+
+func (c *ApiSupplement) FilterAuthServers(qp *query.Params, arr []*AuthorizationServer, compare func(string) bool) ([]*AuthorizationServer, error) {
+	authServerList, res, err := c.ListAuthorizationServers()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, authServer := range authServerList {
+		if compare(authServer.Name) {
+			arr = append(arr, authServer)
+		}
+	}
+
+	if after := getNextLinkOffset(res); after != "" {
+		qp.After = after
+		return c.FilterAuthServers(qp, arr, compare)
+	}
+
+	return nil, nil
+}
+
+func getNextLinkOffset(res *okta.Response) string {
+	linkList := link.Parse(res.Header.Get("link"))
+
+	for _, l := range linkList {
+		if l.Rel == "next" {
+			parsedURL, err := url.Parse(l.URI)
+			if err != nil {
+				continue
+			}
+			q := parsedURL.Query()
+			return q.Get("after")
+		}
+	}
+
+	return ""
 }

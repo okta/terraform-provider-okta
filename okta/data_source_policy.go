@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform/helper/validation"
 )
 
-func dataSourcePolicies() *schema.Resource {
+func dataSourcePolicy() *schema.Resource {
 	return &schema.Resource{
 		Read: dataSourcePolicyRead,
 

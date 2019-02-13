@@ -1,33 +1,21 @@
 package okta
 
 import (
-	"fmt"
 	"net/http"
-	"strings"
-
-	"github.com/hashicorp/terraform/helper/validation"
 
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 )
 
 func resourceAuthServerClaim() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceAuthServerClaimCreate,
-		Exists: resourceAuthServerClaimExists,
-		Read:   resourceAuthServerClaimRead,
-		Update: resourceAuthServerClaimUpdate,
-		Delete: resourceAuthServerClaimDelete,
-		Importer: &schema.ResourceImporter{
-			State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-				parts := strings.Split(d.Id(), "/")
-				if len(parts) != 2 {
-					return nil, fmt.Errorf("Invalid policy rule specifier. Expecting {auth_server_id}/{id}")
-				}
-				d.Set("auth_server_id", parts[0])
-				d.SetId(parts[1])
-				return []*schema.ResourceData{d}, nil
-			},
-		},
+		Create:   resourceAuthServerClaimCreate,
+		Exists:   resourceAuthServerClaimExists,
+		Read:     resourceAuthServerClaimRead,
+		Update:   resourceAuthServerClaimUpdate,
+		Delete:   resourceAuthServerClaimDelete,
+		Importer: createNestedResourceImporter([]string{"auth_server_id", "id"}),
+
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
 				Type:        schema.TypeString,
@@ -43,13 +31,9 @@ func resourceAuthServerClaim() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Auth server claim list of scopes",
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			"status": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "ACTIVE",
-				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
-			},
+			"status": statusSchema,
 			"value": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -81,7 +65,7 @@ func buildAuthServerClaim(d *schema.ResourceData) *AuthorizationServerClaim {
 		Value:                d.Get("value").(string),
 		AlwaysIncludeInToken: d.Get("always_include_in_token").(bool),
 		Name:                 d.Get("name").(string),
-		Conditions:           &Conditions{Scopes: convertInterfaceToStringArr(d.Get("scopes"))},
+		Conditions:           &ClaimConditions{Scopes: convertInterfaceToStringSetNullable(d.Get("scopes"))},
 	}
 }
 
@@ -111,7 +95,7 @@ func resourceAuthServerClaimRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if authServerClaim.Conditions != nil && len(authServerClaim.Conditions.Scopes) > 0 {
-		d.Set("scopes", authServerClaim.Conditions.Scopes)
+		d.Set("scopes", convertStringSetToInterface(authServerClaim.Conditions.Scopes))
 	}
 
 	d.Set("name", authServerClaim.Name)
