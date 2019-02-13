@@ -1,6 +1,6 @@
 resource "okta_auth_server" "test" {
   name        = "testAcc_%[1]d"
-  description = "update"
+  description = "test_updated"
   audiences   = ["whatever.rise.zone"]
 }
 
@@ -25,7 +25,7 @@ resource "okta_auth_server_policy" "test" {
   status           = "ACTIVE"
   name             = "test"
   description      = "update"
-  priority         = 2
+  priority         = 1
   client_whitelist = ["ALL_CLIENTS"]
 }
 
@@ -34,15 +34,11 @@ data "okta_group" "all" {
 }
 
 resource "okta_auth_server_policy_rule" "test" {
-  auth_server_id = "${okta_auth_server.test.id}"
-  policy_id      = "${okta_auth_server_policy.test.id}"
-  status         = "ACTIVE"
-  name           = "test"
-  priority       = 2
-
-  assignments = {
-    group_whitelist = ["${okta_group.all.id}"]
-  }
-
+  auth_server_id       = "${okta_auth_server.test.id}"
+  policy_id            = "${okta_auth_server_policy.test.id}"
+  status               = "ACTIVE"
+  name                 = "test"
+  priority             = 1
+  group_whitelist      = ["${data.okta_group.all.id}"]
   grant_type_whitelist = ["password", "implicit"]
 }

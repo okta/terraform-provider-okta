@@ -144,7 +144,7 @@ func resourceAuthServerDelete(d *schema.ResourceData, m interface{}) error {
 }
 
 func fetchAuthServer(d *schema.ResourceData, m interface{}) (*AuthorizationServer, error) {
-	auth, resp, err := getSupplementFromMetadata(m).GetAuthorizationServer(d.Id(), AuthorizationServer{})
+	auth, resp, err := getSupplementFromMetadata(m).GetAuthorizationServer(d.Id())
 
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil

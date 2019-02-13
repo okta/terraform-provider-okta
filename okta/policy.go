@@ -60,32 +60,26 @@ var (
 	}
 
 	// Pattern used in a few spots, whitelisting/blacklisting users and groups
-	peopleSchema = &schema.Schema{
-		Type:     schema.TypeMap,
-		Required: true,
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"user_whitelist": &schema.Schema{
-					Type:     schema.TypeSet,
-					Elem:     &schema.Schema{Type: schema.TypeString},
-					Optional: true,
-				},
-				"user_blacklist": &schema.Schema{
-					Type:     schema.TypeSet,
-					Elem:     &schema.Schema{Type: schema.TypeString},
-					Optional: true,
-				},
-				"group_whitelist": &schema.Schema{
-					Type:     schema.TypeSet,
-					Elem:     &schema.Schema{Type: schema.TypeString},
-					Optional: true,
-				},
-				"group_blacklist": &schema.Schema{
-					Type:     schema.TypeSet,
-					Elem:     &schema.Schema{Type: schema.TypeString},
-					Optional: true,
-				},
-			},
+	peopleSchema = map[string]*schema.Schema{
+		"user_whitelist": &schema.Schema{
+			Type:     schema.TypeSet,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+			Optional: true,
+		},
+		"user_blacklist": &schema.Schema{
+			Type:     schema.TypeSet,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+			Optional: true,
+		},
+		"group_whitelist": &schema.Schema{
+			Type:     schema.TypeSet,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+			Optional: true,
+		},
+		"group_blacklist": &schema.Schema{
+			Type:     schema.TypeSet,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+			Optional: true,
 		},
 	}
 
@@ -97,25 +91,29 @@ var (
 	}
 )
 
-func flattenPeopleConditions(c *okta.GroupRulePeopleCondition) map[string]interface{} {
+func addPeopleAssignments(target map[string]*schema.Schema) map[string]*schema.Schema {
+	return buildSchema(peopleSchema, target)
+}
+
+func setPeopleAssignments(d *schema.ResourceData, c *okta.GroupRulePeopleCondition) error {
 	// Don't think the API omits these when they are empty thus the unguarded accessing
-	return map[string]interface{}{
+	return setNonPrimitives(d, map[string]interface{}{
 		"group_whitelist": convertStringSetToInterface(c.Groups.Include),
 		"group_blacklist": convertStringSetToInterface(c.Groups.Exclude),
 		"user_whitelist":  convertStringSetToInterface(c.Users.Include),
 		"user_blacklist":  convertStringSetToInterface(c.Users.Exclude),
-	}
+	})
 }
 
 func getPeopleConditions(d *schema.ResourceData) *okta.GroupRulePeopleCondition {
 	return &okta.GroupRulePeopleCondition{
 		Groups: &okta.GroupRuleGroupCondition{
-			Include: convertInterfaceToStringSetNullable(d.Get("people.group_whitelist")),
-			Exclude: convertInterfaceToStringSetNullable(d.Get("people.group_blacklist")),
+			Include: convertInterfaceToStringSet(d.Get("group_whitelist")),
+			Exclude: convertInterfaceToStringSet(d.Get("group_blacklist")),
 		},
 		Users: &okta.GroupRuleUserCondition{
-			Include: convertInterfaceToStringSetNullable(d.Get("people.user_whitelist")),
-			Exclude: convertInterfaceToStringSetNullable(d.Get("people.user_blacklist")),
+			Include: convertInterfaceToStringSet(d.Get("user_whitelist")),
+			Exclude: convertInterfaceToStringSet(d.Get("user_blacklist")),
 		},
 	}
 }

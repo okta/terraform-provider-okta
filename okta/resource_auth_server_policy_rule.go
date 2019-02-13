@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 )
 
 func resourceAuthServerPolicyRule() *schema.Resource {
@@ -15,7 +16,7 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 		Delete:   resourceAuthServerPolicyRuleDelete,
 		Importer: createNestedResourceImporter([]string{"auth_server_id", "policy_id", "id"}),
 
-		Schema: map[string]*schema.Schema{
+		Schema: addPeopleAssignments(map[string]*schema.Schema{
 			"type": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -49,13 +50,30 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "Accepted grant type values: authorization_code, implicit, password.",
 			},
-			"assignments": peopleSchema,
 			"scope_whitelist": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-		},
+			"access_token_lifetime_minutes": &schema.Schema{
+				Type:     schema.TypeInt,
+				Optional: true,
+				// 5 mins - 1 day
+				ValidateFunc: validation.IntBetween(5, 1440),
+				Default:      60,
+			},
+			"refresh_token_lifetime_minutes": &schema.Schema{
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
+			"refresh_token_window_minutes": &schema.Schema{
+				Type:     schema.TypeInt,
+				Optional: true,
+				// 10 mins - 90 days
+				ValidateFunc: validation.IntBetween(10, 129600),
+				Default:      10080,
+			},
+		}),
 	}
 }
 
@@ -65,6 +83,18 @@ func buildAuthServerPolicyRule(d *schema.ResourceData) *AuthorizationServerPolic
 		Status:   d.Get("status").(string),
 		Priority: d.Get("priority").(int),
 		Type:     d.Get("type").(string),
+		Actions: &PolicyRuleActions{
+			Token: &TokenActions{
+				AccessTokenLifetimeMinutes:  d.Get("access_token_lifetime_minutes").(int),
+				RefreshTokenLifetimeMinutes: d.Get("refresh_token_lifetime_minutes").(int),
+				RefreshTokenWindowMinutes:   d.Get("refresh_token_window_minutes").(int),
+			},
+		},
+		Conditions: &PolicyRuleConditions{
+			GrantTypes: &Whitelist{Include: convertInterfaceToStringSet(d.Get("grant_type_whitelist"))},
+			Scopes:     &Whitelist{Include: convertInterfaceToStringSet(d.Get("scope_whitelist"))},
+			People:     getPeopleConditions(d),
+		},
 	}
 }
 
@@ -99,9 +129,15 @@ func resourceAuthServerPolicyRuleRead(d *schema.ResourceData, m interface{}) err
 	d.Set("status", authServerPolicyRule.Status)
 	d.Set("priority", authServerPolicyRule.Priority)
 	d.Set("type", authServerPolicyRule.Type)
-	d.Set("people", flattenPeopleConditions(authServerPolicyRule.Conditions.People))
+	err = setNonPrimitives(d, map[string]interface{}{
+		"grant_type_whitelist": authServerPolicyRule.Conditions.GrantTypes.Include,
+		"scope_whitelist":      authServerPolicyRule.Conditions.Scopes.Include,
+	})
+	if err != nil {
+		return err
+	}
 
-	return nil
+	return setPeopleAssignments(d, authServerPolicyRule.Conditions.People)
 }
 
 func resourceAuthServerPolicyRuleUpdate(d *schema.ResourceData, m interface{}) error {
@@ -118,7 +154,9 @@ func resourceAuthServerPolicyRuleUpdate(d *schema.ResourceData, m interface{}) e
 }
 
 func resourceAuthServerPolicyRuleDelete(d *schema.ResourceData, m interface{}) error {
-	_, err := getSupplementFromMetadata(m).DeleteAuthorizationServerPolicyRule(d.Get("auth_server_id").(string), d.Get("policy_id").(string), d.Id())
+	authServerId := d.Get("auth_server_id").(string)
+	policyId := d.Get("policy_id").(string)
+	_, err := getSupplementFromMetadata(m).DeleteAuthorizationServerPolicyRule(authServerId, policyId, d.Id())
 
 	return err
 }

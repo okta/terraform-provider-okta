@@ -15,10 +15,7 @@ type (
 		Name       string                `json:"name,omitempty"`
 		Id         string                `json:"id,omitempty"`
 		Conditions *PolicyRuleConditions `json:"conditions,omitempty"`
-	}
-
-	GrantTypes struct {
-		Include []string `json:"include,omitempty"`
+		Actions    *PolicyRuleActions    `json:"actions,omitempty"`
 	}
 
 	PolicyRuleActions struct {
@@ -26,8 +23,7 @@ type (
 	}
 
 	PolicyRuleConditions struct {
-		Actions    *PolicyRuleActions             `json:"policyRuleActions,omitempty"`
-		GrantTypes *GrantTypes                    `json:"grantTypes,omitempty"`
+		GrantTypes *Whitelist                     `json:"grantTypes,omitempty"`
 		People     *okta.GroupRulePeopleCondition `json:"people,omitempty"`
 		Scopes     *Whitelist                     `json:"scopes,omitempty"`
 	}

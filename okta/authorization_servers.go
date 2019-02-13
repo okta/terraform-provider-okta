@@ -73,16 +73,15 @@ func (m *ApiSupplement) UpdateAuthorizationServer(id string, body AuthorizationS
 	return &authorizationServer, resp, err
 }
 
-func (m *ApiSupplement) GetAuthorizationServer(id string, authorizationServerInstance AuthorizationServer) (*AuthorizationServer, *okta.Response, error) {
+func (m *ApiSupplement) GetAuthorizationServer(id string) (*AuthorizationServer, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%s", id)
 	req, err := m.requestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
-
-	authorizationServer := authorizationServerInstance
-	resp, err := m.requestExecutor.Do(req, &authorizationServer)
-	return &authorizationServer, resp, err
+	authorizationServer := &AuthorizationServer{}
+	resp, err := m.requestExecutor.Do(req, authorizationServer)
+	return authorizationServer, resp, err
 }
 func (m *ApiSupplement) ActivateAuthorizationServer(id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%s/lifecycle/activate", id)

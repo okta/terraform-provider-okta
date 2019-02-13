@@ -32,6 +32,12 @@ func deleteAuthServers(client *testClient) error {
 	return nil
 }
 
+func authServerExists(id string) (bool, error) {
+	client := getSupplementFromMetadata(testAccProvider.Meta())
+	_, resp, err := client.GetAuthorizationServer(id)
+	return resp.StatusCode != 404 && err == nil, err
+}
+
 func TestAccOktaAuthServerCrud(t *testing.T) {
 	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.sun_also_rises", authServer)
@@ -41,12 +47,14 @@ func TestAccOktaAuthServerCrud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, authServerExists),
 					resource.TestCheckResourceAttr(resourceName, "description", "The best way to find out if you can trust somebody is to trust them."),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "audiences.#", "1"),
@@ -56,6 +64,7 @@ func TestAccOktaAuthServerCrud(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, authServerExists),
 					resource.TestCheckResourceAttr(resourceName, "description", "The past is not dead. In fact, it's not even past."),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "audiences.#", "1"),
@@ -69,31 +78,48 @@ func TestAccOktaAuthServerCrud(t *testing.T) {
 func TestAccOktaAuthServerFullStack(t *testing.T) {
 	ri := acctest.RandInt()
 	name := buildResourceName(ri)
-	resourceName := fmt.Sprintf("%s.sun_also_rises", authServer)
+	resourceName := fmt.Sprintf("%s.test", authServer)
+	claimName := fmt.Sprintf("%s.test", authServerClaim)
+	ruleName := fmt.Sprintf("%s.test", authServerPolicyRule)
+	policyName := fmt.Sprintf("%s.test", authServerPolicy)
+	scopeName := fmt.Sprintf("%s.test", authServerScope)
 	mgr := newFixtureManager("okta_auth_server")
 	config := mgr.GetFixtures("full_stack.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("full_stack_updated.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "description", "The best way to find out if you can trust somebody is to trust them."),
+					ensureResourceExists(resourceName, authServerExists),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "audiences.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.rotation_mode", "MANUAL"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_rotation_mode", "AUTO"),
+
+					resource.TestCheckResourceAttr(scopeName, "name", "test:something"),
+					resource.TestCheckResourceAttr(claimName, "name", "test"),
+					resource.TestCheckResourceAttr(policyName, "name", "test"),
+					resource.TestCheckResourceAttr(ruleName, "name", "test"),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "description", "The past is not dead. In fact, it's not even past."),
+					ensureResourceExists(resourceName, authServerExists),
+					resource.TestCheckResourceAttr(resourceName, "description", "test_updated"),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "audiences.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.rotation_mode", "AUTO"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_rotation_mode", "AUTO"),
+
+					resource.TestCheckResourceAttr(scopeName, "name", "test:something"),
+					resource.TestCheckResourceAttr(claimName, "name", "test"),
+					resource.TestCheckResourceAttr(policyName, "name", "test"),
+					resource.TestCheckResourceAttr(ruleName, "name", "test"),
 				),
 			},
 		},

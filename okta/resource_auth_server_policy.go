@@ -38,7 +38,7 @@ func resourceAuthServerPolicy() *schema.Resource {
 			},
 			"description": &schema.Schema{
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"client_whitelist": &schema.Schema{
 				Type:        schema.TypeSet,
@@ -52,10 +52,11 @@ func resourceAuthServerPolicy() *schema.Resource {
 
 func buildAuthServerPolicy(d *schema.ResourceData) *AuthorizationServerPolicy {
 	return &AuthorizationServerPolicy{
-		Name:     d.Get("name").(string),
-		Type:     d.Get("type").(string),
-		Status:   d.Get("status").(string),
-		Priority: d.Get("priority").(int),
+		Name:        d.Get("name").(string),
+		Type:        d.Get("type").(string),
+		Status:      d.Get("status").(string),
+		Priority:    d.Get("priority").(int),
+		Description: d.Get("description").(string),
 		Conditions: &PolicyConditions{
 			Clients: &Whitelist{
 				Include: convertInterfaceToStringSet(d.Get("client_whitelist")),

@@ -32,9 +32,10 @@ func resourceAuthServerScope() *schema.Resource {
 				Optional: true,
 			},
 			"consent": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "REQUIRED",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "IMPLICIT",
+				Description: "EA Feature and thus it is simply ignored if the feature is off",
 			},
 			"metadata_publish": &schema.Schema{
 				Type:         schema.TypeString,
@@ -83,8 +84,11 @@ func resourceAuthServerScopeRead(d *schema.ResourceData, m interface{}) error {
 
 	d.Set("name", authServerScope.Name)
 	d.Set("description", authServerScope.Description)
-	d.Set("consent", authServerScope.Consent)
 	d.Set("metadata_publish", authServerScope.MetadataPublish)
+
+	if authServerScope.Consent != "" {
+		d.Set("consent", authServerScope.Consent)
+	}
 
 	return nil
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccOktaAuthServerScopeCreate(t *testing.T) {
+func TestAccOktaAuthServerScopeCrud(t *testing.T) {
 	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", authServerScope)
 	mgr := newFixtureManager(authServerScope)
@@ -16,13 +16,14 @@ func TestAccOktaAuthServerScopeCreate(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "consent", "required"),
+					resource.TestCheckResourceAttr(resourceName, "consent", "REQUIRED"),
 					resource.TestCheckResourceAttr(resourceName, "name", "test:something"),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 				),
@@ -30,7 +31,7 @@ func TestAccOktaAuthServerScopeCreate(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "consent", "required"),
+					resource.TestCheckResourceAttr(resourceName, "consent", "REQUIRED"),
 					resource.TestCheckResourceAttr(resourceName, "name", "test:something"),
 					resource.TestCheckResourceAttr(resourceName, "description", "test_updated"),
 				),
