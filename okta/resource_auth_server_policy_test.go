@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
@@ -9,8 +10,8 @@ import (
 
 func TestAccOktaAuthServerPolicyCreate(t *testing.T) {
 	ri := acctest.RandInt()
-	resourceName := buildResourceFQN(oktaGroup, ri)
-	mgr := newFixtureManager("okta_auth_server_policy")
+	resourceName := fmt.Sprintf("%s.test", authServerPolicy)
+	mgr := newFixtureManager(authServerPolicy)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
 
@@ -20,11 +21,19 @@ func TestAccOktaAuthServerPolicyCreate(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "name", "test"),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "testgroupdifferent")),
+					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "name", "test_updated"),
+					resource.TestCheckResourceAttr(resourceName, "description", "test_updated"),
+				),
 			},
 		},
 	})

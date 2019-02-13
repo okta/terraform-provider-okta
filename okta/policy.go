@@ -62,7 +62,7 @@ var (
 	// Pattern used in a few spots, whitelisting/blacklisting users and groups
 	peopleSchema = &schema.Schema{
 		Type:     schema.TypeMap,
-		Optional: true,
+		Required: true,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"user_whitelist": &schema.Schema{

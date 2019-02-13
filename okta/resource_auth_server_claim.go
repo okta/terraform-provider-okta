@@ -51,7 +51,7 @@ func resourceAuthServerClaim() *schema.Resource {
 			"always_include_in_token": &schema.Schema{
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  false,
+				Default:  true,
 			},
 		},
 	}

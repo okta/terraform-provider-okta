@@ -8,7 +8,7 @@ resource "okta_auth_server_claim" "test" {
 }
 
 resource "okta_auth_server" "test" {
-  name        = "test%[1]d"
+  name        = "testAcc_%[1]d"
   description = "test"
-  audiences   = ["api://default"]
+  audiences   = ["whatever.rise.zone"]
 }

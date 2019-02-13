@@ -44,9 +44,10 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 				Description: "Priority of the auth server policy rule",
 			},
 			"grant_type_whitelist": &schema.Schema{
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type:        schema.TypeSet,
+				Required:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "Accepted grant type values: authorization_code, implicit, password.",
 			},
 			"assignments": peopleSchema,
 			"scope_whitelist": &schema.Schema{

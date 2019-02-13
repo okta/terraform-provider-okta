@@ -1,5 +1,5 @@
 resource "okta_auth_server" "sun_also_rises" {
-  audiences   = ["api://something_else"]
+  audiences   = ["whatever-else.rise.zone"]
   description = "The past is not dead. In fact, it's not even past."
-  name        = "Cheeky Faulkner quip %[1]d"
+  name        = "testAcc_%[1]d"
 }

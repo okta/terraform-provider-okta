@@ -14,7 +14,7 @@ import (
 type AuthorizationServer struct {
 	Audiences   []string               `json:"audiences,omitempty"`
 	Credentials *AuthServerCredentials `json:"credentials,omitempty"`
-	Description string                 `json:"descriptions,omitempty"`
+	Description string                 `json:"description,omitempty"`
 	Name        string                 `json:"name,omitempty"`
 	Id          string                 `json:"id,omitempty"`
 }
@@ -139,7 +139,7 @@ func (c *ApiSupplement) FilterAuthServers(qp *query.Params, arr []*Authorization
 		return c.FilterAuthServers(qp, arr, compare)
 	}
 
-	return nil, nil
+	return arr, nil
 }
 
 func getNextLinkOffset(res *okta.Response) string {

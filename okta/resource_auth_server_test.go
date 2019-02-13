@@ -34,7 +34,8 @@ func deleteAuthServers(client *testClient) error {
 
 func TestAccOktaAuthServerCrud(t *testing.T) {
 	ri := acctest.RandInt()
-	resourceName := buildResourceFQN(authServer, ri)
+	resourceName := fmt.Sprintf("%s.sun_also_rises", authServer)
+	name := buildResourceName(ri)
 	mgr := newFixtureManager("okta_auth_server")
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
@@ -47,18 +48,18 @@ func TestAccOktaAuthServerCrud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "description", "The best way to find out if you can trust somebody is to trust them."),
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("Cheeky Hemingway quip %d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "audiences.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.rotation_mode", "MANUAL"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_rotation_mode", "AUTO"),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "description", "The past is not dead. In fact, it's not even past."),
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("Cheeky Faulkner quip %d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "audiences.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.rotation_mode", "AUTO"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_rotation_mode", "AUTO"),
 				),
 			},
 		},
@@ -67,7 +68,8 @@ func TestAccOktaAuthServerCrud(t *testing.T) {
 
 func TestAccOktaAuthServerFullStack(t *testing.T) {
 	ri := acctest.RandInt()
-	resourceName := buildResourceFQN(authServer, ri)
+	name := buildResourceName(ri)
+	resourceName := fmt.Sprintf("%s.sun_also_rises", authServer)
 	mgr := newFixtureManager("okta_auth_server")
 	config := mgr.GetFixtures("full_stack.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("full_stack_updated.tf", ri, t)
@@ -80,7 +82,7 @@ func TestAccOktaAuthServerFullStack(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "description", "The best way to find out if you can trust somebody is to trust them."),
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("Cheeky Hemingway quip %d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "audiences.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.rotation_mode", "MANUAL"),
 				),
@@ -89,7 +91,7 @@ func TestAccOktaAuthServerFullStack(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "description", "The past is not dead. In fact, it's not even past."),
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("Cheeky Faulkner quip %d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "audiences.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.rotation_mode", "AUTO"),
 				),

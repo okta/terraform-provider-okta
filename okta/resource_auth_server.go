@@ -26,42 +26,33 @@ func resourceAuthServer() *schema.Resource {
 				Description: "Currently Okta only supports a single value here",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			"credentials": &schema.Schema{
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Description: "Auth Server credentials",
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"kid": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"last_rotated": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"next_rotation": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"rotation_mode": &schema.Schema{
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"AUTO", "MANUAL"}, false),
-							Default:      "AUTO",
-						},
-					},
-				},
+			"status": statusSchema,
+			"kid": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"credentials_last_rotated": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"credentials_next_rotation": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"credentials_rotation_mode": &schema.Schema{
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"AUTO", "MANUAL"}, false),
+				Default:      "AUTO",
+				Description:  "Credential rotation mode, in many cases you cannot set this to MANUAL, the API will ignore the value and you will get a perpetual diff. This should rarely be used.",
 			},
 			"description": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Auth Server description",
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 			"name": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Auth Server name",
+				Type:     schema.TypeString,
+				Required: true,
 			},
 		},
 	}
@@ -84,7 +75,7 @@ func buildAuthServer(d *schema.ResourceData) *AuthorizationServer {
 		Audiences: convertInterfaceToStringSet(d.Get("audiences")),
 		Credentials: &AuthServerCredentials{
 			Signing: &okta.ApplicationCredentialsSigning{
-				RotationMode: d.Get("credentials.rotation_mode").(string),
+				RotationMode: d.Get("credentials_rotation_mode").(string),
 			},
 		},
 		Description: d.Get("description").(string),
@@ -96,10 +87,6 @@ func resourceAuthServerCreate(d *schema.ResourceData, m interface{}) error {
 	authServer := buildAuthServer(d)
 	responseAuthServer, _, err := getSupplementFromMetadata(m).CreateAuthorizationServer(*authServer, nil)
 	if err != nil {
-		return err
-	}
-
-	if err := handleAuthServerLifecycle(d, m); err != nil {
 		return err
 	}
 
@@ -121,7 +108,10 @@ func resourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
-	d.Set("credentials", flattenCredentials(authServer.Credentials))
+	d.Set("credentials_rotation_mode", authServer.Credentials.Signing.RotationMode)
+	d.Set("kid", authServer.Credentials.Signing.Kid)
+	d.Set("credentials_next_rotation", authServer.Credentials.Signing.NextRotation)
+	d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated)
 	d.Set("description", authServer.Description)
 	d.Set("name", authServer.Name)
 
@@ -161,13 +151,4 @@ func fetchAuthServer(d *schema.ResourceData, m interface{}) (*AuthorizationServe
 	}
 
 	return auth, err
-}
-
-func flattenCredentials(creds *AuthServerCredentials) interface{} {
-	return map[string]interface{}{
-		"kid":           creds.Signing.Kid,
-		"last_rotated":  creds.Signing.LastRotated,
-		"next_rotation": creds.Signing.NextRotation,
-		"rotation_mode": creds.Signing.RotationMode,
-	}
 }

@@ -25,29 +25,21 @@ func dataSourceAuthServer() *schema.Resource {
 				Computed: true,
 				Elem:     schema.TypeString,
 			},
-			"credentials": &schema.Schema{
-				Type:     schema.TypeMap,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"kid": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"last_rotated": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"next_rotation": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"rotation_mode": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-					},
-				},
+			"kid": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"credentials_last_rotated": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"credentials_next_rotation": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"credentials_rotation_mode": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 		},
 	}
@@ -66,7 +58,10 @@ func dataSourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("name", authServer.Name)
 	d.Set("description", authServer.Description)
 	d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
-	d.Set("credentials", flattenCredentials(authServer.Credentials))
+	d.Set("credentials_rotation_mode", authServer.Credentials.Signing.RotationMode)
+	d.Set("kid", authServer.Credentials.Signing.Kid)
+	d.Set("credentials_next_rotation", authServer.Credentials.Signing.NextRotation)
+	d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated)
 
 	return nil
 }

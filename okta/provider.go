@@ -102,6 +102,7 @@ func Provider() terraform.ResourceProvider {
 			authServer:             resourceAuthServer(),
 			authServerClaim:        resourceAuthServerClaim(),
 			authServerPolicy:       resourceAuthServerPolicy(),
+			authServerPolicyRule:   resourceAuthServerPolicyRule(),
 			authServerScope:        resourceAuthServerScope(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
