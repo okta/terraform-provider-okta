@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 	"testing"
 
@@ -34,8 +35,11 @@ func deleteAuthServers(client *testClient) error {
 
 func authServerExists(id string) (bool, error) {
 	client := getSupplementFromMetadata(testAccProvider.Meta())
-	_, resp, err := client.GetAuthorizationServer(id)
-	return resp.StatusCode != 404 && err == nil, err
+	server, resp, err := client.GetAuthorizationServer(id)
+	if resp.StatusCode == http.StatusNotFound {
+		return false, nil
+	}
+	return server.Id != "" && err == nil, err
 }
 
 func TestAccOktaAuthServerCrud(t *testing.T) {
