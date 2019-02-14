@@ -1,10 +1,10 @@
 package okta
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -19,7 +19,7 @@ func resourceGroupRule() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
-		Schema: addPeopleAssignments(map[string]*schema.Schema{
+		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -27,18 +27,21 @@ func resourceGroupRule() *schema.Resource {
 			"group_assignments": &schema.Schema{
 				Type:     schema.TypeSet,
 				Required: true,
-				Elem:     schema.TypeString,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				// Actions cannot be updated even on a deactivated rule
+				ForceNew: true,
 			},
 			"expression_type": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Default:  "urn:okta:expression:1.0",
+				Optional: true,
 			},
 			"expression_value": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"status": statusSchema,
-		}),
+		},
 	}
 }
 
@@ -54,12 +57,22 @@ func buildGroupRule(d *schema.ResourceData) *okta.GroupRule {
 				Type:  d.Get("expression_type").(string),
 				Value: d.Get("expression_value").(string),
 			},
-			People: getPeopleConditions(d),
 		},
-		Name:   d.Get("name").(string),
-		Status: d.Get("status").(string),
-		Type:   "group_rule",
+		Name: d.Get("name").(string),
+		Type: "group_rule",
 	}
+}
+
+func handleGroupRuleLifecycle(d *schema.ResourceData, m interface{}) error {
+	client := getOktaClientFromMetadata(m)
+
+	if d.Get("status").(string) == "ACTIVE" {
+		_, err := client.Group.ActivateRule(d.Id())
+		return err
+	}
+
+	_, err := client.Group.DeactivateRule(d.Id())
+	return err
 }
 
 func resourceGroupRuleCreate(d *schema.ResourceData, m interface{}) error {
@@ -68,8 +81,11 @@ func resourceGroupRuleCreate(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
-
 	d.SetId(responseGroupRule.Id)
+
+	if err := handleGroupRuleLifecycle(d, m); err != nil {
+		return err
+	}
 
 	return resourceGroupRuleRead(d, m)
 }
@@ -89,31 +105,60 @@ func resourceGroupRuleRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("name", g.Name)
 	d.Set("type", g.Type)
 	d.Set("status", g.Status)
-	d.Set("expression_type", g.Status)
-	d.Set("expression_value", g.Status)
 
-	err = setPeopleAssignments(d, g.Conditions.People)
-	if err != nil {
-		return err
+	// Just for the sake of safety, should never be nil
+	if g.Conditions != nil && g.Conditions.Expression != nil {
+		d.Set("expression_type", g.Conditions.Expression.Type)
+		d.Set("expression_value", g.Conditions.Expression.Value)
 	}
 
 	return setNonPrimitives(d, map[string]interface{}{
-		"group_assignments": g.Actions.AssignUserToGroups.GroupIds,
+		"group_assignments": convertStringSetToInterface(g.Actions.AssignUserToGroups.GroupIds),
 	})
 }
 
 func resourceGroupRuleUpdate(d *schema.ResourceData, m interface{}) error {
-	rule := buildGroupRule(d)
-	_, _, err := getOktaClientFromMetadata(m).Group.UpdateRule(d.Id(), *rule)
-	if err != nil {
-		return err
+	status := d.Get("status").(string)
+	// Only inactive rules can be changed, thus we should handle this first
+	if d.HasChange("status") {
+		if err := handleGroupRuleLifecycle(d, m); err != nil {
+			return err
+		}
+		d.SetPartial("status")
+		d.Partial(false)
+	}
+
+	if hasGroupRuleChange(d) {
+		if status == "ACTIVE" {
+			return errors.New("an active rule cannot be modified, set status to INACTIVE with any other changes")
+		}
+
+		rule := buildGroupRule(d)
+		_, _, err := getOktaClientFromMetadata(m).Group.UpdateRule(d.Id(), *rule)
+		if err != nil {
+			return err
+		}
 	}
 
 	return resourceGroupRuleRead(d, m)
 }
 
+func hasGroupRuleChange(d *schema.ResourceData) bool {
+	for _, k := range []string{"expression_type", "expression_value", "name", "group_assignments"} {
+		if d.HasChange(k) {
+			return true
+		}
+	}
+	return false
+}
+
 func resourceGroupRuleDelete(d *schema.ResourceData, m interface{}) error {
-	_, err := getOktaClientFromMetadata(m).Group.DeleteRule(d.Id(), &query.Params{})
+	client := getOktaClientFromMetadata(m)
+	if _, err := client.Group.DeactivateRule(d.Id()); err != nil {
+		return err
+	}
+
+	_, err := client.Group.DeleteRule(d.Id(), nil)
 
 	return err
 }

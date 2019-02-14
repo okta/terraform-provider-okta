@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
@@ -31,10 +32,12 @@ func sweepGroupRules(client *testClient) error {
 
 func TestAccOktaGroupRuleCrud(t *testing.T) {
 	ri := acctest.RandInt()
-	resourceName := buildResourceFQN(groupRule, ri)
-	mgr := newFixtureManager("okta_group")
-	config := mgr.GetFixtures("okta_group.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("okta_group_updated.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", groupRule)
+	mgr := newFixtureManager("okta_group_rule")
+	config := mgr.GetFixtures("basic.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	deactivated := mgr.GetFixtures("basic_deactivated.tf", ri, t)
+	name := buildResourceName(ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -43,13 +46,25 @@ func TestAccOktaGroupRuleCrud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "testgroupdifferent"),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+
+					resource.TestCheckResourceAttr(resourceName, "expression_type", "urn:okta:expression:1.0"),
+					resource.TestCheckResourceAttr(resourceName, "expression_value", "String.startsWith(user.articulateId,\"auth0|\")"),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "testgroupdifferent"),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+				),
+			},
+			{
+				Config: deactivated,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
 				),
 			},
 		},

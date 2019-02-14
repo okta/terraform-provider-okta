@@ -38,11 +38,13 @@ func TestAccOktaGroupsCreate(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "testAcc")),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "testgroupdifferent")),
+					resource.TestCheckResourceAttr(resourceName, "name", "testAccDifferent")),
 			},
 		},
 	})
