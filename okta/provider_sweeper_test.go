@@ -33,6 +33,7 @@ func TestMain(m *testing.M) {
 	setupSweeper(groupRule, sweepGroupRules)
 	setupSweeper(oktaGroup, sweepGroups)
 	setupSweeper(oktaUser, sweepUsers)
+	setupSweeper(userSchema, sweepUserSchema)
 	resource.TestMain(m)
 }
 

@@ -4,12 +4,30 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
+
+func sweepUserSchema(client *testClient) error {
+	schema, _, err := client.artClient.Schemas.GetUserSchema()
+	if err != nil {
+		return err
+	}
+	var errorList []error
+
+	for _, schema := range schema.Definitions.Custom.Properties {
+		if strings.HasPrefix(schema.Index, testResourcePrefix) {
+			if _, _, err := client.artClient.Schemas.DeleteUserCustomSubSchema(schema.Index); err != nil {
+				errorList = append(errorList, err)
+			}
+		}
+	}
+	return condenseError(errorList)
+}
 
 func TestAccOktaUserSchemas(t *testing.T) {
 	ri := acctest.RandInt()

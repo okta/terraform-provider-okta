@@ -18,9 +18,11 @@ func sweepGroupRules(client *testClient) error {
 	}
 
 	for _, s := range rules {
-		if _, err := client.oktaClient.Group.DeactivateRule(s.Id); err != nil {
-			errorList = append(errorList, err)
-			continue
+		if s.Status == "ACTIVE" {
+			if _, err := client.oktaClient.Group.DeactivateRule(s.Id); err != nil {
+				errorList = append(errorList, err)
+				continue
+			}
 		}
 		if _, err := client.oktaClient.Group.DeleteRule(s.Id, nil); err != nil {
 			errorList = append(errorList, err)
