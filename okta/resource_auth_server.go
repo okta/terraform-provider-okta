@@ -54,6 +54,17 @@ func resourceAuthServer() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"issuer": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "EA Feature: allows you to use a custom issuer URL",
+			},
+			"issuer_mode": &schema.Schema{
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "EA Feature: allows you to use a custom issuer URL, no value will leave the issuer at the default",
+				ValidateFunc: validation.StringInSlice([]string{"CUSTOM_URL"}, false),
+			},
 		},
 	}
 }
@@ -80,6 +91,8 @@ func buildAuthServer(d *schema.ResourceData) *AuthorizationServer {
 		},
 		Description: d.Get("description").(string),
 		Name:        d.Get("name").(string),
+		Issuer:      d.Get("issuer").(string),
+		IssuerMode:  d.Get("issuer_mode").(string),
 	}
 }
 
@@ -114,6 +127,12 @@ func resourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated)
 	d.Set("description", authServer.Description)
 	d.Set("name", authServer.Name)
+
+	// Do not sync these unless the issuer mode is specified since it is an EA feature and is computed in some cases
+	if authServer.IssuerMode != "" {
+		d.Set("issuer", authServer.Issuer)
+		d.Set("issuer_mode", authServer.IssuerMode)
+	}
 
 	return nil
 }
