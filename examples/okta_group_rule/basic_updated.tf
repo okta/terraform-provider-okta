@@ -3,10 +3,9 @@ resource "okta_group" "test_other" {
 }
 
 resource "okta_group_rule" "test" {
-  name = "testAcc_%[1]d"
-  status = "ACTIVE"
+  name              = "testAcc_%[1]d"
+  status            = "ACTIVE"
   group_assignments = ["${okta_group.test_other.id}"]
-  expression_type = "urn:okta:expression:1.0"
-  expression_value = "String.startsWith(user.articulateId,\"auth0|\")"
+  expression_type   = "urn:okta:expression:1.0"
+  expression_value  = "String.startsWith(user.articulateId,\"auth0|\")"
 }
-

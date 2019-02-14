@@ -41,19 +41,24 @@ func resourceAuthServerClaim() *schema.Resource {
 			"value_type": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"EXPRESSION"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"EXPRESSION", "GROUPS"}, false),
 				Default:      "EXPRESSION",
 			},
 			"claim_type": &schema.Schema{
 				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"RESOURCE"}, false),
-				Default:      "RESOURCE",
+				Required:     true,
+				ValidateFunc: validation.StringInSlice([]string{"RESOURCE", "IDENTITY"}, false),
 			},
 			"always_include_in_token": &schema.Schema{
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
+			},
+			"group_filter_type": &schema.Schema{
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"START_WITH", "EQUALS", "CONTAINS", "REGEX"}, false),
+				Description:  "Required when value_type is GROUPS",
 			},
 		},
 	}
@@ -68,6 +73,7 @@ func buildAuthServerClaim(d *schema.ResourceData) *AuthorizationServerClaim {
 		AlwaysIncludeInToken: d.Get("always_include_in_token").(bool),
 		Name:                 d.Get("name").(string),
 		Conditions:           &ClaimConditions{Scopes: convertInterfaceToStringSetNullable(d.Get("scopes"))},
+		GroupFilterType:      d.Get("group_filter_type").(string),
 	}
 }
 
@@ -106,6 +112,7 @@ func resourceAuthServerClaimRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("value_type", authServerClaim.ValueType)
 	d.Set("claim_type", authServerClaim.ClaimType)
 	d.Set("always_include_in_token", authServerClaim.AlwaysIncludeInToken)
+	d.Set("group_filter_type", authServerClaim.GroupFilterType)
 
 	return nil
 }
