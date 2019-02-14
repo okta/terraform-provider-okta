@@ -1,4 +1,4 @@
-resource "okta_user" "testAcc_%[1]d" {
+resource "okta_user" "test" {
   first_name = "TestAcc"
   last_name  = "Smith"
   login      = "test-acc-%[1]d@testing.com"
@@ -8,11 +8,11 @@ resource "okta_user" "testAcc_%[1]d" {
 data "okta_user" "test" {
   search {
     name  = "profile.firstName"
-    value = "${okta_user.testAcc_%[1]d.first_name}"
+    value = "${okta_user.test.first_name}"
   }
 
   search {
     name  = "profile.lastName"
-    value = "${okta_user.testAcc_%[1]d.last_name}"
+    value = "${okta_user.test.last_name}"
   }
 }

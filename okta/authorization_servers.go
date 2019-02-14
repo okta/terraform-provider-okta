@@ -18,6 +18,8 @@ type AuthorizationServer struct {
 	Name        string                 `json:"name,omitempty"`
 	Id          string                 `json:"id,omitempty"`
 	Status      string                 `json:"status,omitempty"`
+	Issuer      string                 `json:"issuer,omitempty"`
+	IssuerMode  string                 `json:"issuerMode,omitempty"`
 }
 
 type AuthServerCredentials struct {
