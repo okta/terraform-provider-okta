@@ -40,13 +40,15 @@ func resourceAuthServerClaim() *schema.Resource {
 			},
 			"value_type": &schema.Schema{
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"EXPRESSION"}, false),
+				Default:      "EXPRESSION",
 			},
 			"claim_type": &schema.Schema{
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"RESOURCE"}, false),
+				Default:      "RESOURCE",
 			},
 			"always_include_in_token": &schema.Schema{
 				Type:     schema.TypeBool,
