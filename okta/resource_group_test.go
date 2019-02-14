@@ -9,6 +9,7 @@ import (
 )
 
 func sweepGroups(client *testClient) error {
+	var errorList []error
 	// Should never need to deal with pagination, limit is 10,000 by default
 	groups, _, err := client.oktaClient.Group.ListGroups(&query.Params{Q: testResourcePrefix})
 	if err != nil {
@@ -17,11 +18,11 @@ func sweepGroups(client *testClient) error {
 
 	for _, s := range groups {
 		if _, err := client.oktaClient.Group.DeleteGroup(s.Id); err != nil {
-			return err
+			errorList = append(errorList, err)
 		}
 
 	}
-	return nil
+	return condenseError(errorList)
 }
 
 func TestAccOktaGroupsCreate(t *testing.T) {

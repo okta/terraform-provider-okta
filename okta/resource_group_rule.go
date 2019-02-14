@@ -38,22 +38,7 @@ func resourceGroupRule() *schema.Resource {
 				Required: true,
 			},
 			"status": statusSchema,
-			"user_blacklist": &schema.Schema{
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Optional: true,
-			},
-			"group_whitelist": &schema.Schema{
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Optional: true,
-			},
-			"group_blacklist": &schema.Schema{
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Optional: true,
-			},
-		})
+		}),
 	}
 }
 

@@ -9,6 +9,7 @@ import (
 )
 
 func sweepGroupRules(client *testClient) error {
+	var errorList []error
 	// Should never need to deal with pagination
 	rules, _, err := client.oktaClient.Group.ListRules(&query.Params{Limit: 300})
 	if err != nil {
@@ -17,14 +18,15 @@ func sweepGroupRules(client *testClient) error {
 
 	for _, s := range rules {
 		if _, err := client.oktaClient.Group.DeactivateRule(s.Id); err != nil {
-			return err
+			errorList = append(errorList, err)
+			continue
 		}
 		if _, err := client.oktaClient.Group.DeleteRule(s.Id, nil); err != nil {
-			return err
+			errorList = append(errorList, err)
 		}
 
 	}
-	return nil
+	return condenseError(errorList)
 }
 
 func TestAccOktaGroupRuleCrud(t *testing.T) {

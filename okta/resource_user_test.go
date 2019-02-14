@@ -15,16 +15,18 @@ import (
 )
 
 func sweepUsers(client *testClient) error {
+	var errorList []error
 	users, _, err := client.oktaClient.User.ListUsers(&query.Params{Q: testResourcePrefix})
 	if err != nil {
 		return err
 	}
 
 	for _, u := range users {
-		// Straight up ignore errors here since we are sweeping, no reason to blow up
-		ensureUserDelete(u.Id, u.Status, client.oktaClient)
+		if err := ensureUserDelete(u.Id, u.Status, client.oktaClient); err != nil {
+			errorList = append(errorList, err)
+		}
 	}
-	return nil
+	return condenseError(errorList)
 }
 
 func TestAccOktaUser_customProfileAttributes(t *testing.T) {
