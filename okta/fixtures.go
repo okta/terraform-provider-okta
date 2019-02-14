@@ -7,6 +7,7 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -34,8 +35,10 @@ func (manager *fixtureManager) GetFixtures(fixtureName string, rInt int, t *test
 	if err != nil {
 		t.Fatalf("failed to load terraform fixtures for ACC test, err: %v", err)
 	}
+	tfConfig := string(rawFile)
+	if strings.Count(tfConfig, "%[1]d") == 0 {
+		return tfConfig
+	}
 
-	// Template string
-	tmpString := fmt.Sprintf(string(rawFile), rInt)
-	return tmpString
+	return fmt.Sprintf(tfConfig, rInt)
 }

@@ -11,8 +11,9 @@ import (
 )
 
 type testClient struct {
-	oktaClient *okta.Client
-	artClient  *articulateOkta.Client
+	oktaClient    *okta.Client
+	artClient     *articulateOkta.Client
+	apiSupplement *ApiSupplement
 }
 
 var testResourcePrefix = "testAcc"
@@ -28,6 +29,7 @@ func TestMain(m *testing.M) {
 	setupSweeper(passwordPolicyRule, deletePasswordPolicyRules)
 	setupSweeper("okta_*_apps", deleteTestApps)
 	setupSweeper(mfaPolicyRule, deleteMfaPolicyRules)
+	setupSweeper(authServer, deleteAuthServers)
 	resource.TestMain(m)
 }
 
@@ -36,13 +38,13 @@ func setupSweeper(resourceType string, del func(*testClient) error) {
 	resource.AddTestSweepers(resourceType, &resource.Sweeper{
 		Name: resourceType,
 		F: func(region string) error {
-			articulateOktaClient, client, err := sharedClient(region)
+			articulateOktaClient, client, apiSupplement, err := sharedClient(region)
 
 			if err != nil {
 				return err
 			}
 
-			return del(&testClient{client, articulateOktaClient})
+			return del(&testClient{client, articulateOktaClient, apiSupplement})
 		},
 	})
 }
@@ -57,27 +59,28 @@ func buildResourceName(testID int) string {
 }
 
 // sharedClient returns a common Okta Client for sweepers, which currently requires the original SDK and the official beta SDK
-func sharedClient(region string) (*articulateOkta.Client, *okta.Client, error) {
+func sharedClient(region string) (*articulateOkta.Client, *okta.Client, *ApiSupplement, error) {
 	err := accPreCheck()
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	c, err := oktaConfig()
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	articulateClient, err := articulateOkta.NewClientWithDomain(nil, c.orgName, c.domain, c.apiToken)
 
 	if err != nil {
-		return nil, nil, fmt.Errorf("[ERROR] Error creating Articulate Okta client: %v", err)
+		return nil, nil, nil, fmt.Errorf("[ERROR] Error creating Articulate Okta client: %v", err)
 	}
 
 	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
 
 	config := okta.NewConfig().WithOrgUrl(orgURL).WithToken(c.apiToken).WithBackoff(true).WithRetries(5)
 	client := okta.NewClient(config, nil, nil)
+	api := &ApiSupplement{requestExecutor: client.GetRequestExecutor()}
 
-	return articulateClient, client, nil
+	return articulateClient, client, api, nil
 }

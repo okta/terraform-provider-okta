@@ -10,7 +10,7 @@ Here lies the examples that will aid you on your Okta Terraform journey.
 
 Anything that lies underneath a resource directory is config we use as fixtures to our tests. This means we pass our tests through a string formatter that replaces the format placeholders with the actual values but regardless seeing these might be helpful when trying to implement this provider. Just remember, it is not valid config until you replace or remove `%[1]d`.
 
-## Resources
+## Resources & Data Sources
 
 * [okta_saml_app](./okta_saml_app) Supports the management of Okta SAML Applications.
 * [okta_oauth_app](./okta_oauth_app) Supports the management of Okta OIDC Applications.
@@ -20,6 +20,11 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 * [okta_trusted_origin](./okta_trusted_origin) Supports the management of Okta Trusted Sources and Origins.
 * [okta_user_schemas](./okta_user_schemas) Supports the management of Okta User Profile Attribute Schemas.
 * [okta_identity_provider](./okta_identity_provider) Supports the management of Okta Identity Provider.
+* [okta_auth_server](./okta_auth_server) Supports the management of Okta Authorization servers.
+* [okta_auth_server_policy](./okta_auth_server_policy) Supports the management of Okta Authorization servers policies.
+* [okta_auth_server_policy_rule](./okta_auth_server_policy_rule) Supports the management of Okta Authorization servers policy rules.
+* [okta_auth_server_scope](./okta_auth_server_scope) Supports the management of Okta Authorization servers scopes.
+* [okta_auth_server_claim](./okta_auth_server_claim) Supports the management of Okta Authorization servers claims.
 
 ## Notes
 
