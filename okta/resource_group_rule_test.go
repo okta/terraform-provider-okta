@@ -8,15 +8,18 @@ import (
 	"github.com/okta/okta-sdk-golang/okta/query"
 )
 
-func sweepGroups(client *testClient) error {
-	// Should never need to deal with pagination, limit is 10,000 by default
-	groups, _, err := client.oktaClient.Group.ListGroups(&query.Params{Q: testResourcePrefix})
+func sweepGroupRules(client *testClient) error {
+	// Should never need to deal with pagination
+	rules, _, err := client.oktaClient.Group.ListRules(&query.Params{Limit: 300})
 	if err != nil {
 		return err
 	}
 
-	for _, s := range groups {
-		if _, err := client.oktaClient.Group.DeleteGroup(s.Id); err != nil {
+	for _, s := range rules {
+		if _, err := client.oktaClient.Group.DeactivateRule(s.Id); err != nil {
+			return err
+		}
+		if _, err := client.oktaClient.Group.DeleteRule(s.Id, nil); err != nil {
 			return err
 		}
 
@@ -24,9 +27,9 @@ func sweepGroups(client *testClient) error {
 	return nil
 }
 
-func TestAccOktaGroupsCreate(t *testing.T) {
+func TestAccOktaGroupRuleCrud(t *testing.T) {
 	ri := acctest.RandInt()
-	resourceName := buildResourceFQN(oktaGroup, ri)
+	resourceName := buildResourceFQN(groupRule, ri)
 	mgr := newFixtureManager("okta_group")
 	config := mgr.GetFixtures("okta_group.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("okta_group_updated.tf", ri, t)
@@ -37,11 +40,15 @@ func TestAccOktaGroupsCreate(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "testgroupdifferent"),
+				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "testgroupdifferent")),
+					resource.TestCheckResourceAttr(resourceName, "name", "testgroupdifferent"),
+				),
 			},
 		},
 	})

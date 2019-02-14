@@ -7,10 +7,25 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/okta/okta-sdk-golang/okta/query"
+
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
+
+func sweepUsers(client *testClient) error {
+	users, _, err := client.oktaClient.User.ListUsers(&query.Params{Q: testResourcePrefix})
+	if err != nil {
+		return err
+	}
+
+	for _, u := range users {
+		// Straight up ignore errors here since we are sweeping, no reason to blow up
+		ensureUserDelete(u.Id, u.Status, client.oktaClient)
+	}
+	return nil
+}
 
 func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 	ri := acctest.RandInt()

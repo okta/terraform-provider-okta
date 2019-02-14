@@ -408,25 +408,24 @@ func hasProfileChange(d *schema.ResourceData) bool {
 }
 
 func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] Delete User %v", d.Get("login").(string))
-	client := m.(*Config).oktaClient
+	return ensureUserDelete(d.Id(), d.Get("status").(string), getOktaClientFromMetadata(m))
+}
 
+func ensureUserDelete(id, status string, client *okta.Client) error {
 	// only deprovisioned users can be deleted fully from okta
 	// make two passes on the user if they aren't deprovisioned already to deprovision them first
 	passes := 2
 
-	if d.Get("status") == "DEPROVISIONED" {
+	if status == "DEPROVISIONED" {
 		passes = 1
 	}
 
 	for i := 0; i < passes; i++ {
-		_, err := client.User.DeactivateOrDeleteUser(d.Id())
-
+		_, err := client.User.DeactivateOrDeleteUser(id)
 		if err != nil {
-			return fmt.Errorf("[ERROR] Error Deleting User in Okta: %v", err)
+			return fmt.Errorf("Failed to deprovision or delete user from Okta: %v", err)
 		}
 	}
-
 	return nil
 }
 
