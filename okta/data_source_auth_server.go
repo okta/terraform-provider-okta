@@ -9,7 +9,7 @@ import (
 
 func dataSourceAuthServer() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceAppRead,
+		Read: dataSourceAuthServerRead,
 
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
@@ -23,7 +23,7 @@ func dataSourceAuthServer() *schema.Resource {
 			"audiences": &schema.Schema{
 				Type:     schema.TypeSet,
 				Computed: true,
-				Elem:     schema.TypeString,
+				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"kid": &schema.Schema{
 				Type:     schema.TypeString,
@@ -38,6 +38,10 @@ func dataSourceAuthServer() *schema.Resource {
 				Computed: true,
 			},
 			"credentials_rotation_mode": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"status": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -62,6 +66,7 @@ func dataSourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("kid", authServer.Credentials.Signing.Kid)
 	d.Set("credentials_next_rotation", authServer.Credentials.Signing.NextRotation)
 	d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated)
+	d.Set("status", authServer.Status)
 
 	return nil
 }

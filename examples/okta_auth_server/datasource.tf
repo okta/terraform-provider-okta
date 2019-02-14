@@ -5,5 +5,5 @@ resource "okta_auth_server" "test" {
 }
 
 data "okta_auth_server" "test" {
-  name = "testAcc_%[1]d"
+  name = "${okta_auth_server.test.name}"
 }

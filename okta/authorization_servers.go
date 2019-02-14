@@ -17,6 +17,7 @@ type AuthorizationServer struct {
 	Description string                 `json:"description,omitempty"`
 	Name        string                 `json:"name,omitempty"`
 	Id          string                 `json:"id,omitempty"`
+	Status      string                 `json:"status,omitempty"`
 }
 
 type AuthServerCredentials struct {
