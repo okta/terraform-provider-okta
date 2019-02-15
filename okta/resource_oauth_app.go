@@ -119,19 +119,19 @@ func resourceOAuthApp() *schema.Resource {
 				Description: "URI that initiates login.",
 			},
 			"redirect_uris": &schema.Schema{
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
 				Description: "List of URIs for use in the redirect-based flow. This is required for all application types except service.",
 			},
 			"post_logout_redirect_uris": &schema.Schema{
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
 				Description: "List of URIs for redirection after logout",
 			},
 			"response_types": &schema.Schema{
-				Type: schema.TypeList,
+				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
 					ValidateFunc:     validation.StringInSlice([]string{"code", "token", "id_token"}, false),
@@ -142,7 +142,7 @@ func resourceOAuthApp() *schema.Resource {
 				Description:      "List of OAuth 2.0 response type strings.",
 			},
 			"grant_types": &schema.Schema{
-				Type: schema.TypeList,
+				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 					ValidateFunc: validation.StringInSlice(
@@ -255,10 +255,10 @@ func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	return setNonPrimitives(d, map[string]interface{}{
-		"redirect_uris":             app.Settings.OauthClient.RedirectUris,
-		"response_types":            app.Settings.OauthClient.ResponseTypes,
-		"grant_types":               app.Settings.OauthClient.GrantTypes,
-		"post_logout_redirect_uris": app.Settings.OauthClient.PostLogoutRedirectUris,
+		"redirect_uris":             convertStringSetToInterface(app.Settings.OauthClient.RedirectUris),
+		"response_types":            convertStringSetToInterface(app.Settings.OauthClient.ResponseTypes),
+		"grant_types":               convertStringSetToInterface(app.Settings.OauthClient.GrantTypes),
+		"post_logout_redirect_uris": convertStringSetToInterface(app.Settings.OauthClient.PostLogoutRedirectUris),
 	})
 }
 
@@ -308,8 +308,8 @@ func buildOAuthApp(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 	// Need to a bool pointer, it appears the Okta SDK uses this as a way to avoid false being omitted.
 	keyRotation := d.Get("auto_key_rotation").(bool)
 	appType := d.Get("type").(string)
-	grantTypes := convertInterfaceToStringArr(d.Get("grant_types"))
-	responseTypes := convertInterfaceToStringArrNullable(d.Get("response_types"))
+	grantTypes := convertInterfaceToStringSet(d.Get("grant_types"))
+	responseTypes := convertInterfaceToStringSetNullable(d.Get("response_types"))
 
 	// If grant_types are not set, we default to the bare minimum.
 	if len(grantTypes) < 1 {
@@ -353,8 +353,8 @@ func buildOAuthApp(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 			InitiateLoginUri:       d.Get("login_uri").(string),
 			LogoUri:                d.Get("logo_uri").(string),
 			PolicyUri:              d.Get("policy_uri").(string),
-			RedirectUris:           convertInterfaceToStringArrNullable(d.Get("redirect_uris")),
-			PostLogoutRedirectUris: convertInterfaceToStringArrNullable(d.Get("post_logout_redirect_uris")),
+			RedirectUris:           convertInterfaceToStringSetNullable(d.Get("redirect_uris")),
+			PostLogoutRedirectUris: convertInterfaceToStringSetNullable(d.Get("post_logout_redirect_uris")),
 			ResponseTypes:          responseTypes,
 			TosUri:                 d.Get("tos_uri").(string),
 			IssuerMode:             d.Get("issuer_mode").(string),

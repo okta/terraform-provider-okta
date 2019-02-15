@@ -214,7 +214,7 @@ func resourceSamlApp() *schema.Resource {
 				ValidateFunc: validateIsURL,
 			},
 			"features": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "features to enable",
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -350,7 +350,7 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("digest_algorithm", app.Settings.SignOn.DigestAlgorithm)
 	d.Set("honor_force_authn", app.Settings.SignOn.HonorForceAuthn)
 	d.Set("authn_context_class_ref", app.Settings.SignOn.AuthnContextClassRef)
-	d.Set("features", app.Features)
+	d.Set("features", convertStringSetToInterface(app.Features))
 	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
@@ -476,7 +476,7 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 		settings := okta.ApplicationSettingsApplication(payload)
 		app.Settings.App = &settings
 	}
-	app.Features = convertInterfaceToStringArr(d.Get("features"))
+	app.Features = convertInterfaceToStringSet(d.Get("features"))
 	app.Settings.SignOn = &okta.SamlApplicationSettingsSignOn{
 		DefaultRelayState:     d.Get("default_relay_state").(string),
 		SsoAcsUrl:             d.Get("sso_url").(string),
