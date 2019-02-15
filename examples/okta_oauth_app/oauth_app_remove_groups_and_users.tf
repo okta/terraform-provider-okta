@@ -1,8 +1,8 @@
-resource "okta_group" "testAcc_group_%[1]d" {
-  name = "testAcc-%[1]d"
+resource "okta_group" "group" {
+  name = "testAcc_%[1]d"
 }
 
-resource "okta_user" "testAcc_user_%[1]d" {
+resource "okta_user" "user" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "blah"
