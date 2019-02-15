@@ -1,4 +1,4 @@
-resource "okta_oauth_app" "testAcc_%[1]d" {
+resource "okta_oauth_app" "test" {
   label          = "testAcc_%[1]d"
   status         = "INACTIVE"
   type           = "browser"

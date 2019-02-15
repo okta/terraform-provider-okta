@@ -18,6 +18,8 @@ func resourceSecurePasswordStoreApp() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
+		// For those familiar with Terraform schemas be sure to check the base application schema and/or
+		// the examples in the documentation
 		Schema: buildSwaAppSchema(map[string]*schema.Schema{
 			"password_field": &schema.Schema{
 				Type:        schema.TypeString,

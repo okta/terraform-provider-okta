@@ -18,7 +18,7 @@ func TestAccOktaOAuthApplication(t *testing.T) {
 	mgr := newFixtureManager(oAuthApp)
 	config := mgr.GetFixtures("oauth_app.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("oauth_app_updated.tf", ri, t)
-	resourceName := buildResourceFQN(oAuthApp, ri)
+	resourceName := fmt.Sprintf("%s.test", oAuthApp)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -32,9 +32,9 @@ func TestAccOktaOAuthApplication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "web"),
-					testCheckResourceSliceAttr(resourceName, "grant_types", []string{implicit, authorizationCode}),
-					testCheckResourceSliceAttr(resourceName, "redirect_uris", []string{"http://d.com/"}),
-					testCheckResourceSliceAttr(resourceName, "response_types", []string{"code", "token", "id_token"}),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_uris.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "response_types.#", "1"),
 				),
 			},
 			{
@@ -44,7 +44,8 @@ func TestAccOktaOAuthApplication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
-					testCheckResourceSliceAttr(resourceName, "grant_types", []string{implicit}),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "1"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
 				),
 			},
 		},
@@ -143,8 +144,7 @@ func TestAccOktaOAuthApplicationUserGroups(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "users.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "login_uri", "http://test.com"),
-					testCheckResourceSliceAttr(resourceName, "post_logout_redirect_uris", []string{"http://d.com/post"}),
-					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
+					resource.TestCheckResourceAttr(resourceName, "post_logout_redirect_uris.#", "1"),
 				),
 			},
 			{
@@ -172,7 +172,7 @@ func TestAccOktaOAuthApplicationBadGrantTypes(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
-				ExpectError: regexp.MustCompile(`failed conditional validation for field "grant_types" of type "service", it can contain client_credentials, received implicit`),
+				ExpectError: regexp.MustCompile(`failed conditional validation for field "grant_types" of type "service", it can contain client_credentials, implicit and must contain client_credentials, received implicit`),
 			},
 		},
 	})

@@ -41,6 +41,8 @@ func resourceSamlApp() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
+		// For those familiar with Terraform schemas be sure to check the base application schema and/or
+		// the examples in the documentation
 		Schema: buildAppSchema(map[string]*schema.Schema{
 			"preconfigured_app": {
 				Type:        schema.TypeString,

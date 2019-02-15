@@ -54,7 +54,10 @@ var appGrantTypeMap = map[string]*applicationMap{
 		ValidGrantTypes: []string{implicit},
 	},
 	"service": &applicationMap{
-		ValidGrantTypes: []string{clientCredentials},
+		ValidGrantTypes: []string{clientCredentials, implicit},
+		RequiredGrantTypes: []string{
+			clientCredentials,
+		},
 	},
 }
 
@@ -78,6 +81,8 @@ func resourceOAuthApp() *schema.Resource {
 			}
 			return nil
 		},
+		// For those familiar with Terraform schemas be sure to check the base application schema and/or
+		// the examples in the documentation
 		Schema: buildAppSchema(map[string]*schema.Schema{
 			"type": &schema.Schema{
 				Type:         schema.TypeString,
@@ -96,6 +101,7 @@ func resourceOAuthApp() *schema.Resource {
 				Optional: true,
 				// No ForceNew to avoid recreating when going from false => true
 				Description: "This tells the provider not to persist the application's secret to state. If this is ever changes from true => false your app will be recreated.",
+				Default:     false,
 			},
 			"client_secret": &schema.Schema{
 				Type:        schema.TypeString,
@@ -151,9 +157,8 @@ func resourceOAuthApp() *schema.Resource {
 					Type:         schema.TypeString,
 					ValidateFunc: validation.StringInSlice([]string{"code", "token", "id_token"}, false),
 				},
-				Optional:         true,
-				DiffSuppressFunc: suppressDefaultedArrayDiff,
-				Description:      "List of OAuth 2.0 response type strings.",
+				Optional:    true,
+				Description: "List of OAuth 2.0 response type strings.",
 			},
 			"grant_types": &schema.Schema{
 				Type: schema.TypeSet,
@@ -163,11 +168,9 @@ func resourceOAuthApp() *schema.Resource {
 						[]string{authorizationCode, implicit, password, refreshToken, clientCredentials},
 						false,
 					),
-					DiffSuppressFunc: suppressDefaultedDiff,
 				},
-				Optional:         true,
-				Description:      "List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.",
-				DiffSuppressFunc: suppressDefaultedArrayDiff,
+				Optional:    true,
+				Description: "List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.",
 			},
 			// "Early access" properties.. looks to be in beta which requires opt-in per account
 			"tos_uri": &schema.Schema{
@@ -269,7 +272,7 @@ func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("issuer_mode", app.Settings.OauthClient.IssuerMode)
 
 	// If this is ever changed omit it.
-	if !d.Get("omit_secret").(bool) {
+	if d.Get("omit_secret").(bool) {
 		d.Set("client_secret", "")
 	}
 

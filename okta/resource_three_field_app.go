@@ -17,6 +17,8 @@ func resourceThreeFieldApp() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
+		// For those familiar with Terraform schemas be sure to check the base application schema and/or
+		// the examples in the documentation
 		Schema: buildSwaAppSchema(map[string]*schema.Schema{
 			"button_selector": &schema.Schema{
 				Type:        schema.TypeString,
