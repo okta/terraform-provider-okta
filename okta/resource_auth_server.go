@@ -127,6 +127,7 @@ func resourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated)
 	d.Set("description", authServer.Description)
 	d.Set("name", authServer.Name)
+	d.Set("status", authServer.Status)
 
 	// Do not sync these unless the issuer mode is specified since it is an EA feature and is computed in some cases
 	if authServer.IssuerMode != "" {
