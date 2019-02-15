@@ -1,4 +1,4 @@
 resource "okta_group" "testAcc_%[1]d" {
-  name        = "testgroupdifferent"
+  name        = "testAccDifferent"
   description = "testing, testing"
 }

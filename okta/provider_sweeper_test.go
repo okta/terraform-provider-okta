@@ -30,6 +30,10 @@ func TestMain(m *testing.M) {
 	setupSweeper("okta_*_apps", deleteTestApps)
 	setupSweeper(mfaPolicyRule, deleteMfaPolicyRules)
 	setupSweeper(authServer, deleteAuthServers)
+	setupSweeper(groupRule, sweepGroupRules)
+	setupSweeper(oktaGroup, sweepGroups)
+	setupSweeper(oktaUser, sweepUsers)
+	setupSweeper(userSchema, sweepUserSchema)
 	resource.TestMain(m)
 }
 

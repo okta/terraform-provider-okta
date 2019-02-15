@@ -17,6 +17,7 @@ type (
 		Name                 string           `json:"name,omitempty"`
 		Id                   string           `json:"id,omitempty"`
 		Conditions           *ClaimConditions `json:"conditions,omitempty"`
+		GroupFilterType      string           `json:"group_filter_type,omitempty"`
 	}
 
 	ClaimConditions struct {

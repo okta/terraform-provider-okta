@@ -24,6 +24,7 @@ const (
 	mfaPolicyRule          = "okta_mfa_policy_rule"
 	oAuthApp               = "okta_oauth_app"
 	oktaGroup              = "okta_group"
+	groupRule              = "okta_group_rule"
 	oktaUser               = "okta_user"
 	passwordPolicy         = "okta_password_policy"
 	passwordPolicyRule     = "okta_password_policy_rule"
@@ -99,6 +100,7 @@ func Provider() terraform.ResourceProvider {
 			threeFieldApp:          resourceThreeFieldApp(),
 			swaApp:                 resourceSwaApp(),
 			factor:                 resourceFactor(),
+			groupRule:              resourceGroupRule(),
 			authServer:             resourceAuthServer(),
 			authServerClaim:        resourceAuthServerClaim(),
 			authServerPolicy:       resourceAuthServerPolicy(),
