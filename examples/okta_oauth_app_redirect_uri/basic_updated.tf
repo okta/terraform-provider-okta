@@ -4,8 +4,10 @@ resource "okta_oauth_app" "test" {
   type           = "web"
   grant_types    = ["authorization_code"]
   response_types = ["code"]
+
   // Okta requires at least one redirect URI to create an app
   redirect_uris = ["myapp://callback"]
+
   // Since Okta forces us to create it with a redirect URI we have to ignore future changes, they will be detected as config drift.
   lifecycle {
     ignore_changes = ["redirect_uri"]
