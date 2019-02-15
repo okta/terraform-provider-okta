@@ -23,6 +23,7 @@ const (
 	mfaPolicy              = "okta_mfa_policy"
 	mfaPolicyRule          = "okta_mfa_policy_rule"
 	oAuthApp               = "okta_oauth_app"
+	oAuthAppRedirectUri    = "okta_oauth_app_redirect_uri"
 	oktaGroup              = "okta_group"
 	groupRule              = "okta_group_rule"
 	oktaUser               = "okta_user"
@@ -36,6 +37,7 @@ const (
 	threeFieldApp          = "okta_three_field_app"
 	trustedOrigin          = "okta_trusted_origin"
 	userSchema             = "okta_user_schema"
+	userBaseSchema         = "okta_user_base_schema"
 )
 
 // Provider establishes a client connection to an okta site
@@ -94,6 +96,7 @@ func Provider() terraform.ResourceProvider {
 			userSchema:             resourceUserSchema(),
 			oktaUser:               resourceUser(),
 			oAuthApp:               resourceOAuthApp(),
+			oAuthAppRedirectUri:    resourceOAuthAppRedirectUri(),
 			samlApp:                resourceSamlApp(),
 			autoLoginApp:           resourceAutoLoginApp(),
 			securePasswordStoreApp: resourceSecurePasswordStoreApp(),
