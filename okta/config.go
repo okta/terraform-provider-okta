@@ -5,6 +5,7 @@ import (
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/okta/cache"
 )
 
 // Config is a struct containing our provider schema values
@@ -18,6 +19,7 @@ type Config struct {
 
 	articulateOktaClient *articulateOkta.Client
 	oktaClient           *okta.Client
+	supplementClient     *ApiSupplement
 }
 
 func (c *Config) loadAndValidate() error {
@@ -39,6 +41,9 @@ func (c *Config) loadAndValidate() error {
 		WithBackoff(true).
 		WithRetries(int32(c.retryCount))
 	client := okta.NewClient(config, nil, nil)
+	c.supplementClient = &ApiSupplement{
+		requestExecutor: okta.NewRequestExecutor(nil, cache.NewNoOpCache(), config),
+	}
 
 	// add the Okta SDK client object to Config
 	c.oktaClient = client

@@ -5,14 +5,18 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/terraform/helper/validation"
-
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/hashicorp/terraform/terraform"
 )
 
 // Resource names, defined in place, used throughout the provider and tests
 const (
+	authServer             = "okta_auth_server"
+	authServerPolicy       = "okta_auth_server_policy"
+	authServerPolicyRule   = "okta_auth_server_policy_rule"
+	authServerClaim        = "okta_auth_server_claim"
+	authServerScope        = "okta_auth_server_scope"
 	autoLoginApp           = "okta_auto_login_app"
 	factor                 = "okta_factor"
 	identityProvider       = "okta_identity_provider"
@@ -95,12 +99,18 @@ func Provider() terraform.ResourceProvider {
 			threeFieldApp:          resourceThreeFieldApp(),
 			swaApp:                 resourceSwaApp(),
 			factor:                 resourceFactor(),
+			authServer:             resourceAuthServer(),
+			authServerClaim:        resourceAuthServerClaim(),
+			authServerPolicy:       resourceAuthServerPolicy(),
+			authServerPolicyRule:   resourceAuthServerPolicyRule(),
+			authServerScope:        resourceAuthServerScope(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
+			authServer:              dataSourceAuthServer(),
 			"okta_everyone_group":   dataSourceEveryoneGroup(),
 			"okta_default_policies": deprecatedPolicies,
 			"okta_default_policy":   dataSourceDefaultPolicies(),
-			"okta_policy":           dataSourcePolicies(),
+			"okta_policy":           dataSourcePolicy(),
 			"okta_group":            dataSourceGroup(),
 			"okta_app":              dataSourceApp(),
 			"okta_user":             dataSourceUser(),

@@ -1,5 +1,5 @@
 resource "okta_user_schema" "testAcc_%[1]d" {
-  index       = "testAcc%[1]d"
+  index       = "testAcc_%[1]d"
   title       = "terraform acceptance test updated"
   type        = "string"
   description = "terraform acceptance test updated"

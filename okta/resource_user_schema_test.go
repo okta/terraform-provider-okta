@@ -27,7 +27,7 @@ func TestAccOktaUserSchemas(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test"),
@@ -47,7 +47,7 @@ func TestAccOktaUserSchemas(t *testing.T) {
 				Config: updated,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test updated"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test updated"),
@@ -82,7 +82,7 @@ func TestAccOktaUserSchemas_arrayString(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test"),
@@ -96,7 +96,7 @@ func TestAccOktaUserSchemas_arrayString(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test updated"),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test updated"),
@@ -170,7 +170,7 @@ func testUserSchemaExists(index string) (bool, error) {
 func testOktaUserSchemas_arrayString(rInt int) string {
 	return fmt.Sprintf(`
 resource "okta_user_schema" "testAcc_%[1]d" {
-  index     = "testAcc%[1]d"
+  index     = "testAcc_%[1]d"
   title     = "terraform acceptance test"
   type      = "array"
   description = "terraform acceptance test"
@@ -185,7 +185,7 @@ resource "okta_user_schema" "testAcc_%[1]d" {
 func testOktaUserSchemas_arrayStringUpdated(rInt int) string {
 	return fmt.Sprintf(`
 resource "okta_user_schema" "testAcc_%[1]d" {
-  index     = "testAcc%[1]d"
+  index     = "testAcc_%[1]d"
   title     = "terraform acceptance test updated"
   type      = "array"
   description = "terraform acceptance test updated"
