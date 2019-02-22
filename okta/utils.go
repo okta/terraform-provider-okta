@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 	"unicode"
 
 	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/peterhellberg/link"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -245,6 +247,23 @@ func ensureNotDefault(d *schema.ResourceData, t string) error {
 	}
 
 	return nil
+}
+
+// Grabs after link from link headers if it exists
+func getAfterParam(res *okta.Response) string {
+	linkList := link.Parse(res.Header.Get("link"))
+	for _, l := range linkList {
+		if l.Rel == "next" {
+			parsedURL, err := url.Parse(l.URI)
+			if err != nil {
+				continue
+			}
+			q := parsedURL.Query()
+			return q.Get("after")
+		}
+	}
+
+	return ""
 }
 
 // Useful shortcut for suppressing errors from Okta's SDK when a resource does not exist. Usually used during deletion

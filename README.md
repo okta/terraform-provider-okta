@@ -97,7 +97,7 @@ $ $GOPATH/bin/terraform-provider-okta
 ...
 ```
 
-In order to test the provider, you can simply run `make test`.
+In order to test the provider, you can simply run `make test`. The acceptance tests require an API token and a corresponding Okta org, if you use dotenv, you can `cp .env.sample .env` and add your Okta settings there, and prefix make test with `dotenv`.
 
 ```sh
 $ make test

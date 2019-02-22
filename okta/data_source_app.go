@@ -15,12 +15,17 @@ func dataSourceApp() *schema.Resource {
 			"id": &schema.Schema{
 				Type:          schema.TypeString,
 				Optional:      true,
-				ConflictsWith: []string{"label"},
+				ConflictsWith: []string{"label", "label_prefix"},
 			},
 			"label": &schema.Schema{
 				Type:          schema.TypeString,
 				Optional:      true,
-				ConflictsWith: []string{"id"},
+				ConflictsWith: []string{"id", "label_prefix"},
+			},
+			"label_prefix": &schema.Schema{
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"id", "label"},
 			},
 			"description": &schema.Schema{
 				Type:     schema.TypeString,
@@ -41,16 +46,19 @@ func dataSourceApp() *schema.Resource {
 func dataSourceAppRead(d *schema.ResourceData, m interface{}) error {
 	id := d.Get("id").(string)
 	label := d.Get("label").(string)
+	labelPrefix := d.Get("label_prefix").(string)
 
-	if id == "" && label == "" {
-		return errors.New("you must provide either an id or label to search with")
+	if id == "" && label == "" && labelPrefix == "" {
+		return errors.New("you must provide either an label_prefix, id, or label to search with")
 	}
-	appList, err := listApps(m.(*Config), &appFilters{ID: id, Label: label})
+	appList, err := listApps(m.(*Config), &appFilters{ID: id, Label: label, LabelPrefix: labelPrefix})
 	if err != nil {
 		return err
 	}
 	if len(appList) < 1 {
-		return fmt.Errorf("No application found with provided id or label. ID: %s, Label %s", id, label)
+		return fmt.Errorf(`No application found with provided filter. id: "%s", label: "%s", label_prefix: "%s"`, id, label, labelPrefix)
+	} else if len(appList) > 1 {
+		fmt.Println("Found multiple applications with the criteria supplied, using the first one, sorted by creation date.")
 	}
 	app := appList[0]
 	d.SetId(app.ID)
