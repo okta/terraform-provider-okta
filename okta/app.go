@@ -453,7 +453,6 @@ func collectApps(reqExe *okta.RequestExecutor, filters *appFilters, results *sea
 	results.Apps = append(results.Apps, filterApp(appList, filters)...)
 
 	if after := getAfterParam(res); after != "" && !filters.shouldShortCircuit(results.Apps) {
-		fmt.Printf("%s %+v --\n", after, filters)
 		qp.After = after
 		return collectApps(reqExe, filters, results, qp)
 	}
