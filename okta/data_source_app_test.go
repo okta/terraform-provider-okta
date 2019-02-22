@@ -22,7 +22,7 @@ func TestAccDataSourceApp(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(fmt.Sprintf("okta_oauth_app.testAcc_%d", ri), "id"),
+					resource.TestCheckResourceAttrSet("okta_oauth_app.test", "id"),
 					resource.TestCheckResourceAttr("data.okta_app.test", "label", fmt.Sprintf("testAcc_%d", ri)),
 					resource.TestCheckResourceAttr("data.okta_app.test2", "label", fmt.Sprintf("testAcc_%d", ri)),
 					resource.TestCheckResourceAttr("data.okta_app.test3", "label", fmt.Sprintf("testAcc_%d", ri)),

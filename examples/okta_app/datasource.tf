@@ -1,5 +1,5 @@
 resource "okta_oauth_app" "test" {
-  label          = "Stuff and such"
+  label          = "testAcc_%[1]d"
   type           = "web"
   grant_types    = ["implicit", "authorization_code"]
   redirect_uris  = ["http://d.com/"]
@@ -15,5 +15,5 @@ data "okta_app" "test2" {
 }
 
 data "okta_app" "test3" {
-  label_prefix = "Stuff"
+  label_prefix = "${okta_oauth_app.test.label}"
 }

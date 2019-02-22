@@ -432,7 +432,7 @@ func setAppSettings(d *schema.ResourceData, settings *okta.ApplicationSettingsAp
 
 func listApps(m interface{}, filters *appFilters) ([]*appID, error) {
 	result := &searchResults{Apps: []*appID{}}
-	return nil, collectApps(getSupplementFromMetadata(m).requestExecutor, filters, result, &query.Params{})
+	return result.Apps, collectApps(getSupplementFromMetadata(m).requestExecutor, filters, result, &query.Params{})
 }
 
 // Recursively list apps until no next links are returned
@@ -455,13 +455,14 @@ func collectApps(reqExe *okta.RequestExecutor, filters *appFilters, results *sea
 }
 
 func filterApp(appList []*appID, filter *appFilters) []*appID {
+	// No filters, return it all!
+	if filter.Label == "" && filter.ID == "" && filter.LabelPrefix == "" {
+		return appList
+	}
+
 	filteredList := []*appID{}
 	for _, app := range appList {
-		if filter.ID == app.ID {
-			filteredList = append(filteredList, app)
-		}
-
-		if filter.Label == app.Label {
+		if (filter.ID != "" && filter.ID == app.ID) || (filter.Label != "" && filter.Label == app.Label) {
 			filteredList = append(filteredList, app)
 		}
 
@@ -469,9 +470,6 @@ func filterApp(appList []*appID, filter *appFilters) []*appID {
 			filteredList = append(filteredList, app)
 		}
 
-		if filter.Label == "" && filter.ID == "" && filter.LabelPrefix == "" {
-			filteredList = append(filteredList, app)
-		}
 	}
 	return filteredList
 }
