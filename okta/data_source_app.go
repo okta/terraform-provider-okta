@@ -27,6 +27,12 @@ func dataSourceApp() *schema.Resource {
 				Optional:      true,
 				ConflictsWith: []string{"id", "label"},
 			},
+			"active_only": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+				Description: "Search only ACTIVE applications.",
+			},
 			"description": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
@@ -47,11 +53,16 @@ func dataSourceAppRead(d *schema.ResourceData, m interface{}) error {
 	id := d.Get("id").(string)
 	label := d.Get("label").(string)
 	labelPrefix := d.Get("label_prefix").(string)
+	filters := &appFilters{ID: id, Label: label, LabelPrefix: labelPrefix}
+
+	if d.Get("active_only").(bool) {
+		filters.ApiFilter = `status eq "ACTIVE"`
+	}
 
 	if id == "" && label == "" && labelPrefix == "" {
 		return errors.New("you must provide either an label_prefix, id, or label to search with")
 	}
-	appList, err := listApps(m.(*Config), &appFilters{ID: id, Label: label, LabelPrefix: labelPrefix})
+	appList, err := listApps(m.(*Config), filters)
 	if err != nil {
 		return err
 	}

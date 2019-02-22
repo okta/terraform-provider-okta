@@ -251,7 +251,11 @@ func ensureNotDefault(d *schema.ResourceData, t string) error {
 
 // Grabs after link from link headers if it exists
 func getAfterParam(res *okta.Response) string {
-	linkList := link.Parse(res.Header.Get("link"))
+	if res == nil {
+		return ""
+	}
+
+	linkList := link.ParseHeader(res.Header)
 	for _, l := range linkList {
 		if l.Rel == "next" {
 			parsedURL, err := url.Parse(l.URI)
