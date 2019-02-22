@@ -2,6 +2,7 @@ package okta
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 	"sync"
 
@@ -21,6 +22,7 @@ type (
 	}
 
 	appFilters struct {
+		ApiFilter         string
 		ID                string
 		Label             string
 		LabelPrefix       string
@@ -432,21 +434,25 @@ func setAppSettings(d *schema.ResourceData, settings *okta.ApplicationSettingsAp
 
 func listApps(m interface{}, filters *appFilters) ([]*appID, error) {
 	result := &searchResults{Apps: []*appID{}}
-	return result.Apps, collectApps(getSupplementFromMetadata(m).requestExecutor, filters, result, &query.Params{})
+	qp := &query.Params{Limit: 200, Filter: filters.ApiFilter}
+	return result.Apps, collectApps(getSupplementFromMetadata(m).requestExecutor, filters, result, qp)
 }
 
 // Recursively list apps until no next links are returned
 func collectApps(reqExe *okta.RequestExecutor, filters *appFilters, results *searchResults, qp *query.Params) error {
-	req, err := reqExe.NewRequest("GET", "/api/v1/apps", qp)
+	req, err := reqExe.NewRequest("GET", fmt.Sprintf("/api/v1/apps?%s", qp.String()), nil)
 	if err != nil {
 		return err
 	}
 	var appList []*appID
 	res, err := reqExe.Do(req, &appList)
+	if err != nil {
+		return err
+	}
 
 	results.Apps = append(results.Apps, filterApp(appList, filters)...)
 
-	if after := getAfterParam(res); after != "" && filters.shouldShortCircuit(results.Apps) {
+	if after := getAfterParam(res); after != "" && !filters.shouldShortCircuit(results.Apps) {
 		qp.After = after
 		return collectApps(reqExe, filters, results, qp)
 	}
