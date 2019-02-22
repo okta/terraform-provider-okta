@@ -2,8 +2,6 @@ package okta
 
 import (
 	"encoding/json"
-	"net/url"
-	"strconv"
 	"strings"
 	"sync"
 
@@ -11,39 +9,28 @@ import (
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
-	"github.com/peterhellberg/link"
 )
 
-type appID struct {
-	ID          string `json:"id"`
-	Label       string `json:"label"`
-	Name        string `json:"name"`
-	Status      string `json:"status"`
-	Description string `json:"description"`
-}
-
-type appFilters struct {
-	ID                string
-	Label             string
-	LabelPrefix       string
-	ShortCircuitCount int
-}
-
-func (f *appFilters) shouldShortCircuit(appList []*appID) bool {
-	if f.LabelPrefix != "" {
-		return false
+type (
+	appID struct {
+		ID          string `json:"id"`
+		Label       string `json:"label"`
+		Name        string `json:"name"`
+		Status      string `json:"status"`
+		Description string `json:"description"`
 	}
 
-	if f.ID != "" && f.Label != "" {
-		return len(appList) > 1
+	appFilters struct {
+		ID                string
+		Label             string
+		LabelPrefix       string
+		ShortCircuitCount int
 	}
 
-	if f.ID != "" || f.Label != "" {
-		return len(appList) > 0
+	searchResults struct {
+		Apps []*appID
 	}
-
-	return false
-}
+)
 
 var appUserResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
@@ -443,48 +430,28 @@ func setAppSettings(d *schema.ResourceData, settings *okta.ApplicationSettingsAp
 	return d.Set("app_settings_json", string(payload))
 }
 
-func listApps(c *Config, filters *appFilters) ([]*appID, error) {
-	return collectApps([]*appID{}, &query.Params{}, c.supplementClient.requestExecutor, filters)
+func listApps(m interface{}, filters *appFilters) ([]*appID, error) {
+	result := &searchResults{Apps: []*appID{}}
+	return nil, collectApps(getSupplementFromMetadata(m).requestExecutor, filters, result, &query.Params{})
 }
 
 // Recursively list apps until no next links are returned
-func collectApps(apps []*appID, qp *query.Params, requestExecutor *okta.RequestExecutor, filters *appFilters) ([]*appID, error) {
-	req, err := requestExecutor.NewRequest("GET", "/api/v1/apps", nil)
+func collectApps(reqExe *okta.RequestExecutor, filters *appFilters, results *searchResults, qp *query.Params) error {
+	req, err := reqExe.NewRequest("GET", "/api/v1/apps", qp)
 	if err != nil {
-		return nil, err
+		return err
 	}
-
 	var appList []*appID
-	res, err := requestExecutor.Do(req, &appList)
-	if err != nil {
-		return nil, err
+	res, err := reqExe.Do(req, &appList)
+
+	results.Apps = append(results.Apps, filterApp(appList, filters)...)
+
+	if after := getAfterParam(res); after != "" && filters.shouldShortCircuit(results.Apps) {
+		qp.After = after
+		return collectApps(reqExe, filters, results, qp)
 	}
 
-	apps = append(apps, filterApp(appList, filters)...)
-	linkList := link.Parse(res.Header.Get("link"))
-	if linkList == nil {
-		return apps, nil
-	}
-	if filters.shouldShortCircuit(apps) {
-		return apps, nil
-	}
-
-	for _, l := range linkList {
-		if l.Rel == "next" {
-			parsedURL, err := url.Parse(l.URI)
-			if err != nil {
-				continue
-			}
-			q := parsedURL.Query()
-			qp.After = q.Get("after")
-			limit, err := strconv.ParseInt(q.Get("limit"), 10, 64)
-			if err == nil {
-				qp.Limit = limit
-			}
-			return collectApps(apps, qp, requestExecutor, filters)
-		}
-	}
-	return apps, err
+	return nil
 }
 
 func filterApp(appList []*appID, filter *appFilters) []*appID {
@@ -507,4 +474,20 @@ func filterApp(appList []*appID, filter *appFilters) []*appID {
 		}
 	}
 	return filteredList
+}
+
+func (f *appFilters) shouldShortCircuit(appList []*appID) bool {
+	if f.LabelPrefix != "" {
+		return false
+	}
+
+	if f.ID != "" && f.Label != "" {
+		return len(appList) > 1
+	}
+
+	if f.ID != "" || f.Label != "" {
+		return len(appList) > 0
+	}
+
+	return false
 }

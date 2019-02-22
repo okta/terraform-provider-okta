@@ -1,5 +1,5 @@
-resource "okta_oauth_app" "testAcc_%[1]d" {
-  label          = "testAcc_%[1]d"
+resource "okta_oauth_app" "test" {
+  label          = "Stuff and such"
   type           = "web"
   grant_types    = ["implicit", "authorization_code"]
   redirect_uris  = ["http://d.com/"]
@@ -7,9 +7,13 @@ resource "okta_oauth_app" "testAcc_%[1]d" {
 }
 
 data "okta_app" "test" {
-  label = "${okta_oauth_app.testAcc_%[1]d.label}"
+  label = "${okta_oauth_app.test.label}"
 }
 
 data "okta_app" "test2" {
-  id = "${okta_oauth_app.testAcc_%[1]d.id}"
+  id = "${okta_oauth_app.test.id}"
+}
+
+data "okta_app" "test3" {
+  label_prefix = "Stuff"
 }
