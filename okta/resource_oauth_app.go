@@ -54,7 +54,10 @@ var appGrantTypeMap = map[string]*applicationMap{
 		ValidGrantTypes: []string{implicit},
 	},
 	"service": &applicationMap{
-		ValidGrantTypes: []string{clientCredentials},
+		ValidGrantTypes: []string{clientCredentials, implicit},
+		RequiredGrantTypes: []string{
+			clientCredentials,
+		},
 	},
 }
 
@@ -68,7 +71,18 @@ func resourceOAuthApp() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
-
+		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
+			// Force new if omit_secret goes from true to false
+			if d.Id() != "" {
+				old, new := d.GetChange("omit_secret")
+				if old.(bool) == true && new.(bool) == false {
+					return d.ForceNew("omit_secret")
+				}
+			}
+			return nil
+		},
+		// For those familiar with Terraform schemas be sure to check the base application schema and/or
+		// the examples in the documentation
 		Schema: buildAppSchema(map[string]*schema.Schema{
 			"type": &schema.Schema{
 				Type:         schema.TypeString,
@@ -82,10 +96,17 @@ func resourceOAuthApp() *schema.Resource {
 				Computed:    true,
 				Description: "OAuth client ID.",
 			},
+			"omit_secret": &schema.Schema{
+				Type:     schema.TypeBool,
+				Optional: true,
+				// No ForceNew to avoid recreating when going from false => true
+				Description: "This tells the provider not to persist the application's secret to state. If this is ever changes from true => false your app will be recreated.",
+				Default:     false,
+			},
 			"client_secret": &schema.Schema{
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "OAuth client secret key.",
+				Description: "OAuth client secret key. This will be in plain text in your statefile unless you set omit_secret above.",
 			},
 			"token_endpoint_auth_method": &schema.Schema{
 				Type:     schema.TypeString,
@@ -119,41 +140,37 @@ func resourceOAuthApp() *schema.Resource {
 				Description: "URI that initiates login.",
 			},
 			"redirect_uris": &schema.Schema{
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
-				Description: "List of URIs for use in the redirect-based flow. This is required for all application types except service.",
+				Description: "List of URIs for use in the redirect-based flow. This is required for all application types except service. Note: see okta_oauth_app_redirect_uri for appending to this list in a decentralized way.",
 			},
 			"post_logout_redirect_uris": &schema.Schema{
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
 				Description: "List of URIs for redirection after logout",
 			},
 			"response_types": &schema.Schema{
-				Type: schema.TypeList,
+				Type: schema.TypeSet,
 				Elem: &schema.Schema{
-					Type:             schema.TypeString,
-					ValidateFunc:     validation.StringInSlice([]string{"code", "token", "id_token"}, false),
-					DiffSuppressFunc: suppressDefaultedDiff,
+					Type:         schema.TypeString,
+					ValidateFunc: validation.StringInSlice([]string{"code", "token", "id_token"}, false),
 				},
-				Optional:         true,
-				DiffSuppressFunc: suppressDefaultedArrayDiff,
-				Description:      "List of OAuth 2.0 response type strings.",
+				Optional:    true,
+				Description: "List of OAuth 2.0 response type strings.",
 			},
 			"grant_types": &schema.Schema{
-				Type: schema.TypeList,
+				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 					ValidateFunc: validation.StringInSlice(
 						[]string{authorizationCode, implicit, password, refreshToken, clientCredentials},
 						false,
 					),
-					DiffSuppressFunc: suppressDefaultedDiff,
 				},
-				Optional:         true,
-				Description:      "List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.",
-				DiffSuppressFunc: suppressDefaultedArrayDiff,
+				Optional:    true,
+				Description: "List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.",
 			},
 			// "Early access" properties.. looks to be in beta which requires opt-in per account
 			"tos_uri": &schema.Schema{
@@ -191,7 +208,7 @@ func resourceOAuthAppExists(d *schema.ResourceData, m interface{}) (bool, error)
 }
 
 func validateGrantTypes(d *schema.ResourceData) error {
-	grantTypeList := convertInterfaceToStringArr(d.Get("grant_types"))
+	grantTypeList := convertInterfaceToStringSet(d.Get("grant_types"))
 	appType := d.Get("type").(string)
 	appMap := appGrantTypeMap[appType]
 
@@ -216,6 +233,10 @@ func resourceOAuthAppCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	d.SetId(app.Id)
+	if !d.Get("omit_secret").(bool) {
+		// Needs to be set immediately, not provided again after this
+		d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
+	}
 	err = handleAppGroupsAndUsers(app.Id, d, m)
 
 	if err != nil {
@@ -238,8 +259,8 @@ func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("sign_on_mode", app.SignOnMode)
 	d.Set("label", app.Label)
 	d.Set("type", app.Settings.OauthClient.ApplicationType)
+	// Not setting client_secret, it is only provided on create for auth methods that require it
 	d.Set("client_id", app.Credentials.OauthClient.ClientId)
-	d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
 	d.Set("token_endpoint_auth_method", app.Credentials.OauthClient.TokenEndpointAuthMethod)
 	d.Set("auto_key_rotation", app.Credentials.OauthClient.AutoKeyRotation)
 	d.Set("consent_method", app.Settings.OauthClient.ConsentMethod)
@@ -250,16 +271,22 @@ func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
 	d.Set("issuer_mode", app.Settings.OauthClient.IssuerMode)
 
+	// If this is ever changed omit it.
+	if d.Get("omit_secret").(bool) {
+		d.Set("client_secret", "")
+	}
+
 	if err = syncGroupsAndUsers(app.Id, d, m); err != nil {
 		return err
 	}
+	aggMap := map[string]interface{}{
+		"redirect_uris":             convertStringSetToInterface(app.Settings.OauthClient.RedirectUris),
+		"response_types":            convertStringSetToInterface(app.Settings.OauthClient.ResponseTypes),
+		"grant_types":               convertStringSetToInterface(app.Settings.OauthClient.GrantTypes),
+		"post_logout_redirect_uris": convertStringSetToInterface(app.Settings.OauthClient.PostLogoutRedirectUris),
+	}
 
-	return setNonPrimitives(d, map[string]interface{}{
-		"redirect_uris":             app.Settings.OauthClient.RedirectUris,
-		"response_types":            app.Settings.OauthClient.ResponseTypes,
-		"grant_types":               app.Settings.OauthClient.GrantTypes,
-		"post_logout_redirect_uris": app.Settings.OauthClient.PostLogoutRedirectUris,
-	})
+	return setNonPrimitives(d, aggMap)
 }
 
 func resourceOAuthAppUpdate(d *schema.ResourceData, m interface{}) error {
@@ -269,16 +296,16 @@ func resourceOAuthAppUpdate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	app := buildOAuthApp(d, m)
-	_, _, err := client.Application.UpdateApplication(d.Id(), app)
-	if err != nil {
+	if _, _, err := client.Application.UpdateApplication(d.Id(), app); err != nil {
 		return err
 	}
 
 	desiredStatus := d.Get("status").(string)
-	err = setAppStatus(d, client, app.Status, desiredStatus)
-	err = handleAppGroupsAndUsers(app.Id, d, m)
+	if err := setAppStatus(d, client, app.Status, desiredStatus); err != nil {
+		return err
+	}
 
-	if err != nil {
+	if err := handleAppGroupsAndUsers(app.Id, d, m); err != nil {
 		return err
 	}
 
@@ -287,18 +314,16 @@ func resourceOAuthAppUpdate(d *schema.ResourceData, m interface{}) error {
 
 func resourceOAuthAppDelete(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	_, err := client.Application.DeactivateApplication(d.Id())
-	if err != nil {
-		return err
+
+	if d.Get("status").(string) == "ACTIVE" {
+		_, err := client.Application.DeactivateApplication(d.Id())
+		if err != nil {
+			return err
+		}
 	}
 
-	_, err = client.Application.DeleteApplication(d.Id())
-	if err != nil {
-		return err
-	}
-	d.SetId("")
-
-	return nil
+	_, err := client.Application.DeleteApplication(d.Id())
+	return err
 }
 
 func buildOAuthApp(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApplication {
@@ -308,8 +333,8 @@ func buildOAuthApp(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 	// Need to a bool pointer, it appears the Okta SDK uses this as a way to avoid false being omitted.
 	keyRotation := d.Get("auto_key_rotation").(bool)
 	appType := d.Get("type").(string)
-	grantTypes := convertInterfaceToStringArr(d.Get("grant_types"))
-	responseTypes := convertInterfaceToStringArrNullable(d.Get("response_types"))
+	grantTypes := convertInterfaceToStringSet(d.Get("grant_types"))
+	responseTypes := convertInterfaceToStringSetNullable(d.Get("response_types"))
 
 	// If grant_types are not set, we default to the bare minimum.
 	if len(grantTypes) < 1 {
@@ -340,7 +365,6 @@ func buildOAuthApp(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 		OauthClient: &okta.ApplicationCredentialsOAuthClient{
 			AutoKeyRotation:         &keyRotation,
 			ClientId:                d.Get("client_id").(string),
-			ClientSecret:            d.Get("client_secret").(string),
 			TokenEndpointAuthMethod: d.Get("token_endpoint_auth_method").(string),
 		},
 	}
@@ -353,8 +377,8 @@ func buildOAuthApp(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 			InitiateLoginUri:       d.Get("login_uri").(string),
 			LogoUri:                d.Get("logo_uri").(string),
 			PolicyUri:              d.Get("policy_uri").(string),
-			RedirectUris:           convertInterfaceToStringArrNullable(d.Get("redirect_uris")),
-			PostLogoutRedirectUris: convertInterfaceToStringArrNullable(d.Get("post_logout_redirect_uris")),
+			RedirectUris:           convertInterfaceToStringSetNullable(d.Get("redirect_uris")),
+			PostLogoutRedirectUris: convertInterfaceToStringSetNullable(d.Get("post_logout_redirect_uris")),
 			ResponseTypes:          responseTypes,
 			TosUri:                 d.Get("tos_uri").(string),
 			IssuerMode:             d.Get("issuer_mode").(string),

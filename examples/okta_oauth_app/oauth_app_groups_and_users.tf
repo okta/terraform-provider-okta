@@ -1,8 +1,8 @@
-resource "okta_group" "testAcc_group_%[1]d" {
+resource "okta_group" "group" {
   name = "testAcc_%[1]d"
 }
 
-resource "okta_user" "testAcc_user_%[1]d" {
+resource "okta_user" "user" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "blah"
@@ -11,7 +11,7 @@ resource "okta_user" "testAcc_user_%[1]d" {
   status      = "ACTIVE"
 }
 
-resource "okta_oauth_app" "testAcc_%[1]d" {
+resource "okta_oauth_app" "test" {
   label                     = "testAcc_%[1]d"
   type                      = "web"
   grant_types               = ["implicit", "authorization_code"]
@@ -21,9 +21,9 @@ resource "okta_oauth_app" "testAcc_%[1]d" {
   response_types            = ["code", "token", "id_token"]
 
   users = {
-    id       = "${okta_user.testAcc_user_%[1]d.id}"
-    username = "${okta_user.testAcc_user_%[1]d.email}"
+    id       = "${okta_user.user.id}"
+    username = "${okta_user.user.email}"
   }
 
-  groups = ["${okta_group.testAcc_group_%[1]d.id}"]
+  groups = ["${okta_group.group.id}"]
 }

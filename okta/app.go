@@ -199,9 +199,24 @@ func buildVisibility(d *schema.ResourceData) *okta.ApplicationVisibility {
 }
 
 func fetchApp(d *schema.ResourceData, m interface{}, app okta.App) error {
+	return fetchAppById(d.Id(), m, app)
+}
+
+func fetchAppById(id string, m interface{}, app okta.App) error {
 	client := getOktaClientFromMetadata(m)
-	params := &query.Params{}
-	_, response, err := client.Application.GetApplication(d.Id(), app, params)
+	_, response, err := client.Application.GetApplication(id, app, nil)
+	// We don't want to consider a 404 an error in some cases and thus the delineation
+	if response.StatusCode == 404 {
+		app = nil
+		return nil
+	}
+
+	return err
+}
+
+func updateAppById(id string, m interface{}, app okta.App) error {
+	client := getOktaClientFromMetadata(m)
+	_, response, err := client.Application.UpdateApplication(id, app)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
 	if response.StatusCode == 404 {
 		app = nil

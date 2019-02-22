@@ -173,7 +173,7 @@ func TestAccOktaSamlApplicationUserGroups(t *testing.T) {
 	mgr := newFixtureManager(samlApp)
 	config := mgr.GetFixtures("saml_app_with_groups_and_users.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("saml_app_with_groups_and_users_updated.tf", ri, t)
-	resourceName := buildResourceFQN(samlApp, ri)
+	resourceName := fmt.Sprintf("%s.test", samlApp)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },

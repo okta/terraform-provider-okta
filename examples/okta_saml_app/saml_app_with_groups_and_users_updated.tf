@@ -1,8 +1,8 @@
-resource "okta_group" "group-%[1]d" {
-  name = "testAcc-%[1]d"
+resource "okta_group" "group" {
+  name = "testAcc_%[1]d"
 }
 
-resource "okta_user" "user-%[1]d" {
+resource "okta_user" "user" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "blah"
@@ -11,7 +11,7 @@ resource "okta_user" "user-%[1]d" {
   status      = "ACTIVE"
 }
 
-resource "okta_saml_app" "testAcc_%[1]d" {
+resource "okta_saml_app" "test" {
   preconfigured_app = "amazon_aws"
   label             = "testAcc_%[1]d"
 }

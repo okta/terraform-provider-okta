@@ -173,13 +173,17 @@ func convertInterfaceToStringArrNullable(purportedList interface{}) []string {
 	return arr
 }
 
-// Fields should be in order, for instance, []string{"auth_server_id", "policy_id", "id"}
 func createNestedResourceImporter(fields []string) *schema.ResourceImporter {
+	return createCustomNestedResourceImporter(fields, fmt.Sprintf("Expecting the following format %s", strings.Join(fields, "/")))
+}
+
+// Fields should be in order, for instance, []string{"auth_server_id", "policy_id", "id"}
+func createCustomNestedResourceImporter(fields []string, errMessage string) *schema.ResourceImporter {
 	return &schema.ResourceImporter{
 		State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 			parts := strings.Split(d.Id(), "/")
 			if len(parts) != len(fields) {
-				return nil, fmt.Errorf("Invalid resource import specifier. Expecting the following format %s", strings.Join(fields, "/"))
+				return nil, fmt.Errorf("Invalid resource import specifier. %s", errMessage)
 			}
 
 			for i, field := range fields {
@@ -308,6 +312,18 @@ func normalizeDataJSON(val interface{}) string {
 	ret, _ := json.Marshal(dataMap)
 
 	return string(ret)
+}
+
+// Opposite of append
+func remove(arr []string, el string) []string {
+	var newArr []string
+
+	for _, item := range arr {
+		if item != el {
+			newArr = append(newArr, item)
+		}
+	}
+	return newArr
 }
 
 func requireOneOf(d *schema.ResourceData, propList ...string) error {
