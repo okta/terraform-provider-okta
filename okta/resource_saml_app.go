@@ -338,20 +338,23 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("default_relay_state", app.Settings.SignOn.DefaultRelayState)
-	d.Set("sso_url", app.Settings.SignOn.SsoAcsUrl)
-	d.Set("recipient", app.Settings.SignOn.Recipient)
-	d.Set("destination", app.Settings.SignOn.Destination)
-	d.Set("audience", app.Settings.SignOn.Audience)
-	d.Set("idp_issuer", app.Settings.SignOn.IdpIssuer)
-	d.Set("subject_name_id_template", app.Settings.SignOn.SubjectNameIdTemplate)
-	d.Set("subject_name_id_format", app.Settings.SignOn.SubjectNameIdFormat)
-	d.Set("response_signed", app.Settings.SignOn.ResponseSigned)
-	d.Set("assertion_signed", app.Settings.SignOn.AssertionSigned)
-	d.Set("signature_algorithm", app.Settings.SignOn.SignatureAlgorithm)
-	d.Set("digest_algorithm", app.Settings.SignOn.DigestAlgorithm)
-	d.Set("honor_force_authn", app.Settings.SignOn.HonorForceAuthn)
-	d.Set("authn_context_class_ref", app.Settings.SignOn.AuthnContextClassRef)
+	if app.Settings != nil && app.Settings.SignOn != nil {
+		d.Set("default_relay_state", app.Settings.SignOn.DefaultRelayState)
+		d.Set("sso_url", app.Settings.SignOn.SsoAcsUrl)
+		d.Set("recipient", app.Settings.SignOn.Recipient)
+		d.Set("destination", app.Settings.SignOn.Destination)
+		d.Set("audience", app.Settings.SignOn.Audience)
+		d.Set("idp_issuer", app.Settings.SignOn.IdpIssuer)
+		d.Set("subject_name_id_template", app.Settings.SignOn.SubjectNameIdTemplate)
+		d.Set("subject_name_id_format", app.Settings.SignOn.SubjectNameIdFormat)
+		d.Set("response_signed", app.Settings.SignOn.ResponseSigned)
+		d.Set("assertion_signed", app.Settings.SignOn.AssertionSigned)
+		d.Set("signature_algorithm", app.Settings.SignOn.SignatureAlgorithm)
+		d.Set("digest_algorithm", app.Settings.SignOn.DigestAlgorithm)
+		d.Set("honor_force_authn", app.Settings.SignOn.HonorForceAuthn)
+		d.Set("authn_context_class_ref", app.Settings.SignOn.AuthnContextClassRef)
+	}
+
 	d.Set("features", convertStringSetToInterface(app.Features))
 	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
@@ -376,11 +379,13 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 
-	for i, st := range app.Settings.SignOn.AttributeStatements {
-		d.Set(fmt.Sprintf("attribute_statements.%d.name", i), st.Name)
-		d.Set(fmt.Sprintf("attribute_statements.%d.namespace", i), st.Namespace)
-		d.Set(fmt.Sprintf("attribute_statements.%d.type", i), st.Type)
-		d.Set(fmt.Sprintf("attribute_statements.%d.values", i), st.Values)
+	if app.Settings != nil && app.Settings.SignOn != nil {
+		for i, st := range app.Settings.SignOn.AttributeStatements {
+			d.Set(fmt.Sprintf("attribute_statements.%d.name", i), st.Name)
+			d.Set(fmt.Sprintf("attribute_statements.%d.namespace", i), st.Namespace)
+			d.Set(fmt.Sprintf("attribute_statements.%d.type", i), st.Type)
+			d.Set(fmt.Sprintf("attribute_statements.%d.values", i), st.Values)
+		}
 	}
 
 	return syncGroupsAndUsers(app.Id, d, m)
