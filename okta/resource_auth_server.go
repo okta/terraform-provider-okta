@@ -62,8 +62,9 @@ func resourceAuthServer() *schema.Resource {
 			"issuer_mode": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
-				Description:  "EA Feature: allows you to use a custom issuer URL, no value will leave the issuer at the default",
-				ValidateFunc: validation.StringInSlice([]string{"CUSTOM_URL"}, false),
+				Description:  "EA Feature: allows you to use a custom issuer URL",
+				Default:      "ORG_URL",
+				ValidateFunc: validation.StringInSlice([]string{"CUSTOM_URL", "ORG_URL"}, false),
 			},
 		},
 	}
