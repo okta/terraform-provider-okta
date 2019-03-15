@@ -1,5 +1,4 @@
-Terraform Provider Okta
-==================
+# Terraform Provider Okta
 
 - Website: https://www.terraform.io
 - [![Gitter chat](https://badges.gitter.im/hashicorp-terraform/Lobby.png)](https://gitter.im/hashicorp-terraform/Lobby)
@@ -7,19 +6,29 @@ Terraform Provider Okta
 
 <img src="https://cdn.rawgit.com/hashicorp/terraform-website/master/content/source/assets/images/logo-hashicorp.svg" width="600px">
 
-Maintainers
------------
+## Maintainers
 
 This provider plugin is maintained by the Terraform team at [Articulate](https://articulate.com/).
 
-Requirements
-------------
+## Requirements
 
--	[Terraform](https://www.terraform.io/downloads.html) 0.11.x
--	[Go](https://golang.org/doc/install) 1.11 (to build the provider plugin)
+- [Terraform](https://www.terraform.io/downloads.html) 0.11.x
+- [Go](https://golang.org/doc/install) 1.11 (to build the provider plugin)
 
-Usage
----------------------
+## Disclaimer
+
+There are particular resources and settings that are not exposed on Okta's public API. Please submit an issue if you find one not listed here.
+
+### Org Settings
+
+- Org level customization settings.
+
+### Predefined SAML Applications
+
+- API Integrations on predefined SAML SSO applications. An example of this is the AWS SSO app, you can configure all of the app settings but you cannot configure anything under Provisioning -> API Integration. According to Okta adding API support for this is not likely.
+- Group profile settings on SAML applications. An example of this is the AWS SSO application group assignment which allows you to configure SAML user roles, for instance, which group gets access to which AWS environment. This is exposed on the GET endpoint of the Application Groups API but is read-only at the moment.
+
+## Usage
 
 This plugin requires two inputs to run: the okta organization name and the okta api token. The okta base url is not required and will default to "okta.com" if left out.
 
@@ -41,13 +50,11 @@ OKTA_API_TOKEN=<okta instance api token with the Administrator role>
 OKTA_BASE_URL=<okta base url, e.g. oktapreview.com>
 ```
 
-Examples
---------
+## Examples
 
 As we build out resources we build concomitant acceptance tests that require use to create resource config that actually creates and modifies real resources. We decided to put these test fixtures to good use and provide them [as examples here.](./examples)
 
-Building The Provider
----------------------
+## Building The Provider
 
 Simply clone the provider and run `make`. The `make` command combines `make deps && make build-plugins`, which ensures all dependencies are pulled down, builds binaries for Linux, OSX, and Windows and drops them in the default unix terraform plugin directory `~/.terraform.d/plugins`. Use `make build` for only a single binary for your host OS in your current directory. Note, we use `dep` for dependency management, this is triggered with `make deps`.
 
@@ -64,8 +71,7 @@ $ go build -o .terraform/plugins/$GOOS_$GOARCH/terraform-provider-okta
 $ terraform init -plugin-dir=.terraform/plugins/$GOOS_$GOARCH
 ```
 
-Using the provider
-----------------------
+## Using the provider
 
 Example terraform plan:
 
@@ -83,8 +89,7 @@ resource "okta_user" "blah" {
 }
 ```
 
-Developing the Provider
----------------------------
+## Developing the Provider
 
 If you wish to work on the provider, you'll first need [Go](http://www.golang.org) installed on your machine (version 1.8+ is *required*). You'll also need to correctly setup a [GOPATH](http://golang.org/doc/code.html#GOPATH), as well as adding `$GOPATH/bin` to your `$PATH`.
 
