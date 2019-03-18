@@ -33,7 +33,8 @@ resource "okta_saml_app" "test" {
   "joinAllRoles": false,
   "loginURL": "https://console.aws.amazon.com/ec2/home",
   "roleValuePattern": "arn:aws:iam::$${accountid}:saml-provider/OKTA,arn:aws:iam::$${accountid}:role/$${role}",
-  "sessionDuration": 3600
+  "sessionDuration": 3600,
+  "useGroupMapping": false
 }
 EOT
 }
