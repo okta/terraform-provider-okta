@@ -14,6 +14,7 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 
 * [okta_saml_app](./okta_saml_app) Supports the management of Okta SAML Applications.
 * [okta_oauth_app](./okta_oauth_app) Supports the management of Okta OIDC Applications.
+* [okta_bookmark_app](./okta_bookmark_app) Supports the management Okta Bookmark Application.
 * [okta_oauth_app_redirect_uri](./okta_oauth_app_redirect_uri) Supports decentralizing redirect uri config. Due to Okta's API not allowing this field to be null, you must set a redirect uri in your app, and ignore changes to this attribute. We follow TF best practices and detect config drift. The best case scenario is Okta makes this field nullable and we can not detect config drift when this attr is not present.
 * [okta_app](./okta_app) Generic Application data source.
 * [okta_user](./okta_user) Supports the management of Okta Users.

@@ -18,6 +18,7 @@ const (
 	authServerClaim        = "okta_auth_server_claim"
 	authServerScope        = "okta_auth_server_scope"
 	autoLoginApp           = "okta_auto_login_app"
+	bookmarkApp            = "okta_bookmark_app"
 	factor                 = "okta_factor"
 	identityProvider       = "okta_identity_provider"
 	mfaPolicy              = "okta_mfa_policy"
@@ -109,6 +110,7 @@ func Provider() terraform.ResourceProvider {
 			authServerPolicy:       resourceAuthServerPolicy(),
 			authServerPolicyRule:   resourceAuthServerPolicyRule(),
 			authServerScope:        resourceAuthServerScope(),
+			bookmarkApp:            resourceBookmarkApp(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			authServer:              dataSourceAuthServer(),

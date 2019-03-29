@@ -1,8 +1,8 @@
-resource "okta_group" "testAcc_%[1]d" {
+resource "okta_group" "test" {
   name        = "something new"
   description = "testing, testing"
 }
 
-data "okta_group" "testAcc_%[1]d" {
-  name = "${okta_group.testAcc_%[1]d.name}"
+data "okta_group" "test" {
+  name = "${okta_group.test.name}"
 }
