@@ -1,7 +1,6 @@
 package okta
 
 import (
-	"strconv"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
@@ -22,8 +21,8 @@ func TestAccDataSourceGroup(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_group.testAcc_"+strconv.Itoa(ri), "id"),
-					resource.TestCheckResourceAttrSet("okta_group.testAcc_"+strconv.Itoa(ri), "id"),
+					resource.TestCheckResourceAttrSet("data.okta_group.test", "id"),
+					resource.TestCheckResourceAttrSet("okta_group.test", "id"),
 				),
 			},
 		},

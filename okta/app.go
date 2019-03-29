@@ -96,6 +96,27 @@ var baseAppSchema = map[string]*schema.Schema{
 	},
 }
 
+var appVisibilitySchema = map[string]*schema.Schema{
+	"auto_submit_toolbar": &schema.Schema{
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Default:     false,
+		Description: "Display auto submit toolbar",
+	},
+	"hide_ios": &schema.Schema{
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Default:     false,
+		Description: "Do not display application icon on mobile app",
+	},
+	"hide_web": &schema.Schema{
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Default:     false,
+		Description: "Do not display application icon to users",
+	},
+}
+
 var baseSwaAppSchema = map[string]*schema.Schema{
 	"accessibility_self_service": &schema.Schema{
 		Type:        schema.TypeBool,
@@ -154,6 +175,11 @@ func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *o
 
 func buildAppSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
 	return buildSchema(baseAppSchema, appSchema)
+}
+
+func buildAppSchemaWithVisibility(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
+	schema := buildSchema(baseAppSchema, appSchema)
+	return buildSchema(appVisibilitySchema, schema)
 }
 
 func buildSchemeCreds(d *schema.ResourceData) *okta.SchemeApplicationCredentials {

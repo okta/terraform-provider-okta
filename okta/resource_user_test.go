@@ -70,7 +70,7 @@ func TestAccOktaUser_groupMembership(t *testing.T) {
 	mgr := newFixtureManager(oktaUser)
 	config := mgr.GetFixtures("okta_user_group_assigned.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("okta_user_group_unassigned.tf", ri, t)
-	resourceName := buildResourceFQN(oktaUser, ri)
+	resourceName := fmt.Sprintf("%s.test", oktaUser)
 	email := fmt.Sprintf("test-acc-%d@testing.com", ri)
 
 	resource.Test(t, resource.TestCase{
