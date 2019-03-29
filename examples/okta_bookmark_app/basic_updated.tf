@@ -4,7 +4,6 @@ resource "okta_user" "user" {
   last_name   = "blah"
   login       = "test-acc-%[1]d@testing.com"
   email       = "test-acc-%[1]d@testing.com"
-  status      = "ACTIVE"
 }
 
 resource "okta_group" "group" {
