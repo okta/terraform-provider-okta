@@ -245,13 +245,16 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 	existingGroup, _, _ := client.Application.ListApplicationGroupAssignments(id, &query.Params{})
 	var (
 		asyncActionList []func() error
-		rawArr          []interface{}
+		groupIdList     []string
 	)
 
 	if arr, ok := d.GetOk("groups"); ok {
-		rawArr = arr.(*schema.Set).List()
-		for _, g := range rawArr {
-			groupID := g.(string)
+		rawArr := arr.(*schema.Set).List()
+		groupIdList = make([]string, len(rawArr))
+
+		for i, gID := range rawArr {
+			groupID := gID.(string)
+			groupIdList[i] = groupID
 
 			if !containsGroup(existingGroup, groupID) {
 				asyncActionList = append(asyncActionList, func() error {
@@ -263,14 +266,11 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 	}
 
 	for _, group := range existingGroup {
-		for _, thing := range rawArr {
-			g := thing.(string)
-			if g == group.Id {
-				asyncActionList = append(asyncActionList, func() error {
-					return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(id, group.Id))
-				})
-				break
-			}
+		if !contains(groupIdList, group.Id) {
+			asyncActionList = append(asyncActionList, func() error {
+				return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(id, group.Id))
+			})
+			break
 		}
 	}
 
@@ -354,13 +354,11 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 
 	for _, user := range existingUsers {
 		if user.Scope == "USER" {
-			for _, uID := range userIDList {
-				if uID == user.Id {
-					asyncActionList = append(asyncActionList, func() error {
-						return suppressErrorOn404(client.Application.DeleteApplicationUser(id, user.Id))
-					})
-					break
-				}
+			if !contains(userIDList, user.Id) {
+				asyncActionList = append(asyncActionList, func() error {
+					return suppressErrorOn404(client.Application.DeleteApplicationUser(id, user.Id))
+				})
+				break
 			}
 		}
 	}
