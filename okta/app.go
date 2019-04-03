@@ -245,25 +245,20 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 	existingGroup, _, _ := client.Application.ListApplicationGroupAssignments(id, &query.Params{})
 	var (
 		asyncActionList []func() error
-		rawArr          []interface{}
+		groupIdList     []string
 	)
 
 	if arr, ok := d.GetOk("groups"); ok {
-		rawArr = arr.(*schema.Set).List()
-		for _, thing := range rawArr {
-			g := thing.(string)
-			contains := false
+		rawArr := arr.(*schema.Set).List()
+		groupIdList = make([]string, len(rawArr))
 
-			for _, eGroup := range existingGroup {
-				if eGroup.Id == g {
-					contains = true
-					break
-				}
-			}
+		for i, gID := range rawArr {
+			groupID := gID.(string)
+			groupIdList[i] = groupID
 
-			if !contains {
+			if !containsGroup(existingGroup, groupID) {
 				asyncActionList = append(asyncActionList, func() error {
-					_, _, err := client.Application.CreateApplicationGroupAssignment(id, g, okta.ApplicationGroupAssignment{})
+					_, _, err := client.Application.CreateApplicationGroupAssignment(id, groupID, okta.ApplicationGroupAssignment{})
 					return err
 				})
 			}
@@ -271,23 +266,33 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 	}
 
 	for _, group := range existingGroup {
-		contains := false
-		for _, thing := range rawArr {
-			g := thing.(string)
-			if g == group.Id {
-				contains = true
-				break
-			}
-		}
-
-		if !contains {
+		if !contains(groupIdList, group.Id) {
+			groupID := group.Id
 			asyncActionList = append(asyncActionList, func() error {
-				return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(id, group.Id))
+				return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(id, groupID))
 			})
 		}
 	}
 
 	return asyncActionList
+}
+
+func containsGroup(groupList []*okta.ApplicationGroupAssignment, id string) bool {
+	for _, group := range groupList {
+		if group.Id == id {
+			return true
+		}
+	}
+	return false
+}
+
+func containsUser(userList []*okta.AppUser, id string) bool {
+	for _, user := range userList {
+		if user.Id == id && user.Scope == "USER" {
+			return true
+		}
+	}
+	return false
 }
 
 // Handles the assigning of groups and users to Applications. Does so asynchronously.
@@ -319,22 +324,14 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 		userIDList = make([]string, len(users))
 
 		for i, user := range users {
-			u := user.(map[string]interface{})
-			uID := u["id"].(string)
+			userProfile := user.(map[string]interface{})
+			uID := userProfile["id"].(string)
 			userIDList[i] = uID
-			contains := false
 
-			for _, u := range existingUsers {
-				if u.Id == uID && u.Scope == "USER" {
-					contains = true
-					break
-				}
-			}
-
-			if !contains {
-				username := u["username"].(string)
+			if !containsUser(existingUsers, uID) {
+				username := userProfile["username"].(string)
 				// Not required
-				password, _ := u["password"].(string)
+				password, _ := userProfile["password"].(string)
 
 				asyncActionList = append(asyncActionList, func() error {
 					_, _, err := client.Application.AssignUserToApplication(id, okta.AppUser{
@@ -356,17 +353,10 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 
 	for _, user := range existingUsers {
 		if user.Scope == "USER" {
-			contains := false
-			for _, uID := range userIDList {
-				if uID == user.Id {
-					contains = true
-					break
-				}
-			}
-
-			if !contains {
+			if !contains(userIDList, user.Id) {
+				userID := user.Id
 				asyncActionList = append(asyncActionList, func() error {
-					return suppressErrorOn404(client.Application.DeleteApplicationUser(id, user.Id))
+					return suppressErrorOn404(client.Application.DeleteApplicationUser(id, userID))
 				})
 			}
 		}
