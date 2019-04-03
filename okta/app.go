@@ -270,7 +270,6 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 			asyncActionList = append(asyncActionList, func() error {
 				return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(id, group.Id))
 			})
-			break
 		}
 	}
 
@@ -322,7 +321,6 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 	if set, ok := d.GetOk("users"); ok {
 		users = set.(*schema.Set).List()
 		userIDList = make([]string, len(users))
-		fmt.Println(users)
 
 		for i, user := range users {
 			userProfile := user.(map[string]interface{})
@@ -358,7 +356,6 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 				asyncActionList = append(asyncActionList, func() error {
 					return suppressErrorOn404(client.Application.DeleteApplicationUser(id, user.Id))
 				})
-				break
 			}
 		}
 	}
