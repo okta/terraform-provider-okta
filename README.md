@@ -15,6 +15,15 @@ This provider plugin is maintained by the Terraform team at [Articulate](https:/
 - [Terraform](https://www.terraform.io/downloads.html) 0.11.x
 - [Go](https://golang.org/doc/install) 1.11 (to build the provider plugin)
 
+## Common Errors
+
+* App User Error
+```
+The API returned an error: Deactivate application for user forbidden.. Causes: errorSummary: The application cannot be unassigned from the user while their group memberships grant them access, The API returned an error: Deactivate application for user forbidden.. Causes: errorSummary: The application cannot be unassigned from the user while their group memberships grant them access.
+```
+
+This requires manual intervention. A user's access must be "converted" via the UI to group access. Okta does not expose an endpoint for this.
+
 ## Disclaimer
 
 There are particular resources and settings that are not exposed on Okta's public API. Please submit an issue if you find one not listed here.

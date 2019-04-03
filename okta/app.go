@@ -252,38 +252,28 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 		rawArr = arr.(*schema.Set).List()
 		for _, thing := range rawArr {
 			g := thing.(string)
-			contains := false
 
 			for _, eGroup := range existingGroup {
 				if eGroup.Id == g {
-					contains = true
+					asyncActionList = append(asyncActionList, func() error {
+						_, _, err := client.Application.CreateApplicationGroupAssignment(id, g, okta.ApplicationGroupAssignment{})
+						return err
+					})
 					break
 				}
-			}
-
-			if !contains {
-				asyncActionList = append(asyncActionList, func() error {
-					_, _, err := client.Application.CreateApplicationGroupAssignment(id, g, okta.ApplicationGroupAssignment{})
-					return err
-				})
 			}
 		}
 	}
 
 	for _, group := range existingGroup {
-		contains := false
 		for _, thing := range rawArr {
 			g := thing.(string)
 			if g == group.Id {
-				contains = true
+				asyncActionList = append(asyncActionList, func() error {
+					return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(id, group.Id))
+				})
 				break
 			}
-		}
-
-		if !contains {
-			asyncActionList = append(asyncActionList, func() error {
-				return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(id, group.Id))
-			})
 		}
 	}
 
@@ -319,36 +309,31 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 		userIDList = make([]string, len(users))
 
 		for i, user := range users {
-			u := user.(map[string]interface{})
-			uID := u["id"].(string)
+			userProfile := user.(map[string]interface{})
+			uID := userProfile["id"].(string)
 			userIDList[i] = uID
-			contains := false
 
 			for _, u := range existingUsers {
 				if u.Id == uID && u.Scope == "USER" {
-					contains = true
+					username := userProfile["username"].(string)
+					// Not required
+					password, _ := userProfile["password"].(string)
+
+					asyncActionList = append(asyncActionList, func() error {
+						_, _, err := client.Application.AssignUserToApplication(id, okta.AppUser{
+							Id: uID,
+							Credentials: &okta.AppUserCredentials{
+								UserName: username,
+								Password: &okta.AppUserPasswordCredential{
+									Value: password,
+								},
+							},
+						})
+
+						return err
+					})
 					break
 				}
-			}
-
-			if !contains {
-				username := u["username"].(string)
-				// Not required
-				password, _ := u["password"].(string)
-
-				asyncActionList = append(asyncActionList, func() error {
-					_, _, err := client.Application.AssignUserToApplication(id, okta.AppUser{
-						Id: uID,
-						Credentials: &okta.AppUserCredentials{
-							UserName: username,
-							Password: &okta.AppUserPasswordCredential{
-								Value: password,
-							},
-						},
-					})
-
-					return err
-				})
 			}
 		}
 
@@ -356,18 +341,13 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 
 	for _, user := range existingUsers {
 		if user.Scope == "USER" {
-			contains := false
 			for _, uID := range userIDList {
 				if uID == user.Id {
-					contains = true
+					asyncActionList = append(asyncActionList, func() error {
+						return suppressErrorOn404(client.Application.DeleteApplicationUser(id, user.Id))
+					})
 					break
 				}
-			}
-
-			if !contains {
-				asyncActionList = append(asyncActionList, func() error {
-					return suppressErrorOn404(client.Application.DeleteApplicationUser(id, user.Id))
-				})
 			}
 		}
 	}
