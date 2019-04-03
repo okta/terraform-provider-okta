@@ -250,17 +250,14 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 
 	if arr, ok := d.GetOk("groups"); ok {
 		rawArr = arr.(*schema.Set).List()
-		for _, thing := range rawArr {
-			g := thing.(string)
+		for _, g := range rawArr {
+			groupID := g.(string)
 
-			for _, eGroup := range existingGroup {
-				if eGroup.Id == g {
-					asyncActionList = append(asyncActionList, func() error {
-						_, _, err := client.Application.CreateApplicationGroupAssignment(id, g, okta.ApplicationGroupAssignment{})
-						return err
-					})
-					break
-				}
+			if !containsGroup(existingGroup, groupID) {
+				asyncActionList = append(asyncActionList, func() error {
+					_, _, err := client.Application.CreateApplicationGroupAssignment(id, groupID, okta.ApplicationGroupAssignment{})
+					return err
+				})
 			}
 		}
 	}
@@ -278,6 +275,24 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 	}
 
 	return asyncActionList
+}
+
+func containsGroup(groupList []*okta.ApplicationGroupAssignment, id string) bool {
+	for _, group := range groupList {
+		if group.Id == id {
+			return true
+		}
+	}
+	return false
+}
+
+func containsUser(userList []*okta.AppUser, id string) bool {
+	for _, user := range userList {
+		if user.Id == id && user.Scope == "USER" {
+			return true
+		}
+	}
+	return false
 }
 
 // Handles the assigning of groups and users to Applications. Does so asynchronously.
@@ -313,27 +328,25 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 			uID := userProfile["id"].(string)
 			userIDList[i] = uID
 
-			for _, u := range existingUsers {
-				if u.Id == uID && u.Scope == "USER" {
-					username := userProfile["username"].(string)
-					// Not required
-					password, _ := userProfile["password"].(string)
+			if !containsUser(existingUsers, uID) {
+				username := userProfile["username"].(string)
+				// Not required
+				password, _ := userProfile["password"].(string)
 
-					asyncActionList = append(asyncActionList, func() error {
-						_, _, err := client.Application.AssignUserToApplication(id, okta.AppUser{
-							Id: uID,
-							Credentials: &okta.AppUserCredentials{
-								UserName: username,
-								Password: &okta.AppUserPasswordCredential{
-									Value: password,
-								},
+				asyncActionList = append(asyncActionList, func() error {
+					_, _, err := client.Application.AssignUserToApplication(id, okta.AppUser{
+						Id: uID,
+						Credentials: &okta.AppUserCredentials{
+							UserName: username,
+							Password: &okta.AppUserPasswordCredential{
+								Value: password,
 							},
-						})
-
-						return err
+						},
 					})
-					break
-				}
+
+					return err
+				})
+				break
 			}
 		}
 
