@@ -19,8 +19,8 @@ func dataSourcePolicy() *schema.Resource {
 			},
 			"type": {
 				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{signOnPolicyType, passwordPolicyType, "MFA_ENROLL", "OAUTH_AUTHORIZATION_POLICY"}, false),
-				Description:  fmt.Sprintf("Policy type: %s, %s, MFA_ENROLL, or OAUTH_AUTHORIZATION_POLICY", signOnPolicyType, passwordPolicyType),
+				ValidateFunc: validation.StringInSlice([]string{signOnPolicyType, passwordPolicyType, "MFA_ENROLL", "OAUTH_AUTHORIZATION_POLICY", "IDP_DISCOVERY"}, false),
+				Description:  fmt.Sprintf("Policy type: %s, %s, MFA_ENROLL, IDP_DISCOVERY, or OAUTH_AUTHORIZATION_POLICY", signOnPolicyType, passwordPolicyType),
 				Required:     true,
 			},
 		},
