@@ -73,6 +73,12 @@ func Provider() terraform.ResourceProvider {
 				Default:     1,
 				Description: "Number of concurrent requests to make within a resource where bulk operations are not possible. Take note of https://developer.okta.com/docs/api/getting_started/rate-limits.",
 			},
+			"wait_for_rate_limit": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+				Description: "Wait until rate limit is reset before making any additional requests.",
+			},
 			"max_retries": {
 				Type:         schema.TypeInt,
 				Optional:     true,
@@ -131,11 +137,12 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	log.Printf("[INFO] Initializing Okta client")
 
 	config := Config{
-		orgName:     d.Get("org_name").(string),
-		domain:      d.Get("base_url").(string),
-		apiToken:    d.Get("api_token").(string),
-		parallelism: d.Get("parallelism").(int),
-		retryCount:  d.Get("max_retries").(int),
+		orgName:      d.Get("org_name").(string),
+		domain:       d.Get("base_url").(string),
+		apiToken:     d.Get("api_token").(string),
+		parallelism:  d.Get("parallelism").(int),
+		retryCount:   d.Get("max_retries").(int),
+		waitForReset: d.Get("wait_for_rate_limit").(bool),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, fmt.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)

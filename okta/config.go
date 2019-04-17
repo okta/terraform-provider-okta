@@ -11,11 +11,12 @@ import (
 // Config is a struct containing our provider schema values
 // plus the okta client object
 type Config struct {
-	orgName     string
-	domain      string
-	apiToken    string
-	retryCount  int
-	parallelism int
+	orgName      string
+	domain       string
+	apiToken     string
+	retryCount   int
+	parallelism  int
+	waitForReset bool
 
 	articulateOktaClient *articulateOkta.Client
 	oktaClient           *okta.Client
@@ -38,7 +39,7 @@ func (c *Config) loadAndValidate() error {
 		WithOrgUrl(orgUrl).
 		WithToken(c.apiToken).
 		WithCache(false).
-		WithBackoff(true).
+		WaitForRateLimitReset(c.waitForReset).
 		WithRetries(int32(c.retryCount))
 	client := okta.NewClient(config, nil, nil)
 	c.supplementClient = &ApiSupplement{
