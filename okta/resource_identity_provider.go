@@ -46,6 +46,13 @@ func resourceIdentityProvider() *schema.Resource {
 				Description: "OAUTH2 client secret",
 				Sensitive:   true,
 			},
+			"issuer_mode": &schema.Schema{
+				Type:         schema.TypeString,
+				Description:  "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
+				ValidateFunc: validation.StringInSlice([]string{"ORG_URL", "CUSTOM_URL_DOMAIN"}, false),
+				Default:      "ORG_URL",
+				Optional:     true,
+			},
 			"links_authorized_hints_allow": &schema.Schema{
 				Type:     schema.TypeList,
 				Computed: true,
@@ -275,6 +282,7 @@ func populateIdentityProvider(idp *articulateOkta.IdentityProvider, d *schema.Re
 	idp.Links.ClientRedirectUri.Href = d.Get("links_client_redirect_uri_href").(string)
 	idp.Protocol.Credentials.Client.ClientID = d.Get("client_id").(string)
 	idp.Protocol.Credentials.Client.ClientSecret = d.Get("client_secret").(string)
+	idp.IssuerMode = d.Get("issuer_mode").(string)
 
 	return idp
 }
@@ -340,6 +348,10 @@ func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("links_client_redirect_uri_href", idp.Links.ClientRedirectUri.Href)
 	d.Set("client_id", idp.Protocol.Credentials.Client.ClientID)
 	d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
+
+	if idp.IssuerMode != "" {
+		d.Set("issuer_mode", idp.IssuerMode)
+	}
 
 	agTypeMap := map[string]interface{}{
 		"protocol_scopes":                       idp.Protocol.Scopes,

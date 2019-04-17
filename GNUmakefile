@@ -1,5 +1,3 @@
-VERSION=v2.18.0
-
 SWEEP?=global
 TEST?=$$(go list ./... |grep -v 'vendor')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
@@ -8,7 +6,7 @@ default: deps build-plugins
 
 deps:
 	curl -s https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-	${GOPATH}/bin/dep ensure
+	dep ensure
 
 # Builds a binary for current OS and Arch
 build: fmtcheck deps
@@ -70,5 +68,13 @@ test-compile:
 		exit 1; \
 	fi
 	go test -c $(TEST) $(TESTARGS)
+
+build-assets:
+
+# Auto releasing from master
+ship-assets: release
+
+release:
+	@sh -c "'$(CURDIR)/scripts/release.sh'"
 
 .PHONY: build test testacc vet fmt fmtcheck errcheck vendor-status test-compile

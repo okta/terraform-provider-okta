@@ -39,7 +39,7 @@ func (c *Config) loadAndValidate() error {
 		WithOrgUrl(orgUrl).
 		WithToken(c.apiToken).
 		WithCache(false).
-		WaitForRateLimitReset(c.waitForReset).
+		WithWaitForLimitReset(c.waitForReset).
 		WithRetries(int32(c.retryCount))
 	client := okta.NewClient(config, nil, nil)
 	c.supplementClient = &ApiSupplement{

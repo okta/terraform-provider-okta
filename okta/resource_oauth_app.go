@@ -106,6 +106,7 @@ func resourceOAuthApp() *schema.Resource {
 			"client_secret": &schema.Schema{
 				Type:        schema.TypeString,
 				Computed:    true,
+				Sensitive:   true,
 				Description: "OAuth client secret key. This will be in plain text in your statefile unless you set omit_secret above.",
 			},
 			"token_endpoint_auth_method": &schema.Schema{
@@ -193,6 +194,7 @@ func resourceOAuthApp() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"CUSTOM_URL", "ORG_URL"}, false),
+				Default:      "ORG_URL",
 				Description:  "*Early Access Property*. Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.",
 			},
 		}),
@@ -269,7 +271,10 @@ func resourceOAuthAppRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("tos_uri", app.Settings.OauthClient.TosUri)
 	d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
 	d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
-	d.Set("issuer_mode", app.Settings.OauthClient.IssuerMode)
+
+	if app.Settings.OauthClient.IssuerMode != "" {
+		d.Set("issuer_mode", app.Settings.OauthClient.IssuerMode)
+	}
 
 	// If this is ever changed omit it.
 	if d.Get("omit_secret").(bool) {

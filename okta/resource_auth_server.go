@@ -132,8 +132,12 @@ func resourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 
 	// Do not sync these unless the issuer mode is specified since it is an EA feature and is computed in some cases
 	if authServer.IssuerMode != "" {
-		d.Set("issuer", authServer.Issuer)
 		d.Set("issuer_mode", authServer.IssuerMode)
+
+		// Ignore this property if it is not custom
+		if authServer.IssuerMode != "ORG_URL" {
+			d.Set("issuer", authServer.Issuer)
+		}
 	}
 
 	return nil

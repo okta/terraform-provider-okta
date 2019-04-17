@@ -84,7 +84,7 @@ func Provider() terraform.ResourceProvider {
 				Optional:     true,
 				Default:      5,
 				ValidateFunc: validation.IntAtMost(100), // Have to cut it off somewhere right?
-				Description:  "maximum number of retries to attempt before erroring out. This is also related to back offs when a 429 HTTP status code is received.",
+				Description:  "maximum number of retries to attempt before erroring out.",
 			},
 		},
 
