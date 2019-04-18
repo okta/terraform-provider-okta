@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/dghubble/sling"
+	cleanhttp "github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
@@ -558,7 +559,7 @@ func getMetadata(d *schema.ResourceData, m interface{}, keyId string) (string, e
 		return "", err
 	}
 
-	httpClient := http.Client{}
+	httpClient := cleanhttp.DefaultClient()
 	res, err := httpClient.Do(req)
 	defer res.Body.Close()
 	if err != nil {
