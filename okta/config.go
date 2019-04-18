@@ -17,6 +17,7 @@ type Config struct {
 	retryCount   int
 	parallelism  int
 	waitForReset bool
+	backoff      bool
 
 	articulateOktaClient *articulateOkta.Client
 	oktaClient           *okta.Client
@@ -39,7 +40,8 @@ func (c *Config) loadAndValidate() error {
 		WithOrgUrl(orgUrl).
 		WithToken(c.apiToken).
 		WithCache(false).
-		WithWaitForLimitReset(c.waitForReset).
+		WithBackoff(c.backoff).
+		WithWaitForLimitReset(c.waitForReset && c.backoff != true).
 		WithRetries(int32(c.retryCount))
 	client := okta.NewClient(config, nil, nil)
 	c.supplementClient = &ApiSupplement{

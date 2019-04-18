@@ -73,16 +73,22 @@ func Provider() terraform.ResourceProvider {
 				Default:     1,
 				Description: "Number of concurrent requests to make within a resource where bulk operations are not possible. Take note of https://developer.okta.com/docs/api/getting_started/rate-limits.",
 			},
-			"wait_for_rate_limit": {
+			"backoff": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     true,
-				Description: "Wait until rate limit is reset before making any additional requests.",
+				Description: "Use exponential back off strategy for rate limits.",
+			},
+			"wait_for_rate_limit": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Wait until rate limit is reset before making any additional requests. Experimental at this point.",
 			},
 			"max_retries": {
 				Type:         schema.TypeInt,
 				Optional:     true,
-				Default:      5,
+				Default:      10,
 				ValidateFunc: validation.IntAtMost(100), // Have to cut it off somewhere right?
 				Description:  "maximum number of retries to attempt before erroring out.",
 			},
