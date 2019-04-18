@@ -5,7 +5,7 @@ before:
   hooks: []
 
 builds:
-- binary: terraform-provider-okta
+- binary: "terraform-provider-okta_{{.Version}}_x4"
   env:
   - CGO_ENABLED=0
   goos:
@@ -17,9 +17,14 @@ builds:
   ldflags: []
 
 archive:
+  # https://github.com/articulate/terraform-provider-okta/issues/128#issuecomment-484565435
   name_template: "{{.ProjectName}}-{{.Os}}-{{.Arch}}"
   format_overrides:
   - goos: windows
+    format: zip
+  - goos: darwin
+    format: zip
+  - goos: linux
     format: zip
   files:
     - none*  # only package the binary - not defaults: readme, license, changelog
