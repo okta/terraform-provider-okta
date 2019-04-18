@@ -50,6 +50,7 @@ resource "okta_saml_app" "test" {
 
   app_settings_json = <<EOT
 {
+  "appFilter":"okta",
   "awsEnvironmentType":"aws.amazon",
   "groupFilter": "aws_(?{{accountid}}\\d+)_(?{{role}}[a-zA-Z0-9+=,.@\\-_]+)",
   "joinAllRoles": false,

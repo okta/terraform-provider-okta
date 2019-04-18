@@ -49,7 +49,7 @@ func (m *ApiSupplement) ListAuthorizationServers() ([]*AuthorizationServer, *okt
 func (m *ApiSupplement) CreateAuthorizationServer(body AuthorizationServer, qp *query.Params) (*AuthorizationServer, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers")
 	if qp != nil {
-		url = url + qp.String()
+		url += qp.String()
 	}
 	req, err := m.requestExecutor.NewRequest("POST", url, body)
 	if err != nil {
@@ -64,7 +64,7 @@ func (m *ApiSupplement) CreateAuthorizationServer(body AuthorizationServer, qp *
 func (m *ApiSupplement) UpdateAuthorizationServer(id string, body AuthorizationServer, qp *query.Params) (*AuthorizationServer, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%s", id)
 	if qp != nil {
-		url = url + qp.String()
+		url += qp.String()
 	}
 	req, err := m.requestExecutor.NewRequest("PUT", url, body)
 	if err != nil {

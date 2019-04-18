@@ -1,0 +1,28 @@
+# all available options: https://goreleaser.com/customization/
+project_name: terraform-provider-okta
+
+before:
+  hooks: []
+
+builds:
+- binary: terraform-provider-okta
+  env:
+  - CGO_ENABLED=0
+  goos:
+  - darwin
+  - windows
+  - linux
+  goarch:
+  - amd64
+  ldflags: []
+
+archive:
+  name_template: "{{.ProjectName}}-{{.Os}}-{{.Arch}}"
+  format_overrides:
+  - goos: windows
+    format: zip
+  files:
+    - none*  # only package the binary - not defaults: readme, license, changelog
+
+checksum:
+  name_template: 'SHA256SUMS.txt'
