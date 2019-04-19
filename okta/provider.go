@@ -79,6 +79,18 @@ func Provider() terraform.ResourceProvider {
 				Default:     true,
 				Description: "Use exponential back off strategy for rate limits.",
 			},
+			"min_wait_seconds": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Default:     30,
+				Description: "minimum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
+			},
+			"max_wait_seconds": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Default:     300,
+				Description: "maximum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
+			},
 			"max_retries": {
 				Type:         schema.TypeInt,
 				Optional:     true,
@@ -142,6 +154,8 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		apiToken:    d.Get("api_token").(string),
 		parallelism: d.Get("parallelism").(int),
 		retryCount:  d.Get("max_retries").(int),
+		maxWait:     d.Get("max_wait_seconds").(int),
+		minWait:     d.Get("min_wait_seconds").(int),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, fmt.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)

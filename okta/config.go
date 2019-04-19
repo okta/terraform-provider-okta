@@ -19,6 +19,8 @@ type Config struct {
 	parallelism  int
 	waitForReset bool
 	backoff      bool
+	minWait      int
+	maxWait      int
 
 	articulateOktaClient *articulateOkta.Client
 	oktaClient           *okta.Client
@@ -42,8 +44,8 @@ func (c *Config) loadAndValidate() error {
 		WithToken(c.apiToken).
 		WithCache(false).
 		WithBackoff(c.backoff).
-		WithMinWait(time.Second * 10).
-		WithMaxWait(time.Minute * 2).
+		WithMinWait(time.Duration(c.minWait) * time.Second).
+		WithMaxWait(time.Duration(c.maxWait) * time.Second).
 		WithRetries(int32(c.retryCount))
 	client := okta.NewClient(config, nil, nil)
 	c.supplementClient = &ApiSupplement{
