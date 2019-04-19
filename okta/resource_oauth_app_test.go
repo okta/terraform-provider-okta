@@ -189,7 +189,7 @@ func createDoesAppExist(app okta.App) func(string) (bool, error) {
 		}
 
 		if err != nil {
-			return false, err
+			return false, responseErr(response, err)
 		}
 
 		return true, err

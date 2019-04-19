@@ -79,16 +79,10 @@ func Provider() terraform.ResourceProvider {
 				Default:     true,
 				Description: "Use exponential back off strategy for rate limits.",
 			},
-			"wait_for_rate_limit": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Wait until rate limit is reset before making any additional requests. Experimental at this point.",
-			},
 			"max_retries": {
 				Type:         schema.TypeInt,
 				Optional:     true,
-				Default:      10,
+				Default:      5,
 				ValidateFunc: validation.IntAtMost(100), // Have to cut it off somewhere right?
 				Description:  "maximum number of retries to attempt before erroring out.",
 			},

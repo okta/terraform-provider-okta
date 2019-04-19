@@ -2,6 +2,7 @@ package okta
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -364,7 +365,11 @@ func requireOneOf(d *schema.ResourceData, propList ...string) error {
 // it when it occurs and build some more context.
 func responseErr(resp *okta.Response, err error) error {
 	if err != nil {
-		return fmt.Errorf("%v, Status: %s", err, resp.Status)
+		msg := err.Error()
+		if resp != nil {
+			msg += fmt.Sprintf(", Status: %s", resp.Status)
+		}
+		return errors.New(msg)
 	}
 	return nil
 }
