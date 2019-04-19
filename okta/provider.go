@@ -137,12 +137,11 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	log.Printf("[INFO] Initializing Okta client")
 
 	config := Config{
-		orgName:      d.Get("org_name").(string),
-		domain:       d.Get("base_url").(string),
-		apiToken:     d.Get("api_token").(string),
-		parallelism:  d.Get("parallelism").(int),
-		retryCount:   d.Get("max_retries").(int),
-		waitForReset: d.Get("wait_for_rate_limit").(bool),
+		orgName:     d.Get("org_name").(string),
+		domain:      d.Get("base_url").(string),
+		apiToken:    d.Get("api_token").(string),
+		parallelism: d.Get("parallelism").(int),
+		retryCount:  d.Get("max_retries").(int),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, fmt.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)
