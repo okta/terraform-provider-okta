@@ -99,6 +99,9 @@ func TestAccOktaSamlApplication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "destination", "http://its-about-the-journey.com"),
 					resource.TestCheckResourceAttr(resourceName, "audience", "http://audience.com"),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttrSet(resourceName, "http_post_binding"),
+					resource.TestCheckResourceAttrSet(resourceName, "http_redirect_binding"),
+					resource.TestCheckResourceAttrSet(resourceName, "key_id"),
 				),
 			},
 			{
@@ -188,7 +191,7 @@ func TestAccOktaSamlApplicationUserGroups(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "users.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "groups.#", "3"),
-					resource.TestCheckResourceAttr(resourceName, "key.years_valid", "3"),
+					resource.TestCheckResourceAttr(resourceName, "key_years_valid", "3"),
 				),
 			},
 			{
@@ -197,7 +200,7 @@ func TestAccOktaSamlApplicationUserGroups(t *testing.T) {
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-					resource.TestCheckNoResourceAttr(resourceName, "key.id"),
+					resource.TestCheckResourceAttrSet(resourceName, "key_id"),
 					resource.TestCheckResourceAttr(resourceName, "groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "users.#", "1"),
 				),

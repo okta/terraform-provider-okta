@@ -2,11 +2,11 @@ package okta
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 
 	"github.com/dghubble/sling"
 	cleanhttp "github.com/hashicorp/go-cleanhttp"
@@ -14,6 +14,11 @@ import (
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
+)
+
+const (
+	postBinding     = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+	redirectBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
 )
 
 // Fields required if preconfigured_app is not provided
@@ -30,6 +35,17 @@ var customSamlAppRequiredFields = []string{
 	"honor_force_authn",
 	"authn_context_class_ref",
 }
+
+type (
+	ssoService struct {
+		Binding  string `xml:"Binding,attr"`
+		Location string `xml:"Location,attr"`
+	}
+
+	root struct {
+		Services []*ssoService `xml:"IDPSSODescriptor>SingleSignOnService"`
+	}
+)
 
 func resourceSamlApp() *schema.Resource {
 	return &schema.Resource{
@@ -54,36 +70,37 @@ func resourceSamlApp() *schema.Resource {
 					return new == ""
 				},
 			},
-			"key": {
-				Type:        schema.TypeMap,
-				Description: "Certificate config",
+			"key_name": {
+				Type:        schema.TypeString,
+				Description: "Certificate name. This modulates the rotation of keys. New name == new key.",
 				Optional:    true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:        schema.TypeString,
-							Description: "Certificate name. This modulates the rotation of keys. New name == new key.",
-							Required:    true,
-						},
-						"id": {
-							Type:        schema.TypeString,
-							Description: "Certificate ID",
-							Computed:    true,
-						},
-						"years_valid": {
-							Type:         schema.TypeInt,
-							Optional:     true,
-							Default:      1,
-							ValidateFunc: validation.IntAtLeast(1),
-							Description:  "Number of years the certificate is valid.",
-						},
-						"metadata": {
-							Type:        schema.TypeString,
-							Description: "SAML App certificate payload",
-							Computed:    true,
-						},
-					},
-				},
+			},
+			"key_id": {
+				Type:        schema.TypeString,
+				Description: "Certificate ID",
+				Computed:    true,
+			},
+			"key_years_valid": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      1,
+				ValidateFunc: validation.IntAtLeast(1),
+				Description:  "Number of years the certificate is valid.",
+			},
+			"metadata": {
+				Type:        schema.TypeString,
+				Description: "SAML xml metadata payload",
+				Computed:    true,
+			},
+			"http_post_binding": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Post location from the SAML metadata.",
+			},
+			"http_redirect_binding": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect location from the SAML metadata.",
 			},
 			"auto_submit_toolbar": {
 				Type:        schema.TypeBool,
@@ -366,16 +383,29 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	if app.Credentials.Signing.Kid != "" {
-		keyId := app.Credentials.Signing.Kid
-		d.Set("key.id", keyId)
-		key, err := getMetadata(d, m, keyId)
+	if app.Credentials.Signing.Kid != "" && app.Status != "INACTIVE" {
+		keyID := app.Credentials.Signing.Kid
+		d.Set("key_id", keyID)
+		keyMetadata, err := getMetadata(d, m, keyID)
 		if err != nil {
 			return err
 		}
-		// This can clear out the metadata in cases where an app is deactivated. The API will not return metadata
-		// for inactive apps.
-		d.Set("key.metadata", key)
+		d.Set("metadata", keyMetadata)
+
+		metadataRoot := &root{}
+		err = xml.Unmarshal(keyMetadata, metadataRoot)
+		if err != nil {
+			return fmt.Errorf("Could not parse SAML app metadata, error: %s", err)
+		}
+		// Always grab the last one just for simplicity. Should never have duplicates.
+		for _, service := range metadataRoot.Services {
+			switch service.Binding {
+			case postBinding:
+				d.Set("http_post_binding", service.Location)
+			case redirectBinding:
+				d.Set("http_redirect_binding", service.Location)
+			}
+		}
 	}
 
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
@@ -413,7 +443,7 @@ func resourceSamlAppUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	if d.HasChange("key.name") {
+	if d.HasChange("key_name") {
 		err = tryCreateCertificate(d, m, app.Id)
 		if err != nil {
 			return err
@@ -516,7 +546,7 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 	statements := d.Get("attribute_statements").([]interface{})
 	if len(statements) > 0 {
 		samlAttr := make([]*okta.SamlAttributeStatement, len(statements))
-		for i, _ := range statements {
+		for i := range statements {
 			samlAttr[i] = &okta.SamlAttributeStatement{
 				Name:      d.Get(fmt.Sprintf("attribute_statements.%d.name", i)).(string),
 				Namespace: d.Get(fmt.Sprintf("attribute_statements.%d.namespace", i)).(string),
@@ -527,7 +557,7 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 		app.Settings.SignOn.AttributeStatements = samlAttr
 	}
 
-	if id, ok := d.GetOk("key.id"); ok {
+	if id, ok := d.GetOk("key_id"); ok {
 		app.Credentials = &okta.ApplicationCredentials{
 			Signing: &okta.ApplicationCredentialsSigning{
 				Kid: id.(string),
@@ -549,36 +579,34 @@ func getCertificate(d *schema.ResourceData, m interface{}) (*okta.JsonWebKey, er
 	return key, err
 }
 
-func getMetadata(d *schema.ResourceData, m interface{}, keyId string) (string, error) {
-	url := fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata?kid=%s", getBaseUrl(m), d.Id(), keyId)
+func getMetadata(d *schema.ResourceData, m interface{}, keyID string) ([]byte, error) {
+	url := fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata?kid=%s", getBaseUrl(m), d.Id(), keyID)
 	req, err := sling.New().Get(url).Request()
 	req.Header.Add("Authorization", fmt.Sprintf("SSWS %s", getApiToken(m)))
 	req.Header.Add("User-Agent", "Terraform Okta Provider")
 	req.Header.Add("Accept", "application/xml")
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	httpClient := cleanhttp.DefaultClient()
 	res, err := httpClient.Do(req)
-	defer res.Body.Close()
 	if err != nil {
-		return "", err
+		return nil, err
 	} else if res.StatusCode == 404 {
-		return "", nil
+		return nil, nil
 	} else if res.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("failed to get metadata for app ID: %s, key ID: %s, status: %s", d.Id(), keyId, res.Status)
+		return nil, fmt.Errorf("failed to get metadata for app ID: %s, key ID: %s, status: %s", d.Id(), keyID, res.Status)
 	}
-	reader, err := ioutil.ReadAll(res.Body)
-
-	return string(reader), err
+	defer res.Body.Close()
+	return ioutil.ReadAll(res.Body)
 }
 
 // Keep in mind that at the time of writing this the official SDK did not support generating certs.
-func generateCertificate(d *schema.ResourceData, m interface{}, appId string) (*okta.JsonWebKey, error) {
+func generateCertificate(d *schema.ResourceData, m interface{}, appID string) (*okta.JsonWebKey, error) {
 	requestExecutor := getRequestExecutor(m)
-	years, _ := strconv.Atoi(d.Get("key.years_valid").(string))
-	url := fmt.Sprintf("/api/v1/apps/%s/credentials/keys/generate?validityYears=%d", appId, years)
+	years := d.Get("key_years_valid").(int)
+	url := fmt.Sprintf("/api/v1/apps/%s/credentials/keys/generate?validityYears=%d", appID, years)
 	req, err := requestExecutor.NewRequest("POST", url, nil)
 	if err != nil {
 		return nil, err
@@ -590,15 +618,15 @@ func generateCertificate(d *schema.ResourceData, m interface{}, appId string) (*
 	return key, err
 }
 
-func tryCreateCertificate(d *schema.ResourceData, m interface{}, appId string) error {
-	if _, ok := d.GetOk("key.name"); ok {
-		key, err := generateCertificate(d, m, appId)
+func tryCreateCertificate(d *schema.ResourceData, m interface{}, appID string) error {
+	if _, ok := d.GetOk("key_name"); ok {
+		key, err := generateCertificate(d, m, appID)
 		if err != nil {
 			return err
 		}
 
 		// Set ID and the read done at the end of update and create will do the GET on metadata
-		d.Set("key.id", key.Kid)
+		d.Set("key_id", key.Kid)
 	}
 
 	return nil

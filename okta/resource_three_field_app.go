@@ -101,10 +101,10 @@ func resourceThreeFieldAppRead(d *schema.ResourceData, m interface{}) error {
 func resourceThreeFieldAppUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	app := buildThreeFieldApplication(d, m)
-	_, _, err := client.Application.UpdateApplication(d.Id(), app)
+	_, resp, err := client.Application.UpdateApplication(d.Id(), app)
 
 	if err != nil {
-		return err
+		return responseErr(resp, err)
 	}
 
 	desiredStatus := d.Get("status").(string)
@@ -119,14 +119,12 @@ func resourceThreeFieldAppUpdate(d *schema.ResourceData, m interface{}) error {
 
 func resourceThreeFieldAppDelete(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	_, err := client.Application.DeactivateApplication(d.Id())
+	resp, err := client.Application.DeactivateApplication(d.Id())
 	if err != nil {
-		return err
+		return responseErr(resp, err)
 	}
 
-	_, err = client.Application.DeleteApplication(d.Id())
-
-	return err
+	return responseErr(client.Application.DeleteApplication(d.Id()))
 }
 
 func buildThreeFieldApplication(d *schema.ResourceData, m interface{}) *okta.SwaThreeFieldApplication {

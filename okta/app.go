@@ -226,7 +226,7 @@ func fetchAppById(id string, m interface{}, app okta.App) error {
 		return nil
 	}
 
-	return err
+	return responseErr(response, err)
 }
 
 func updateAppById(id string, m interface{}, app okta.App) error {
@@ -238,7 +238,7 @@ func updateAppById(id string, m interface{}, app okta.App) error {
 		return nil
 	}
 
-	return err
+	return responseErr(response, err)
 }
 
 func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []func() error {
@@ -258,8 +258,8 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 
 			if !containsGroup(existingGroup, groupID) {
 				asyncActionList = append(asyncActionList, func() error {
-					_, _, err := client.Application.CreateApplicationGroupAssignment(id, groupID, okta.ApplicationGroupAssignment{})
-					return err
+					_, resp, err := client.Application.CreateApplicationGroupAssignment(id, groupID, okta.ApplicationGroupAssignment{})
+					return responseErr(resp, err)
 				})
 			}
 		}
@@ -374,16 +374,15 @@ func resourceAppExists(d *schema.ResourceData, m interface{}) (bool, error) {
 }
 
 func setAppStatus(d *schema.ResourceData, client *okta.Client, status string, desiredStatus string) error {
-	var err error
 	if status != desiredStatus {
 		if desiredStatus == "INACTIVE" {
-			_, err = client.Application.DeactivateApplication(d.Id())
+			return responseErr(client.Application.DeactivateApplication(d.Id()))
 		} else if desiredStatus == "ACTIVE" {
-			_, err = client.Application.ActivateApplication(d.Id())
+			return responseErr(client.Application.ActivateApplication(d.Id()))
 		}
 	}
 
-	return err
+	return nil
 }
 
 func syncGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) error {
