@@ -1,14 +1,12 @@
 SWEEP?=global
 TEST?=$$(go list ./... |grep -v 'vendor')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
+export GO111MODULE=on
 
-default: deps build-plugins
-
-deps:
-	go mod download
+default: build-plugins
 
 # Builds a binary for current OS and Arch
-build: fmtcheck deps
+build: fmtcheck
 	@mkdir -p ~/.terraform.d/plugins/
 	@go build -o terraform-provider-okta_${VERSION}
 
