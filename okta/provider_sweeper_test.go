@@ -82,7 +82,7 @@ func sharedClient(region string) (*articulateOkta.Client, *okta.Client, *ApiSupp
 
 	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
 
-	config := okta.NewConfig().WithOrgUrl(orgURL).WithToken(c.apiToken).WithBackoff(true).WithRetries(5)
+	config := okta.NewConfig().WithOrgUrl(orgURL).WithToken(c.apiToken).WithBackoff(true).WithRetries(20)
 	client := okta.NewClient(config, nil, nil)
 	api := &ApiSupplement{requestExecutor: client.GetRequestExecutor()}
 
