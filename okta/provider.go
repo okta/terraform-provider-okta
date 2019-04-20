@@ -156,6 +156,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		retryCount:  d.Get("max_retries").(int),
 		maxWait:     d.Get("max_wait_seconds").(int),
 		minWait:     d.Get("min_wait_seconds").(int),
+		backoff:     d.Get("backoff").(bool),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, fmt.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)

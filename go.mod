@@ -37,4 +37,4 @@ require (
 	google.golang.org/grpc v1.18.0 // indirect
 )
 
-replace github.com/okta/okta-sdk-golang => github.com/articulate/okta-sdk-golang v1.0.1
+replace github.com/okta/okta-sdk-golang => github.com/articulate/okta-sdk-golang v1.0.2
