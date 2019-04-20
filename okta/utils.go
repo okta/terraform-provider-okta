@@ -2,6 +2,7 @@ package okta
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -277,7 +278,7 @@ func suppressErrorOn404(resp *okta.Response, err error) error {
 		return nil
 	}
 
-	return err
+	return responseErr(resp, err)
 }
 
 func getApiToken(m interface{}) string {
@@ -357,6 +358,20 @@ func requireOneOf(d *schema.ResourceData, propList ...string) error {
 	}
 
 	return fmt.Errorf("One of the following fields must be set: %s", strings.Join(propList, ", "))
+}
+
+// Okta SDK will (not often) return just `Okta API has returned an error: ""`` when the error is not valid JSON.
+// The status should help with debugability. Potentially also could check for an empty error and omit
+// it when it occurs and build some more context.
+func responseErr(resp *okta.Response, err error) error {
+	if err != nil {
+		msg := err.Error()
+		if resp != nil {
+			msg += fmt.Sprintf(", Status: %s", resp.Status)
+		}
+		return errors.New(msg)
+	}
+	return nil
 }
 
 // The best practices states that aggregate types should have error handling (think non-primitive). This will not attempt to set nil values.

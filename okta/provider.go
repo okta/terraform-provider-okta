@@ -79,16 +79,22 @@ func Provider() terraform.ResourceProvider {
 				Default:     true,
 				Description: "Use exponential back off strategy for rate limits.",
 			},
-			"wait_for_rate_limit": {
-				Type:        schema.TypeBool,
+			"min_wait_seconds": {
+				Type:        schema.TypeInt,
 				Optional:    true,
-				Default:     false,
-				Description: "Wait until rate limit is reset before making any additional requests. Experimental at this point.",
+				Default:     30,
+				Description: "minimum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
+			},
+			"max_wait_seconds": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Default:     300,
+				Description: "maximum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
 			},
 			"max_retries": {
 				Type:         schema.TypeInt,
 				Optional:     true,
-				Default:      10,
+				Default:      5,
 				ValidateFunc: validation.IntAtMost(100), // Have to cut it off somewhere right?
 				Description:  "maximum number of retries to attempt before erroring out.",
 			},
@@ -143,12 +149,14 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	log.Printf("[INFO] Initializing Okta client")
 
 	config := Config{
-		orgName:      d.Get("org_name").(string),
-		domain:       d.Get("base_url").(string),
-		apiToken:     d.Get("api_token").(string),
-		parallelism:  d.Get("parallelism").(int),
-		retryCount:   d.Get("max_retries").(int),
-		waitForReset: d.Get("wait_for_rate_limit").(bool),
+		orgName:     d.Get("org_name").(string),
+		domain:      d.Get("base_url").(string),
+		apiToken:    d.Get("api_token").(string),
+		parallelism: d.Get("parallelism").(int),
+		retryCount:  d.Get("max_retries").(int),
+		maxWait:     d.Get("max_wait_seconds").(int),
+		minWait:     d.Get("min_wait_seconds").(int),
+		backoff:     d.Get("backoff").(bool),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, fmt.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)

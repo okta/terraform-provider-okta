@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+	"time"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/okta/okta-sdk-golang/okta"
@@ -18,6 +19,8 @@ type Config struct {
 	parallelism  int
 	waitForReset bool
 	backoff      bool
+	minWait      int
+	maxWait      int
 
 	articulateOktaClient *articulateOkta.Client
 	oktaClient           *okta.Client
@@ -41,7 +44,8 @@ func (c *Config) loadAndValidate() error {
 		WithToken(c.apiToken).
 		WithCache(false).
 		WithBackoff(c.backoff).
-		WithWaitForLimitReset(c.waitForReset && c.backoff != true).
+		WithMinWait(time.Duration(c.minWait) * time.Second).
+		WithMaxWait(time.Duration(c.maxWait) * time.Second).
 		WithRetries(int32(c.retryCount))
 	client := okta.NewClient(config, nil, nil)
 	c.supplementClient = &ApiSupplement{

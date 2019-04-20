@@ -12,7 +12,6 @@ go:
 install:
 # needed for the snap pipe:
 - sudo snap install snapcraft --classic
-- make deps
 - make testacc
 script:
 - make build

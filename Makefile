@@ -1,15 +1,12 @@
 SWEEP?=global
 TEST?=$$(go list ./... |grep -v 'vendor')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
+export GO111MODULE=on
 
-default: deps build-plugins
-
-deps:
-	curl -s https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-	dep ensure
+default: build-plugins
 
 # Builds a binary for current OS and Arch
-build: fmtcheck deps
+build: fmtcheck
 	@mkdir -p ~/.terraform.d/plugins/
 	@go build -o terraform-provider-okta_${VERSION}
 
@@ -17,7 +14,7 @@ build: fmtcheck deps
 build-plugins:
 	@mkdir -p ~/.terraform.d/plugins/
 	gox -osarch="linux/amd64 darwin/amd64 windows/amd64" \
-	  -output="${HOME}/.terraform.d/plugins/{{.OS}}_{{.Arch}}/terraform-provider-okta_${VERSION}" .
+	  -output="${HOME}/.terraform.d/plugins/{{.OS}}_{{.Arch}}/terraform-provider-okta_${VERSION}_x4" .
 
 ship: build-plugins
 	exists=$$(aws s3api list-objects --bucket articulate-terraform-providers --profile prod --prefix terraform-provider-okta --query Contents[].Key | jq 'contains(["${VERSION}"])' ) \
@@ -37,7 +34,7 @@ testacc: fmtcheck
 
 # Sweeps up leaked dangling resources
 sweep:
-	@echo "WARNING: This will destroy resources. Use only in development accounts."
+	@echo "WARNING: This will destroy resources. Use only in development accounts.
 	go test $(TEST) -v -sweep=$(SWEEP) $(SWEEPARGS)
 
 vet:
