@@ -1,6 +1,6 @@
 // This would normally be in another repo if you were decentralizing redirect_uri settings
 resource "okta_oauth_app" "test" {
-  label          = "testAcc %[1]d"
+  label          = "testAcc_replace_with_uuid"
   type           = "web"
   grant_types    = ["authorization_code"]
   response_types = ["code"]

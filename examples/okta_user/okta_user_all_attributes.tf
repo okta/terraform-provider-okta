@@ -1,9 +1,9 @@
-resource "okta_user" "testAcc_%[1]d" {
+resource "okta_user" "testAcc_replace_with_uuid" {
   admin_roles        = ["ORG_ADMIN"]
   first_name         = "TestAcc"
   last_name          = "Smith"
-  login              = "test-acc-%[1]d@testing.com"
-  email              = "test1-%[1]d@testing.com"
+  login              = "test-acc-replace_with_uuid@testing.com"
+  email              = "test1-replace_with_uuid@testing.com"
   city               = "New York"
   cost_center        = "10"
   country_code       = "US"
@@ -24,7 +24,7 @@ resource "okta_user" "testAcc_%[1]d" {
   preferred_language = "en-us"
   primary_phone      = "4445556666"
   profile_url        = "http://www.example.com/profile"
-  second_email       = "test2-%[1]d@testing.com"
+  second_email       = "test2-replace_with_uuid@testing.com"
   state              = "NY"
   street_address     = "5678 Testing Ave."
   timezone           = "America/New_York"

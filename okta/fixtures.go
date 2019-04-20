@@ -17,6 +17,8 @@ type (
 	}
 )
 
+const uuidPattern = "replace_with_uuid"
+
 // newFixtureManager get a new fixture manager for a particular resource.
 func newFixtureManager(resourceName string) *fixtureManager {
 	_, filename, _, _ := runtime.Caller(0)
@@ -36,9 +38,9 @@ func (manager *fixtureManager) GetFixtures(fixtureName string, rInt int, t *test
 		t.Fatalf("failed to load terraform fixtures for ACC test, err: %v", err)
 	}
 	tfConfig := string(rawFile)
-	if strings.Count(tfConfig, "%[1]d") == 0 {
+	if strings.Count(tfConfig, uuidPattern) == 0 {
 		return tfConfig
 	}
 
-	return fmt.Sprintf(tfConfig, rInt)
+	return strings.Replace(tfConfig, uuidPattern, fmt.Sprintf("%d", rInt), -1)
 }

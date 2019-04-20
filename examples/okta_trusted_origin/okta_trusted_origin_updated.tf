@@ -1,6 +1,6 @@
-resource "okta_trusted_origin" "testAcc_%[1]d" {
-  name   = "test-acc-%[1]d"
+resource "okta_trusted_origin" "testAcc_replace_with_uuid" {
+  name   = "test-acc-replace_with_uuid"
   active = false
-  origin = "https://example2-%[1]d.com"
+  origin = "https://example2-replace_with_uuid.com"
   scopes = ["CORS", "REDIRECT"]
 }

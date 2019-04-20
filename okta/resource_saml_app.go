@@ -5,11 +5,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-
-	"github.com/dghubble/sling"
-	cleanhttp "github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
@@ -580,26 +575,8 @@ func getCertificate(d *schema.ResourceData, m interface{}) (*okta.JsonWebKey, er
 }
 
 func getMetadata(d *schema.ResourceData, m interface{}, keyID string) ([]byte, error) {
-	url := fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata?kid=%s", getBaseUrl(m), d.Id(), keyID)
-	req, err := sling.New().Get(url).Request()
-	req.Header.Add("Authorization", fmt.Sprintf("SSWS %s", getApiToken(m)))
-	req.Header.Add("User-Agent", "Terraform Okta Provider")
-	req.Header.Add("Accept", "application/xml")
-	if err != nil {
-		return nil, err
-	}
-
-	httpClient := cleanhttp.DefaultClient()
-	res, err := httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	} else if res.StatusCode == 404 {
-		return nil, nil
-	} else if res.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to get metadata for app ID: %s, key ID: %s, status: %s", d.Id(), keyID, res.Status)
-	}
-	defer res.Body.Close()
-	return ioutil.ReadAll(res.Body)
+	key, _, err := getSupplementFromMetadata(m).GetSAMLMetdata(d.Id(), keyID)
+	return key, err
 }
 
 // Keep in mind that at the time of writing this the official SDK did not support generating certs.

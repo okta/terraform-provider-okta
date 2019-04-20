@@ -1,5 +1,5 @@
 resource "okta_auth_server" "test" {
-  name        = "testAcc_%[1]d"
+  name        = "testAcc_replace_with_uuid"
   description = "test"
   audiences   = ["whatever.rise.zone"]
 }

@@ -1,6 +1,6 @@
-resource "okta_saml_app" "testAcc_%[1]d" {
+resource "okta_saml_app" "testAcc_replace_with_uuid" {
   preconfigured_app = "pagerduty"
-  label             = "testAcc_%[1]d"
+  label             = "testAcc_replace_with_uuid"
 
   app_settings_json = <<JSON
 {
