@@ -27,6 +27,7 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 * [okta_auth_server_policy_rule](./okta_auth_server_policy_rule) Supports the management of Okta Authorization servers policy rules.
 * [okta_auth_server_scope](./okta_auth_server_scope) Supports the management of Okta Authorization servers scopes.
 * [okta_auth_server_claim](./okta_auth_server_claim) Supports the management of Okta Authorization servers claims.
+* [okta_inline_hook](./okta_inline_hook) Supports the management of Okta Inline Hooks EA feature.
 
 ## Notes
 

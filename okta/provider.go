@@ -21,6 +21,7 @@ const (
 	bookmarkApp            = "okta_bookmark_app"
 	factor                 = "okta_factor"
 	identityProvider       = "okta_identity_provider"
+	inlineHook             = "okta_inline_hook"
 	mfaPolicy              = "okta_mfa_policy"
 	mfaPolicyRule          = "okta_mfa_policy_rule"
 	oAuthApp               = "okta_oauth_app"
@@ -129,6 +130,7 @@ func Provider() terraform.ResourceProvider {
 			authServerPolicyRule:   resourceAuthServerPolicyRule(),
 			authServerScope:        resourceAuthServerScope(),
 			bookmarkApp:            resourceBookmarkApp(),
+			inlineHook:             resourceInlineHook(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			authServer:              dataSourceAuthServer(),

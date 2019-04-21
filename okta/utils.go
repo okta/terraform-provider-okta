@@ -290,6 +290,14 @@ func getBaseUrl(m interface{}) string {
 	return fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
 }
 
+// Safely get string value
+func getStringValue(d *schema.ResourceData, key string) string {
+	if v, ok := d.GetOk(key); ok {
+		return v.(string)
+	}
+	return ""
+}
+
 func getParallelismFromMetadata(meta interface{}) int {
 	return meta.(*Config).parallelism
 }
