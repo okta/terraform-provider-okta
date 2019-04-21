@@ -1,5 +1,5 @@
 resource "okta_oauth_app" "test" {
-  label          = "testAcc_%[1]d"
+  label          = "testAcc_replace_with_uuid"
   status         = "INACTIVE"
   type           = "browser"
   grant_types    = ["implicit"]

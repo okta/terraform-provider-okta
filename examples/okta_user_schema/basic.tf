@@ -1,5 +1,5 @@
-resource "okta_user_schema" "testAcc_%[1]d" {
-  index       = "testAcc_%[1]d"
+resource "okta_user_schema" "testAcc_replace_with_uuid" {
+  index       = "testAcc_replace_with_uuid"
   title       = "terraform acceptance test"
   type        = "string"
   description = "terraform acceptance test"

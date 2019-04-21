@@ -14,29 +14,7 @@ This provider plugin is maintained by the Terraform team at [Articulate](https:/
 ## Requirements
 
 - [Terraform](https://www.terraform.io/downloads.html) 0.11.x
-- [Go](https://golang.org/doc/install) 1.11 (to build the provider plugin)
-
-## Common Errors
-
-* App User Error
-```
-The API returned an error: Deactivate application for user forbidden.. Causes: errorSummary: The application cannot be unassigned from the user while their group memberships grant them access, The API returned an error: Deactivate application for user forbidden.. Causes: errorSummary: The application cannot be unassigned from the user while their group memberships grant them access.
-```
-
-This requires manual intervention. A user's access must be "converted" via the UI to group access. Okta does not expose an endpoint for this.
-
-## Disclaimer
-
-There are particular resources and settings that are not exposed on Okta's public API. Please submit an issue if you find one not listed here.
-
-### Org Settings
-
-- Org level customization settings.
-
-### Predefined SAML Applications
-
-- API Integrations on predefined SAML SSO applications. An example of this is the AWS SSO app, you can configure all of the app settings but you cannot configure anything under Provisioning -> API Integration. According to Okta adding API support for this is not likely.
-- Group profile settings on SAML applications. An example of this is the AWS SSO application group assignment which allows you to configure SAML user roles, for instance, which group gets access to which AWS environment. This is exposed on the GET endpoint of the Application Groups API but is read-only at the moment.
+- [Go](https://golang.org/doc/install) 1.12 (to build the provider plugin)
 
 ## Usage
 
@@ -49,6 +27,12 @@ provider "okta" {
   org_name  = <okta instance name, e.g. dev-XXXXXX>
   api_token = <okta instance api token with the Administrator role>
   base_url  = <okta base url, e.g. oktapreview.com>
+
+  // Optional settings, https://en.wikipedia.org/wiki/Exponential_backoff
+  max_retries      = <number of retries on api calls, default: 5>
+  backoff          = <enable exponential backoff strategy for rate limits, default = true>
+  min_wait_seconds = <min number of seconds to wait on backoff, default: 30>
+  max_wait_seconds = <max number of seconds to wait on backoff, default: 300>
 }
 ```
 
@@ -98,6 +82,28 @@ resource "okta_user" "blah" {
   email     = "XXXXX@XXXXXXXX.XXX"
 }
 ```
+
+## Disclaimer
+
+There are particular resources and settings that are not exposed on Okta's public API. Please submit an issue if you find one not listed here.
+
+### Org Settings
+
+- Org level customization settings.
+
+### Predefined SAML Applications
+
+- API Integrations on predefined SAML SSO applications. An example of this is the AWS SSO app, you can configure all of the app settings but you cannot configure anything under Provisioning -> API Integration. According to Okta adding API support for this is not likely.
+- Group profile settings on SAML applications. An example of this is the AWS SSO application group assignment which allows you to configure SAML user roles, for instance, which group gets access to which AWS environment. This is exposed on the GET endpoint of the Application Groups API but is read-only at the moment.
+
+## Common Errors
+
+* App User Error
+```
+The API returned an error: Deactivate application for user forbidden. Causes: errorSummary: The application cannot be unassigned from the user while their group memberships grant them access, The API returned an error: Deactivate application for user forbidden.. Causes: errorSummary: The application cannot be unassigned from the user while their group memberships grant them access.
+```
+
+This requires manual intervention. A user's access must be "converted" via the UI to group access. Okta does not expose an endpoint for this.
 
 ## Developing the Provider
 

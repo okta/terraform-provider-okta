@@ -1,8 +1,8 @@
-resource "okta_user" "testAcc_%[1]d" {
+resource "okta_user" "testAcc_replace_with_uuid" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "Smith"
-  login       = "test-acc-%[1]d@testing.com"
-  email       = "test-acc-%[1]d@testing.com"
+  login       = "test-acc-replace_with_uuid@testing.com"
+  email       = "test-acc-replace_with_uuid@testing.com"
   status      = "STAGED"
 }

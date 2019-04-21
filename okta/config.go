@@ -5,6 +5,7 @@ import (
 	"time"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
+	cleanhttp "github.com/hashicorp/go-cleanhttp"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/cache"
 )
@@ -28,7 +29,8 @@ type Config struct {
 }
 
 func (c *Config) loadAndValidate() error {
-	articulateClient, err := articulateOkta.NewClientWithDomain(nil, c.orgName, c.domain, c.apiToken)
+	httpClient := cleanhttp.DefaultClient()
+	articulateClient, err := articulateOkta.NewClientWithDomain(httpClient, c.orgName, c.domain, c.apiToken)
 
 	// add the Articulate Okta client object to Config
 	c.articulateOktaClient = articulateClient
@@ -47,9 +49,12 @@ func (c *Config) loadAndValidate() error {
 		WithMinWait(time.Duration(c.minWait) * time.Second).
 		WithMaxWait(time.Duration(c.maxWait) * time.Second).
 		WithRetries(int32(c.retryCount))
-	client := okta.NewClient(config, nil, nil)
+	client := okta.NewClient(config, httpClient, cache.NewNoOpCache())
 	c.supplementClient = &ApiSupplement{
-		requestExecutor: okta.NewRequestExecutor(nil, cache.NewNoOpCache(), config),
+		baseURL:         fmt.Sprintf("https://%s.%s", c.orgName, c.domain),
+		client:          httpClient,
+		token:           c.apiToken,
+		requestExecutor: okta.NewRequestExecutor(httpClient, cache.NewNoOpCache(), config),
 	}
 
 	// add the Okta SDK client object to Config

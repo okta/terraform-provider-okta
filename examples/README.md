@@ -8,7 +8,7 @@ Here lies the examples that will aid you on your Okta Terraform journey.
 
 ## Test Fixture Examples
 
-Anything that lies underneath a resource directory is config we use as fixtures to our tests. This means we pass our tests through a string formatter that replaces the format placeholders with the actual values but regardless seeing these might be helpful when trying to implement this provider. Just remember, it is not valid config until you replace or remove `%[1]d`.
+Anything that lies underneath a resource directory is config we use as fixtures to our tests. We use the special trigger `replace_with_uuid` to trigger the fixture manager to insert a unique id. Eventually we will stand up a wiki for the provider but we don't quite have the manpower yet to do so.
 
 ## Resources & Data Sources
 

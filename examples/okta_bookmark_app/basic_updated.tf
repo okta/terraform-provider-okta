@@ -2,16 +2,16 @@ resource "okta_user" "user" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "blah"
-  login       = "test-acc-%[1]d@testing.com"
-  email       = "test-acc-%[1]d@testing.com"
+  login       = "test-acc-replace_with_uuid@testing.com"
+  email       = "test-acc-replace_with_uuid@testing.com"
 }
 
 resource "okta_group" "group" {
-  name = "testAcc_%[1]d"
+  name = "testAcc_replace_with_uuid"
 }
 
 resource "okta_bookmark_app" "test" {
-  label = "testAcc_%[1]d"
+  label = "testAcc_replace_with_uuid"
   url   = "https://test.com"
 
   users = {

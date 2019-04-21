@@ -34,7 +34,7 @@ testacc: fmtcheck
 
 # Sweeps up leaked dangling resources
 sweep:
-	@echo "WARNING: This will destroy resources. Use only in development accounts.
+	@echo "WARNING: This will destroy resources. Use only in development accounts."
 	go test $(TEST) -v -sweep=$(SWEEP) $(SWEEPARGS)
 
 vet:
