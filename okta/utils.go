@@ -336,6 +336,14 @@ func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []
 	return warnings, errors
 }
 
+func mergeMaps(target, source map[string]interface{}) map[string]interface{} {
+	for key, value := range source {
+		target[key] = value
+	}
+
+	return target
+}
+
 func normalizeDataJSON(val interface{}) string {
 	dataMap := map[string]interface{}{}
 

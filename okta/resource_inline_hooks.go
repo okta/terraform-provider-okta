@@ -3,7 +3,6 @@ package okta
 import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/okta/okta-sdk-golang/okta/query"
 
 	"net/http"
 )
@@ -43,6 +42,7 @@ func resourceInlineHook() *schema.Resource {
 			"type": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 				ValidateFunc: validation.StringInSlice(
 					[]string{
 						"com.okta.oauth2.tokens.transform",
@@ -55,6 +55,34 @@ func resourceInlineHook() *schema.Resource {
 			"version": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+			},
+			"headers": &schema.Schema{
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     headerSchema,
+			},
+			"auth": &schema.Schema{
+				Type:     schema.TypeMap,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"key": &schema.Schema{
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"type": &schema.Schema{
+							Type:         schema.TypeString,
+							Optional:     true,
+							Default:      "HEADER",
+							ValidateFunc: validation.StringInSlice([]string{"HEADER"}, false),
+						},
+						"value": &schema.Schema{
+							Type:      schema.TypeString,
+							Optional:  true,
+							Sensitive: true,
+						},
+					},
+				},
 			},
 			"channel": &schema.Schema{
 				Type:     schema.TypeMap,
@@ -79,37 +107,6 @@ func resourceInlineHook() *schema.Resource {
 							Default:  "POST",
 							Optional: true,
 						},
-						"auth": &schema.Schema{
-							Type:     schema.TypeMap,
-							Optional: true,
-							Elem: schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"key": &schema.Schema{
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: "Header name for authentication",
-									},
-									"type": &schema.Schema{
-										Type:     schema.TypeString,
-										Optional: true,
-										ValidateFunc: validation.StringInSlice(
-											[]string{"HEADER"},
-											false,
-										),
-									},
-									"value": &schema.Schema{
-										Type:      schema.TypeString,
-										Optional:  true,
-										Sensitive: true,
-									},
-								},
-							},
-						},
-						"headers": &schema.Schema{
-							Type:     schema.TypeSet,
-							Optional: true,
-							Elem:     &headerSchema,
-						},
 					},
 				},
 			},
@@ -120,14 +117,17 @@ func resourceInlineHook() *schema.Resource {
 func resourceInlineHookCreate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
 	hook := buildInlineHook(d, m)
-	activate := d.Get("status").(string) == "ACTIVE"
-	params := &query.Params{Activate: &activate}
-	newHook, _, err := client.CreateInlineHook(*hook, params)
+	newHook, _, err := client.CreateInlineHook(*hook, nil)
 	if err != nil {
 		return err
 	}
 
 	d.SetId(newHook.ID)
+	desiredStatus := d.Get("status").(string)
+	err = setHookStatus(d, client, newHook.Status, desiredStatus)
+	if err != nil {
+		return err
+	}
 
 	return resourceInlineHookRead(d, m)
 }
@@ -149,20 +149,22 @@ func resourceInlineHookRead(d *schema.ResourceData, m interface{}) error {
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"channel": flattenHookChannel(hook.Channel),
+		"headers": flattenHeaders(hook.Channel),
+		"auth":    flattenAuth(d, hook.Channel),
 	})
 }
 
 func resourceInlineHookUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
 	hook := buildInlineHook(d, m)
-	_, _, err := client.UpdateInlineHook(d.Id(), *hook, nil)
+	newHook, _, err := client.UpdateInlineHook(d.Id(), *hook, nil)
 
 	if err != nil {
 		return err
 	}
 
 	desiredStatus := d.Get("status").(string)
-	err = setHookStatus(d, client, hook.Status, desiredStatus)
+	err = setHookStatus(d, client, newHook.Status, desiredStatus)
 	if err != nil {
 		return err
 	}
@@ -198,20 +200,21 @@ func buildInlineChannel(d *schema.ResourceData, m interface{}) *Channel {
 	}
 
 	headerList := []*Header{}
-	if raw, ok := d.GetOk("channel.headers"); ok {
+	if raw, ok := d.GetOk("headers"); ok {
 		for _, header := range raw.(*schema.Set).List() {
-			h, ok := header.(map[string]string)
+			h, ok := header.(map[string]interface{})
 			if ok {
-				headerList = append(headerList, &Header{Key: h["key"], Value: h["type"]})
+				headerList = append(headerList, &Header{Key: h["key"].(string), Value: h["value"].(string)})
 			}
 		}
 	}
+
 	var auth *AuthScheme
-	if _, ok := d.GetOk("channel.auth.type"); ok {
+	if _, ok := d.GetOk("auth.key"); ok {
 		auth = &AuthScheme{
-			Key:   getStringValue(d, "channel.auth.key"),
-			Type:  getStringValue(d, "channel.auth.type"),
-			Value: getStringValue(d, "channel.auth.value"),
+			Key:   getStringValue(d, "auth.key"),
+			Type:  getStringValue(d, "auth.type"),
+			Value: getStringValue(d, "auth.value"),
 		}
 	}
 
@@ -220,13 +223,37 @@ func buildInlineChannel(d *schema.ResourceData, m interface{}) *Channel {
 			URI:        getStringValue(d, "channel.uri"),
 			AuthScheme: auth,
 			Headers:    headerList,
+			Method:     getStringValue(d, "channel.method"),
 		},
 		Type:    getStringValue(d, "channel.type"),
 		Version: getStringValue(d, "channel.version"),
 	}
 }
 
+func flattenAuth(d *schema.ResourceData, c *Channel) map[string]interface{} {
+	auth := map[string]interface{}{}
+
+	if c.Config.AuthScheme != nil {
+		auth = map[string]interface{}{
+			"key":  c.Config.AuthScheme.Key,
+			"type": c.Config.AuthScheme.Type,
+			// Read only
+			"value": getStringValue(d, "auth.value"),
+		}
+	}
+	return auth
+}
+
 func flattenHookChannel(c *Channel) map[string]interface{} {
+	return map[string]interface{}{
+		"type":    c.Type,
+		"version": c.Version,
+		"uri":     c.Config.URI,
+		"method":  c.Config.Method,
+	}
+}
+
+func flattenHeaders(c *Channel) *schema.Set {
 	headers := make([]interface{}, len(c.Config.Headers))
 	for i, header := range c.Config.Headers {
 		headers[i] = map[string]interface{}{
@@ -235,17 +262,7 @@ func flattenHookChannel(c *Channel) map[string]interface{} {
 		}
 	}
 
-	return map[string]interface{}{
-		"type":    c.Type,
-		"version": c.Version,
-		"uri":     c.Config.URI,
-		"auth": map[string]interface{}{
-			"key":   c.Config.AuthScheme.Key,
-			"type":  c.Config.AuthScheme.Type,
-			"value": c.Config.AuthScheme.Value,
-		},
-		"headers": schema.NewSet(schema.HashResource(headerSchema), headers),
-	}
+	return schema.NewSet(schema.HashResource(headerSchema), headers)
 }
 
 func setHookStatus(d *schema.ResourceData, client *ApiSupplement, status string, desiredStatus string) error {

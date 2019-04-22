@@ -1,7 +1,6 @@
 package okta
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
@@ -24,6 +23,7 @@ type (
 		AuthScheme *AuthScheme `json:"authScheme,omitempty"`
 		Headers    []*Header   `json:"headers,omitempty"`
 		URI        string      `json:"uri,omitempty"`
+		Method     string      `json:"method,omitempty"`
 	}
 
 	Header struct {
@@ -87,8 +87,6 @@ func (m *ApiSupplement) CreateInlineHook(body InlineHook, qp *query.Params) (*In
 	if qp != nil {
 		url += qp.String()
 	}
-	data, _ := json.Marshal(body)
-	fmt.Println(string(data))
 	req, err := m.requestExecutor.NewRequest("POST", url, body)
 	if err != nil {
 		return nil, nil, err

@@ -9,12 +9,12 @@ import (
 )
 
 func TestAccInlineHook(t *testing.T) {
-	t.Skip("skipping test until EA feature is enabled in test account")
 	ri := acctest.RandInt()
-	resourceName := "okta_inline_hooks.test"
+	resourceName := "okta_inline_hook.test"
 	mgr := newFixtureManager(inlineHook)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	activatedConfig := mgr.GetFixtures("basic_activated.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -33,8 +33,8 @@ func TestAccInlineHook(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
 					resource.TestCheckResourceAttr(resourceName, "channel.uri", "https://example.com/test"),
 					resource.TestCheckResourceAttr(resourceName, "channel.method", "POST"),
-					resource.TestCheckResourceAttr(resourceName, "channel.auth_type", "HEADER"),
-					resource.TestCheckResourceAttr(resourceName, "channel.auth_key", "Authorization"),
+					resource.TestCheckResourceAttr(resourceName, "auth.type", "HEADER"),
+					resource.TestCheckResourceAttr(resourceName, "auth.key", "Authorization"),
 				),
 			},
 			{
@@ -49,8 +49,20 @@ func TestAccInlineHook(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
 					resource.TestCheckResourceAttr(resourceName, "channel.uri", "https://example.com/test1"),
 					resource.TestCheckResourceAttr(resourceName, "channel.method", "POST"),
-					resource.TestCheckResourceAttr(resourceName, "channel.auth_type", "HEADER"),
-					resource.TestCheckResourceAttr(resourceName, "channel.auth_key", "Authorization"),
+				),
+			},
+			{
+				Config: activatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, hookExists),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.import.transform"),
+					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
+					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
+					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
+					resource.TestCheckResourceAttr(resourceName, "channel.uri", "https://example.com/test1"),
+					resource.TestCheckResourceAttr(resourceName, "channel.method", "POST"),
 				),
 			},
 		},
