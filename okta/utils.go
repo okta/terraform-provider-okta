@@ -290,6 +290,14 @@ func getBaseUrl(m interface{}) string {
 	return fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
 }
 
+// Safely get string value
+func getStringValue(d *schema.ResourceData, key string) string {
+	if v, ok := d.GetOk(key); ok {
+		return v.(string)
+	}
+	return ""
+}
+
 func getParallelismFromMetadata(meta interface{}) int {
 	return meta.(*Config).parallelism
 }
@@ -326,6 +334,14 @@ func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []
 		errors = append(errors, fmt.Errorf("%s field not a valid email address", key))
 	}
 	return warnings, errors
+}
+
+func mergeMaps(target, source map[string]interface{}) map[string]interface{} {
+	for key, value := range source {
+		target[key] = value
+	}
+
+	return target
 }
 
 func normalizeDataJSON(val interface{}) string {
