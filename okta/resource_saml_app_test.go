@@ -102,6 +102,7 @@ func TestAccOktaSamlApplication(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "http_post_binding"),
 					resource.TestCheckResourceAttrSet(resourceName, "http_redirect_binding"),
 					resource.TestCheckResourceAttrSet(resourceName, "key_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "metadata"),
 				),
 			},
 			{

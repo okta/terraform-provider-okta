@@ -2,6 +2,8 @@ SWEEP?=global
 TEST?=$$(go list ./... |grep -v 'vendor')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 export GO111MODULE=on
+// Last tagged version
+VERSION=$$(git tag --sort=v:refname | tail -1)
 
 default: build-plugins
 
@@ -21,7 +23,7 @@ ship: build-plugins
 	&& if [ $$exists == "true" ]; then \
 	  echo "[ERROR] terraform-provider-okta_${VERSION} already exists in s3://${TERRAFORM_PLUGINS_BUCKET} - don't forget to bump the version."; else \
 		echo "copying terraform-provider-okta_${VERSION} to s3://${TERRAFORM_PLUGINS_BUCKET}"; \
-	  aws s3 cp ~/.terraform.d/plugins/linux_amd64/terraform-provider-okta_${VERSION}  s3://${TERRAFORM_PLUGINS_BUCKET}/ --profile ${TERRAFORM_PLUGINS_PROFILE}; \
+	  aws s3 cp ~/.terraform.d/plugins/linux_amd64/terraform-provider-okta_${VERSION}_x4  s3://${TERRAFORM_PLUGINS_BUCKET}/ --profile ${TERRAFORM_PLUGINS_PROFILE}; \
 	fi
 
 test: fmtcheck
