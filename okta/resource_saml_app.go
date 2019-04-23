@@ -385,7 +385,7 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 		if err != nil {
 			return err
 		}
-		d.Set("metadata", keyMetadata)
+		d.Set("metadata", string(keyMetadata))
 
 		metadataRoot := &root{}
 		err = xml.Unmarshal(keyMetadata, metadataRoot)
