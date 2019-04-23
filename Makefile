@@ -2,7 +2,8 @@ SWEEP?=global
 TEST?=$$(go list ./... |grep -v 'vendor')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 export GO111MODULE=on
-// Last tagged version
+
+# Last tagged version
 VERSION=$$(git tag --sort=v:refname | tail -1)
 
 default: build-plugins
