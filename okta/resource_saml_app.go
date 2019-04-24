@@ -32,9 +32,6 @@ var customSamlAppRequiredFields = []string{
 }
 
 type (
-	entityDescriptor struct {
-	}
-
 	ssoService struct {
 		Binding  string `xml:"Binding,attr"`
 		Location string `xml:"Location,attr"`
