@@ -4,7 +4,6 @@ resource "okta_saml_app" "testAcc_replace_with_uuid" {
   recipient                = "http://here.com"
   destination              = "http://its-about-the-journey.com"
   audience                 = "http://audience.com"
-  idp_issuer               = "idhere123"
   subject_name_id_template = "$${source.login}"
   subject_name_id_format   = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
   response_signed          = true

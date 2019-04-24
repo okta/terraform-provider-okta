@@ -105,9 +105,10 @@ func resourceUserSchema() *schema.Resource {
 				Default:      "READ_ONLY",
 			},
 			"master": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"PROFILE_MASTER", "OKTA"}, false),
+				Type:     schema.TypeString,
+				Optional: true,
+				// Accepting an empty value to allow for zero value (when provisioning is off)
+				ValidateFunc: validation.StringInSlice([]string{"PROFILE_MASTER", "OKTA", ""}, false),
 				Description:  "SubSchema profile manager, if not set it will inherit its setting.",
 			},
 		},

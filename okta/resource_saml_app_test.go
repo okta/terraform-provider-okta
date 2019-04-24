@@ -53,7 +53,7 @@ func TestAccOktaSamlApplicationConditionalRequire(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
-				ExpectError: regexp.MustCompile("missing conditionally required fields, reason: Custom SAML applications must contain these fields, missing fields: sso_url, recipient, destination, audience, idp_issuer, subject_name_id_template, subject_name_id_format, signature_algorithm, digest_algorithm, honor_force_authn, authn_context_class_ref"),
+				ExpectError: regexp.MustCompile("missing conditionally required fields, reason: Custom SAML applications must contain these fields*"),
 			},
 		},
 	})
@@ -103,6 +103,8 @@ func TestAccOktaSamlApplication(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "http_redirect_binding"),
 					resource.TestCheckResourceAttrSet(resourceName, "key_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "metadata"),
+					resource.TestCheckResourceAttrSet(resourceName, "entity_key"),
+					resource.TestCheckResourceAttrSet(resourceName, "entity_url"),
 				),
 			},
 			{
@@ -138,7 +140,6 @@ func TestAccOktaSamlApplicationAllFields(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "recipient", "http://here.com"),
 					resource.TestCheckResourceAttr(resourceName, "destination", "http://its-about-the-journey.com"),
 					resource.TestCheckResourceAttr(resourceName, "audience", "http://audience.com"),
-					resource.TestCheckResourceAttr(resourceName, "idp_issuer", "idhere123"),
 					resource.TestCheckResourceAttr(resourceName, "subject_name_id_template", "${source.login}"),
 					resource.TestCheckResourceAttr(resourceName, "subject_name_id_format", "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"),
 					resource.TestCheckResourceAttr(resourceName, "response_signed", "true"),
