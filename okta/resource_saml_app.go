@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
+	"strings"
 )
 
 const (
@@ -22,7 +23,6 @@ var customSamlAppRequiredFields = []string{
 	"recipient",
 	"destination",
 	"audience",
-	"idp_issuer",
 	"subject_name_id_template",
 	"subject_name_id_format",
 	"signature_algorithm",
@@ -38,7 +38,8 @@ type (
 	}
 
 	root struct {
-		Services []*ssoService `xml:"IDPSSODescriptor>SingleSignOnService"`
+		EntityURI string        `xml:"entityID,attr"`
+		Services  []*ssoService `xml:"IDPSSODescriptor>SingleSignOnService"`
 	}
 )
 
@@ -97,6 +98,16 @@ func resourceSamlApp() *schema.Resource {
 				Computed:    true,
 				Description: "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect location from the SAML metadata.",
 			},
+			"entity_key": {
+				Type:        schema.TypeString,
+				Description: "Entity ID, the ID portion of the entity_url",
+				Computed:    true,
+			},
+			"entity_url": {
+				Type:        schema.TypeString,
+				Description: "Entity URL for instance http://www.okta.com/exk1fcia6d6EMsf331d8",
+				Computed:    true,
+			},
 			"auto_submit_toolbar": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -147,6 +158,10 @@ func resourceSamlApp() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "SAML issuer ID",
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					// Conditional default
+					return new == "" && old == "http://www.okta.com/${org.externalKey}"
+				},
 			},
 			"sp_issuer": {
 				Type:        schema.TypeString,
@@ -401,6 +416,10 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 				d.Set("http_redirect_binding", service.Location)
 			}
 		}
+		uri := metadataRoot.EntityURI
+		key := getExternalID(uri, app.Settings.SignOn.IdpIssuer)
+		d.Set("entity_url", uri)
+		d.Set("entity_key", key)
 	}
 
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
@@ -572,6 +591,13 @@ func getCertificate(d *schema.ResourceData, m interface{}) (*okta.JsonWebKey, er
 	}
 
 	return key, err
+}
+
+func getExternalID(url string, pattern string) string {
+	// Default idp issuer is such that I can extract the ID. If someone enters a custom value
+	// this will result in "" most likely, which seems fine
+	pur := strings.Replace(pattern, "${org.externalKey}", "", -1)
+	return strings.Replace(url, pur, "", -1)
 }
 
 func getMetadata(d *schema.ResourceData, m interface{}, keyID string) ([]byte, error) {
