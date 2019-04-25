@@ -1,7 +1,6 @@
 package okta
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/okta/okta-sdk-golang/okta"
@@ -129,13 +128,23 @@ func resourceGroupRuleUpdate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if hasGroupRuleChange(d) {
+		client := getOktaClientFromMetadata(m)
+		rule := buildGroupRule(d)
+
 		if status == "ACTIVE" {
-			return errors.New("an active rule cannot be modified, set status to INACTIVE with any other changes")
+			// Only inactive rules can be changed, thus we should deactivate the rule in case it was "ACTIVE"
+			_, err := client.Group.DeactivateRule(d.Id())
+			return err
 		}
 
-		rule := buildGroupRule(d)
-		_, _, err := getOktaClientFromMetadata(m).Group.UpdateRule(d.Id(), *rule)
+		_, _, err := client.Group.UpdateRule(d.Id(), *rule)
 		if err != nil {
+			return err
+		}
+
+		if status == "ACTIVE" {
+			// We should reactivate the rule in case it was deactivated.
+			_, err := client.Group.ActivateRule(d.Id())
 			return err
 		}
 	}
