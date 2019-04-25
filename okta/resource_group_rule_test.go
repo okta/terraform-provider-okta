@@ -38,6 +38,7 @@ func TestAccOktaGroupRuleCrud(t *testing.T) {
 	mgr := newFixtureManager("okta_group_rule")
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	groupUpdate := mgr.GetFixtures("basic_group_update.tf", ri, t)
 	deactivated := mgr.GetFixtures("basic_deactivated.tf", ri, t)
 	name := buildResourceName(ri)
 
@@ -57,6 +58,13 @@ func TestAccOktaGroupRuleCrud(t *testing.T) {
 			},
 			{
 				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+				),
+			},
+			{
+				Config: groupUpdate,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
