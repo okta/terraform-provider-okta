@@ -1,9 +1,8 @@
 package okta
 
 import (
-	"net/http"
-
 	"github.com/okta/okta-sdk-golang/okta"
+	"net/http"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -117,7 +116,7 @@ func resourceGroupRuleRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceGroupRuleUpdate(d *schema.ResourceData, m interface{}) error {
-	status := d.Get("status").(string)
+	desiredStatus := d.Get("status").(string)
 	// Only inactive rules can be changed, thus we should handle this first
 	if d.HasChange("status") {
 		if err := handleGroupRuleLifecycle(d, m); err != nil {
@@ -131,10 +130,11 @@ func resourceGroupRuleUpdate(d *schema.ResourceData, m interface{}) error {
 		client := getOktaClientFromMetadata(m)
 		rule := buildGroupRule(d)
 
-		if status == "ACTIVE" {
+		if desiredStatus == "ACTIVE" {
 			// Only inactive rules can be changed, thus we should deactivate the rule in case it was "ACTIVE"
-			_, err := client.Group.DeactivateRule(d.Id())
-			return err
+			if _, err := client.Group.DeactivateRule(d.Id()); err != nil {
+				return err
+			}
 		}
 
 		_, _, err := client.Group.UpdateRule(d.Id(), *rule)
@@ -142,10 +142,11 @@ func resourceGroupRuleUpdate(d *schema.ResourceData, m interface{}) error {
 			return err
 		}
 
-		if status == "ACTIVE" {
+		if desiredStatus == "ACTIVE" {
 			// We should reactivate the rule in case it was deactivated.
-			_, err := client.Group.ActivateRule(d.Id())
-			return err
+			if _, err := client.Group.ActivateRule(d.Id()); err != nil {
+				return err
+			}
 		}
 	}
 
