@@ -323,8 +323,8 @@ func getRequestExecutor(m interface{}) *okta.RequestExecutor {
 	return okta.NewRequestExecutor(nil, cache.NewNoOpCache(), config)
 }
 
-func is404(client *articulateOkta.Client) bool {
-	return client.OktaErrorCode == "E0000007"
+func is404(status int) bool {
+	return status == http.StatusNotFound
 }
 
 // regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
