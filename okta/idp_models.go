@@ -12,149 +12,182 @@ type (
 	}
 
 	SAMLIdentityProvider struct {
-		ID       string        `json:"id"`
-		Name     string        `json:"name"`
-		Policy   *SAMLPolicy   `json:"policy"`
-		Protocol *SAMLProtocol `json:"protocol"`
-		Type     string        `json:"type"`
-		Status   string        `json:"status"`
+		ID         string        `json:"id,omitempty"`
+		IssuerMode string        `json:"issuerMode,omitempty"`
+		Name       string        `json:"name,omitempty"`
+		Policy     *SAMLPolicy   `json:"policy,omitempty"`
+		Protocol   *SAMLProtocol `json:"protocol,omitempty"`
+		Type       string        `json:"type,omitempty"`
+		Status     string        `json:"status,omitempty"`
 	}
 
 	SAMLPolicy struct {
-		AccountLink  *AccountLink     `json:"accountLink"`
-		Provisioning *IDPProvisioning `json:"provisioning"`
-		Subject      *SAMLSubject     `json:"subject"`
+		AccountLink  *AccountLink     `json:"accountLink,omitempty"`
+		Provisioning *IDPProvisioning `json:"provisioning,omitempty"`
+		Subject      *SAMLSubject     `json:"subject,omitempty"`
+		Type         string           `json:"type,omitempty"`
 	}
 
 	SAMLEndpoints struct {
-		Acs *ACSSSO `json:"acs"`
-		Sso *IDPSSO `json:"sso"`
+		Acs *ACSSSO `json:"acs,omitempty"`
+		Sso *IDPSSO `json:"sso,omitempty"`
 	}
 
 	IDPProvisioning struct {
-		Action        string         `json:"action"`
-		Conditions    *IDPConditions `json:"conditions"`
-		Groups        *IDPAction     `json:"groups"`
-		ProfileMaster bool           `json:"profileMaster"`
+		Action        string         `json:"action,omitempty"`
+		Conditions    *IDPConditions `json:"conditions,omitempty"`
+		Groups        *IDPAction     `json:"groups,omitempty"`
+		ProfileMaster bool           `json:"profileMaster,omitempty"`
 	}
 
 	AccountLink struct {
-		Action string      `json:"action"`
-		Filter interface{} `json:"filter"`
+		Action string  `json:"action,omitempty"`
+		Filter *Filter `json:"filter,omitempty"`
+	}
+
+	Filter struct {
+		Groups *Included `json:"groups"`
+	}
+
+	Included struct {
+		Include []string `json:"include"`
 	}
 
 	IDPAction struct {
-		Action string `json:"action"`
+		Action string `json:"action,omitempty"`
 	}
 
 	Signature struct {
-		Algorithm string `json:"algorithm"`
-		Scope     string `json:"scope"`
+		Algorithm string `json:"algorithm,omitempty"`
+		Scope     string `json:"scope,omitempty"`
 	}
 
 	SAMLProtocol struct {
-		Algorithms  *Algorithms      `json:"algorithms"`
-		Credentials *SAMLCredentials `json:"credentials"`
-		Endpoints   *SAMLEndpoints   `json:"endpoints"`
-		Type        string           `json:"type"`
+		Algorithms  *Algorithms      `json:"algorithms,omitempty"`
+		Credentials *SAMLCredentials `json:"credentials,omitempty"`
+		Endpoints   *SAMLEndpoints   `json:"endpoints,omitempty"`
+		Type        string           `json:"type,omitempty"`
 	}
 
 	IDPTrust struct {
-		Audience string `json:"audience"`
-		Issuer   string `json:"issuer"`
-		Kid      string `json:"kid"`
+		Audience string `json:"audience,omitempty"`
+		Issuer   string `json:"issuer,omitempty"`
+		Kid      string `json:"kid,omitempty"`
 	}
 
 	IDPSSO struct {
-		Binding     string `json:"binding"`
-		Destination string `json:"destination"`
-		URL         string `json:"url"`
+		Binding     string `json:"binding,omitempty"`
+		Destination string `json:"destination,omitempty"`
+		URL         string `json:"url,omitempty"`
 	}
 
 	ACSSSO struct {
-		Binding string `json:"binding"`
-		Type    string `json:"type"`
+		Binding string `json:"binding,omitempty"`
+		Type    string `json:"type,omitempty"`
 	}
 
 	Endpoint struct {
-		Binding string `json:"binding"`
-		URL     string `json:"url"`
+		Binding string `json:"binding,omitempty"`
+		URL     string `json:"url,omitempty"`
 	}
 
 	IDPConditions struct {
-		Deprovisioned *IDPAction `json:"deprovisioned"`
-		Suspended     *IDPAction `json:"suspended"`
+		Deprovisioned *IDPAction `json:"deprovisioned,omitempty"`
+		Suspended     *IDPAction `json:"suspended,omitempty"`
 	}
 
 	SAMLSubject struct {
-		Filter           string                                       `json:"filter"`
-		Format           []string                                     `json:"format"`
-		MatchType        string                                       `json:"matchType"`
-		UserNameTemplate *okta.ApplicationCredentialsUsernameTemplate `json:"userNameTemplate"`
+		Filter           string                                       `json:"filter,omitempty"`
+		Format           []string                                     `json:"format,omitempty"`
+		MatchType        string                                       `json:"matchType,omitempty"`
+		UserNameTemplate *okta.ApplicationCredentialsUsernameTemplate `json:"userNameTemplate,omitempty"`
 	}
 
 	Algorithms struct {
-		Request  *IDPSignature `json:"request"`
-		Response *IDPSignature `json:"response"`
+		Request  *IDPSignature `json:"request,omitempty"`
+		Response *IDPSignature `json:"response,omitempty"`
 	}
 
 	IDPSignature struct {
-		Signature *Signature `json:"signature"`
+		Signature *Signature `json:"signature,omitempty"`
 	}
 
 	SAMLCredentials struct {
-		Trust *IDPTrust `json:"trust"`
+		Trust *IDPTrust `json:"trust,omitempty"`
 	}
 
 	OIDCIdentityProvider struct {
-		ID       string        `json:"id"`
-		Name     string        `json:"name"`
-		Policy   *OIDCPolicy   `json:"policy"`
-		Protocol *OIDCProtocol `json:"protocol"`
-		Type     string        `json:"type"`
-		Status   string        `json:"status"`
+		ID         string        `json:"id,omitempty"`
+		IssuerMode string        `json:"issuerMode,omitempty"`
+		Name       string        `json:"name,omitempty"`
+		Policy     *OIDCPolicy   `json:"policy,omitempty"`
+		Protocol   *OIDCProtocol `json:"protocol,omitempty"`
+		Type       string        `json:"type,omitempty"`
+		Status     string        `json:"status,omitempty"`
 	}
 
 	OIDCPolicy struct {
-		AccountLink  *AccountLink     `json:"accountLink"`
+		AccountLink  *AccountLink     `json:"accountLink,omitempty"`
 		MaxClockSkew int64            `json:"maxClockSkew"`
-		Provisioning *IDPProvisioning `json:"provisioning"`
-		Subject      *OIDCSubject     `json:"subject"`
+		Provisioning *IDPProvisioning `json:"provisioning,omitempty"`
+		Subject      *OIDCSubject     `json:"subject,omitempty"`
 	}
 
 	OIDCEndpoints struct {
-		Acs           *ACSSSO   `json:"acs"`
-		Authorization *Endpoint `json:"authorization"`
-		Jwks          *Endpoint `json:"jwks"`
-		Token         *Endpoint `json:"token"`
-		UserInfo      *Endpoint `json:"userInfo"`
+		Acs           *ACSSSO   `json:"acs,omitempty"`
+		Authorization *Endpoint `json:"authorization,omitempty"`
+		Jwks          *Endpoint `json:"jwks,omitempty"`
+		Token         *Endpoint `json:"token,omitempty"`
+		UserInfo      *Endpoint `json:"userInfo,omitempty"`
 	}
 
 	OIDCProtocol struct {
-		Algorithms  *Algorithms      `json:"algorithms"`
-		Credentials *OIDCCredentials `json:"credentials"`
-		Endpoints   *OIDCEndpoints   `json:"endpoints"`
-		Issuer      *Issuer          `json:"issuer"`
-		Scopes      []string         `json:"scopes"`
-		Type        string           `json:"type"`
+		Algorithms  *Algorithms      `json:"algorithms,omitempty"`
+		Credentials *OIDCCredentials `json:"credentials,omitempty"`
+		Endpoints   *OIDCEndpoints   `json:"endpoints,omitempty"`
+		Issuer      *Issuer          `json:"issuer,omitempty"`
+		Scopes      []string         `json:"scopes,omitempty"`
+		Type        string           `json:"type,omitempty"`
 	}
 
 	OIDCCredentials struct {
-		Client *OIDCClient `json:"client"`
+		Client *OIDCClient `json:"client,omitempty"`
 	}
 
 	OIDCClient struct {
-		ClientID     string `json:"client_id"`
-		ClientSecret string `json:"client_secret"`
+		ClientID     string `json:"client_id,omitempty"`
+		ClientSecret string `json:"client_secret,omitempty"`
 	}
 
 	OIDCSubject struct {
-		MatchType        string                                       `json:"matchType"`
-		UserNameTemplate *okta.ApplicationCredentialsUsernameTemplate `json:"userNameTemplate"`
+		MatchType        string                                       `json:"matchType,omitempty"`
+		UserNameTemplate *okta.ApplicationCredentialsUsernameTemplate `json:"userNameTemplate,omitempty"`
 	}
 
 	Issuer struct {
-		URL string `json:"url"`
+		URL string `json:"url,omitempty"`
+	}
+
+	SigningKey struct {
+		Created   string   `json:"created,omitempty"`
+		ExpiresAt string   `json:"expiresAt,omitempty"`
+		X5C       []string `json:"x5c"`
+		Kid       string   `json:"kid"`
+		Kty       string   `json:"kty"`
+		Use       string   `json:"use"`
+		X5T256    string   `json:"x5t#S256"`
+		E         string   `json:"e,omitempty"`
+		N         string   `json:"n,omitempty"`
+	}
+
+	Certificate struct {
+		X5C []string `json:"x5c"`
+	}
+
+	BasicIdp struct {
+		IdentityProvider
+		Id   string `json:"id"`
+		Name string `json:"name"`
 	}
 )
 
@@ -163,6 +196,10 @@ func (i *OIDCIdentityProvider) IsIDP() bool {
 }
 
 func (i *SAMLIdentityProvider) IsIDP() bool {
+	return true
+}
+
+func (i *BasicIdp) IsIDP() bool {
 	return true
 }
 

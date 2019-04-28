@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 	"testing"
 
@@ -125,8 +126,8 @@ func createPolicyCheckDestroy(policyType string) func(*terraform.State) error {
 func doesPolicyExistsUpstream(ID string) (bool, error) {
 	client := getClientFromMetadata(testAccProvider.Meta())
 
-	policy, _, err := client.Policies.GetPolicy(ID)
-	if is404(client) {
+	policy, resp, err := client.Policies.GetPolicy(ID)
+	if resp.StatusCode == http.StatusNotFound {
 		return false, nil
 	} else if err != nil {
 		return false, err

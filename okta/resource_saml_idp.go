@@ -11,12 +11,27 @@ func resourceSamlIdp() *schema.Resource {
 		Create: resourceSamlIdpCreate,
 		Read:   resourceSamlIdpRead,
 		Update: resourceSamlIdpUpdate,
-		Delete: resourceIdentityProviderDelete,
+		Delete: resourceIdpDelete,
 		Exists: getIdentityProviderExists(&SAMLIdentityProvider{}),
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
 		Schema: buildIdpSchema(map[string]*schema.Schema{
+			"type": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"acs_binding": bindingSchema,
+			"acs_type": &schema.Schema{
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      "INSTANCE",
+				ValidateFunc: validation.StringInSlice([]string{"INSTANCE"}, false),
+			},
+			"acs_url": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
 			"sso_url": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -34,27 +49,32 @@ func resourceSamlIdp() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"name_format": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+			},
 			"subject_format": &schema.Schema{
 				Type:     schema.TypeSet,
-				Elem:     schema.TypeString,
+				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
 			},
 			"subject_filter": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"provisioning_action": actionSchema,
 			"issuer": &schema.Schema{
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
+			"issuer_mode": issuerMode,
 			"audience": &schema.Schema{
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"kid": &schema.Schema{
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 		}),
 	}
@@ -67,7 +87,7 @@ func resourceSamlIdpCreate(d *schema.ResourceData, m interface{}) error {
 	}
 	d.SetId(idp.ID)
 
-	if err := setIdpStatus(idp.ID, idp.Status, d.Get("status").(string), m); err != nil {
+	if err := setIdpStatus(d.Id(), idp.Status, d.Get("status").(string), m); err != nil {
 		return err
 	}
 
@@ -75,28 +95,37 @@ func resourceSamlIdpCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceSamlIdpRead(d *schema.ResourceData, m interface{}) error {
-	var idp *OIDCIdentityProvider
-
+	idp := &SAMLIdentityProvider{}
 	if err := fetchIdp(d.Id(), m, idp); err != nil {
 		return err
 	}
 
 	d.Set("name", idp.Name)
-	d.Set("account_link_action", idp.Policy.AccountLink.Action)
-	d.Set("account_link_filter", idp.Policy.AccountLink.Filter)
-	d.Set("max_clock_skew", idp.Policy.MaxClockSkew)
 	d.Set("provisioning_action", idp.Policy.Provisioning.Action)
 	d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned)
+	d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
 	d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended)
 	d.Set("groups_action", idp.Policy.Provisioning.Groups.Action)
 	d.Set("subject_match_type", idp.Policy.Subject.MatchType)
+	d.Set("subject_filter", idp.Policy.Subject.Filter)
 	d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
-	d.Set("request_algorithm", idp.Protocol.Algorithms.Request.Signature.Algorithm)
-	d.Set("request_scope", idp.Protocol.Algorithms.Request.Signature.Scope)
-	d.Set("response_algorithm", idp.Protocol.Algorithms.Response.Signature.Algorithm)
-	d.Set("response_scope", idp.Protocol.Algorithms.Response.Signature.Scope)
+	d.Set("issuer", idp.Protocol.Credentials.Trust.Issuer)
+	d.Set("audience", idp.Protocol.Credentials.Trust.Audience)
+	d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
+	syncAlgo(d, idp.Protocol.Algorithms)
 
-	return nil
+	if idp.IssuerMode != "" {
+		d.Set("issuer_mode", idp.IssuerMode)
+	}
+
+	if idp.Policy.AccountLink != nil {
+		d.Set("account_link_action", idp.Policy.AccountLink.Action)
+		d.Set("account_link_group_include", idp.Policy.AccountLink.Filter)
+	}
+
+	return setNonPrimitives(d, map[string]interface{}{
+		"subject_format": convertStringSetToInterface(idp.Policy.Subject.Format),
+	})
 }
 
 func resourceSamlIdpUpdate(d *schema.ResourceData, m interface{}) error {
@@ -118,27 +147,12 @@ func resourceSamlIdpUpdate(d *schema.ResourceData, m interface{}) error {
 
 func buildSamlIdp(d *schema.ResourceData) *SAMLIdentityProvider {
 	return &SAMLIdentityProvider{
-		Name: d.Get("name").(string),
-		Type: "OIDC",
+		Name:       d.Get("name").(string),
+		Type:       "SAML2",
+		IssuerMode: d.Get("issuer_mode").(string),
 		Policy: &SAMLPolicy{
-			AccountLink: &AccountLink{
-				Action: d.Get("account_link_action").(string),
-				Filter: d.Get("account_link_filter").(string),
-			},
-			Provisioning: &IDPProvisioning{
-				Action: d.Get("provisioning_action").(string),
-				Conditions: &IDPConditions{
-					Deprovisioned: &IDPAction{
-						Action: d.Get("deprovisioned_action").(string),
-					},
-					Suspended: &IDPAction{
-						Action: d.Get("suspended_action").(string),
-					},
-				},
-				Groups: &IDPAction{
-					Action: d.Get("groups_action").(string),
-				},
-			},
+			AccountLink:  NewAccountLink(d),
+			Provisioning: NewIdpProvisioning(d),
 			Subject: &SAMLSubject{
 				Filter:    d.Get("subject_filter").(string),
 				Format:    convertInterfaceToStringSet(d.Get("subject_format")),
@@ -149,32 +163,19 @@ func buildSamlIdp(d *schema.ResourceData) *SAMLIdentityProvider {
 			},
 		},
 		Protocol: &SAMLProtocol{
-			Algorithms: &Algorithms{
-				Request: &IDPSignature{
-					Signature: &Signature{
-						Algorithm: d.Get("request_algorithm").(string),
-						Scope:     d.Get("request_scope").(string),
-					},
-				},
-				Response: &IDPSignature{
-					Signature: &Signature{
-						Algorithm: d.Get("response_algorithm").(string),
-						Scope:     d.Get("response_scope").(string),
-					},
-				},
-			},
+			Algorithms: NewAlgorithms(d),
 			Endpoints: &SAMLEndpoints{
 				Acs: &ACSSSO{
 					Binding: d.Get("acs_binding").(string),
 					Type:    d.Get("acs_type").(string),
 				},
 				Sso: &IDPSSO{
-					Binding:     d.Get("acs_binding").(string),
-					Destination: d.Get("acs_destination").(string),
-					URL:         d.Get("acs_url").(string),
+					Binding:     d.Get("sso_binding").(string),
+					Destination: d.Get("sso_destination").(string),
+					URL:         d.Get("sso_url").(string),
 				},
 			},
-			Type: d.Get("protocol_type").(string),
+			Type: "SAML2",
 			Credentials: &SAMLCredentials{
 				Trust: &IDPTrust{
 					Issuer:   d.Get("issuer").(string),

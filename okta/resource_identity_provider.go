@@ -2,10 +2,10 @@ package okta
 
 import (
 	"fmt"
-
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
+	"net/http"
 )
 
 // DEPRECATED - see okta_idp and okta_saml_idp
@@ -370,5 +370,5 @@ func resourceIdentityProviderUpdate(d *schema.ResourceData, m interface{}) error
 // check if IDP exists in Okta
 func idpExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	_, resp, err := getClientFromMetadata(m).IdentityProviders.GetIdentityProvider(d.Id())
-	return err == nil && !is404(resp.StatusCode), err
+	return resp.StatusCode == http.StatusOK, err
 }

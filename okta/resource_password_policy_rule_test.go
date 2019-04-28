@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+	"net/http"
 	"regexp"
 	"strings"
 	"testing"
@@ -204,8 +205,8 @@ func createRuleCheckDestroy(ruleType string) func(*terraform.State) error {
 func doesRuleExistsUpstream(policyID string, ID string) (bool, error) {
 	client := getClientFromMetadata(testAccProvider.Meta())
 
-	rule, _, err := client.Policies.GetPolicyRule(policyID, ID)
-	if is404(client) {
+	rule, resp, err := client.Policies.GetPolicyRule(policyID, ID)
+	if resp.StatusCode == http.StatusNotFound {
 		return false, nil
 	} else if err != nil {
 		return false, err

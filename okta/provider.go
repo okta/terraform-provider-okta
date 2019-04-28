@@ -23,6 +23,8 @@ const (
 	identityProvider       = "okta_identity_provider"
 	idpResource            = "okta_idp"
 	samlIdp                = "okta_saml_idp"
+	samlIdpKey             = "okta_saml_idp_key"
+	socialIdp              = "okta_social_idp"
 	inlineHook             = "okta_inline_hook"
 	mfaPolicy              = "okta_mfa_policy"
 	mfaPolicyRule          = "okta_mfa_policy_rule"
@@ -132,6 +134,8 @@ func Provider() terraform.ResourceProvider {
 			inlineHook:             resourceInlineHook(),
 			idpResource:            resourceIdp(),
 			samlIdp:                resourceSamlIdp(),
+			samlIdpKey:             resourceIdpSigningKey(),
+			socialIdp:              resourceSocialIdp(),
 
 			// Below resources will be deprecated
 			"okta_user_schemas": resourceUserSchemas(),

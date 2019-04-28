@@ -6,37 +6,30 @@ import (
 	"github.com/okta/okta-sdk-golang/okta"
 )
 
-func resourceIdp() *schema.Resource {
+func resourceSocialIdp() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceIdpCreate,
-		Read:   resourceIdpRead,
-		Update: resourceIdpUpdate,
+		Create: resourceSocialIdpCreate,
+		Read:   resourceSocialIdpRead,
+		Update: resourceSocialIdpUpdate,
 		Delete: resourceIdpDelete,
-		Exists: getIdentityProviderExists(&OIDCIdentityProvider{}),
+		Exists: getIdentityProviderExists(&SAMLIdentityProvider{}),
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
 
 		// Note the base schema
 		Schema: buildIdpSchema(map[string]*schema.Schema{
+			"authorization_url":     optUrlSchema,
+			"authorization_binding": optBindingSchema,
+			"token_url":             optUrlSchema,
+			"token_binding":         optBindingSchema,
 			"type": &schema.Schema{
 				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"authorization_url":     urlSchema,
-			"authorization_binding": bindingSchema,
-			"token_url":             urlSchema,
-			"token_binding":         bindingSchema,
-			"user_info_url":         urlSchema,
-			"user_info_binding":     bindingSchema,
-			"jwks_url":              urlSchema,
-			"jwks_binding":          bindingSchema,
-			"acs_binding":           bindingSchema,
-			"acs_type": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "INSTANCE",
-				ValidateFunc: validation.StringInSlice([]string{"INSTANCE"}, false),
+				Required: true,
+				ValidateFunc: validation.StringInSlice(
+					[]string{"OIDC", "FACEBOOK", "LINKEDIN", "MICROSOFT", "GOOGLE"},
+					false,
+				),
 			},
 			"scopes": &schema.Schema{
 				Type:     schema.TypeSet,
@@ -51,17 +44,12 @@ func resourceIdp() *schema.Resource {
 			},
 			"client_id": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"client_secret": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
-			"issuer_url": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"issuer_mode": issuerMode,
 			"max_clock_skew": &schema.Schema{
 				Type:     schema.TypeInt,
 				Optional: true,
@@ -70,8 +58,8 @@ func resourceIdp() *schema.Resource {
 	}
 }
 
-func resourceIdpCreate(d *schema.ResourceData, m interface{}) error {
-	idp := buildOidcIdp(d)
+func resourceSocialIdpCreate(d *schema.ResourceData, m interface{}) error {
+	idp := buildSocialIdp(d)
 	if err := createIdp(m, idp); err != nil {
 		return err
 	}
@@ -81,10 +69,10 @@ func resourceIdpCreate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	return resourceIdpRead(d, m)
+	return resourceSocialIdpRead(d, m)
 }
 
-func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
+func resourceSocialIdpRead(d *schema.ResourceData, m interface{}) error {
 	idp := &OIDCIdentityProvider{}
 
 	if err := fetchIdp(d.Id(), m, idp); err != nil {
@@ -92,7 +80,6 @@ func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	d.Set("name", idp.Name)
-	d.Set("type", idp.Type)
 	d.Set("max_clock_skew", idp.Policy.MaxClockSkew)
 	d.Set("provisioning_action", idp.Policy.Provisioning.Action)
 	d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned)
@@ -101,16 +88,8 @@ func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("groups_action", idp.Policy.Provisioning.Groups.Action)
 	d.Set("subject_match_type", idp.Policy.Subject.MatchType)
 	d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
-	d.Set("issuer_url", idp.Protocol.Issuer.URL)
-	d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
 	d.Set("client_id", idp.Protocol.Credentials.Client.ClientID)
-	d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
-	d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
-	syncEndpoint("authorization", idp.Protocol.Endpoints.Authorization, d)
-	syncEndpoint("token", idp.Protocol.Endpoints.Token, d)
-	syncEndpoint("user_info", idp.Protocol.Endpoints.UserInfo, d)
-	syncEndpoint("jwks", idp.Protocol.Endpoints.Jwks, d)
-	syncAlgo(d, idp.Protocol.Algorithms)
+	d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
 
 	if idp.IssuerMode != "" {
 		d.Set("issuer_mode", idp.IssuerMode)
@@ -126,13 +105,8 @@ func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
 	})
 }
 
-func syncEndpoint(key string, e *Endpoint, d *schema.ResourceData) {
-	d.Set(key+"_binding", e.Binding)
-	d.Set(key+"_url", e.URL)
-}
-
-func resourceIdpUpdate(d *schema.ResourceData, m interface{}) error {
-	idp := buildOidcIdp(d)
+func resourceSocialIdpUpdate(d *schema.ResourceData, m interface{}) error {
+	idp := buildSocialIdp(d)
 	d.Partial(true)
 
 	if err := updateIdp(d.Id(), m, idp); err != nil {
@@ -145,14 +119,13 @@ func resourceIdpUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	return resourceIdpRead(d, m)
+	return resourceSocialIdpRead(d, m)
 }
 
-func buildOidcIdp(d *schema.ResourceData) *OIDCIdentityProvider {
+func buildSocialIdp(d *schema.ResourceData) *OIDCIdentityProvider {
 	return &OIDCIdentityProvider{
-		Name:       d.Get("name").(string),
-		Type:       "OIDC",
-		IssuerMode: d.Get("issuer_mode").(string),
+		Name: d.Get("name").(string),
+		Type: d.Get("type").(string),
 		Policy: &OIDCPolicy{
 			AccountLink:  NewAccountLink(d),
 			MaxClockSkew: int64(d.Get("max_clock_skew").(int)),
@@ -165,18 +138,13 @@ func buildOidcIdp(d *schema.ResourceData) *OIDCIdentityProvider {
 			},
 		},
 		Protocol: &OIDCProtocol{
-			Algorithms: NewAlgorithms(d),
-			Endpoints:  NewEndpoints(d),
-			Scopes:     convertInterfaceToStringSet(d.Get("scopes")),
-			Type:       d.Get("protocol_type").(string),
+			Scopes: convertInterfaceToStringSet(d.Get("scopes")),
+			Type:   d.Get("protocol_type").(string),
 			Credentials: &OIDCCredentials{
 				Client: &OIDCClient{
 					ClientID:     d.Get("client_id").(string),
 					ClientSecret: d.Get("client_secret").(string),
 				},
-			},
-			Issuer: &Issuer{
-				URL: d.Get("issuer_url").(string),
 			},
 		},
 	}
