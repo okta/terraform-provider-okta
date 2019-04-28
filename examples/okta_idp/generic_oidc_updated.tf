@@ -1,5 +1,4 @@
 resource okta_idp test {
-  type                  = "OIDC"
   name                  = "testAcc_replace_with_uuid"
   acs_type              = "INSTANCE"
   acs_binding           = "HTTP-POST"
