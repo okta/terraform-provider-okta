@@ -27,7 +27,7 @@ func resourceSocialIdp() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ValidateFunc: validation.StringInSlice(
-					[]string{"OIDC", "FACEBOOK", "LINKEDIN", "MICROSOFT", "GOOGLE"},
+					[]string{"FACEBOOK", "LINKEDIN", "MICROSOFT", "GOOGLE"},
 					false,
 				),
 			},
@@ -38,7 +38,7 @@ func resourceSocialIdp() *schema.Resource {
 			},
 			"protocol_type": &schema.Schema{
 				Type:         schema.TypeString,
-				Default:      "OIDC",
+				Default:      "OAUTH2",
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"OIDC", "OAUTH2"}, false),
 			},
@@ -47,8 +47,9 @@ func resourceSocialIdp() *schema.Resource {
 				Optional: true,
 			},
 			"client_secret": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:      schema.TypeString,
+				Optional:  true,
+				Sensitive: true,
 			},
 			"max_clock_skew": &schema.Schema{
 				Type:     schema.TypeInt,

@@ -54,8 +54,9 @@ func resourceIdp() *schema.Resource {
 				Required: true,
 			},
 			"client_secret": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+				Type:      schema.TypeString,
+				Required:  true,
+				Sensitive: true,
 			},
 			"issuer_url": &schema.Schema{
 				Type:     schema.TypeString,

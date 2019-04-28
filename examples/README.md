@@ -15,19 +15,27 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 * [okta_saml_app](./okta_saml_app) Supports the management of Okta SAML Applications.
 * [okta_oauth_app](./okta_oauth_app) Supports the management of Okta OIDC Applications.
 * [okta_bookmark_app](./okta_bookmark_app) Supports the management Okta Bookmark Application.
-* [okta_oauth_app_redirect_uri](./okta_oauth_app_redirect_uri) Supports decentralizing redirect uri config. Due to Okta's API not allowing this field to be null, you must set a redirect uri in your app, and ignore changes to this attribute. We follow TF best practices and detect config drift. The best case scenario is Okta makes this field nullable and we can not detect config drift when this attr is not present.
 * [okta_app](./okta_app) Generic Application data source.
 * [okta_user](./okta_user) Supports the management of Okta Users.
 * [okta_group](./okta_group) Supports the management of Okta Groups.
+* [okta_group_rule](./okta_group_rule) Supports the management of Okta Group Rules.
 * [okta_trusted_origin](./okta_trusted_origin) Supports the management of Okta Trusted Sources and Origins.
 * [okta_user_schemas](./okta_user_schemas) Supports the management of Okta User Profile Attribute Schemas.
-* [okta_identity_provider](./okta_identity_provider) Supports the management of Okta Identity Provider.
 * [okta_auth_server](./okta_auth_server) Supports the management of Okta Authorization servers.
 * [okta_auth_server_policy](./okta_auth_server_policy) Supports the management of Okta Authorization servers policies.
 * [okta_auth_server_policy_rule](./okta_auth_server_policy_rule) Supports the management of Okta Authorization servers policy rules.
 * [okta_auth_server_scope](./okta_auth_server_scope) Supports the management of Okta Authorization servers scopes.
 * [okta_auth_server_claim](./okta_auth_server_claim) Supports the management of Okta Authorization servers claims.
 * [okta_inline_hook](./okta_inline_hook) Supports the management of Okta Inline Hooks EA feature.
+* [okta_idp](./okta_idp) Supports the management of Okta OIDC Identity Providers.
+* [okta_social_idp](./okta_social_idp) Supports the management of Okta Social Identity Providers. Such as Google, Facebook, Microsoft, and LinkedIn.
+* [okta_saml_idp](./okta_idp) Supports the management of Okta SAML Identity Providers.
+* [okta_oauth_app_redirect_uri](./okta_oauth_app_redirect_uri) Supports decentralizing redirect uri config. Due to Okta's API not allowing this field to be null, you must set a redirect uri in your app, and ignore changes to this attribute. We follow TF best practices and detect config drift. The best case scenario is Okta makes this field nullable and we can not detect config drift when this attr is not present.
+
+## Deprecated Resources
+
+* okta_identity_provider -- See okta_idp, okta_social_idp, and okta_saml_idp.
+* okta_user_schemas -- See okta_user_schema.
 
 ## Notes
 
