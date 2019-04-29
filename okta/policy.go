@@ -169,9 +169,9 @@ func getGroups(d *schema.ResourceData) *articulateOkta.People {
 // Grabs policy from upstream, if the resource does not exist the returned policy will be nil which is not considered an error
 func getPolicy(d *schema.ResourceData, m interface{}) (*articulateOkta.Policy, error) {
 	client := m.(*Config).articulateOktaClient
-	policy, _, err := client.Policies.GetPolicy(d.Id())
+	policy, resp, err := client.Policies.GetPolicy(d.Id())
 
-	if is404(client) {
+	if is404(resp.StatusCode) {
 		return policy, nil
 	}
 

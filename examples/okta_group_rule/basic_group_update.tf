@@ -9,4 +9,3 @@ resource "okta_group_rule" "test" {
   expression_type   = "urn:okta:expression:1.0"
   expression_value  = "String.startsWith(user.articulateId,String.toLowerCase(\"auth0|\"))"
 }
-

@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"github.com/crewjam/saml"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
@@ -30,18 +31,6 @@ var customSamlAppRequiredFields = []string{
 	"honor_force_authn",
 	"authn_context_class_ref",
 }
-
-type (
-	ssoService struct {
-		Binding  string `xml:"Binding,attr"`
-		Location string `xml:"Location,attr"`
-	}
-
-	root struct {
-		EntityURI string        `xml:"entityID,attr"`
-		Services  []*ssoService `xml:"IDPSSODescriptor>SingleSignOnService"`
-	}
-)
 
 func resourceSamlApp() *schema.Resource {
 	return &schema.Resource{
@@ -86,6 +75,11 @@ func resourceSamlApp() *schema.Resource {
 			"metadata": {
 				Type:        schema.TypeString,
 				Description: "SAML xml metadata payload",
+				Computed:    true,
+			},
+			"certificate": {
+				Type:        schema.TypeString,
+				Description: "cert from SAML XML metadata payload",
 				Computed:    true,
 			},
 			"http_post_binding": {
@@ -402,13 +396,13 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 		}
 		d.Set("metadata", string(keyMetadata))
 
-		metadataRoot := &root{}
+		metadataRoot := &saml.EntityDescriptor{}
 		err = xml.Unmarshal(keyMetadata, metadataRoot)
 		if err != nil {
 			return fmt.Errorf("Could not parse SAML app metadata, error: %s", err)
 		}
 		// Always grab the last one just for simplicity. Should never have duplicates.
-		for _, service := range metadataRoot.Services {
+		for _, service := range metadataRoot.IDPSSODescriptors[0].SingleSignOnServices {
 			switch service.Binding {
 			case postBinding:
 				d.Set("http_post_binding", service.Location)
@@ -416,10 +410,11 @@ func resourceSamlAppRead(d *schema.ResourceData, m interface{}) error {
 				d.Set("http_redirect_binding", service.Location)
 			}
 		}
-		uri := metadataRoot.EntityURI
+		uri := metadataRoot.EntityID
 		key := getExternalID(uri, app.Settings.SignOn.IdpIssuer)
 		d.Set("entity_url", uri)
 		d.Set("entity_key", key)
+		d.Set("certificate", metadataRoot.IDPSSODescriptors[0].KeyDescriptors[0].KeyInfo.Certificate)
 	}
 
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)

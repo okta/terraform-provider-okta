@@ -2,13 +2,13 @@ package okta
 
 import (
 	"fmt"
-	"log"
-
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
+	"net/http"
 )
 
+// DEPRECATED - see okta_idp and okta_saml_idp
 func resourceIdentityProvider() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceIdentityProviderCreate,
@@ -19,7 +19,7 @@ func resourceIdentityProvider() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
-
+		DeprecationMessage: "This resource is being deprecated in favor of okta_oidc_idp & okta_saml_idp",
 		Schema: map[string]*schema.Schema{
 			"active": &schema.Schema{
 				Type:        schema.TypeBool,
@@ -288,20 +288,13 @@ func populateIdentityProvider(idp *articulateOkta.IdentityProvider, d *schema.Re
 }
 
 func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] Create Identity Provider %v", d.Get("name").(string))
-
-	if !d.Get("active").(bool) {
-		return fmt.Errorf("[ERROR] Okta will not allow an IDP to be created as INACTIVE. Can set to false for existing IDPs only.")
-	}
-
-	client := m.(*Config).articulateOktaClient
+	client := getClientFromMetadata(m)
 	idp := assembleIdentityProvider()
 	populateIdentityProvider(idp, d)
 
 	returnedIdp, _, err := client.IdentityProviders.CreateIdentityProvider(idp)
-
 	if err != nil {
-		return fmt.Errorf("[ERROR] %v.", err)
+		return err
 	}
 
 	d.SetId(returnedIdp.ID)
@@ -310,20 +303,11 @@ func resourceIdentityProviderCreate(d *schema.ResourceData, m interface{}) error
 }
 
 func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] Read Identity Provider %v", d.Get("name").(string))
-
 	var idp *articulateOkta.IdentityProvider
-	client := m.(*Config).articulateOktaClient
-	exists, err := idpExists(d, m)
+	client := getClientFromMetadata(m)
+	idp, _, err := client.IdentityProviders.GetIdentityProvider(d.Id())
 	if err != nil {
 		return err
-	}
-
-	if exists == true {
-		idp, _, err = client.IdentityProviders.GetIdentityProvider(d.Id())
-	} else {
-		d.SetId("")
-		return nil
 	}
 
 	d.Set("type", idp.Type)
@@ -368,69 +352,23 @@ func resourceIdentityProviderRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceIdentityProviderUpdate(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] Update Identity Provider %v", d.Get("name").(string))
-
 	var idp = assembleIdentityProvider()
 	populateIdentityProvider(idp, d)
 
 	// can only update IDP status in Update operation
 	status := activationStatus(d.Get("active").(bool))
 	idp.Status = status
-
-	client := m.(*Config).articulateOktaClient
-	exists, err := idpExists(d, m)
+	client := getClientFromMetadata(m)
+	idp, _, err := client.IdentityProviders.UpdateIdentityProvider(d.Id(), idp)
 	if err != nil {
-		return err
-	}
-
-	if exists == true {
-		idp, _, err = client.IdentityProviders.UpdateIdentityProvider(d.Id(), idp)
-		if err != nil {
-			return fmt.Errorf("[ERROR] Error Updating Identity Provider with Okta: %v", err)
-		}
-	} else {
-		d.SetId("")
-		return nil
+		return fmt.Errorf("[ERROR] Error Updating Identity Provider with Okta: %v", err)
 	}
 
 	return resourceIdentityProviderRead(d, m)
 }
 
-func resourceIdentityProviderDelete(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] Delete Identity Provider %v", d.Get("name").(string))
-	client := m.(*Config).articulateOktaClient
-	exists, err := idpExists(d, m)
-	if err != nil {
-		return err
-	}
-	if exists == true {
-		_, err = client.IdentityProviders.DeleteIdentityProvider(d.Id())
-		if err != nil {
-			return fmt.Errorf("[ERROR] Error Deleting Identity Providers from Okta: %v", err)
-		}
-	}
-
-	updatedExists, err2 := idpExists(d, m)
-	if err2 != nil {
-		return err2
-	}
-
-	if updatedExists == true {
-		return fmt.Errorf("%v", "Resource still exists after destroy called")
-	}
-	return nil
-}
-
 // check if IDP exists in Okta
 func idpExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	client := m.(*Config).articulateOktaClient
-	_, _, err := client.IdentityProviders.GetIdentityProvider(d.Id())
-
-	if client.OktaErrorCode == "E0000007" {
-		return false, nil
-	}
-	if err != nil {
-		return false, fmt.Errorf("[ERROR] Error Listing Identity Provider in Okta: %v", err)
-	}
-	return true, nil
+	_, resp, err := getClientFromMetadata(m).IdentityProviders.GetIdentityProvider(d.Id())
+	return resp.StatusCode == http.StatusOK, err
 }

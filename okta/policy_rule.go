@@ -154,9 +154,9 @@ func getPolicyRule(d *schema.ResourceData, m interface{}) (*articulateOkta.Rule,
 	client := m.(*Config).articulateOktaClient
 	policyID := d.Get("policyid").(string)
 
-	_, _, err := client.Policies.GetPolicy(policyID)
+	_, resp, err := client.Policies.GetPolicy(policyID)
 
-	if is404(client) {
+	if is404(resp.StatusCode) {
 		return nil, nil
 	}
 
@@ -164,8 +164,8 @@ func getPolicyRule(d *schema.ResourceData, m interface{}) (*articulateOkta.Rule,
 		return nil, fmt.Errorf("[ERROR] Error Listing Policy in Okta: %v", err)
 	}
 
-	rule, _, err := client.Policies.GetPolicyRule(policyID, d.Id())
-	if is404(client) {
+	rule, resp, err := client.Policies.GetPolicyRule(policyID, d.Id())
+	if is404(resp.StatusCode) {
 		return nil, nil
 	}
 	if err != nil {

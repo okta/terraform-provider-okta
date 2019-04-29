@@ -11,4 +11,3 @@ resource okta_inline_hook test {
     method  = "POST"
   }
 }
-

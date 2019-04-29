@@ -21,6 +21,10 @@ const (
 	bookmarkApp            = "okta_bookmark_app"
 	factor                 = "okta_factor"
 	identityProvider       = "okta_identity_provider"
+	idpResource            = "okta_idp"
+	samlIdp                = "okta_saml_idp"
+	samlIdpKey             = "okta_saml_idp_key"
+	socialIdp              = "okta_social_idp"
 	inlineHook             = "okta_inline_hook"
 	mfaPolicy              = "okta_mfa_policy"
 	mfaPolicyRule          = "okta_mfa_policy_rule"
@@ -102,17 +106,14 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			oktaGroup:          resourceGroup(),
-			identityProvider:   resourceIdentityProvider(),
-			passwordPolicy:     resourcePasswordPolicy(),
-			signOnPolicy:       resourceSignOnPolicy(),
-			signOnPolicyRule:   resourceSignOnPolicyRule(),
-			passwordPolicyRule: resourcePasswordPolicyRule(),
-			mfaPolicy:          resourceMfaPolicy(),
-			mfaPolicyRule:      resourceMfaPolicyRule(),
-			trustedOrigin:      resourceTrustedOrigin(),
-			// Will be deprecated
-			"okta_user_schemas":    resourceUserSchemas(),
+			oktaGroup:              resourceGroup(),
+			passwordPolicy:         resourcePasswordPolicy(),
+			signOnPolicy:           resourceSignOnPolicy(),
+			signOnPolicyRule:       resourceSignOnPolicyRule(),
+			passwordPolicyRule:     resourcePasswordPolicyRule(),
+			mfaPolicy:              resourceMfaPolicy(),
+			mfaPolicyRule:          resourceMfaPolicyRule(),
+			trustedOrigin:          resourceTrustedOrigin(),
 			userSchema:             resourceUserSchema(),
 			oktaUser:               resourceUser(),
 			oAuthApp:               resourceOAuthApp(),
@@ -131,6 +132,14 @@ func Provider() terraform.ResourceProvider {
 			authServerScope:        resourceAuthServerScope(),
 			bookmarkApp:            resourceBookmarkApp(),
 			inlineHook:             resourceInlineHook(),
+			idpResource:            resourceIdp(),
+			samlIdp:                resourceSamlIdp(),
+			samlIdpKey:             resourceIdpSigningKey(),
+			socialIdp:              resourceSocialIdp(),
+
+			// Below resources will be deprecated
+			"okta_user_schemas": resourceUserSchemas(),
+			identityProvider:    resourceIdentityProvider(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			authServer:              dataSourceAuthServer(),
