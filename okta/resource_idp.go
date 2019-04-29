@@ -105,13 +105,16 @@ func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("issuer_url", idp.Protocol.Issuer.URL)
 	d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
 	d.Set("client_id", idp.Protocol.Credentials.Client.ClientID)
-	d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
-	d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
 	syncEndpoint("authorization", idp.Protocol.Endpoints.Authorization, d)
 	syncEndpoint("token", idp.Protocol.Endpoints.Token, d)
 	syncEndpoint("user_info", idp.Protocol.Endpoints.UserInfo, d)
 	syncEndpoint("jwks", idp.Protocol.Endpoints.Jwks, d)
 	syncAlgo(d, idp.Protocol.Algorithms)
+
+	if idp.Protocol.Endpoints.Acs != nil {
+		d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
+		d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
+	}
 
 	if idp.IssuerMode != "" {
 		d.Set("issuer_mode", idp.IssuerMode)
