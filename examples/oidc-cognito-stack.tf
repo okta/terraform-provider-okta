@@ -25,7 +25,7 @@ data "okta_user" "garth" {
   group_memberships = ["${okta_group.peeps.id}"]
 }
 
-resource "okta_oauth_app" "app" {
+resource "okta_app_oauth" "app" {
   label          = "G Studios"
   type           = "browser"
   client_uri     = "${local.uri}"
@@ -53,7 +53,7 @@ resource "aws_iam_openid_connect_provider" "openid" {
   url = "https://articulate.okta.com"
 
   client_id_list = [
-    "${okta_oauth_app.app.id}",
+    "${okta_app_oauth.app.id}",
   ]
 
   thumbprint_list = [
@@ -141,7 +141,7 @@ resource "aws_cognito_identity_pool_roles_attachment" "role_attachment" {
       role_arn   = "${aws_iam_role.authenticated.arn}"
 
       // Need to add data source for apps to Okta provider, oauth app only created in stage so hardcoding for now
-      value = "${okta_oauth_app.app.id}"
+      value = "${okta_app_oauth.app.id}"
     }
   }
 

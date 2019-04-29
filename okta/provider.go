@@ -12,38 +12,38 @@ import (
 
 // Resource names, defined in place, used throughout the provider and tests
 const (
+	appAutoLogin           = "okta_app_auto_login"
+	appBookmark            = "okta_app_bookmark"
+	appOAuth               = "okta_app_oauth"
+	appOAuthRedirectUri    = "okta_app_oauth_redirect_uri"
+	appSaml                = "okta_app_saml"
+	appSecurePasswordStore = "okta_app_secure_password_store"
+	appSwa                 = "okta_app_swa"
+	appThreeField          = "okta_app_three_field"
 	authServer             = "okta_auth_server"
+	authServerClaim        = "okta_auth_server_claim"
 	authServerPolicy       = "okta_auth_server_policy"
 	authServerPolicyRule   = "okta_auth_server_policy_rule"
-	authServerClaim        = "okta_auth_server_claim"
 	authServerScope        = "okta_auth_server_scope"
-	autoLoginApp           = "okta_auto_login_app"
-	bookmarkApp            = "okta_bookmark_app"
 	factor                 = "okta_factor"
-	identityProvider       = "okta_identity_provider"
-	idpResource            = "okta_idp"
-	samlIdp                = "okta_saml_idp"
-	samlIdpKey             = "okta_saml_idp_key"
-	socialIdp              = "okta_social_idp"
-	inlineHook             = "okta_inline_hook"
-	mfaPolicy              = "okta_mfa_policy"
-	mfaPolicyRule          = "okta_mfa_policy_rule"
-	oAuthApp               = "okta_oauth_app"
-	oAuthAppRedirectUri    = "okta_oauth_app_redirect_uri"
-	oktaGroup              = "okta_group"
 	groupRule              = "okta_group_rule"
+	identityProvider       = "okta_identity_provider"
+	idpResource            = "okta_idp_oidc"
+	idpSaml                = "okta_idp_saml"
+	idpSamlKey             = "okta_idp_saml_key"
+	idpSocial              = "okta_idp_social"
+	inlineHook             = "okta_inline_hook"
+	oktaGroup              = "okta_group"
 	oktaUser               = "okta_user"
-	passwordPolicy         = "okta_password_policy"
-	passwordPolicyRule     = "okta_password_policy_rule"
-	samlApp                = "okta_saml_app"
-	securePasswordStoreApp = "okta_secure_password_store_app"
-	signOnPolicy           = "okta_signon_policy"
-	signOnPolicyRule       = "okta_signon_policy_rule"
-	swaApp                 = "okta_swa_app"
-	threeFieldApp          = "okta_three_field_app"
+	policyMfa              = "okta_policy_mfa"
+	policyPassword         = "okta_policy_password"
+	policyRuleMfa          = "okta_policy_rule_mfa"
+	policyRulePassword     = "okta_policy_rule_password"
+	policyRuleSignOn       = "okta_policy_rule_signon"
+	policySignOn           = "okta_policy_signon"
 	trustedOrigin          = "okta_trusted_origin"
-	userSchema             = "okta_user_schema"
 	userBaseSchema         = "okta_user_base_schema"
+	userSchema             = "okta_user_schema"
 )
 
 // Provider establishes a client connection to an okta site
@@ -106,40 +106,60 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			oktaGroup:              resourceGroup(),
-			passwordPolicy:         resourcePasswordPolicy(),
-			signOnPolicy:           resourceSignOnPolicy(),
-			signOnPolicyRule:       resourceSignOnPolicyRule(),
-			passwordPolicyRule:     resourcePasswordPolicyRule(),
-			mfaPolicy:              resourceMfaPolicy(),
-			mfaPolicyRule:          resourceMfaPolicyRule(),
-			trustedOrigin:          resourceTrustedOrigin(),
-			userSchema:             resourceUserSchema(),
-			oktaUser:               resourceUser(),
-			oAuthApp:               resourceOAuthApp(),
-			oAuthAppRedirectUri:    resourceOAuthAppRedirectUri(),
-			samlApp:                resourceSamlApp(),
-			autoLoginApp:           resourceAutoLoginApp(),
-			securePasswordStoreApp: resourceSecurePasswordStoreApp(),
-			threeFieldApp:          resourceThreeFieldApp(),
-			swaApp:                 resourceSwaApp(),
-			factor:                 resourceFactor(),
-			groupRule:              resourceGroupRule(),
+			appAutoLogin:           resourceAppAutoLogin(),
+			appBookmark:            resourceAppBookmark(),
+			appOAuth:               resourceAppOAuth(),
+			appOAuthRedirectUri:    resourceAppOAuthRedirectUri(),
+			appSaml:                resourceAppSaml(),
+			appSecurePasswordStore: resourceAppSecurePasswordStore(),
+			appSwa:                 resourceAppSwa(),
+			appThreeField:          resourceAppThreeField(),
 			authServer:             resourceAuthServer(),
 			authServerClaim:        resourceAuthServerClaim(),
 			authServerPolicy:       resourceAuthServerPolicy(),
 			authServerPolicyRule:   resourceAuthServerPolicyRule(),
 			authServerScope:        resourceAuthServerScope(),
-			bookmarkApp:            resourceBookmarkApp(),
+			factor:                 resourceFactor(),
+			groupRule:              resourceGroupRule(),
+			idpResource:            resourceIdpOidc(),
+			idpSaml:                resourceIdpSaml(),
+			idpSamlKey:             resourceIdpSigningKey(),
+			idpSocial:              resourceIdpSocial(),
 			inlineHook:             resourceInlineHook(),
-			idpResource:            resourceIdp(),
-			samlIdp:                resourceSamlIdp(),
-			samlIdpKey:             resourceIdpSigningKey(),
-			socialIdp:              resourceSocialIdp(),
+			oktaGroup:              resourceGroup(),
+			oktaUser:               resourceUser(),
+			policyMfa:              resourcePolicyMfa(),
+			policyPassword:         resourcePolicyPassword(),
+			policyRuleMfa:          resourcePolicyMfaRule(),
+			policyRulePassword:     resourcePolicyPasswordRule(),
+			policyRuleSignOn:       resourcePolicySignonRule(),
+			policySignOn:           resourcePolicySignon(),
+			trustedOrigin:          resourceTrustedOrigin(),
+			userSchema:             resourceUserSchema(),
 
-			// Below resources will be deprecated
+			// Below resources will be deprecated, soon to be removed
 			"okta_user_schemas": resourceUserSchemas(),
 			identityProvider:    resourceIdentityProvider(),
+
+			// The day I realized I was naming stuff wrong :'-(
+			"okta_idp":                       deprecateIncorrectNaming(resourceIdpOidc(), idpResource),
+			"okta_saml_idp":                  deprecateIncorrectNaming(resourceIdpSaml(), idpSaml),
+			"okta_saml_idp_signing_key":      deprecateIncorrectNaming(resourceIdpSigningKey(), idpSamlKey),
+			"okta_social_idp":                deprecateIncorrectNaming(resourceIdpSocial(), idpSocial),
+			"okta_bookmark_app":              deprecateIncorrectNaming(resourceAppBookmark(), appBookmark),
+			"okta_saml_app":                  deprecateIncorrectNaming(resourceAppSaml(), appSaml),
+			"okta_oauth_app":                 deprecateIncorrectNaming(resourceAppOAuth(), appOAuth),
+			"okta_oauth_app_redirect_uri":    deprecateIncorrectNaming(resourceAppOAuthRedirectUri(), appOAuthRedirectUri),
+			"okta_auto_login_app":            deprecateIncorrectNaming(resourceAppAutoLogin(), appAutoLogin),
+			"okta_secure_password_store_app": deprecateIncorrectNaming(resourceAppSecurePasswordStore(), appSecurePasswordStore),
+			"okta_three_field_app":           deprecateIncorrectNaming(resourceAppThreeField(), appThreeField),
+			"okta_swa_app":                   deprecateIncorrectNaming(resourceAppSwa(), appSwa),
+			"okta_password_policy":           deprecateIncorrectNaming(resourcePolicyPassword(), policyPassword),
+			"okta_signon_policy":             deprecateIncorrectNaming(resourcePolicySignon(), policySignOn),
+			"okta_signon_policy_rule":        deprecateIncorrectNaming(resourcePolicySignonRule(), policyRuleSignOn),
+			"okta_password_policy_rule":      deprecateIncorrectNaming(resourcePolicyPasswordRule(), policyRulePassword),
+			"okta_mfa_policy":                deprecateIncorrectNaming(resourcePolicyMfa(), policyMfa),
+			"okta_mfa_policy_rule":           deprecateIncorrectNaming(resourcePolicyMfaRule(), policyRuleMfa),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			authServer:              dataSourceAuthServer(),
@@ -154,6 +174,11 @@ func Provider() terraform.ResourceProvider {
 
 		ConfigureFunc: providerConfigure,
 	}
+}
+
+func deprecateIncorrectNaming(d *schema.Resource, newResource string) *schema.Resource {
+	d.DeprecationMessage = fmt.Sprintf("Resource is deprecated due to a correction in naming conventions, please use %s instead.", newResource)
+	return d
 }
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {

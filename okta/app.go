@@ -117,7 +117,7 @@ var appVisibilitySchema = map[string]*schema.Schema{
 	},
 }
 
-var baseSwaAppSchema = map[string]*schema.Schema{
+var baseappSwaSchema = map[string]*schema.Schema{
 	"accessibility_self_service": &schema.Schema{
 		Type:        schema.TypeBool,
 		Optional:    true,
@@ -195,9 +195,9 @@ func buildSchemeCreds(d *schema.ResourceData) *okta.SchemeApplicationCredentials
 	}
 }
 
-func buildSwaAppSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
+func buildAppSwaSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
 	s := buildAppSchema(appSchema)
-	return buildSchema(baseSwaAppSchema, s)
+	return buildSchema(baseappSwaSchema, s)
 }
 
 func buildVisibility(d *schema.ResourceData) *okta.ApplicationVisibility {

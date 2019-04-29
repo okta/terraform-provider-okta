@@ -22,14 +22,14 @@ var testResourcePrefix = "testAcc"
 // It also delineates between acceptance tests and unit tests
 func TestMain(m *testing.M) {
 	// Acceptance test sweepers necessary to prevent dangling resources
-	setupSweeper(passwordPolicy, deletePasswordPolicies)
-	setupSweeper(signOnPolicy, deleteSignOnPolicies)
-	setupSweeper(mfaPolicy, deleteMfaPolicies)
-	setupSweeper(signOnPolicyRule, deleteSignOnPolicyRules)
-	setupSweeper(passwordPolicyRule, deletePasswordPolicyRules)
+	setupSweeper(policyPassword, deletePasswordPolicies)
+	setupSweeper(policySignOn, deleteSignOnPolicies)
+	setupSweeper(policyMfa, deleteMfaPolicies)
+	setupSweeper(policyRuleSignOn, deleteSignOnPolicyRules)
+	setupSweeper(policyRulePassword, deletepolicyRulePasswords)
 	setupSweeper("okta_*_app", deleteTestApps)
 	setupSweeper("okta_*_idp", deleteTestIdps)
-	setupSweeper(mfaPolicyRule, deleteMfaPolicyRules)
+	setupSweeper(policyRuleMfa, deleteMfaPolicyRules)
 	setupSweeper(authServer, deleteAuthServers)
 	setupSweeper(groupRule, sweepGroupRules)
 	setupSweeper(oktaGroup, sweepGroups)
