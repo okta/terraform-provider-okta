@@ -30,7 +30,8 @@ type (
 	}
 
 	searchResults struct {
-		Apps []*appID
+		Apps  []*appID
+		Users []*okta.User
 	}
 )
 
