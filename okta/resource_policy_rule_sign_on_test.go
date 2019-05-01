@@ -216,7 +216,7 @@ resource "%s" "%s" {
 }
 
 resource "%s" "%s" {
-  	policyid = "${okta_signon_policy.%s.id}"
+  	policyid = "${okta_policy_signon.%s.id}"
 	name     = "%s"
 	status   = "ACTIVE"
 }
