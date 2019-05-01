@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// DEPRECATED - see okta_idp and okta_saml_idp
+// DEPRECATED - see okta_idp_oidc and okta_idp_saml
 func resourceIdentityProvider() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceIdentityProviderCreate,
@@ -19,7 +19,7 @@ func resourceIdentityProvider() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
-		DeprecationMessage: "This resource is being deprecated in favor of okta_oidc_idp & okta_saml_idp",
+		DeprecationMessage: "This resource is being deprecated in favor of okta_oidc_idp & okta_idp_saml",
 		Schema: map[string]*schema.Schema{
 			"active": &schema.Schema{
 				Type:        schema.TypeBool,

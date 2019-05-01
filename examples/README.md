@@ -1,6 +1,6 @@
 # Configuration Examples
 
-Here lies the examples that will aid you on your Okta Terraform journey.
+Here lies the examples that will aid you on your Okta Terraform journey. PLEASE NOTE not all resources are yet outlined here. Just some really common ones! We will stand up a wiki soon.
 
 ## Example Stacks
 
@@ -12,9 +12,9 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 
 ## Resources & Data Sources
 
-* [okta_saml_app](./okta_saml_app) Supports the management of Okta SAML Applications.
-* [okta_oauth_app](./okta_oauth_app) Supports the management of Okta OIDC Applications.
-* [okta_bookmark_app](./okta_bookmark_app) Supports the management Okta Bookmark Application.
+* [okta_app_saml](./okta_app_saml) Supports the management of Okta SAML Applications.
+* [okta_app_oauth](./okta_app_oauth) Supports the management of Okta OIDC Applications.
+* [okta_app_bookmark](./okta_app_bookmark) Supports the management Okta Bookmark Application.
 * [okta_app](./okta_app) Generic Application data source.
 * [okta_user](./okta_user) Supports the management of Okta Users.
 * [okta_group](./okta_group) Supports the management of Okta Groups.
@@ -28,13 +28,13 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 * [okta_auth_server_claim](./okta_auth_server_claim) Supports the management of Okta Authorization servers claims.
 * [okta_inline_hook](./okta_inline_hook) Supports the management of Okta Inline Hooks EA feature.
 * [okta_idp](./okta_idp) Supports the management of Okta OIDC Identity Providers.
-* [okta_social_idp](./okta_social_idp) Supports the management of Okta Social Identity Providers. Such as Google, Facebook, Microsoft, and LinkedIn.
-* [okta_saml_idp](./okta_idp) Supports the management of Okta SAML Identity Providers.
-* [okta_oauth_app_redirect_uri](./okta_oauth_app_redirect_uri) Supports decentralizing redirect uri config. Due to Okta's API not allowing this field to be null, you must set a redirect uri in your app, and ignore changes to this attribute. We follow TF best practices and detect config drift. The best case scenario is Okta makes this field nullable and we can not detect config drift when this attr is not present.
+* [okta_idp_social](./okta_idp_social) Supports the management of Okta Social Identity Providers. Such as Google, Facebook, Microsoft, and LinkedIn.
+* [okta_idp_saml](./okta_idp) Supports the management of Okta SAML Identity Providers.
+* [okta_app_oauth_redirect_uri](./okta_app_oauth_redirect_uri) Supports decentralizing redirect uri config. Due to Okta's API not allowing this field to be null, you must set a redirect uri in your app, and ignore changes to this attribute. We follow TF best practices and detect config drift. The best case scenario is Okta makes this field nullable and we can not detect config drift when this attr is not present.
 
 ## Deprecated Resources
 
-* okta_identity_provider -- See okta_idp, okta_social_idp, and okta_saml_idp.
+* okta_identity_provider -- See okta_idp, okta_idp_social, and okta_idp_saml.
 * okta_user_schemas -- See okta_user_schema.
 
 ## Notes

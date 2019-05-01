@@ -330,7 +330,7 @@ func userCustomSchemasTemplate(d *schema.ResourceData, m interface{}) error {
 		var obj interface{}
 		err := json.Unmarshal([]byte(d.Get("oneof").(string)), &obj)
 		if err != nil {
-			fmt.Errorf("[ERROR] Error Unmarsaling oneof json string %v", err)
+			return fmt.Errorf("[ERROR] Error Unmarsaling oneof json string %v", err)
 		}
 		for _, v := range obj.([]interface{}) {
 			oneof := client.Schemas.OneOf()
