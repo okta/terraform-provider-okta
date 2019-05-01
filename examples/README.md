@@ -17,6 +17,7 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 * [okta_app_bookmark](./okta_app_bookmark) Supports the management Okta Bookmark Application.
 * [okta_app](./okta_app) Generic Application data source.
 * [okta_user](./okta_user) Supports the management of Okta Users.
+* [okta_users](./okta_users) Data source to retrieve a group of users.
 * [okta_group](./okta_group) Supports the management of Okta Groups.
 * [okta_group_rule](./okta_group_rule) Supports the management of Okta Group Rules.
 * [okta_trusted_origin](./okta_trusted_origin) Supports the management of Okta Trusted Sources and Origins.

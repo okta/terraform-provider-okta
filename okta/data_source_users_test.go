@@ -10,6 +10,7 @@ import (
 func TestAccDataSourceUsers(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager("okta_users")
+	users := mgr.GetFixtures("users.tf", ri, t)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
@@ -20,7 +21,7 @@ func TestAccDataSourceUsers(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				// Ensure users are created
-				Config: config,
+				Config: users,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("okta_user.test", "id"),
 					resource.TestCheckResourceAttrSet("okta_user.test1", "id"),
@@ -32,13 +33,7 @@ func TestAccDataSourceUsers(t *testing.T) {
 				// Ensure data source props are set
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.okta_users.test", "users.#", "3"),
-					resource.TestCheckResourceAttr("data.okta_users.test", "users.0.first_name", "TestAcc"),
-					resource.TestCheckResourceAttr("data.okta_users.test", "users.1.first_name", "TestAcc"),
-					resource.TestCheckResourceAttr("data.okta_users.test", "users.2.first_name", "TestAcc"),
-					resource.TestCheckResourceAttr("data.okta_users.test", "users.0.last_name", "Doe"),
-					resource.TestCheckResourceAttr("data.okta_users.test", "users.1.last_name", "Jones"),
-					resource.TestCheckResourceAttr("data.okta_users.test", "users.2.last_name", "Entwhistle"),
+					resource.TestCheckResourceAttrSet("data.okta_users.test", "users.#"),
 				),
 			},
 		},

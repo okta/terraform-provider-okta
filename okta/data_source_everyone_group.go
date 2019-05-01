@@ -10,7 +10,14 @@ func dataSourceEveryoneGroup() *schema.Resource {
 	return &schema.Resource{
 		Read: dataSourceEveryoneGroupRead,
 
-		Schema: map[string]*schema.Schema{},
+		Schema: map[string]*schema.Schema{
+			"include_users": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Fetch group users, having default off cuts down on API calls.",
+			},
+		},
 	}
 }
 

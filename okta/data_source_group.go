@@ -22,6 +22,18 @@ func dataSourceGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"include_users": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Fetch group users, having default off cuts down on API calls.",
+			},
+			"users": &schema.Schema{
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "Users associated with the group. This can also be done per user.",
+			},
 		},
 	}
 }
@@ -35,13 +47,22 @@ func findGroup(name string, d *schema.ResourceData, m interface{}) error {
 	groups, _, err := client.Group.ListGroups(&query.Params{Q: name})
 	if err != nil {
 		return fmt.Errorf("failed to query for groups: %v", err)
-	}
-	if len(groups) > 0 {
-		d.SetId(groups[0].Id)
-		d.Set("description", groups[0].Profile.Description)
-		return nil
+	} else if len(groups) < 1 {
+		return errors.New("Group not found")
 	}
 
-	return errors.New("Group not found")
+	d.SetId(groups[0].Id)
+	d.Set("description", groups[0].Profile.Description)
 
+	if d.Get("include_users").(bool) {
+		userIdList, err := listGroupUserIds(m, d.Id())
+		if err != nil {
+			return err
+		}
+
+		// just user ids for now
+		return d.Set("users", convertStringSetToInterface(userIdList))
+	}
+
+	return nil
 }

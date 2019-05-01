@@ -121,7 +121,7 @@ func resourceUser() *schema.Resource {
 			"group_memberships": {
 				Type:        schema.TypeSet,
 				Optional:    true,
-				Description: "The groups that you want this user to be a part of",
+				Description: "The groups that you want this user to be a part of. This can also be done via the group using the `users` property.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"honorific_prefix": &schema.Schema{
@@ -291,9 +291,9 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		}
 	}
 
-	// group assigning can only happen after the user is created as well
-	groups := convertInterfaceToStringSetNullable(d.Get("group_memberships"))
-	if groups != nil {
+	// Only sync when there is opt in, consumers can chose which route they want to take
+	if _, exists := d.GetOkExists("group_membership"); exists {
+		groups := convertInterfaceToStringSetNullable(d.Get("group_memberships"))
 		if err = assignGroupsToUser(user.Id, groups, client); err != nil {
 			return err
 		}
@@ -331,7 +331,11 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	return setGroups(d, client)
+	// Only sync when it is outlined, an empty list will remove all membership
+	if _, exists := d.GetOkExists("group_membership"); exists {
+		return setGroups(d, client)
+	}
+	return nil
 }
 
 func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {

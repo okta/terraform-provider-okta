@@ -23,6 +23,7 @@ func TestAccDataSourceGroup(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_group.test", "id"),
 					resource.TestCheckResourceAttrSet("okta_group.test", "id"),
+					resource.TestCheckResourceAttr("okta_group.test", "users.#", "1"),
 				),
 			},
 		},
