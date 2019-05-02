@@ -73,11 +73,25 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 				ValidateFunc: validation.IntBetween(10, 129600),
 				Default:      10080,
 			},
+			"inline_hook_id": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 		}),
 	}
 }
 
 func buildAuthServerPolicyRule(d *schema.ResourceData) *AuthorizationServerPolicyRule {
+	var hook *AuthServerInlineHook
+
+	inlineHook := d.Get("inline_hook_id").(string)
+
+	if inlineHook != "" {
+		hook = &AuthServerInlineHook{
+			Id: inlineHook,
+		}
+	}
+
 	return &AuthorizationServerPolicyRule{
 		Name:     d.Get("name").(string),
 		Status:   d.Get("status").(string),
@@ -88,6 +102,7 @@ func buildAuthServerPolicyRule(d *schema.ResourceData) *AuthorizationServerPolic
 				AccessTokenLifetimeMinutes:  d.Get("access_token_lifetime_minutes").(int),
 				RefreshTokenLifetimeMinutes: d.Get("refresh_token_lifetime_minutes").(int),
 				RefreshTokenWindowMinutes:   d.Get("refresh_token_window_minutes").(int),
+				InlineHook:                  hook,
 			},
 		},
 		Conditions: &PolicyRuleConditions{
@@ -129,6 +144,7 @@ func resourceAuthServerPolicyRuleRead(d *schema.ResourceData, m interface{}) err
 	d.Set("status", authServerPolicyRule.Status)
 	d.Set("priority", authServerPolicyRule.Priority)
 	d.Set("type", authServerPolicyRule.Type)
+	d.Set("inline_hook_id", authServerPolicyRule.Actions.Token.InlineHook.Id)
 	err = setNonPrimitives(d, map[string]interface{}{
 		"grant_type_whitelist": authServerPolicyRule.Conditions.GrantTypes.Include,
 		"scope_whitelist":      authServerPolicyRule.Conditions.Scopes.Include,
