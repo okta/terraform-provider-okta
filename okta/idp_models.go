@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/okta/okta-sdk-golang/okta"
 )

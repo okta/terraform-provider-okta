@@ -28,10 +28,6 @@ func resourceIdpSaml() *schema.Resource {
 				Default:      "INSTANCE",
 				ValidateFunc: validation.StringInSlice([]string{"INSTANCE"}, false),
 			},
-			"acs_url": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
 			"sso_url": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -70,7 +66,7 @@ func resourceIdpSaml() *schema.Resource {
 			"issuer_mode": issuerMode,
 			"audience": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Computed: true,
 			},
 			"kid": &schema.Schema{
 				Type:     schema.TypeString,
@@ -178,9 +174,8 @@ func buildidpSaml(d *schema.ResourceData) *SAMLIdentityProvider {
 			Type: "SAML2",
 			Credentials: &SAMLCredentials{
 				Trust: &IDPTrust{
-					Issuer:   d.Get("issuer").(string),
-					Audience: d.Get("audience").(string),
-					Kid:      d.Get("kid").(string),
+					Issuer: d.Get("issuer").(string),
+					Kid:    d.Get("kid").(string),
 				},
 			},
 		},
