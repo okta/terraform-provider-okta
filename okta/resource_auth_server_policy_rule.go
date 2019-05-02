@@ -144,7 +144,11 @@ func resourceAuthServerPolicyRuleRead(d *schema.ResourceData, m interface{}) err
 	d.Set("status", authServerPolicyRule.Status)
 	d.Set("priority", authServerPolicyRule.Priority)
 	d.Set("type", authServerPolicyRule.Type)
-	d.Set("inline_hook_id", authServerPolicyRule.Actions.Token.InlineHook.Id)
+
+	if authServerPolicyRule.Actions.Token.InlineHook != nil {
+		d.Set("inline_hook_id", authServerPolicyRule.Actions.Token.InlineHook.Id)
+	}
+
 	err = setNonPrimitives(d, map[string]interface{}{
 		"grant_type_whitelist": authServerPolicyRule.Conditions.GrantTypes.Include,
 		"scope_whitelist":      authServerPolicyRule.Conditions.Scopes.Include,
