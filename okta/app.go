@@ -30,7 +30,8 @@ type (
 	}
 
 	searchResults struct {
-		Apps []*appID
+		Apps  []*appID
+		Users []*okta.User
 	}
 )
 
@@ -286,7 +287,7 @@ func containsGroup(groupList []*okta.ApplicationGroupAssignment, id string) bool
 	return false
 }
 
-func containsUser(userList []*okta.AppUser, id string) bool {
+func containsAppUser(userList []*okta.AppUser, id string) bool {
 	for _, user := range userList {
 		if user.Id == id && user.Scope == "USER" {
 			return true
@@ -328,7 +329,7 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 			uID := userProfile["id"].(string)
 			userIDList[i] = uID
 
-			if !containsUser(existingUsers, uID) {
+			if !containsAppUser(existingUsers, uID) {
 				username := userProfile["username"].(string)
 				// Not required
 				password, _ := userProfile["password"].(string)

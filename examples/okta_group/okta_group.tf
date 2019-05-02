@@ -1,4 +1,4 @@
-resource "okta_group" "testAcc_replace_with_uuid" {
+resource "okta_group" "test" {
   name        = "testAcc"
   description = "testing, testing"
 }

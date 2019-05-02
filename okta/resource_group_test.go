@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
@@ -27,10 +28,11 @@ func sweepGroups(client *testClient) error {
 
 func TestAccOktaGroupsCreate(t *testing.T) {
 	ri := acctest.RandInt()
-	resourceName := buildResourceFQN(oktaGroup, ri)
+	resourceName := fmt.Sprintf("%s.test", oktaGroup)
 	mgr := newFixtureManager("okta_group")
 	config := mgr.GetFixtures("okta_group.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("okta_group_updated.tf", ri, t)
+	addUsersConfig := mgr.GetFixtures("okta_group_with_users.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -45,6 +47,13 @@ func TestAccOktaGroupsCreate(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "testAccDifferent")),
+			},
+			{
+				Config: addUsersConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "testAcc"),
+					resource.TestCheckResourceAttr(resourceName, "users.#", "4"),
+				),
 			},
 		},
 	})
