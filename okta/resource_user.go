@@ -222,6 +222,11 @@ func resourceUser() *schema.Resource {
 					return old == "PROVISIONED" && new == "ACTIVE" || old == "PASSWORD_EXPIRED" && new == "ACTIVE"
 				},
 			},
+			"raw_status": &schema.Schema{
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The raw status of the User in Okta - (status is mapped)",
+			},
 			"street_address": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -253,7 +258,7 @@ func resourceUser() *schema.Resource {
 
 func mapStatus(currentStatus string) string {
 	// PASSWORD_EXPIRED is effectively ACTIVE for our purposes
-	if currentStatus == "PASSWORD_EXPIRED" {
+	if currentStatus == "PASSWORD_EXPIRED" || currentStatus == "RECOVERY" {
 		return "ACTIVE"
 	}
 
@@ -322,8 +327,9 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	d.Set("status", mapStatus(user.Status))
+	d.Set("raw_status", user.Status)
 
-	if err = setUserProfileAttributes(d, user); err != nil {
+	if err = setNonPrimitives(d, flattenUser(user)); err != nil {
 		return err
 	}
 
