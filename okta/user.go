@@ -3,6 +3,7 @@ package okta
 import (
 	"fmt"
 	"log"
+	"reflect"
 	"strings"
 	"time"
 
@@ -399,7 +400,9 @@ func flattenUser(u *okta.User) map[string]interface{} {
 			attrKey := camelCaseToUnderscore(k)
 
 			if isCustomUserAttr(attrKey) {
-				customAttributes[k] = v
+				// Avoid Terraform blowing up due to wrong type
+				ref := reflect.ValueOf(v)
+				customAttributes[k] = ref.String()
 			} else {
 				attrs[attrKey] = v
 			}
