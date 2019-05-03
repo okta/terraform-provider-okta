@@ -226,7 +226,6 @@ func resourceUser() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "The raw status of the User in Okta - (status is mapped)",
-				Default:     "ACTIVE",
 			},
 			"street_address": &schema.Schema{
 				Type:        schema.TypeString,
