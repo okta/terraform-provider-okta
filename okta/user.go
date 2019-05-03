@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -411,31 +410,6 @@ func flattenUser(u *okta.User) map[string]interface{} {
 	attrs["custom_profile_attributes"] = customAttributes
 
 	return attrs
-}
-
-func setUserProfileAttributes(d *schema.ResourceData, u *okta.User) error {
-	// any profile attributes that aren't explicitly outlined in the okta_user schema
-	// (ie. first_name) can be considered customAttributes
-	customAttributes := make(map[string]interface{})
-
-	// set all the attributes in state that were returned from user.Profile
-	for k, v := range *u.Profile {
-		if v != nil {
-			attribute := camelCaseToUnderscore(k)
-			if err := d.Set(attribute, v); err != nil {
-				if strings.Contains(err.Error(), "Invalid address to set") {
-					customAttributes[k] = v
-				} else {
-					return fmt.Errorf("error setting %s for resource %s: %s", attribute, d.Id(), err)
-				}
-			}
-		}
-	}
-
-	// set the custom_profile_attributes values
-	return setNonPrimitives(d, map[string]interface{}{
-		"custom_profile_attributes": customAttributes,
-	})
 }
 
 // need to remove from all current admin roles and reassign based on terraform configs when a change is detected

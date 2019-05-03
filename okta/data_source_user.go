@@ -32,7 +32,7 @@ func dataSourceUserRead(d *schema.ResourceData, m interface{}) error {
 
 	d.SetId(users[0].Id)
 
-	if err = setUserProfileAttributes(d, users[0]); err != nil {
+	if err = setNonPrimitives(d, flattenUser(users[0])); err != nil {
 		return err
 	}
 

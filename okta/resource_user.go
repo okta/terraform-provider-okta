@@ -329,7 +329,7 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("status", mapStatus(user.Status))
 	d.Set("raw_status", user.Status)
 
-	if err = setUserProfileAttributes(d, user); err != nil {
+	if err = setNonPrimitives(d, flattenUser(user)); err != nil {
 		return err
 	}
 
