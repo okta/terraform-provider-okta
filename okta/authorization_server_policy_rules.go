@@ -18,6 +18,10 @@ type (
 		Actions    *PolicyRuleActions    `json:"actions,omitempty"`
 	}
 
+	AuthServerInlineHook struct {
+		Id string `json:"id,omitempty"`
+	}
+
 	PolicyRuleActions struct {
 		Token *TokenActions `json:"token,omitempty"`
 	}
@@ -29,9 +33,10 @@ type (
 	}
 
 	TokenActions struct {
-		AccessTokenLifetimeMinutes  int `json:"accessTokenLifetimeMinutes,omitempty"`
-		RefreshTokenLifetimeMinutes int `json:"refreshTokenLifetimeMinutes,omitempty"`
-		RefreshTokenWindowMinutes   int `json:"refreshTokenWindowMinutes,omitempty"`
+		AccessTokenLifetimeMinutes  int                   `json:"accessTokenLifetimeMinutes,omitempty"`
+		RefreshTokenLifetimeMinutes int                   `json:"refreshTokenLifetimeMinutes,omitempty"`
+		RefreshTokenWindowMinutes   int                   `json:"refreshTokenWindowMinutes,omitempty"`
+		InlineHook                  *AuthServerInlineHook `json:"inlineHook,omitempty"`
 	}
 )
 
