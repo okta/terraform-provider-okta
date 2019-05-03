@@ -11,8 +11,6 @@ require (
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/crewjam/saml v0.0.0-20180831135026-ebc5f787b786
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
-	github.com/gin-contrib/sse v0.0.0-20190301062529-5545eab6dad3 // indirect
-	github.com/gin-gonic/gin v1.3.0 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.0
 	github.com/hashicorp/go-getter v1.0.3 // indirect
@@ -34,13 +32,12 @@ require (
 	github.com/okta/okta-sdk-golang v0.1.0
 	github.com/peterhellberg/link v1.0.0
 	github.com/posener/complete v1.2.1 // indirect
-	github.com/rs/zerolog v1.14.3 // indirect
 	github.com/russellhaering/goxmldsig v0.0.0-20180430223755-7acd5e4a6ef7 // indirect
-	github.com/ugorji/go v1.1.4 // indirect
 	github.com/zclconf/go-cty v0.0.0-20190201220620-4ca19710f056 // indirect
+	golang.org/x/net v0.0.0-20190311183353-d8887717615a // indirect
+	golang.org/x/sync v0.0.0-20190423024810-112230192c58 // indirect
 	google.golang.org/genproto v0.0.0-20190201180003-4b09977fb922 // indirect
 	google.golang.org/grpc v1.18.0 // indirect
-	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
 )
 
-replace github.com/okta/okta-sdk-golang => github.com/articulate/okta-sdk-golang v1.0.2
+replace github.com/okta/okta-sdk-golang => github.com/articulate/okta-sdk-golang v1.0.3
