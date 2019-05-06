@@ -14,9 +14,10 @@ func deleteMfaPolicies(client *testClient) error {
 
 func TestAccOktaMfaPolicy(t *testing.T) {
 	ri := acctest.RandInt()
-	config := testOktaMfaPolicy(ri)
-	updatedConfig := testOktaMfaPolicyUpdated(ri)
-	resourceName := buildResourceFQN(policyMfa, ri)
+	mgr := newFixtureManager(policyMfa)
+	config := mgr.GetFixtures("basic.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", policyMfa)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -48,46 +49,4 @@ func TestAccOktaMfaPolicy(t *testing.T) {
 			},
 		},
 	})
-}
-
-func testOktaMfaPolicy(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  name        		= "%s"
-  status      		= "ACTIVE"
-  description 		= "Terraform Acceptance Test MFA Policy"
-  google_otp = {
-	  enroll = "REQUIRED"
-  }
-}
-`, policyMfa, name, name)
-}
-
-func testOktaMfaPolicyUpdated(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-data "okta_everyone_group" "everyone-%d" {}
-
-resource "%s" "%s" {
-	name        = "%s"
-	status      = "INACTIVE"
-	description = "Terraform Acceptance Test MFA Policy Updated"
-	groups_included = [ "${data.okta_everyone_group.everyone-%d.id}" ]
-	fido_u2f = {
-		enroll = "OPTIONAL"
-	}
-	google_otp = {
-		enroll = "OPTIONAL"
-	}
-	okta_otp = {
-		enroll = "OPTIONAL"
-	}
-	okta_sms = {
-		enroll = "OPTIONAL"
-	}
-}
-`, rInt, policyMfa, name, name, rInt)
 }

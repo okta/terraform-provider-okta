@@ -33,9 +33,10 @@ func deletePolicyByType(t string, client *testClient) error {
 
 func TestAccOktaPolicyPassword(t *testing.T) {
 	ri := acctest.RandInt()
-	config := testOktaPolicyPassword(ri)
-	updatedConfig := testOktaPolicyPasswordUpdated(ri)
-	resourceName := buildResourceFQN(policyPassword, ri)
+	mgr := newFixtureManager(policyPassword)
+	config := mgr.GetFixtures("basic.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", policySignOn)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -134,54 +135,4 @@ func doesPolicyExistsUpstream(ID string) (bool, error) {
 	}
 
 	return policy.ID != "", nil
-}
-
-func testOktaPolicyPassword(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  name        = "%s"
-  status      = "ACTIVE"
-  description = "Terraform Acceptance Test Password Policy"
-}
-`, policyPassword, name, name)
-}
-
-// Noticed the below comment, added a TODO to actually validate for this.
-// cannot change skipunlock to "true" if the authprovider is OKTA
-// unless PASSWORD_POLICY_SOFT_LOCK is enabled
-// (not supported in this TF provider at this time)
-func testOktaPolicyPasswordUpdated(rInt int) string {
-	name := buildResourceName(rInt)
-
-	// Adding another resource so I can ensure the priority preference works
-	return fmt.Sprintf(`
-data "okta_everyone_group" "everyone-%d" {}
-
-resource "%s" "%s" {
-	name        = "%s"
-	status      = "INACTIVE"
-	description = "Terraform Acceptance Test Password Policy Updated"
-	groups_included = [ "${data.okta_everyone_group.everyone-%d.id}" ]
-	password_min_length = 12
-	password_min_lowercase = 0
-	password_min_uppercase = 0
-	password_min_number = 0
-	password_min_symbol = 1
-	password_exclude_username = false
-	password_exclude_first_name = true
-	password_exclude_last_name = true
-	password_max_age_days = 60
-	password_expire_warn_days = 15
-	password_min_age_minutes = 60
-	password_history_count = 5
-	password_max_lockout_attempts = 3
-	password_auto_unlock_minutes = 2
-	password_show_lockout_failures = true
-	question_min_length = 10
-	recovery_email_token = 20160
-	sms_recovery = "ACTIVE"
-}
-`, rInt, policyPassword, name, name, rInt)
 }
