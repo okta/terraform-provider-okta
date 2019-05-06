@@ -29,66 +29,12 @@ func TestAccOktaPolicyRuleDefaultErrors(t *testing.T) {
 	})
 }
 
-func TestAccOktaPolicyRulesRename(t *testing.T) {
-	ri := acctest.RandInt()
-	updatedName := fmt.Sprintf("%s-changed-%d", testResourcePrefix, ri)
-	config := testOktaPolicyRuleSignOn(ri)
-	updatedConfig := testOktaPolicyRuleSignOnRename(updatedName, ri)
-	resourceName := buildResourceFQN(policyRuleSignOn, ri)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createRuleCheckDestroy(policyRuleSignOn),
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					ensureRuleExists(resourceName),
-				),
-			},
-			{
-				Config: updatedConfig,
-				Check: resource.ComposeTestCheckFunc(
-					ensureRuleExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-				),
-			},
-		},
-	})
-}
-
-func TestAccOktaPolicyRulesNewPolicy(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testOktaPolicyRuleSignOn(ri)
-	updatedConfig := testOktaPolicyRuleSignOnNewPolicy(ri)
-	resourceName := buildResourceFQN(policyRuleSignOn, ri)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createRuleCheckDestroy(policyRuleSignOn),
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					ensureRuleExists(resourceName),
-				),
-			},
-			{
-				Config: updatedConfig,
-				Check: resource.ComposeTestCheckFunc(
-					ensureRuleExists(resourceName),
-				),
-			},
-		},
-	})
-}
 func TestAccOktaPolicyRuleSignOn(t *testing.T) {
 	ri := acctest.RandInt()
-	config := testOktaPolicyRuleSignOn(ri)
-	updatedConfig := testOktaPolicyRuleSignOnUpdated(ri)
-	resourceName := buildResourceFQN(policyRuleSignOn, ri)
+	mgr := newFixtureManager(policyRuleSignOn)
+	config := mgr.GetFixtures("basic.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", policyRuleSignOn)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -99,7 +45,7 @@ func TestAccOktaPolicyRuleSignOn(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 				),
 			},
@@ -107,12 +53,13 @@ func TestAccOktaPolicyRuleSignOn(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "access", "DENY"),
 					resource.TestCheckResourceAttr(resourceName, "session_idle", "240"),
 					resource.TestCheckResourceAttr(resourceName, "session_lifetime", "240"),
 					resource.TestCheckResourceAttr(resourceName, "session_persistent", "false"),
+					resource.TestCheckResourceAttr(resourceName, "users_excluded.#", "1"),
 				),
 			},
 		},
@@ -137,43 +84,6 @@ func TestAccOktaPolicyRuleSignOnPassErrors(t *testing.T) {
 	})
 }
 
-func testOktaPolicyRuleSignOn(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-data "okta_default_policy" "default-%d" {
-	type = "%s"
-}
-
-resource "%s" "%s" {
-	policyid = "${data.okta_default_policy.default-%d.id}"
-	name     = "%s"
-	status   = "ACTIVE"
-}
-`, rInt, signOnPolicyType, policyRuleSignOn, name, rInt, name)
-}
-
-func testOktaPolicyRuleSignOnUpdated(rInt int) string {
-	name := buildResourceName(rInt)
-
-	// Adding a second resource here to test the priority preference
-	return fmt.Sprintf(`
-data "okta_default_policy" "default-%d" {
-  	type = "%s"
-}
-
-resource "%s" "%s" {
-	policyid = "${data.okta_default_policy.default-%d.id}"
-	name     = "%s"
-	status   = "INACTIVE"
-	access           = "DENY"
-	session_idle      = 240
-	session_lifetime  = 240
-	session_persistent = false
-}
-`, rInt, signOnPolicyType, policyRuleSignOn, name, rInt, name)
-}
-
 func testOktaPolicyRuleSignOnDefaultErrors(rInt int) string {
 	name := buildResourceName(rInt)
 
@@ -184,43 +94,6 @@ resource "%s" "%s" {
 	status   = "ACTIVE"
 }
 `, policyRuleSignOn, name)
-}
-
-func testOktaPolicyRuleSignOnRename(updatedName string, rInt int) string {
-	name := buildResourceName(rInt)
-	return fmt.Sprintf(`
-data "okta_default_policy" "default-%d" {
-	type = "%s"
-}
-
-resource "%s" "%s" {
-	policyid = "${data.okta_default_policy.default-%d.id}"
-	name     = "%s"
-	status   = "ACTIVE"
-}
-`, rInt, signOnPolicyType, policyRuleSignOn, name, rInt, updatedName)
-}
-
-func testOktaPolicyRuleSignOnNewPolicy(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-data "okta_default_policy" "default-%d" {
-	type = "%s"
-}
-
-resource "%s" "%s" {
-	name        = "%s"
-	status      = "ACTIVE"
-	description = "Terraform Acceptance Test SignOn Policy"
-}
-
-resource "%s" "%s" {
-  	policyid = "${okta_policy_signon.%s.id}"
-	name     = "%s"
-	status   = "ACTIVE"
-}
-`, rInt, signOnPolicyType, policySignOn, name, name, policyRuleSignOn, name, name, name)
 }
 
 func testOktaPolicyRuleSignOnPassErrors(rInt int) string {

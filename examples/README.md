@@ -30,7 +30,9 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 * [okta_inline_hook](./okta_inline_hook) Supports the management of Okta Inline Hooks EA feature.
 * [okta_idp](./okta_idp) Supports the management of Okta OIDC Identity Providers.
 * [okta_idp_social](./okta_idp_social) Supports the management of Okta Social Identity Providers. Such as Google, Facebook, Microsoft, and LinkedIn.
-* [okta_idp_saml](./okta_idp) Supports the management of Okta SAML Identity Providers.
+* [okta_idp_saml](./okta_idp_saml) Supports the management of Okta SAML Identity Providers.
+* [okta_policy_signon](./okta_policy_signon) Supports the management of sign on policies.
+* [okta_policy_rule_signon](./okta_policy_rule_signon) Supports the management of sign on policy rules.
 * [okta_app_oauth_redirect_uri](./okta_app_oauth_redirect_uri) Supports decentralizing redirect uri config. Due to Okta's API not allowing this field to be null, you must set a redirect uri in your app, and ignore changes to this attribute. We follow TF best practices and detect config drift. The best case scenario is Okta makes this field nullable and we can not detect config drift when this attr is not present.
 
 ## Deprecated Resources

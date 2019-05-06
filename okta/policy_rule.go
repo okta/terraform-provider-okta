@@ -43,18 +43,10 @@ var baseRuleSchema = map[string]*schema.Schema{
 		Description:  "Policy Rule Status: ACTIVE or INACTIVE.",
 	},
 	"users_excluded": {
-		Type:          schema.TypeList,
-		Optional:      true,
-		Description:   "List of User IDs to Exclude",
-		ConflictsWith: []string{"users_included"},
-		Elem:          &schema.Schema{Type: schema.TypeString},
-	},
-	"users_included": {
-		Type:          schema.TypeList,
-		Optional:      true,
-		Description:   "List of User IDs to Exclude",
-		ConflictsWith: []string{"users_excluded"},
-		Elem:          &schema.Schema{Type: schema.TypeString},
+		Type:        schema.TypeSet,
+		Optional:    true,
+		Description: "Set of User IDs to Exclude",
+		Elem:        &schema.Schema{Type: schema.TypeString},
 	},
 	"network_connection": {
 		Type:         schema.TypeString,
@@ -177,19 +169,11 @@ func getPolicyRule(d *schema.ResourceData, m interface{}) (*articulateOkta.Rule,
 
 func getUsers(d *schema.ResourceData) *articulateOkta.People {
 	var people *articulateOkta.People
-	include := d.Get("users_included")
-	exclude := d.Get("users_excluded")
 
-	if include != nil {
+	if include, ok := d.GetOk("users_excluded"); ok {
 		people = &articulateOkta.People{
 			Users: &articulateOkta.Users{
-				Include: convertInterfaceToStringArr(include),
-			},
-		}
-	} else if exclude != nil {
-		people = &articulateOkta.People{
-			Users: &articulateOkta.Users{
-				Exclude: convertInterfaceToStringArr(exclude),
+				Exclude: convertInterfaceToStringSet(include),
 			},
 		}
 	}
@@ -216,8 +200,7 @@ func syncRuleFromUpstream(d *schema.ResourceData, rule *articulateOkta.Rule) err
 	d.Set("network_connection", rule.Conditions.Network.Connection)
 
 	return setNonPrimitives(d, map[string]interface{}{
-		"users_excluded":   convertStringArrToInterface(rule.Conditions.People.Users.Exclude),
-		"users_included":   convertStringArrToInterface(rule.Conditions.People.Users.Include),
+		"users_excluded":   convertStringSetToInterface(rule.Conditions.People.Users.Exclude),
 		"network_includes": convertStringArrToInterface(rule.Conditions.Network.Include),
 		"network_excludes": convertStringArrToInterface(rule.Conditions.Network.Exclude),
 	})

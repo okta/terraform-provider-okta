@@ -39,23 +39,13 @@ var (
 			ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
 			Description:  "Policy Status: ACTIVE or INACTIVE.",
 		},
-		"groups_excluded": {
-			Type:        schema.TypeList,
-			Optional:    true,
-			Description: "List of Group IDs to Include",
-			Elem:        &schema.Schema{Type: schema.TypeString},
-		},
 		"groups_included": {
-			Type:        schema.TypeList,
+			Type:        schema.TypeSet,
 			Optional:    true,
 			Description: "List of Group IDs to Include",
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
-				// Suppress diff if config is empty, the API will apply the default.
-				DiffSuppressFunc: createValueDiffSuppression(""),
 			},
-			// Suppress diff if config is empty, the API will apply the default.
-			DiffSuppressFunc: suppressDefaultedArrayDiff,
 		},
 	}
 
@@ -146,19 +136,11 @@ func ensureNotDefaultPolicy(d *schema.ResourceData) error {
 
 func getGroups(d *schema.ResourceData) *articulateOkta.People {
 	var people *articulateOkta.People
-	include := d.Get("groups_included")
-	exclude := d.Get("groups_excluded")
 
-	if include != nil && len(include.([]interface{})) > 1 {
+	if include, ok := d.GetOk("groups_included"); ok {
 		people = &articulateOkta.People{
 			Groups: &articulateOkta.Groups{
-				Include: convertInterfaceToStringArr(include),
-			},
-		}
-	} else if exclude != nil && len(exclude.([]interface{})) > 1 {
-		people = &articulateOkta.People{
-			Groups: &articulateOkta.Groups{
-				Exclude: convertInterfaceToStringArr(exclude),
+				Include: convertInterfaceToStringSet(include),
 			},
 		}
 	}
@@ -232,7 +214,6 @@ func syncPolicyFromUpstream(d *schema.ResourceData, policy *articulateOkta.Polic
 	d.Set("priority", policy.Priority)
 
 	return setNonPrimitives(d, map[string]interface{}{
-		"groups_excluded": convertStringArrToInterface(policy.Conditions.People.Groups.Exclude),
-		"groups_included": convertStringArrToInterface(policy.Conditions.People.Groups.Include),
+		"groups_included": convertStringSetToInterface(policy.Conditions.People.Groups.Include),
 	})
 }
