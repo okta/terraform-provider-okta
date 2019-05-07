@@ -36,7 +36,7 @@ func TestAccOktaPolicyPassword(t *testing.T) {
 	mgr := newFixtureManager(policyPassword)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.test", policySignOn)
+	resourceName := fmt.Sprintf("%s.test", policyPassword)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
