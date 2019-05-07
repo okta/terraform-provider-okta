@@ -30,39 +30,13 @@ func TestAccOktaPoliciesDefaultErrors(t *testing.T) {
 	})
 }
 
-func TestAccOktaPoliciesRename(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testOktaPolicySignOn(ri)
-	updatedName := fmt.Sprintf("%s-changed-%d", testResourcePrefix, ri)
-	updatedConfig := testOktaPolicySignOnRename(updatedName, ri)
-	resourceName := buildResourceFQN(policySignOn, ri)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createPolicyCheckDestroy(policySignOn),
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					ensurePolicyExists(resourceName),
-				),
-			},
-			{
-				Config: updatedConfig,
-				Check: resource.ComposeTestCheckFunc(
-					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-				),
-			},
-		},
-	})
-}
 func TestAccOktaPolicySignOn(t *testing.T) {
 	ri := acctest.RandInt()
-	config := testOktaPolicySignOn(ri)
-	updatedConfig := testOktaPolicySignOnUpdated(ri)
-	resourceName := buildResourceFQN(policySignOn, ri)
+	mgr := newFixtureManager(policySignOn)
+	config := mgr.GetFixtures("basic.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("basic_inactive.tf", ri, t)
+	renamedConfig := mgr.GetFixtures("basic_renamed.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", policySignOn)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -73,7 +47,7 @@ func TestAccOktaPolicySignOn(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test SignOn Policy"),
 				),
@@ -82,9 +56,18 @@ func TestAccOktaPolicySignOn(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test SignOn Policy Updated"),
+				),
+			},
+			{
+				Config: renamedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAccUpdated_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test SignOn Policy"),
 				),
 			},
 		},
@@ -127,33 +110,6 @@ func TestAccOktaPolicySignOnAuthErrors(t *testing.T) {
 	})
 }
 
-func testOktaPolicySignOn(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  name        = "%s"
-  status      = "ACTIVE"
-  description = "Terraform Acceptance Test SignOn Policy"
-}
-`, policySignOn, name, name)
-}
-
-func testOktaPolicySignOnUpdated(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-data "okta_everyone_group" "everyone-%d" {}
-
-resource "%s" "%s" {
-  name        = "%s"
-  status      = "INACTIVE"
-  description = "Terraform Acceptance Test SignOn Policy Updated"
-  groups_included = [ "${data.okta_everyone_group.everyone-%d.id}" ]
-}
-`, rInt, policySignOn, name, name, rInt)
-}
-
 func testOktaPolicySignOnDefaultErrors(rInt int) string {
 	name := buildResourceName(rInt)
 
@@ -164,18 +120,6 @@ resource "%s" "%s" {
   description = "Terraform Acceptance Test SignOn Policy"
 }
 `, policySignOn, name)
-}
-
-func testOktaPolicySignOnRename(updatedName string, rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  name        = "%s"
-  status      = "ACTIVE"
-  description = "Terraform Acceptance Test SignOn Policy Error Check"
-}
-`, policySignOn, name, updatedName)
 }
 
 func testOktaPolicySignOnPassErrors(rInt int) string {
