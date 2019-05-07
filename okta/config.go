@@ -5,7 +5,8 @@ import (
 	"time"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
-	cleanhttp "github.com/hashicorp/go-cleanhttp"
+	"github.com/hashicorp/go-cleanhttp"
+	"github.com/hashicorp/terraform/helper/logging"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/cache"
 )
@@ -30,6 +31,8 @@ type Config struct {
 
 func (c *Config) loadAndValidate() error {
 	httpClient := cleanhttp.DefaultClient()
+	httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
+
 	articulateClient, err := articulateOkta.NewClientWithDomain(httpClient, c.orgName, c.domain, c.apiToken)
 
 	// add the Articulate Okta client object to Config
