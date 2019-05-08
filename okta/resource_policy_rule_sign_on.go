@@ -208,30 +208,14 @@ func buildSignOnPolicyRule(d *schema.ResourceData, m interface{}) (articulateOkt
 		People: getUsers(d),
 	}
 
-	// Hardcoded since MFA is not implemented.
-	template.Actions.SignOn.RequireFactor = false
+	template.Actions.SignOn.RequireFactor = d.Get("mfa_required").(bool)
+	template.Actions.SignOn.FactorPromptMode = d.Get("mfa_prompt").(string)
+	template.Actions.SignOn.RememberDeviceByDefault = d.Get("mfa_remember_device").(bool)
+	template.Actions.SignOn.FactorLifetime = d.Get("mfa_lifetime").(int)
 	template.Actions.SignOn.Session.MaxSessionIdleMinutes = d.Get("session_idle").(int)
 	template.Actions.SignOn.Session.MaxSessionLifetimeMinutes = d.Get("session_lifetime").(int)
 	template.Actions.SignOn.Session.UsePersistentCookie = d.Get("session_persistent").(bool)
 	template.Actions.SignOn.Access = d.Get("access").(string)
-
-	// Preserving existing errors here, looks like the MFA rule needs to be there in order for these to work.
-	//if required, ok := d.GetOk("mfa_required"); ok {
-	if _, ok := d.GetOk("mfa_required"); ok {
-		return template, fmt.Errorf("[ERROR] mfa signon actions not supported in this terraform provider at this time")
-	}
-	//if prompt, ok := d.GetOk("mfa_prompt"); ok {
-	if _, ok := d.GetOk("mfa_prompt"); ok {
-		return template, fmt.Errorf("[ERROR] mfa signon actions not supported in this terraform provider at this time")
-	}
-	//if remember, ok := d.GetOk("mfa_remember_device"); ok {
-	if _, ok := d.GetOk("mfa_remember_device"); ok {
-		return template, fmt.Errorf("[ERROR] mfa signon actions not supported in this terraform provider at this time")
-	}
-	//if lifetime, ok := d.GetOk("mfa_lifetime"); ok {
-	if _, ok := d.GetOk("mfa_lifetime"); ok {
-		return template, fmt.Errorf("[ERROR] mfa signon actions not supported in this terraform provider at this time")
-	}
 
 	return template, nil
 }
