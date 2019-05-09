@@ -4,12 +4,13 @@ data okta_policy test {
 }
 
 resource okta_policy_rule_idp_discovery test {
-  policyid                  = "${data.okta_policy.test.id}"
-  priority                  = 1
-  name                      = "testAcc_replace_with_uuid"
-  idp_type                  = "SAML2"
-  idp_id                    = "${okta_idp_saml.test.id}"
-  user_identifier_type      = "ATTRIBUTE"
+  policyid             = "${data.okta_policy.test.id}"
+  priority             = 1
+  name                 = "testAcc_replace_with_uuid"
+  idp_type             = "SAML2"
+  idp_id               = "${okta_idp_saml.test.id}"
+  user_identifier_type = "ATTRIBUTE"
+
   // Don't have a company schema in this account, just chosing something always there
   user_identifier_attribute = "firstName"
 
@@ -52,6 +53,7 @@ resource okta_app_saml test {
   digest_algorithm         = "SHA256"
   honor_force_authn        = false
   authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+
   attribute_statements = [
     {
       name   = "firstName"
