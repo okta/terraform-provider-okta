@@ -24,6 +24,7 @@ func TestMain(m *testing.M) {
 	// Acceptance test sweepers necessary to prevent dangling resources
 	setupSweeper(policyPassword, deletePasswordPolicies)
 	setupSweeper(policySignOn, deleteSignOnPolicies)
+	setupSweeper(policyRuleIdpDiscovery, deletePolicyRuleIdpDiscovery)
 	setupSweeper(policyMfa, deleteMfaPolicies)
 	setupSweeper(policyRuleSignOn, deleteSignOnPolicyRules)
 	setupSweeper(policyRulePassword, deletepolicyRulePasswords)

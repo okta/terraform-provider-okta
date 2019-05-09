@@ -37,6 +37,7 @@ const (
 	oktaUser               = "okta_user"
 	policyMfa              = "okta_policy_mfa"
 	policyPassword         = "okta_policy_password"
+	policyRuleIdpDiscovery = "okta_policy_rule_idp_discovery"
 	policyRuleMfa          = "okta_policy_rule_mfa"
 	policyRulePassword     = "okta_policy_rule_password"
 	policyRuleSignOn       = "okta_policy_rule_signon"
@@ -130,6 +131,7 @@ func Provider() terraform.ResourceProvider {
 			oktaUser:               resourceUser(),
 			policyMfa:              resourcePolicyMfa(),
 			policyPassword:         resourcePolicyPassword(),
+			policyRuleIdpDiscovery: resourcePolicyRuleIdpDiscovery(),
 			policyRuleMfa:          resourcePolicyMfaRule(),
 			policyRulePassword:     resourcePolicyPasswordRule(),
 			policyRuleSignOn:       resourcePolicySignonRule(),
