@@ -66,24 +66,6 @@ func TestAccOktaPolicyRuleSignOn(t *testing.T) {
 	})
 }
 
-func TestAccOktaPolicyRuleSignOnPassErrors(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testOktaPolicyRuleSignOnPassErrors(ri)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createRuleCheckDestroy(policyRuleSignOn),
-		Steps: []resource.TestStep{
-			{
-				Config:      config,
-				ExpectError: regexp.MustCompile("config is invalid: .*: : invalid or unknown key: password_change"),
-				PlanOnly:    true,
-			},
-		},
-	})
-}
-
 func testOktaPolicyRuleSignOnDefaultErrors(rInt int) string {
 	name := buildResourceName(rInt)
 
@@ -94,21 +76,4 @@ resource "%s" "%s" {
 	status   = "ACTIVE"
 }
 `, policyRuleSignOn, name)
-}
-
-func testOktaPolicyRuleSignOnPassErrors(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-data "okta_default_policy" "default-%d" {
-	type = "%s"
-}
-
-resource "%s" "%s" {
-  policyid = "${data.okta_default_policy.default-%d.id}"
-  name     = "%s"
-  status   = "ACTIVE"
-  password_change = "DENY"
-}
-`, rInt, signOnPolicyType, policyRuleSignOn, name, rInt, name)
 }
