@@ -271,6 +271,13 @@ func getAfterParam(res *okta.Response) string {
 	return ""
 }
 
+func getMapString(m map[string]interface{}, key string) string {
+	if v, ok := m[key]; ok {
+		return v.(string)
+	}
+	return ""
+}
+
 // Useful shortcut for suppressing errors from Okta's SDK when a resource does not exist. Usually used during deletion
 // of nested resources.
 func suppressErrorOn404(resp *okta.Response, err error) error {

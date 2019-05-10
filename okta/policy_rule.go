@@ -9,13 +9,26 @@ import (
 	"github.com/hashicorp/terraform/helper/validation"
 )
 
-const passwordPolicyType = "PASSWORD"
-const signOnPolicyType = "OKTA_SIGN_ON"
-const mfaPolicyType = "MFA_ENROLL"
-const singOnPolicyRuleType = "SIGN_ON"
+const (
+	passwordPolicyType   = "PASSWORD"
+	signOnPolicyType     = "OKTA_SIGN_ON"
+	mfaPolicyType        = "MFA_ENROLL"
+	singOnPolicyRuleType = "SIGN_ON"
+	idpDiscovery         = "IDP_DISCOVERY"
+)
+
+var userExcludedSchema = map[string]*schema.Schema{
+	"users_excluded": {
+		Type:        schema.TypeSet,
+		Optional:    true,
+		Description: "Set of User IDs to Exclude",
+		Elem:        &schema.Schema{Type: schema.TypeString},
+	},
+}
 
 // Basis of policy rules
 var baseRuleSchema = map[string]*schema.Schema{
+	// Ugh vestigial incorrect naming. Should switch to policy_id
 	"policyid": &schema.Schema{
 		Type:        schema.TypeString,
 		ForceNew:    true,
@@ -42,12 +55,6 @@ var baseRuleSchema = map[string]*schema.Schema{
 		ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
 		Description:  "Policy Rule Status: ACTIVE or INACTIVE.",
 	},
-	"users_excluded": {
-		Type:        schema.TypeSet,
-		Optional:    true,
-		Description: "Set of User IDs to Exclude",
-		Elem:        &schema.Schema{Type: schema.TypeString},
-	},
 	"network_connection": {
 		Type:         schema.TypeString,
 		Optional:     true,
@@ -71,8 +78,12 @@ var baseRuleSchema = map[string]*schema.Schema{
 	},
 }
 
-func buildRuleSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
+func buildBaseRuleSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
 	return buildSchema(baseRuleSchema, target)
+}
+
+func buildRuleSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
+	return buildSchema(buildSchema(baseRuleSchema, target), userExcludedSchema)
 }
 
 func createRule(d *schema.ResourceData, meta interface{}, template interface{}, ruleType string) (*articulateOkta.Rule, error) {

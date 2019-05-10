@@ -6,7 +6,7 @@ import (
 
 func deleteTestIdps(client *testClient) error {
 	providers := []*BasicIdp{}
-	_, _, err := client.apiSupplement.ListIdentityProviders(providers, &query.Params{Q: "testAcc_"})
+	_, _, err := client.apiSupplement.ListIdentityProviders(&providers, &query.Params{Q: "testAcc_"})
 	if err != nil {
 		return err
 	}

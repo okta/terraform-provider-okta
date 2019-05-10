@@ -12,9 +12,9 @@ go:
 install:
 # needed for the snap pipe:
 - sudo snap install snapcraft --classic
-- make testacc
 script:
 - make build
+- make testacc
 branches:
   only:
   - master

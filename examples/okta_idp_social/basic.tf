@@ -1,7 +1,7 @@
 resource okta_idp_social facebook {
   type          = "FACEBOOK"
   protocol_type = "OAUTH2"
-  name          = "facebook_replace_with_uuid"
+  name          = "testAcc_facebook_replace_with_uuid"
 
   scopes = [
     "public_profile",
@@ -16,7 +16,7 @@ resource okta_idp_social facebook {
 resource okta_idp_social google {
   type          = "GOOGLE"
   protocol_type = "OAUTH2"
-  name          = "google_replace_with_uuid"
+  name          = "testAcc_google_replace_with_uuid"
 
   scopes = [
     "profile",
@@ -32,7 +32,7 @@ resource okta_idp_social google {
 resource okta_idp_social microsoft {
   type          = "MICROSOFT"
   protocol_type = "OIDC"
-  name          = "microsoft_replace_with_uuid"
+  name          = "testAcc_microsoft_replace_with_uuid"
 
   scopes = [
     "openid",

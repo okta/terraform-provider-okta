@@ -116,49 +116,6 @@ func TestAccOktaPolicyRulePasswordPriority(t *testing.T) {
 	})
 }
 
-func TestAccOktaPolicyRulePasswordSignOnErrors(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testOktaPolicyRulePasswordSignOnErrors(ri)
-	resourceName := buildResourceFQN(policyRulePassword, ri)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createRuleCheckDestroy(policyRulePassword),
-		Steps: []resource.TestStep{
-			{
-				Config:      config,
-				ExpectError: regexp.MustCompile("config is invalid: .* invalid or unknown key: session_idle"),
-				PlanOnly:    true,
-				Check: resource.ComposeTestCheckFunc(
-					ensureRuleExists(resourceName),
-				),
-			},
-		},
-	})
-}
-func TestAccOktaPolicyRulePasswordAuthErrors(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testOktaPolicyRulePasswordAuthErrors(ri)
-	resourceName := buildResourceFQN(policyRulePassword, ri)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createRuleCheckDestroy(policyRulePassword),
-		Steps: []resource.TestStep{
-			{
-				Config:      config,
-				ExpectError: regexp.MustCompile("config is invalid: .* : invalid or unknown key: auth_type"),
-				PlanOnly:    true,
-				Check: resource.ComposeTestCheckFunc(
-					ensureRuleExists(resourceName),
-				),
-			},
-		},
-	})
-}
-
 func ensureRuleExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		missingErr := fmt.Errorf("resource not found: %s", name)

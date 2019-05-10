@@ -4,6 +4,7 @@ package okta
 
 import (
 	"fmt"
+
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
 )

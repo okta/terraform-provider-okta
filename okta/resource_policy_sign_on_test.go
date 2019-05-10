@@ -74,42 +74,6 @@ func TestAccOktaPolicySignOn(t *testing.T) {
 	})
 }
 
-func TestAccOktaPolicySignOnPassErrors(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testOktaPolicySignOnPassErrors(ri)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createPolicyCheckDestroy(policySignOn),
-		Steps: []resource.TestStep{
-			{
-				Config:      config,
-				ExpectError: regexp.MustCompile("config is invalid: .* : invalid or unknown key: password_min_length"),
-				PlanOnly:    true,
-			},
-		},
-	})
-}
-
-func TestAccOktaPolicySignOnAuthErrors(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testOktaPolicySignOnAuthErrors(ri)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createPolicyCheckDestroy(policySignOn),
-		Steps: []resource.TestStep{
-			{
-				Config:      config,
-				ExpectError: regexp.MustCompile("config is invalid: .* : invalid or unknown key: auth_provider"),
-				PlanOnly:    true,
-			},
-		},
-	})
-}
-
 func testOktaPolicySignOnDefaultErrors(rInt int) string {
 	name := buildResourceName(rInt)
 
@@ -120,30 +84,4 @@ resource "%s" "%s" {
   description = "Terraform Acceptance Test SignOn Policy"
 }
 `, policySignOn, name)
-}
-
-func testOktaPolicySignOnPassErrors(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  name        = "%s"
-  status      = "ACTIVE"
-  description = "Terraform Acceptance Test SignOn Policy Error Check"
-  password_min_length = 12
-}
-`, policySignOn, name, name)
-}
-
-func testOktaPolicySignOnAuthErrors(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  name        = "%s"
-  status      = "ACTIVE"
-  description = "Terraform Acceptance Test SignOn Policy Error Check"
-  auth_provider = "ACTIVE_DIRECTORY"
-}
-`, policySignOn, name, name)
 }
