@@ -26,6 +26,7 @@ const (
 
 // Building out structure for the conditional validation logic. It looks like customizing the diff
 // is the best way to implement this logic, as it needs to introspect.
+// NOTE: opened a ticket to Okta to fix their docs, they are off.
 // https://developer.okta.com/docs/api/resources/apps#credentials-settings-details
 var appGrantTypeMap = map[string]*applicationMap{
 	"web": &applicationMap{
@@ -36,6 +37,7 @@ var appGrantTypeMap = map[string]*applicationMap{
 			authorizationCode,
 			implicit,
 			refreshToken,
+			clientCredentials,
 		},
 	},
 	"native": &applicationMap{
@@ -51,10 +53,16 @@ var appGrantTypeMap = map[string]*applicationMap{
 		},
 	},
 	"browser": &applicationMap{
-		ValidGrantTypes: []string{implicit},
+		ValidGrantTypes: []string{
+			implicit,
+			authorizationCode,
+		},
 	},
 	"service": &applicationMap{
-		ValidGrantTypes: []string{clientCredentials, implicit},
+		ValidGrantTypes: []string{
+			clientCredentials,
+			implicit,
+		},
 		RequiredGrantTypes: []string{
 			clientCredentials,
 		},
