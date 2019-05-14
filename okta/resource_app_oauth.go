@@ -61,6 +61,7 @@ var appGrantTypeMap = map[string]*applicationMap{
 	"service": &applicationMap{
 		ValidGrantTypes: []string{
 			clientCredentials,
+			implicit,
 		},
 		RequiredGrantTypes: []string{
 			clientCredentials,
