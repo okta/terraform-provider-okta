@@ -56,7 +56,7 @@ func resourceAuthServer() *schema.Resource {
 			},
 			"issuer": &schema.Schema{
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 				Description: "EA Feature: allows you to use a custom issuer URL",
 			},
 			"issuer_mode": &schema.Schema{
@@ -92,7 +92,6 @@ func buildAuthServer(d *schema.ResourceData) *AuthorizationServer {
 		},
 		Description: d.Get("description").(string),
 		Name:        d.Get("name").(string),
-		Issuer:      d.Get("issuer").(string),
 		IssuerMode:  d.Get("issuer_mode").(string),
 	}
 }
@@ -129,15 +128,11 @@ func resourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("description", authServer.Description)
 	d.Set("name", authServer.Name)
 	d.Set("status", authServer.Status)
+	d.Set("issuer", authServer.Issuer)
 
 	// Do not sync these unless the issuer mode is specified since it is an EA feature and is computed in some cases
 	if authServer.IssuerMode != "" {
 		d.Set("issuer_mode", authServer.IssuerMode)
-
-		// Ignore this property if it is not custom
-		if authServer.IssuerMode != "ORG_URL" {
-			d.Set("issuer", authServer.Issuer)
-		}
 	}
 
 	return nil
