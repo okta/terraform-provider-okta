@@ -388,12 +388,14 @@ func setAppStatus(d *schema.ResourceData, client *okta.Client, status string, de
 
 func syncGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	userList, _, err := client.Application.ListApplicationUsers(id, &query.Params{})
+	// Temporary high limit to avoid issues short term. Need to support pagination here
+	userList, _, err := client.Application.ListApplicationUsers(id, &query.Params{Limit: 200})
 	if err != nil {
 		return err
 	}
 
-	groupList, _, err := client.Application.ListApplicationGroupAssignments(id, &query.Params{})
+	// Temporary high limit to avoid issues short term. Need to support pagination here
+	groupList, _, err := client.Application.ListApplicationGroupAssignments(id, &query.Params{Limit: 200})
 	if err != nil {
 		return err
 	}
