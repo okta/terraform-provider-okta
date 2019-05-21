@@ -297,7 +297,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	// Only sync when there is opt in, consumers can chose which route they want to take
-	if _, exists := d.GetOkExists("group_membership"); exists {
+	if _, exists := d.GetOkExists("group_memberships"); exists {
 		groups := convertInterfaceToStringSetNullable(d.Get("group_memberships"))
 		if err = assignGroupsToUser(user.Id, groups, client); err != nil {
 			return err
@@ -338,7 +338,7 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	// Only sync when it is outlined, an empty list will remove all membership
-	if _, exists := d.GetOkExists("group_membership"); exists {
+	if _, exists := d.GetOkExists("group_memberships"); exists {
 		return setGroups(d, client)
 	}
 	return nil
@@ -398,7 +398,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		if err := updateGroupsOnUser(d.Id(), groups, client); err != nil {
 			return err
 		}
-		d.SetPartial("group_membership")
+		d.SetPartial("group_memberships")
 	}
 	d.Partial(false)
 
