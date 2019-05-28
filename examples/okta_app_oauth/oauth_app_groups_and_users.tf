@@ -20,7 +20,7 @@ resource "okta_app_oauth" "test" {
   login_uri                 = "http://test.com"
   response_types            = ["code", "token", "id_token"]
 
-  users = {
+  users {
     id       = "${okta_user.user.id}"
     username = "${okta_user.user.email}"
   }

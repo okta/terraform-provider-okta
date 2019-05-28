@@ -9,7 +9,7 @@ import (
 	"github.com/okta/okta-sdk-golang/okta"
 )
 
-func TestAccOktaappThreeFieldlication(t *testing.T) {
+func TestAccOktaAppThreeFieldApplication(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestThreeFieldConfig(ri)
 	updatedConfig := buildTestThreeFieldConfigUpdated(ri)

@@ -9,7 +9,7 @@ import (
 	"github.com/okta/okta-sdk-golang/okta"
 )
 
-func TestAccOktaappSecurePasswordStorelication(t *testing.T) {
+func TestAccOktaAppSecurePasswordStoreApplication(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSecurePasswordStoreConfig(ri)
 	updatedConfig := buildTestSecurePasswordStoreConfigUpdated(ri)
@@ -49,7 +49,7 @@ func TestAccOktaappSecurePasswordStorelication(t *testing.T) {
 		},
 	})
 }
-func TestAccOktaappSecurePasswordStorelicationCredsSchemes(t *testing.T) {
+func TestAccOktaAppSecurePasswordStoreApplicationCredsSchemes(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSecurePasswordStoreConfigAdmin(ri)
 	updatedConfig := buildTestSecurePasswordStoreConfigExternalSync(ri)

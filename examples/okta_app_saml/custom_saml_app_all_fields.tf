@@ -13,16 +13,15 @@ resource "okta_app_saml" "testAcc_replace_with_uuid" {
   honor_force_authn        = true
   authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
 
-  attribute_statements = [
-    {
-      name      = "Attr One"
-      namespace = "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
-      values    = ["val"]
-    },
-    {
-      name         = "Attr Two"
-      filter_type  = "STARTS_WITH"
-      filter_value = "test"
-    },
-  ]
+  attribute_statements {
+    name      = "Attr One"
+    namespace = "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
+    values    = ["val"]
+  }
+
+  attribute_statements {
+    name         = "Attr Two"
+    filter_type  = "STARTS_WITH"
+    filter_value = "test"
+  }
 }

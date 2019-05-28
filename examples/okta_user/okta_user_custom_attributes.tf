@@ -12,7 +12,7 @@ resource "okta_user" "testAcc_replace_with_uuid" {
   login       = "test-acc-replace_with_uuid@testing.com"
   email       = "test-acc-replace_with_uuid@testing.com"
 
-  custom_profile_attributes {
+  custom_profile_attributes = {
     customAttribute123 = "testing-custom-attribute"
   }
 

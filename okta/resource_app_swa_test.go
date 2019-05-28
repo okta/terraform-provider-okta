@@ -10,7 +10,7 @@ import (
 )
 
 // Test creation of a simple AWS SWA app. The preconfigured apps are created by name.
-func TestAccOktaappSwalicationPreconfig(t *testing.T) {
+func TestAccOktaAppSwalicationPreconfig(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSwaConfigPreconfig(ri)
 	updatedConfig := buildTestSwaConfigPreconfigUpdated(ri)
@@ -42,7 +42,7 @@ func TestAccOktaappSwalicationPreconfig(t *testing.T) {
 }
 
 // Test creation of a custom SAML app.
-func TestAccOktaappSwalication(t *testing.T) {
+func TestAccOktaAppSwalication(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSwaConfig(ri)
 	updatedConfig := buildTestSwaConfigUpdated(ri)
@@ -81,7 +81,7 @@ func TestAccOktaappSwalication(t *testing.T) {
 }
 
 // Add and remove groups/users
-func TestAccOktaappSwalicationUserGroups(t *testing.T) {
+func TestAccOktaAppSwalicationUserGroups(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSwaGroupsUsers(ri)
 	updatedConfig := buildTestSwaRemoveGroupsUsers(ri)

@@ -10,7 +10,7 @@ import (
 )
 
 // Test creation of a simple AWS SWA auto login app. The preconfigured apps are created by name.
-func TestAccOktaappAutoLoginlicationPreconfig(t *testing.T) {
+func TestAccOktaAppAutoLoginApplicationPreconfig(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestAutoLoginConfigPreconfig(ri)
 	updatedConfig := buildTestAutoLoginConfigPreconfigUpdated(ri)
@@ -40,7 +40,7 @@ func TestAccOktaappAutoLoginlicationPreconfig(t *testing.T) {
 	})
 }
 
-func TestAccOktaappAutoLoginlication(t *testing.T) {
+func TestAccOktaAppAutoLoginApplication(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestAutoLoginConfig(ri)
 	updatedConfig := buildTestAutoLoginConfigUpdated(ri)
@@ -80,7 +80,7 @@ func TestAccOktaappAutoLoginlication(t *testing.T) {
 	})
 }
 
-func TestAccOktaappAutoLoginlicationCredsSchemes(t *testing.T) {
+func TestAccOktaAppAutoLoginApplicationCredsSchemes(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestAutoLoginConfigAdmin(ri)
 	updatedConfig := buildTestAutoLoginConfigExternalSync(ri)

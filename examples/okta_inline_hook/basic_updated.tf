@@ -4,7 +4,7 @@ resource okta_inline_hook test {
   type    = "com.okta.import.transform"
   version = "1.0.2"
 
-  channel {
+  channel = {
     type    = "HTTP"
     version = "1.0.0"
     uri     = "https://example.com/test1"
