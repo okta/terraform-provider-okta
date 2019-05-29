@@ -10,7 +10,7 @@ import (
 )
 
 // Test creation of a simple AWS SWA app. The preconfigured apps are created by name.
-func TestAccOktaAppSwalicationPreconfig(t *testing.T) {
+func TestAccOktaAppSwaApplicationPreconfig(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSwaConfigPreconfig(ri)
 	updatedConfig := buildTestSwaConfigPreconfigUpdated(ri)
@@ -42,7 +42,7 @@ func TestAccOktaAppSwalicationPreconfig(t *testing.T) {
 }
 
 // Test creation of a custom SAML app.
-func TestAccOktaAppSwalication(t *testing.T) {
+func TestAccOktaAppSwaApplication(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSwaConfig(ri)
 	updatedConfig := buildTestSwaConfigUpdated(ri)
@@ -81,7 +81,7 @@ func TestAccOktaAppSwalication(t *testing.T) {
 }
 
 // Add and remove groups/users
-func TestAccOktaAppSwalicationUserGroups(t *testing.T) {
+func TestAccOktaAppSwaApplicationUserGroups(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSwaGroupsUsers(ri)
 	updatedConfig := buildTestSwaRemoveGroupsUsers(ri)
@@ -156,12 +156,10 @@ resource "okta_user" "user-%d" {
 resource "%s" "%s" {
   preconfigured_app = "aws_console"
   label       	    = "%s"
-  users = [
-    {
-      id = "${okta_user.user-%d.id}"
-      username = "${okta_user.user-%d.email}"
-    }
-  ]
+  users {
+    id = "${okta_user.user-%d.id}"
+    username = "${okta_user.user-%d.email}"
+  }
   groups = ["${okta_group.group-%d.id}"]
 }
 `, rInt, rInt, rInt, rInt, rInt, appSwa, name, name, rInt, rInt, rInt)

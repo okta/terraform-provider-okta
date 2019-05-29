@@ -10,7 +10,7 @@ resource okta_inline_hook test {
     method  = "POST"
   }
 
-  auth {
+  auth = {
     key   = "Authorization"
     type  = "HEADER"
     value = "123"

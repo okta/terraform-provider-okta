@@ -15,17 +15,17 @@ resource "okta_user_schema" "testAcc_replace_with_uuid" {
     title = "Small"
   }
 
-  users {
+  one_of {
     const = "M"
     title = "Medium"
   }
 
-  users {
+  one_of {
     const = "L"
     title = "Large"
   }
 
-  users {
+  one_of {
     const = "XXL"
     title = "Extra Extra Large"
   }

@@ -14,12 +14,10 @@ resource okta_policy_rule_idp_discovery test {
   // Don't have a company schema in this account, just chosing something always there
   user_identifier_attribute = "firstName"
 
-  user_identifier_patterns = [
-    {
-      match_type = "EQUALS"
-      value      = "Articulate"
-    },
-  ]
+  user_identifier_patterns {
+    match_type = "EQUALS"
+    value      = "Articulate"
+  }
 }
 
 resource okta_idp_saml test {
