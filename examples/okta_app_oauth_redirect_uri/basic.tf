@@ -14,11 +14,7 @@ resource "okta_app_oauth" "test" {
   }
 }
 
-data "okta_app" "test" {
-  label = "${okta_app_oauth.test.label}"
-}
-
 resource "okta_app_oauth_redirect_uri" "test" {
-  app_id = "${data.okta_app.test.id}"
+  app_id = "${okta_app_oauth.test.id}"
   uri    = "http://google.com"
 }
