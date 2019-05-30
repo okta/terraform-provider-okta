@@ -12,7 +12,7 @@ import (
 	"github.com/okta/okta-sdk-golang/okta"
 )
 
-func TestAccappSamllicationImport(t *testing.T) {
+func TestAccappSamlApplicationImport(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appSaml)
 	config := mgr.GetFixtures("import.tf", ri, t)
@@ -42,7 +42,7 @@ func TestAccappSamllicationImport(t *testing.T) {
 }
 
 // Ensure conditional require logic causes this plan to fail
-func TestAccOktaappSamllicationConditionalRequire(t *testing.T) {
+func TestAccOktaAppSamlApplicationConditionalRequire(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSamlConfigMissingFields(ri)
 
@@ -60,7 +60,7 @@ func TestAccOktaappSamllicationConditionalRequire(t *testing.T) {
 }
 
 // Ensure conditional require logic causes this plan to fail
-func TestAccOktaappSamllicationInvalidUrl(t *testing.T) {
+func TestAccOktaAppSamlApplicationInvalidUrl(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSamlConfigInvalidUrl(ri)
 
@@ -71,14 +71,14 @@ func TestAccOktaappSamllicationInvalidUrl(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
-				ExpectError: regexp.MustCompile("config is invalid: okta_app_saml.testAcc_.*: failed to validate url, \"123\""),
+				ExpectError: regexp.MustCompile("config is invalid: failed to validate url, \"123\""),
 			},
 		},
 	})
 }
 
 // Test creation of a custom SAML app.
-func TestAccOktaappSamllication(t *testing.T) {
+func TestAccOktaAppSamlApplication(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appSaml)
 	config := mgr.GetFixtures("custom_saml_app.tf", ri, t)
@@ -119,7 +119,7 @@ func TestAccOktaappSamllication(t *testing.T) {
 	})
 }
 
-func TestAccOktaappSamllicationAllFields(t *testing.T) {
+func TestAccOktaAppSamlApplicationAllFields(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appSaml)
 	config := mgr.GetFixtures("custom_saml_app.tf", ri, t)
@@ -173,7 +173,7 @@ func TestAccOktaappSamllicationAllFields(t *testing.T) {
 }
 
 // Add and remove groups/users
-func TestAccOktaappSamllicationUserGroups(t *testing.T) {
+func TestAccOktaAppSamlApplicationUserGroups(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appSaml)
 	config := mgr.GetFixtures("saml_app_with_groups_and_users.tf", ri, t)

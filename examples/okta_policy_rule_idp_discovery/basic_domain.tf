@@ -10,14 +10,13 @@ resource okta_policy_rule_idp_discovery test {
   idp_type             = "OKTA"
   user_identifier_type = "IDENTIFIER"
 
-  user_identifier_patterns = [
-    {
-      match_type = "SUFFIX"
-      value      = "gmail.com"
-    },
-    {
-      match_type = "SUFFIX"
-      value      = "articulate.com"
-    },
-  ]
+  user_identifier_patterns {
+    match_type = "SUFFIX"
+    value      = "gmail.com"
+  }
+
+  user_identifier_patterns {
+    match_type = "SUFFIX"
+    value      = "articulate.com"
+  }
 }

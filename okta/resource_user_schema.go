@@ -79,20 +79,17 @@ func resourceUserSchema() *schema.Resource {
 				Type:        schema.TypeList,
 				Optional:    true,
 				Description: "Custom Subschema json schemas. see: developer.okta.com/docs/api/resources/schemas#user-profile-schema-property-object",
-				Elem: &schema.Schema{
-					Type: schema.TypeMap,
-					Elem: &schema.Resource{
-						Schema: map[string]*schema.Schema{
-							"const": &schema.Schema{
-								Required:    true,
-								Type:        schema.TypeString,
-								Description: "Enum value",
-							},
-							"title": &schema.Schema{
-								Required:    true,
-								Type:        schema.TypeString,
-								Description: "Enum title",
-							},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"const": &schema.Schema{
+							Required:    true,
+							Type:        schema.TypeString,
+							Description: "Enum value",
+						},
+						"title": &schema.Schema{
+							Required:    true,
+							Type:        schema.TypeString,
+							Description: "Enum title",
 						},
 					},
 				},

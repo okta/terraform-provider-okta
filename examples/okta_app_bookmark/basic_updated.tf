@@ -14,7 +14,7 @@ resource "okta_app_bookmark" "test" {
   label = "testAcc_replace_with_uuid"
   url   = "https://test.com"
 
-  users = {
+  users {
     id       = "${okta_user.user.id}"
     username = "${okta_user.user.email}"
   }

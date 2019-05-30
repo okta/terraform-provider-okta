@@ -10,22 +10,23 @@ resource "okta_user_schema" "testAcc_replace_with_uuid" {
   master      = "PROFILE_MASTER"
   enum        = ["S", "M", "L", "XL"]
 
-  one_of = [
-    {
-      const = "S"
-      title = "Small"
-    },
-    {
-      const = "M"
-      title = "Medium"
-    },
-    {
-      const = "L"
-      title = "Large"
-    },
-    {
-      const = "XL"
-      title = "Extra Large"
-    },
-  ]
+  one_of {
+    const = "S"
+    title = "Small"
+  }
+
+  one_of {
+    const = "M"
+    title = "Medium"
+  }
+
+  one_of {
+    const = "L"
+    title = "Large"
+  }
+
+  one_of {
+    const = "XL"
+    title = "Extra Large"
+  }
 }

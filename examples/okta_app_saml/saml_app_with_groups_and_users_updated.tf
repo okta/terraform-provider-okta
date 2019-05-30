@@ -36,10 +36,8 @@ resource "okta_app_saml" "test" {
   label             = "testAcc_replace_with_uuid"
   groups            = ["${data.okta_group.all.id}"]
 
-  users = [
-    {
-      id       = "${okta_user.user1.id}"
-      username = "${okta_user.user1.email}"
-    },
-  ]
+  users {
+    id       = "${okta_user.user1.id}"
+    username = "${okta_user.user1.email}"
+  }
 }

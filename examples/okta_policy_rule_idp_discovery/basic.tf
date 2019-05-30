@@ -14,12 +14,10 @@ resource okta_policy_rule_idp_discovery test {
   // Don't have a company schema in this account, just chosing something always there
   user_identifier_attribute = "firstName"
 
-  user_identifier_patterns = [
-    {
-      match_type = "EQUALS"
-      value      = "Articulate"
-    },
-  ]
+  user_identifier_patterns {
+    match_type = "EQUALS"
+    value      = "Articulate"
+  }
 }
 
 resource okta_idp_saml test {
@@ -54,22 +52,23 @@ resource okta_app_saml test {
   honor_force_authn        = false
   authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
 
-  attribute_statements = [
-    {
-      name   = "firstName"
-      values = ["user.firstName"]
-    },
-    {
-      name   = "lastName"
-      values = ["user.lastName"]
-    },
-    {
-      name   = "email"
-      values = ["user.email"]
-    },
-    {
-      name   = "company"
-      values = ["Articulate"]
-    },
-  ]
+  attribute_statements {
+    name   = "firstName"
+    values = ["user.firstName"]
+  }
+
+  attribute_statements {
+    name   = "lastName"
+    values = ["user.lastName"]
+  }
+
+  attribute_statements {
+    name   = "email"
+    values = ["user.email"]
+  }
+
+  attribute_statements {
+    name   = "company"
+    values = ["Articulate"]
+  }
 }
