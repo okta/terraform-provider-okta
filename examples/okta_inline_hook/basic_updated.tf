@@ -11,10 +11,8 @@ resource okta_inline_hook test {
     method  = "POST"
   }
 
-  headers = [
-    {
-      key   = "x-stuff-and-such"
-      value = "yea boi"
-    },
-  ]
+  headers {
+    key   = "x-stuff-and-such"
+    value = "yea boi"
+  }
 }
