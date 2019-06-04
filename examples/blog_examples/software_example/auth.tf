@@ -28,7 +28,7 @@ resource okta_auth_server_scope profile_name {
 resource okta_auth_server_claim staff {
   auth_server_id = "${data.auth_server.id}"
   name           = "staff"
-  value          = "String.substringAfter(user.email, \"@\") == \"testing.com\""
+  value          = "String.substringAfter(user.email, \"@\") == \"example.com\""
   scopes         = ["${okta_auth_server_scope.staff.name}"]
   claim_type     = "IDENTITY"
 }

@@ -12,7 +12,7 @@ resource "okta_saml_app" "jamf_sso" {
 
   app_settings_json = <<EOT
 {
-  "domain": "testing.jamfcloud.com"
+  "domain": "example.jamfcloud.com"
 }
 EOT
 
@@ -21,7 +21,7 @@ EOT
 
 resource "okta_bookmark_app" "jamf_admin" {
   label = "Jamf Admin Access"
-  url = "https://testing.jamfcloud.com"
+  url = "https://example.jamfcloud.com"
 
   users {
     id = "${okta_user.bill_billson.id}"
@@ -31,6 +31,6 @@ resource "okta_bookmark_app" "jamf_admin" {
 
 resource "okta_bookmark_app" "jamf_enrollment" {
   label = "Jamf Enrollment"
-  url = "https://testing.jamfcloud.com/enroll"
+  url = "https://example.jamfcloud.com/enroll"
   groups = ["${data.okta_group.everyone.id}"]
 }

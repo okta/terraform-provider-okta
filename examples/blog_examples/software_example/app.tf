@@ -17,8 +17,8 @@ resource okta_oauth_app my_app {
     "code",
   ]
 
-  redirect_uris             = ["https://testing.com/auth-callback"]
-  post_logout_redirect_uris = ["https://testing.com"]
-  login_uri                 = "https://testing.com"
+  redirect_uris             = ["https://example.com/auth-callback"]
+  post_logout_redirect_uris = ["https://example.com"]
+  login_uri                 = "https://example.com"
   groups                    = ["${data.okta_group.everyone.id}"]
 }
