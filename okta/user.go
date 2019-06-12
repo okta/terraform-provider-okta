@@ -3,6 +3,7 @@ package okta
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -346,16 +347,23 @@ func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 }
 
 func setAdminRoles(d *schema.ResourceData, c *okta.Client) error {
-	// set all roles currently attached to user in state
-	roles, _, err := c.User.ListAssignedRoles(d.Id(), nil)
-
-	if err != nil {
-		return err
-	}
-
 	roleTypes := make([]interface{}, 0)
-	for _, role := range roles {
-		roleTypes = append(roleTypes, role.Type)
+
+	// set all roles currently attached to user in state
+	roles, resp, err := c.User.ListAssignedRoles(d.Id(), nil)
+
+	// only super admin can list roles if this fails assume the user has no
+	// admin roles
+	if err != nil {
+		if resp.StatusCode == http.StatusForbidden {
+			log.Printf("[INFO] Insufficient permissions to get Admin Roles, skipping.")
+		} else {
+			return err
+		}
+	} else {
+		for _, role := range roles {
+			roleTypes = append(roleTypes, role.Type)
+		}
 	}
 
 	// set the custom_profile_attributes values
