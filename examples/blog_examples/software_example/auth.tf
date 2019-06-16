@@ -19,7 +19,7 @@ resource okta_auth_server_claim last_name {
 }
 
 resource okta_auth_server_scope profile_name {
-  auth_server_id = "${data.auth_server.id}"
+  auth_server_id   = "${data.auth_server.id}"
   metadata_publish = "NO_CLIENTS"
   name             = "profile_name"
   consent          = "IMPLICIT"

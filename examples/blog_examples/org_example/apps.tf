@@ -21,16 +21,16 @@ EOT
 
 resource "okta_bookmark_app" "jamf_admin" {
   label = "Jamf Admin Access"
-  url = "https://example.jamfcloud.com"
+  url   = "https://example.jamfcloud.com"
 
   users {
-    id = "${okta_user.bill_billson.id}"
+    id       = "${okta_user.bill_billson.id}"
     username = "${okta_user.bill_billson.login}"
   }
 }
 
 resource "okta_bookmark_app" "jamf_enrollment" {
-  label = "Jamf Enrollment"
-  url = "https://example.jamfcloud.com/enroll"
+  label  = "Jamf Enrollment"
+  url    = "https://example.jamfcloud.com/enroll"
   groups = ["${data.okta_group.everyone.id}"]
 }
