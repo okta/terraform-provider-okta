@@ -26,7 +26,7 @@ func resourceIdpSaml() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Default:      "INSTANCE",
-				ValidateFunc: validation.StringInSlice([]string{"INSTANCE"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"INSTANCE", "ORG"}, false),
 			},
 			"sso_url": &schema.Schema{
 				Type:     schema.TypeString,
@@ -101,7 +101,6 @@ func resourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned)
 	d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
 	d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended)
-	d.Set("groups_action", idp.Policy.Provisioning.Groups.Action)
 	d.Set("subject_match_type", idp.Policy.Subject.MatchType)
 	d.Set("subject_filter", idp.Policy.Subject.Filter)
 	d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
@@ -109,6 +108,10 @@ func resourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("audience", idp.Protocol.Credentials.Trust.Audience)
 	d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
 	syncAlgo(d, idp.Protocol.Algorithms)
+
+	if err := syncGroupActions(d, idp.Policy.Provisioning.Groups); err != nil {
+		return err
+	}
 
 	if idp.IssuerMode != "" {
 		d.Set("issuer_mode", idp.IssuerMode)
