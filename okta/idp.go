@@ -2,9 +2,10 @@ package okta
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"net/http"
 )
 
 const (
@@ -38,7 +39,21 @@ var (
 		},
 		"deprovisioned_action": actionSchema,
 		"suspended_action":     actionSchema,
-		"groups_action":        actionSchema,
+		"groups_action": &schema.Schema{
+			Type:         schema.TypeString,
+			Optional:     true,
+			Default:      "NONE",
+			ValidateFunc: validation.StringInSlice([]string{"NONE", "SYNC", "APPEND", "ASSIGN"}, false),
+		},
+		"groups_attribute": &schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		"groups_filter": &schema.Schema{
+			Elem:     &schema.Schema{Type: schema.TypeString},
+			Optional: true,
+			Type:     schema.TypeSet,
+		},
 		"username_template": &schema.Schema{
 			Type:     schema.TypeString,
 			Optional: true,
@@ -192,6 +207,16 @@ func setIdpStatus(id, status, desiredStatus string, m interface{}) error {
 	return nil
 }
 
+func syncGroupActions(d *schema.ResourceData, groups *IDPGroupsAction) error {
+	if groups != nil {
+		d.Set("groups_action", groups.Action)
+		d.Set("groups_attribute", groups.SourceAttributeName)
+
+		return setNonPrimitives(d, map[string]interface{}{"groups_filter": groups.Filter})
+	}
+	return nil
+}
+
 func getIdentityProviderExists(idp IdentityProvider) schema.ExistsFunc {
 	return func(d *schema.ResourceData, m interface{}) (bool, error) {
 		_, resp, err := getSupplementFromMetadata(m).GetIdentityProvider(d.Id(), idp)
@@ -211,8 +236,10 @@ func NewIdpProvisioning(d *schema.ResourceData) *IDPProvisioning {
 				Action: d.Get("suspended_action").(string),
 			},
 		},
-		Groups: &IDPAction{
-			Action: d.Get("groups_action").(string),
+		Groups: &IDPGroupsAction{
+			Action:              d.Get("groups_action").(string),
+			Filter:              convertInterfaceToStringSetNullable(d.Get("groups_filter")),
+			SourceAttributeName: d.Get("groups_attribute").(string),
 		},
 	}
 }

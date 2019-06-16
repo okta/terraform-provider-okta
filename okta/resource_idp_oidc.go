@@ -99,7 +99,6 @@ func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned)
 	d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended)
 	d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
-	d.Set("groups_action", idp.Policy.Provisioning.Groups.Action)
 	d.Set("subject_match_type", idp.Policy.Subject.MatchType)
 	d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
 	d.Set("issuer_url", idp.Protocol.Issuer.URL)
@@ -110,6 +109,10 @@ func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
 	syncEndpoint("user_info", idp.Protocol.Endpoints.UserInfo, d)
 	syncEndpoint("jwks", idp.Protocol.Endpoints.Jwks, d)
 	syncAlgo(d, idp.Protocol.Algorithms)
+
+	if err := syncGroupActions(d, idp.Policy.Provisioning.Groups); err != nil {
+		return err
+	}
 
 	if idp.Protocol.Endpoints.Acs != nil {
 		d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)

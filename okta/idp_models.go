@@ -35,10 +35,10 @@ type (
 	}
 
 	IDPProvisioning struct {
-		Action        string         `json:"action,omitempty"`
-		Conditions    *IDPConditions `json:"conditions,omitempty"`
-		Groups        *IDPAction     `json:"groups,omitempty"`
-		ProfileMaster bool           `json:"profileMaster,omitempty"`
+		Action        string           `json:"action,omitempty"`
+		Conditions    *IDPConditions   `json:"conditions,omitempty"`
+		Groups        *IDPGroupsAction `json:"groups,omitempty"`
+		ProfileMaster bool             `json:"profileMaster,omitempty"`
 	}
 
 	AccountLink struct {
@@ -56,6 +56,12 @@ type (
 
 	IDPAction struct {
 		Action string `json:"action,omitempty"`
+	}
+
+	IDPGroupsAction struct {
+		Action              string   `json:"action,omitempty"`
+		Filter              []string `json:"filter,omitempty"`
+		SourceAttributeName string   `json:"sourceAttributeName,omitempty"`
 	}
 
 	Signature struct {
