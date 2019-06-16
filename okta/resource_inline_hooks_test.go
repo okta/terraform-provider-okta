@@ -15,6 +15,7 @@ func TestAccInlineHook(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
 	activatedConfig := mgr.GetFixtures("basic_activated.tf", ri, t)
+	registration := mgr.GetFixtures("registration.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -58,6 +59,20 @@ func TestAccInlineHook(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.import.transform"),
+					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
+					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
+					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
+					resource.TestCheckResourceAttr(resourceName, "channel.uri", "https://example.com/test1"),
+					resource.TestCheckResourceAttr(resourceName, "channel.method", "POST"),
+				),
+			},
+			{
+				Config: registration,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, hookExists),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.user.pre-registration"),
 					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),

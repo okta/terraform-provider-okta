@@ -14,7 +14,7 @@ install:
 - sudo snap install snapcraft --classic
 script:
 - make build
-- travis_wait make testacc
+- travis_wait 30 make testacc
 branches:
   only:
   - master

@@ -31,7 +31,7 @@ func resourceInlineHook() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
-		// For those familiar with Terraform schemas be sure to check the base hooklication schema and/or
+		// For those familiar with Terraform schemas be sure to check the base hook schema and/or
 		// the examples in the documentation
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
@@ -48,6 +48,7 @@ func resourceInlineHook() *schema.Resource {
 						"com.okta.oauth2.tokens.transform",
 						"com.okta.import.transform",
 						"com.okta.saml.tokens.transform",
+						"com.okta.user.pre-registration",
 					},
 					false,
 				),
