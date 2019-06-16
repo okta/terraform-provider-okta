@@ -86,11 +86,14 @@ func resourceIdpSocialRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned)
 	d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended)
 	d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
-	d.Set("groups_action", idp.Policy.Provisioning.Groups.Action)
 	d.Set("subject_match_type", idp.Policy.Subject.MatchType)
 	d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
 	d.Set("client_id", idp.Protocol.Credentials.Client.ClientID)
 	d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
+
+	if err := syncGroupActions(d, idp.Policy.Provisioning.Groups); err != nil {
+		return err
+	}
 
 	if idp.IssuerMode != "" {
 		d.Set("issuer_mode", idp.IssuerMode)
