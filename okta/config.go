@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+	"net/http"
 	"time"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
@@ -11,23 +12,34 @@ import (
 	"github.com/okta/okta-sdk-golang/okta/cache"
 )
 
-// Config is a struct containing our provider schema values
-// plus the okta client object
-type Config struct {
-	orgName      string
-	domain       string
-	apiToken     string
-	retryCount   int
-	parallelism  int
-	waitForReset bool
-	backoff      bool
-	minWait      int
-	maxWait      int
-
-	articulateOktaClient *articulateOkta.Client
-	oktaClient           *okta.Client
-	supplementClient     *ApiSupplement
+func (adt *AddHeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	req.Header.Add("User-Agent", "Okta Terraform Provider")
+	return adt.T.RoundTrip(req)
 }
+
+type (
+	// AddHeaderTransport used to tack on default headers to outgoing requests
+	AddHeaderTransport struct {
+		T http.RoundTripper
+	}
+
+	// Config contains our provider schema values and Okta clients
+	Config struct {
+		orgName      string
+		domain       string
+		apiToken     string
+		retryCount   int
+		parallelism  int
+		waitForReset bool
+		backoff      bool
+		minWait      int
+		maxWait      int
+
+		articulateOktaClient *articulateOkta.Client
+		oktaClient           *okta.Client
+		supplementClient     *ApiSupplement
+	}
+)
 
 func (c *Config) loadAndValidate() error {
 	httpClient := cleanhttp.DefaultClient()
