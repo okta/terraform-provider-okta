@@ -47,8 +47,8 @@ func oktaConfig() (*Config, error) {
 		apiToken:    os.Getenv("OKTA_API_TOKEN"),
 		domain:      os.Getenv("OKTA_BASE_URL"),
 		parallelism: 1,
-		retryCount:  5,
-		minWait:     60,
+		retryCount:  10,
+		minWait:     30,
 		maxWait:     600,
 	}
 
