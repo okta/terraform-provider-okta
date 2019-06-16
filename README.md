@@ -9,7 +9,7 @@
 
 ## Maintainers
 
-This provider plugin is maintained by the Terraform team at [Articulate](https://articulate.com/).
+This provider plugin is maintained by the Terraform team at [Articulate](https://articulate.com/). [To contribute see here.](./CONTRIBUTING.md) [For more information on how to develop see here.](./DEVELOPMENT.md) Acceptance tests are no longer run by Travis due to the number of API calls it generates. You must post a passing ACC test screenshot with your PR.
 
 ## Requirements
 

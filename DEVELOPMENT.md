@@ -66,7 +66,8 @@ When you have changes you would like to propose to kritis, you will need to:
    (include references to [issue numbers](https://help.github.com/articles/closing-issues-using-keywords/)
    if appropriate)
 1. [Create a pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/)
+1. Post a screenshot of the passing ACC tests. If you do not have access to an Okta org, you can request a maintainer run the ACC tests. These tests make ALOT of API calls so free dev accounts, the configured number of retries, and the backoff duration may not be enough to get through all of the tests.
 
 ### Reviews
 
-Each PR must be reviewed by a maintainer. Currently encrypted env vars cannot be used on forks, which requires us to open up the PR on a local branch.
+Each PR must be reviewed by a maintainer. In order for a PR to merge you must post a screenshot of the ACC tests passing. We do not run these via Travis due to Okta rate limiting. It gets to be untenable. Maintainers have access to Okta orgs they can run this against so if you are an outside contributor feel free to request ACC tests be run.
