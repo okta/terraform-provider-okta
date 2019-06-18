@@ -2,9 +2,10 @@ package okta
 
 import (
 	"fmt"
-	"github.com/okta/okta-sdk-golang/okta"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/okta/okta-sdk-golang/okta"
 )
 
 // ApiSupplement not all APIs are supported by okta-sdk-golang, this will act as a supplement to the Okta SDK
@@ -24,7 +25,7 @@ func (m *ApiSupplement) GetSAMLMetdata(id, keyID string) ([]byte, *http.Response
 	req.Header.Add("Authorization", fmt.Sprintf("SSWS %s", m.token))
 	req.Header.Add("User-Agent", "Terraform Okta Provider")
 	req.Header.Add("Accept", "application/xml")
-	res, err := m.client.Do(req)
+	res, err := m.requestExecutor.DoWithRetries(req, 0)
 	if err != nil {
 		return nil, res, err
 	} else if res.StatusCode == http.StatusNotFound {
