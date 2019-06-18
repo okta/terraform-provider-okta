@@ -33,6 +33,7 @@ const (
 	idpSamlKey             = "okta_idp_saml_key"
 	idpSocial              = "okta_idp_social"
 	inlineHook             = "okta_inline_hook"
+	networkZone            = "okta_network_zone"
 	oktaGroup              = "okta_group"
 	oktaUser               = "okta_user"
 	policyMfa              = "okta_policy_mfa"
@@ -127,6 +128,7 @@ func Provider() terraform.ResourceProvider {
 			idpSamlKey:             resourceIdpSigningKey(),
 			idpSocial:              resourceIdpSocial(),
 			inlineHook:             resourceInlineHook(),
+			networkZone:            resourceNetworkZone(),
 			oktaGroup:              resourceGroup(),
 			oktaUser:               resourceUser(),
 			policyMfa:              resourcePolicyMfa(),
