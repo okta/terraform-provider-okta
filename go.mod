@@ -12,6 +12,7 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/terraform v0.12.0
 	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
+	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/mattn/go-isatty v0.0.7 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/okta/okta-sdk-golang v0.1.0
@@ -20,4 +21,4 @@ require (
 	golang.org/x/net v0.0.0-20190503192946-f4e77d36d62c // indirect
 )
 
-replace github.com/okta/okta-sdk-golang => github.com/articulate/okta-sdk-golang v1.0.3
+replace github.com/okta/okta-sdk-golang => github.com/articulate/okta-sdk-golang v1.0.4
