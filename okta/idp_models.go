@@ -193,8 +193,11 @@ type (
 
 	BasicIdp struct {
 		IdentityProvider
-		Id   string `json:"id"`
-		Name string `json:"name"`
+		Id       string        `json:"id"`
+		Name     string        `json:"name"`
+		Type     string        `json:"type,omitempty"`
+		Status   string        `json:"status,omitempty"`
+		Protocol *SAMLProtocol `json:"protocol,omitempty"`
 	}
 )
 

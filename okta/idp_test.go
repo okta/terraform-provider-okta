@@ -16,6 +16,13 @@ func deleteTestIdps(client *testClient) error {
 		if err != nil {
 			return err
 		}
+
+		if idp.Type == saml2Idp {
+			_, err := client.apiSupplement.DeleteIdentityProviderSigningKey(idp.Protocol.Credentials.Trust.Kid)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

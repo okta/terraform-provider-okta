@@ -5,12 +5,13 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/crewjam/saml"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
-	"strings"
 )
 
 const (
@@ -425,6 +426,8 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 			d.Set(fmt.Sprintf("attribute_statements.%d.namespace", i), st.Namespace)
 			d.Set(fmt.Sprintf("attribute_statements.%d.type", i), st.Type)
 			d.Set(fmt.Sprintf("attribute_statements.%d.values", i), st.Values)
+			d.Set(fmt.Sprintf("attribute_statements.%d.filter_type", i), st.FilterType)
+			d.Set(fmt.Sprintf("attribute_statements.%d.filter_value", i), st.FilterValue)
 		}
 	}
 
