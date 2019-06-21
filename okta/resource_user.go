@@ -349,7 +349,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	status := d.Get("status").(string)
 	statusChange := d.HasChange("status")
 
-        if status == "STAGED" && statusChange {
+	if status == "STAGED" && statusChange {
 		return fmt.Errorf("[ERROR] Okta will not allow a user to be updated to STAGED. Can set to STAGED on user creation only.")
 	}
 
