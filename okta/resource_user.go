@@ -347,8 +347,9 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Update User %v", d.Get("login").(string))
 	status := d.Get("status").(string)
+	statusChange := d.HasChange("status")
 
-	if status == "STAGED" {
+        if status == "STAGED" && statusChange {
 		return fmt.Errorf("[ERROR] Okta will not allow a user to be updated to STAGED. Can set to STAGED on user creation only.")
 	}
 
@@ -358,7 +359,6 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 	roleChange := d.HasChange("admin_roles")
 	groupChange := d.HasChange("group_memberships")
-	statusChange := d.HasChange("status")
 	userChange := hasProfileChange(d)
 
 	// run the update status func first so a user that was previously deprovisioned
