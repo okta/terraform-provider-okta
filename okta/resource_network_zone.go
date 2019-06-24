@@ -8,18 +8,6 @@ import (
 	"github.com/hashicorp/terraform/helper/validation"
 )
 
-var addressObjectSchema = map[string]*schema.Schema{
-	"type": &schema.Schema{
-		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice([]string{"CIDR", "RANGE"}, false),
-		Required:     true,
-	},
-	"value": &schema.Schema{
-		Type:     schema.TypeString,
-		Required: true,
-	},
-}
-
 func resourceNetworkZone() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceNetworkZoneCreate,
@@ -32,26 +20,22 @@ func resourceNetworkZone() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"gateways": &schema.Schema{
+			"gateway_type": &schema.Schema{
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "IP addresses (range or CIDR form) of this zone",
+				ValidateFunc: validation.StringInSlice([]string{"CIDR", "RANGE"}, false),
+			},
+			"gateway_values": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "IP addresses (range or CIDR form) of this zone",
-				Elem: &schema.Resource{
-					Schema: addressObjectSchema,
-				},
+				Description: "Array of values in CIDR/range form depending on the type specified",
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"name": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Name of the Network Zone Resource",
-			},
-			"proxies": &schema.Schema{
-				Type:        schema.TypeList,
-				Optional:    true,
-				Description: "IP addresses (range or CIDR form) allowed to forward request from",
-				Elem: &schema.Resource{
-					Schema: addressObjectSchema,
-				},
 			},
 			"type": &schema.Schema{
 				Type:         schema.TypeString,
