@@ -3,6 +3,7 @@ package okta
 import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
+	"strings"
 )
 
 func resourceNetworkZone() *schema.Resource {
@@ -17,11 +18,17 @@ func resourceNetworkZone() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
+			"dynamic_locations": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "Array of locations ISO-3166-1(2). Format code: countryCode OR countryCode-regionCode",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"gateway_type": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "IP addresses (range or CIDR form) of this zone",
-				ValidateFunc: validation.StringInSlice([]string{"CIDR", "RANGE"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"CIDR", "RANGE", ""}, false),
 			},
 			"gateway_values": {
 				Type:        schema.TypeSet,
@@ -96,17 +103,32 @@ func resourceNetworkZoneDelete(d *schema.ResourceData, m interface{}) error {
 }
 
 func buildNetworkZone(d *schema.ResourceData, m interface{}) *NetworkZone {
-	gatewayList := []*Gateways{}
-	if values, ok := d.GetOk("gateway_values"); ok {
-		for _, value := range values.(*schema.Set).List() {
-			gatewayList = append(gatewayList, &Gateways{Type: d.Get("gateway_type").(string), Value: value.(string)})
+	gatewayList := []*Gateway{}
+	locationsList := []*Location{}
+	zoneType := d.Get("type").(string)
+	if strings.TrimRight(zoneType, "\n") == "IP" {
+		if values, ok := d.GetOk("gateway_values"); ok {
+			for _, value := range values.(*schema.Set).List() {
+				gatewayList = append(gatewayList, &Gateway{Type: d.Get("gateway_type").(string), Value: value.(string)})
+			}
+		}
+	} else {
+		if values, ok := d.GetOk("dynamic_locations"); ok {
+			for _, value := range values.(*schema.Set).List() {
+				if strings.Contains(value.(string), "-") {
+					locationsList = append(locationsList, &Location{Country: strings.Split(value.(string), "-")[0], Region: value.(string)})
+				} else {
+					locationsList = append(locationsList, &Location{Country: value.(string)})
+				}
+			}
 		}
 	}
 
 	return &NetworkZone{
-		Name:     d.Get("name").(string),
-		Type:     d.Get("type").(string),
-		Gateways: gatewayList,
+		Name:      d.Get("name").(string),
+		Type:      zoneType,
+		Gateways:  gatewayList,
+		Locations: locationsList,
 	}
 }
 

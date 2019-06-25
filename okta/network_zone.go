@@ -8,17 +8,23 @@ import (
 )
 
 type (
-	Gateways struct {
+	Gateway struct {
 		Type  string `json:"type,omitempty"`
 		Value string `json:"value,omitempty"`
 	}
 
+	Location struct {
+		Country string `json:"country,omitempty"`
+		Region  string `json:"region,omitempty"`
+	}
+
 	NetworkZone struct {
-		Gateways []*Gateways `json:"gateways"`
-		ID       string      `json:"id,omitempty"`
-		Name     string      `json:"name,omitempty"`
-		System   bool        `json:"system,omitempty"`
-		Type     string      `json:"type,omitempty"`
+		Gateways  []*Gateway  `json:"gateways,omitempty"`
+		ID        string      `json:"id,omitempty"`
+		Locations []*Location `json:"locations,omitempty"`
+		Name      string      `json:"name,omitempty"`
+		System    bool        `json:"system,omitempty"`
+		Type      string      `json:"type,omitempty"`
 	}
 )
 
