@@ -58,7 +58,17 @@ func resourceUser() *schema.Resource {
 		Delete: resourceUserDelete,
 		Exists: resourceUserExists,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+				// Supporting id and email based imports
+				client := getOktaClientFromMetadata(meta)
+				user, _, err := client.User.GetUser(d.Id())
+				if err != nil {
+					return nil, err
+				}
+				d.SetId(user.Id)
+
+				return []*schema.ResourceData{d}, nil
+			},
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -318,7 +328,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 
 func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List User %v", d.Get("login").(string))
-	client := m.(*Config).oktaClient
+	client := getOktaClientFromMetadata(m)
 
 	user, _, err := client.User.GetUser(d.Id())
 
