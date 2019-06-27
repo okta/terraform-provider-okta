@@ -33,6 +33,7 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(oktaUser)
 	config := mgr.GetFixtures("okta_user_custom_attributes.tf", ri, t)
+	arrayAttrConfig := mgr.GetFixtures("custom_attributes_array.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("okta_user_remove_custom_attributes.tf", ri, t)
 	resourceName := buildResourceFQN(oktaUser, ri)
 	email := fmt.Sprintf("test-acc-%d@testing.com", ri)
@@ -50,6 +51,16 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "login", email),
 					resource.TestCheckResourceAttr(resourceName, "email", email),
 					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes.customAttribute123", "testing-custom-attribute"),
+				),
+			},
+			{
+				Config: arrayAttrConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
+					resource.TestCheckResourceAttr(resourceName, "login", email),
+					resource.TestCheckResourceAttr(resourceName, "email", email),
+					resource.TestCheckResourceAttr(resourceName, "custom_attributes", "{\"array123\":[\"test\"],\"number123\":1}"),
 				),
 			},
 			{

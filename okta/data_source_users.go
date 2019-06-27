@@ -39,7 +39,11 @@ func dataSourceUsersRead(d *schema.ResourceData, m interface{}) error {
 	arr := make([]map[string]interface{}, len(results.Users))
 
 	for i, user := range results.Users {
-		arr[i] = flattenUser(user)
+		rawMap, err := flattenUser(user)
+		if err != nil {
+			return err
+		}
+		arr[i] = rawMap
 	}
 
 	return d.Set("users", arr)

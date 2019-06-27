@@ -84,8 +84,17 @@ func resourceUser() *schema.Resource {
 				Description: "User country code",
 			},
 			"custom_profile_attributes": &schema.Schema{
-				Type:     schema.TypeMap,
-				Optional: true,
+				Type:          schema.TypeMap,
+				Optional:      true,
+				ConflictsWith: []string{"custom_attributes"},
+			},
+			"custom_attributes": &schema.Schema{
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"custom_profile_attributes"},
+				ValidateFunc:  validateDataJSON,
+				StateFunc:     normalizeDataJSON,
+				Description:   "JSON formatted custom_attributes for a user. This should be used instead of custom_profile_attributes when you need to define complex types.",
 			},
 			"department": &schema.Schema{
 				Type:        schema.TypeString,
@@ -329,7 +338,12 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("status", mapStatus(user.Status))
 	d.Set("raw_status", user.Status)
 
-	if err = setNonPrimitives(d, flattenUser(user)); err != nil {
+	rawMap, err := flattenUser(user)
+	if err != nil {
+		return err
+	}
+
+	if err = setNonPrimitives(d, rawMap); err != nil {
 		return err
 	}
 

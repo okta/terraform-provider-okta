@@ -1,4 +1,4 @@
-resource "okta_user_schema" "testAcc_schema_uuid" {
+resource "okta_user_schema" "test" {
   index  = "customAttribute123"
   title  = "terraform acceptance test"
   type   = "string"
@@ -16,5 +16,5 @@ resource "okta_user" "testAcc_replace_with_uuid" {
     customAttribute123 = "testing-custom-attribute"
   }
 
-  depends_on = ["okta_user_schema.testAcc_schema_uuid"]
+  depends_on = ["okta_user_schema.test"]
 }
