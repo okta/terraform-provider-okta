@@ -117,7 +117,6 @@ func resourceUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 	d.SetId(d.Get("index").(string))
-	fmt.Println("CREATE --", d.Id())
 
 	return resourceUserSchemaRead(d, m)
 }
@@ -129,7 +128,6 @@ func resourceUserSchemaExists(d *schema.ResourceData, m interface{}) (bool, erro
 		return false, fmt.Errorf("Error Listing User Subschemas in Okta: %v", err)
 	}
 
-	fmt.Println("EXISTS", d.Id(), " == ", subschemas)
 	return contains(subschemas, d.Id()), nil
 }
 
@@ -139,7 +137,7 @@ func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("READ --", d.Id())
+
 	subschema := getSubSchema(schema.Definitions.Custom.Properties, d.Id())
 	d.Set("array_type", subschema.Items.Type)
 	d.Set("title", subschema.Title)
@@ -180,7 +178,6 @@ func getSubSchema(props []articulateOkta.CustomSubSchema, id string) *articulate
 }
 
 func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
-	fmt.Println("UPDATE --", d.Id())
 	if err := updateSubschema(d, m); err != nil {
 		return err
 	}
@@ -190,9 +187,8 @@ func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
 
 func resourceUserSchemaDelete(d *schema.ResourceData, m interface{}) error {
 	client := getClientFromMetadata(m)
-
 	_, _, err := client.Schemas.DeleteUserCustomSubSchema(d.Id())
-	fmt.Println("DELETE --", d.Id())
+
 	return err
 }
 
