@@ -8,7 +8,7 @@ import (
 )
 
 type (
-	Gateway struct {
+	AddressObj struct {
 		Type  string `json:"type,omitempty"`
 		Value string `json:"value,omitempty"`
 	}
@@ -19,12 +19,13 @@ type (
 	}
 
 	NetworkZone struct {
-		Gateways  []*Gateway  `json:"gateways,omitempty"`
-		ID        string      `json:"id,omitempty"`
-		Locations []*Location `json:"locations,omitempty"`
-		Name      string      `json:"name,omitempty"`
-		System    bool        `json:"system,omitempty"`
-		Type      string      `json:"type,omitempty"`
+		Gateways  []*AddressObj `json:"gateways,omitempty"`
+		ID        string        `json:"id,omitempty"`
+		Locations []*Location   `json:"locations,omitempty"`
+		Name      string        `json:"name,omitempty"`
+		Proxies   []*AddressObj `json:"proxies,omitempty"`
+		System    bool          `json:"system,omitempty"`
+		Type      string        `json:"type,omitempty"`
 	}
 )
 

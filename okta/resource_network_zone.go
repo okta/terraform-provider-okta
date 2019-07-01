@@ -24,22 +24,22 @@ func resourceNetworkZone() *schema.Resource {
 				Description: "Array of locations ISO-3166-1(2). Format code: countryCode OR countryCode-regionCode",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			"gateway_type": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "IP addresses (range or CIDR form) of this zone",
-				ValidateFunc: validation.StringInSlice([]string{"CIDR", "RANGE", ""}, false),
-			},
-			"gateway_values": {
+			"gateways": {
 				Type:        schema.TypeSet,
 				Optional:    true,
-				Description: "Array of values in CIDR/range form depending on the type specified",
+				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"name": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Name of the Network Zone Resource",
+			},
+			"proxies": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples",
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"type": &schema.Schema{
 				Type:         schema.TypeString,
@@ -103,14 +103,17 @@ func resourceNetworkZoneDelete(d *schema.ResourceData, m interface{}) error {
 }
 
 func buildNetworkZone(d *schema.ResourceData, m interface{}) *NetworkZone {
-	gatewayList := []*Gateway{}
+	gatewaysList := []*AddressObj{}
+	proxiesList := []*AddressObj{}
 	locationsList := []*Location{}
 	zoneType := d.Get("type").(string)
+
 	if strings.TrimRight(zoneType, "\n") == "IP" {
-		if values, ok := d.GetOk("gateway_values"); ok {
-			for _, value := range values.(*schema.Set).List() {
-				gatewayList = append(gatewayList, &Gateway{Type: d.Get("gateway_type").(string), Value: value.(string)})
-			}
+		if values, ok := d.GetOk("gateways"); ok {
+			gatewaysList = buildAddressObjList(values.(*schema.Set))
+		}
+		if values, ok := d.GetOk("proxies"); ok {
+			proxiesList = buildAddressObjList(values.(*schema.Set))
 		}
 	} else {
 		if values, ok := d.GetOk("dynamic_locations"); ok {
@@ -127,18 +130,23 @@ func buildNetworkZone(d *schema.ResourceData, m interface{}) *NetworkZone {
 	return &NetworkZone{
 		Name:      d.Get("name").(string),
 		Type:      zoneType,
-		Gateways:  gatewayList,
+		Gateways:  gatewaysList,
 		Locations: locationsList,
+		Proxies:   proxiesList,
 	}
 }
 
-// func buildGateways(d *schema.ResourceData, m interface{}) *Gateways {
-// 	// if _, ok := d.GetOk("gateway_type"); !ok {
-// 	// 	return nil
-// 	// }
+func buildAddressObjList(values *schema.Set) []*AddressObj {
+	var addressType string
+	addressObjList := []*AddressObj{}
 
-// 	return &Gateways{
-// 		Type:  getStringValue(d, "gateway_type"),
-// 		Value: getStringValue(d, "gateway_values"),
-// 	}
-// }
+	for _, value := range values.List() {
+		if strings.Contains(value.(string), "/") {
+			addressType = "CIDR"
+		} else {
+			addressType = "RANGE"
+		}
+		addressObjList = append(addressObjList, &AddressObj{Type: addressType, Value: value.(string)})
+	}
+	return addressObjList
+}
