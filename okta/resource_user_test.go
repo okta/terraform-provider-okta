@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -27,6 +28,39 @@ func sweepUsers(client *testClient) error {
 		}
 	}
 	return condenseError(errorList)
+}
+
+func TestAccUserImport(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(oktaUser)
+	config := mgr.GetFixtures("import.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", oktaUser)
+
+	resource.Test(t, resource.TestCase{
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateCheck: func(s []*terraform.InstanceState) (err error) {
+					if len(s) != 1 {
+						err = errors.New("failed to import into resource into state")
+						return
+					}
+
+					id := s[0].Attributes["id"]
+
+					if strings.Contains(id, "@") {
+						err = fmt.Errorf("user resource id incorrectly set, %s", id)
+					}
+					return
+				},
+			},
+		},
+	})
 }
 
 func TestAccOktaUser_customProfileAttributes(t *testing.T) {

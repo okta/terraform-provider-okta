@@ -58,7 +58,17 @@ func resourceUser() *schema.Resource {
 		Delete: resourceUserDelete,
 		Exists: resourceUserExists,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+				// Supporting id and email based imports
+				client := getOktaClientFromMetadata(meta)
+				user, _, err := client.User.GetUser(d.Id())
+				if err != nil {
+					return nil, err
+				}
+				d.SetId(user.Id)
+
+				return []*schema.ResourceData{d}, nil
+			},
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -327,7 +337,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 
 func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List User %v", d.Get("login").(string))
-	client := m.(*Config).oktaClient
+	client := getOktaClientFromMetadata(m)
 
 	user, _, err := client.User.GetUser(d.Id())
 
@@ -361,8 +371,9 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Update User %v", d.Get("login").(string))
 	status := d.Get("status").(string)
+	statusChange := d.HasChange("status")
 
-	if status == "STAGED" {
+	if status == "STAGED" && statusChange {
 		return fmt.Errorf("[ERROR] Okta will not allow a user to be updated to STAGED. Can set to STAGED on user creation only.")
 	}
 
@@ -372,7 +383,6 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 	roleChange := d.HasChange("admin_roles")
 	groupChange := d.HasChange("group_memberships")
-	statusChange := d.HasChange("status")
 	userChange := hasProfileChange(d)
 
 	// run the update status func first so a user that was previously deprovisioned

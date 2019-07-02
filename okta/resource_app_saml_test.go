@@ -12,7 +12,7 @@ import (
 	"github.com/okta/okta-sdk-golang/okta"
 )
 
-func TestAccappSamlApplicationImport(t *testing.T) {
+func TestAccAppSamlImport(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appSaml)
 	config := mgr.GetFixtures("import.tf", ri, t)

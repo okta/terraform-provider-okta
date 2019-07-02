@@ -77,9 +77,10 @@ provider "okta" {
 }
 
 resource "okta_user" "blah" {
-  firstname = "blah"
-  lastname  = "blergh"
-  email     = "XXXXX@XXXXXXXX.XXX"
+  first_name = "blah"
+  last_name  = "blergh"
+  email      = "XXXXX@XXXXXXXX.XXX"
+  login      = "XXXXX@XXXXXXXX.XXX"
 }
 ```
 
