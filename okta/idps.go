@@ -112,8 +112,8 @@ func (m *ApiSupplement) GetIdentityProviderSigningKey(idpId, kid string) (*Signi
 	return key, resp, err
 }
 
-func (m *ApiSupplement) DeleteIdentityProviderSigningKey(idpId, kid string) (*okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/idps/%s/credentials/keys/%s", idpId, kid)
+func (m *ApiSupplement) DeleteIdentityProviderSigningKey(kid string) (*okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/idps/credentials/keys/%s", kid)
 	req, err := m.requestExecutor.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err

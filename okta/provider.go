@@ -173,6 +173,7 @@ func Provider() terraform.ResourceProvider {
 			"okta_user":             dataSourceUser(),
 			"okta_users":            dataSourceUsers(),
 			authServer:              dataSourceAuthServer(),
+			"okta_idp_saml":         dataSourceIdpSaml(),
 		},
 
 		ConfigureFunc: providerConfigure,
