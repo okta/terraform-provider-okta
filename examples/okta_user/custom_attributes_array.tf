@@ -1,4 +1,11 @@
 resource "okta_user_schema" "test" {
+  index  = "customAttribute123"
+  title  = "terraform acceptance test"
+  type   = "string"
+  master = "PROFILE_MASTER"
+}
+
+resource "okta_user_schema" "test_array" {
   index      = "array123"
   title      = "terraform acceptance test"
   type       = "array"
@@ -27,5 +34,5 @@ resource "okta_user" "testAcc_replace_with_uuid" {
   }
 JSON
 
-  depends_on = ["okta_user_schema.test", "okta_user_schema.test_number"]
+  depends_on = ["okta_user_schema.test_array", "okta_user_schema.test_number"]
 }

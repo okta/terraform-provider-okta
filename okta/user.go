@@ -234,6 +234,7 @@ func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 		// We validate the JSON, no need to check error
 		json.Unmarshal([]byte(str), &attrs)
 		for k, v := range attrs {
+			fmt.Printf("%s - %v", k, v)
 			profile[k] = v
 		}
 	}
@@ -410,10 +411,9 @@ func isCustomUserAttr(key string) bool {
 	return !contains(profileKeys, key)
 }
 
-func flattenUser(u *okta.User) (map[string]interface{}, error) {
+func flattenUser(u *okta.User, d *schema.ResourceData) (map[string]interface{}, error) {
 	customAttributes := make(map[string]interface{})
 	attrs := map[string]interface{}{}
-	shouldSetJson := false
 
 	for k, v := range *u.Profile {
 		if v != nil {
@@ -438,23 +438,23 @@ func flattenUser(u *okta.User) (map[string]interface{}, error) {
 					rawMap := v.(map[string]interface{})
 					customAttributes[k] = rawMap
 				}
-
-				if ref.Kind() != reflect.String {
-					shouldSetJson = true
-				}
 			} else {
 				attrs[attrKey] = v
 			}
 		}
 	}
 
-	if shouldSetJson {
+	if v, ok := d.GetOkExists("custom_attributes"); ok {
+		fmt.Printf("\n\n old --- %+v \n\n", v)
 		data, err := json.Marshal(customAttributes)
 		if err != nil {
 			return nil, fmt.Errorf("Failed to load custom_attributes to JSON")
 		}
+		fmt.Println(string(data))
 		attrs["custom_attributes"] = string(data)
+		attrs["custom_profile_attributes"] = map[string]interface{}{}
 	} else {
+		fmt.Println("nil")
 		attrs["custom_profile_attributes"] = customAttributes
 	}
 

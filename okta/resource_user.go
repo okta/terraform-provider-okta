@@ -348,7 +348,7 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("status", mapStatus(user.Status))
 	d.Set("raw_status", user.Status)
 
-	rawMap, err := flattenUser(user)
+	rawMap, err := flattenUser(user, d)
 	if err != nil {
 		return err
 	}
