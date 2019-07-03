@@ -73,16 +73,16 @@ func resourceNetworkZoneRead(d *schema.ResourceData, m interface{}) error {
 
 	return setNonPrimitives(d, map[string]interface{}{
 		// TODO
-		// "channel": flattenHookChannel(hook.Channel),
-		// "headers": flattenHeaders(hook.Channel),
-		// "auth":    flattenAuth(d, hook.Channel),
+		// "gateways" 		: flattenHookGateways(),
+		// "proxies" 		: flattenProxies(hook.Channel),
+		// "dynamic_locations" 	: flattenDynamicLocations(d, hook.Channel),
 	})
 }
 
 func resourceNetworkZoneUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
 	networkZone := buildNetworkZone(d, m)
-	networkZone, _, err := client.UpdateNetworkZone(d.Id(), *networkZone, nil)
+	_, _, err := client.UpdateNetworkZone(d.Id(), *networkZone, nil)
 
 	if err != nil {
 		return err
