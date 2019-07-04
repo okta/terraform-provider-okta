@@ -556,8 +556,8 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 				Namespace:   d.Get(fmt.Sprintf("attribute_statements.%d.namespace", i)).(string),
 				Type:        d.Get(fmt.Sprintf("attribute_statements.%d.type", i)).(string),
 				Values:      convertInterfaceToStringArr(d.Get(fmt.Sprintf("attribute_statements.%d.values", i))),
-				FilterType:  d.Get(fmt.Sprintf("attribute_statements.%d.filterType", i)).(string),
-				FilterValue: d.Get(fmt.Sprintf("attribute_statements.%d.filterValue", i)).(string),
+				FilterType:  d.Get(fmt.Sprintf("attribute_statements.%d.filter_type", i)).(string),
+				FilterValue: d.Get(fmt.Sprintf("attribute_statements.%d.filter_value", i)).(string),
 			}
 		}
 		app.Settings.SignOn.AttributeStatements = samlAttr
