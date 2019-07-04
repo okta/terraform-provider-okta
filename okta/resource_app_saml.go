@@ -5,7 +5,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/crewjam/saml"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -402,20 +401,13 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 		if err != nil {
 			return fmt.Errorf("Could not parse SAML app metadata, error: %s", err)
 		}
-		// Always grab the last one just for simplicity. Should never have duplicates.
-		for _, service := range metadataRoot.IDPSSODescriptors[0].SingleSignOnServices {
-			switch service.Binding {
-			case postBinding:
-				d.Set("http_post_binding", service.Location)
-			case redirectBinding:
-				d.Set("http_redirect_binding", service.Location)
-			}
-		}
+		desc := metadataRoot.IDPSSODescriptors[0]
+		syncSamlEndpointBinding(d, desc.SingleSignOnServices)
 		uri := metadataRoot.EntityID
 		key := getExternalID(uri, app.Settings.SignOn.IdpIssuer)
 		d.Set("entity_url", uri)
 		d.Set("entity_key", key)
-		d.Set("certificate", metadataRoot.IDPSSODescriptors[0].KeyDescriptors[0].KeyInfo.Certificate)
+		d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
 	}
 
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
@@ -560,10 +552,12 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 		samlAttr := make([]*okta.SamlAttributeStatement, len(statements))
 		for i := range statements {
 			samlAttr[i] = &okta.SamlAttributeStatement{
-				Name:      d.Get(fmt.Sprintf("attribute_statements.%d.name", i)).(string),
-				Namespace: d.Get(fmt.Sprintf("attribute_statements.%d.namespace", i)).(string),
-				Type:      d.Get(fmt.Sprintf("attribute_statements.%d.type", i)).(string),
-				Values:    convertInterfaceToStringArr(d.Get(fmt.Sprintf("attribute_statements.%d.values", i))),
+				Name:        d.Get(fmt.Sprintf("attribute_statements.%d.name", i)).(string),
+				Namespace:   d.Get(fmt.Sprintf("attribute_statements.%d.namespace", i)).(string),
+				Type:        d.Get(fmt.Sprintf("attribute_statements.%d.type", i)).(string),
+				Values:      convertInterfaceToStringArr(d.Get(fmt.Sprintf("attribute_statements.%d.values", i))),
+				FilterType:  d.Get(fmt.Sprintf("attribute_statements.%d.filterType", i)).(string),
+				FilterValue: d.Get(fmt.Sprintf("attribute_statements.%d.filterValue", i)).(string),
 			}
 		}
 		app.Settings.SignOn.AttributeStatements = samlAttr
@@ -589,13 +583,6 @@ func getCertificate(d *schema.ResourceData, m interface{}) (*okta.JsonWebKey, er
 	}
 
 	return key, err
-}
-
-func getExternalID(url string, pattern string) string {
-	// Default idp issuer is such that I can extract the ID. If someone enters a custom value
-	// this will result in "" most likely, which seems fine
-	pur := strings.Replace(pattern, "${org.externalKey}", "", -1)
-	return strings.Replace(url, pur, "", -1)
 }
 
 func getMetadata(d *schema.ResourceData, m interface{}, keyID string) ([]byte, error) {
