@@ -31,6 +31,6 @@ resource okta_idp_saml test {
   response_signature_scope = "ANY"
 }
 
-data okta_idp_saml test {
-  name = "${okta_idp_saml.test.name}"
+data okta_idp_metadata_saml test {
+  idp_id = "${okta_idp_saml.test.id}"
 }

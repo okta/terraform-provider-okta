@@ -20,6 +20,7 @@ resource "okta_app_saml" "testAcc_replace_with_uuid" {
   }
 
   attribute_statements {
+    type         = "GROUP"
     name         = "Attr Two"
     filter_type  = "STARTS_WITH"
     filter_value = "test"
