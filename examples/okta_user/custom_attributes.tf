@@ -20,7 +20,6 @@ resource "okta_user_schema" "test_number" {
   master = "PROFILE_MASTER"
 }
 
-
 resource "okta_user" "testAcc_replace_with_uuid" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
