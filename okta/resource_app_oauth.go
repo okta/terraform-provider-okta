@@ -389,7 +389,7 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 		},
 	}
 
-	if sec, ok := d.GetOk("client_basic_secret"); ok && authMethod == "client_secret_secret" {
+	if sec, ok := d.GetOk("client_basic_secret"); ok {
 		app.Credentials.OauthClient.ClientSecret = sec.(string)
 	}
 
