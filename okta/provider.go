@@ -165,6 +165,8 @@ func Provider() terraform.ResourceProvider {
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"okta_app":               dataSourceApp(),
+			"okta_app_saml":          dataSourceAppSaml(),
+			"okta_app_metadata_saml": dataSourceAppMetadataSaml(),
 			"okta_default_policies":  deprecatedPolicies,
 			"okta_default_policy":    dataSourceDefaultPolicies(),
 			"okta_everyone_group":    dataSourceEveryoneGroup(),

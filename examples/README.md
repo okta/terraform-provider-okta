@@ -14,6 +14,7 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 ## Resources & Data Sources
 
 * [okta_app_saml](./okta_app_saml) Supports the management of Okta SAML Applications.
+* [okta_app_metadata_saml](./okta_app_metadata_saml) Data source for SAML app metadata.
 * [okta_app_oauth](./okta_app_oauth) Supports the management of Okta OIDC Applications.
 * [okta_app_bookmark](./okta_app_bookmark) Supports the management Okta Bookmark Application.
 * [okta_app](./okta_app) Generic Application data source.
@@ -32,6 +33,7 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 * [okta_idp](./okta_idp) Supports the management of Okta OIDC Identity Providers.
 * [okta_idp_social](./okta_idp_social) Supports the management of Okta Social Identity Providers. Such as Google, Facebook, Microsoft, and LinkedIn.
 * [okta_idp_saml](./okta_idp_saml) Supports the management of Okta SAML Identity Providers.
+* [okta_idp_metadata_saml](./okta_app_metadata_saml) Data source for SAML IdP metadata.
 * [okta_policy_signon](./okta_policy_signon) Supports the management of sign on policies.
 * [okta_policy_rule_signon](./okta_policy_rule_signon) Supports the management of sign on policy rules.
 * [okta_policy_mfa](./okta_policy_mfa) Supports the management of MFA policies.

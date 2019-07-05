@@ -42,7 +42,7 @@ func TestAccAppSamlImport(t *testing.T) {
 }
 
 // Ensure conditional require logic causes this plan to fail
-func TestAccOktaAppSamlApplicationConditionalRequire(t *testing.T) {
+func TestAccOktaAppSamlConditionalRequire(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSamlConfigMissingFields(ri)
 
@@ -60,7 +60,7 @@ func TestAccOktaAppSamlApplicationConditionalRequire(t *testing.T) {
 }
 
 // Ensure conditional require logic causes this plan to fail
-func TestAccOktaAppSamlApplicationInvalidUrl(t *testing.T) {
+func TestAccOktaAppSamlInvalidUrl(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSamlConfigInvalidUrl(ri)
 
@@ -78,7 +78,7 @@ func TestAccOktaAppSamlApplicationInvalidUrl(t *testing.T) {
 }
 
 // Test creation of a custom SAML app.
-func TestAccOktaAppSamlApplication(t *testing.T) {
+func TestAccOktaAppSaml(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appSaml)
 	config := mgr.GetFixtures("custom_saml_app.tf", ri, t)
@@ -119,7 +119,7 @@ func TestAccOktaAppSamlApplication(t *testing.T) {
 	})
 }
 
-func TestAccOktaAppSamlApplicationAllFields(t *testing.T) {
+func TestAccOktaAppSamlAllFields(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appSaml)
 	config := mgr.GetFixtures("custom_saml_app.tf", ri, t)
@@ -173,7 +173,7 @@ func TestAccOktaAppSamlApplicationAllFields(t *testing.T) {
 }
 
 // Add and remove groups/users
-func TestAccOktaAppSamlApplicationUserGroups(t *testing.T) {
+func TestAccOktaAppSamlUserGroups(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appSaml)
 	config := mgr.GetFixtures("saml_app_with_groups_and_users.tf", ri, t)
