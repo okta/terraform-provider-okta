@@ -2,37 +2,12 @@ package okta
 
 import (
 	"encoding/json"
-	"fmt"
-	"strings"
 	"sync"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
-)
-
-type (
-	appID struct {
-		ID          string `json:"id"`
-		Label       string `json:"label"`
-		Name        string `json:"name"`
-		Status      string `json:"status"`
-		Description string `json:"description"`
-	}
-
-	appFilters struct {
-		ApiFilter         string
-		ID                string
-		Label             string
-		LabelPrefix       string
-		ShortCircuitCount int
-	}
-
-	searchResults struct {
-		Apps  []*appID
-		Users []*okta.User
-	}
 )
 
 var appUserResource = &schema.Resource{
@@ -450,66 +425,37 @@ func setAppSettings(d *schema.ResourceData, settings *okta.ApplicationSettingsAp
 	return d.Set("app_settings_json", string(payload))
 }
 
-func listApps(m interface{}, filters *appFilters) ([]*appID, error) {
-	result := &searchResults{Apps: []*appID{}}
-	qp := &query.Params{Limit: 200, Filter: filters.ApiFilter}
-	return result.Apps, collectApps(getSupplementFromMetadata(m).requestExecutor, filters, result, qp)
-}
+func syncSamlSettings(d *schema.ResourceData, set *okta.SamlApplicationSettings) error {
+	d.Set("default_relay_state", set.SignOn.DefaultRelayState)
+	d.Set("sso_url", set.SignOn.SsoAcsUrl)
+	d.Set("recipient", set.SignOn.Recipient)
+	d.Set("destination", set.SignOn.Destination)
+	d.Set("audience", set.SignOn.Audience)
+	d.Set("idp_issuer", set.SignOn.IdpIssuer)
+	d.Set("subject_name_id_template", set.SignOn.SubjectNameIdTemplate)
+	d.Set("subject_name_id_format", set.SignOn.SubjectNameIdFormat)
+	d.Set("response_signed", set.SignOn.ResponseSigned)
+	d.Set("assertion_signed", set.SignOn.AssertionSigned)
+	d.Set("signature_algorithm", set.SignOn.SignatureAlgorithm)
+	d.Set("digest_algorithm", set.SignOn.DigestAlgorithm)
+	d.Set("honor_force_authn", set.SignOn.HonorForceAuthn)
+	d.Set("authn_context_class_ref", set.SignOn.AuthnContextClassRef)
 
-// Recursively list apps until no next links are returned
-func collectApps(reqExe *okta.RequestExecutor, filters *appFilters, results *searchResults, qp *query.Params) error {
-	req, err := reqExe.NewRequest("GET", fmt.Sprintf("/api/v1/apps?%s", qp.String()), nil)
-	if err != nil {
-		return err
-	}
-	var appList []*appID
-	res, err := reqExe.Do(req, &appList)
-	if err != nil {
-		return err
-	}
+	attrStatements := set.SignOn.AttributeStatements
+	arr := make([]map[string]interface{}, len(attrStatements))
 
-	results.Apps = append(results.Apps, filterApp(appList, filters)...)
-
-	if after := getAfterParam(res); after != "" && !filters.shouldShortCircuit(results.Apps) {
-		qp.After = after
-		return collectApps(reqExe, filters, results, qp)
-	}
-
-	return nil
-}
-
-func filterApp(appList []*appID, filter *appFilters) []*appID {
-	// No filters, return it all!
-	if filter.Label == "" && filter.ID == "" && filter.LabelPrefix == "" {
-		return appList
-	}
-
-	filteredList := []*appID{}
-	for _, app := range appList {
-		if (filter.ID != "" && filter.ID == app.ID) || (filter.Label != "" && filter.Label == app.Label) {
-			filteredList = append(filteredList, app)
+	for i, st := range attrStatements {
+		arr[i] = map[string]interface{}{
+			"name":         st.Name,
+			"namespace":    st.Namespace,
+			"type":         st.Type,
+			"values":       st.Values,
+			"filter_type":  st.FilterType,
+			"filter_value": st.FilterValue,
 		}
-
-		if filter.LabelPrefix != "" && strings.HasPrefix(app.Label, filter.LabelPrefix) {
-			filteredList = append(filteredList, app)
-		}
-
-	}
-	return filteredList
-}
-
-func (f *appFilters) shouldShortCircuit(appList []*appID) bool {
-	if f.LabelPrefix != "" {
-		return false
 	}
 
-	if f.ID != "" && f.Label != "" {
-		return len(appList) > 1
-	}
-
-	if f.ID != "" || f.Label != "" {
-		return len(appList) > 0
-	}
-
-	return false
+	return setNonPrimitives(d, map[string]interface{}{
+		"attribute_statements": arr,
+	})
 }

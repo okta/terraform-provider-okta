@@ -1,7 +1,6 @@
 package okta
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -50,24 +49,16 @@ func dataSourceApp() *schema.Resource {
 }
 
 func dataSourceAppRead(d *schema.ResourceData, m interface{}) error {
-	id := d.Get("id").(string)
-	label := d.Get("label").(string)
-	labelPrefix := d.Get("label_prefix").(string)
-	filters := &appFilters{ID: id, Label: label, LabelPrefix: labelPrefix}
-
-	if d.Get("active_only").(bool) {
-		filters.ApiFilter = `status eq "ACTIVE"`
-	}
-
-	if id == "" && label == "" && labelPrefix == "" {
-		return errors.New("you must provide either an label_prefix, id, or label to search with")
+	filters, err := getAppFilters(d)
+	if err != nil {
+		return err
 	}
 	appList, err := listApps(m.(*Config), filters)
 	if err != nil {
 		return err
 	}
 	if len(appList) < 1 {
-		return fmt.Errorf(`No application found with provided filter. id: "%s", label: "%s", label_prefix: "%s"`, id, label, labelPrefix)
+		return fmt.Errorf("No application found with provided filter: %s", filters)
 	} else if len(appList) > 1 {
 		fmt.Println("Found multiple applications with the criteria supplied, using the first one, sorted by creation date.")
 	}

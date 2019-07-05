@@ -361,20 +361,7 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if app.Settings != nil && app.Settings.SignOn != nil {
-		d.Set("default_relay_state", app.Settings.SignOn.DefaultRelayState)
-		d.Set("sso_url", app.Settings.SignOn.SsoAcsUrl)
-		d.Set("recipient", app.Settings.SignOn.Recipient)
-		d.Set("destination", app.Settings.SignOn.Destination)
-		d.Set("audience", app.Settings.SignOn.Audience)
-		d.Set("idp_issuer", app.Settings.SignOn.IdpIssuer)
-		d.Set("subject_name_id_template", app.Settings.SignOn.SubjectNameIdTemplate)
-		d.Set("subject_name_id_format", app.Settings.SignOn.SubjectNameIdFormat)
-		d.Set("response_signed", app.Settings.SignOn.ResponseSigned)
-		d.Set("assertion_signed", app.Settings.SignOn.AssertionSigned)
-		d.Set("signature_algorithm", app.Settings.SignOn.SignatureAlgorithm)
-		d.Set("digest_algorithm", app.Settings.SignOn.DigestAlgorithm)
-		d.Set("honor_force_authn", app.Settings.SignOn.HonorForceAuthn)
-		d.Set("authn_context_class_ref", app.Settings.SignOn.AuthnContextClassRef)
+		syncSamlSettings(d, app.Settings)
 	}
 
 	d.Set("features", convertStringSetToInterface(app.Features))
@@ -411,17 +398,6 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
-
-	if app.Settings != nil && app.Settings.SignOn != nil {
-		for i, st := range app.Settings.SignOn.AttributeStatements {
-			d.Set(fmt.Sprintf("attribute_statements.%d.name", i), st.Name)
-			d.Set(fmt.Sprintf("attribute_statements.%d.namespace", i), st.Namespace)
-			d.Set(fmt.Sprintf("attribute_statements.%d.type", i), st.Type)
-			d.Set(fmt.Sprintf("attribute_statements.%d.values", i), st.Values)
-			d.Set(fmt.Sprintf("attribute_statements.%d.filter_type", i), st.FilterType)
-			d.Set(fmt.Sprintf("attribute_statements.%d.filter_value", i), st.FilterValue)
-		}
-	}
 
 	return syncGroupsAndUsers(app.Id, d, m)
 }
