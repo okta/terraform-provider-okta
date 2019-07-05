@@ -31,8 +31,12 @@ func dataSourceUserRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	d.SetId(users[0].Id)
+	rawMap, err := flattenUser(users[0], d)
+	if err != nil {
+		return err
+	}
 
-	if err = setNonPrimitives(d, flattenUser(users[0])); err != nil {
+	if err = setNonPrimitives(d, rawMap); err != nil {
 		return err
 	}
 

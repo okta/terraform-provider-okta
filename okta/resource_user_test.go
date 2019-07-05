@@ -66,8 +66,9 @@ func TestAccUserImport(t *testing.T) {
 func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(oktaUser)
-	config := mgr.GetFixtures("okta_user_custom_attributes.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("okta_user_remove_custom_attributes.tf", ri, t)
+	config := mgr.GetFixtures("custom_attributes.tf", ri, t)
+	arrayAttrConfig := mgr.GetFixtures("custom_attributes_array.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("remove_custom_attributes.tf", ri, t)
 	resourceName := buildResourceFQN(oktaUser, ri)
 	email := fmt.Sprintf("test-acc-%d@testing.com", ri)
 
@@ -77,13 +78,25 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 		CheckDestroy: testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				Config:  config,
+				Destroy: false,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
 					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
 					resource.TestCheckResourceAttr(resourceName, "login", email),
 					resource.TestCheckResourceAttr(resourceName, "email", email),
-					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes.customAttribute123", "testing-custom-attribute"),
+					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", "{\"customAttribute123\":\"testing-custom-attribute\"}"),
+				),
+			},
+			{
+				Config:  arrayAttrConfig,
+				Destroy: false,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
+					resource.TestCheckResourceAttr(resourceName, "login", email),
+					resource.TestCheckResourceAttr(resourceName, "email", email),
+					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", "{\"array123\":[\"test\"],\"number123\":1}"),
 				),
 			},
 			{
@@ -102,8 +115,8 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 func TestAccOktaUser_groupMembership(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(oktaUser)
-	config := mgr.GetFixtures("okta_user_group_assigned.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("okta_user_group_unassigned.tf", ri, t)
+	config := mgr.GetFixtures("group_assigned.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("group_unassigned.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", oktaUser)
 	email := fmt.Sprintf("test-acc-%d@testing.com", ri)
 
@@ -164,9 +177,9 @@ func TestAccOktaUser_invalidCustomProfileAttribute(t *testing.T) {
 func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(oktaUser)
-	config := mgr.GetFixtures("okta_user_staged.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("okta_user_all_attributes.tf", ri, t)
-	minimalConfig := mgr.GetFixtures("okta_user.tf", ri, t)
+	config := mgr.GetFixtures("staged.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("all_attributes.tf", ri, t)
+	minimalConfig := mgr.GetFixtures("basic.tf", ri, t)
 	resourceName := buildResourceFQN(oktaUser, ri)
 	email := fmt.Sprintf("test-acc-%d@testing.com", ri)
 
@@ -238,8 +251,8 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(oktaUser)
-	statusChanged := mgr.GetFixtures("okta_user_deprovisioned.tf", ri, t)
-	config := mgr.GetFixtures("okta_user_staged.tf", ri, t)
+	statusChanged := mgr.GetFixtures("deprovisioned.tf", ri, t)
+	config := mgr.GetFixtures("staged.tf", ri, t)
 	resourceName := buildResourceFQN(oktaUser, ri)
 	email := fmt.Sprintf("test-acc-%d@testing.com", ri)
 
@@ -268,7 +281,7 @@ func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
 func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(oktaUser)
-	config := mgr.GetFixtures("okta_user_deprovisioned.tf", ri, t)
+	config := mgr.GetFixtures("deprovisioned.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },

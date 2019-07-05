@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -220,8 +221,13 @@ func assignGroupsToUser(u string, g []string, c *okta.Client) error {
 func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 	profile := okta.UserProfile{}
 
-	if _, ok := d.GetOk("custom_profile_attributes"); ok {
-		for k, v := range d.Get("custom_profile_attributes").(map[string]interface{}) {
+	if rawAttrs, ok := d.GetOk("custom_profile_attributes"); ok {
+		var attrs map[string]interface{}
+		str := rawAttrs.(string)
+
+		// We validate the JSON, no need to check error
+		json.Unmarshal([]byte(str), &attrs)
+		for k, v := range attrs {
 			profile[k] = v
 		}
 	}
@@ -398,7 +404,7 @@ func isCustomUserAttr(key string) bool {
 	return !contains(profileKeys, key)
 }
 
-func flattenUser(u *okta.User) map[string]interface{} {
+func flattenUser(u *okta.User, d *schema.ResourceData) (map[string]interface{}, error) {
 	customAttributes := make(map[string]interface{})
 	attrs := map[string]interface{}{}
 
@@ -407,17 +413,37 @@ func flattenUser(u *okta.User) map[string]interface{} {
 			attrKey := camelCaseToUnderscore(k)
 
 			if isCustomUserAttr(attrKey) {
-				// Avoid Terraform blowing up due to wrong type
+				// Supporting any potential type
 				ref := reflect.ValueOf(v)
-				customAttributes[k] = ref.String()
+				switch ref.Kind() {
+				case reflect.String:
+					customAttributes[k] = ref.String()
+				case reflect.Float64:
+					customAttributes[k] = ref.Float()
+				case reflect.Int:
+					customAttributes[k] = ref.Int()
+				case reflect.Bool:
+					customAttributes[k] = ref.Bool()
+				case reflect.Slice:
+					rawArr := v.([]interface{})
+					customAttributes[k] = rawArr
+				case reflect.Map:
+					rawMap := v.(map[string]interface{})
+					customAttributes[k] = rawMap
+				}
 			} else {
 				attrs[attrKey] = v
 			}
 		}
 	}
-	attrs["custom_profile_attributes"] = customAttributes
 
-	return attrs
+	data, err := json.Marshal(customAttributes)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to load custom_attributes to JSON")
+	}
+	attrs["custom_profile_attributes"] = string(data)
+
+	return attrs, nil
 }
 
 // need to remove from all current admin roles and reassign based on terraform configs when a change is detected
