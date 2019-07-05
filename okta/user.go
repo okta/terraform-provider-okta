@@ -221,20 +221,13 @@ func assignGroupsToUser(u string, g []string, c *okta.Client) error {
 func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 	profile := okta.UserProfile{}
 
-	if _, ok := d.GetOk("custom_profile_attributes"); ok {
-		for k, v := range d.Get("custom_profile_attributes").(map[string]interface{}) {
-			profile[k] = v
-		}
-	}
-
-	if rawAttrs, ok := d.GetOk("custom_attributes"); ok {
+	if rawAttrs, ok := d.GetOk("custom_profile_attributes"); ok {
 		var attrs map[string]interface{}
 		str := rawAttrs.(string)
 
 		// We validate the JSON, no need to check error
 		json.Unmarshal([]byte(str), &attrs)
 		for k, v := range attrs {
-			fmt.Printf("%s - %v", k, v)
 			profile[k] = v
 		}
 	}
@@ -444,19 +437,11 @@ func flattenUser(u *okta.User, d *schema.ResourceData) (map[string]interface{}, 
 		}
 	}
 
-	if v, ok := d.GetOkExists("custom_attributes"); ok {
-		fmt.Printf("\n\n old --- %+v \n\n", v)
-		data, err := json.Marshal(customAttributes)
-		if err != nil {
-			return nil, fmt.Errorf("Failed to load custom_attributes to JSON")
-		}
-		fmt.Println(string(data))
-		attrs["custom_attributes"] = string(data)
-		attrs["custom_profile_attributes"] = map[string]interface{}{}
-	} else {
-		fmt.Println("nil")
-		attrs["custom_profile_attributes"] = customAttributes
+	data, err := json.Marshal(customAttributes)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to load custom_attributes to JSON")
 	}
+	attrs["custom_profile_attributes"] = string(data)
 
 	return attrs, nil
 }

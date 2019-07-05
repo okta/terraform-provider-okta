@@ -94,17 +94,12 @@ func resourceUser() *schema.Resource {
 				Description: "User country code",
 			},
 			"custom_profile_attributes": &schema.Schema{
-				Type:          schema.TypeMap,
-				Optional:      true,
-				ConflictsWith: []string{"custom_attributes"},
-			},
-			"custom_attributes": &schema.Schema{
-				Type:          schema.TypeString,
-				Optional:      true,
-				ConflictsWith: []string{"custom_profile_attributes"},
-				ValidateFunc:  validateDataJSON,
-				StateFunc:     normalizeDataJSON,
-				Description:   "JSON formatted custom_attributes for a user. This should be used instead of custom_profile_attributes when you need to define complex types.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateDataJSON,
+				StateFunc:    normalizeDataJSON,
+				Default:      "{}",
+				Description:  "JSON formatted custom attributes for a user. It must be JSON due to various types Okta allows.",
 			},
 			"department": &schema.Schema{
 				Type:        schema.TypeString,

@@ -28,9 +28,11 @@ resource "okta_user" "testAcc_replace_with_uuid" {
   login       = "test-acc-replace_with_uuid@testing.com"
   email       = "test-acc-replace_with_uuid@testing.com"
 
-  custom_profile_attributes = {
-    customAttribute123 = "testing-custom-attribute"
+  custom_profile_attributes = <<JSON
+  {
+    "customAttribute123": "testing-custom-attribute"
   }
+JSON
 
   depends_on = ["okta_user_schema.test", "okta_user_schema.test_number"]
 }

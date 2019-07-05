@@ -135,6 +135,7 @@ func resourceUserSchemaExists(d *schema.ResourceData, m interface{}) (bool, erro
 
 func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
 	client := getClientFromMetadata(m)
+	fmt.Printf("\n\n%s\n\n", d.Id())
 	schema, _, err := client.Schemas.GetUserSchema()
 	if err != nil {
 		return err

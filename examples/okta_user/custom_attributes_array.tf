@@ -27,7 +27,7 @@ resource "okta_user" "testAcc_replace_with_uuid" {
   login       = "test-acc-replace_with_uuid@testing.com"
   email       = "test-acc-replace_with_uuid@testing.com"
 
-  custom_attributes = <<JSON
+  custom_profile_attributes = <<JSON
   {
     "array123": ["test"],
     "number123": 1

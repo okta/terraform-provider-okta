@@ -85,7 +85,7 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
 					resource.TestCheckResourceAttr(resourceName, "login", email),
 					resource.TestCheckResourceAttr(resourceName, "email", email),
-					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes.customAttribute123", "testing-custom-attribute"),
+					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", "{\"customAttribute123\":\"testing-custom-attribute\"}"),
 				),
 			},
 			{
@@ -96,7 +96,7 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
 					resource.TestCheckResourceAttr(resourceName, "login", email),
 					resource.TestCheckResourceAttr(resourceName, "email", email),
-					resource.TestCheckResourceAttr(resourceName, "custom_attributes", "{\"array123\":[\"test\"],\"number123\":1}"),
+					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", "{\"array123\":[\"test\"],\"number123\":1}"),
 				),
 			},
 			{
