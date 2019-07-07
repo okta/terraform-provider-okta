@@ -340,9 +340,11 @@ resource okta_user "testAcc_%[1]s" {
   login       = "test-acc-%[1]s@testing.com"
   email       = "test-acc-%[1]s@testing.com"
 
-  custom_profile_attributes = {
-    notValid = "this-isnt-valid"
+  custom_profile_attributes = <<JSON
+  {
+    "notValid": "this-isnt-valid"
   }
+  JSON
 }
 `, r)
 }
