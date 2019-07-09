@@ -104,6 +104,12 @@ func resourceAppOAuth() *schema.Resource {
 				Computed:    true,
 				Description: "OAuth client ID.",
 			},
+			"custom_client_id": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "This property allows you to set your client_id.",
+			},
 			"omit_secret": &schema.Schema{
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -391,6 +397,10 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 
 	if sec, ok := d.GetOk("client_basic_secret"); ok {
 		app.Credentials.OauthClient.ClientSecret = sec.(string)
+	}
+
+	if cid, ok := d.GetOk("custom_client_id"); ok {
+		app.Credentials.OauthClient.ClientId = cid.(string)
 	}
 
 	app.Settings = &okta.OpenIdConnectApplicationSettings{
