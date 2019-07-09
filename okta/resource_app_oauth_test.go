@@ -36,6 +36,7 @@ func TestAccOktaAppOauthBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "redirect_uris.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "response_types.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "client_secret", "something_from_somewhere"),
+					resource.TestCheckResourceAttr(resourceName, "client_id", "something_from_somewhere"),
 				),
 			},
 			{
@@ -47,6 +48,7 @@ func TestAccOktaAppOauthBasic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "1"),
 					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
 				),
 			},
 		},
