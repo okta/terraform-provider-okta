@@ -49,6 +49,11 @@ var (
 			Type:     schema.TypeString,
 			Optional: true,
 		},
+		"groups_assignment": &schema.Schema{
+			Elem:     &schema.Schema{Type: schema.TypeString},
+			Optional: true,
+			Type:     schema.TypeSet,
+		},
 		"groups_filter": &schema.Schema{
 			Elem:     &schema.Schema{Type: schema.TypeString},
 			Optional: true,
@@ -212,8 +217,12 @@ func syncGroupActions(d *schema.ResourceData, groups *IDPGroupsAction) error {
 		d.Set("groups_action", groups.Action)
 		d.Set("groups_attribute", groups.SourceAttributeName)
 
-		return setNonPrimitives(d, map[string]interface{}{"groups_filter": groups.Filter})
+		return setNonPrimitives(d, map[string]interface{}{
+			"groups_assignment": groups.Assignments,
+			"groups_filter":     groups.Filter,
+		})
 	}
+
 	return nil
 }
 
@@ -238,6 +247,7 @@ func NewIdpProvisioning(d *schema.ResourceData) *IDPProvisioning {
 		},
 		Groups: &IDPGroupsAction{
 			Action:              d.Get("groups_action").(string),
+			Assignments:         convertInterfaceToStringSetNullable(d.Get("groups_assignment")),
 			Filter:              convertInterfaceToStringSetNullable(d.Get("groups_filter")),
 			SourceAttributeName: d.Get("groups_attribute").(string),
 		},
