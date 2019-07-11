@@ -62,7 +62,13 @@ func resourceIdpOidc() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"issuer_mode": issuerMode,
+			"issuer_mode": &schema.Schema{
+				Type:         schema.TypeString,
+				Description:  "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
+				ValidateFunc: validation.StringInSlice([]string{"ORG_URL", "CUSTOM_URL"}, false),
+				Default:      "ORG_URL",
+				Optional:     true,
+			},
 			"max_clock_skew": &schema.Schema{
 				Type:     schema.TypeInt,
 				Optional: true,
