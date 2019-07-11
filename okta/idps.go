@@ -18,6 +18,7 @@ func (m *ApiSupplement) DeleteIdentityProvider(id string) (*okta.Response, error
 
 	return m.requestExecutor.Do(req, nil)
 }
+
 func (m *ApiSupplement) ListIdentityProviders(idps interface{}, qp *query.Params) (interface{}, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/idps")
 	if qp != nil {
