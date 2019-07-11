@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccidpSocial(t *testing.T) {
+func TestAccIdpSocial(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(idpSocial)
 	config := mgr.GetFixtures("basic.tf", ri, t)

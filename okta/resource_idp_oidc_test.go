@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccIdp(t *testing.T) {
+func TestAccIdpOidc(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(idpResource)
 	config := mgr.GetFixtures("generic_oidc.tf", ri, t)
