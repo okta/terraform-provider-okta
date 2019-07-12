@@ -25,7 +25,7 @@ type (
 )
 
 func (m *ApiSupplement) ListEmailTemplates() ([]*EmailTemplate, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/templates/emails")
+	url := "/api/v1/templates/emails"
 	req, err := m.requestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
@@ -34,6 +34,21 @@ func (m *ApiSupplement) ListEmailTemplates() ([]*EmailTemplate, *okta.Response, 
 	var auth []*EmailTemplate
 	resp, err := m.requestExecutor.Do(req, &auth)
 	return auth, resp, err
+}
+
+func (m *ApiSupplement) CreateEmailTemplate(id string, body EmailTemplate, qp *query.Params) (*EmailTemplate, *okta.Response, error) {
+	url := "/api/v1/templates/emails"
+	if qp != nil {
+		url += qp.String()
+	}
+	req, err := m.requestExecutor.NewRequest("POST", url, body)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	temp := &EmailTemplate{}
+	resp, err := m.requestExecutor.Do(req, temp)
+	return temp, resp, err
 }
 
 func (m *ApiSupplement) UpdateEmailTemplate(id string, body EmailTemplate, qp *query.Params) (*EmailTemplate, *okta.Response, error) {
@@ -60,4 +75,14 @@ func (m *ApiSupplement) GetEmailTemplate(id string) (*EmailTemplate, *okta.Respo
 	temp := &EmailTemplate{}
 	resp, err := m.requestExecutor.Do(req, temp)
 	return temp, resp, err
+}
+
+func (m *ApiSupplement) DeleteEmailTemplate(id string) (*okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/templates/emails/%s", id)
+	req, err := m.requestExecutor.NewRequest("DELETE", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := m.requestExecutor.Do(req, nil)
+	return resp, err
 }

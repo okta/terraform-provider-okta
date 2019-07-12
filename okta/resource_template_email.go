@@ -32,6 +32,11 @@ func resourceTemplateEmail() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 		Schema: map[string]*schema.Schema{
+			"default_language": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "en",
+			},
 			"type": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
@@ -57,11 +62,15 @@ func buildEmailTemplate(d *schema.ResourceData) *EmailTemplate {
 			Template: rawTrans["template"].(string),
 		}
 	}
+	defaultLang := d.Get("default_language").(string)
 
 	return &EmailTemplate{
-		Name:         "Custom",
-		Type:         d.Get("type").(string),
-		Translations: trans,
+		DefaultLanguage: defaultLang,
+		Name:            "Custom",
+		Type:            d.Get("type").(string),
+		Translations:    trans,
+		Subject:         trans[defaultLang].Subject,
+		Template:        trans[defaultLang].Template,
 	}
 }
 
@@ -82,7 +91,7 @@ func flattenEmailTranlations(temp map[string]*EmailTranslation) *schema.Set {
 func resourceTemplateEmailCreate(d *schema.ResourceData, m interface{}) error {
 	temp := buildEmailTemplate(d)
 	id := d.Get("type").(string)
-	_, _, err := getSupplementFromMetadata(m).UpdateEmailTemplate(id, *temp, nil)
+	_, _, err := getSupplementFromMetadata(m).CreateEmailTemplate(id, *temp, nil)
 	if err != nil {
 		return err
 	}
@@ -98,6 +107,7 @@ func resourceTemplateEmailRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 	d.Set("translations", flattenEmailTranlations(temp.Translations))
+	d.Set("default_language", temp.DefaultLanguage)
 
 	return nil
 }
@@ -113,11 +123,7 @@ func resourceTemplateEmailUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceTemplateEmailDelete(d *schema.ResourceData, m interface{}) error {
-	temp := &EmailTemplate{
-		Name: "Default",
-		Type: d.Get("type").(string),
-	}
-	_, _, err := getSupplementFromMetadata(m).UpdateEmailTemplate(d.Id(), *temp, nil)
+	_, err := getSupplementFromMetadata(m).DeleteEmailTemplate(d.Id())
 
 	return err
 }

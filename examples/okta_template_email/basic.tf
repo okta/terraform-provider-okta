@@ -4,12 +4,12 @@ resource okta_template_email test {
   translations {
     language = "en"
     subject  = "Stuff"
-    template = "Hi $${user.firstName}"
+    template = "Hi $${user.firstName},<br/><br/>Blah blah $${resetPasswordLink}"
   }
 
   translations {
     language = "es"
     subject  = "Cosas"
-    template = "Hola $${user.firstName}"
+    template = "Hola $${user.firstName},<br/><br/>Puedo ir al bano $${resetPasswordLink}"
   }
 }
