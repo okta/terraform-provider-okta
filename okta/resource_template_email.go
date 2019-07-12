@@ -1,0 +1,123 @@
+package okta
+
+import (
+	"github.com/hashicorp/terraform/helper/schema"
+)
+
+var translationResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"language": &schema.Schema{
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"subject": &schema.Schema{
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"template": &schema.Schema{
+			Type:     schema.TypeString,
+			Required: true,
+		},
+	},
+}
+
+func resourceTemplateEmail() *schema.Resource {
+	return &schema.Resource{
+		// No point in having an exist function since templates always exist
+		Create: resourceTemplateEmailCreate,
+		Read:   resourceTemplateEmailRead,
+		Update: resourceTemplateEmailUpdate,
+		Delete: resourceTemplateEmailDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
+		Schema: map[string]*schema.Schema{
+			"type": &schema.Schema{
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Email template type",
+			},
+			"translations": &schema.Schema{
+				Type:     schema.TypeSet,
+				Required: true,
+				Elem:     translationResource,
+			},
+		},
+	}
+}
+
+func buildEmailTemplate(d *schema.ResourceData) *EmailTemplate {
+	trans := map[string]*EmailTranslation{}
+	rawTransList := d.Get("translations").(*schema.Set)
+
+	for _, val := range rawTransList.List() {
+		rawTrans := val.(map[string]interface{})
+		trans[rawTrans["language"].(string)] = &EmailTranslation{
+			Subject:  rawTrans["subject"].(string),
+			Template: rawTrans["template"].(string),
+		}
+	}
+
+	return &EmailTemplate{
+		Name:         "Custom",
+		Type:         d.Get("type").(string),
+		Translations: trans,
+	}
+}
+
+func flattenEmailTranlations(temp map[string]*EmailTranslation) *schema.Set {
+	rawSet := []interface{}{}
+
+	for key, val := range temp {
+		rawSet = append(rawSet, map[string]interface{}{
+			"language": key,
+			"subject":  val.Subject,
+			"template": val.Template,
+		})
+	}
+
+	return schema.NewSet(schema.HashResource(translationResource), rawSet)
+}
+
+func resourceTemplateEmailCreate(d *schema.ResourceData, m interface{}) error {
+	temp := buildEmailTemplate(d)
+	id := d.Get("type").(string)
+	_, _, err := getSupplementFromMetadata(m).UpdateEmailTemplate(id, *temp, nil)
+	if err != nil {
+		return err
+	}
+
+	d.SetId(id)
+
+	return resourceTemplateEmailRead(d, m)
+}
+
+func resourceTemplateEmailRead(d *schema.ResourceData, m interface{}) error {
+	temp, _, err := getSupplementFromMetadata(m).GetEmailTemplate(d.Id())
+	if err != nil {
+		return err
+	}
+	d.Set("translations", flattenEmailTranlations(temp.Translations))
+
+	return nil
+}
+
+func resourceTemplateEmailUpdate(d *schema.ResourceData, m interface{}) error {
+	temp := buildEmailTemplate(d)
+	_, _, err := getSupplementFromMetadata(m).UpdateEmailTemplate(d.Id(), *temp, nil)
+	if err != nil {
+		return err
+	}
+
+	return resourceTemplateEmailRead(d, m)
+}
+
+func resourceTemplateEmailDelete(d *schema.ResourceData, m interface{}) error {
+	temp := &EmailTemplate{
+		Name: "Default",
+		Type: d.Get("type").(string),
+	}
+	_, _, err := getSupplementFromMetadata(m).UpdateEmailTemplate(d.Id(), *temp, nil)
+
+	return err
+}
