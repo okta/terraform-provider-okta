@@ -189,10 +189,8 @@ func buildUserDataSourceSchema(target map[string]*schema.Schema) map[string]*sch
 }
 
 func assignAdminRolesToUser(u string, r []string, c *okta.Client) error {
-	validRoles := []string{"SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN", "HELP_DESK_ADMIN"}
-
 	for _, role := range r {
-		if contains(validRoles, role) {
+		if contains(validAdminRoles, role) {
 			roleStruct := okta.Role{Type: role}
 			_, _, err := c.User.AddRoleToUser(u, roleStruct)
 
