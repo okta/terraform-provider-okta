@@ -23,8 +23,8 @@ var translationResource = &schema.Resource{
 
 func resourceTemplateEmail() *schema.Resource {
 	return &schema.Resource{
-		// No point in having an exist function since templates always exist
 		Create: resourceTemplateEmailCreate,
+		Exists: resourceTemplateEmailExists,
 		Read:   resourceTemplateEmailRead,
 		Update: resourceTemplateEmailUpdate,
 		Delete: resourceTemplateEmailDelete,
@@ -99,6 +99,12 @@ func resourceTemplateEmailCreate(d *schema.ResourceData, m interface{}) error {
 	d.SetId(id)
 
 	return resourceTemplateEmailRead(d, m)
+}
+
+func resourceTemplateEmailExists(d *schema.ResourceData, m interface{}) (bool, error) {
+	temp, resp, err := getSupplementFromMetadata(m).GetEmailTemplate(d.Id())
+
+	return temp != nil && !is404(resp.StatusCode), err
 }
 
 func resourceTemplateEmailRead(d *schema.ResourceData, m interface{}) error {
