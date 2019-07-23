@@ -5,7 +5,6 @@ Here lies the examples that will aid you on your Okta Terraform journey. PLEASE 
 ## Example Stacks
 
 * [Okta and Cognito](./oidc-cognito-stack.tf) Example of using Okta OIDC application with a Cognito ID Provider to provide a serverless SPA access to AWS resources.
-* [Various Examples](./blog_examples) A few examples featured in an Okta blog.
 
 ## Test Fixture Examples
 

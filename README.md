@@ -16,6 +16,10 @@ This provider plugin is maintained by the Terraform team at [Articulate](https:/
 - [Terraform](https://www.terraform.io/downloads.html) 0.12.x
 - [Go](https://golang.org/doc/install) 1.12 (to build the provider plugin)
 
+## Demo
+
+For a more in depth holistic usage demo, [see our demo repository here](https://github.com/articulate/terraform-provider-okta-demos).
+
 ## Usage
 
 This plugin requires two inputs to run: the okta organization name and the okta api token. The okta base url is not required and will default to "okta.com" if left out.
