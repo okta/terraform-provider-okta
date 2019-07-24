@@ -26,6 +26,7 @@ const (
 	authServerPolicyRule   = "okta_auth_server_policy_rule"
 	authServerScope        = "okta_auth_server_scope"
 	factor                 = "okta_factor"
+	groupRoles             = "okta_group_roles"
 	groupRule              = "okta_group_rule"
 	identityProvider       = "okta_identity_provider"
 	idpResource            = "okta_idp_oidc"
@@ -43,6 +44,7 @@ const (
 	policyRulePassword     = "okta_policy_rule_password"
 	policyRuleSignOn       = "okta_policy_rule_signon"
 	policySignOn           = "okta_policy_signon"
+	templateEmail          = "okta_template_email"
 	trustedOrigin          = "okta_trusted_origin"
 	userBaseSchema         = "okta_user_base_schema"
 	userSchema             = "okta_user_schema"
@@ -122,6 +124,7 @@ func Provider() terraform.ResourceProvider {
 			authServerPolicyRule:   resourceAuthServerPolicyRule(),
 			authServerScope:        resourceAuthServerScope(),
 			factor:                 resourceFactor(),
+			groupRoles:             resourceGroupRoles(),
 			groupRule:              resourceGroupRule(),
 			idpResource:            resourceIdpOidc(),
 			idpSaml:                resourceIdpSaml(),
@@ -138,6 +141,7 @@ func Provider() terraform.ResourceProvider {
 			policyRulePassword:     resourcePolicyPasswordRule(),
 			policyRuleSignOn:       resourcePolicySignonRule(),
 			policySignOn:           resourcePolicySignon(),
+			templateEmail:          resourceTemplateEmail(),
 			trustedOrigin:          resourceTrustedOrigin(),
 			userSchema:             resourceUserSchema(),
 
@@ -166,16 +170,19 @@ func Provider() terraform.ResourceProvider {
 			"okta_mfa_policy_rule":           deprecateIncorrectNaming(resourcePolicyMfaRule(), policyRuleMfa),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"okta_app":              dataSourceApp(),
-			"okta_default_policies": deprecatedPolicies,
-			"okta_default_policy":   dataSourceDefaultPolicies(),
-			"okta_everyone_group":   dataSourceEveryoneGroup(),
-			"okta_group":            dataSourceGroup(),
-			"okta_policy":           dataSourcePolicy(),
-			"okta_user":             dataSourceUser(),
-			"okta_users":            dataSourceUsers(),
-			authServer:              dataSourceAuthServer(),
-			"okta_idp_saml":         dataSourceIdpSaml(),
+			"okta_app":               dataSourceApp(),
+			"okta_app_saml":          dataSourceAppSaml(),
+			"okta_app_metadata_saml": dataSourceAppMetadataSaml(),
+			"okta_default_policies":  deprecatedPolicies,
+			"okta_default_policy":    dataSourceDefaultPolicies(),
+			"okta_everyone_group":    dataSourceEveryoneGroup(),
+			"okta_group":             dataSourceGroup(),
+			"okta_idp_metadata_saml": dataSourceIdpMetadataSaml(),
+			"okta_idp_saml":          dataSourceIdpSaml(),
+			"okta_policy":            dataSourcePolicy(),
+			"okta_user":              dataSourceUser(),
+			"okta_users":             dataSourceUsers(),
+			authServer:               dataSourceAuthServer(),
 		},
 
 		ConfigureFunc: providerConfigure,

@@ -55,6 +55,13 @@ func resourceIdpSocial() *schema.Resource {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
+			"issuer_mode": &schema.Schema{
+				Type:         schema.TypeString,
+				Description:  "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
+				ValidateFunc: validation.StringInSlice([]string{"ORG_URL", "CUSTOM_URL"}, false),
+				Default:      "ORG_URL",
+				Optional:     true,
+			},
 		}),
 	}
 }
@@ -128,8 +135,9 @@ func resourceIdpSocialUpdate(d *schema.ResourceData, m interface{}) error {
 
 func buildidpSocial(d *schema.ResourceData) *OIDCIdentityProvider {
 	return &OIDCIdentityProvider{
-		Name: d.Get("name").(string),
-		Type: d.Get("type").(string),
+		Name:       d.Get("name").(string),
+		Type:       d.Get("type").(string),
+		IssuerMode: d.Get("issuer_mode").(string),
 		Policy: &OIDCPolicy{
 			AccountLink:  NewAccountLink(d),
 			MaxClockSkew: int64(d.Get("max_clock_skew").(int)),

@@ -94,8 +94,12 @@ func resourceUser() *schema.Resource {
 				Description: "User country code",
 			},
 			"custom_profile_attributes": &schema.Schema{
-				Type:     schema.TypeMap,
-				Optional: true,
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateDataJSON,
+				StateFunc:    normalizeDataJSON,
+				Default:      "{}",
+				Description:  "JSON formatted custom attributes for a user. It must be JSON due to various types Okta allows.",
 			},
 			"department": &schema.Schema{
 				Type:        schema.TypeString,
@@ -339,7 +343,12 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("status", mapStatus(user.Status))
 	d.Set("raw_status", user.Status)
 
-	if err = setNonPrimitives(d, flattenUser(user)); err != nil {
+	rawMap, err := flattenUser(user, d)
+	if err != nil {
+		return err
+	}
+
+	if err = setNonPrimitives(d, rawMap); err != nil {
 		return err
 	}
 

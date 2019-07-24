@@ -104,6 +104,12 @@ func resourceAppOAuth() *schema.Resource {
 				Computed:    true,
 				Description: "OAuth client ID.",
 			},
+			"custom_client_id": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "This property allows you to set your client_id.",
+			},
 			"omit_secret": &schema.Schema{
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -116,6 +122,12 @@ func resourceAppOAuth() *schema.Resource {
 				Computed:    true,
 				Sensitive:   true,
 				Description: "OAuth client secret key. This will be in plain text in your statefile unless you set omit_secret above.",
+			},
+			"client_basic_secret": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Sensitive:   true,
+				Description: "OAuth client secret key, this can be set when token_endpoint_auth_method is client_secret_basic.",
 			},
 			"token_endpoint_auth_method": &schema.Schema{
 				Type:     schema.TypeString,
@@ -374,13 +386,23 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 	}
 
 	app.Label = d.Get("label").(string)
+	authMethod := d.Get("token_endpoint_auth_method").(string)
 	app.Credentials = &okta.OAuthApplicationCredentials{
 		OauthClient: &okta.ApplicationCredentialsOAuthClient{
 			AutoKeyRotation:         &keyRotation,
 			ClientId:                d.Get("client_id").(string),
-			TokenEndpointAuthMethod: d.Get("token_endpoint_auth_method").(string),
+			TokenEndpointAuthMethod: authMethod,
 		},
 	}
+
+	if sec, ok := d.GetOk("client_basic_secret"); ok {
+		app.Credentials.OauthClient.ClientSecret = sec.(string)
+	}
+
+	if cid, ok := d.GetOk("custom_client_id"); ok {
+		app.Credentials.OauthClient.ClientId = cid.(string)
+	}
+
 	app.Settings = &okta.OpenIdConnectApplicationSettings{
 		OauthClient: &okta.OpenIdConnectApplicationSettingsClient{
 			ApplicationType:        appType,

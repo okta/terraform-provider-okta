@@ -13,7 +13,7 @@ import (
 
 // Tests a standard OAuth application with an updated type. This tests the ForceNew on type and tests creating an
 // ACTIVE and INACTIVE application via the create action.
-func TestAccOktaAppOAuthApplication(t *testing.T) {
+func TestAccOktaAppOauthBasic(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appOAuth)
 	config := mgr.GetFixtures("oauth_app.tf", ri, t)
@@ -35,6 +35,8 @@ func TestAccOktaAppOAuthApplication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "redirect_uris.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "response_types.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "client_secret", "something_from_somewhere"),
+					resource.TestCheckResourceAttr(resourceName, "client_id", "something_from_somewhere"),
 				),
 			},
 			{
@@ -46,6 +48,7 @@ func TestAccOktaAppOAuthApplication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "1"),
 					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
 				),
 			},
 		},
@@ -53,7 +56,7 @@ func TestAccOktaAppOAuthApplication(t *testing.T) {
 }
 
 // Tests creation of service app and updates it to native
-func TestAccOktaAppOAuthApplicationServiceNative(t *testing.T) {
+func TestAccOktaAppOauthServiceNative(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appOAuth)
 	config := mgr.GetFixtures("service.tf", ri, t)
@@ -88,7 +91,7 @@ func TestAccOktaAppOAuthApplicationServiceNative(t *testing.T) {
 }
 
 // Tests ACTIVE to INACTIVE OAuth application via the update action.
-func TestAccOktaAppOAuthApplicationUpdateStatus(t *testing.T) {
+func TestAccOktaAppOauthUpdateStatus(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appOAuth)
 	config := mgr.GetFixtures("oauth_app.tf", ri, t)
@@ -122,7 +125,7 @@ func TestAccOktaAppOAuthApplicationUpdateStatus(t *testing.T) {
 }
 
 // Add and remove groups/users
-func TestAccOktaAppOAuthApplicationUserGroups(t *testing.T) {
+func TestAccOktaAppOauthUserGroups(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appOAuth)
 	config := mgr.GetFixtures("oauth_app_groups_and_users.tf", ri, t)
@@ -162,7 +165,7 @@ func TestAccOktaAppOAuthApplicationUserGroups(t *testing.T) {
 }
 
 // Tests properly errors on conditional requirements.
-func TestAccOktaAppOAuthApplicationBadGrantTypes(t *testing.T) {
+func TestAccOktaAppOauthBadGrantTypes(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestOAuthConfigBadGrantTypes(ri)
 

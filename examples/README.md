@@ -5,7 +5,6 @@ Here lies the examples that will aid you on your Okta Terraform journey. PLEASE 
 ## Example Stacks
 
 * [Okta and Cognito](./oidc-cognito-stack.tf) Example of using Okta OIDC application with a Cognito ID Provider to provide a serverless SPA access to AWS resources.
-* [Various Examples](./blog_examples) A few examples featured in an Okta blog.
 
 ## Test Fixture Examples
 
@@ -14,12 +13,14 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 ## Resources & Data Sources
 
 * [okta_app_saml](./okta_app_saml) Supports the management of Okta SAML Applications.
+* [okta_app_metadata_saml](./okta_app_metadata_saml) Data source for SAML app metadata.
 * [okta_app_oauth](./okta_app_oauth) Supports the management of Okta OIDC Applications.
 * [okta_app_bookmark](./okta_app_bookmark) Supports the management Okta Bookmark Application.
 * [okta_app](./okta_app) Generic Application data source.
 * [okta_user](./okta_user) Supports the management of Okta Users.
 * [okta_users](./okta_users) Data source to retrieve a group of users.
 * [okta_group](./okta_group) Supports the management of Okta Groups.
+* [okta_group_roles](./okta_group_roles) Supports the management of Okta Group Administrator Roles.
 * [okta_group_rule](./okta_group_rule) Supports the management of Okta Group Rules.
 * [okta_trusted_origin](./okta_trusted_origin) Supports the management of Okta Trusted Sources and Origins.
 * [okta_user_schemas](./okta_user_schemas) Supports the management of Okta User Profile Attribute Schemas.
@@ -33,10 +34,12 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 * [okta_idp_social](./okta_idp_social) Supports the management of Okta Social Identity Providers. Such as Google, Facebook, Microsoft, and LinkedIn.
 * [okta_idp_saml](./okta_idp_saml) Supports the management of Okta SAML Identity Providers.
 * [okta_network_zone](./okta_network_zone) Supports the management of Okta Network Zones for whitelisting IPs or countries dynamically.
+* [okta_idp_metadata_saml](./okta_app_metadata_saml) Data source for SAML IdP metadata.
 * [okta_policy_signon](./okta_policy_signon) Supports the management of sign on policies.
 * [okta_policy_rule_signon](./okta_policy_rule_signon) Supports the management of sign on policy rules.
 * [okta_policy_mfa](./okta_policy_mfa) Supports the management of MFA policies.
 * [okta_policy_password](./okta_policy_password) Supports the management of password policies.
+* [okta_template_email](./okta_template_email) Supports the management of custom email templates.
 * [okta_app_oauth_redirect_uri](./okta_app_oauth_redirect_uri) Supports decentralizing redirect uri config. Due to Okta's API not allowing this field to be null, you must set a redirect uri in your app, and ignore changes to this attribute. We follow TF best practices and detect config drift. The best case scenario is Okta makes this field nullable and we can not detect config drift when this attr is not present.
 
 ## Deprecated Resources

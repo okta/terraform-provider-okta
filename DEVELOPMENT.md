@@ -56,6 +56,9 @@ Acceptance tests are run against real infrastructure and thus require credential
 ```shell
 cp .env.sample .env
 dotenv make testacc
+
+# Or run a particular test
+TEST_FILTER=TestAccDataSourceAppSaml dotenv make testacc
 ```
 
 ## Creating a PR

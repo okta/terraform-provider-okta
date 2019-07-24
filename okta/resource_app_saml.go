@@ -5,7 +5,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/crewjam/saml"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -362,20 +361,7 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if app.Settings != nil && app.Settings.SignOn != nil {
-		d.Set("default_relay_state", app.Settings.SignOn.DefaultRelayState)
-		d.Set("sso_url", app.Settings.SignOn.SsoAcsUrl)
-		d.Set("recipient", app.Settings.SignOn.Recipient)
-		d.Set("destination", app.Settings.SignOn.Destination)
-		d.Set("audience", app.Settings.SignOn.Audience)
-		d.Set("idp_issuer", app.Settings.SignOn.IdpIssuer)
-		d.Set("subject_name_id_template", app.Settings.SignOn.SubjectNameIdTemplate)
-		d.Set("subject_name_id_format", app.Settings.SignOn.SubjectNameIdFormat)
-		d.Set("response_signed", app.Settings.SignOn.ResponseSigned)
-		d.Set("assertion_signed", app.Settings.SignOn.AssertionSigned)
-		d.Set("signature_algorithm", app.Settings.SignOn.SignatureAlgorithm)
-		d.Set("digest_algorithm", app.Settings.SignOn.DigestAlgorithm)
-		d.Set("honor_force_authn", app.Settings.SignOn.HonorForceAuthn)
-		d.Set("authn_context_class_ref", app.Settings.SignOn.AuthnContextClassRef)
+		syncSamlSettings(d, app.Settings)
 	}
 
 	d.Set("features", convertStringSetToInterface(app.Features))
@@ -402,34 +388,16 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 		if err != nil {
 			return fmt.Errorf("Could not parse SAML app metadata, error: %s", err)
 		}
-		// Always grab the last one just for simplicity. Should never have duplicates.
-		for _, service := range metadataRoot.IDPSSODescriptors[0].SingleSignOnServices {
-			switch service.Binding {
-			case postBinding:
-				d.Set("http_post_binding", service.Location)
-			case redirectBinding:
-				d.Set("http_redirect_binding", service.Location)
-			}
-		}
+		desc := metadataRoot.IDPSSODescriptors[0]
+		syncSamlEndpointBinding(d, desc.SingleSignOnServices)
 		uri := metadataRoot.EntityID
 		key := getExternalID(uri, app.Settings.SignOn.IdpIssuer)
 		d.Set("entity_url", uri)
 		d.Set("entity_key", key)
-		d.Set("certificate", metadataRoot.IDPSSODescriptors[0].KeyDescriptors[0].KeyInfo.Certificate)
+		d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
 	}
 
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
-
-	if app.Settings != nil && app.Settings.SignOn != nil {
-		for i, st := range app.Settings.SignOn.AttributeStatements {
-			d.Set(fmt.Sprintf("attribute_statements.%d.name", i), st.Name)
-			d.Set(fmt.Sprintf("attribute_statements.%d.namespace", i), st.Namespace)
-			d.Set(fmt.Sprintf("attribute_statements.%d.type", i), st.Type)
-			d.Set(fmt.Sprintf("attribute_statements.%d.values", i), st.Values)
-			d.Set(fmt.Sprintf("attribute_statements.%d.filter_type", i), st.FilterType)
-			d.Set(fmt.Sprintf("attribute_statements.%d.filter_value", i), st.FilterValue)
-		}
-	}
 
 	return syncGroupsAndUsers(app.Id, d, m)
 }
@@ -560,10 +528,12 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 		samlAttr := make([]*okta.SamlAttributeStatement, len(statements))
 		for i := range statements {
 			samlAttr[i] = &okta.SamlAttributeStatement{
-				Name:      d.Get(fmt.Sprintf("attribute_statements.%d.name", i)).(string),
-				Namespace: d.Get(fmt.Sprintf("attribute_statements.%d.namespace", i)).(string),
-				Type:      d.Get(fmt.Sprintf("attribute_statements.%d.type", i)).(string),
-				Values:    convertInterfaceToStringArr(d.Get(fmt.Sprintf("attribute_statements.%d.values", i))),
+				Name:        d.Get(fmt.Sprintf("attribute_statements.%d.name", i)).(string),
+				Namespace:   d.Get(fmt.Sprintf("attribute_statements.%d.namespace", i)).(string),
+				Type:        d.Get(fmt.Sprintf("attribute_statements.%d.type", i)).(string),
+				Values:      convertInterfaceToStringArr(d.Get(fmt.Sprintf("attribute_statements.%d.values", i))),
+				FilterType:  d.Get(fmt.Sprintf("attribute_statements.%d.filter_type", i)).(string),
+				FilterValue: d.Get(fmt.Sprintf("attribute_statements.%d.filter_value", i)).(string),
 			}
 		}
 		app.Settings.SignOn.AttributeStatements = samlAttr
@@ -589,13 +559,6 @@ func getCertificate(d *schema.ResourceData, m interface{}) (*okta.JsonWebKey, er
 	}
 
 	return key, err
-}
-
-func getExternalID(url string, pattern string) string {
-	// Default idp issuer is such that I can extract the ID. If someone enters a custom value
-	// this will result in "" most likely, which seems fine
-	pur := strings.Replace(pattern, "${org.externalKey}", "", -1)
-	return strings.Replace(url, pur, "", -1)
 }
 
 func getMetadata(d *schema.ResourceData, m interface{}, keyID string) ([]byte, error) {

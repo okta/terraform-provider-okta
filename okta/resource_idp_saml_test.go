@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccidpSaml(t *testing.T) {
+func TestAccIdpSaml(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(idpSaml)
 	config := mgr.GetFixtures("basic.tf", ri, t)
