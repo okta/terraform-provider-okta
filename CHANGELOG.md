@@ -44,3 +44,7 @@ For Release v3.0.9
 
 * Add okta_template_email resource for defining Custom Email Templates
 * Add okta_group_roles resource for defining the admin roles tied to a group
+
+For Release v3.0.10
+
+* Add okta_network_zone resource 
