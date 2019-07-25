@@ -11,4 +11,11 @@ resource "okta_app_saml" "testAcc_replace_with_uuid" {
   digest_algorithm         = "SHA256"
   honor_force_authn        = false
   authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+
+  attribute_statements {
+    type         = "GROUP"
+    name         = "groups"
+    filter_type  = "REGEX"
+    filter_value = ".*"
+  }
 }
