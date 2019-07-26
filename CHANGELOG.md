@@ -22,6 +22,7 @@ For Release v3.0.4
 * Add okta_app_saml data source
 * Add okta_app_metadata_saml data source
 * Add okta_idp_metadata_saml data source
+* Fix group filter bug, filter_type and filter_value were not being sync'd
 
 For Release v3.0.5
 
