@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+	"time"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -122,25 +123,27 @@ func resourceUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUserSchemaExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	client := getClientFromMetadata(m)
-	schema, _, err := client.Schemas.GetUserSchema()
-	if err != nil {
-		return false, err
-	}
+	subschema, err := getSubSchema(d, m)
 
-	subschema := getSubSchema(schema.Definitions.Custom.Properties, d.Id())
-
-	return subschema != nil, nil
+	return subschema != nil, err
 }
 
 func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
-	client := getClientFromMetadata(m)
-	schema, _, err := client.Schemas.GetUserSchema()
+	subschema, err := getSubSchema(d, m)
 	if err != nil {
 		return err
-	}
+	} else if subschema == nil {
+		// See https://github.com/articulate/terraform-provider-okta/issues/144
+		// Occassionally a schema prop would be created and the read would not find it.
+		// There appears to be a delay of availability on the Okta side, thus the backoff.
+		fmt.Println("Could not find an existence subschema property, backing off and retrying. Known timing issue")
+		time.Sleep(time.Second * 3)
 
-	subschema := getSubSchema(schema.Definitions.Custom.Properties, d.Id())
+		subschema, err = getSubSchema(d, m)
+		if err != nil {
+			return err
+		}
+	}
 
 	d.Set("array_type", subschema.Items.Type)
 	d.Set("title", subschema.Title)
@@ -171,13 +174,24 @@ func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
 	})
 }
 
-func getSubSchema(props []articulateOkta.CustomSubSchema, id string) *articulateOkta.CustomSubSchema {
-	for _, schema := range props {
-		if schema.Index == id {
-			return &schema
+func getSubSchema(d *schema.ResourceData, m interface{}) (subschema *articulateOkta.CustomSubSchema, err error) {
+	var schema *articulateOkta.Schema
+	id := d.Id()
+
+	client := getClientFromMetadata(m)
+	schema, _, err = client.Schemas.GetUserSchema()
+	if err != nil {
+		return
+	}
+
+	for _, part := range schema.Definitions.Custom.Properties {
+		if part.Index == id {
+			subschema = &part
+			return
 		}
 	}
-	return nil
+
+	return
 }
 
 func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {

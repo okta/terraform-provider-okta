@@ -204,7 +204,7 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
 					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
 					resource.TestCheckResourceAttr(resourceName, "login", email),
-					resource.TestCheckResourceAttr(resourceName, "email", fmt.Sprintf("test1-%d@testing.com", ri)),
+					resource.TestCheckResourceAttr(resourceName, "email", email),
 					resource.TestCheckResourceAttr(resourceName, "admin_roles.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "city", "New York"),
 					resource.TestCheckResourceAttr(resourceName, "cost_center", "10"),
