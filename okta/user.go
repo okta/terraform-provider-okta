@@ -498,27 +498,31 @@ func updateGroupsOnUser(u string, g []string, c *okta.Client) error {
 // handle setting of user status based on what the current status is because okta
 // only allows transitions to certain statuses from other statuses - consult okta User API docs for more info
 // https://developer.okta.com/docs/api/resources/users#lifecycle-operations
-func updateUserStatus(u string, d string, c *okta.Client) error {
-	user, _, err := c.User.GetUser(u)
+func updateUserStatus(uid string, desiredStatus string, c *okta.Client) error {
+	user, _, err := c.User.GetUser(uid)
 
 	if err != nil {
 		return err
 	}
 
 	var statusErr error
-	switch d {
+	switch desiredStatus {
 	case "SUSPENDED":
-		_, statusErr = c.User.SuspendUser(u)
+		_, statusErr = c.User.SuspendUser(uid)
 	case "DEPROVISIONED":
-		_, statusErr = c.User.DeactivateUser(u)
+		_, statusErr = c.User.DeactivateUser(uid)
 	case "ACTIVE":
-		if user.Status == "SUSPENDED" {
-			_, statusErr = c.User.UnsuspendUser(u)
-		} else if user.Status == "PASSWORD_EXPIRED" {
+		switch user.Status {
+		case "SUSPENDED":
+			_, statusErr = c.User.UnsuspendUser(uid)
+			break
+		case "PASSWORD_EXPIRED":
 			// Ignore password expired status. This status is already activated.
 			return nil
-		} else {
-			_, _, statusErr = c.User.ActivateUser(u, nil)
+		case "LOCKED_OUT":
+			_, statusErr = c.User.UnlockUser(uid)
+		default:
+			_, _, statusErr = c.User.ActivateUser(uid, nil)
 		}
 	}
 
@@ -526,7 +530,7 @@ func updateUserStatus(u string, d string, c *okta.Client) error {
 		return statusErr
 	}
 
-	err = waitForStatusTransition(u, c)
+	err = waitForStatusTransition(uid, c)
 
 	if err != nil {
 		return err
