@@ -499,7 +499,7 @@ func updateGroupsOnUser(u string, g []string, c *okta.Client) error {
 // only allows transitions to certain statuses from other statuses - consult okta User API docs for more info
 // https://developer.okta.com/docs/api/resources/users#lifecycle-operations
 func updateUserStatus(uid string, desiredStatus string, c *okta.Client) error {
-	user, _, err := c.User.GetUser(u)
+	user, _, err := c.User.GetUser(uid)
 
 	if err != nil {
 		return err
