@@ -49,3 +49,7 @@ For Release v3.0.9
 For Release v3.0.10
 
 * Add okta_network_zone resource 
+
+For Release v3.0.11
+
+* Fix ocassional panic when creating a user schema see https://github.com/articulate/terraform-provider-okta/issues/144
