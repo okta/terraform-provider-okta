@@ -54,3 +54,7 @@ For Release v3.0.11
 
 * Fix ocassional panic when creating a user schema see https://github.com/articulate/terraform-provider-okta/issues/144
 * Users in LOCKED_OUT state are unlocked when config is ACTIVE https://github.com/articulate/terraform-provider-okta/issues/225
+
+For Release v3.0.12
+
+* Ensure schema does not panic after retry :smh:
