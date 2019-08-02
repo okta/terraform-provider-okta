@@ -94,6 +94,7 @@ func resourceIdpSocialRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended)
 	d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
 	d.Set("subject_match_type", idp.Policy.Subject.MatchType)
+	d.Set("subject_match_attribute", idp.Policy.Subject.MatchAttribute)
 	d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
 	d.Set("client_id", idp.Protocol.Credentials.Client.ClientID)
 	d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
@@ -143,7 +144,8 @@ func buildidpSocial(d *schema.ResourceData) *OIDCIdentityProvider {
 			MaxClockSkew: int64(d.Get("max_clock_skew").(int)),
 			Provisioning: NewIdpProvisioning(d),
 			Subject: &OIDCSubject{
-				MatchType: d.Get("subject_match_type").(string),
+				MatchType:      d.Get("subject_match_type").(string),
+				MatchAttribute: d.Get("subject_match_attribute").(string),
 				UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
 					Template: d.Get("username_template").(string),
 				},

@@ -169,6 +169,7 @@ type (
 
 	OIDCSubject struct {
 		MatchType        string                                       `json:"matchType,omitempty"`
+		MatchAttribute   string                                       `json:"matchAttribute,omitempty"`
 		UserNameTemplate *okta.ApplicationCredentialsUsernameTemplate `json:"userNameTemplate,omitempty"`
 	}
 

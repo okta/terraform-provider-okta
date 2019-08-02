@@ -69,6 +69,10 @@ var (
 			Optional: true,
 			Default:  "USERNAME",
 		},
+		"subject_match_attribute": &schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
 		"profile_master": &schema.Schema{
 			Type:     schema.TypeBool,
 			Optional: true,
