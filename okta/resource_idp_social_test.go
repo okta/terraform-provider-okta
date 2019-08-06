@@ -29,6 +29,8 @@ func TestAccIdpSocial(t *testing.T) {
 					resource.TestCheckResourceAttr(fbName, "client_id", "abcd123"),
 					resource.TestCheckResourceAttr(fbName, "client_secret", "abcd123"),
 					resource.TestCheckResourceAttr(fbName, "username_template", "idpuser.email"),
+					resource.TestCheckResourceAttr(fbName, "match_type", "CUSTOM_ATTRIBUTE"),
+					resource.TestCheckResourceAttr(fbName, "match_attribute", "customfieldId"),
 
 					resource.TestCheckResourceAttr(microName, "type", "MICROSOFT"),
 					resource.TestCheckResourceAttr(microName, "protocol_type", "OIDC"),
