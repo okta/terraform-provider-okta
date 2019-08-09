@@ -34,6 +34,7 @@ func TestAccOktaPolicyRuleSignOn(t *testing.T) {
 	mgr := newFixtureManager(policyRuleSignOn)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	excludedNetwork := mgr.GetFixtures("excluded_network.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleSignOn)
 
 	resource.Test(t, resource.TestCase{
@@ -60,6 +61,16 @@ func TestAccOktaPolicyRuleSignOn(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "session_lifetime", "240"),
 					resource.TestCheckResourceAttr(resourceName, "session_persistent", "false"),
 					resource.TestCheckResourceAttr(resourceName, "users_excluded.#", "1"),
+				),
+			},
+			{
+				Config: excludedNetwork,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "access", "DENY"),
+					resource.TestCheckResourceAttr(resourceName, "network_connection", "ZONE"),
 				),
 			},
 		},
