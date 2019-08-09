@@ -1,4 +1,4 @@
-package okta
+package okta_sdk
 
 import (
 	"fmt"

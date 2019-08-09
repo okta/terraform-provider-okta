@@ -23,6 +23,11 @@ func resourceUserSchemaObject() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
+			"base": &schema.Schema{
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: userSchemaResource,
+			},
 			"custom": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
@@ -72,6 +77,7 @@ func resourceUserSchemaObjectRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUserSchemaObjectUpdate(d *schema.ResourceData, m interface{}) error {
+	updateSubSchema(d.Get(""))
 	return resourceUserSchemaRead(d, m)
 }
 

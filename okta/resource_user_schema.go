@@ -20,8 +20,8 @@ func resourceUserSchema() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
-
-		Schema: userSchemaSchema,
+		DeprecationMessage: "This resource is now deprecated, please use okta_user_schema_object",
+		Schema:             userSchemaSchema,
 	}
 }
 
