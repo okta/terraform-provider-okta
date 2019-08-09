@@ -137,20 +137,11 @@ func ensureNotDefaultRule(d *schema.ResourceData) error {
 }
 
 func getNetwork(d *schema.ResourceData) *articulateOkta.Network {
-	network := &articulateOkta.Network{
+	return &articulateOkta.Network{
 		Connection: d.Get("network_connection").(string),
+		Exclude:    convertInterfaceToStringArrNullable(d.Get("network_excludes")),
+		Include:    convertInterfaceToStringArrNullable(d.Get("network_includes")),
 	}
-
-	include := d.Get("network_includes")
-	exclude := d.Get("network_excludes")
-
-	if include != nil {
-		network.Include = convertInterfaceToStringArr(include)
-	} else if exclude != nil {
-		network.Exclude = convertInterfaceToStringArr(exclude)
-	}
-
-	return network
 }
 
 func getPolicyRule(d *schema.ResourceData, m interface{}) (*articulateOkta.Rule, error) {
