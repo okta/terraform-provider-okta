@@ -67,3 +67,8 @@ For Release v3.0.13
 For Release v3.0.14
 
 * Fix logic around including/excluding networks on policy rules
+
+For Release v3.0.15
+
+* Update Okta SDK
+* Filter out GROUP based admin roles when processing user `admin_roles` attribute
