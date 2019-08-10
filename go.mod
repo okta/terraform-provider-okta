@@ -24,4 +24,4 @@ require (
 	golang.org/x/sys v0.0.0-20190528012530-adf421d2caf4 // indirect
 )
 
-replace github.com/okta/okta-sdk-golang => github.com/articulate/okta-sdk-golang v1.0.5
+replace github.com/okta/okta-sdk-golang => github.com/articulate/okta-sdk-golang v0.0.0-20190810203837-596e830a6cb1

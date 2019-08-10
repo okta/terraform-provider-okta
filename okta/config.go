@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -9,7 +10,6 @@ import (
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform/helper/logging"
 	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/cache"
 )
 
 func (adt *AddHeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {
@@ -56,20 +56,25 @@ func (c *Config) loadAndValidate() error {
 
 	orgUrl := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
 
-	config := okta.NewConfig().
-		WithOrgUrl(orgUrl).
-		WithToken(c.apiToken).
-		WithCache(false).
-		WithBackoff(c.backoff).
-		WithMinWait(time.Duration(c.minWait) * time.Second).
-		WithMaxWait(time.Duration(c.maxWait) * time.Second).
-		WithRetries(int32(c.retryCount))
-	client := okta.NewClient(config, httpClient, cache.NewNoOpCache())
+	client, err := okta.NewClient(
+		context.Background(),
+		okta.WithOrgUrl(orgUrl),
+		okta.WithToken(c.apiToken),
+		okta.WithCache(false),
+		okta.WithBackoff(c.backoff),
+		okta.WithMinWait(time.Duration(c.minWait)*time.Second),
+		okta.WithMaxWait(time.Duration(c.maxWait)*time.Second),
+		okta.WithRetries(int32(c.retryCount)),
+		okta.WithHttpClient(*httpClient),
+	)
+	if err != nil {
+		return err
+	}
 	c.supplementClient = &ApiSupplement{
 		baseURL:         fmt.Sprintf("https://%s.%s", c.orgName, c.domain),
 		client:          httpClient,
 		token:           c.apiToken,
-		requestExecutor: okta.NewRequestExecutor(httpClient, cache.NewNoOpCache(), config),
+		requestExecutor: client.GetRequestExecutor(),
 	}
 
 	// add the Okta SDK client object to Config

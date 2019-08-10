@@ -332,7 +332,7 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 			if !contains(userIDList, user.Id) {
 				userID := user.Id
 				asyncActionList = append(asyncActionList, func() error {
-					return suppressErrorOn404(client.Application.DeleteApplicationUser(id, userID))
+					return suppressErrorOn404(client.Application.DeleteApplicationUser(id, userID, nil))
 				})
 			}
 		}

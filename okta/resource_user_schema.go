@@ -2,7 +2,6 @@ package okta
 
 import (
 	"fmt"
-	"time"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -133,18 +132,7 @@ func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	} else if subschema == nil {
-		// See https://github.com/articulate/terraform-provider-okta/issues/144
-		// Occassionally a schema prop would be created and the read would not find it.
-		// There appears to be a delay of availability on the Okta side, thus the backoff.
-		fmt.Println("Could not find an existence subschema property, backing off and retrying. Known timing issue")
-		time.Sleep(time.Second * 3)
-
-		subschema, err = getSubSchema(d, m)
-		if err != nil {
-			return err
-		} else if subschema == nil {
-			return fmt.Errorf("Okta did not return a subschema for \"%s\"", d.Id())
-		}
+		return fmt.Errorf("Okta did not return a subschema for \"%s\". This is a known bug caused by terraform running concurrent subschena resources. See https://github.com/articulate/terraform-provider-okta/issues/144. New resource is on its way to solve this limitation.", d.Id())
 	}
 
 	d.Set("array_type", subschema.Items.Type)

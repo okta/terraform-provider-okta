@@ -15,7 +15,6 @@ import (
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta/cache"
 )
 
 func buildSchema(s, t map[string]*schema.Schema) map[string]*schema.Schema {
@@ -322,12 +321,7 @@ func getSupplementFromMetadata(meta interface{}) *ApiSupplement {
 }
 
 func getRequestExecutor(m interface{}) *okta.RequestExecutor {
-	c := m.(*Config)
-	config := okta.NewConfig().
-		WithOrgUrl(getBaseUrl(m)).
-		WithToken(c.apiToken).
-		WithCache(false)
-	return okta.NewRequestExecutor(nil, cache.NewNoOpCache(), config)
+	return getOktaClientFromMetadata(m).GetRequestExecutor()
 }
 
 func is404(status int) bool {
