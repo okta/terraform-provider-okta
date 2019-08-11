@@ -144,6 +144,7 @@ func Provider() terraform.ResourceProvider {
 			templateEmail:          resourceTemplateEmail(),
 			trustedOrigin:          resourceTrustedOrigin(),
 			userSchema:             resourceUserSchema(),
+			userBaseSchema:         resourceUserBaseSchema(),
 
 			// Below resources will be deprecated, soon to be removed
 			"okta_user_schemas": resourceUserSchemas(),

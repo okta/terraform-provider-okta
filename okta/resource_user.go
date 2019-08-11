@@ -398,7 +398,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		profile := populateUserProfile(d)
 		userBody := okta.User{Profile: profile}
 
-		_, _, err := client.User.UpdateUser(d.Id(), userBody)
+		_, _, err := client.User.UpdateUser(d.Id(), userBody, nil)
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating User in Okta: %v", err)
 		}
@@ -450,7 +450,7 @@ func ensureUserDelete(id, status string, client *okta.Client) error {
 	}
 
 	for i := 0; i < passes; i++ {
-		_, err := client.User.DeactivateOrDeleteUser(id)
+		_, err := client.User.DeactivateOrDeleteUser(id, nil)
 		if err != nil {
 			return fmt.Errorf("Failed to deprovision or delete user from Okta: %v", err)
 		}

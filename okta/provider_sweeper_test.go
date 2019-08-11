@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"testing"
@@ -36,6 +37,7 @@ func TestMain(m *testing.M) {
 	setupSweeper(oktaGroup, sweepGroups)
 	setupSweeper(oktaUser, sweepUsers)
 	setupSweeper(userSchema, sweepUserSchema)
+	setupSweeper(userBaseSchema, sweepUserBaseSchema)
 	resource.TestMain(m)
 }
 
@@ -84,8 +86,16 @@ func sharedClient(region string) (*articulateOkta.Client, *okta.Client, *ApiSupp
 
 	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
 
-	config := okta.NewConfig().WithOrgUrl(orgURL).WithToken(c.apiToken).WithBackoff(true).WithRetries(20)
-	client := okta.NewClient(config, nil, nil)
+	client, err := okta.NewClient(
+		context.Background(),
+		okta.WithOrgUrl(orgURL),
+		okta.WithToken(c.apiToken),
+		okta.WithBackoff(true),
+		okta.WithRetries(20),
+	)
+	if err != nil {
+		return articulateClient, client, nil, err
+	}
 	api := &ApiSupplement{requestExecutor: client.GetRequestExecutor()}
 
 	return articulateClient, client, api, nil

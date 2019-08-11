@@ -351,14 +351,27 @@ func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 	return &profile
 }
 
+func listUserOnlyRoles(c *okta.Client, userId string) (userOnlyRoles []*okta.Role, resp *okta.Response, err error) {
+	roles, resp, err := c.User.ListAssignedRoles(userId, nil)
+	if err != nil {
+		return
+	}
+
+	for _, role := range roles {
+		if role.AssignmentType == "USER" {
+			userOnlyRoles = append(userOnlyRoles, role)
+		}
+	}
+
+	return
+}
+
 func setAdminRoles(d *schema.ResourceData, c *okta.Client) error {
 	roleTypes := make([]interface{}, 0)
 
 	// set all roles currently attached to user in state
-	roles, resp, err := c.User.ListAssignedRoles(d.Id(), nil)
+	roles, resp, err := listUserOnlyRoles(c, d.Id())
 
-	// only super admin can list roles if this fails assume the user has no
-	// admin roles
 	if err != nil {
 		if resp.StatusCode == http.StatusForbidden {
 			log.Printf("[INFO] Insufficient permissions to get Admin Roles, skipping.")
@@ -447,7 +460,7 @@ func flattenUser(u *okta.User, d *schema.ResourceData) (map[string]interface{}, 
 
 // need to remove from all current admin roles and reassign based on terraform configs when a change is detected
 func updateAdminRolesOnUser(u string, r []string, c *okta.Client) error {
-	roles, _, err := c.User.ListAssignedRoles(u, nil)
+	roles, _, err := listUserOnlyRoles(c, u)
 
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Updating Admin Roles On User: %v", err)
@@ -510,7 +523,7 @@ func updateUserStatus(uid string, desiredStatus string, c *okta.Client) error {
 	case "SUSPENDED":
 		_, statusErr = c.User.SuspendUser(uid)
 	case "DEPROVISIONED":
-		_, statusErr = c.User.DeactivateUser(uid)
+		_, statusErr = c.User.DeactivateUser(uid, nil)
 	case "ACTIVE":
 		switch user.Status {
 		case "SUSPENDED":

@@ -58,3 +58,17 @@ For Release v3.0.11
 For Release v3.0.12
 
 * Ensure schema does not panic after retry :smh:
+
+For Release v3.0.13
+
+* Add okta_user_base_schema resource for managing base schema properties
+* Add missing attribute, match_type and match_attribute, on social idp resource
+
+For Release v3.0.14
+
+* Fix logic around including/excluding networks on policy rules
+
+For Release v3.0.15
+
+* Update Okta SDK
+* Filter out GROUP based admin roles when processing user `admin_roles` attribute

@@ -23,7 +23,8 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 * [okta_group_roles](./okta_group_roles) Supports the management of Okta Group Administrator Roles.
 * [okta_group_rule](./okta_group_rule) Supports the management of Okta Group Rules.
 * [okta_trusted_origin](./okta_trusted_origin) Supports the management of Okta Trusted Sources and Origins.
-* [okta_user_schemas](./okta_user_schemas) Supports the management of Okta User Profile Attribute Schemas.
+* [okta_user_schema](./okta_user_schema) Supports the management of Okta defined User Profile Attribute Schemas.
+* [okta_user_base_schema](./okta_user_base_schema) Supports the management of Okta User Profile Attribute Schemas.
 * [okta_auth_server](./okta_auth_server) Supports the management of Okta Authorization servers.
 * [okta_auth_server_policy](./okta_auth_server_policy) Supports the management of Okta Authorization servers policies.
 * [okta_auth_server_policy_rule](./okta_auth_server_policy_rule) Supports the management of Okta Authorization servers policy rules.
