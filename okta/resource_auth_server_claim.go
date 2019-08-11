@@ -3,6 +3,7 @@ package okta
 import (
 	"net/http"
 
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 )
@@ -64,15 +65,15 @@ func resourceAuthServerClaim() *schema.Resource {
 	}
 }
 
-func buildAuthServerClaim(d *schema.ResourceData) *AuthorizationServerClaim {
-	return &AuthorizationServerClaim{
+func buildAuthServerClaim(d *schema.ResourceData) *sdk.AuthorizationServerClaim {
+	return &sdk.AuthorizationServerClaim{
 		Status:               d.Get("status").(string),
 		ClaimType:            d.Get("claim_type").(string),
 		ValueType:            d.Get("value_type").(string),
 		Value:                d.Get("value").(string),
 		AlwaysIncludeInToken: d.Get("always_include_in_token").(bool),
 		Name:                 d.Get("name").(string),
-		Conditions:           &ClaimConditions{Scopes: convertInterfaceToStringSetNullable(d.Get("scopes"))},
+		Conditions:           &sdk.ClaimConditions{Scopes: convertInterfaceToStringSetNullable(d.Get("scopes"))},
 		GroupFilterType:      d.Get("group_filter_type").(string),
 	}
 }
@@ -134,9 +135,9 @@ func resourceAuthServerClaimDelete(d *schema.ResourceData, m interface{}) error 
 	return err
 }
 
-func fetchAuthServerClaim(d *schema.ResourceData, m interface{}) (*AuthorizationServerClaim, error) {
+func fetchAuthServerClaim(d *schema.ResourceData, m interface{}) (*sdk.AuthorizationServerClaim, error) {
 	c := getSupplementFromMetadata(m)
-	auth, resp, err := c.GetAuthorizationServerClaim(d.Get("auth_server_id").(string), d.Id(), AuthorizationServerClaim{})
+	auth, resp, err := c.GetAuthorizationServerClaim(d.Get("auth_server_id").(string), d.Id(), sdk.AuthorizationServerClaim{})
 
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil

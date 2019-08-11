@@ -1,4 +1,4 @@
-package okta
+package sdk
 
 import (
 	"fmt"
@@ -215,7 +215,7 @@ func (i *BasicIdp) IsIDP() bool {
 	return true
 }
 
-func getEndpoint(d *schema.ResourceData, key string) *Endpoint {
+func GetEndpoint(d *schema.ResourceData, key string) *Endpoint {
 	return &Endpoint{
 		Binding: d.Get(fmt.Sprintf("%s_binding", key)).(string),
 		URL:     d.Get(fmt.Sprintf("%s_url", key)).(string),

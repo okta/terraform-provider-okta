@@ -3,6 +3,7 @@ package okta
 import (
 	"net/http"
 
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 )
@@ -48,8 +49,8 @@ func resourceAuthServerScope() *schema.Resource {
 	}
 }
 
-func buildAuthServerScope(d *schema.ResourceData) *AuthorizationServerScope {
-	return &AuthorizationServerScope{
+func buildAuthServerScope(d *schema.ResourceData) *sdk.AuthorizationServerScope {
+	return &sdk.AuthorizationServerScope{
 		Consent:         d.Get("consent").(string),
 		Description:     d.Get("description").(string),
 		MetadataPublish: d.Get("metadata_publish").(string),
@@ -110,9 +111,9 @@ func resourceAuthServerScopeDelete(d *schema.ResourceData, m interface{}) error 
 	return err
 }
 
-func fetchAuthServerScope(d *schema.ResourceData, m interface{}) (*AuthorizationServerScope, error) {
+func fetchAuthServerScope(d *schema.ResourceData, m interface{}) (*sdk.AuthorizationServerScope, error) {
 	c := getSupplementFromMetadata(m)
-	auth, resp, err := c.GetAuthorizationServerScope(d.Get("auth_server_id").(string), d.Id(), AuthorizationServerScope{})
+	auth, resp, err := c.GetAuthorizationServerScope(d.Get("auth_server_id").(string), d.Id(), sdk.AuthorizationServerScope{})
 
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil

@@ -1,4 +1,4 @@
-package okta
+package sdk
 
 import (
 	"fmt"
@@ -94,23 +94,23 @@ type (
 
 func (m *ApiSupplement) DeleteIdpDiscoveryRule(policyId, id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%s/rules/%s", policyId, id)
-	req, err := m.requestExecutor.NewRequest("DELETE", url, nil)
+	req, err := m.RequestExecutor.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return m.requestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(req, nil)
 }
 
 func (m *ApiSupplement) ListIdpDiscoveryRules(policyId string) ([]*IdpDiscoveryRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%s/rules", policyId)
-	req, err := m.requestExecutor.NewRequest("GET", url, nil)
+	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var auth []*IdpDiscoveryRule
-	resp, err := m.requestExecutor.Do(req, &auth)
+	resp, err := m.RequestExecutor.Do(req, &auth)
 	return auth, resp, err
 }
 
@@ -119,13 +119,13 @@ func (m *ApiSupplement) CreateIdpDiscoveryRule(policyId string, body IdpDiscover
 	if qp != nil {
 		url += qp.String()
 	}
-	req, err := m.requestExecutor.NewRequest("POST", url, body)
+	req, err := m.RequestExecutor.NewRequest("POST", url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	rule := body
-	resp, err := m.requestExecutor.Do(req, &rule)
+	resp, err := m.RequestExecutor.Do(req, &rule)
 	return &rule, resp, err
 }
 
@@ -134,43 +134,43 @@ func (m *ApiSupplement) UpdateIdpDiscoveryRule(policyId, id string, body IdpDisc
 	if qp != nil {
 		url += qp.String()
 	}
-	req, err := m.requestExecutor.NewRequest("PUT", url, body)
+	req, err := m.RequestExecutor.NewRequest("PUT", url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	rule := body
-	resp, err := m.requestExecutor.Do(req, &rule)
+	resp, err := m.RequestExecutor.Do(req, &rule)
 	return &rule, resp, err
 }
 
 func (m *ApiSupplement) GetIdpDiscoveryRule(policyId, id string) (*IdpDiscoveryRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%s/rules/%s", policyId, id)
-	req, err := m.requestExecutor.NewRequest("GET", url, nil)
+	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	rule := &IdpDiscoveryRule{}
-	resp, err := m.requestExecutor.Do(req, rule)
+	resp, err := m.RequestExecutor.Do(req, rule)
 	return rule, resp, err
 }
 
 func (m *ApiSupplement) ActivateRule(policyId, id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%s/rules/%s/lifecycle/activate", policyId, id)
-	req, err := m.requestExecutor.NewRequest("POST", url, nil)
+	req, err := m.RequestExecutor.NewRequest("POST", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return m.requestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(req, nil)
 }
 
 func (m *ApiSupplement) DeactivateRule(policyId, id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%s/rules/%s/lifecycle/deactivate", policyId, id)
-	req, err := m.requestExecutor.NewRequest("POST", url, nil)
+	req, err := m.RequestExecutor.NewRequest("POST", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return m.requestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(req, nil)
 }

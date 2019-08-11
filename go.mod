@@ -4,6 +4,7 @@ go 1.12
 
 require (
 	github.com/articulate/oktasdk-go v0.0.0-20190417182045-e41ed7befc56
+	github.com/articulate/terraform v0.6.12 // indirect
 	github.com/aws/aws-sdk-go v1.20.3 // indirect
 	github.com/beevik/etree v1.1.0 // indirect
 	github.com/crewjam/saml v0.0.0-20180831135026-ebc5f787b786

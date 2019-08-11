@@ -8,9 +8,15 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-uuserSearchResource := Elem: &schema.Resource{
-	Schema: userSchemaSchema,
-}
+var (
+	userSchemaResource = &schema.Resource{
+		Schema: userSchemaSchema,
+	}
+
+	userBaseSchemaResource = &schema.Resource{
+		Schema: userBaseSchemaSchema,
+	}
+)
 
 func resourceUserSchemaObject() *schema.Resource {
 	return &schema.Resource{
@@ -26,12 +32,12 @@ func resourceUserSchemaObject() *schema.Resource {
 			"base": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
-				Elem: userSchemaResource,
+				Elem:     userSchema,
 			},
 			"custom": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
-				Elem: userSchemaResource,
+				Elem:     userSchemaResource,
 			},
 		},
 	}
@@ -90,18 +96,18 @@ func flattenUserSchemaObject(props []*articulateOkta.CustomSubSchema) *schema.Se
 
 	for _, prop := range props {
 		propSet.Add(map[string]interface{}{
-			"index": prop.Index,
-			"array_type": prop.Items.Type,
-			"title": prop.Title,
-			"type": prop.Type,
+			"index":       prop.Index,
+			"array_type":  prop.Items.Type,
+			"title":       prop.Title,
+			"type":        prop.Type,
 			"description": prop.Description,
-			"required": prop.Required,
-			"min_length": prop.MinLength,
-			"max_length": prop.MaxLength,
-			"enum": prop.Enum,
-			"one_of": flattenOneOf(subschema.OneOf),
+			"required":    prop.Required,
+			"min_length":  prop.MinLength,
+			"max_length":  prop.MaxLength,
+			"enum":        prop.Enum,
+			"one_of":      flattenOneOf(subschema.OneOf),
 			"permissions": prop.Permissions,
-			"master": prop.Master,
+			"master":      prop.Master,
 		})
 	}
 

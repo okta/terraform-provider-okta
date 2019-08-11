@@ -10,6 +10,7 @@ import (
 	"strings"
 	"unicode"
 
+	sdk "github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/peterhellberg/link"
 
@@ -316,7 +317,7 @@ func getOktaClientFromMetadata(meta interface{}) *okta.Client {
 	return meta.(*Config).oktaClient
 }
 
-func getSupplementFromMetadata(meta interface{}) *ApiSupplement {
+func getSupplementFromMetadata(meta interface{}) *sdk.ApiSupplement {
 	return meta.(*Config).supplementClient
 }
 

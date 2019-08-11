@@ -1,4 +1,4 @@
-package okta_sdk
+package sdk
 
 import (
 	"fmt"
@@ -10,19 +10,19 @@ import (
 
 // ApiSupplement not all APIs are supported by okta-sdk-golang, this will act as a supplement to the Okta SDK
 type ApiSupplement struct {
-	baseURL         string
-	client          *http.Client
-	token           string
-	requestExecutor *okta.RequestExecutor
+	BaseURL         string
+	Client          *http.Client
+	Token           string
+	RequestExecutor *okta.RequestExecutor
 }
 
 func (m *ApiSupplement) GetSAMLMetdata(id, keyID string) ([]byte, *http.Response, error) {
-	url := fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata?kid=%s", m.baseURL, id, keyID)
+	url := fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata?kid=%s", m.BaseURL, id, keyID)
 	return m.GetXml(url)
 }
 
 func (m *ApiSupplement) GetSAMLIdpMetdata(id string) ([]byte, *http.Response, error) {
-	url := fmt.Sprintf("%s/api/v1/idps/%s/metadata.xml", m.baseURL, id)
+	url := fmt.Sprintf("%s/api/v1/idps/%s/metadata.xml", m.BaseURL, id)
 	return m.GetXml(url)
 }
 
@@ -31,10 +31,10 @@ func (m *ApiSupplement) GetXml(url string) ([]byte, *http.Response, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	req.Header.Add("Authorization", fmt.Sprintf("SSWS %s", m.token))
+	req.Header.Add("Authorization", fmt.Sprintf("SSWS %s", m.Token))
 	req.Header.Add("User-Agent", "Terraform Okta Provider")
 	req.Header.Add("Accept", "application/xml")
-	res, err := m.requestExecutor.DoWithRetries(req, 0)
+	res, err := m.RequestExecutor.DoWithRetries(req, 0)
 	if err != nil {
 		return nil, res, err
 	} else if res.StatusCode == http.StatusNotFound {

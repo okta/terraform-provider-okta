@@ -1,4 +1,4 @@
-package okta
+package sdk
 
 import (
 	"fmt"
@@ -34,25 +34,25 @@ func (m *ApiSupplement) CreateNetworkZone(body NetworkZone, qp *query.Params) (*
 	if qp != nil {
 		url += qp.String()
 	}
-	req, err := m.requestExecutor.NewRequest("POST", url, body)
+	req, err := m.RequestExecutor.NewRequest("POST", url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	zone := body
-	resp, err := m.requestExecutor.Do(req, &zone)
+	resp, err := m.RequestExecutor.Do(req, &zone)
 	return &zone, resp, err
 }
 
 func (m *ApiSupplement) GetNetworkZone(id string) (*NetworkZone, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/zones/%s", id)
-	req, err := m.requestExecutor.NewRequest("GET", url, nil)
+	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	zone := &NetworkZone{}
-	resp, err := m.requestExecutor.Do(req, &zone)
+	resp, err := m.RequestExecutor.Do(req, &zone)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -61,12 +61,12 @@ func (m *ApiSupplement) GetNetworkZone(id string) (*NetworkZone, *okta.Response,
 
 func (m *ApiSupplement) DeleteNetworkZone(id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/zones/%s", id)
-	req, err := m.requestExecutor.NewRequest("DELETE", url, nil)
+	req, err := m.RequestExecutor.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return m.requestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(req, nil)
 }
 
 func (m *ApiSupplement) UpdateNetworkZone(id string, body NetworkZone, qp *query.Params) (*NetworkZone, *okta.Response, error) {
@@ -74,13 +74,13 @@ func (m *ApiSupplement) UpdateNetworkZone(id string, body NetworkZone, qp *query
 	if qp != nil {
 		url += qp.String()
 	}
-	req, err := m.requestExecutor.NewRequest("PUT", url, body)
+	req, err := m.RequestExecutor.NewRequest("PUT", url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	zone := body
-	resp, err := m.requestExecutor.Do(req, &zone)
+	resp, err := m.RequestExecutor.Do(req, &zone)
 	if err != nil {
 		return nil, resp, err
 	}

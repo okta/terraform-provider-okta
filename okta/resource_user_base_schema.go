@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"

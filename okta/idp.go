@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/articulate/terraform-provider-okta/sdk"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 )
@@ -167,7 +169,7 @@ func resourceDeleteAnyIdp(d *schema.ResourceData, m interface{}, active bool) er
 	return nil
 }
 
-func fetchIdp(id string, m interface{}, idp IdentityProvider) error {
+func fetchIdp(id string, m interface{}, idp sdk.IdentityProvider) error {
 	client := getSupplementFromMetadata(m)
 	_, response, err := client.GetIdentityProvider(id, idp)
 	if response.StatusCode == http.StatusNotFound {
@@ -178,7 +180,7 @@ func fetchIdp(id string, m interface{}, idp IdentityProvider) error {
 	return responseErr(response, err)
 }
 
-func updateIdp(id string, m interface{}, idp IdentityProvider) error {
+func updateIdp(id string, m interface{}, idp sdk.IdentityProvider) error {
 	client := getSupplementFromMetadata(m)
 	_, response, err := client.UpdateIdentityProvider(id, idp, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
@@ -190,7 +192,7 @@ func updateIdp(id string, m interface{}, idp IdentityProvider) error {
 	return responseErr(response, err)
 }
 
-func createIdp(m interface{}, idp IdentityProvider) error {
+func createIdp(m interface{}, idp sdk.IdentityProvider) error {
 	client := getSupplementFromMetadata(m)
 	_, response, err := client.CreateIdentityProvider(idp, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
@@ -216,7 +218,7 @@ func setIdpStatus(id, status, desiredStatus string, m interface{}) error {
 	return nil
 }
 
-func syncGroupActions(d *schema.ResourceData, groups *IDPGroupsAction) error {
+func syncGroupActions(d *schema.ResourceData, groups *sdk.IDPGroupsAction) error {
 	if groups != nil {
 		d.Set("groups_action", groups.Action)
 		d.Set("groups_attribute", groups.SourceAttributeName)
@@ -230,7 +232,7 @@ func syncGroupActions(d *schema.ResourceData, groups *IDPGroupsAction) error {
 	return nil
 }
 
-func getIdentityProviderExists(idp IdentityProvider) schema.ExistsFunc {
+func getIdentityProviderExists(idp sdk.IdentityProvider) schema.ExistsFunc {
 	return func(d *schema.ResourceData, m interface{}) (bool, error) {
 		_, resp, err := getSupplementFromMetadata(m).GetIdentityProvider(d.Id(), idp)
 
@@ -238,18 +240,18 @@ func getIdentityProviderExists(idp IdentityProvider) schema.ExistsFunc {
 	}
 }
 
-func NewIdpProvisioning(d *schema.ResourceData) *IDPProvisioning {
-	return &IDPProvisioning{
+func NewIdpProvisioning(d *schema.ResourceData) *sdk.IDPProvisioning {
+	return &sdk.IDPProvisioning{
 		Action: d.Get("provisioning_action").(string),
-		Conditions: &IDPConditions{
-			Deprovisioned: &IDPAction{
+		Conditions: &sdk.IDPConditions{
+			Deprovisioned: &sdk.IDPAction{
 				Action: d.Get("deprovisioned_action").(string),
 			},
-			Suspended: &IDPAction{
+			Suspended: &sdk.IDPAction{
 				Action: d.Get("suspended_action").(string),
 			},
 		},
-		Groups: &IDPGroupsAction{
+		Groups: &sdk.IDPGroupsAction{
 			Action:              d.Get("groups_action").(string),
 			Assignments:         convertInterfaceToStringSetNullable(d.Get("groups_assignment")),
 			Filter:              convertInterfaceToStringSetNullable(d.Get("groups_filter")),
@@ -258,32 +260,32 @@ func NewIdpProvisioning(d *schema.ResourceData) *IDPProvisioning {
 	}
 }
 
-func NewAccountLink(d *schema.ResourceData) *AccountLink {
+func NewAccountLink(d *schema.ResourceData) *sdk.AccountLink {
 	link := convertInterfaceToStringSet(d.Get("account_link_group_include"))
-	var filter *Filter
+	var filter *sdk.Filter
 
 	if len(link) > 0 {
-		filter = &Filter{
-			Groups: &Included{
+		filter = &sdk.Filter{
+			Groups: &sdk.Included{
 				Include: link,
 			},
 		}
 	}
 
-	return &AccountLink{
+	return &sdk.AccountLink{
 		Action: d.Get("account_link_action").(string),
 		Filter: filter,
 	}
 }
 
-func NewAlgorithms(d *schema.ResourceData) *Algorithms {
-	return &Algorithms{
+func NewAlgorithms(d *schema.ResourceData) *sdk.Algorithms {
+	return &sdk.Algorithms{
 		Request:  NewSignature(d, "request"),
 		Response: NewSignature(d, "response"),
 	}
 }
 
-func NewSignature(d *schema.ResourceData, key string) *IDPSignature {
+func NewSignature(d *schema.ResourceData, key string) *sdk.IDPSignature {
 	scopeKey := fmt.Sprintf("%s_signature_scope", key)
 	scope := d.Get(scopeKey).(string)
 
@@ -291,32 +293,32 @@ func NewSignature(d *schema.ResourceData, key string) *IDPSignature {
 		return nil
 	}
 
-	return &IDPSignature{
-		Signature: &Signature{
+	return &sdk.IDPSignature{
+		Signature: &sdk.Signature{
 			Algorithm: d.Get(fmt.Sprintf("%s_signature_algorithm", key)).(string),
 			Scope:     scope,
 		},
 	}
 }
 
-func NewAcs(d *schema.ResourceData) *ACSSSO {
-	return &ACSSSO{
+func NewAcs(d *schema.ResourceData) *sdk.ACSSSO {
+	return &sdk.ACSSSO{
 		Binding: d.Get("acs_binding").(string),
 		Type:    d.Get("acs_type").(string),
 	}
 }
 
-func NewEndpoints(d *schema.ResourceData) *OIDCEndpoints {
-	return &OIDCEndpoints{
+func NewEndpoints(d *schema.ResourceData) *sdk.OIDCEndpoints {
+	return &sdk.OIDCEndpoints{
 		Acs:           NewAcs(d),
-		Authorization: getEndpoint(d, "authorization"),
-		Token:         getEndpoint(d, "token"),
-		UserInfo:      getEndpoint(d, "user_info"),
-		Jwks:          getEndpoint(d, "jwks"),
+		Authorization: sdk.GetEndpoint(d, "authorization"),
+		Token:         sdk.GetEndpoint(d, "token"),
+		UserInfo:      sdk.GetEndpoint(d, "user_info"),
+		Jwks:          sdk.GetEndpoint(d, "jwks"),
 	}
 }
 
-func syncAlgo(d *schema.ResourceData, alg *Algorithms) {
+func syncAlgo(d *schema.ResourceData, alg *sdk.Algorithms) {
 	if alg != nil {
 		if alg.Request != nil && alg.Request.Signature != nil {
 			reqSign := alg.Request.Signature

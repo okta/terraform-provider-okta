@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/okta/okta-sdk-golang/okta/query"
 )
@@ -83,7 +84,7 @@ func dataSourceIdpSaml() *schema.Resource {
 func dataSourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
 	var (
 		err error
-		idp *SAMLIdentityProvider
+		idp *sdk.SAMLIdentityProvider
 	)
 
 	id := d.Get("id").(string)
@@ -123,8 +124,8 @@ func dataSourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
 	})
 }
 
-func getIdpById(m interface{}, id string) (*SAMLIdentityProvider, error) {
-	var idp SAMLIdentityProvider
+func getIdpById(m interface{}, id string) (*sdk.SAMLIdentityProvider, error) {
+	var idp sdk.SAMLIdentityProvider
 	client := getSupplementFromMetadata(m)
 	_, resp, err := client.GetIdentityProvider(id, &idp)
 
@@ -132,8 +133,8 @@ func getIdpById(m interface{}, id string) (*SAMLIdentityProvider, error) {
 
 }
 
-func getIdpByName(m interface{}, label string) (*SAMLIdentityProvider, error) {
-	var idps []*SAMLIdentityProvider
+func getIdpByName(m interface{}, label string) (*sdk.SAMLIdentityProvider, error) {
+	var idps []*sdk.SAMLIdentityProvider
 	queryParams := query.Params{Limit: 1, Q: label}
 	client := getSupplementFromMetadata(m)
 	_, resp, err := client.ListIdentityProviders(&idps, &queryParams)
