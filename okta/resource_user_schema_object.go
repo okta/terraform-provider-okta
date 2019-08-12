@@ -32,7 +32,7 @@ func resourceUserSchemaObject() *schema.Resource {
 			"base": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
-				Elem:     userSchema,
+				Elem:     userBaseSchemaResource,
 			},
 			"custom": &schema.Schema{
 				Type:     schema.TypeSet,
@@ -72,18 +72,10 @@ func resourceUserSchemaObjectCreate(d *schema.ResourceData, m interface{}) error
 }
 
 func resourceUserSchemaObjectRead(d *schema.ResourceData, m interface{}) error {
-	schm, err := getUserSchemaObject(d, m)
-	if err != nil {
-		return err
-	}
-
-	d.Set("custom", flattenUserSchemaObject(schm.Definitions.Custom.Properties))
-
 	return nil
 }
 
 func resourceUserSchemaObjectUpdate(d *schema.ResourceData, m interface{}) error {
-	updateSubSchema(d.Get(""))
 	return resourceUserSchemaRead(d, m)
 }
 
@@ -92,7 +84,7 @@ func resourceUserSchemaObjectDelete(d *schema.ResourceData, m interface{}) error
 }
 
 func flattenUserSchemaObject(props []*articulateOkta.CustomSubSchema) *schema.Set {
-	propSet := schema.NewSet(schema.HashResource(userSearchResource), []interface{}{})
+	propSet := schema.NewSet(schema.HashResource(userSchemaResource), []interface{}{})
 
 	for _, prop := range props {
 		propSet.Add(map[string]interface{}{
@@ -105,7 +97,7 @@ func flattenUserSchemaObject(props []*articulateOkta.CustomSubSchema) *schema.Se
 			"min_length":  prop.MinLength,
 			"max_length":  prop.MaxLength,
 			"enum":        prop.Enum,
-			"one_of":      flattenOneOf(subschema.OneOf),
+			"one_of":      flattenOneOf(prop.OneOf),
 			"permissions": prop.Permissions,
 			"master":      prop.Master,
 		})

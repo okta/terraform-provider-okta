@@ -97,7 +97,7 @@ func sharedClient(region string) (*articulateOkta.Client, *okta.Client, *sdk.Api
 	if err != nil {
 		return articulateClient, client, nil, err
 	}
-	api := &sdk.ApiSupplement{requestExecutor: client.GetRequestExecutor()}
+	api := &sdk.ApiSupplement{RequestExecutor: client.GetRequestExecutor()}
 
 	return articulateClient, client, api, nil
 }

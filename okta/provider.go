@@ -48,6 +48,7 @@ const (
 	trustedOrigin          = "okta_trusted_origin"
 	userBaseSchema         = "okta_user_base_schema"
 	userSchema             = "okta_user_schema"
+	userSchemaObject       = "okta_user_schema_object"
 )
 
 // Provider establishes a client connection to an okta site
@@ -145,6 +146,7 @@ func Provider() terraform.ResourceProvider {
 			trustedOrigin:          resourceTrustedOrigin(),
 			userSchema:             resourceUserSchema(),
 			userBaseSchema:         resourceUserBaseSchema(),
+			userSchemaObject:       resourceUserSchemaObject(),
 
 			// Below resources will be deprecated, soon to be removed
 			"okta_user_schemas": resourceUserSchemas(),

@@ -3,7 +3,7 @@ package okta
 import (
 	"fmt"
 
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -44,15 +44,18 @@ func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	} else if subschema == nil {
-		return fmt.Errorf("Okta did not return a subschema for \"%s\". This is a known bug caused by terraform running concurrent subschena resources. See https://github.com/articulate/terraform-provider-okta/issues/144. New resource is on its way to solve this limitation.", d.Id())
+		return fmt.Errorf("Okta did not return a subschema for \"%s\". This is a known bug caused by terraform running concurrent subschema resources. See https://github.com/articulate/terraform-provider-okta/issues/144. New resource is on its way to solve this limitation.", d.Id())
 	}
 
-	d.Set("array_type", subschema.Items.Type)
 	d.Set("title", subschema.Title)
 	d.Set("type", subschema.Type)
 	d.Set("description", subschema.Description)
 	d.Set("required", subschema.Required)
-	d.Set("index", subschema.Index)
+	d.Set("index", d.Id())
+
+	if subschema.Items != nil {
+		d.Set("array_type", subschema.Items.Type)
+	}
 
 	if subschema.Master != nil {
 		d.Set("master", subschema.Master.Type)
@@ -76,19 +79,19 @@ func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
 	})
 }
 
-func getSubSchema(d *schema.ResourceData, m interface{}) (subschema *articulateOkta.CustomSubSchema, err error) {
-	var schema *articulateOkta.Schema
+func getSubSchema(d *schema.ResourceData, m interface{}) (subschema *sdk.UserSubSchema, err error) {
+	var schema *sdk.UserSchema
 	id := d.Id()
 
-	client := getClientFromMetadata(m)
-	schema, _, err = client.Schemas.GetUserSchema()
+	client := getSupplementFromMetadata(m)
+	schema, _, err = client.GetUserSchema()
 	if err != nil {
 		return
 	}
 
-	for _, part := range schema.Definitions.Custom.Properties {
-		if part.Index == id {
-			subschema = &part
+	for key, part := range schema.Definitions.Custom.Properties {
+		if key == id {
+			subschema = part
 			return
 		}
 	}
@@ -113,15 +116,14 @@ func resourceUserSchemaDelete(d *schema.ResourceData, m interface{}) error {
 
 // create or modify a custom subschema
 func updateSubschema(d *schema.ResourceData, m interface{}) error {
-	client := getClientFromMetadata(m)
+	client := getSupplementFromMetadata(m)
 
-	template := &articulateOkta.CustomSubSchema{
-		Index:       d.Get("index").(string),
+	template := &sdk.UserSubSchema{
 		Title:       d.Get("title").(string),
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
 		Required:    d.Get("required").(bool),
-		Permissions: []articulateOkta.Permissions{
+		Permissions: []*sdk.UserSchemaPermission{
 			{
 				Action:    d.Get("permissions").(string),
 				Principal: "SELF",
@@ -131,7 +133,7 @@ func updateSubschema(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if v, ok := d.GetOk("master"); ok {
-		template.Master = &articulateOkta.Master{Type: v.(string)}
+		template.Master = &sdk.UserSchemaItem{Type: v.(string)}
 	}
 
 	if v, ok := d.GetOk("array_type"); ok {
@@ -149,14 +151,15 @@ func updateSubschema(d *schema.ResourceData, m interface{}) error {
 	if oneOfList, ok := d.GetOk("one_of"); ok {
 		for _, v := range oneOfList.([]interface{}) {
 			valueMap := v.(map[string]interface{})
-			template.OneOf = append(template.OneOf, articulateOkta.OneOf{
+			template.OneOf = append(template.OneOf, &sdk.UserSchemaEnum{
 				Const: valueMap["const"].(string),
 				Title: valueMap["title"].(string),
 			})
 		}
 	}
 
-	_, _, err := client.Schemas.UpdateUserCustomSubSchema(*template)
+	_, _, err := client.UpdateCustomUserSchemaProperty(d.Id(), template)
+
 	if err != nil {
 		return fmt.Errorf("Error Creating/Updating Custom User Subschema in Okta: %v", err)
 	}
@@ -164,7 +167,7 @@ func updateSubschema(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func flattenOneOf(oneOf []articulateOkta.OneOf) []map[string]interface{} {
+func flattenOneOf(oneOf []*sdk.UserSchemaEnum) []map[string]interface{} {
 	result := make([]map[string]interface{}, len(oneOf))
 	for i, v := range oneOf {
 		result[i] = map[string]interface{}{
