@@ -205,7 +205,7 @@ func buildIdentifier(d *schema.ResourceData) *IdpDiscoveryRuleUserIdentifier {
 			Patterns:  buildUserIdPatterns(d),
 		}
 	}
-	return nil;
+	return nil
 }
 
 func flattenUserIdPatterns(patterns []*IdpDiscoveryRulePattern) *schema.Set {
@@ -246,9 +246,9 @@ func flattenAppInclude(app *IdpDiscoveryRuleApp) *schema.Set {
 		flattened := make([]interface{}, len(app.Include))
 		for i, v := range app.Include {
 			flattened[i] = map[string]interface{}{
-				"id":    v.ID,
-				"name":  v.Name,
-				"type":  v.Type,
+				"id":   v.ID,
+				"name": v.Name,
+				"type": v.Type,
 			}
 		}
 	}
@@ -262,9 +262,9 @@ func flattenAppExclude(app *IdpDiscoveryRuleApp) *schema.Set {
 		flattened := make([]interface{}, len(app.Include))
 		for i, v := range app.Exclude {
 			flattened[i] = map[string]interface{}{
-				"id":    v.ID,
-				"name":  v.Name,
-				"type":  v.Type,
+				"id":   v.ID,
+				"name": v.Name,
+				"type": v.Type,
 			}
 		}
 	}
@@ -372,7 +372,7 @@ func buildIdpDiscoveryRule(d *schema.ResourceData, m interface{}) *IdpDiscoveryR
 				Include: convertInterfaceToStringArr(d.Get("network_includes")),
 				Exclude: convertInterfaceToStringArr(d.Get("network_excludes")),
 			},
-			Platform: buildPlatformInclude(d),
+			Platform:       buildPlatformInclude(d),
 			UserIdentifier: buildIdentifier(d),
 		},
 		Type:   idpDiscovery,
