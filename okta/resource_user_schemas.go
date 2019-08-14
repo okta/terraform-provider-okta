@@ -70,12 +70,12 @@ func resourceUserSchemas() *schema.Resource {
 			case "number":
 				return fmt.Errorf("Editing a custom SubSchema of type number not supported in this terraform provider at this time")
 
-			case "interger":
-				return fmt.Errorf("Editing a custom SubSchema of type interger not supported in this terraform provider at this time")
+			case "integer":
+				return fmt.Errorf("Editing a custom SubSchema of type integer not supported in this terraform provider at this time")
 
 			case "array":
 				if d.Get("arraytype").(string) != "string" {
-					return fmt.Errorf("Editing a custom SubSchema of type array (number, interger, or reference) not supported in this terraform provider at this time")
+					return fmt.Errorf("Editing a custom SubSchema of type array (number, integer, or reference) not supported in this terraform provider at this time")
 				}
 			}
 
@@ -108,8 +108,8 @@ func resourceUserSchemas() *schema.Resource {
 			"arraytype": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"string", "number", "interger", "reference"}, false),
-				Description:  "Subschema array type: string, number, interger, reference. Type field must be an array.",
+				ValidateFunc: validation.StringInSlice([]string{"string", "number", "integer", "reference"}, false),
+				Description:  "Subschema array type: string, number, integer, reference. Type field must be an array.",
 			},
 			"description": &schema.Schema{
 				Type:        schema.TypeString,
