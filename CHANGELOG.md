@@ -78,3 +78,4 @@ For Release v3.0.16
 * Fix issues around `okta_policy_rule_idp_discovery`
     * `app_include` and `app_exlcude` were missing required properties
     * `user_identifier_type` was being added even when not defined, causing API errors
+* Fix integer array type
