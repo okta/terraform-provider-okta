@@ -43,8 +43,8 @@ func resourceUserSchema() *schema.Resource {
 			"array_type": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"string", "number", "interger", "reference"}, false),
-				Description:  "Subschema array type: string, number, interger, reference. Type field must be an array.",
+				ValidateFunc: validation.StringInSlice([]string{"string", "number", "integer", "reference"}, false),
+				Description:  "Subschema array type: string, number, integer, reference. Type field must be an array.",
 				ForceNew:     true,
 			},
 			"description": &schema.Schema{
