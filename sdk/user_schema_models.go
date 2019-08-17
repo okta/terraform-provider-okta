@@ -42,12 +42,12 @@ type (
 		Format      string                  `json:"format,omitempty"`
 		Items       *UserSchemaItem         `json:"items,omitempty"`
 		Master      *UserSchemaItem         `json:"master,omitempty"`
-		MaxLength   int                     `json:"maxLength,omitempty"`
-		MinLength   int                     `json:"minLength,omitempty"`
+		MaxLength   *int                    `json:"maxLength,omitempty"`
+		MinLength   *int                    `json:"minLength,omitempty"`
 		Mutability  string                  `json:"mutability,omitempty"`
 		OneOf       []*UserSchemaEnum       `json:"oneOf,omitempty"`
 		Permissions []*UserSchemaPermission `json:"permissions,omitempty"`
-		Required    bool                    `json:"required,omitempty"`
+		Required    *bool                   `json:"required,omitempty"`
 		Scope       string                  `json:"scope,omitempty"`
 		Title       string                  `json:"title,omitempty"`
 		Type        string                  `json:"type,omitempty"`

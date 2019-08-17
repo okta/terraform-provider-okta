@@ -278,6 +278,26 @@ func getMapString(m map[string]interface{}, key string) string {
 	return ""
 }
 
+func boolPtr(b bool) (ptr *bool) {
+	ptr = &b
+	return
+}
+
+func intPtr(b int) (ptr *int) {
+	ptr = &b
+	return
+}
+
+func getNullableInt(d *schema.ResourceData, key string) *int {
+	if v, ok := d.GetOk(key); ok {
+		i := v.(int)
+
+		return &i
+	}
+
+	return nil
+}
+
 // Useful shortcut for suppressing errors from Okta's SDK when a resource does not exist. Usually used during deletion
 // of nested resources.
 func suppressErrorOn404(resp *okta.Response, err error) error {

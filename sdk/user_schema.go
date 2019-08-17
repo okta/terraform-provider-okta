@@ -8,8 +8,8 @@ var (
 	schemaUrl = "/api/v1/meta/schemas/user/default"
 )
 
-func (m *ApiSupplement) RemoveUserSchemaProperty(id string) (*okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("DELETE", schemaUrl, nil)
+func (m *ApiSupplement) DeleteUserSchemaProperty(id string) (*okta.Response, error) {
+	req, err := m.RequestExecutor.NewRequest("POST", schemaUrl, getCustomUserSchema(id, nil))
 	if err != nil {
 		return nil, err
 	}
@@ -29,11 +29,11 @@ func (m *ApiSupplement) AddCustomUserSchemaProperty(schema *UserSubSchema) (*Use
 }
 
 func (m *ApiSupplement) UpdateCustomUserSchemaProperty(id string, schema *UserSubSchema) (*UserSchema, *okta.Response, error) {
-	return m.UpdateUserSchemaProperty(getUserSchema("#custom", id, schema))
+	return m.UpdateUserSchemaProperty(getCustomUserSchema(id, schema))
 }
 
 func (m *ApiSupplement) UpdateBaseUserSchemaProperty(id string, schema *UserSubSchema) (*UserSchema, *okta.Response, error) {
-	return m.UpdateUserSchemaProperty(getUserSchema("#base", id, schema))
+	return m.UpdateUserSchemaProperty(getBaseUserSchema(id, schema))
 }
 
 func (m *ApiSupplement) UpdateUserSchemaProperty(schema *UserSchema) (*UserSchema, *okta.Response, error) {
@@ -57,16 +57,28 @@ func (m *ApiSupplement) GetUserSchema() (*UserSchema, *okta.Response, error) {
 	return schema, resp, err
 }
 
-func getUserSchema(id, index string, schema *UserSubSchema) *UserSchema {
+func getBaseUserSchema(index string, schema *UserSubSchema) *UserSchema {
 	return &UserSchema{
 		Definitions: &UserSchemaDefinitions{
-			Custom: &UserSubSchemaProperties{
-				ID:   id,
-				Type: "object",
-				Properties: map[string]*UserSubSchema{
-					index: schema,
-				},
-			},
+			Base: GetUserSchemaProp("#base", index, schema),
+		},
+	}
+}
+
+func getCustomUserSchema(index string, schema *UserSubSchema) *UserSchema {
+	return &UserSchema{
+		Definitions: &UserSchemaDefinitions{
+			Custom: GetUserSchemaProp("#custom", index, schema),
+		},
+	}
+}
+
+func GetUserSchemaProp(id, index string, schema *UserSubSchema) *UserSubSchemaProperties {
+	return &UserSubSchemaProperties{
+		ID:   id,
+		Type: "object",
+		Properties: map[string]*UserSubSchema{
+			index: schema,
 		},
 	}
 }

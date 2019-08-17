@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 )
@@ -57,11 +58,13 @@ var (
 		"enum": &schema.Schema{
 			Type:        schema.TypeList,
 			Optional:    true,
+			ForceNew:    true,
 			Description: "Custom Subschema enumerated value of the property. see: developer.okta.com/docs/api/resources/schemas#user-profile-schema-property-object",
 			Elem:        &schema.Schema{Type: schema.TypeString},
 		},
 		"one_of": &schema.Schema{
 			Type:        schema.TypeList,
+			ForceNew:    true,
 			Optional:    true,
 			Description: "Custom Subschema json schemas. see: developer.okta.com/docs/api/resources/schemas#user-profile-schema-property-object",
 			Elem: &schema.Resource{
@@ -128,5 +131,134 @@ var (
 			ValidateFunc: validation.StringInSlice([]string{"PROFILE_MASTER", "OKTA", ""}, false),
 			Description:  "SubSchema profile manager, if not set it will inherit its setting.",
 		},
+		"required": &schema.Schema{
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Whether the Subschema is required",
+		},
 	}
 )
+
+func buildBaseUserSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
+	return buildSchema(userBaseSchemaSchema, target)
+}
+
+func buildCustomUserSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
+	return buildSchema(userSchemaSchema, target)
+}
+
+func syncUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) error {
+	d.Set("title", subschema.Title)
+	d.Set("type", subschema.Type)
+	d.Set("description", subschema.Description)
+	d.Set("required", subschema.Required)
+	d.Set("min_length", subschema.MinLength)
+	d.Set("max_length", subschema.MaxLength)
+
+	if subschema.Items != nil {
+		d.Set("array_type", subschema.Items.Type)
+	}
+
+	if subschema.Master != nil {
+		d.Set("master", subschema.Master.Type)
+	}
+
+	if len(subschema.Permissions) > 0 {
+		d.Set("permissions", subschema.Permissions[0].Action)
+	}
+
+	return setNonPrimitives(d, map[string]interface{}{
+		"enum":   subschema.Enum,
+		"one_of": flattenOneOf(subschema.OneOf),
+	})
+}
+
+func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) {
+	d.Set("title", subschema.Title)
+	d.Set("type", subschema.Type)
+	d.Set("required", subschema.Required)
+
+	if subschema.Master != nil {
+		d.Set("master", subschema.Master.Type)
+	}
+
+	if len(subschema.Permissions) > 0 {
+		d.Set("permissions", subschema.Permissions[0].Action)
+	}
+}
+
+func getBaseProperty(schema *sdk.UserSchema, id string) *sdk.UserSubSchema {
+	for key, part := range schema.Definitions.Base.Properties {
+		if key == id {
+			return part
+		}
+	}
+
+	return nil
+}
+
+func getCustomProperty(schema *sdk.UserSchema, id string) *sdk.UserSubSchema {
+	for key, part := range schema.Definitions.Custom.Properties {
+		if key == id {
+			return part
+		}
+	}
+
+	return nil
+}
+
+func getNullableOneOf(d *schema.ResourceData) (oneOf []*sdk.UserSchemaEnum) {
+	oneOf = []*sdk.UserSchemaEnum{}
+
+	if oneOfList, ok := d.GetOk("one_of"); ok {
+		for _, v := range oneOfList.([]interface{}) {
+			valueMap := v.(map[string]interface{})
+			oneOf = append(oneOf, &sdk.UserSchemaEnum{
+				Const: valueMap["const"].(string),
+				Title: valueMap["title"].(string),
+			})
+		}
+	}
+
+	return oneOf
+}
+
+func getNullableItem(d *schema.ResourceData, key string) *sdk.UserSchemaItem {
+	if v, ok := d.GetOk(key); ok {
+		return &sdk.UserSchemaItem{Type: v.(string)}
+	}
+
+	return nil
+}
+
+func flattenOneOf(oneOf []*sdk.UserSchemaEnum) []interface{} {
+	result := make([]interface{}, len(oneOf))
+	for i, v := range oneOf {
+		result[i] = map[string]interface{}{
+			"const": v.Const,
+			"title": v.Title,
+		}
+	}
+	return result
+}
+
+func getUserSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
+	return &sdk.UserSubSchema{
+		Title:       d.Get("title").(string),
+		Type:        d.Get("type").(string),
+		Description: d.Get("description").(string),
+		Required:    boolPtr(d.Get("required").(bool)),
+		Permissions: []*sdk.UserSchemaPermission{
+			{
+				Action:    d.Get("permissions").(string),
+				Principal: "SELF",
+			},
+		},
+		Enum:      convertInterfaceToStringArrNullable(d.Get("enum")),
+		Master:    getNullableItem(d, "master"),
+		Items:     getNullableItem(d, "array_type"),
+		MinLength: intPtr(d.Get("min_length").(int)),
+		MaxLength: intPtr(d.Get("max_length").(int)),
+		OneOf:     getNullableOneOf(d),
+	}
+}

@@ -20,6 +20,8 @@ const (
 	appSecurePasswordStore = "okta_app_secure_password_store"
 	appSwa                 = "okta_app_swa"
 	appThreeField          = "okta_app_three_field"
+	appUserSchema          = "okta_app_user_schema"
+	appUserBaseSchema      = "okta_app_user_base_schema"
 	authServer             = "okta_auth_server"
 	authServerClaim        = "okta_auth_server_claim"
 	authServerPolicy       = "okta_auth_server_policy"
@@ -48,7 +50,6 @@ const (
 	trustedOrigin          = "okta_trusted_origin"
 	userBaseSchema         = "okta_user_base_schema"
 	userSchema             = "okta_user_schema"
-	userSchemaObject       = "okta_user_schema_object"
 )
 
 // Provider establishes a client connection to an okta site
@@ -119,6 +120,8 @@ func Provider() terraform.ResourceProvider {
 			appSecurePasswordStore: resourceAppSecurePasswordStore(),
 			appSwa:                 resourceAppSwa(),
 			appThreeField:          resourceAppThreeField(),
+			appUserSchema:          resourceAppUserSchema(),
+			appUserBaseSchema:      resourceAppUserBaseSchema(),
 			authServer:             resourceAuthServer(),
 			authServerClaim:        resourceAuthServerClaim(),
 			authServerPolicy:       resourceAuthServerPolicy(),
@@ -146,7 +149,6 @@ func Provider() terraform.ResourceProvider {
 			trustedOrigin:          resourceTrustedOrigin(),
 			userSchema:             resourceUserSchema(),
 			userBaseSchema:         resourceUserBaseSchema(),
-			userSchemaObject:       resourceUserSchemaObject(),
 
 			// Below resources will be deprecated, soon to be removed
 			"okta_user_schemas": resourceUserSchemas(),
