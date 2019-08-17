@@ -42,6 +42,25 @@ var userIdPatternResource = &schema.Resource{
 	},
 }
 
+//https://developer.okta.com/docs/reference/api/policy/#application-and-app-instance-condition-object
+var appResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"type": &schema.Schema{
+			Type:         schema.TypeString,
+			Optional:     true,
+			ValidateFunc: validation.StringInSlice([]string{"APP", "APP_TYPE"}, false),
+		},
+		"name": &schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		"id": &schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+	},
+}
+
 func resourcePolicyRuleIdpDiscovery() *schema.Resource {
 	return &schema.Resource{
 		Exists:   resourcePolicyRuleIdpDiscoveryExists,
@@ -63,13 +82,13 @@ func resourcePolicyRuleIdpDiscovery() *schema.Resource {
 			},
 			"app_include": &schema.Schema{
 				Type:        schema.TypeSet,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Elem:        appResource,
 				Optional:    true,
 				Description: "Applications to include in discovery rule",
 			},
 			"app_exclude": &schema.Schema{
 				Type:        schema.TypeSet,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Elem:        appResource,
 				Optional:    true,
 				Description: "Applications to exclude in discovery rule",
 			},
@@ -113,10 +132,50 @@ func buildPlatformInclude(d *schema.ResourceData) *sdk.IdpDiscoveryRulePlatform 
 				})
 			}
 		}
+
+		return &sdk.IdpDiscoveryRulePlatform{
+			Include: includeList,
+		}
+	}
+	return nil
+
+}
+
+func buildAppConditions(d *schema.ResourceData) *sdk.IdpDiscoveryRuleApp {
+	includeList := []*sdk.IdpDiscoveryRuleAppObj{}
+
+	if v, ok := d.GetOk("app_include"); ok {
+		valueList := v.(*schema.Set).List()
+
+		for _, item := range valueList {
+			if value, ok := item.(map[string]interface{}); ok {
+				includeList = append(includeList, &sdk.IdpDiscoveryRuleAppObj{
+					ID:   getMapString(value, "id"),
+					Type: getMapString(value, "type"),
+					Name: getMapString(value, "name"),
+				})
+			}
+		}
 	}
 
-	return &sdk.IdpDiscoveryRulePlatform{
+	excludeList := []*sdk.IdpDiscoveryRuleAppObj{}
+	if v, ok := d.GetOk("app_exclude"); ok {
+		valueList := v.(*schema.Set).List()
+
+		for _, item := range valueList {
+			if value, ok := item.(map[string]interface{}); ok {
+				includeList = append(excludeList, &sdk.IdpDiscoveryRuleAppObj{
+					ID:   getMapString(value, "id"),
+					Type: getMapString(value, "type"),
+					Name: getMapString(value, "name"),
+				})
+			}
+		}
+	}
+
+	return &sdk.IdpDiscoveryRuleApp{
 		Include: includeList,
+		Exclude: excludeList,
 	}
 }
 
@@ -135,8 +194,19 @@ func buildUserIdPatterns(d *schema.ResourceData) []*sdk.IdpDiscoveryRulePattern 
 			}
 		}
 	}
-
 	return patternList
+}
+
+func buildIdentifier(d *schema.ResourceData) *sdk.IdpDiscoveryRuleUserIdentifier {
+
+	if uidType, ok := d.GetOkExists("user_identifier_type"); ok {
+		return &sdk.IdpDiscoveryRuleUserIdentifier{
+			Attribute: d.Get("user_identifier_attribute").(string),
+			Type:      uidType.(string),
+			Patterns:  buildUserIdPatterns(d),
+		}
+	}
+	return nil
 }
 
 func flattenUserIdPatterns(patterns []*sdk.IdpDiscoveryRulePattern) *schema.Set {
@@ -168,6 +238,38 @@ func flattenPlatformInclude(platform *sdk.IdpDiscoveryRulePlatform) *schema.Set 
 		}
 	}
 	return schema.NewSet(schema.HashResource(platformIncludeResource), flattend)
+}
+
+func flattenAppInclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
+	var flattend []interface{}
+
+	if app != nil && app.Include != nil {
+		flattened := make([]interface{}, len(app.Include))
+		for i, v := range app.Include {
+			flattened[i] = map[string]interface{}{
+				"id":   v.ID,
+				"name": v.Name,
+				"type": v.Type,
+			}
+		}
+	}
+	return schema.NewSet(schema.HashResource(appResource), flattend)
+}
+
+func flattenAppExclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
+	var flattend []interface{}
+
+	if app != nil && app.Include != nil {
+		flattened := make([]interface{}, len(app.Include))
+		for i, v := range app.Exclude {
+			flattened[i] = map[string]interface{}{
+				"id":   v.ID,
+				"name": v.Name,
+				"type": v.Type,
+			}
+		}
+	}
+	return schema.NewSet(schema.HashResource(appResource), flattend)
 }
 
 func resourcePolicyRuleIdpDiscoveryExists(d *schema.ResourceData, m interface{}) (bool, error) {
@@ -225,8 +327,8 @@ func resourcePolicyRuleIdpDiscoveryRead(d *schema.ResourceData, m interface{}) e
 		"network_excludes":         convertStringArrToInterface(rule.Conditions.Network.Exclude),
 		"platform_include":         flattenPlatformInclude(rule.Conditions.Platform),
 		"user_identifier_patterns": flattenUserIdPatterns(rule.Conditions.UserIdentifier.Patterns),
-		"app_include":              convertStringSetToInterface(rule.Conditions.App.Include),
-		"app_exclude":              convertStringSetToInterface(rule.Conditions.App.Exclude),
+		"app_include":              flattenAppInclude(rule.Conditions.App),
+		"app_exclude":              flattenAppExclude(rule.Conditions.App),
 	})
 }
 
@@ -264,22 +366,15 @@ func buildIdpDiscoveryRule(d *schema.ResourceData, m interface{}) *sdk.IdpDiscov
 			},
 		},
 		Conditions: &sdk.IdpDiscoveryRuleConditions{
-			App: &sdk.IdpDiscoveryRuleApp{
-				Include: convertInterfaceToStringSetNullable(d.Get("app_include")),
-				Exclude: convertInterfaceToStringSetNullable(d.Get("app_exclude")),
-			},
+			App: buildAppConditions(d),
 			Network: &sdk.IdpDiscoveryRuleNetwork{
 				Connection: d.Get("network_connection").(string),
 				// plural name here is vestigial due to old policy rule resources
 				Include: convertInterfaceToStringArr(d.Get("network_includes")),
 				Exclude: convertInterfaceToStringArr(d.Get("network_excludes")),
 			},
-			Platform: buildPlatformInclude(d),
-			UserIdentifier: &sdk.IdpDiscoveryRuleUserIdentifier{
-				Attribute: d.Get("user_identifier_attribute").(string),
-				Type:      d.Get("user_identifier_type").(string),
-				Patterns:  buildUserIdPatterns(d),
-			},
+			Platform:       buildPlatformInclude(d),
+			UserIdentifier: buildIdentifier(d),
 		},
 		Type:   idpDiscovery,
 		Name:   d.Get("name").(string),

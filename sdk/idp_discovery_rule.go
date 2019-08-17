@@ -13,15 +13,21 @@ type (
 	}
 
 	IdpDiscoveryRuleApp struct {
-		Exclude []string `json:"exclude"`
-		Include []string `json:"include"`
+		Exclude []*IdpDiscoveryRuleAppObj `json:"exclude"`
+		Include []*IdpDiscoveryRuleAppObj `json:"include"`
+	}
+
+	IdpDiscoveryRuleAppObj struct {
+		Type string `json:"type,omitempty"`
+		ID   string `json:"id,omitempty"`
+		Name string `json:"name,omitempty"`
 	}
 
 	IdpDiscoveryRuleConditions struct {
 		App            *IdpDiscoveryRuleApp            `json:"app"`
 		Network        *IdpDiscoveryRuleNetwork        `json:"network"`
-		Platform       *IdpDiscoveryRulePlatform       `json:"platform"`
-		UserIdentifier *IdpDiscoveryRuleUserIdentifier `json:"userIdentifier"`
+		Platform       *IdpDiscoveryRulePlatform       `json:"platform,omitempty"`
+		UserIdentifier *IdpDiscoveryRuleUserIdentifier `json:"userIdentifier,omitempty"`
 	}
 
 	IdpDiscoveryRuleIdp struct {
@@ -50,8 +56,8 @@ type (
 	}
 
 	IdpDiscoveryRulePlatform struct {
-		Exclude []interface{}                      `json:"exclude"`
-		Include []*IdpDiscoveryRulePlatformInclude `json:"include"`
+		Exclude []interface{}                      `json:"exclude,omitempty"`
+		Include []*IdpDiscoveryRulePlatformInclude `json:"include,omitempty"`
 	}
 
 	IdpDiscoveryRuleProvider struct {
