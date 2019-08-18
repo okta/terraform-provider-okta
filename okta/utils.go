@@ -10,6 +10,7 @@ import (
 	"strings"
 	"unicode"
 
+	sdk "github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/peterhellberg/link"
 
@@ -277,6 +278,26 @@ func getMapString(m map[string]interface{}, key string) string {
 	return ""
 }
 
+func boolPtr(b bool) (ptr *bool) {
+	ptr = &b
+	return
+}
+
+func intPtr(b int) (ptr *int) {
+	ptr = &b
+	return
+}
+
+func getNullableInt(d *schema.ResourceData, key string) *int {
+	if v, ok := d.GetOk(key); ok {
+		i := v.(int)
+
+		return &i
+	}
+
+	return nil
+}
+
 // Useful shortcut for suppressing errors from Okta's SDK when a resource does not exist. Usually used during deletion
 // of nested resources.
 func suppressErrorOn404(resp *okta.Response, err error) error {
@@ -316,7 +337,7 @@ func getOktaClientFromMetadata(meta interface{}) *okta.Client {
 	return meta.(*Config).oktaClient
 }
 
-func getSupplementFromMetadata(meta interface{}) *ApiSupplement {
+func getSupplementFromMetadata(meta interface{}) *sdk.ApiSupplement {
 	return meta.(*Config).supplementClient
 }
 

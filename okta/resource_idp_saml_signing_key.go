@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 	"net/http"
 )
@@ -52,7 +53,7 @@ func resourceIdpSigningKey() *schema.Resource {
 }
 
 func resourceIdpSigningKeyCreate(d *schema.ResourceData, m interface{}) error {
-	cert := &Certificate{
+	cert := &sdk.Certificate{
 		X5C: convertInterfaceToStringSet(d.Get("x5c")),
 	}
 	key, resp, err := getSupplementFromMetadata(m).AddIdentityProviderCertificate(cert)

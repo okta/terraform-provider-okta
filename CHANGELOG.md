@@ -79,3 +79,10 @@ For Release v3.0.16
     * `app_include` and `app_exlcude` were missing required properties
     * `user_identifier_type` was being added even when not defined, causing API errors
 * Fix integer array type
+
+For Release v3.0.17
+
+* Add okta_app_user_schema resource
+* Add okta_app_user_base_schema resource
+* Add `required` field to base schema
+

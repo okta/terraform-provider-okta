@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/articulate/terraform-provider-okta/sdk"
+
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform/helper/logging"
@@ -37,7 +39,7 @@ type (
 
 		articulateOktaClient *articulateOkta.Client
 		oktaClient           *okta.Client
-		supplementClient     *ApiSupplement
+		supplementClient     *sdk.ApiSupplement
 	}
 )
 
@@ -70,11 +72,11 @@ func (c *Config) loadAndValidate() error {
 	if err != nil {
 		return err
 	}
-	c.supplementClient = &ApiSupplement{
-		baseURL:         fmt.Sprintf("https://%s.%s", c.orgName, c.domain),
-		client:          httpClient,
-		token:           c.apiToken,
-		requestExecutor: client.GetRequestExecutor(),
+	c.supplementClient = &sdk.ApiSupplement{
+		BaseURL:         fmt.Sprintf("https://%s.%s", c.orgName, c.domain),
+		Client:          httpClient,
+		Token:           c.apiToken,
+		RequestExecutor: client.GetRequestExecutor(),
 	}
 
 	// add the Okta SDK client object to Config

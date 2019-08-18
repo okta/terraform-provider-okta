@@ -3,6 +3,7 @@ package okta
 import (
 	"fmt"
 
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -36,14 +37,14 @@ func resourceGroupRoles() *schema.Resource {
 	}
 }
 
-func buildGroupRole(d *schema.ResourceData, role string) *Role {
-	return &Role{
+func buildGroupRole(d *schema.ResourceData, role string) *sdk.Role {
+	return &sdk.Role{
 		AssignmentType: "GROUP",
 		Type:           role,
 	}
 }
 
-func containsRole(roles []*Role, roleName string) bool {
+func containsRole(roles []*sdk.Role, roleName string) bool {
 	for _, role := range roles {
 		if role.Type == roleName {
 			return true
@@ -141,7 +142,7 @@ func resourceGroupRolesDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func splitRoles(existingRoles []*Role, expectedRoles []string) (rolesToAdd []string, rolesToRemove []string) {
+func splitRoles(existingRoles []*sdk.Role, expectedRoles []string) (rolesToAdd []string, rolesToRemove []string) {
 	for _, roleName := range expectedRoles {
 		if !containsRole(existingRoles, roleName) {
 			rolesToAdd = append(rolesToAdd, roleName)

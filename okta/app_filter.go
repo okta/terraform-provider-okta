@@ -41,7 +41,7 @@ func (a *appFilters) String() string {
 func listApps(m interface{}, filters *appFilters) ([]*appID, error) {
 	result := &searchResults{Apps: []*appID{}}
 	qp := &query.Params{Limit: 200, Filter: filters.ApiFilter}
-	return result.Apps, collectApps(getSupplementFromMetadata(m).requestExecutor, filters, result, qp)
+	return result.Apps, collectApps(getSupplementFromMetadata(m).RequestExecutor, filters, result, qp)
 }
 
 // Recursively list apps until no next links are returned
@@ -107,7 +107,7 @@ func (f *appFilters) shouldShortCircuit(appList []*appID) bool {
 func listSamlApps(m interface{}, filters *appFilters) ([]*okta.SamlApplication, error) {
 	result := &searchResults{SamlApps: []*okta.SamlApplication{}}
 	qp := &query.Params{Limit: 200, Filter: filters.ApiFilter}
-	return result.SamlApps, collectSamlApps(getSupplementFromMetadata(m).requestExecutor, filters, result, qp)
+	return result.SamlApps, collectSamlApps(getSupplementFromMetadata(m).RequestExecutor, filters, result, qp)
 }
 
 // Recursively list apps until no next links are returned

@@ -13,15 +13,15 @@ import (
 )
 
 func sweepUserSchema(client *testClient) error {
-	schema, _, err := client.artClient.Schemas.GetUserSchema()
+	schema, _, err := client.apiSupplement.GetUserSchema()
 	if err != nil {
 		return err
 	}
 	var errorList []error
 
-	for _, schema := range schema.Definitions.Custom.Properties {
-		if strings.HasPrefix(schema.Index, testResourcePrefix) {
-			if _, _, err := client.artClient.Schemas.DeleteUserCustomSubSchema(schema.Index); err != nil {
+	for key, _ := range schema.Definitions.Custom.Properties {
+		if strings.HasPrefix(key, testResourcePrefix) {
+			if _, err := client.apiSupplement.DeleteUserSchemaProperty(key); err != nil {
 				errorList = append(errorList, err)
 			}
 		}

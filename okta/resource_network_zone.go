@@ -1,9 +1,11 @@
 package okta
 
 import (
+	"strings"
+
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"strings"
 )
 
 func resourceNetworkZone() *schema.Resource {
@@ -102,10 +104,10 @@ func resourceNetworkZoneDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func buildNetworkZone(d *schema.ResourceData, m interface{}) *NetworkZone {
-	gatewaysList := []*AddressObj{}
-	proxiesList := []*AddressObj{}
-	locationsList := []*Location{}
+func buildNetworkZone(d *schema.ResourceData, m interface{}) *sdk.NetworkZone {
+	gatewaysList := []*sdk.AddressObj{}
+	proxiesList := []*sdk.AddressObj{}
+	locationsList := []*sdk.Location{}
 	zoneType := d.Get("type").(string)
 
 	if strings.TrimRight(zoneType, "\n") == "IP" {
@@ -119,15 +121,15 @@ func buildNetworkZone(d *schema.ResourceData, m interface{}) *NetworkZone {
 		if values, ok := d.GetOk("dynamic_locations"); ok {
 			for _, value := range values.(*schema.Set).List() {
 				if strings.Contains(value.(string), "-") {
-					locationsList = append(locationsList, &Location{Country: strings.Split(value.(string), "-")[0], Region: value.(string)})
+					locationsList = append(locationsList, &sdk.Location{Country: strings.Split(value.(string), "-")[0], Region: value.(string)})
 				} else {
-					locationsList = append(locationsList, &Location{Country: value.(string)})
+					locationsList = append(locationsList, &sdk.Location{Country: value.(string)})
 				}
 			}
 		}
 	}
 
-	return &NetworkZone{
+	return &sdk.NetworkZone{
 		Name:      d.Get("name").(string),
 		Type:      zoneType,
 		Gateways:  gatewaysList,
@@ -136,9 +138,9 @@ func buildNetworkZone(d *schema.ResourceData, m interface{}) *NetworkZone {
 	}
 }
 
-func buildAddressObjList(values *schema.Set) []*AddressObj {
+func buildAddressObjList(values *schema.Set) []*sdk.AddressObj {
 	var addressType string
-	addressObjList := []*AddressObj{}
+	addressObjList := []*sdk.AddressObj{}
 
 	for _, value := range values.List() {
 		if strings.Contains(value.(string), "/") {
@@ -146,7 +148,7 @@ func buildAddressObjList(values *schema.Set) []*AddressObj {
 		} else {
 			addressType = "RANGE"
 		}
-		addressObjList = append(addressObjList, &AddressObj{Type: addressType, Value: value.(string)})
+		addressObjList = append(addressObjList, &sdk.AddressObj{Type: addressType, Value: value.(string)})
 	}
 	return addressObjList
 }

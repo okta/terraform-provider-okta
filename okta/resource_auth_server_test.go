@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/okta/okta-sdk-golang/okta/query"
@@ -16,7 +17,7 @@ func findTestAuthServer(name string) bool {
 }
 
 func deleteAuthServers(client *testClient) error {
-	servers, err := client.apiSupplement.FilterAuthServers(&query.Params{}, []*AuthorizationServer{}, findTestAuthServer)
+	servers, err := client.apiSupplement.FilterAuthServers(&query.Params{}, []*sdk.AuthorizationServer{}, findTestAuthServer)
 	if err != nil {
 		return err
 	}

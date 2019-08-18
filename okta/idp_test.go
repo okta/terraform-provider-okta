@@ -1,11 +1,12 @@
 package okta
 
 import (
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/okta/okta-sdk-golang/okta/query"
 )
 
 func deleteTestIdps(client *testClient) error {
-	providers := []*BasicIdp{}
+	providers := []*sdk.BasicIdp{}
 	_, _, err := client.apiSupplement.ListIdentityProviders(&providers, &query.Params{Q: "testAcc_"})
 	if err != nil {
 		return err

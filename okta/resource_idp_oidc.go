@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
@@ -12,7 +13,7 @@ func resourceIdpOidc() *schema.Resource {
 		Read:   resourceIdpRead,
 		Update: resourceIdpUpdate,
 		Delete: resourceIdpDelete,
-		Exists: getIdentityProviderExists(&OIDCIdentityProvider{}),
+		Exists: getIdentityProviderExists(&sdk.OIDCIdentityProvider{}),
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
@@ -92,7 +93,7 @@ func resourceIdpCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
-	idp := &OIDCIdentityProvider{}
+	idp := &sdk.OIDCIdentityProvider{}
 
 	if err := fetchIdp(d.Id(), m, idp); err != nil {
 		return err
@@ -139,7 +140,7 @@ func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
 	})
 }
 
-func syncEndpoint(key string, e *Endpoint, d *schema.ResourceData) {
+func syncEndpoint(key string, e *sdk.Endpoint, d *schema.ResourceData) {
 	d.Set(key+"_binding", e.Binding)
 	d.Set(key+"_url", e.URL)
 }
@@ -161,34 +162,34 @@ func resourceIdpUpdate(d *schema.ResourceData, m interface{}) error {
 	return resourceIdpRead(d, m)
 }
 
-func buildOidcIdp(d *schema.ResourceData) *OIDCIdentityProvider {
-	return &OIDCIdentityProvider{
+func buildOidcIdp(d *schema.ResourceData) *sdk.OIDCIdentityProvider {
+	return &sdk.OIDCIdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       "OIDC",
 		IssuerMode: d.Get("issuer_mode").(string),
-		Policy: &OIDCPolicy{
+		Policy: &sdk.OIDCPolicy{
 			AccountLink:  NewAccountLink(d),
 			MaxClockSkew: int64(d.Get("max_clock_skew").(int)),
 			Provisioning: NewIdpProvisioning(d),
-			Subject: &OIDCSubject{
+			Subject: &sdk.OIDCSubject{
 				MatchType: d.Get("subject_match_type").(string),
 				UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
 					Template: d.Get("username_template").(string),
 				},
 			},
 		},
-		Protocol: &OIDCProtocol{
+		Protocol: &sdk.OIDCProtocol{
 			Algorithms: NewAlgorithms(d),
 			Endpoints:  NewEndpoints(d),
 			Scopes:     convertInterfaceToStringSet(d.Get("scopes")),
 			Type:       d.Get("protocol_type").(string),
-			Credentials: &OIDCCredentials{
-				Client: &OIDCClient{
+			Credentials: &sdk.OIDCCredentials{
+				Client: &sdk.OIDCClient{
 					ClientID:     d.Get("client_id").(string),
 					ClientSecret: d.Get("client_secret").(string),
 				},
 			},
-			Issuer: &Issuer{
+			Issuer: &sdk.Issuer{
 				URL: d.Get("issuer_url").(string),
 			},
 		},
