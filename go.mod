@@ -19,9 +19,9 @@ require (
 	github.com/okta/okta-sdk-golang v0.1.0
 	github.com/peterhellberg/link v1.0.0
 	github.com/russellhaering/goxmldsig v0.0.0-20180430223755-7acd5e4a6ef7 // indirect
-	golang.org/x/crypto v0.0.0-20190513172903-22d7a77e9e5f // indirect
-	golang.org/x/net v0.0.0-20190522155817-f3200d17e092 // indirect
-	golang.org/x/sys v0.0.0-20190528012530-adf421d2caf4 // indirect
+	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4 // indirect
+	golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7 // indirect
+	golang.org/x/sys v0.0.0-20190813064441-fde4db37ae7a // indirect
 )
 
 replace github.com/okta/okta-sdk-golang => github.com/articulate/okta-sdk-golang v0.0.0-20190810203837-596e830a6cb1

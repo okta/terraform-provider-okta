@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
+	sdk "github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/okta/okta-sdk-golang/okta"
 )
@@ -14,7 +15,7 @@ import (
 type testClient struct {
 	oktaClient    *okta.Client
 	artClient     *articulateOkta.Client
-	apiSupplement *ApiSupplement
+	apiSupplement *sdk.ApiSupplement
 }
 
 var testResourcePrefix = "testAcc"
@@ -67,7 +68,7 @@ func buildResourceName(testID int) string {
 }
 
 // sharedClient returns a common Okta Client for sweepers, which currently requires the original SDK and the official beta SDK
-func sharedClient(region string) (*articulateOkta.Client, *okta.Client, *ApiSupplement, error) {
+func sharedClient(region string) (*articulateOkta.Client, *okta.Client, *sdk.ApiSupplement, error) {
 	err := accPreCheck()
 	if err != nil {
 		return nil, nil, nil, err
@@ -96,7 +97,7 @@ func sharedClient(region string) (*articulateOkta.Client, *okta.Client, *ApiSupp
 	if err != nil {
 		return articulateClient, client, nil, err
 	}
-	api := &ApiSupplement{requestExecutor: client.GetRequestExecutor()}
+	api := &sdk.ApiSupplement{RequestExecutor: client.GetRequestExecutor()}
 
 	return articulateClient, client, api, nil
 }

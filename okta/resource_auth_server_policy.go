@@ -1,9 +1,9 @@
 package okta
 
 import (
-	"net/http"
-
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
+	"net/http"
 )
 
 func resourceAuthServerPolicy() *schema.Resource {
@@ -50,15 +50,15 @@ func resourceAuthServerPolicy() *schema.Resource {
 	}
 }
 
-func buildAuthServerPolicy(d *schema.ResourceData) *AuthorizationServerPolicy {
-	return &AuthorizationServerPolicy{
+func buildAuthServerPolicy(d *schema.ResourceData) *sdk.AuthorizationServerPolicy {
+	return &sdk.AuthorizationServerPolicy{
 		Name:        d.Get("name").(string),
 		Type:        d.Get("type").(string),
 		Status:      d.Get("status").(string),
 		Priority:    d.Get("priority").(int),
 		Description: d.Get("description").(string),
-		Conditions: &PolicyConditions{
-			Clients: &Whitelist{
+		Conditions: &sdk.PolicyConditions{
+			Clients: &sdk.Whitelist{
 				Include: convertInterfaceToStringSet(d.Get("client_whitelist")),
 			},
 		},
@@ -116,9 +116,9 @@ func resourceAuthServerPolicyDelete(d *schema.ResourceData, m interface{}) error
 	return err
 }
 
-func fetchAuthServerPolicy(d *schema.ResourceData, m interface{}) (*AuthorizationServerPolicy, error) {
+func fetchAuthServerPolicy(d *schema.ResourceData, m interface{}) (*sdk.AuthorizationServerPolicy, error) {
 	c := getSupplementFromMetadata(m)
-	auth, resp, err := c.GetAuthorizationServerPolicy(d.Get("auth_server_id").(string), d.Id(), AuthorizationServerPolicy{})
+	auth, resp, err := c.GetAuthorizationServerPolicy(d.Get("auth_server_id").(string), d.Id(), sdk.AuthorizationServerPolicy{})
 
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil

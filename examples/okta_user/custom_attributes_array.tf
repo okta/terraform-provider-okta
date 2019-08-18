@@ -11,13 +11,15 @@ resource "okta_user_schema" "test_array" {
   type       = "array"
   array_type = "string"
   master     = "PROFILE_MASTER"
+  depends_on = ["okta_user_schema.test_number", "okta_user_schema.test"]
 }
 
 resource "okta_user_schema" "test_number" {
-  index  = "number123"
-  title  = "terraform acceptance test"
-  type   = "number"
-  master = "PROFILE_MASTER"
+  index      = "number123"
+  title      = "terraform acceptance test"
+  type       = "number"
+  master     = "PROFILE_MASTER"
+  depends_on = ["okta_user_schema.test"]
 }
 
 resource "okta_user" "testAcc_replace_with_uuid" {

@@ -3,14 +3,14 @@ package okta
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/articulate/terraform-provider-okta/sdk"
+	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/okta/okta-sdk-golang/okta"
 	"log"
 	"net/http"
 	"reflect"
 	"time"
-
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/okta/okta-sdk-golang/okta"
 )
 
 var userSearchSchema = &schema.Schema{
@@ -190,7 +190,7 @@ func buildUserDataSourceSchema(target map[string]*schema.Schema) map[string]*sch
 
 func assignAdminRolesToUser(u string, r []string, c *okta.Client) error {
 	for _, role := range r {
-		if contains(validAdminRoles, role) {
+		if contains(sdk.ValidAdminRoles, role) {
 			roleStruct := okta.Role{Type: role}
 			_, _, err := c.User.AddRoleToUser(u, roleStruct)
 

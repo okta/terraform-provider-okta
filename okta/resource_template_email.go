@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -51,20 +52,20 @@ func resourceTemplateEmail() *schema.Resource {
 	}
 }
 
-func buildEmailTemplate(d *schema.ResourceData) *EmailTemplate {
-	trans := map[string]*EmailTranslation{}
+func buildEmailTemplate(d *schema.ResourceData) *sdk.EmailTemplate {
+	trans := map[string]*sdk.EmailTranslation{}
 	rawTransList := d.Get("translations").(*schema.Set)
 
 	for _, val := range rawTransList.List() {
 		rawTrans := val.(map[string]interface{})
-		trans[rawTrans["language"].(string)] = &EmailTranslation{
+		trans[rawTrans["language"].(string)] = &sdk.EmailTranslation{
 			Subject:  rawTrans["subject"].(string),
 			Template: rawTrans["template"].(string),
 		}
 	}
 	defaultLang := d.Get("default_language").(string)
 
-	return &EmailTemplate{
+	return &sdk.EmailTemplate{
 		DefaultLanguage: defaultLang,
 		Name:            "Custom",
 		Type:            d.Get("type").(string),
@@ -74,7 +75,7 @@ func buildEmailTemplate(d *schema.ResourceData) *EmailTemplate {
 	}
 }
 
-func flattenEmailTranlations(temp map[string]*EmailTranslation) *schema.Set {
+func flattenEmailTranlations(temp map[string]*sdk.EmailTranslation) *schema.Set {
 	rawSet := []interface{}{}
 
 	for key, val := range temp {

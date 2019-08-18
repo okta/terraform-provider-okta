@@ -33,7 +33,6 @@ func TestAccDataSourceUser(t *testing.T) {
 					resource.TestCheckResourceAttr("data.okta_user.test", "first_name", "TestAcc"),
 					resource.TestCheckResourceAttr("data.okta_user.test", "last_name", "Smith"),
 					resource.TestCheckResourceAttrSet("okta_user.test", "id"),
-					resource.TestCheckResourceAttr("data.okta_user.test", "custom_profile_attributes", "{\"array123\":[\"test\"],\"number123\":1}"),
 				),
 			},
 		},

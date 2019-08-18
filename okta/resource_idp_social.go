@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
@@ -12,7 +13,7 @@ func resourceIdpSocial() *schema.Resource {
 		Read:   resourceIdpSocialRead,
 		Update: resourceIdpSocialUpdate,
 		Delete: resourceIdpDelete,
-		Exists: getIdentityProviderExists(&SAMLIdentityProvider{}),
+		Exists: getIdentityProviderExists(&sdk.SAMLIdentityProvider{}),
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
@@ -89,7 +90,7 @@ func resourceIdpSocialCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceIdpSocialRead(d *schema.ResourceData, m interface{}) error {
-	idp := &OIDCIdentityProvider{}
+	idp := &sdk.OIDCIdentityProvider{}
 
 	if err := fetchIdp(d.Id(), m, idp); err != nil {
 		return err
@@ -142,16 +143,16 @@ func resourceIdpSocialUpdate(d *schema.ResourceData, m interface{}) error {
 	return resourceIdpSocialRead(d, m)
 }
 
-func buildidpSocial(d *schema.ResourceData) *OIDCIdentityProvider {
-	return &OIDCIdentityProvider{
+func buildidpSocial(d *schema.ResourceData) *sdk.OIDCIdentityProvider {
+	return &sdk.OIDCIdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       d.Get("type").(string),
 		IssuerMode: d.Get("issuer_mode").(string),
-		Policy: &OIDCPolicy{
+		Policy: &sdk.OIDCPolicy{
 			AccountLink:  NewAccountLink(d),
 			MaxClockSkew: int64(d.Get("max_clock_skew").(int)),
 			Provisioning: NewIdpProvisioning(d),
-			Subject: &OIDCSubject{
+			Subject: &sdk.OIDCSubject{
 				MatchType:      d.Get("subject_match_type").(string),
 				MatchAttribute: d.Get("subject_match_attribute").(string),
 				UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
@@ -159,11 +160,11 @@ func buildidpSocial(d *schema.ResourceData) *OIDCIdentityProvider {
 				},
 			},
 		},
-		Protocol: &OIDCProtocol{
+		Protocol: &sdk.OIDCProtocol{
 			Scopes: convertInterfaceToStringSet(d.Get("scopes")),
 			Type:   d.Get("protocol_type").(string),
-			Credentials: &OIDCCredentials{
-				Client: &OIDCClient{
+			Credentials: &sdk.OIDCCredentials{
+				Client: &sdk.OIDCClient{
 					ClientID:     d.Get("client_id").(string),
 					ClientSecret: d.Get("client_secret").(string),
 				},

@@ -20,6 +20,8 @@ const (
 	appSecurePasswordStore = "okta_app_secure_password_store"
 	appSwa                 = "okta_app_swa"
 	appThreeField          = "okta_app_three_field"
+	appUserSchema          = "okta_app_user_schema"
+	appUserBaseSchema      = "okta_app_user_base_schema"
 	authServer             = "okta_auth_server"
 	authServerClaim        = "okta_auth_server_claim"
 	authServerPolicy       = "okta_auth_server_policy"
@@ -118,6 +120,8 @@ func Provider() terraform.ResourceProvider {
 			appSecurePasswordStore: resourceAppSecurePasswordStore(),
 			appSwa:                 resourceAppSwa(),
 			appThreeField:          resourceAppThreeField(),
+			appUserSchema:          resourceAppUserSchema(),
+			appUserBaseSchema:      resourceAppUserBaseSchema(),
 			authServer:             resourceAuthServer(),
 			authServerClaim:        resourceAuthServerClaim(),
 			authServerPolicy:       resourceAuthServerPolicy(),

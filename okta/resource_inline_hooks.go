@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 
@@ -185,8 +186,8 @@ func resourceInlineHookDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func buildInlineHook(d *schema.ResourceData, m interface{}) *InlineHook {
-	return &InlineHook{
+func buildInlineHook(d *schema.ResourceData, m interface{}) *sdk.InlineHook {
+	return &sdk.InlineHook{
 		Name:    d.Get("name").(string),
 		Status:  d.Get("status").(string),
 		Type:    d.Get("type").(string),
@@ -195,32 +196,32 @@ func buildInlineHook(d *schema.ResourceData, m interface{}) *InlineHook {
 	}
 }
 
-func buildInlineChannel(d *schema.ResourceData, m interface{}) *Channel {
+func buildInlineChannel(d *schema.ResourceData, m interface{}) *sdk.Channel {
 	if _, ok := d.GetOk("channel"); !ok {
 		return nil
 	}
 
-	headerList := []*Header{}
+	headerList := []*sdk.Header{}
 	if raw, ok := d.GetOk("headers"); ok {
 		for _, header := range raw.(*schema.Set).List() {
 			h, ok := header.(map[string]interface{})
 			if ok {
-				headerList = append(headerList, &Header{Key: h["key"].(string), Value: h["value"].(string)})
+				headerList = append(headerList, &sdk.Header{Key: h["key"].(string), Value: h["value"].(string)})
 			}
 		}
 	}
 
-	var auth *AuthScheme
+	var auth *sdk.AuthScheme
 	if _, ok := d.GetOk("auth.key"); ok {
-		auth = &AuthScheme{
+		auth = &sdk.AuthScheme{
 			Key:   getStringValue(d, "auth.key"),
 			Type:  getStringValue(d, "auth.type"),
 			Value: getStringValue(d, "auth.value"),
 		}
 	}
 
-	return &Channel{
-		Config: &HookConfig{
+	return &sdk.Channel{
+		Config: &sdk.HookConfig{
 			URI:        getStringValue(d, "channel.uri"),
 			AuthScheme: auth,
 			Headers:    headerList,
@@ -231,7 +232,7 @@ func buildInlineChannel(d *schema.ResourceData, m interface{}) *Channel {
 	}
 }
 
-func flattenAuth(d *schema.ResourceData, c *Channel) map[string]interface{} {
+func flattenAuth(d *schema.ResourceData, c *sdk.Channel) map[string]interface{} {
 	auth := map[string]interface{}{}
 
 	if c.Config.AuthScheme != nil {
@@ -245,7 +246,7 @@ func flattenAuth(d *schema.ResourceData, c *Channel) map[string]interface{} {
 	return auth
 }
 
-func flattenHookChannel(c *Channel) map[string]interface{} {
+func flattenHookChannel(c *sdk.Channel) map[string]interface{} {
 	return map[string]interface{}{
 		"type":    c.Type,
 		"version": c.Version,
@@ -254,7 +255,7 @@ func flattenHookChannel(c *Channel) map[string]interface{} {
 	}
 }
 
-func flattenHeaders(c *Channel) *schema.Set {
+func flattenHeaders(c *sdk.Channel) *schema.Set {
 	headers := make([]interface{}, len(c.Config.Headers))
 	for i, header := range c.Config.Headers {
 		headers[i] = map[string]interface{}{
@@ -266,7 +267,7 @@ func flattenHeaders(c *Channel) *schema.Set {
 	return schema.NewSet(schema.HashResource(headerSchema), headers)
 }
 
-func setHookStatus(d *schema.ResourceData, client *ApiSupplement, status string, desiredStatus string) error {
+func setHookStatus(d *schema.ResourceData, client *sdk.ApiSupplement, status string, desiredStatus string) error {
 	if status != desiredStatus {
 		if desiredStatus == "INACTIVE" {
 			return responseErr(client.DeactivateInlineHook(d.Id()))

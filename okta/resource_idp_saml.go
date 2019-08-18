@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
@@ -12,7 +13,7 @@ func resourceIdpSaml() *schema.Resource {
 		Read:   resourceIdpSamlRead,
 		Update: resourceIdpSamlUpdate,
 		Delete: resourceIdpDelete,
-		Exists: getIdentityProviderExists(&SAMLIdentityProvider{}),
+		Exists: getIdentityProviderExists(&sdk.SAMLIdentityProvider{}),
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
@@ -91,7 +92,7 @@ func resourceIdpSamlCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
-	idp := &SAMLIdentityProvider{}
+	idp := &sdk.SAMLIdentityProvider{}
 	if err := fetchIdp(d.Id(), m, idp); err != nil {
 		return err
 	}
@@ -144,15 +145,15 @@ func resourceIdpSamlUpdate(d *schema.ResourceData, m interface{}) error {
 	return resourceIdpSamlRead(d, m)
 }
 
-func buildidpSaml(d *schema.ResourceData) *SAMLIdentityProvider {
-	return &SAMLIdentityProvider{
+func buildidpSaml(d *schema.ResourceData) *sdk.SAMLIdentityProvider {
+	return &sdk.SAMLIdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       "SAML2",
 		IssuerMode: d.Get("issuer_mode").(string),
-		Policy: &SAMLPolicy{
+		Policy: &sdk.SAMLPolicy{
 			AccountLink:  NewAccountLink(d),
 			Provisioning: NewIdpProvisioning(d),
-			Subject: &SAMLSubject{
+			Subject: &sdk.SAMLSubject{
 				Filter:    d.Get("subject_filter").(string),
 				Format:    convertInterfaceToStringSet(d.Get("subject_format")),
 				MatchType: d.Get("subject_match_type").(string),
@@ -161,22 +162,22 @@ func buildidpSaml(d *schema.ResourceData) *SAMLIdentityProvider {
 				},
 			},
 		},
-		Protocol: &SAMLProtocol{
+		Protocol: &sdk.SAMLProtocol{
 			Algorithms: NewAlgorithms(d),
-			Endpoints: &SAMLEndpoints{
-				Acs: &ACSSSO{
+			Endpoints: &sdk.SAMLEndpoints{
+				Acs: &sdk.ACSSSO{
 					Binding: d.Get("acs_binding").(string),
 					Type:    d.Get("acs_type").(string),
 				},
-				Sso: &IDPSSO{
+				Sso: &sdk.IDPSSO{
 					Binding:     d.Get("sso_binding").(string),
 					Destination: d.Get("sso_destination").(string),
 					URL:         d.Get("sso_url").(string),
 				},
 			},
 			Type: "SAML2",
-			Credentials: &SAMLCredentials{
-				Trust: &IDPTrust{
+			Credentials: &sdk.SAMLCredentials{
+				Trust: &sdk.IDPTrust{
 					Issuer: d.Get("issuer").(string),
 					Kid:    d.Get("kid").(string),
 				},

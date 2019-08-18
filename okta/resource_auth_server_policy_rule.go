@@ -3,6 +3,7 @@ package okta
 import (
 	"net/http"
 
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 )
@@ -81,33 +82,33 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 	}
 }
 
-func buildAuthServerPolicyRule(d *schema.ResourceData) *AuthorizationServerPolicyRule {
-	var hook *AuthServerInlineHook
+func buildAuthServerPolicyRule(d *schema.ResourceData) *sdk.AuthorizationServerPolicyRule {
+	var hook *sdk.AuthServerInlineHook
 
 	inlineHook := d.Get("inline_hook_id").(string)
 
 	if inlineHook != "" {
-		hook = &AuthServerInlineHook{
+		hook = &sdk.AuthServerInlineHook{
 			Id: inlineHook,
 		}
 	}
 
-	return &AuthorizationServerPolicyRule{
+	return &sdk.AuthorizationServerPolicyRule{
 		Name:     d.Get("name").(string),
 		Status:   d.Get("status").(string),
 		Priority: d.Get("priority").(int),
 		Type:     d.Get("type").(string),
-		Actions: &PolicyRuleActions{
-			Token: &TokenActions{
+		Actions: &sdk.PolicyRuleActions{
+			Token: &sdk.TokenActions{
 				AccessTokenLifetimeMinutes:  d.Get("access_token_lifetime_minutes").(int),
 				RefreshTokenLifetimeMinutes: d.Get("refresh_token_lifetime_minutes").(int),
 				RefreshTokenWindowMinutes:   d.Get("refresh_token_window_minutes").(int),
 				InlineHook:                  hook,
 			},
 		},
-		Conditions: &PolicyRuleConditions{
-			GrantTypes: &Whitelist{Include: convertInterfaceToStringSet(d.Get("grant_type_whitelist"))},
-			Scopes:     &Whitelist{Include: convertInterfaceToStringSet(d.Get("scope_whitelist"))},
+		Conditions: &sdk.PolicyRuleConditions{
+			GrantTypes: &sdk.Whitelist{Include: convertInterfaceToStringSet(d.Get("grant_type_whitelist"))},
+			Scopes:     &sdk.Whitelist{Include: convertInterfaceToStringSet(d.Get("scope_whitelist"))},
 			People:     getPeopleConditions(d),
 		},
 	}
@@ -181,11 +182,11 @@ func resourceAuthServerPolicyRuleDelete(d *schema.ResourceData, m interface{}) e
 	return err
 }
 
-func fetchAuthServerPolicyRule(d *schema.ResourceData, m interface{}) (*AuthorizationServerPolicyRule, error) {
+func fetchAuthServerPolicyRule(d *schema.ResourceData, m interface{}) (*sdk.AuthorizationServerPolicyRule, error) {
 	c := getSupplementFromMetadata(m)
 	authServerId := d.Get("auth_server_id").(string)
 	policyId := d.Get("policy_id").(string)
-	auth, resp, err := c.GetAuthorizationServerPolicyRule(authServerId, policyId, d.Id(), AuthorizationServerPolicyRule{})
+	auth, resp, err := c.GetAuthorizationServerPolicyRule(authServerId, policyId, d.Id(), sdk.AuthorizationServerPolicyRule{})
 
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil

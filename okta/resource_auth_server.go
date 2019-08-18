@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/okta/okta-sdk-golang/okta"
 )
 
@@ -82,10 +83,10 @@ func handleAuthServerLifecycle(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func buildAuthServer(d *schema.ResourceData) *AuthorizationServer {
-	return &AuthorizationServer{
+func buildAuthServer(d *schema.ResourceData) *sdk.AuthorizationServer {
+	return &sdk.AuthorizationServer{
 		Audiences: convertInterfaceToStringSet(d.Get("audiences")),
-		Credentials: &AuthServerCredentials{
+		Credentials: &sdk.AuthServerCredentials{
 			Signing: &okta.ApplicationCredentialsSigning{
 				RotationMode: d.Get("credentials_rotation_mode").(string),
 			},
@@ -163,7 +164,7 @@ func resourceAuthServerDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func fetchAuthServer(d *schema.ResourceData, m interface{}) (*AuthorizationServer, error) {
+func fetchAuthServer(d *schema.ResourceData, m interface{}) (*sdk.AuthorizationServer, error) {
 	auth, resp, err := getSupplementFromMetadata(m).GetAuthorizationServer(d.Id())
 
 	if resp.StatusCode == http.StatusNotFound {

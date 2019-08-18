@@ -1,4 +1,4 @@
-package okta
+package sdk
 
 import (
 	"fmt"
@@ -43,42 +43,42 @@ type (
 
 func (m *ApiSupplement) ActivateInlineHook(id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/inlineHooks/%s/lifecycle/activate", id)
-	req, err := m.requestExecutor.NewRequest("POST", url, nil)
+	req, err := m.RequestExecutor.NewRequest("POST", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return m.requestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(req, nil)
 }
 
 func (m *ApiSupplement) DeactivateInlineHook(id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/inlineHooks/%s/lifecycle/deactivate", id)
-	req, err := m.requestExecutor.NewRequest("POST", url, nil)
+	req, err := m.RequestExecutor.NewRequest("POST", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return m.requestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(req, nil)
 }
 
 func (m *ApiSupplement) DeleteInlineHook(id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/inlineHooks/%s", id)
-	req, err := m.requestExecutor.NewRequest("DELETE", url, nil)
+	req, err := m.RequestExecutor.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return m.requestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(req, nil)
 }
 
 func (m *ApiSupplement) ListInlineHooks() ([]*InlineHook, *okta.Response, error) {
-	req, err := m.requestExecutor.NewRequest("GET", "/api/v1/inlineHooks", nil)
+	req, err := m.RequestExecutor.NewRequest("GET", "/api/v1/inlineHooks", nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var auth []*InlineHook
-	resp, err := m.requestExecutor.Do(req, &auth)
+	resp, err := m.RequestExecutor.Do(req, &auth)
 	return auth, resp, err
 }
 
@@ -87,13 +87,13 @@ func (m *ApiSupplement) CreateInlineHook(body InlineHook, qp *query.Params) (*In
 	if qp != nil {
 		url += qp.String()
 	}
-	req, err := m.requestExecutor.NewRequest("POST", url, body)
+	req, err := m.RequestExecutor.NewRequest("POST", url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	hook := body
-	resp, err := m.requestExecutor.Do(req, &hook)
+	resp, err := m.RequestExecutor.Do(req, &hook)
 	return &hook, resp, err
 }
 
@@ -102,13 +102,13 @@ func (m *ApiSupplement) UpdateInlineHook(id string, body InlineHook, qp *query.P
 	if qp != nil {
 		url += qp.String()
 	}
-	req, err := m.requestExecutor.NewRequest("PUT", url, body)
+	req, err := m.RequestExecutor.NewRequest("PUT", url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	hook := body
-	resp, err := m.requestExecutor.Do(req, &hook)
+	resp, err := m.RequestExecutor.Do(req, &hook)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -117,13 +117,13 @@ func (m *ApiSupplement) UpdateInlineHook(id string, body InlineHook, qp *query.P
 
 func (m *ApiSupplement) GetInlineHook(id string) (*InlineHook, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/inlineHooks/%s", id)
-	req, err := m.requestExecutor.NewRequest("GET", url, nil)
+	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	hook := &InlineHook{}
-	resp, err := m.requestExecutor.Do(req, &hook)
+	resp, err := m.RequestExecutor.Do(req, &hook)
 	if err != nil {
 		return nil, resp, err
 	}

@@ -4,4 +4,5 @@ resource "okta_user_base_schema" "firstName" {
   type        = "string"
   master      = "PROFILE_MASTER"
   permissions = "READ_WRITE"
+  required    = true
 }
