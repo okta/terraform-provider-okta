@@ -257,8 +257,8 @@ func getUserSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
 		Enum:      convertInterfaceToStringArrNullable(d.Get("enum")),
 		Master:    getNullableItem(d, "master"),
 		Items:     getNullableItem(d, "array_type"),
-		MinLength: intPtr(d.Get("min_length").(int)),
-		MaxLength: intPtr(d.Get("max_length").(int)),
+		MinLength: getNullableInt(d, "min_length"),
+		MaxLength: getNullableInt(d, "max_length"),
 		OneOf:     getNullableOneOf(d),
 	}
 }

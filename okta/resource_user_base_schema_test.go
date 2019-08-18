@@ -3,9 +3,10 @@ package okta
 import (
 	"errors"
 	"fmt"
+	"testing"
+
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
 )
@@ -61,7 +62,7 @@ func TestAccOktaUserBaseSchemas(t *testing.T) {
 
 func TestAccuserBaseSchemaImport(t *testing.T) {
 	ri := acctest.RandInt()
-	resourceName := buildResourceFQN(userBaseSchema, ri)
+	resourceName := fmt.Sprintf("%s.%s", userBaseSchema, baseTestProp)
 	mgr := newFixtureManager(userBaseSchema)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 
