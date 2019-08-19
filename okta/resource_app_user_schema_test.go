@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccOktaAppUserSchemas_crud(t *testing.T) {
+func TestAccAppUserSchemas_crud(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appUserSchema)
 	config := mgr.GetFixtures("basic.tf", ri, t)
@@ -26,7 +26,7 @@ func TestAccOktaAppUserSchemas_crud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaAppUserSchemasExists(resourceName),
+					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
@@ -46,7 +46,7 @@ func TestAccOktaAppUserSchemas_crud(t *testing.T) {
 			{
 				Config: updated,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaAppUserSchemasExists(resourceName),
+					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
@@ -59,7 +59,7 @@ func TestAccOktaAppUserSchemas_crud(t *testing.T) {
 	})
 }
 
-func testOktaAppUserSchemasExists(name string) resource.TestCheckFunc {
+func testAppUserSchemasExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]

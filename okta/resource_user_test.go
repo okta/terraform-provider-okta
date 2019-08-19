@@ -70,7 +70,7 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 	arrayAttrConfig := mgr.GetFixtures("custom_attributes_array.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("remove_custom_attributes.tf", ri, t)
 	resourceName := buildResourceFQN(oktaUser, ri)
-	email := fmt.Sprintf("test-acc-%d@testing.com", ri)
+	email := fmt.Sprintf("test-acc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -118,7 +118,7 @@ func TestAccOktaUser_groupMembership(t *testing.T) {
 	config := mgr.GetFixtures("group_assigned.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("group_unassigned.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", oktaUser)
-	email := fmt.Sprintf("test-acc-%d@testing.com", ri)
+	email := fmt.Sprintf("test-acc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -181,7 +181,7 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("all_attributes.tf", ri, t)
 	minimalConfig := mgr.GetFixtures("basic.tf", ri, t)
 	resourceName := buildResourceFQN(oktaUser, ri)
-	email := fmt.Sprintf("test-acc-%d@testing.com", ri)
+	email := fmt.Sprintf("test-acc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -226,7 +226,7 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "preferred_language", "en-us"),
 					resource.TestCheckResourceAttr(resourceName, "primary_phone", "4445556666"),
 					resource.TestCheckResourceAttr(resourceName, "profile_url", "http://www.example.com/profile"),
-					resource.TestCheckResourceAttr(resourceName, "second_email", fmt.Sprintf("test2-%d@testing.com", ri)),
+					resource.TestCheckResourceAttr(resourceName, "second_email", fmt.Sprintf("test2-%d@example.com", ri)),
 					resource.TestCheckResourceAttr(resourceName, "state", "NY"),
 					resource.TestCheckResourceAttr(resourceName, "street_address", "5678 Testing Ave."),
 					resource.TestCheckResourceAttr(resourceName, "timezone", "America/New_York"),
@@ -254,7 +254,7 @@ func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
 	statusChanged := mgr.GetFixtures("deprovisioned.tf", ri, t)
 	config := mgr.GetFixtures("staged.tf", ri, t)
 	resourceName := buildResourceFQN(oktaUser, ri)
-	email := fmt.Sprintf("test-acc-%d@testing.com", ri)
+	email := fmt.Sprintf("test-acc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -337,8 +337,8 @@ resource okta_user "testAcc_%[1]s" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "%[1]s"
-  login       = "test-acc-%[1]s@testing.com"
-  email       = "test-acc-%[1]s@testing.com"
+  login       = "test-acc-%[1]s@example.com"
+  email       = "test-acc-%[1]s@example.com"
 
   custom_profile_attributes = <<JSON
   {
@@ -355,9 +355,9 @@ resource okta_user "testAcc_%[1]s" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "%[1]s"
-  login       = "test-acc-%[1]s@testing.com"
+  login       = "test-acc-%[1]s@example.com"
   status      = "DEPROVISIONED"
-  email       = "hello@testing.com"
+  email       = "hello@example.com"
 }
 `, r)
 }
@@ -368,8 +368,8 @@ resource okta_user "testAcc_%[1]s" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN", "GROUP_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "Smith"
-  login       = "test-acc-%[1]s@testing.com"
-  email       = "test-acc-%[1]s@testing.com"
+  login       = "test-acc-%[1]s@example.com"
+  email       = "test-acc-%[1]s@example.com"
 }
 `, r)
 }
