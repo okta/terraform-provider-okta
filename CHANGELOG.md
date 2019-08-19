@@ -85,4 +85,5 @@ For Release v3.0.17
 * Add okta_app_user_schema resource
 * Add okta_app_user_base_schema resource
 * Add `required` field to base schema
-
+* Add `okta_app_user` resource
+* Add `okta_app_group` resource
