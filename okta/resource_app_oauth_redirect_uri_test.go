@@ -35,7 +35,7 @@ func createRedirectUriExists(name string) resource.TestCheckFunc {
 	}
 }
 
-func TestAccOktaAppOAuthlicationRedirectCrud(t *testing.T) {
+func TestAccAppOAuthApplication_redirectCrud(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appOAuthRedirectUri)
 	config := mgr.GetFixtures("basic.tf", ri, t)

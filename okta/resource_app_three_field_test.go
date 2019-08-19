@@ -9,11 +9,12 @@ import (
 	"github.com/okta/okta-sdk-golang/okta"
 )
 
-func TestAccOktaAppThreeFieldApplication(t *testing.T) {
+func TestAccAppThreeFieldApplication_crud(t *testing.T) {
 	ri := acctest.RandInt()
-	config := buildTestThreeFieldConfig(ri)
-	updatedConfig := buildTestThreeFieldConfigUpdated(ri)
-	resourceName := buildResourceFQN(appThreeField, ri)
+	mgr := newFixtureManager(appThreeField)
+	config := mgr.GetFixtures("basic.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", appThreeField)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -49,37 +50,4 @@ func TestAccOktaAppThreeFieldApplication(t *testing.T) {
 			},
 		},
 	})
-}
-
-func buildTestThreeFieldConfig(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  label         	 	= "%s"
-  button_selector		= "btn"
-  username_selector		= "user"
-  password_selector		= "pass"
-  url			        = "http://example.com"
-  extra_field_selector          = "third"
-  extra_field_value		= "third"
-}
-`, appThreeField, name, name)
-}
-
-func buildTestThreeFieldConfigUpdated(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  label       			= "%s"
-  status 	  		= "INACTIVE"
-  button_selector		= "btn1"
-  username_selector		= "user1"
-  password_selector		= "pass1"
-  url			        = "http://example.com"
-  extra_field_selector 	        = "mfa"
-  extra_field_value		= "mfa"
-}
-`, appThreeField, name, name)
 }

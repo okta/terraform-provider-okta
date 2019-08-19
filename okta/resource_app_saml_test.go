@@ -12,11 +12,11 @@ import (
 	"github.com/okta/okta-sdk-golang/okta"
 )
 
-func TestAccAppSamlImport(t *testing.T) {
+func TestAccAppSaml_import(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appSaml)
 	config := mgr.GetFixtures("import.tf", ri, t)
-	resourceName := buildResourceFQN(appSaml, ri)
+	resourceName := fmt.Sprintf("%s.test", appSaml)
 
 	resource.Test(t, resource.TestCase{
 		Providers: testAccProviders,
@@ -42,7 +42,7 @@ func TestAccAppSamlImport(t *testing.T) {
 }
 
 // Ensure conditional require logic causes this plan to fail
-func TestAccOktaAppSamlConditionalRequire(t *testing.T) {
+func TestAccAppSaml_conditionalRequire(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSamlConfigMissingFields(ri)
 
@@ -60,7 +60,7 @@ func TestAccOktaAppSamlConditionalRequire(t *testing.T) {
 }
 
 // Ensure conditional require logic causes this plan to fail
-func TestAccOktaAppSamlInvalidUrl(t *testing.T) {
+func TestAccAppSaml_invalidUrl(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSamlConfigInvalidUrl(ri)
 
@@ -77,54 +77,12 @@ func TestAccOktaAppSamlInvalidUrl(t *testing.T) {
 	})
 }
 
-// Test creation of a custom SAML app.
-func TestAccOktaAppSaml(t *testing.T) {
+func TestAccAppSaml_crud(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appSaml)
-	config := mgr.GetFixtures("custom_saml_app.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("custom_saml_app_updated.tf", ri, t)
-	resourceName := buildResourceFQN(appSaml, ri)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
-					resource.TestCheckResourceAttr(resourceName, "sso_url", "http://google.com"),
-					resource.TestCheckResourceAttr(resourceName, "recipient", "http://here.com"),
-					resource.TestCheckResourceAttr(resourceName, "destination", "http://its-about-the-journey.com"),
-					resource.TestCheckResourceAttr(resourceName, "audience", "http://audience.com"),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttrSet(resourceName, "http_post_binding"),
-					resource.TestCheckResourceAttrSet(resourceName, "http_redirect_binding"),
-					resource.TestCheckResourceAttrSet(resourceName, "key_id"),
-					resource.TestCheckResourceAttrSet(resourceName, "metadata"),
-					resource.TestCheckResourceAttrSet(resourceName, "entity_key"),
-					resource.TestCheckResourceAttrSet(resourceName, "entity_url"),
-				),
-			},
-			{
-				Config: updatedConfig,
-				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccOktaAppSamlAllFields(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSaml)
-	config := mgr.GetFixtures("custom_saml_app.tf", ri, t)
-	allFields := mgr.GetFixtures("custom_saml_app_all_fields.tf", ri, t)
-	resourceName := buildResourceFQN(appSaml, ri)
+	config := mgr.GetFixtures("basic.tf", ri, t)
+	allFields := mgr.GetFixtures("updated.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", appSaml)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -179,11 +137,11 @@ func TestAccOktaAppSamlAllFields(t *testing.T) {
 }
 
 // Add and remove groups/users
-func TestAccOktaAppSamlUserGroups(t *testing.T) {
+func TestAccAppSaml_userGroups(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appSaml)
-	config := mgr.GetFixtures("saml_app_with_groups_and_users.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("saml_app_with_groups_and_users_updated.tf", ri, t)
+	config := mgr.GetFixtures("user_groups.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("user_groups_updated.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
 	resource.Test(t, resource.TestCase{

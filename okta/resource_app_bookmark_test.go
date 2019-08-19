@@ -9,7 +9,7 @@ import (
 	"github.com/okta/okta-sdk-golang/okta"
 )
 
-func TestAccOktaAppBookmarkApplication(t *testing.T) {
+func TestAccAppBookmarkApplication(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appBookmark)
 	config := mgr.GetFixtures("basic.tf", ri, t)

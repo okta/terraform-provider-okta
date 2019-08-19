@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform/helper/acctest"
 )
 
-func TestAccOktaAppUserBaseSchema_change(t *testing.T) {
+func TestAccAppUserBaseSchema_change(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appUserBaseSchema)
 	config := mgr.GetFixtures("basic.tf", ri, t)

@@ -18,16 +18,16 @@ resource "okta_user" "user" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "blah"
-  login       = "test-acc-replace_with_uuid@testing.com"
-  email       = "test-acc-replace_with_uuid@testing.com"
+  login       = "test-acc-replace_with_uuid@example.com"
+  email       = "test-acc-replace_with_uuid@example.com"
   status      = "ACTIVE"
 }
 
 resource "okta_user" "user1" {
   first_name = "TestAcc1"
   last_name  = "blah"
-  login      = "test-acc-1-replace_with_uuid@testing.com"
-  email      = "test-acc-1-replace_with_uuid@testing.com"
+  login      = "test-acc-1-replace_with_uuid@example.com"
+  email      = "test-acc-1-replace_with_uuid@example.com"
   status     = "ACTIVE"
 }
 
