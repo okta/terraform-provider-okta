@@ -105,7 +105,7 @@ var (
 		Type:         schema.TypeString,
 		Optional:     true,
 		Description:  "algorithm to use to sign requests",
-		ValidateFunc: validation.StringInSlice([]string{"SHA-256"}, false),
+		ValidateFunc: validation.StringInSlice([]string{"SHA-256", "SHA-1"}, false),
 		Default:      "SHA-256",
 	}
 
