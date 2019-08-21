@@ -59,50 +59,10 @@ func oktaConfig() (*Config, error) {
 	return config, nil
 }
 
-func testOktaConfig(t *testing.T) *Config {
-	c, err := oktaConfig()
-
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-
-	return c
-}
-
 func testAccPreCheck(t *testing.T) {
 	err := accPreCheck()
 
 	if err != nil {
 		t.Fatalf("%v", err)
-	}
-}
-
-func TestAccOktaProviderRegistration_articulateSDK(t *testing.T) {
-	testAccPreCheck(t)
-	c := testOktaConfig(t)
-	// test credentials by listing our default user profile schema
-	url := fmt.Sprintf("meta/schemas/user/default")
-
-	req, err := c.articulateOktaClient.NewRequest("GET", url, nil)
-
-	if err != nil {
-		t.Fatalf("Error initializing test connection to Okta: %v", err)
-	}
-	_, err = c.articulateOktaClient.Do(req, nil)
-	if err != nil {
-		t.Fatalf("Error testing connection to Okta via the Articulate SDK. Please verify your credentials: %v", err)
-	}
-}
-
-func TestAccOktaProviderRegistration_oktaSDK(t *testing.T) {
-	testAccPreCheck(t)
-	c := testOktaConfig(t)
-
-	// test credentials by listing users in account
-	// will limit to 1 user when this gets merged - https://github.com/okta/okta-sdk-golang/pull/28
-	_, _, err := c.oktaClient.User.ListUsers(nil)
-
-	if err != nil {
-		t.Fatalf("Error testing connection to Okta via the Official Okta SDK. Please verify your credentials: %v", err)
 	}
 }
