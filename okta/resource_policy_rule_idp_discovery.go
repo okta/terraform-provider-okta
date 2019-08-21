@@ -200,11 +200,14 @@ func buildUserIdPatterns(d *schema.ResourceData) []*sdk.IdpDiscoveryRulePattern 
 func buildIdentifier(d *schema.ResourceData) *sdk.IdpDiscoveryRuleUserIdentifier {
 
 	if uidType, ok := d.GetOkExists("user_identifier_type"); ok {
-		return &sdk.IdpDiscoveryRuleUserIdentifier{
-			Attribute: d.Get("user_identifier_attribute").(string),
-			Type:      uidType.(string),
-			Patterns:  buildUserIdPatterns(d),
+		if uidType != "" {
+			return &sdk.IdpDiscoveryRuleUserIdentifier{
+				Attribute: d.Get("user_identifier_attribute").(string),
+				Type:      uidType.(string),
+				Patterns:  buildUserIdPatterns(d),
+			}
 		}
+		return nil
 	}
 	return nil
 }
