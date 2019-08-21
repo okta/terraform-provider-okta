@@ -87,3 +87,7 @@ For Release v3.0.17
 * Add `required` field to base schema
 * Add `okta_app_user` resource
 * Add `okta_app_group` resource
+
+For Release v3.0.18
+
+* Support SHA-1 signing algorithm on IdPs
