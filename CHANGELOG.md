@@ -91,3 +91,4 @@ For Release v3.0.17
 For Release v3.0.18
 
 * Support SHA-1 signing algorithm on IdPs
+* Fix bug where audience is reset on IdP update because it is omitted from the payload
