@@ -178,8 +178,8 @@ func buildidpSaml(d *schema.ResourceData) *sdk.SAMLIdentityProvider {
 			Type: "SAML2",
 			Credentials: &sdk.SAMLCredentials{
 				Trust: &sdk.IDPTrust{
-					Issuer: d.Get("issuer").(string),
-					Kid:    d.Get("kid").(string),
+					Issuer:   d.Get("issuer").(string),
+					Kid:      d.Get("kid").(string),
 					Audience: d.Get("audience").(string),
 				},
 			},
