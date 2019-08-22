@@ -36,7 +36,7 @@ var (
 		"provisioning_action": &schema.Schema{
 			Type:         schema.TypeString,
 			Optional:     true,
-			ValidateFunc: validation.StringInSlice([]string{"AUTO", ""}, false),
+			ValidateFunc: validation.StringInSlice([]string{"AUTO", "DISABLED", ""}, false),
 			Default:      "AUTO",
 		},
 		"deprovisioned_action": actionSchema,
