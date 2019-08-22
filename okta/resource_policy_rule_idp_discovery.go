@@ -199,13 +199,15 @@ func buildUserIdPatterns(d *schema.ResourceData) []*sdk.IdpDiscoveryRulePattern 
 
 func buildIdentifier(d *schema.ResourceData) *sdk.IdpDiscoveryRuleUserIdentifier {
 
-	if uidType, ok := d.GetOkExists("user_identifier_type"); ok {
+	uidType := d.Get("user_identifier_type").(string)
+	if uidType != "" {
 		return &sdk.IdpDiscoveryRuleUserIdentifier{
 			Attribute: d.Get("user_identifier_attribute").(string),
-			Type:      uidType.(string),
+			Type:      uidType,
 			Patterns:  buildUserIdPatterns(d),
 		}
 	}
+
 	return nil
 }
 
@@ -225,48 +227,45 @@ func flattenUserIdPatterns(patterns []*sdk.IdpDiscoveryRulePattern) *schema.Set 
 }
 
 func flattenPlatformInclude(platform *sdk.IdpDiscoveryRulePlatform) *schema.Set {
-	var flattend []interface{}
+	var flattened []interface{}
 
 	if platform != nil && platform.Include != nil {
-		flattened := make([]interface{}, len(platform.Include))
-		for i, v := range platform.Include {
-			flattened[i] = map[string]interface{}{
+		for _, v := range platform.Include {
+			flattened = append(flattened, map[string]interface{}{
 				"os_expression": v.Os.Expression,
 				"os_type":       v.Os.Type,
 				"type":          v.Type,
-			}
+			})
 		}
 	}
-	return schema.NewSet(schema.HashResource(platformIncludeResource), flattend)
+	return schema.NewSet(schema.HashResource(platformIncludeResource), flattened)
 }
 
 func flattenAppInclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
-	var flattend []interface{}
+	var flattened []interface{}
 
 	if app != nil && app.Include != nil {
-		flattened := make([]interface{}, len(app.Include))
-		for i, v := range app.Include {
-			flattened[i] = map[string]interface{}{
+		for _, v := range app.Include {
+			flattened = append(flattened, map[string]interface{}{
 				"id":   v.ID,
 				"name": v.Name,
 				"type": v.Type,
-			}
+			})
 		}
 	}
-	return schema.NewSet(schema.HashResource(appResource), flattend)
+	return schema.NewSet(schema.HashResource(appResource), flattened)
 }
 
 func flattenAppExclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
 	var flattend []interface{}
 
 	if app != nil && app.Include != nil {
-		flattened := make([]interface{}, len(app.Include))
-		for i, v := range app.Exclude {
-			flattened[i] = map[string]interface{}{
+		for _, v := range app.Exclude {
+			flattend = append(flattend, map[string]interface{}{
 				"id":   v.ID,
 				"name": v.Name,
 				"type": v.Type,
-			}
+			})
 		}
 	}
 	return schema.NewSet(schema.HashResource(appResource), flattend)
