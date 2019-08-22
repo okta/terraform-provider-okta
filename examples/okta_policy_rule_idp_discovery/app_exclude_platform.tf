@@ -4,9 +4,14 @@ resource okta_policy_rule_idp_discovery test {
   name     = "testAcc_replace_with_uuid"
   idp_type = "OKTA"
 
-  app_include {
+  app_exclude {
     type = "APP"
     id   = "${okta_app_oauth.test.id}"
+  }
+
+  platform_include {
+    type    = "MOBILE"
+    os_type = "ANY"
   }
 }
 

@@ -19,6 +19,7 @@ func TestAccOktaPolicyRuleIdpDiscovery(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_domain.tf", ri, t)
 	deactivatedConfig := mgr.GetFixtures("basic_deactivated.tf", ri, t)
 	appIncludeConfig := mgr.GetFixtures("app_include.tf", ri, t)
+	appExcludeConfig := mgr.GetFixtures("app_exclude_platform.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleIdpDiscovery)
 
 	resource.Test(t, resource.TestCase{
@@ -60,7 +61,18 @@ func TestAccOktaPolicyRuleIdpDiscovery(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "app_include.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "idp_type", "SAML2"),
+					resource.TestCheckResourceAttr(resourceName, "idp_type", "OKTA"),
+				),
+			},
+			{
+				Config: appExcludeConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "app_exclude.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "idp_type", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "platform_include.#", "1"),
 				),
 			},
 		},
