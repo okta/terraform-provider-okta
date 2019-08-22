@@ -244,13 +244,12 @@ func flattenAppInclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
 	var flattend []interface{}
 
 	if app != nil && app.Include != nil {
-		flattened := make([]interface{}, len(app.Include))
-		for i, v := range app.Include {
-			flattened[i] = map[string]interface{}{
+		for _, v := range app.Include {
+			flattend = append(flattend, map[string]interface{}{
 				"id":   v.ID,
 				"name": v.Name,
 				"type": v.Type,
-			}
+			})
 		}
 	}
 	return schema.NewSet(schema.HashResource(appResource), flattend)
@@ -260,13 +259,12 @@ func flattenAppExclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
 	var flattend []interface{}
 
 	if app != nil && app.Include != nil {
-		flattened := make([]interface{}, len(app.Include))
-		for i, v := range app.Exclude {
-			flattened[i] = map[string]interface{}{
+		for _, v := range app.Exclude {
+			flattend = append(flattend, map[string]interface{}{
 				"id":   v.ID,
 				"name": v.Name,
 				"type": v.Type,
-			}
+			})
 		}
 	}
 	return schema.NewSet(schema.HashResource(appResource), flattend)
