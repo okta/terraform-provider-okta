@@ -28,8 +28,8 @@ func resourceIdpOidc() *schema.Resource {
 			"authorization_binding": bindingSchema,
 			"token_url":             urlSchema,
 			"token_binding":         bindingSchema,
-			"user_info_url":         urlSchema,
-			"user_info_binding":     bindingSchema,
+			"user_info_url":         optionalUrlSchema,
+			"user_info_binding":     optionalBindingSchema,
 			"jwks_url":              urlSchema,
 			"jwks_binding":          bindingSchema,
 			"acs_binding":           bindingSchema,
@@ -141,8 +141,10 @@ func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func syncEndpoint(key string, e *sdk.Endpoint, d *schema.ResourceData) {
-	d.Set(key+"_binding", e.Binding)
-	d.Set(key+"_url", e.URL)
+	if e != nil {
+		d.Set(key+"_binding", e.Binding)
+		d.Set(key+"_url", e.URL)
+	}
 }
 
 func resourceIdpUpdate(d *schema.ResourceData, m interface{}) error {

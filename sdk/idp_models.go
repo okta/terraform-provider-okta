@@ -216,8 +216,14 @@ func (i *BasicIdp) IsIDP() bool {
 }
 
 func GetEndpoint(d *schema.ResourceData, key string) *Endpoint {
-	return &Endpoint{
-		Binding: d.Get(fmt.Sprintf("%s_binding", key)).(string),
-		URL:     d.Get(fmt.Sprintf("%s_url", key)).(string),
+	binding := d.Get(fmt.Sprintf("%s_binding", key)).(string)
+	url := d.Get(fmt.Sprintf("%s_url", key)).(string)
+
+	if binding != "" && url != "" {
+		return &Endpoint{
+			Binding: binding,
+			URL:     url,
+		}
 	}
+	return nil
 }
