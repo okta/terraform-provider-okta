@@ -228,13 +228,12 @@ func flattenPlatformInclude(platform *sdk.IdpDiscoveryRulePlatform) *schema.Set 
 	var flattend []interface{}
 
 	if platform != nil && platform.Include != nil {
-		flattened := make([]interface{}, len(platform.Include))
-		for i, v := range platform.Include {
-			flattened[i] = map[string]interface{}{
+		for _, v := range platform.Include {
+			flattend = append(flattend, map[string]interface{}{
 				"os_expression": v.Os.Expression,
 				"os_type":       v.Os.Type,
 				"type":          v.Type,
-			}
+			})
 		}
 	}
 	return schema.NewSet(schema.HashResource(platformIncludeResource), flattend)
