@@ -18,6 +18,8 @@ func TestAccOktaPolicyRuleIdpDiscovery(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("basic_domain.tf", ri, t)
 	deactivatedConfig := mgr.GetFixtures("basic_deactivated.tf", ri, t)
+	appIncludeConfig := mgr.GetFixtures("app_include.tf", ri, t)
+	appExcludeConfig := mgr.GetFixtures("app_exclude_platform.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleIdpDiscovery)
 
 	resource.Test(t, resource.TestCase{
@@ -32,6 +34,7 @@ func TestAccOktaPolicyRuleIdpDiscovery(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "user_identifier_patterns.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "user_identifier_type", "ATTRIBUTE"),
 				),
 			},
 			{
@@ -40,6 +43,7 @@ func TestAccOktaPolicyRuleIdpDiscovery(t *testing.T) {
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "user_identifier_type", "IDENTIFIER"),
 					resource.TestCheckResourceAttr(resourceName, "user_identifier_patterns.#", "2"),
 				),
 			},
@@ -49,7 +53,29 @@ func TestAccOktaPolicyRuleIdpDiscovery(t *testing.T) {
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "user_identifier_type", "IDENTIFIER"),
 					resource.TestCheckResourceAttr(resourceName, "user_identifier_patterns.#", "2"),
+				),
+			},
+			{
+				Config: appIncludeConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "app_include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "idp_type", "OKTA"),
+				),
+			},
+			{
+				Config: appExcludeConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "app_exclude.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "idp_type", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "platform_include.#", "1"),
 				),
 			},
 		},
