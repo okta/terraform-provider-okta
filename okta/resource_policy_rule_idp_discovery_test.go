@@ -34,6 +34,7 @@ func TestAccOktaPolicyRuleIdpDiscovery(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "user_identifier_patterns.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "user_identifier_type", "ATTRIBUTE"),
 				),
 			},
 			{
@@ -42,6 +43,7 @@ func TestAccOktaPolicyRuleIdpDiscovery(t *testing.T) {
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "user_identifier_type", "IDENTIFIER"),
 					resource.TestCheckResourceAttr(resourceName, "user_identifier_patterns.#", "2"),
 				),
 			},
@@ -51,6 +53,7 @@ func TestAccOktaPolicyRuleIdpDiscovery(t *testing.T) {
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "user_identifier_type", "IDENTIFIER"),
 					resource.TestCheckResourceAttr(resourceName, "user_identifier_patterns.#", "2"),
 				),
 			},

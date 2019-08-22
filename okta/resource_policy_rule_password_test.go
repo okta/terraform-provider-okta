@@ -163,7 +163,7 @@ func doesRuleExistsUpstream(policyID string, ID string) (bool, error) {
 	client := getClientFromMetadata(testAccProvider.Meta())
 
 	rule, resp, err := client.Policies.GetPolicyRule(policyID, ID)
-	if resp.StatusCode == http.StatusNotFound {
+	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return false, nil
 	} else if err != nil {
 		return false, err

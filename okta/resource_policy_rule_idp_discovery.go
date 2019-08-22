@@ -159,12 +159,13 @@ func buildAppConditions(d *schema.ResourceData) *sdk.IdpDiscoveryRuleApp {
 	}
 
 	excludeList := []*sdk.IdpDiscoveryRuleAppObj{}
+
 	if v, ok := d.GetOk("app_exclude"); ok {
 		valueList := v.(*schema.Set).List()
 
 		for _, item := range valueList {
 			if value, ok := item.(map[string]interface{}); ok {
-				includeList = append(excludeList, &sdk.IdpDiscoveryRuleAppObj{
+				excludeList = append(excludeList, &sdk.IdpDiscoveryRuleAppObj{
 					ID:   getMapString(value, "id"),
 					Type: getMapString(value, "type"),
 					Name: getMapString(value, "name"),
@@ -198,8 +199,8 @@ func buildUserIdPatterns(d *schema.ResourceData) []*sdk.IdpDiscoveryRulePattern 
 }
 
 func buildIdentifier(d *schema.ResourceData) *sdk.IdpDiscoveryRuleUserIdentifier {
-
 	uidType := d.Get("user_identifier_type").(string)
+
 	if uidType != "" {
 		return &sdk.IdpDiscoveryRuleUserIdentifier{
 			Attribute: d.Get("user_identifier_attribute").(string),
@@ -242,7 +243,7 @@ func flattenPlatformInclude(platform *sdk.IdpDiscoveryRulePlatform) *schema.Set 
 }
 
 func flattenAppInclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
-	var flattened []interface{}
+	flattened := []interface{}{}
 
 	if app != nil && app.Include != nil {
 		for _, v := range app.Include {
@@ -257,18 +258,18 @@ func flattenAppInclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
 }
 
 func flattenAppExclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
-	var flattend []interface{}
+	flattened := []interface{}{}
 
-	if app != nil && app.Include != nil {
+	if app != nil && app.Exclude != nil {
 		for _, v := range app.Exclude {
-			flattend = append(flattend, map[string]interface{}{
+			flattened = append(flattened, map[string]interface{}{
 				"id":   v.ID,
 				"name": v.Name,
 				"type": v.Type,
 			})
 		}
 	}
-	return schema.NewSet(schema.HashResource(appResource), flattend)
+	return schema.NewSet(schema.HashResource(appResource), flattened)
 }
 
 func resourcePolicyRuleIdpDiscoveryExists(d *schema.ResourceData, m interface{}) (bool, error) {
