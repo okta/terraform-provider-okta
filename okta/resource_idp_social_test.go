@@ -12,6 +12,7 @@ func TestAccIdpSocial(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(idpSocial)
 	config := mgr.GetFixtures("basic.tf", ri, t)
+	disabledConf := mgr.GetFixtures("auto_provision_disabled.tf", ri, t)
 	fbName := fmt.Sprintf("%s.facebook", idpSocial)
 	microName := fmt.Sprintf("%s.microsoft", idpSocial)
 	googleName := fmt.Sprintf("%s.google", idpSocial)
@@ -47,6 +48,18 @@ func TestAccIdpSocial(t *testing.T) {
 					resource.TestCheckResourceAttr(googleName, "client_id", "abcd123"),
 					resource.TestCheckResourceAttr(googleName, "client_secret", "abcd123"),
 					resource.TestCheckResourceAttr(googleName, "username_template", "idpuser.email"),
+				),
+			},
+			{
+				Config: disabledConf,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(googleName, "type", "GOOGLE"),
+					resource.TestCheckResourceAttr(googleName, "protocol_type", "OAUTH2"),
+					resource.TestCheckResourceAttr(googleName, "name", fmt.Sprintf("testAcc_google_%d", ri)),
+					resource.TestCheckResourceAttr(googleName, "client_id", "abcd123"),
+					resource.TestCheckResourceAttr(googleName, "client_secret", "abcd123"),
+					resource.TestCheckResourceAttr(googleName, "username_template", "idpuser.email"),
+					resource.TestCheckResourceAttr(googleName, "provisioning_action", "DISABLED"),
 				),
 			},
 		},
