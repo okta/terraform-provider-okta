@@ -225,33 +225,33 @@ func flattenUserIdPatterns(patterns []*sdk.IdpDiscoveryRulePattern) *schema.Set 
 }
 
 func flattenPlatformInclude(platform *sdk.IdpDiscoveryRulePlatform) *schema.Set {
-	var flattend []interface{}
+	var flattened []interface{}
 
 	if platform != nil && platform.Include != nil {
 		for _, v := range platform.Include {
-			flattend = append(flattend, map[string]interface{}{
+			flattened = append(flattened, map[string]interface{}{
 				"os_expression": v.Os.Expression,
 				"os_type":       v.Os.Type,
 				"type":          v.Type,
 			})
 		}
 	}
-	return schema.NewSet(schema.HashResource(platformIncludeResource), flattend)
+	return schema.NewSet(schema.HashResource(platformIncludeResource), flattened)
 }
 
 func flattenAppInclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
-	var flattend []interface{}
+	var flattened []interface{}
 
 	if app != nil && app.Include != nil {
 		for _, v := range app.Include {
-			flattend = append(flattend, map[string]interface{}{
+			flattened = append(flattened, map[string]interface{}{
 				"id":   v.ID,
 				"name": v.Name,
 				"type": v.Type,
 			})
 		}
 	}
-	return schema.NewSet(schema.HashResource(appResource), flattend)
+	return schema.NewSet(schema.HashResource(appResource), flattened)
 }
 
 func flattenAppExclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
