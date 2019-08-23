@@ -47,6 +47,7 @@ func TestAccOktaAuthServerClaimCreate(t *testing.T) {
 func TestAccOktaAuthServerClaimGroupType(t *testing.T) {
 	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", authServerClaim)
+	swResourceName := fmt.Sprintf("%s.test_sw", authServerClaim)
 	mgr := newFixtureManager(authServerClaim)
 	config := mgr.GetFixtures("basic_group.tf", ri, t)
 
@@ -64,6 +65,13 @@ func TestAccOktaAuthServerClaimGroupType(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "value_type", "GROUPS"),
 					resource.TestCheckResourceAttr(resourceName, "value", "Everyone"),
 					resource.TestCheckResourceAttr(resourceName, "claim_type", "RESOURCE"),
+
+					resource.TestCheckResourceAttr(swResourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(swResourceName, "name", "test_sw"),
+					resource.TestCheckResourceAttr(swResourceName, "group_filter_type", "STARTS_WITH"),
+					resource.TestCheckResourceAttr(swResourceName, "value_type", "GROUPS"),
+					resource.TestCheckResourceAttr(swResourceName, "value", "Every"),
+					resource.TestCheckResourceAttr(swResourceName, "claim_type", "RESOURCE"),
 				),
 			},
 		},
