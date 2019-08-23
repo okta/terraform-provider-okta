@@ -58,7 +58,7 @@ func resourceAuthServerClaim() *schema.Resource {
 			"group_filter_type": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"START_WITH", "EQUALS", "CONTAINS", "REGEX"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"STARTS_WITH", "EQUALS", "CONTAINS", "REGEX"}, false),
 				Description:  "Required when value_type is GROUPS",
 			},
 		},
