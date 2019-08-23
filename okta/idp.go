@@ -119,9 +119,20 @@ var (
 		Computed: true,
 	}
 
+	optionalUrlSchema = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+
 	bindingSchema = &schema.Schema{
 		Type:         schema.TypeString,
 		Required:     true,
+		ValidateFunc: validation.StringInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}, false),
+	}
+
+	optionalBindingSchema = &schema.Schema{
+		Type:         schema.TypeString,
+		Optional:     true,
 		ValidateFunc: validation.StringInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}, false),
 	}
 
