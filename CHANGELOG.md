@@ -97,3 +97,7 @@ For Release v3.0.19
 
 * Fix diff issues around `okta_policy_rule_idp_discovery`
 * Allow `provisioning_action` for IdPs to be set to `DISABLED`
+
+For Release v3.0.20
+
+* Fix `okta_auth_server_claim`, `group_filter_type` could not be set to `STARTS_WITH` due to a typo
