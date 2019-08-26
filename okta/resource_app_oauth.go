@@ -217,6 +217,24 @@ func resourceAppOAuth() *schema.Resource {
 				Default:      "ORG_URL",
 				Description:  "*Early Access Property*. Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.",
 			},
+			"auto_submit_toolbar": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Display auto submit toolbar",
+			},
+			"hide_ios": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+				Description: "Do not display application icon on mobile app",
+			},
+			"hide_web": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+				Description: "Do not display application icon to users",
+			},
 		}),
 	}
 }
@@ -291,6 +309,9 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("tos_uri", app.Settings.OauthClient.TosUri)
 	d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
 	d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
+	d.Set("auto_submit_toolbar", app.Visibility.AutoSubmitToolbar)
+	d.Set("hide_ios", app.Visibility.Hide.IOS)
+	d.Set("hide_web", app.Visibility.Hide.Web)
 
 	if app.Settings.OauthClient.IssuerMode != "" {
 		d.Set("issuer_mode", app.Settings.OauthClient.IssuerMode)
@@ -419,6 +440,7 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 			IssuerMode:             d.Get("issuer_mode").(string),
 		},
 	}
+	app.Visibility = buildVisibility(d)
 
 	return app
 }
