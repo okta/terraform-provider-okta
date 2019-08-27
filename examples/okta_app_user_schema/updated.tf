@@ -14,4 +14,5 @@ resource okta_app_user_schema test {
   description = "terraform acceptance test updated"
   required    = true
   master      = "OKTA"
+  scope       = "SELF"
 }

@@ -62,6 +62,12 @@ var (
 			Description: "Custom Subschema enumerated value of the property. see: developer.okta.com/docs/api/resources/schemas#user-profile-schema-property-object",
 			Elem:        &schema.Schema{Type: schema.TypeString},
 		},
+		"scope": &schema.Schema{
+			Type:         schema.TypeString,
+			Optional:     true,
+			Default:      "NONE",
+			ValidateFunc: validation.StringInSlice([]string{"SELF", "NONE", ""}, false),
+		},
 		"one_of": &schema.Schema{
 			Type:        schema.TypeList,
 			ForceNew:    true,
@@ -154,6 +160,7 @@ func syncUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) error 
 	d.Set("required", subschema.Required)
 	d.Set("min_length", subschema.MinLength)
 	d.Set("max_length", subschema.MaxLength)
+	d.Set("scope", subschema.Scope)
 
 	if subschema.Items != nil {
 		d.Set("array_type", subschema.Items.Type)
@@ -254,6 +261,7 @@ func getUserSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
 				Principal: "SELF",
 			},
 		},
+		Scope:     d.Get("scope").(string),
 		Enum:      convertInterfaceToStringArrNullable(d.Get("enum")),
 		Master:    getNullableItem(d, "master"),
 		Items:     getNullableItem(d, "array_type"),

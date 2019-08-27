@@ -53,6 +53,7 @@ func TestAccAppUserSchemas_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test updated"),
 					resource.TestCheckResourceAttr(resourceName, "required", "true"),
 					resource.TestCheckResourceAttr(resourceName, "master", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "scope", "SELF"),
 				),
 			},
 		},
