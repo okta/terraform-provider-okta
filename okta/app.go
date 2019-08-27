@@ -180,6 +180,7 @@ func buildVisibility(d *schema.ResourceData) *okta.ApplicationVisibility {
 	autoSubmit := d.Get("auto_submit_toolbar").(bool)
 	hideMobile := d.Get("hide_ios").(bool)
 	hideWeb := d.Get("hide_web").(bool)
+
 	return &okta.ApplicationVisibility{
 		AutoSubmitToolbar: &autoSubmit,
 		Hide: &okta.ApplicationVisibilityHide{
