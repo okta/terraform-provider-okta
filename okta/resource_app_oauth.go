@@ -1,6 +1,8 @@
 package okta
 
 import (
+	"encoding/json"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
@@ -235,6 +237,12 @@ func resourceAppOAuth() *schema.Resource {
 				Default:     true,
 				Description: "Do not display application icon to users",
 			},
+			"custom_profile_attributes": &schema.Schema{
+				Type:        schema.TypeString,
+				StateFunc:   normalizeDataJSON,
+				Optional:    true,
+				Description: "Custom JSON returned by GET requests to api/v1/apps/{appId}",
+			},
 		}),
 	}
 }
@@ -298,6 +306,7 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("status", app.Status)
 	d.Set("sign_on_mode", app.SignOnMode)
 	d.Set("label", app.Label)
+	d.Set("custom_profile_attributes", app.Profile)
 	d.Set("type", app.Settings.OauthClient.ApplicationType)
 	// Not setting client_secret, it is only provided on create for auth methods that require it
 	d.Set("client_id", app.Credentials.OauthClient.ClientId)
@@ -441,6 +450,14 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 		},
 	}
 	app.Visibility = buildVisibility(d)
+
+	if rawAttrs, ok := d.GetOk("custom_profile_attributes"); ok {
+		var attrs map[string]interface{}
+		str := rawAttrs.(string)
+		json.Unmarshal([]byte(str), &attrs)
+
+		app.Profile = attrs
+	}
 
 	return app
 }
