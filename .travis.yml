@@ -1,31 +1,31 @@
+dist: trusty
 sudo: required
+services:
+- docker
 language: go
-addons:
-  apt:
-    packages:
-    # needed for the nfpm pipe:
-    - rpm
-    # needed for the snap pipe:
-    - snapd
-go:
-- 1.13.x
+
+env:
+  - GOFLAGS=-mod=vendor
+
 install:
-# needed for the snap pipe:
-- sudo snap install snapcraft --classic
-script:
 - make build
-- make test
+- make tools
+
 branches:
   only:
   - master
-deploy:
-- provider: script
-  skip_cleanup: true
-  script: curl -sL https://git.io/goreleaser | bash
-  on:
-    tags: true
-    condition: $TRAVIS_OS_NAME = linux
-env:
-  global:
-  # needed for the snap pipe:
-  - PATH=/snap/bin:$PATH
+
+matrix:
+  fast_finish: true
+  allow_failures:
+  - go: tip
+  include:
+  - go: "1.13.x"
+    name: "Code Lint"
+    script: make lint
+  - go: "1.13.x"
+    name: "Code Vet"
+    script: make vet
+  - go: "1.13.x"
+    name: "Code UnitTest"
+    script: make test

@@ -154,10 +154,6 @@ func Provider() terraform.ResourceProvider {
 			userSchema:             resourceUserSchema(),
 			userBaseSchema:         resourceUserBaseSchema(),
 
-			// Below resources will be deprecated, soon to be removed
-			"okta_user_schemas": resourceUserSchemas(),
-			identityProvider:    resourceIdentityProvider(),
-
 			// The day I realized I was naming stuff wrong :'-(
 			"okta_idp":                       deprecateIncorrectNaming(resourceIdpOidc(), idpResource),
 			"okta_saml_idp":                  deprecateIncorrectNaming(resourceIdpSaml(), idpSaml),

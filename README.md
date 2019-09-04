@@ -14,7 +14,7 @@ This provider plugin is maintained by the Terraform team at [Articulate](https:/
 ## Requirements
 
 - [Terraform](https://www.terraform.io/downloads.html) 0.12.x
-- [Go](https://golang.org/doc/install) 1.13 (to build the provider plugin)
+- [Go](https://golang.org/doc/install) 1.12 (to build the provider plugin)
 
 ## Demo
 
@@ -54,19 +54,18 @@ As we build out resources we build concomitant acceptance tests that require use
 
 ## Building The Provider
 
-Simply clone the provider and run `make`. The `make` command combines `make deps && make build-plugins`, which ensures all dependencies are pulled down, builds binaries for Linux, OSX, and Windows and drops them in the default unix terraform plugin directory `~/.terraform.d/plugins`. Use `make build` for only a single binary for your host OS in your current directory.
+Clone repository to: `$GOPATH/src/github.com/articulate/terraform-provider-okta`
 
 ```sh
-$ go get -d github.com/articulate/terraform-provider-okta
-$ cd $GOPATH/src/github.com/articulate/terraform-provider-okta
-$ make
+$ mkdir -p $GOPATH/src/github.com/articulate; cd $GOPATH/src/github.com/articulate
+$ git clone git@github.com:articulate/terraform-provider-okta
 ```
 
-For local development, I've found the below commands helpful. Run them from inside the terraform-provider-okta directory
+Enter the provider directory and build the provider. Ensure you have Go Modules enabled, depending on the version of Go you are using, you may have to flip it on with `GO111MODULE=on`.
 
 ```sh
-$ go build -o .terraform/plugins/$GOOS_$GOARCH/terraform-provider-okta
-$ terraform init -plugin-dir=.terraform/plugins/$GOOS_$GOARCH
+$ cd $GOPATH/src/github.com/articulate/terraform-provider-okta
+$ make build
 ```
 
 ## Using the provider

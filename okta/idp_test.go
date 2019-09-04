@@ -5,6 +5,15 @@ import (
 	"github.com/okta/okta-sdk-golang/okta/query"
 )
 
+func createDoesIdpExist(idp sdk.IdentityProvider) func(string) (bool, error) {
+	return func(id string) (bool, error) {
+		client := getSupplementFromMetadata(testAccProvider.Meta())
+		_, response, err := client.GetIdentityProvider(id, idp)
+
+		return doesResourceExist(response, err)
+	}
+}
+
 func deleteTestIdps(client *testClient) error {
 	providers := []*sdk.BasicIdp{}
 	_, _, err := client.apiSupplement.ListIdentityProviders(&providers, &query.Params{Q: "testAcc_"})
