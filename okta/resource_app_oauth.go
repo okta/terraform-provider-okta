@@ -237,11 +237,11 @@ func resourceAppOAuth() *schema.Resource {
 				Default:     true,
 				Description: "Do not display application icon to users",
 			},
-			"custom_profile_attributes": &schema.Schema{
+			"profile": &schema.Schema{
 				Type:        schema.TypeString,
 				StateFunc:   normalizeDataJSON,
 				Optional:    true,
-				Description: "Custom JSON returned by GET requests to api/v1/apps/{appId}",
+				Description: "Custom JSON that represents an OAuth application's profile",
 			},
 		}),
 	}

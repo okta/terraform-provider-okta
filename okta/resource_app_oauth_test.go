@@ -113,7 +113,7 @@ func TestAccAppOauth_badGrantTypes(t *testing.T) {
 	})
 }
 
-// Tests an OAuth application with custom profile attributes. This tests with a nested JSON object as well as an array.
+// Tests an OAuth application with profile attributes. This tests with a nested JSON object as well as an array.
 func TestAccAppOauth_customProfileAttributes(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appOAuth)
@@ -133,7 +133,7 @@ func TestAccAppOauth_customProfileAttributes(t *testing.T) {
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", "{\"customAttribute123\":\"testing-custom-attribute\"}"),
+					resource.TestCheckResourceAttr(resourceName, "profile", "{\"customAttribute123\":\"testing-custom-attribute\"}"),
 				),
 			},
 			{
@@ -142,7 +142,7 @@ func TestAccAppOauth_customProfileAttributes(t *testing.T) {
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", "{\"array123\":[\"test\"],\"number123\":1}"),
+					resource.TestCheckResourceAttr(resourceName, "profile", "{\"array123\":[\"test\"],\"number123\":1}"),
 				),
 			},
 			{
@@ -151,7 +151,7 @@ func TestAccAppOauth_customProfileAttributes(t *testing.T) {
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", ""),
+					resource.TestCheckResourceAttr(resourceName, "profile", ""),
 				),
 			},
 		},
