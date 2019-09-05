@@ -1,7 +1,7 @@
 
 // A groups claim allows for groups to be injected into ID tokens or access tokens.
 // A group whitelist allows for limiting the groups injected on a per-application basis to
-// reduce the size of the tokens.In reality, you would include the group ID in the 
+// reduce the size of the tokens. In reality, you would include the group ID in the 
 // whitelist but for testing purpose the name is used here.
 // Okta's documentation has more information.
 // https://developer.okta.com/docs/guides/create-token-with-groups-claim/create-groups-claim/
