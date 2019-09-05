@@ -118,7 +118,7 @@ func TestAccAppOauth_customProfileAttributes(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appOAuth)
 	config := mgr.GetFixtures("custom_attributes.tf", ri, t)
-	arrayAttrConfig := mgr.GetFixtures("custom_attributes_array.tf", ri, t)
+	groupWhitelistConfig := mgr.GetFixtures("group_for_groups_claim.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("remove_custom_attributes.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
@@ -137,12 +137,12 @@ func TestAccAppOauth_customProfileAttributes(t *testing.T) {
 				),
 			},
 			{
-				Config: arrayAttrConfig,
+				Config: groupWhitelistConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-					resource.TestCheckResourceAttr(resourceName, "profile", "{\"array123\":[\"test\"],\"number123\":1}"),
+					resource.TestCheckResourceAttr(resourceName, "profile", "{\"groups\":{\"whitelist\":[\"Whitelist Group\"]}}"),
 				),
 			},
 			{
