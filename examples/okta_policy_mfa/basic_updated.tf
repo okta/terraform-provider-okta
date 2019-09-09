@@ -12,10 +12,6 @@ resource okta_policy_mfa test {
     enroll = "OPTIONAL"
   }
 
-  google_otp = {
-    enroll = "OPTIONAL"
-  }
-
   okta_otp = {
     enroll = "OPTIONAL"
   }
@@ -24,11 +20,11 @@ resource okta_policy_mfa test {
     enroll = "OPTIONAL"
   }
 
-  depends_on = ["okta_factor.google_otp", "okta_factor.okta_otp", "okta_factor.fido_u2f", "okta_factor.okta_sms"]
-}
-
-resource okta_factor google_otp {
-  provider_id = "google_otp"
+  depends_on = [
+    "okta_factor.okta_otp",
+    "okta_factor.fido_u2f",
+    "okta_factor.okta_sms",
+  ]
 }
 
 resource okta_factor fido_u2f {

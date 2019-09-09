@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccAppUser_crud(t *testing.T) {
+func TestAccOktaAppUser_crud(t *testing.T) {
 	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", appUser)
 	mgr := newFixtureManager(appUser)

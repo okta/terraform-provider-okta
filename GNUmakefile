@@ -4,6 +4,13 @@ GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=okta
 
+# Expression to match against tests
+# go test -run <filter>
+# e.g. Iden will run all TestAccIdentity tests
+ifdef TEST_FILTER
+	TEST_FILTER := -run $(TEST_FILTER)
+endif
+
 default: build
 
 build: fmtcheck
@@ -16,10 +23,11 @@ sweep:
 test: fmtcheck
 	go test -i $(TEST) || exit 1
 	echo $(TEST) | \
-		xargs -t -n4 go test $(TESTARGS) -timeout=30s -parallel=4
+		xargs -t -n4 go test $(TESTARGS) $(TEST_FILTER) -timeout=30s -parallel=4
+    test: fmtcheck
 
 testacc: fmtcheck
-	TF_ACC=1 go test $(TEST) -v $(TESTARGS) -timeout 120m
+	TF_ACC=1 go test $(TEST) -v $(TESTARGS) $(TEST_FILTER) -timeout 120m
 
 vet:
 	@echo "go vet ."

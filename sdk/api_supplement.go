@@ -34,7 +34,7 @@ func (m *ApiSupplement) GetXml(url string) ([]byte, *http.Response, error) {
 	req.Header.Add("Authorization", fmt.Sprintf("SSWS %s", m.Token))
 	req.Header.Add("User-Agent", "Terraform Okta Provider")
 	req.Header.Add("Accept", "application/xml")
-	res, err := m.RequestExecutor.DoWithRetries(req, 0)
+	res, err := m.RequestExecutor.DoWithRetries(okta.NewRequest(req), 0)
 	if err != nil {
 		return nil, res, err
 	} else if res.StatusCode == http.StatusNotFound {

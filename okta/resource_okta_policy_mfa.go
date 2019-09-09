@@ -105,20 +105,19 @@ func resourcePolicyMfaRead(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
-
-	d.Set("duo", flattenFactor(policy.Settings.Factors.Duo))
-	d.Set("fido_u2f", flattenFactor(policy.Settings.Factors.FidoU2f))
-	d.Set("fido_webauthn", flattenFactor(policy.Settings.Factors.FidoWebauthn))
-	d.Set("google_otp", flattenFactor(policy.Settings.Factors.GoogleOtp))
-	d.Set("okta_call", flattenFactor(policy.Settings.Factors.OktaOtp))
-	d.Set("okta_otp", flattenFactor(policy.Settings.Factors.OktaOtp))
-	d.Set("okta_password", flattenFactor(policy.Settings.Factors.OktaPassword))
-	d.Set("okta_push", flattenFactor(policy.Settings.Factors.OktaPush))
-	d.Set("okta_question", flattenFactor(policy.Settings.Factors.OktaQuestion))
-	d.Set("okta_sms", flattenFactor(policy.Settings.Factors.OktaSms))
-	d.Set("rsa_token", flattenFactor(policy.Settings.Factors.RsaToken))
-	d.Set("symantec_vip", flattenFactor(policy.Settings.Factors.SymantecVip))
-	d.Set("yubikey_token", flattenFactor(policy.Settings.Factors.YubikeyToken))
+	syncFactor(d, "duo", policy.Settings.Factors.Duo)
+	syncFactor(d, "fido_u2f", policy.Settings.Factors.FidoU2f)
+	syncFactor(d, "fido_webauthn", policy.Settings.Factors.FidoWebauthn)
+	syncFactor(d, "google_otp", policy.Settings.Factors.GoogleOtp)
+	syncFactor(d, "okta_call", policy.Settings.Factors.OktaOtp)
+	syncFactor(d, "okta_otp", policy.Settings.Factors.OktaOtp)
+	syncFactor(d, "okta_password", policy.Settings.Factors.OktaPassword)
+	syncFactor(d, "okta_push", policy.Settings.Factors.OktaPush)
+	syncFactor(d, "okta_question", policy.Settings.Factors.OktaQuestion)
+	syncFactor(d, "okta_sms", policy.Settings.Factors.OktaSms)
+	syncFactor(d, "rsa_token", policy.Settings.Factors.RsaToken)
+	syncFactor(d, "symantec_vip", policy.Settings.Factors.SymantecVip)
+	syncFactor(d, "yubikey_token", policy.Settings.Factors.YubikeyToken)
 
 	return syncPolicyFromUpstream(d, policy)
 }
@@ -213,13 +212,9 @@ func buildFactorProvider(d *schema.ResourceData, key string) *articulateOkta.Fac
 	return provider
 }
 
-func flattenFactor(factor *articulateOkta.FactorProvider) (setMap map[string]interface{}) {
-	if factor != nil {
-		setMap = map[string]interface{}{
-			"consent_type": factor.Consent.Type,
-			"enroll":       factor.Enroll.Self,
-		}
+func syncFactor(d *schema.ResourceData, k string, f *articulateOkta.FactorProvider) {
+	if f != nil {
+		d.Set(fmt.Sprintf("%s.consent_type", k), f.Consent.Type)
+		d.Set(fmt.Sprintf("%s.enroll", k), f.Enroll.Self)
 	}
-
-	return setMap
 }

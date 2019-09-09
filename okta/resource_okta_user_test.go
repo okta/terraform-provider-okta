@@ -37,7 +37,7 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 	arrayAttrConfig := mgr.GetFixtures("custom_attributes_array.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("remove_custom_attributes.tf", ri, t)
 	importConfig := mgr.GetFixtures("import.tf", ri, t)
-	resourceName := buildResourceFQN(oktaUser, ri)
+	resourceName := fmt.Sprintf("%s.test", oktaUser)
 	email := fmt.Sprintf("test-acc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
@@ -169,7 +169,7 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 	config := mgr.GetFixtures("staged.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("all_attributes.tf", ri, t)
 	minimalConfig := mgr.GetFixtures("basic.tf", ri, t)
-	resourceName := buildResourceFQN(oktaUser, ri)
+	resourceName := fmt.Sprintf("%s.test", oktaUser)
 	email := fmt.Sprintf("test-acc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
@@ -242,7 +242,7 @@ func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
 	mgr := newFixtureManager(oktaUser)
 	statusChanged := mgr.GetFixtures("deprovisioned.tf", ri, t)
 	config := mgr.GetFixtures("staged.tf", ri, t)
-	resourceName := buildResourceFQN(oktaUser, ri)
+	resourceName := fmt.Sprintf("%s.test", oktaUser)
 	email := fmt.Sprintf("test-acc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
@@ -322,7 +322,7 @@ func testAccCheckUserDestroy(s *terraform.State) error {
 
 func testOktaUserConfig_invalidCustomProfileAttribute(r string) string {
 	return fmt.Sprintf(`
-resource okta_user "testAcc_%[1]s" {
+resource okta_user "test" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "%[1]s"
@@ -340,7 +340,7 @@ resource okta_user "testAcc_%[1]s" {
 
 func testOktaUserConfig_updateDeprovisioned(r string) string {
 	return fmt.Sprintf(`
-resource okta_user "testAcc_%[1]s" {
+resource okta_user "test" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "%[1]s"
@@ -353,7 +353,7 @@ resource okta_user "testAcc_%[1]s" {
 
 func testOktaUserConfig_validRole(r string) string {
 	return fmt.Sprintf(`
-resource okta_user "testAcc_%[1]s" {
+resource okta_user "test" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN", "GROUP_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "Smith"

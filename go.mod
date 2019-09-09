@@ -13,7 +13,6 @@ require (
 	github.com/crewjam/saml v0.0.0-20180831135026-ebc5f787b786
 	github.com/google/go-cmp v0.3.1 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.1
-	github.com/hashicorp/go-hclog v0.9.2 // indirect
 	github.com/hashicorp/go-plugin v1.0.1 // indirect
 	github.com/hashicorp/go-version v1.2.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
@@ -41,4 +40,4 @@ require (
 	google.golang.org/grpc v1.23.0 // indirect
 )
 
-replace github.com/okta/okta-sdk-golang => github.com/articulate/okta-sdk-golang v0.0.0-20190810203837-596e830a6cb1
+replace github.com/okta/okta-sdk-golang => github.com/articulate/okta-sdk-golang v1.1.1
