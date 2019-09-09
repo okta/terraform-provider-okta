@@ -102,6 +102,13 @@ var (
 			ValidateFunc: validation.StringInSlice([]string{"PROFILE_MASTER", "OKTA", ""}, false),
 			Description:  "SubSchema profile manager, if not set it will inherit its setting.",
 		},
+		"external_name": &schema.Schema{
+			Type:        schema.TypeString,
+			Required:    false,
+			Optional:    true,
+			Description: "Subschema external name",
+			ForceNew:    true,
+		},
 	}
 
 	userBaseSchemaSchema = map[string]*schema.Schema{
@@ -161,6 +168,7 @@ func syncUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) error 
 	d.Set("min_length", subschema.MinLength)
 	d.Set("max_length", subschema.MaxLength)
 	d.Set("scope", subschema.Scope)
+	d.Set("external_name", subschema.ExternalName)
 
 	if subschema.Items != nil {
 		d.Set("array_type", subschema.Items.Type)
@@ -261,12 +269,13 @@ func getUserSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
 				Principal: "SELF",
 			},
 		},
-		Scope:     d.Get("scope").(string),
-		Enum:      convertInterfaceToStringArrNullable(d.Get("enum")),
-		Master:    getNullableItem(d, "master"),
-		Items:     getNullableItem(d, "array_type"),
-		MinLength: getNullableInt(d, "min_length"),
-		MaxLength: getNullableInt(d, "max_length"),
-		OneOf:     getNullableOneOf(d),
+		Scope:        d.Get("scope").(string),
+		Enum:         convertInterfaceToStringArrNullable(d.Get("enum")),
+		Master:       getNullableItem(d, "master"),
+		Items:        getNullableItem(d, "array_type"),
+		MinLength:    getNullableInt(d, "min_length"),
+		MaxLength:    getNullableInt(d, "max_length"),
+		OneOf:        getNullableOneOf(d),
+		ExternalName: d.Get("external_name").(string),
 	}
 }
