@@ -112,3 +112,7 @@ For Release v3.0.22
 * Send `profileMaster` along with IdP, so the config is recognized by Okta API
 * Fix bug in SDK related to retries and the request body being empty on subsequent requests.
 * Various updates related to Hashicorp's review process that aren't necessarily functionality related, see https://github.com/articulate/terraform-provider-okta/pull/271
+
+For Release v3.0.23
+
+* Add `external_name` property to the `okta_app_user_schema` and `okta_user_schema`
