@@ -104,7 +104,6 @@ var (
 		},
 		"external_name": &schema.Schema{
 			Type:        schema.TypeString,
-			Required:    false,
 			Optional:    true,
 			Description: "Subschema external name",
 			ForceNew:    true,
