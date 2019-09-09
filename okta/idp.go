@@ -253,8 +253,8 @@ func getIdentityProviderExists(idp sdk.IdentityProvider) schema.ExistsFunc {
 
 func NewIdpProvisioning(d *schema.ResourceData) *sdk.IDPProvisioning {
 	return &sdk.IDPProvisioning{
-		Action: d.Get("provisioning_action").(string),
-		ProfileMaster: d.Get( "profile_master").(bool),
+		Action:        d.Get("provisioning_action").(string),
+		ProfileMaster: d.Get("profile_master").(bool),
 		Conditions: &sdk.IDPConditions{
 			Deprovisioned: &sdk.IDPAction{
 				Action: d.Get("deprovisioned_action").(string),
