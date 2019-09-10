@@ -101,3 +101,18 @@ For Release v3.0.19
 For Release v3.0.20
 
 * Fix `okta_auth_server_claim`, `group_filter_type` could not be set to `STARTS_WITH` due to a typo
+
+For Release v3.0.21
+
+* Expose scope property on `okta_user_schema`
+* Allow setting of OAuth application visibility settings
+
+For Release v3.0.22
+
+* Send `profileMaster` along with IdP, so the config is recognized by Okta API
+* Fix bug in SDK related to retries and the request body being empty on subsequent requests.
+* Various updates related to Hashicorp's review process that aren't necessarily functionality related, see https://github.com/articulate/terraform-provider-okta/pull/271
+
+For Release v3.0.23
+
+* Add `external_name` property to the `okta_app_user_schema` and `okta_user_schema`

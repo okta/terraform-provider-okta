@@ -1,0 +1,35 @@
+<% wrap_layout :inner do %>
+  <% content_for :sidebar do %>
+    <div class="docs-sidebar hidden-print affix-top" role="complementary">
+      <ul class="nav docs-sidenav">
+        <li<%= sidebar_current("docs-home") %>>
+        <a href="/docs/providers/index.html">All Providers</a>
+        </li>
+
+        <li<%= sidebar_current("docs-okta-index") %>>
+        <a href="/docs/providers/okta/index.html">Okta Provider</a>
+        </li>
+
+        <li<%= sidebar_current("docs-okta-datasource") %>>
+          <a href="#">Data Sources</a>
+          <ul class="nav nav-visible">
+            <li<%= sidebar_current("docs-okta-datasource-app") %>>
+              <a href="/docs/providers/okta/d/app.html">okta_app</a>
+            </li>
+          </ul>
+        </li>
+
+        <li<%= sidebar_current("docs-okta-resource") %>>
+        <a href="#">Resources</a>
+        <ul class="nav nav-visible">
+          <li<%= sidebar_current("docs-okta-resource-app-auto-login") %>>
+            <a href="/docs/providers/okta/r/app_auto_login.html">okta_app_auto_login</a>
+          </li>
+        </ul>
+        </li>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= yield %>
+  <% end %>

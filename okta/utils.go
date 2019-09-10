@@ -283,6 +283,19 @@ func boolPtr(b bool) (ptr *bool) {
 	return
 }
 
+func doesResourceExist(response *okta.Response, err error) (bool, error) {
+	// We don't want to consider a 404 an error in some cases and thus the delineation
+	if response.StatusCode == 404 {
+		return false, nil
+	}
+
+	if err != nil {
+		return false, responseErr(response, err)
+	}
+
+	return true, err
+}
+
 func intPtr(b int) (ptr *int) {
 	ptr = &b
 	return

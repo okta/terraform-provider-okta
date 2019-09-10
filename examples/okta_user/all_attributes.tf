@@ -1,4 +1,4 @@
-resource "okta_user" "testAcc_replace_with_uuid" {
+resource "okta_user" "test" {
   admin_roles        = ["ORG_ADMIN"]
   first_name         = "TestAcc"
   last_name          = "Smith"
