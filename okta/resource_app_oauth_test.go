@@ -113,6 +113,51 @@ func TestAccAppOauth_badGrantTypes(t *testing.T) {
 	})
 }
 
+// Tests an OAuth application with profile attributes. This tests with a nested JSON object as well as an array.
+func TestAccAppOauth_customProfileAttributes(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appOAuth)
+	config := mgr.GetFixtures("custom_attributes.tf", ri, t)
+	groupWhitelistConfig := mgr.GetFixtures("group_for_groups_claim.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("remove_custom_attributes.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", appOAuth)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "profile", "{\"customAttribute123\":\"testing-custom-attribute\"}"),
+				),
+			},
+			{
+				Config: groupWhitelistConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "profile", "{\"groups\":{\"whitelist\":[\"Whitelist Group\"]}}"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "profile", ""),
+				),
+			},
+		},
+	})
+}
+
 func createDoesAppExist(app okta.App) func(string) (bool, error) {
 	return func(id string) (bool, error) {
 		client := getOktaClientFromMetadata(testAccProvider.Meta())
