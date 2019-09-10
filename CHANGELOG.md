@@ -116,3 +116,7 @@ For Release v3.0.22
 For Release v3.0.23
 
 * Add `external_name` property to the `okta_app_user_schema` and `okta_user_schema`
+
+For Release v3.0.24
+
+* Support `profile` on `okta_oauth_app` resource
