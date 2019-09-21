@@ -1,19 +1,19 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app"
-sidebar_current: "docs-okta-datasource-app"
+page_title: "Okta: okta_users"
+sidebar_current: "docs-okta-datasource-users"
 description: |-
-  Get an application of any kind from Okta.
+  Get a list of users from Okta.
 ---
 
-# okta_app
+# okta_users
 
-Use this data source to retrieve the collaborators for a given repository.
+Use this data source to retrieve a list of users from Okta.
 
 ## Example Usage
 
 ```hcl
-data "okta_app" "example" {
+data "okta_users" "example" {
   label = "Example App"
 }
 ```

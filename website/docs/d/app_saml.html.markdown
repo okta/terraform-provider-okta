@@ -1,19 +1,19 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app"
-sidebar_current: "docs-okta-datasource-app"
+page_title: "Okta: okta_app_saml"
+sidebar_current: "docs-okta-datasource-app-saml"
 description: |-
-  Get an application of any kind from Okta.
+  Get a SAML application from Okta.
 ---
 
-# okta_app
+# okta_app_saml
 
 Use this data source to retrieve the collaborators for a given repository.
 
 ## Example Usage
 
 ```hcl
-data "okta_app" "example" {
+data "okta_app_saml" "example" {
   label = "Example App"
 }
 ```

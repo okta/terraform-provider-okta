@@ -1,19 +1,19 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app"
-sidebar_current: "docs-okta-datasource-app"
+page_title: "Okta: okta_default_policy"
+sidebar_current: "docs-okta-datasource-default-policy"
 description: |-
-  Get an application of any kind from Okta.
+  Get a default policy from Okta.
 ---
 
-# okta_app
+# okta_default_policy
 
 Use this data source to retrieve the collaborators for a given repository.
 
 ## Example Usage
 
 ```hcl
-data "okta_app" "example" {
+data "okta_default_policy" "example" {
   label = "Example App"
 }
 ```

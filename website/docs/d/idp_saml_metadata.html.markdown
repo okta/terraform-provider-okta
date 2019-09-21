@@ -1,19 +1,19 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app"
-sidebar_current: "docs-okta-datasource-app"
+page_title: "Okta: okta_idp_saml_metadata"
+sidebar_current: "docs-okta-datasource-idp-saml-metadata"
 description: |-
-  Get an application of any kind from Okta.
+  Get SAML IdP metadata from Okta.
 ---
 
-# okta_app
+# okta_idp_saml_metadata
 
-Use this data source to retrieve the collaborators for a given repository.
+Use this data source to retrieve SAML IdP metadata from Okta.
 
 ## Example Usage
 
 ```hcl
-data "okta_app" "example" {
+data "okta_idp_saml_metadata" "example" {
   label = "Example App"
 }
 ```

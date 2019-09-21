@@ -6,7 +6,7 @@ description: |-
   Get an application of any kind from Okta.
 ---
 
-# okta_app
+# okta\_app
 
 Use this data source to retrieve the collaborators for a given repository.
 
