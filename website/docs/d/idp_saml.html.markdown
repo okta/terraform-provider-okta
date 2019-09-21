@@ -20,22 +20,36 @@ data "okta_idp_saml" "example" {
 
 ## Arguments Reference
 
- * `label` - (Optional) The label of the app to retrieve, conflicts with `label_prefix` and `id`.
+* `name` - (Optional) The name of the idp to retrieve, conflicts with `id`.
 
- * `label_prefix` - (Optional) Label prefix of the app to retrieve, conflicts with `label` and `id`. This will tell the provider to do a `starts with` query as opposed to an `equals` query.
-
- * `id` - (Optional) `id` of application to retrieve, conflicts with `label` and `label_prefix`.
-
- * `active_only` - (Optional) tells the provider to query for only `ACTIVE` applications.
+* `id` - (Optional) The id of the idp to retrieve, conflicts with `name`.
 
 ## Attributes Reference
 
- * `id` - `id` of application.
+* `id` - id of idp.
 
- * `label` - `label` of application.
+* `name` - name of the idp.
 
- * `description` - `description` of application.
+* `type` - type of idp.
 
- * `name` - `name` of application.
+* `acs_binding` - HTTP binding used to receive a SAMLResponse message from the IdP.
 
- * `status` - `status` of application.
+* `acs_type` - Determines whether to publish an instance-specific (trust) or organization (shared) ACS endpoint in the SAML metadata.
+
+* `sso_url` - single sign on url.
+
+* `sso_binding` - single sign on binding.
+
+* `sso_destination` - SSO request binding, HTTP-POST or HTTP-REDIRECT.
+
+* `subject_format` - Expression to generate or transform a unique username for the IdP user.
+
+* `subject_filter` - regular expression pattern used to filter untrusted IdP usernames.
+
+* `issuer` - URI that identifies the issuer (IdP).
+
+* `issuer_mode` - indicates whether Okta uses the original Okta org domain URL, or a custom domain URL in the request to the IdP.
+
+* `audience` - URI that identifies the target Okta IdP instance (SP)
+
+* `kid` - Key ID reference to the IdP's X.509 signature certificate.

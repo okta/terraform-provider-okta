@@ -14,28 +14,28 @@ Use this data source to retrieve SAML IdP metadata from Okta.
 
 ```hcl
 data "okta_idp_saml_metadata" "example" {
-  label = "Example App"
+  id = "<idp id>"
 }
 ```
 
 ## Arguments Reference
 
- * `label` - (Optional) The label of the app to retrieve, conflicts with `label_prefix` and `id`.
-
- * `label_prefix` - (Optional) Label prefix of the app to retrieve, conflicts with `label` and `id`. This will tell the provider to do a `starts with` query as opposed to an `equals` query.
-
- * `id` - (Optional) `id` of application to retrieve, conflicts with `label` and `label_prefix`.
-
- * `active_only` - (Optional) tells the provider to query for only `ACTIVE` applications.
+* `idp_id` - (Required) The id of the IdP to retrieve metadata for.
 
 ## Attributes Reference
 
- * `id` - `id` of application.
+* `assertions_signed` - whether assertions are signed.
 
- * `label` - `label` of application.
+* `authn_request_signed` - whether authn requests are signed.
 
- * `description` - `description` of application.
+* `encryption_certificate` - SAML request encryption certificate.
 
- * `name` - `name` of application.
+* `entity_id` - Entity URL for instance `https://www.okta.com/saml2/service-provider/sposcfdmlybtwkdcgtuf`.
 
- * `status` - `status` of application.
+* `http_post_binding` - urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Post location from the SAML metadata.
+
+* `http_redirect_binding` - urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect location from the SAML metadata.
+
+* `metadata` - raw IdP metadata.
+
+* `signing_certificate` - SAML request signing certificate.

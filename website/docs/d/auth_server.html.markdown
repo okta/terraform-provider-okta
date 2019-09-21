@@ -8,32 +8,36 @@ description: |-
 
 # okta_auth_server
 
-Use this data source to retrieve the collaborators for a given repository.
+Use this data source to retrieve an auth server from Okta.
 
 ## Example Usage
 
 ```hcl
 data "okta_auth_server" "example" {
-  label = "Example App"
+  name = "Example Auth"
 }
 ```
 
 ## Arguments Reference
 
- * `label` - (Optional) The label of the app to retrieve, conflicts with `id`.
-
- * `id` - (Optional) `id` of application to retrieve, conflicts with `label`.
-
- * `active_only` - (Optional) tells the provider to query for only `ACTIVE` applications.
+ * `name` - (Required) The name of the auth server to retrieve.
 
 ## Attributes Reference
 
- * `id` - `id` of application.
+ * `id` - Authorization server id.
 
- * `label` - `label` of application.
+ * `name` - The name of the auth server.
 
- * `description` - `description` of application.
+ * `description` - description of Authorization server.
 
- * `name` - `name` of application.
+ * `audiences` - array of audiences,
 
- * `status` - `status` of application.
+ * `kid` - auth server key id.
+
+ * `credentials_last_rotated` - last time credentials were rotated.
+
+ * `credentials_next_rotation` - next time credentials will be rotated
+
+ * `credentials_rotation_mode` - mode of credential rotation, auto or manual.
+
+ * `status` - the activation status of the authorization server.

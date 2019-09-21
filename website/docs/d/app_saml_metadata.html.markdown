@@ -14,28 +14,27 @@ Use this data source to retrieve the collaborators for a given repository.
 
 ```hcl
 data "okta_app_saml_metadata" "example" {
-  label = "Example App"
+  app_id = "<app id>"
+  key_id = "<cert key id>"
 }
 ```
 
 ## Arguments Reference
 
- * `label` - (Optional) The label of the app to retrieve, conflicts with `label_prefix` and `id`.
+ * `app_id` - (Required) The application ID.
 
- * `label_prefix` - (Optional) Label prefix of the app to retrieve, conflicts with `label` and `id`. This will tell the provider to do a `starts with` query as opposed to an `equals` query.
-
- * `id` - (Optional) `id` of application to retrieve, conflicts with `label` and `label_prefix`.
-
- * `active_only` - (Optional) tells the provider to query for only `ACTIVE` applications.
+ * `key_id` - (Required) Certificate Key ID.
 
 ## Attributes Reference
 
- * `id` - `id` of application.
+ * `metadata` - raw metadata of application.
 
- * `label` - `label` of application.
+ * `http_redirect_binding` - urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect location from the SAML metadata.
 
- * `description` - `description` of application.
+ * `http_post_binding` - urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Post location from the SAML metadata.
 
- * `name` - `name` of application.
+ * `certificate` - public certificate from application metadata.
 
- * `status` - `status` of application.
+ * `want_authn_requests_signed` - Whether authn requests are signed.
+
+ * `entity_id` - Entity URL for instance `https://www.okta.com/saml2/service-provider/sposcfdmlybtwkdcgtuf`.

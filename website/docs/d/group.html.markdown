@@ -20,22 +20,14 @@ data "okta_group" "example" {
 
 ## Arguments Reference
 
- * `label` - (Optional) The label of the app to retrieve, conflicts with `label_prefix` and `id`.
+* `name` - (Required) name of group to retrieve.
 
- * `label_prefix` - (Optional) Label prefix of the app to retrieve, conflicts with `label` and `id`. This will tell the provider to do a `starts with` query as opposed to an `equals` query.
-
- * `id` - (Optional) `id` of application to retrieve, conflicts with `label` and `label_prefix`.
-
- * `active_only` - (Optional) tells the provider to query for only `ACTIVE` applications.
+* `include_users` - (Optional) whether or not to retrieve all member ids.
 
 ## Attributes Reference
 
- * `id` - `id` of application.
+* `name` - name of group.
 
- * `label` - `label` of application.
+* `description` - description of group.
 
- * `description` - `description` of application.
-
- * `name` - `name` of application.
-
- * `status` - `status` of application.
+* `users` - user ids that are members of this group, only included if `include_users` is set to `true`.
