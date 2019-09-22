@@ -45,6 +45,12 @@ func resourceAuthServerScope() *schema.Resource {
 				Description:  "Whether to publish metadata or not, matching API type despite the fact it could just be a boolean",
 				ValidateFunc: validation.StringInSlice([]string{"ALL_CLIENTS", "NO_CLIENTS"}, false),
 			},
+			"default": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "A default scope will be returned in an access token when the client omits the scope parameter in a token request, provided this scope is allowed as part of the access policy rule.",
+			},
 		},
 	}
 }
@@ -55,6 +61,7 @@ func buildAuthServerScope(d *schema.ResourceData) *sdk.AuthorizationServerScope 
 		Description:     d.Get("description").(string),
 		MetadataPublish: d.Get("metadata_publish").(string),
 		Name:            d.Get("name").(string),
+		Default:         d.Get("default").(bool),
 	}
 }
 
@@ -86,6 +93,7 @@ func resourceAuthServerScopeRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("name", authServerScope.Name)
 	d.Set("description", authServerScope.Description)
 	d.Set("metadata_publish", authServerScope.MetadataPublish)
+	d.Set("default", authServerScope.Default)
 
 	if authServerScope.Consent != "" {
 		d.Set("consent", authServerScope.Consent)

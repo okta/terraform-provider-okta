@@ -13,6 +13,7 @@ type AuthorizationServerScope struct {
 	Description     string `json:"description,omitempty"`
 	Consent         string `json:"consent,omitempty"`
 	MetadataPublish string `json:"metadataPublish,omitempty"`
+	Default         bool   `json:"default"`
 }
 
 func (m *ApiSupplement) DeleteAuthorizationServerScope(authServerId, id string) (*okta.Response, error) {
