@@ -1,26 +1,23 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app_auto_login"
-sidebar_current: "docs-okta-resource-app-auto-login"
+page_title: "Okta: okta_app_bookmark"
+sidebar_current: "docs-okta-resource-app-bookmark"
 description: |-
-  Creates an Auto Login Okta Application.
+  Creates a Bookmark Application.
 ---
 
-# okta\_app\_auto\_login
+# okta_app_bookmark
 
-Creates an Auto Login Okta Application.
+Creates a Bookmark Application.
 
-This resource allows you to create and configure an Auto Login Okta Application.
+This resource allows you to create and configure a Bookmark Application.
 
 ## Example Usage
 
 ```hcl
-resource "okta_app_auto_login" "example" {
-  label                = "Example App"
-  sign_on_url          = "https://example.com/login.html"
-  sign_on_redirect_url = "https://example.com"
-  reveal_password      = true
-  credentials_scheme   = "EDIT_USERNAME_AND_PASSWORD"
+resource "okta_app_bookmark" "example" {
+  label  = "Example"
+  url    = "https://example.com"
 }
 ```
 
@@ -29,18 +26,23 @@ resource "okta_app_auto_login" "example" {
 The following arguments are supported:
 
 * `label` - (Required) The Application's display name.
-* `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
-* `preconfigured_app` - (Optional) Tells Okta to use an existing application in their application catalog, as opposed to a custom application.
+
+* `url` - (Optional) The URL of the bookmark.
+
+* `request_integration` - (Optional) Would you like Okta to add an integration for this app?
 
 ## Attributes Reference
 
-* `name` - Name assigned to the application by Okta.
-* `sign_on_mode` - Sign on mode of application.
+* `id` - ID of the Application.
+
+* `label` - The Application's display name.
+
+* `url` - The URL of the bookmark.
 
 ## Import
 
-Okta Auto Login App can be imported via the Okta ID.
+Okta Bookmark App can be imported via the Okta ID.
 
 ```
-$ terraform import okta_app_auto_login.example <app id>
+$ terraform import okta_app_bookmark.example <app id>
 ```

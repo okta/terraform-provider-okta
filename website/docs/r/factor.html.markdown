@@ -6,7 +6,7 @@ description: |-
   Creates an Auto Login Okta Application.
 ---
 
-# okta\_app\_auto\_login
+# okta_app_auto_login
 
 Creates an Auto Login Okta Application.
 

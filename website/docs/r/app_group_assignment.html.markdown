@@ -1,26 +1,23 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app_auto_login"
-sidebar_current: "docs-okta-resource-app-auto-login"
+page_title: "Okta: okta_app_group_assignment"
+sidebar_current: "docs-okta-resource-app-group-assignment"
 description: |-
-  Creates an Auto Login Okta Application.
+  Assigns a group to an application.
 ---
 
-# okta\_app\_auto\_login
+# okta_app_group_assignment
 
-Creates an Auto Login Okta Application.
+Assigns a group to an application.
 
-This resource allows you to create and configure an Auto Login Okta Application.
+This resource allows you to create an App Group assignment.
 
 ## Example Usage
 
 ```hcl
-resource "okta_app_auto_login" "example" {
-  label                = "Example App"
-  sign_on_url          = "https://example.com/login.html"
-  sign_on_redirect_url = "https://example.com"
-  reveal_password      = true
-  credentials_scheme   = "EDIT_USERNAME_AND_PASSWORD"
+resource "okta_app_group_assignment" "example" {
+  app_id   = "<app id>"
+  group_id = "<group id>"
 }
 ```
 
@@ -28,19 +25,18 @@ resource "okta_app_auto_login" "example" {
 
 The following arguments are supported:
 
-* `label` - (Required) The Application's display name.
-* `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
-* `preconfigured_app` - (Optional) Tells Okta to use an existing application in their application catalog, as opposed to a custom application.
+* `app_id` - (Required) The ID of the application to assign a group to.
+
+* `group_id` - (Required) The ID of the group to assign the app to.
 
 ## Attributes Reference
 
-* `name` - Name assigned to the application by Okta.
-* `sign_on_mode` - Sign on mode of application.
+* `id` - ID of the group assignment.
 
 ## Import
 
-Okta Auto Login App can be imported via the Okta ID.
+An application group assignment can be imported via assignment ID.
 
 ```
-$ terraform import okta_app_auto_login.example <app id>
+$ terraform import okta_app_group_assignment.example <id>
 ```
