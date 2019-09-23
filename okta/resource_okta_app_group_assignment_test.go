@@ -26,7 +26,7 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 					ensureAppGroupAssignmentExists(resourceName),
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "group_id"),
-					resource.TestCheckResourceAttrSet(resourceName, "profile"),
+					resource.TestCheckResourceAttr(resourceName, "profile", "{}"),
 				),
 			},
 		},
