@@ -1,4 +1,3 @@
-
 // A groups claim allows for groups to be injected into ID tokens or access tokens.
 // A group whitelist allows for limiting the groups injected on a per-application basis to
 // reduce the size of the tokens. In reality, you would include the group ID in the 
@@ -19,7 +18,7 @@ resource "okta_app_oauth" "test" {
   client_basic_secret        = "something_from_somewhere"
   custom_client_id           = "something_from_somewhere"
   token_endpoint_auth_method = "client_secret_basic"
-  
+
   profile = <<JSON
    {
     "groups": {

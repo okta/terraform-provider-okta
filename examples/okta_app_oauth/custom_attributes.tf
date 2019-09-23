@@ -7,8 +7,8 @@ resource "okta_app_oauth" "test" {
   client_basic_secret        = "something_from_somewhere"
   custom_client_id           = "something_from_somewhere"
   token_endpoint_auth_method = "client_secret_basic"
-  
-  profile  = <<JSON
+
+  profile = <<JSON
   {
     "customAttribute123": "testing-custom-attribute"
   }
