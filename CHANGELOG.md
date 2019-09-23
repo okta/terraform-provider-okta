@@ -48,7 +48,7 @@ For Release v3.0.9
 
 For Release v3.0.10
 
-* Add okta_network_zone resource 
+* Add okta_network_zone resource
 
 For Release v3.0.11
 
@@ -120,3 +120,10 @@ For Release v3.0.23
 For Release v3.0.24
 
 * Support `profile` on `okta_oauth_app` resource
+
+For Release v3.0.25
+
+* Support setting an auth server scope as the default
+* Fix bug with supporting `profile` on `okta_oauth_app` resource
+* Support `profile` and `priority` on `okta_app_group_assignment`
+* Support `profile` on `okta_app_user`
