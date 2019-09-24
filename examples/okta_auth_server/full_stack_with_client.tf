@@ -26,7 +26,7 @@ resource "okta_auth_server_policy" "test" {
   name             = "test"
   description      = "update"
   priority         = 1
-  client_whitelist = ["ALL_CLIENTS"]
+  client_whitelist = ["${okta_app_oauth.test.id}"]
 }
 
 data "okta_group" "all" {
@@ -41,4 +41,13 @@ resource "okta_auth_server_policy_rule" "test" {
   priority             = 1
   group_whitelist      = ["${data.okta_group.all.id}"]
   grant_type_whitelist = ["password", "implicit"]
+}
+
+resource "okta_app_oauth" "test" {
+  status         = "ACTIVE"
+  label          = "test"
+  type           = "web"
+  grant_types    = ["implicit", "authorization_code"]
+  redirect_uris  = ["https://localhost:8443/redirect_uri/"]
+  response_types = ["code", "token", "id_token"]
 }
