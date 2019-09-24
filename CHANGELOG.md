@@ -130,4 +130,8 @@ For Release v3.0.25
 
 For Release v3.0.26
 
-* Support array enums in `okta_user_schema` and `okta_app_user_schema` as `array_enum` and `array_one_of``
+* Support array enums in `okta_user_schema` and `okta_app_user_schema` as `array_enum` and `array_one_of`
+
+For Release v3.0.27
+
+* Update refresh token window validation to account for new upper limit of 5 years 
