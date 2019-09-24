@@ -127,3 +127,7 @@ For Release v3.0.25
 * Fix bug with supporting `profile` on `okta_oauth_app` resource
 * Support `profile` and `priority` on `okta_app_group_assignment`
 * Support `profile` on `okta_app_user`
+
+For Release v3.0.26
+
+* Support array enums in `okta_user_schema` and `okta_app_user_schema` as `array_enum` and `array_one_of``
