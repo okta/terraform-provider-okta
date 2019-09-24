@@ -28,6 +28,12 @@ type (
 	}
 
 	UserSchemaItem struct {
+		Enum  []string          `json:"enum,omitempty"`
+		OneOf []*UserSchemaEnum `json:"oneOf,omitempty"`
+		Type  string            `json:"type,omitempty"`
+	}
+
+	UserSchemaMaster struct {
 		Type string `json:"type,omitempty"`
 	}
 
@@ -41,7 +47,7 @@ type (
 		Enum         []string                `json:"enum,omitempty"`
 		Format       string                  `json:"format,omitempty"`
 		Items        *UserSchemaItem         `json:"items,omitempty"`
-		Master       *UserSchemaItem         `json:"master,omitempty"`
+		Master       *UserSchemaMaster       `json:"master,omitempty"`
 		MaxLength    *int                    `json:"maxLength,omitempty"`
 		MinLength    *int                    `json:"minLength,omitempty"`
 		Mutability   string                  `json:"mutability,omitempty"`
