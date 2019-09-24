@@ -98,9 +98,11 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 
 func TestAccOktaUserSchema_arrayString(t *testing.T) {
 	ri := acctest.RandInt()
-	resourceName := buildResourceFQN(userSchema, ri)
-	config := testOktaUserSchemas_arrayString(ri)
-	updatedConfig := testOktaUserSchemas_arrayStringUpdated(ri)
+	resourceName := fmt.Sprintf("%s.test", userSchema)
+	mgr := newFixtureManager(userSchema)
+	config := mgr.GetFixtures("array_string.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("array_string_updated.tf", ri, t)
+	arrayEnum := mgr.GetFixtures("array_enum.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -135,6 +137,24 @@ func TestAccOktaUserSchema_arrayString(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "master", "OKTA"),
 				),
 			},
+			{
+				Config: arrayEnum,
+				Check: resource.ComposeTestCheckFunc(
+					testOktaUserSchemasExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
+					resource.TestCheckResourceAttr(resourceName, "type", "array"),
+					resource.TestCheckResourceAttr(resourceName, "array_type", "string"),
+					resource.TestCheckResourceAttr(resourceName, "description", "testing"),
+					resource.TestCheckResourceAttr(resourceName, "required", "false"),
+					resource.TestCheckResourceAttr(resourceName, "master", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "scope", "NONE"),
+					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "test"),
+					resource.TestCheckResourceAttr(resourceName, "array_enum.1", "1"),
+					resource.TestCheckResourceAttr(resourceName, "array_enum.2", "2"),
+					resource.TestCheckResourceAttr(resourceName, "array_one_of.#", "3"),
+				),
+			},
 		},
 	})
 }
@@ -167,34 +187,4 @@ func testUserSchemaExists(index string) (bool, error) {
 	}
 
 	return false, nil
-}
-
-func testOktaUserSchemas_arrayString(rInt int) string {
-	return fmt.Sprintf(`
-resource "okta_user_schema" "testAcc_%[1]d" {
-  index     = "testAcc_%[1]d"
-  title     = "terraform acceptance test"
-  type      = "array"
-  description = "terraform acceptance test"
-  array_type = "string"
-  required    = false
-  permissions = "READ_ONLY"
-  master      = "PROFILE_MASTER"
-}
-`, rInt)
-}
-
-func testOktaUserSchemas_arrayStringUpdated(rInt int) string {
-	return fmt.Sprintf(`
-resource "okta_user_schema" "testAcc_%[1]d" {
-  index     = "testAcc_%[1]d"
-  title     = "terraform acceptance test updated"
-  type      = "array"
-  description = "terraform acceptance test updated"
-  array_type = "string"
-  required    = true
-  permissions = "READ_WRITE"
-  master      = "OKTA"
-}
-`, rInt)
 }

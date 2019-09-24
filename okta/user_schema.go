@@ -33,6 +33,33 @@ var (
 			Description:  "Subschema array type: string, number, integer, reference. Type field must be an array.",
 			ForceNew:     true,
 		},
+		"array_enum": &schema.Schema{
+			Type:        schema.TypeList,
+			Optional:    true,
+			ForceNew:    true,
+			Description: "Custom Subschema enumerated value of a property of type array.",
+			Elem:        &schema.Schema{Type: schema.TypeString},
+		},
+		"array_one_of": &schema.Schema{
+			Type:        schema.TypeList,
+			ForceNew:    true,
+			Optional:    true,
+			Description: "array of valid JSON schemas for property type array.",
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"const": &schema.Schema{
+						Required:    true,
+						Type:        schema.TypeString,
+						Description: "Enum value",
+					},
+					"title": &schema.Schema{
+						Required:    true,
+						Type:        schema.TypeString,
+						Description: "Enum title",
+					},
+				},
+			},
+		},
 		"description": &schema.Schema{
 			Type:        schema.TypeString,
 			Optional:    true,
@@ -56,11 +83,12 @@ var (
 			ValidateFunc: validation.IntAtLeast(1),
 		},
 		"enum": &schema.Schema{
-			Type:        schema.TypeList,
-			Optional:    true,
-			ForceNew:    true,
-			Description: "Custom Subschema enumerated value of the property. see: developer.okta.com/docs/api/resources/schemas#user-profile-schema-property-object",
-			Elem:        &schema.Schema{Type: schema.TypeString},
+			Type:          schema.TypeList,
+			Optional:      true,
+			ForceNew:      true,
+			Description:   "Custom Subschema enumerated value of the property. see: developer.okta.com/docs/api/resources/schemas#user-profile-schema-property-object",
+			ConflictsWith: []string{"array_type"},
+			Elem:          &schema.Schema{Type: schema.TypeString},
 		},
 		"scope": &schema.Schema{
 			Type:         schema.TypeString,
@@ -69,10 +97,11 @@ var (
 			ValidateFunc: validation.StringInSlice([]string{"SELF", "NONE", ""}, false),
 		},
 		"one_of": &schema.Schema{
-			Type:        schema.TypeList,
-			ForceNew:    true,
-			Optional:    true,
-			Description: "Custom Subschema json schemas. see: developer.okta.com/docs/api/resources/schemas#user-profile-schema-property-object",
+			Type:          schema.TypeList,
+			ForceNew:      true,
+			Optional:      true,
+			Description:   "Custom Subschema json schemas. see: developer.okta.com/docs/api/resources/schemas#user-profile-schema-property-object",
+			ConflictsWith: []string{"array_type"},
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"const": &schema.Schema{
@@ -221,10 +250,10 @@ func getCustomProperty(schema *sdk.UserSchema, id string) *sdk.UserSubSchema {
 	return nil
 }
 
-func getNullableOneOf(d *schema.ResourceData) (oneOf []*sdk.UserSchemaEnum) {
+func getNullableOneOf(d *schema.ResourceData, key string) (oneOf []*sdk.UserSchemaEnum) {
 	oneOf = []*sdk.UserSchemaEnum{}
 
-	if oneOfList, ok := d.GetOk("one_of"); ok {
+	if oneOfList, ok := d.GetOk(key); ok {
 		for _, v := range oneOfList.([]interface{}) {
 			valueMap := v.(map[string]interface{})
 			oneOf = append(oneOf, &sdk.UserSchemaEnum{
@@ -237,9 +266,21 @@ func getNullableOneOf(d *schema.ResourceData) (oneOf []*sdk.UserSchemaEnum) {
 	return oneOf
 }
 
-func getNullableItem(d *schema.ResourceData, key string) *sdk.UserSchemaItem {
-	if v, ok := d.GetOk(key); ok {
-		return &sdk.UserSchemaItem{Type: v.(string)}
+func getNullableMaster(d *schema.ResourceData) *sdk.UserSchemaMaster {
+	if v, ok := d.GetOk("master"); ok {
+		return &sdk.UserSchemaMaster{Type: v.(string)}
+	}
+
+	return nil
+}
+
+func getNullableItem(d *schema.ResourceData) *sdk.UserSchemaItem {
+	if v, ok := d.GetOk("array_type"); ok {
+		return &sdk.UserSchemaItem{
+			Type:  v.(string),
+			OneOf: getNullableOneOf(d, "array_one_of"),
+			Enum:  convertInterfaceToStringArrNullable(d.Get("array_enum")),
+		}
 	}
 
 	return nil
@@ -270,11 +311,11 @@ func getUserSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
 		},
 		Scope:        d.Get("scope").(string),
 		Enum:         convertInterfaceToStringArrNullable(d.Get("enum")),
-		Master:       getNullableItem(d, "master"),
-		Items:        getNullableItem(d, "array_type"),
+		Master:       getNullableMaster(d),
+		Items:        getNullableItem(d),
 		MinLength:    getNullableInt(d, "min_length"),
 		MaxLength:    getNullableInt(d, "max_length"),
-		OneOf:        getNullableOneOf(d),
+		OneOf:        getNullableOneOf(d, "one_of"),
 		ExternalName: d.Get("external_name").(string),
 	}
 }
