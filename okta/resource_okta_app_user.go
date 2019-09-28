@@ -92,11 +92,16 @@ func resourceAppUserUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppUserRead(d *schema.ResourceData, m interface{}) error {
-	u, _, err := getOktaClientFromMetadata(m).Application.GetApplicationUser(
+	u, resp, err := getOktaClientFromMetadata(m).Application.GetApplicationUser(
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
 		nil,
 	)
+
+	if is404(resp.StatusCode) {
+		d.SetId("")
+		return nil
+	}
 
 	if err != nil {
 		return err

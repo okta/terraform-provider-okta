@@ -75,6 +75,12 @@ func resourceFactorDelete(d *schema.ResourceData, m interface{}) error {
 
 func resourceFactorRead(d *schema.ResourceData, m interface{}) error {
 	factor, err := findFactor(d, m)
+
+	if factor == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}

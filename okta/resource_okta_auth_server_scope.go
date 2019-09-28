@@ -86,6 +86,12 @@ func resourceAuthServerScopeExists(d *schema.ResourceData, m interface{}) (bool,
 
 func resourceAuthServerScopeRead(d *schema.ResourceData, m interface{}) error {
 	authServerScope, err := fetchAuthServerScope(d, m)
+
+	if authServerScope == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}

@@ -334,7 +334,12 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List User %v", d.Get("login").(string))
 	client := getOktaClientFromMetadata(m)
 
-	user, _, err := client.User.GetUser(d.Id())
+	user, resp, err := client.User.GetUser(d.Id())
+
+	if is404(resp.StatusCode) {
+		d.SetId("")
+		return nil
+	}
 
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Getting User from Okta: %v", err)

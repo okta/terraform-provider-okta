@@ -311,6 +311,12 @@ func setRuleStatus(d *schema.ResourceData, m interface{}, status string) error {
 func resourcePolicyRuleIdpDiscoveryRead(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
 	rule, resp, err := client.GetIdpDiscoveryRule(d.Get("policyid").(string), d.Id())
+
+	if is404(resp.StatusCode) {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return responseErr(resp, err)
 	}

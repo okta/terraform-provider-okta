@@ -66,10 +66,17 @@ func resourceNetworkZoneCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceNetworkZoneRead(d *schema.ResourceData, m interface{}) error {
-	zone, _, err := getSupplementFromMetadata(m).GetNetworkZone(d.Id())
+	zone, resp, err := getSupplementFromMetadata(m).GetNetworkZone(d.Id())
+
+	if is404(resp.StatusCode) {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}
+
 	d.Set("name", zone.Name)
 	d.Set("type", zone.Type)
 

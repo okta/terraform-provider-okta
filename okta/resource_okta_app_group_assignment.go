@@ -105,11 +105,16 @@ func resourceAppGroupAssignmentUpdate(d *schema.ResourceData, m interface{}) err
 }
 
 func resourceAppGroupAssignmentRead(d *schema.ResourceData, m interface{}) error {
-	g, _, err := getOktaClientFromMetadata(m).Application.GetApplicationGroupAssignment(
+	g, resp, err := getOktaClientFromMetadata(m).Application.GetApplicationGroupAssignment(
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
 		nil,
 	)
+
+	if is404(resp.StatusCode) {
+		d.SetId("")
+		return nil
+	}
 
 	if err != nil {
 		return err

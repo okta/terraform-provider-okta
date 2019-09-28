@@ -77,7 +77,13 @@ func resourceGroupRolesCreate(d *schema.ResourceData, m interface{}) error {
 
 func resourceGroupRolesRead(d *schema.ResourceData, m interface{}) error {
 	groupId := d.Get("group_id").(string)
-	existingRoles, _, err := getSupplementFromMetadata(m).ListAdminRoles(groupId, nil)
+	existingRoles, resp, err := getSupplementFromMetadata(m).ListAdminRoles(groupId, nil)
+
+	if is404(resp.StatusCode) {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}

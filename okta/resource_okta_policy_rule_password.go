@@ -71,6 +71,12 @@ func resourcePolicyPasswordRuleRead(d *schema.ResourceData, m interface{}) error
 	log.Printf("[INFO] List Policy Rule %v", d.Get("name").(string))
 
 	rule, err := getPolicyRule(d, m)
+
+	if rule == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}

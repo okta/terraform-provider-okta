@@ -45,7 +45,8 @@ func resourceAppUserBaseSchemaRead(d *schema.ResourceData, m interface{}) error 
 	if err != nil {
 		return err
 	} else if subschema == nil {
-		return fmt.Errorf("Okta did not return a subschema for \"%s\"", d.Id())
+		d.SetId("")
+		return nil
 	}
 
 	syncBaseUserSchema(d, subschema)

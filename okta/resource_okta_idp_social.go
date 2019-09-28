@@ -96,6 +96,11 @@ func resourceIdpSocialRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
+	if idp == nil {
+		d.SetId("")
+		return nil
+	}
+
 	d.Set("name", idp.Name)
 	d.Set("max_clock_skew", idp.Policy.MaxClockSkew)
 	d.Set("provisioning_action", idp.Policy.Provisioning.Action)

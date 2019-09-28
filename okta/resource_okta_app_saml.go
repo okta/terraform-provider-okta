@@ -356,6 +356,12 @@ func resourceAppSamlCreate(d *schema.ResourceData, m interface{}) error {
 func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 	app := okta.NewSamlApplication()
 	err := fetchApp(d, m, app)
+
+	if app == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}

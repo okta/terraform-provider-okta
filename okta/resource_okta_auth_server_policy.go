@@ -1,9 +1,10 @@
 package okta
 
 import (
+	"net/http"
+
 	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
-	"net/http"
 )
 
 func resourceAuthServerPolicy() *schema.Resource {
@@ -86,6 +87,12 @@ func resourceAuthServerPolicyExists(d *schema.ResourceData, m interface{}) (bool
 
 func resourceAuthServerPolicyRead(d *schema.ResourceData, m interface{}) error {
 	authServerPolicy, err := fetchAuthServerPolicy(d, m)
+
+	if authServerPolicy == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}

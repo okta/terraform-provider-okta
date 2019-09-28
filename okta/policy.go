@@ -154,7 +154,7 @@ func getPolicy(d *schema.ResourceData, m interface{}) (*articulateOkta.Policy, e
 	policy, resp, err := client.Policies.GetPolicy(d.Id())
 
 	if is404(resp.StatusCode) {
-		return policy, nil
+		return nil, nil
 	}
 
 	return policy, err
