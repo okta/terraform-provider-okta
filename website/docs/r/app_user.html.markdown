@@ -1,21 +1,21 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app_auto_login"
-sidebar_current: "docs-okta-resource-app-auto-login"
+page_title: "Okta: okta_app_app_user"
+sidebar_current: "docs-okta-resource-app-user"
 description: |-
-  Creates an Auto Login Okta Application.
+  Creates an Application User.
 ---
 
-# okta_app_auto_login
+# okta_app_app_user
 
-Creates an Auto Login Okta Application.
+Creates an Application User.
 
-This resource allows you to create and configure an Auto Login Okta Application.
+This resource allows you to create and configure an Application User.
 
 ## Example Usage
 
 ```hcl
-resource "okta_app_auto_login" "example" {
+resource "okta_app_app_user" "example" {
   label                = "Example App"
   sign_on_url          = "https://example.com/login.html"
   sign_on_redirect_url = "https://example.com"
@@ -39,8 +39,8 @@ The following arguments are supported:
 
 ## Import
 
-Okta Auto Login App can be imported via the Okta ID.
+An application user can be imported via the Okta ID.
 
 ```
-$ terraform import okta_app_auto_login.example <app id>
+$ terraform import okta_app_app_user.example <app id>
 ```
