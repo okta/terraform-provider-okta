@@ -1,26 +1,37 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app_auto_login"
-sidebar_current: "docs-okta-resource-app-auto-login"
+page_title: "Okta: okta_inline_hook"
+sidebar_current: "docs-okta-resource-inline-hook"
 description: |-
-  Creates an Auto Login Okta Application.
+  Creates an inline hook.
 ---
 
-# okta_app_auto_login
+# okta_inline_hook
 
-Creates an Auto Login Okta Application.
+Creates an inline hook.
 
-This resource allows you to create and configure an Auto Login Okta Application.
+This resource allows you to create and configure an inline hook.
 
 ## Example Usage
 
 ```hcl
-resource "okta_app_auto_login" "example" {
-  label                = "Example App"
-  sign_on_url          = "https://example.com/login.html"
-  sign_on_redirect_url = "https://example.com"
-  reveal_password      = true
-  credentials_scheme   = "EDIT_USERNAME_AND_PASSWORD"
+resource "okta_inline_hook" "example" {
+  name    = "example"
+  version = "1.0.1"
+  type    = "com.okta.oauth2.tokens.transform"
+
+  channel = {
+    type    = "HTTP"
+    version = "1.0.0"
+    uri     = "https://example.com/test"
+    method  = "POST"
+  }
+
+  auth = {
+    key   = "Authorization"
+    type  = "HEADER"
+    value = "secret"
+  }
 }
 ```
 
@@ -28,19 +39,20 @@ resource "okta_app_auto_login" "example" {
 
 The following arguments are supported:
 
-* `label` - (Required) The Application's display name.
-* `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
-* `preconfigured_app` - (Optional) Tells Okta to use an existing application in their application catalog, as opposed to a custom application.
+* `name` - (Required) The inline hook display name.
+
+* `version` - (Required) The version of the hook.
+
+* `type` - (Required) The type of hook to create. [See here for supported types](https://developer.okta.com/docs/reference/api/inline-hooks/#supported-inline-hook-types).
 
 ## Attributes Reference
 
-* `name` - Name assigned to the application by Okta.
-* `sign_on_mode` - Sign on mode of application.
+* `id` - The ID of the inline hooks.
 
 ## Import
 
-Okta Auto Login App can be imported via the Okta ID.
+An inline hook can be imported via the Okta ID.
 
 ```
-$ terraform import okta_app_auto_login.example <app id>
+$ terraform import okta_inline_hook.example <hook id>
 ```

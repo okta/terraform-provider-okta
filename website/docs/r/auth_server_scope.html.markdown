@@ -1,26 +1,25 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app_auto_login"
-sidebar_current: "docs-okta-resource-app-auto-login"
+page_title: "Okta: okta_auth_server_scope"
+sidebar_current: "docs-okta-resource-auth-server-scope"
 description: |-
-  Creates an Auto Login Okta Application.
+  Creates an Authorization Scope.
 ---
 
-# okta_app_auto_login
+# okta_auth_server_scope
 
-Creates an Auto Login Okta Application.
+Creates an Authorization Server Scope.
 
 This resource allows you to create and configure an Auto Login Okta Application.
 
 ## Example Usage
 
 ```hcl
-resource "okta_app_auto_login" "example" {
-  label                = "Example App"
-  sign_on_url          = "https://example.com/login.html"
-  sign_on_redirect_url = "https://example.com"
-  reveal_password      = true
-  credentials_scheme   = "EDIT_USERNAME_AND_PASSWORD"
+resource "okta_auth_server_scope" "example" {
+  auth_server_id   = "<auth server id>"
+  metadata_publish = "NO_CLIENTS"
+  name             = "example"
+  consent          = "IMPLICIT"
 }
 ```
 
@@ -28,19 +27,28 @@ resource "okta_app_auto_login" "example" {
 
 The following arguments are supported:
 
-* `label` - (Required) The Application's display name.
-* `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
-* `preconfigured_app` - (Optional) Tells Okta to use an existing application in their application catalog, as opposed to a custom application.
+* `name` - (Required) Auth Server scope name.
+
+* `auth_server_id` - (Required) Auth Server ID.
+
+* `description` - (Optional) Description of the Auth Server Scope.
+
+* `consent` - (Optional) Indicates whether a consent dialog is needed for the scope. It can be set to `"REQUIRED"` or `"IMPLICIT"`.
+
+* `metadata_publish` - (Optional) Whether to publish metadata or not. It can be set to `"ALL_CLIENTS"` or `"NO_CLIENTS"`.
+
+* `default` - (Optional) A default scope will be returned in an access token when the client omits the scope parameter in a token request, provided this scope is allowed as part of the access policy rule.
 
 ## Attributes Reference
 
-* `name` - Name assigned to the application by Okta.
-* `sign_on_mode` - Sign on mode of application.
+* `id` - ID of the Auth Server Scope.
+
+* `auth_server_id` - The ID of the Auth Server.
 
 ## Import
 
-Okta Auto Login App can be imported via the Okta ID.
+Okta Auth Server Scope can be imported via the Auth Server ID and Scope ID.
 
 ```
-$ terraform import okta_app_auto_login.example <app id>
+$ terraform import okta_auth_server_scope.example <auth server id>/<scope id>
 ```

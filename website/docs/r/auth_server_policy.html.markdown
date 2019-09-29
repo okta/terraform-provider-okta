@@ -1,26 +1,27 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app_auto_login"
-sidebar_current: "docs-okta-resource-app-auto-login"
+page_title: "Okta: okta_auth_server_policy"
+sidebar_current: "docs-okta-resource-auth-server-policy"
 description: |-
-  Creates an Auto Login Okta Application.
+  Creates an Authorization Server Policy.
 ---
 
-# okta_app_auto_login
+# okta_auth_server_policy
 
-Creates an Auto Login Okta Application.
+Creates an Authorization Server Policy.
 
-This resource allows you to create and configure an Auto Login Okta Application.
+This resource allows you to create and configure an Authorization Server Policy.
 
 ## Example Usage
 
 ```hcl
-resource "okta_app_auto_login" "example" {
-  label                = "Example App"
-  sign_on_url          = "https://example.com/login.html"
-  sign_on_redirect_url = "https://example.com"
-  reveal_password      = true
-  credentials_scheme   = "EDIT_USERNAME_AND_PASSWORD"
+resource "okta_auth_server_policy" "example" {
+  auth_server_id   = "<auth server id>"
+  status           = "ACTIVE"
+  name             = "example"
+  description      = "example"
+  priority         = 1
+  client_whitelist = ["ALL_CLIENTS"]
 }
 ```
 
@@ -28,19 +29,30 @@ resource "okta_app_auto_login" "example" {
 
 The following arguments are supported:
 
-* `label` - (Required) The Application's display name.
-* `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
-* `preconfigured_app` - (Optional) Tells Okta to use an existing application in their application catalog, as opposed to a custom application.
+* `name` - (Required) The name of the Auth Server Policy.
+
+* `auth_server_id` - (Required) The ID of the Auth Server.
+
+* `status` - (Optional) The status of the Auth Server Policy.
+
+* `priority` - (Required) The priority of the Auth Server Policy.
+
+* `description` - (Optional) The description of the Auth Server Policy.
+
+* `client_whitelist` - (Required) The clients to whitelist the policy for. `["ALL_CLIENTS"]` is a special value that can be used to whitelist for all clients. Otherwise it is a list of client ids.
 
 ## Attributes Reference
 
-* `name` - Name assigned to the application by Okta.
-* `sign_on_mode` - Sign on mode of application.
+* `id` - (Required) The ID of the authorization server policy.
+
+* `auth_server_id` - (Required) The ID of the Auth Server.
+
+* `type` - The type of the Auth Server Policy.
 
 ## Import
 
-Okta Auto Login App can be imported via the Okta ID.
+Authorization Server Policy can be imported via the Auth Server ID and Policy ID.
 
 ```
-$ terraform import okta_app_auto_login.example <app id>
+$ terraform import okta_auth_server_policy.example <auth server id>/<policy id>
 ```

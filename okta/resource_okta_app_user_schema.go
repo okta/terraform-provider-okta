@@ -9,14 +9,12 @@ import (
 
 func resourceAppUserSchema() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceAppUserSchemaCreate,
-		Read:   resourceAppUserSchemaRead,
-		Update: resourceAppUserSchemaUpdate,
-		Delete: resourceAppUserSchemaDelete,
-		Exists: resourceAppUserSchemaExists,
-		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
-		},
+		Create:   resourceAppUserSchemaCreate,
+		Read:     resourceAppUserSchemaRead,
+		Update:   resourceAppUserSchemaUpdate,
+		Delete:   resourceAppUserSchemaDelete,
+		Exists:   resourceAppUserSchemaExists,
+		Importer: createNestedResourceImporter([]string{"app_id", "id"}),
 
 		Schema: buildCustomUserSchema(map[string]*schema.Schema{
 			"app_id": &schema.Schema{
