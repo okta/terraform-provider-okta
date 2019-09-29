@@ -1,41 +1,112 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app"
-sidebar_current: "docs-okta-datasource-app"
+page_title: "Okta: okta_user"
+sidebar_current: "docs-okta-resource-user"
 description: |-
-  Get an application of any kind from Okta.
+  Creates an Okta User.
 ---
 
-# okta\_app
+# okta_user
 
-Use this data source to retrieve the collaborators for a given repository.
+Creates an Okta User.
+
+This resource allows you to create and configure an Okta User.
 
 ## Example Usage
 
 ```hcl
-data "okta_app" "example" {
-  label = "Example App"
+resource "okta_user" "example" {
+  index       = "customPropertyName"
+  title       = "customPropertyName"
+  type        = "string"
+  description = "My custom property name"
+  master      = "OKTA"
+  scope       = "SELF"
 }
 ```
 
-## Arguments Reference
+## Argument Reference
 
- * `label` - (Optional) The label of the app to retrieve, conflicts with `label_prefix` and `id`.
+The following arguments are supported:
 
- * `label_prefix` - (Optional) Label prefix of the app to retrieve, conflicts with `label` and `id`. This will tell the provider to do a `starts with` query as opposed to an `equals` query.
+* `email` - (Required) User profile property.
 
- * `id` - (Optional) `id` of application to retrieve, conflicts with `label` and `label_prefix`.
+* `login` - (Required) User profile property.
 
- * `active_only` - (Optional) tells the provider to query for only `ACTIVE` applications.
+* `first_name` - (Required) User's First Name, required by default.
+
+* `last_name` - (Required) User's Last Name, required by default.
+
+* `custom_profile_attributes` - (Optional) raw JSON containing all custom profile attributes.
+
+* `admin_roles` - (Optional) Administrator roles assigned to User.
+
+* `city` - (Optional) User profile property.
+
+* `cost_center` - (Optional) User profile property.
+
+* `country_code` - (Optional) User profile property.
+
+* `department` - (Optional) User profile property.
+
+* `display_name` - (Optional) User profile property.
+
+* `division` - (Optional) User profile property.
+
+* `employee_number` - (Optional) User profile property.
+
+* `group_memberships` - (Optional) User profile property.
+
+* `honorific_prefix` - (Optional) User profile property.
+
+* `honorific_suffix` - (Optional) User profile property.
+
+* `locale` - (Optional) User profile property.
+
+* `manager` - (Optional) User profile property.
+
+* `manager_id` - (Optional) User profile property.
+
+* `middle_name` - (Optional) User profile property.
+
+* `mobile_phone` - (Optional) User profile property.
+
+* `nick_name` - (Optional) User profile property.
+
+* `organization` - (Optional) User profile property.
+
+* `postal_address` - (Optional) User profile property.
+
+* `preferred_language` - (Optional) User profile property.
+
+* `primary_phone` - (Optional) User profile property.
+
+* `profile_url` - (Optional) User profile property.
+
+* `second_email` - (Optional) User profile property.
+
+* `state` - (Optional) User profile property.
+
+* `status` - (Optional) User profile property.
+
+* `street_address` - (Optional) User profile property.
+
+* `timezone` - (Optional) User profile property.
+
+* `title` - (Optional) User profile property.
+
+* `user_type` - (Optional) User profile property.
+
+* `zip_code` - (Optional) User profile property.
 
 ## Attributes Reference
 
- * `id` - `id` of application.
+* `index` - (Optional) ID of the User schema property.
 
- * `label` - `label` of application.
+## Import
 
- * `description` - `description` of application.
+An Okta User can be imported via the ID.
 
- * `name` - `name` of application.
-
- * `status` - `status` of application.
+```
+$ terraform import okta_user.example <user id>
+```

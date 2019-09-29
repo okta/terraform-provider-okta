@@ -1,26 +1,24 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app_auto_login"
-sidebar_current: "docs-okta-resource-app-auto-login"
+page_title: "Okta: okta_trusted_origin"
+sidebar_current: "docs-okta-resource-trusted-origin"
 description: |-
-  Creates an Auto Login Okta Application.
+  Creates a Trusted Origin.
 ---
 
-# okta_app_auto_login
+# okta_trusted_origin
 
-Creates an Auto Login Okta Application.
+Creates a Trusted Origin.
 
-This resource allows you to create and configure an Auto Login Okta Application.
+This resource allows you to create and configure an Trusted Origin.
 
 ## Example Usage
 
 ```hcl
-resource "okta_app_auto_login" "example" {
-  label                = "Example App"
-  sign_on_url          = "https://example.com/login.html"
-  sign_on_redirect_url = "https://example.com"
-  reveal_password      = true
-  credentials_scheme   = "EDIT_USERNAME_AND_PASSWORD"
+resource "okta_trusted_origin" "example" {
+  name   = "example"
+  origin = "https://example.com"
+  scopes = ["CORS"]
 }
 ```
 
@@ -28,19 +26,22 @@ resource "okta_app_auto_login" "example" {
 
 The following arguments are supported:
 
-* `label` - (Required) The Application's display name.
-* `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
-* `preconfigured_app` - (Optional) Tells Okta to use an existing application in their application catalog, as opposed to a custom application.
+*	`active` - (Optional) Whether the Trusted Origin is active or not - can only be issued post-creation.
+
+* `name` - (Required) Name of the Trusted Origin Resource.
+
+* `origin` - (Required) The origin to trust.
+
+* `scopes` - (Required) Scopes of the Trusted Origin - can be `"CORS"` and/or `"REDIRECT"`.
 
 ## Attributes Reference
 
-* `name` - Name assigned to the application by Okta.
-* `sign_on_mode` - Sign on mode of application.
+* `id` - The ID of the Trusted Origin.
 
 ## Import
 
-Okta Auto Login App can be imported via the Okta ID.
+A Trusted Origin can be imported via the Okta ID.
 
 ```
-$ terraform import okta_app_auto_login.example <app id>
+$ terraform import okta_trusted_origin.example <trusted origin id>
 ```
