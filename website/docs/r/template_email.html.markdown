@@ -1,26 +1,34 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app_auto_login"
-sidebar_current: "docs-okta-resource-app-auto-login"
+page_title: "Okta: okta_template_email"
+sidebar_current: "docs-okta-resource-template-email"
 description: |-
-  Creates an Auto Login Okta Application.
+  Creates an Okta Email Template.
 ---
 
-# okta_app_auto_login
+# okta_template_email
 
-Creates an Auto Login Okta Application.
+Creates an Okta Email Template.
 
-This resource allows you to create and configure an Auto Login Okta Application.
+This resource allows you to create and configure an Okta Email Template.
 
 ## Example Usage
 
 ```hcl
-resource "okta_app_auto_login" "example" {
-  label                = "Example App"
-  sign_on_url          = "https://example.com/login.html"
-  sign_on_redirect_url = "https://example.com"
-  reveal_password      = true
-  credentials_scheme   = "EDIT_USERNAME_AND_PASSWORD"
+resource "okta_template_email" "example" {
+  type = "email.forgotPassword"
+
+  translations {
+    language = "en"
+    subject  = "Stuff"
+    template = "Hi $${user.firstName},<br/><br/>Blah blah $${resetPasswordLink}"
+  }
+
+  translations {
+    language = "es"
+    subject  = "Cosas"
+    template = "Hola $${user.firstName},<br/><br/>Puedo ir al bano $${resetPasswordLink}"
+  }
 }
 ```
 
@@ -28,19 +36,23 @@ resource "okta_app_auto_login" "example" {
 
 The following arguments are supported:
 
-* `label` - (Required) The Application's display name.
-* `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
-* `preconfigured_app` - (Optional) Tells Okta to use an existing application in their application catalog, as opposed to a custom application.
+* `type` - (Required) Email template type
+
+* `translations` - (Required) Set of translations for particular template.
+  * `language` - (Required) The language to map tthe template to.
+  * `subject` - (Required) The email subject line.
+  * `template` - (Required) The email body.
+
+* `default_language` - (Optional) The default language, by default is set to `"en"`.
 
 ## Attributes Reference
 
-* `name` - Name assigned to the application by Okta.
-* `sign_on_mode` - Sign on mode of application.
+* `id` - ID of the Email Template.
 
 ## Import
 
-Okta Auto Login App can be imported via the Okta ID.
+An Okta Email Template can be imported via the Okta ID.
 
 ```
-$ terraform import okta_app_auto_login.example <app id>
+$ terraform import okta_template_email.example <template id>
 ```
