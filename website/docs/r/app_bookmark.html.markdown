@@ -41,7 +41,7 @@ The following arguments are supported:
 
 ## Import
 
-Okta Bookmark App can be imported via the Okta ID.
+A Bookmark App can be imported via the Okta ID.
 
 ```
 $ terraform import okta_app_bookmark.example <app id>

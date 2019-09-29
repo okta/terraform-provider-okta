@@ -30,15 +30,15 @@ data "okta_app_saml" "example" {
 
 ## Attributes Reference
 
- * `id` - `id` of application.
+ * `id` - id of application.
 
- * `label` - `label` of application.
+ * `label` - label of application.
 
- * `description` - `description` of application.
+ * `description` - description of application.
 
- * `name` - `name` of application.
+ * `name` - name of application.
 
- * `status` - `status` of application.
+ * `status` - status of application.
 
  * `key_id` - Certificate key ID.
 
