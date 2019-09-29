@@ -15,6 +15,7 @@ func TestAccOktaAppUser_crud(t *testing.T) {
 	mgr := newFixtureManager(appUser)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	update := mgr.GetFixtures("update.tf", ri, t)
+	basicProfile := mgr.GetFixtures("basic_profile.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -37,6 +38,16 @@ func TestAccOktaAppUser_crud(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "user_id"),
 					resource.TestCheckResourceAttr(resourceName, "username", fmt.Sprintf("testAcc_%d", ri)),
+				),
+			},
+			{
+				Config: basicProfile,
+				Check: resource.ComposeTestCheckFunc(
+					ensureAppUserExists(resourceName),
+					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "user_id"),
+					resource.TestCheckResourceAttr(resourceName, "username", fmt.Sprintf("testAcc_%d@example.com", ri)),
+					resource.TestCheckResourceAttr(resourceName, "profile", "{\"testCustom\":\"testing\"}"),
 				),
 			},
 		},

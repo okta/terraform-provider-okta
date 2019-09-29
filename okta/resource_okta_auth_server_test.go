@@ -90,7 +90,7 @@ func TestAccOktaAuthServer_fullStack(t *testing.T) {
 	scopeName := fmt.Sprintf("%s.test", authServerScope)
 	mgr := newFixtureManager("okta_auth_server")
 	config := mgr.GetFixtures("full_stack.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("full_stack_updated.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("full_stack_with_client.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -124,6 +124,7 @@ func TestAccOktaAuthServer_fullStack(t *testing.T) {
 					resource.TestCheckResourceAttr(scopeName, "name", "test:something"),
 					resource.TestCheckResourceAttr(claimName, "name", "test"),
 					resource.TestCheckResourceAttr(policyName, "name", "test"),
+					resource.TestCheckResourceAttr(policyName, "client_whitelist.#", "1"),
 					resource.TestCheckResourceAttr(ruleName, "name", "test"),
 				),
 			},

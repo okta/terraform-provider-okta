@@ -1,8 +1,6 @@
 package okta
 
 import (
-	"fmt"
-
 	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -44,7 +42,8 @@ func resourceUserBaseSchemaRead(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	} else if subschema == nil {
-		return fmt.Errorf("Okta did not return a subschema for \"%s\"", d.Id())
+		d.SetId("")
+		return nil
 	}
 
 	syncBaseUserSchema(d, subschema)
@@ -80,7 +79,7 @@ func resourceUserBaseSchemaDelete(d *schema.ResourceData, m interface{}) error {
 // create or modify a  subschema
 func updateBaseSubschema(d *schema.ResourceData, m interface{}) error {
 	schema := &sdk.UserSubSchema{
-		Master: getNullableItem(d, "master"),
+		Master: getNullableMaster(d),
 		Title:  d.Get("title").(string),
 		Type:   d.Get("type").(string),
 		Permissions: []*sdk.UserSchemaPermission{

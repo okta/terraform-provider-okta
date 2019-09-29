@@ -123,9 +123,15 @@ func resourceAppSecurePasswordStoreRead(d *schema.ResourceData, m interface{}) e
 	app := okta.NewSecurePasswordStoreApplication()
 	err := fetchApp(d, m, app)
 
+	if app == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}
+
 	d.Set("password_field", app.Settings.App.PasswordField)
 	d.Set("username_field", app.Settings.App.UsernameField)
 	d.Set("url", app.Settings.App.Url)

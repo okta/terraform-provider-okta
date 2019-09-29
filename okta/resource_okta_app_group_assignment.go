@@ -15,6 +15,7 @@ func resourceAppGroupAssignment() *schema.Resource {
 		Exists: resourceAppGroupAssignmentExists,
 		Read:   resourceAppGroupAssignmentRead,
 		Delete: resourceAppGroupAssignmentDelete,
+		Update: resourceAppGroupAssignmentUpdate,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
@@ -32,10 +33,15 @@ func resourceAppGroupAssignment() *schema.Resource {
 				Description: "Group associated with the application",
 				ForceNew:    true,
 			},
+			"priority": &schema.Schema{
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
 			"profile": &schema.Schema{
 				Type:      schema.TypeString,
 				StateFunc: normalizeDataJSON,
-				Computed:  true,
+				Optional:  true,
+				Default:   "{}",
 			},
 		},
 	}
@@ -52,11 +58,25 @@ func resourceAppGroupAssignmentExists(d *schema.ResourceData, m interface{}) (bo
 	return g != nil, err
 }
 
+func getAppGroupAssignment(d *schema.ResourceData) okta.ApplicationGroupAssignment {
+	var profile interface{}
+
+	rawProfile := d.Get("profile").(string)
+	// JSON is already validated
+	json.Unmarshal([]byte(rawProfile), &profile)
+	priority := d.Get("priority").(int)
+
+	return okta.ApplicationGroupAssignment{
+		Profile:  profile,
+		Priority: int64(priority),
+	}
+}
+
 func resourceAppGroupAssignmentCreate(d *schema.ResourceData, m interface{}) error {
 	assignment, _, err := getOktaClientFromMetadata(m).Application.CreateApplicationGroupAssignment(
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
-		okta.ApplicationGroupAssignment{},
+		getAppGroupAssignment(d),
 	)
 
 	if err != nil {
@@ -68,12 +88,33 @@ func resourceAppGroupAssignmentCreate(d *schema.ResourceData, m interface{}) err
 	return resourceAppGroupAssignmentRead(d, m)
 }
 
+func resourceAppGroupAssignmentUpdate(d *schema.ResourceData, m interface{}) error {
+	client := getOktaClientFromMetadata(m)
+	// Create actually does a PUT
+	_, _, err := client.Application.CreateApplicationGroupAssignment(
+		d.Get("app_id").(string),
+		d.Get("group_id").(string),
+		getAppGroupAssignment(d),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return resourceAppUserRead(d, m)
+}
+
 func resourceAppGroupAssignmentRead(d *schema.ResourceData, m interface{}) error {
-	g, _, err := getOktaClientFromMetadata(m).Application.GetApplicationGroupAssignment(
+	g, resp, err := getOktaClientFromMetadata(m).Application.GetApplicationGroupAssignment(
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
 		nil,
 	)
+
+	if is404(resp.StatusCode) {
+		d.SetId("")
+		return nil
+	}
 
 	if err != nil {
 		return err
@@ -85,6 +126,7 @@ func resourceAppGroupAssignmentRead(d *schema.ResourceData, m interface{}) error
 	}
 
 	d.Set("profile", string(jsonProfile))
+	d.Set("priority", g.Priority)
 
 	return nil
 }

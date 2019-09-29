@@ -298,6 +298,11 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 	app := okta.NewOpenIdConnectApplication()
 	err := fetchApp(d, m, app)
 
+	if app == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}
@@ -306,7 +311,7 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("status", app.Status)
 	d.Set("sign_on_mode", app.SignOnMode)
 	d.Set("label", app.Label)
-	d.Set("custom_profile_attributes", app.Profile)
+	d.Set("profile", app.Profile)
 	d.Set("type", app.Settings.OauthClient.ApplicationType)
 	// Not setting client_secret, it is only provided on create for auth methods that require it
 	d.Set("client_id", app.Credentials.OauthClient.ClientId)
@@ -451,7 +456,7 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 	}
 	app.Visibility = buildVisibility(d)
 
-	if rawAttrs, ok := d.GetOk("custom_profile_attributes"); ok {
+	if rawAttrs, ok := d.GetOk("profile"); ok {
 		var attrs map[string]interface{}
 		str := rawAttrs.(string)
 		json.Unmarshal([]byte(str), &attrs)

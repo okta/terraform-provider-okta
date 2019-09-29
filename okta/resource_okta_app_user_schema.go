@@ -47,7 +47,8 @@ func resourceAppUserSchemaRead(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	} else if subschema == nil {
-		return fmt.Errorf("Okta did not return a subschema for \"%s\". This is a known limitation of Okta's API, these must be created one at a time to avoid overwritting. One way to do this is via depends_on, see link for example https://github.com/articulate/terraform-provider-okta/blob/master/examples/okta_user/custom_attributes.tf.", d.Id())
+		d.SetId("")
+		return nil
 	}
 
 	return syncUserSchema(d, subschema)

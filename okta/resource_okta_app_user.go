@@ -1,6 +1,8 @@
 package okta
 
 import (
+	"encoding/json"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/okta/okta-sdk-golang/okta"
 )
@@ -40,7 +42,8 @@ func resourceAppUser() *schema.Resource {
 			"profile": &schema.Schema{
 				Type:      schema.TypeString,
 				StateFunc: normalizeDataJSON,
-				Computed:  true,
+				Optional:  true,
+				Default:   "{}",
 			},
 		},
 	}
@@ -89,11 +92,16 @@ func resourceAppUserUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppUserRead(d *schema.ResourceData, m interface{}) error {
-	u, _, err := getOktaClientFromMetadata(m).Application.GetApplicationUser(
+	u, resp, err := getOktaClientFromMetadata(m).Application.GetApplicationUser(
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
 		nil,
 	)
+
+	if is404(resp.StatusCode) {
+		d.SetId("")
+		return nil
+	}
 
 	if err != nil {
 		return err
@@ -115,6 +123,12 @@ func resourceAppUserDelete(d *schema.ResourceData, m interface{}) error {
 }
 
 func getAppUser(d *schema.ResourceData) *okta.AppUser {
+	var profile interface{}
+
+	rawProfile := d.Get("profile").(string)
+	// JSON is already validated
+	json.Unmarshal([]byte(rawProfile), &profile)
+
 	return &okta.AppUser{
 		Id: d.Get("user_id").(string),
 		Credentials: &okta.AppUserCredentials{
@@ -123,5 +137,6 @@ func getAppUser(d *schema.ResourceData) *okta.AppUser {
 				Value: d.Get("password").(string),
 			},
 		},
+		Profile: profile,
 	}
 }

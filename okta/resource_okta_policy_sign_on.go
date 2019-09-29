@@ -43,6 +43,12 @@ func resourcePolicySignonRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List Policy %v", d.Get("name").(string))
 
 	policy, err := getPolicy(d, m)
+
+	if policy == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}

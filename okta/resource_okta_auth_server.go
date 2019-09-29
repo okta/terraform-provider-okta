@@ -117,6 +117,12 @@ func resourceAuthServerExists(d *schema.ResourceData, m interface{}) (bool, erro
 
 func resourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 	authServer, err := fetchAuthServer(d, m)
+
+	if authServer == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}

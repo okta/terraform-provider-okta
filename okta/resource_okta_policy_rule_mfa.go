@@ -50,6 +50,12 @@ func resourcePolicyMfaRuleCreate(d *schema.ResourceData, m interface{}) error {
 
 func resourcePolicyMfaRuleRead(d *schema.ResourceData, m interface{}) error {
 	rule, err := getPolicyRule(d, m)
+
+	if rule == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}

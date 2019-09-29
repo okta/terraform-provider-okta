@@ -48,7 +48,7 @@ For Release v3.0.9
 
 For Release v3.0.10
 
-* Add okta_network_zone resource 
+* Add okta_network_zone resource
 
 For Release v3.0.11
 
@@ -120,3 +120,18 @@ For Release v3.0.23
 For Release v3.0.24
 
 * Support `profile` on `okta_oauth_app` resource
+
+For Release v3.0.25
+
+* Support setting an auth server scope as the default
+* Fix bug with supporting `profile` on `okta_oauth_app` resource
+* Support `profile` and `priority` on `okta_app_group_assignment`
+* Support `profile` on `okta_app_user`
+
+For Release v3.0.26
+
+* Support array enums in `okta_user_schema` and `okta_app_user_schema` as `array_enum` and `array_one_of`
+
+For Release v3.0.27
+
+* Update refresh token window validation to account for new upper limit of 5 years 

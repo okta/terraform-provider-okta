@@ -109,10 +109,17 @@ func resourceTemplateEmailExists(d *schema.ResourceData, m interface{}) (bool, e
 }
 
 func resourceTemplateEmailRead(d *schema.ResourceData, m interface{}) error {
-	temp, _, err := getSupplementFromMetadata(m).GetEmailTemplate(d.Id())
+	temp, resp, err := getSupplementFromMetadata(m).GetEmailTemplate(d.Id())
+
+	if is404(resp.StatusCode) {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}
+
 	d.Set("translations", flattenEmailTranlations(temp.Translations))
 	d.Set("default_language", temp.DefaultLanguage)
 

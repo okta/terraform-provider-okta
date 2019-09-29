@@ -70,8 +70,8 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 			"refresh_token_window_minutes": &schema.Schema{
 				Type:     schema.TypeInt,
 				Optional: true,
-				// 10 mins - 90 days
-				ValidateFunc: validation.IntBetween(10, 129600),
+				// 10 mins - 5 years
+				ValidateFunc: validation.IntBetween(10, 2628000),
 				Default:      10080,
 			},
 			"inline_hook_id": &schema.Schema{
@@ -137,6 +137,12 @@ func resourceAuthServerPolicyRuleExists(d *schema.ResourceData, m interface{}) (
 
 func resourceAuthServerPolicyRuleRead(d *schema.ResourceData, m interface{}) error {
 	authServerPolicyRule, err := fetchAuthServerPolicyRule(d, m)
+
+	if authServerPolicyRule == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}
