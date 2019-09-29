@@ -47,14 +47,6 @@ func resourceIdpSocial() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"match_type": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"match_attribute": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"client_secret": &schema.Schema{
 				Type:      schema.TypeString,
 				Optional:  true,

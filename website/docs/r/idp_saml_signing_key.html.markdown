@@ -1,26 +1,22 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app_auto_login"
-sidebar_current: "docs-okta-resource-app-auto-login"
+page_title: "Okta: okta_idp_saml_signing_key"
+sidebar_current: "docs-okta-resource-saml-signing-key"
 description: |-
-  Creates an Auto Login Okta Application.
+  Creates a SAML Identity Provider Signing Key.
 ---
 
-# okta_app_auto_login
+# okta_idp_saml_signing_key
 
-Creates an Auto Login Okta Application.
+Creates a SAML Identity Provider Signing Key.
 
-This resource allows you to create and configure an Auto Login Okta Application.
+This resource allows you to create and configure a SAML Identity Provider Signing Key.
 
 ## Example Usage
 
 ```hcl
-resource "okta_app_auto_login" "example" {
-  label                = "Example App"
-  sign_on_url          = "https://example.com/login.html"
-  sign_on_redirect_url = "https://example.com"
-  reveal_password      = true
-  credentials_scheme   = "EDIT_USERNAME_AND_PASSWORD"
+resource "okta_idp_saml_key" "example" {
+  x5c = ["${okta_app_saml.example.certificate}"]
 }
 ```
 
@@ -28,19 +24,28 @@ resource "okta_app_auto_login" "example" {
 
 The following arguments are supported:
 
-* `label` - (Required) The Application's display name.
-* `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
-* `preconfigured_app` - (Optional) Tells Okta to use an existing application in their application catalog, as opposed to a custom application.
+* `x5c` - (Required) base64-encoded X.509 certificate chain with DER encoding.
 
 ## Attributes Reference
 
-* `name` - Name assigned to the application by Okta.
-* `sign_on_mode` - Sign on mode of application.
+* `id` - Key ID.
+
+* `kid` - Key ID.
+
+* `created` - Date created.
+
+* `expires_at` - Date the cert expires.
+
+* `kty` - Identifies the cryptographic algorithm family used with the key.
+
+* `use` - Intended use of the public key.
+
+* `x5t_s256` - base64url-encoded SHA-256 thumbprint of the DER encoding of an X.509 certificate.
 
 ## Import
 
-Okta Auto Login App can be imported via the Okta ID.
+A SAML IdP Signing Key can be imported via the key id.
 
 ```
-$ terraform import okta_app_auto_login.example <app id>
+$ terraform import okta_idp_saml_signing_key.example <key id>
 ```

@@ -16,11 +16,9 @@ This resource allows you to create and configure an Application User.
 
 ```hcl
 resource "okta_app_user" "example" {
-  label                = "Example App"
-  sign_on_url          = "https://example.com/login.html"
-  sign_on_redirect_url = "https://example.com"
-  reveal_password      = true
-  credentials_scheme   = "EDIT_USERNAME_AND_PASSWORD"
+  app_id   = "<app_id>"
+  user_id  = "<user id>"
+  username = "example"
 }
 ```
 
@@ -28,16 +26,24 @@ resource "okta_app_user" "example" {
 
 The following arguments are supported:
 
-* `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
+* `app_id` - (Required) App to associate user with.
+
+* `user_id` - (Required) User to associate the application with.
+
+* `username` - (Required) The username to use for the app user.
+
+* `password` - (Optional) The password to use.
+
+* `profile` - (Optional) The JSON profile of the App User.
 
 ## Attributes Reference
 
-* `id` - The ID of the user.
+* `id` - The ID of the app user.
 
 ## Import
 
-An application user can be imported via the Okta ID.
+An Application User can be imported via the Okta ID.
 
 ```
-$ terraform import okta_app_user.example <app id>
+$ terraform import okta_app_user.example <app id>/<user id>
 ```
