@@ -31,7 +31,7 @@ func resourceGroupRoles() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "Users associated with the group. This can also be done per user.",
+				Description: "Admin roles associated with the group. This can also be done per user.",
 			},
 		},
 	}

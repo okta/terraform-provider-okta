@@ -1,26 +1,26 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app_auto_login"
-sidebar_current: "docs-okta-resource-app-auto-login"
+page_title: "Okta: okta_group_rule"
+sidebar_current: "docs-okta-resource-group-rule"
 description: |-
-  Creates an Auto Login Okta Application.
+  Creates an Okta Group Rule.
 ---
 
-# okta_app_auto_login
+# okta_group_rule
 
-Creates an Auto Login Okta Application.
+Creates an Okta Group Rule.
 
-This resource allows you to create and configure an Auto Login Okta Application.
+This resource allows you to create and configure an Okta Group Rule.
 
 ## Example Usage
 
 ```hcl
-resource "okta_app_auto_login" "example" {
-  label                = "Example App"
-  sign_on_url          = "https://example.com/login.html"
-  sign_on_redirect_url = "https://example.com"
-  reveal_password      = true
-  credentials_scheme   = "EDIT_USERNAME_AND_PASSWORD"
+resource "okta_group_rule" "example" {
+  name              = "example"
+  status            = "ACTIVE"
+  group_assignments = ["<group id>"]
+  expression_type   = "urn:okta:expression:1.0"
+  expression_value  = "String.startsWith(user.firstName,\"andy\")"
 }
 ```
 
@@ -28,19 +28,24 @@ resource "okta_app_auto_login" "example" {
 
 The following arguments are supported:
 
-* `label` - (Required) The Application's display name.
-* `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
-* `preconfigured_app` - (Optional) Tells Okta to use an existing application in their application catalog, as opposed to a custom application.
+* `name` - (Required) The name of the Group Rule.
+
+* `group_assignments` - (Required) The list of group ids to assign the users to.
+
+* `expression_type` - (Optional) The expression type to use to invoke the rule. The default is `"urn:okta:expression:1.0"`.
+
+* `expression_value` - (Required) The expression value.
+
+* `status` - (Optional) The status of the group rule.
 
 ## Attributes Reference
 
-* `name` - Name assigned to the application by Okta.
-* `sign_on_mode` - Sign on mode of application.
+* `id` - The ID of the Group Rule.
 
 ## Import
 
-Okta Auto Login App can be imported via the Okta ID.
+An Okta Group Rule can be imported via the Okta ID.
 
 ```
-$ terraform import okta_app_auto_login.example <app id>
+$ terraform import okta_group_rule.example <group rule id>
 ```

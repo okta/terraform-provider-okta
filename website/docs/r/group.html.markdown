@@ -1,41 +1,42 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app"
-sidebar_current: "docs-okta-datasource-app"
+page_title: "Okta: okta_group"
+sidebar_current: "docs-okta-resource-group"
 description: |-
-  Get an application of any kind from Okta.
+  Creates an Okta Group.
 ---
 
-# okta\_app
+# okta_group
 
-Use this data source to retrieve the collaborators for a given repository.
+Creates an Okta Group.
+
+This resource allows you to create and configure an Okta Group.
 
 ## Example Usage
 
 ```hcl
-data "okta_app" "example" {
-  label = "Example App"
+resource "okta_group" "example" {
+  name        = "Example"
+  description = "My Example Group"
 }
 ```
 
-## Arguments Reference
+## Argument Reference
 
- * `label` - (Optional) The label of the app to retrieve, conflicts with `label_prefix` and `id`.
+The following arguments are supported:
 
- * `label_prefix` - (Optional) Label prefix of the app to retrieve, conflicts with `label` and `id`. This will tell the provider to do a `starts with` query as opposed to an `equals` query.
+* `name` - (Required) The name of the Okta Group.
 
- * `id` - (Optional) `id` of application to retrieve, conflicts with `label` and `label_prefix`.
-
- * `active_only` - (Optional) tells the provider to query for only `ACTIVE` applications.
+* `description` - (Optional) The description of the Okta Group.
 
 ## Attributes Reference
 
- * `id` - `id` of application.
+* `id` - The ID of the Okta Group.
 
- * `label` - `label` of application.
+## Import
 
- * `description` - `description` of application.
+An Okta Group can be imported via the Okta ID.
 
- * `name` - `name` of application.
-
- * `status` - `status` of application.
+```
+$ terraform import okta_group.example <group id>
+```

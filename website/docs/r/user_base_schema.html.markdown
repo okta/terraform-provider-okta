@@ -1,26 +1,25 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app_auto_login"
-sidebar_current: "docs-okta-resource-app-auto-login"
+page_title: "Okta: okta_user_base_schema"
+sidebar_current: "docs-okta-resource-user-base-schema"
 description: |-
-  Creates an Auto Login Okta Application.
+  Manages a User Base Schema property.
 ---
 
-# okta_app_auto_login
+# okta_user_base_schema
 
-Creates an Auto Login Okta Application.
+Manages a User Base Schema property.
 
-This resource allows you to create and configure an Auto Login Okta Application.
+This resource allows you to configure a base user schema property.
 
 ## Example Usage
 
 ```hcl
-resource "okta_app_auto_login" "example" {
-  label                = "Example App"
-  sign_on_url          = "https://example.com/login.html"
-  sign_on_redirect_url = "https://example.com"
-  reveal_password      = true
-  credentials_scheme   = "EDIT_USERNAME_AND_PASSWORD"
+resource "okta_user_base_schema" "example" {
+  index       = "customPropertyName"
+  title       = "customPropertyName"
+  type        = "string"
+  master      = "OKTA"
 }
 ```
 
@@ -28,19 +27,26 @@ resource "okta_app_auto_login" "example" {
 
 The following arguments are supported:
 
-* `label` - (Required) The Application's display name.
-* `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
-* `preconfigured_app` - (Optional) Tells Okta to use an existing application in their application catalog, as opposed to a custom application.
+* `index` - (Required) The property name.
+
+* `title` - (Required) The property display name.
+
+* `type` - (Required) The type of the schema property. It can be `"string"`, `"boolean"`, `"number"`, `"integer"`, `"array"`, or `"object"`.
+
+* `required` - (Optional) Whether the property is required for this application's users.
+
+* `permissions` - (Optional) Access control permissions for the property. It can be set to `"READ_WRITE"`, `"READ_ONLY"`, `"HIDE"`.
+
+* `master` - (Optional) Master priority for the user schema property. It can be set to `"PROFILE_MASTER"` or `"OKTA"`.
 
 ## Attributes Reference
 
-* `name` - Name assigned to the application by Okta.
-* `sign_on_mode` - Sign on mode of application.
+* `index` - ID of the user schema property.
 
 ## Import
 
-Okta Auto Login App can be imported via the Okta ID.
+User base schema property can be imported via the property index.
 
 ```
-$ terraform import okta_app_auto_login.example <app id>
+$ terraform import okta_user_base_schema.example <property name>
 ```

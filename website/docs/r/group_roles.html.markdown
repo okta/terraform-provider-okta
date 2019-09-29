@@ -1,26 +1,23 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app_auto_login"
+page_title: "Okta: okta_group_roles"
 sidebar_current: "docs-okta-resource-app-auto-login"
 description: |-
-  Creates an Auto Login Okta Application.
+  Creates Group level Admin Role Assignments.
 ---
 
-# okta_app_auto_login
+# okta_group_roles
 
-Creates an Auto Login Okta Application.
+Creates Group level Admin Role Assignments.
 
-This resource allows you to create and configure an Auto Login Okta Application.
+This resource allows you to create and configure Group level Admin Role Assignments.
 
 ## Example Usage
 
 ```hcl
-resource "okta_app_auto_login" "example" {
-  label                = "Example App"
-  sign_on_url          = "https://example.com/login.html"
-  sign_on_redirect_url = "https://example.com"
-  reveal_password      = true
-  credentials_scheme   = "EDIT_USERNAME_AND_PASSWORD"
+resource "okta_group_roles" "example" {
+  group_id    = "<group id>"
+  admin_roles = ["SUPER_ADMIN"]
 }
 ```
 
@@ -28,19 +25,18 @@ resource "okta_app_auto_login" "example" {
 
 The following arguments are supported:
 
-* `label` - (Required) The Application's display name.
-* `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
-* `preconfigured_app` - (Optional) Tells Okta to use an existing application in their application catalog, as opposed to a custom application.
+* `group_id` - (Required) The ID of group to attach admin roles to.
+
+* `admin_roles` - (Required) Admin roles associated with the group. It can be any of the following values `"SUPER_ADMIN"`, `"ORG_ADMIN"`, `"APP_ADMIN"`, `"USER_ADMIN"`, `"HELP_DESK_ADMIN"`, `"READ_ONLY_ADMIN"`, `"MOBILE_ADMIN"`, `"API_ACCESS_MANAGEMENT_ADMIN"`, `"REPORT_ADMIN"`.
 
 ## Attributes Reference
 
-* `name` - Name assigned to the application by Okta.
-* `sign_on_mode` - Sign on mode of application.
+* `id` - The ID of the Group Role Assignment.
 
 ## Import
 
-Okta Auto Login App can be imported via the Okta ID.
+Group Role Assignment can be imported via the Okta Group ID.
 
 ```
-$ terraform import okta_app_auto_login.example <app id>
+$ terraform import okta_group_roles.example <group id>
 ```
