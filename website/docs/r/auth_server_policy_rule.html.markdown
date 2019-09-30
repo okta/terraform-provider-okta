@@ -1,7 +1,7 @@
 ---
 layout: "okta"
 page_title: "Okta: okta_auth_server_policy_rule"
-sidebar_current: "docs-okta-resource-app-auto-login"
+sidebar_current: "docs-okta-resource-auth-server-policy-rule"
 description: |-
   Creates an Authorization Server Policy Rule.
 ---

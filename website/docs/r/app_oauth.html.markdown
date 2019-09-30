@@ -1,7 +1,7 @@
 ---
 layout: "okta"
 page_title: "Okta: okta_app_oauth"
-sidebar_current: "docs-okta-resource-app-auto-login"
+sidebar_current: "docs-okta-resource-app-oauth"
 description: |-
   Creates an OIDC Application.
 ---

@@ -1,26 +1,25 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app_auto_login"
-sidebar_current: "docs-okta-resource-app-auto-login"
+page_title: "Okta: okta_policy_signon"
+sidebar_current: "docs-okta-resource-policy-signon"
 description: |-
-  Creates an Auto Login Okta Application.
+  Creates a Sign On Policy.
 ---
 
-# okta_app_auto_login
+# okta_policy_signon
 
-Creates an Auto Login Okta Application.
+Creates a Sign On Policy.
 
-This resource allows you to create and configure an Auto Login Okta Application.
+This resource allows you to create and configure a Sign On Policy.
 
 ## Example Usage
 
 ```hcl
-resource "okta_app_auto_login" "example" {
-  label                = "Example App"
-  sign_on_url          = "https://example.com/login.html"
-  sign_on_redirect_url = "https://example.com"
-  reveal_password      = true
-  credentials_scheme   = "EDIT_USERNAME_AND_PASSWORD"
+resource "okta_policy_signon" "example" {
+  name            = "example"
+  status          = "ACTIVE"
+  description     = "Example"
+  groups_included = ["${data.okta_group.everyone.id}"]
 }
 ```
 
@@ -28,19 +27,24 @@ resource "okta_app_auto_login" "example" {
 
 The following arguments are supported:
 
-* `label` - (Required) The Application's display name.
-* `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
-* `preconfigured_app` - (Optional) Tells Okta to use an existing application in their application catalog, as opposed to a custom application.
+* `name` - (Required) Policy Name.
+
+* `description` - (Optional) Policy Description.
+
+* `priority` - (Optional) Priority of the policy.
+
+* `status` - (Optional) Policy Status: `"ACTIVE"` or `"INACTIVE"`.
+
+* `groups_included` - List of Group IDs to Include.
 
 ## Attributes Reference
 
-* `name` - Name assigned to the application by Okta.
-* `sign_on_mode` - Sign on mode of application.
+* `id` - ID of the Policy.
 
 ## Import
 
-Okta Auto Login App can be imported via the Okta ID.
+A Sign On Policy can be imported via the Okta ID.
 
 ```
-$ terraform import okta_app_auto_login.example <app id>
+$ terraform import okta_policy_signon.example <policy id>
 ```

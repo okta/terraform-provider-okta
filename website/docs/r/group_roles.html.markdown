@@ -1,7 +1,7 @@
 ---
 layout: "okta"
 page_title: "Okta: okta_group_roles"
-sidebar_current: "docs-okta-resource-app-auto-login"
+sidebar_current: "docs-okta-resource-group-roles"
 description: |-
   Creates Group level Admin Role Assignments.
 ---
