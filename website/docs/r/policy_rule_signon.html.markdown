@@ -1,46 +1,61 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app_auto_login"
-sidebar_current: "docs-okta-resource-app-auto-login"
+page_title: "Okta: okta_policy_rule_signon"
+sidebar_current: "docs-okta-resource-policy-rule-signon"
 description: |-
-  Creates an Auto Login Okta Application.
+  Creates a Sign On Policy Rule.
 ---
 
-# okta_app_auto_login
+# okta_policy_rule_signon
 
-Creates an Auto Login Okta Application.
-
-This resource allows you to create and configure an Auto Login Okta Application.
-
-## Example Usage
-
-```hcl
-resource "okta_app_auto_login" "example" {
-  label                = "Example App"
-  sign_on_url          = "https://example.com/login.html"
-  sign_on_redirect_url = "https://example.com"
-  reveal_password      = true
-  credentials_scheme   = "EDIT_USERNAME_AND_PASSWORD"
-}
-```
+Creates a Sign On Policy Rule.
 
 ## Argument Reference
 
 The following arguments are supported:
 
-* `label` - (Required) The Application's display name.
-* `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
-* `preconfigured_app` - (Optional) Tells Okta to use an existing application in their application catalog, as opposed to a custom application.
+* `policyid` - (Required) Policy ID.
+
+* `name` - (Required) Policy Rule Name.
+
+* `priority` - (Optional) Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last/lowest if not there.
+
+* `status` - (Optional) Policy Rule Status: `"ACTIVE"` or `"INACTIVE"`.
+
+* `authtype` - (Optional) Authentication entrypoint: `"ANY"` or `"RADIUS"`.
+
+* `access` - (Optional) Allow or deny access based on the rule conditions: `"ALLOW"` or `"DENY"`. The default is `"ALLOW"`.
+
+* `mfa_required` - (Optional) Require MFA. By default is `false`.
+
+* `mfa_prompt` - (Optional) Prompt for MFA based on the device used, a factor session lifetime, or every sign on attempt: `"DEVICE"`, `"SESSION"` or `"ALWAYS"`.
+
+* `mfa_remember_device` - (Optional) Remember MFA device. The default `false`.
+
+* `mfa_lifetime` - (Optional) Elapsed time before the next MFA challenge.
+
+* `session_idle` - (Optional) Max minutes a session can be idle.",
+
+* `session_lifetime` - (Optional) Max minutes a session is active: Disable = 0.
+
+* `session_persistent` - (Optional) Whether session cookies will last across browser sessions. Okta Administrators can never have persistent session cookies.
+
+* `network_connection` - (Optional) Network selection mode: `"ANYWHERE"`, `"ZONE"`, `"ON_NETWORK"`, or `"OFF_NETWORK"`.
+
+* `network_includes` - (Optional) The network zones to include. Conflicts with `network_excludes`.
+
+* `network_excludes` - (Optional) The network zones to exclude. Conflicts with `network_includes`.
 
 ## Attributes Reference
 
-* `name` - Name assigned to the application by Okta.
-* `sign_on_mode` - Sign on mode of application.
+* `id` - ID of the Rule.
+
+* `policyid` - Policy ID.
 
 ## Import
 
-Okta Auto Login App can be imported via the Okta ID.
+A Policy Rule can be imported via the Policy and Rule ID.
 
 ```
-$ terraform import okta_app_auto_login.example <app id>
+$ terraform import okta_policy_rule_signon.example <policy id>/<rule id>
 ```
