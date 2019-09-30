@@ -135,3 +135,7 @@ For Release v3.0.26
 For Release v3.0.27
 
 * Update refresh token window validation to account for new upper limit of 5 years 
+
+For Release v3.0.28
+
+* Remove resource from state on 404.
