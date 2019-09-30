@@ -23,12 +23,12 @@ func resourceAppUser() *schema.Resource {
 			"app_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "App to associate group with",
+				Description: "App to associate user with",
 			},
 			"user_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Group associated with the application",
+				Description: "User associated with the application",
 			},
 			"username": &schema.Schema{
 				Type:     schema.TypeString,
@@ -92,11 +92,16 @@ func resourceAppUserUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppUserRead(d *schema.ResourceData, m interface{}) error {
-	u, _, err := getOktaClientFromMetadata(m).Application.GetApplicationUser(
+	u, resp, err := getOktaClientFromMetadata(m).Application.GetApplicationUser(
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
 		nil,
 	)
+
+	if is404(resp.StatusCode) {
+		d.SetId("")
+		return nil
+	}
 
 	if err != nil {
 		return err

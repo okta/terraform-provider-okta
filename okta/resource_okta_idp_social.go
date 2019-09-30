@@ -48,12 +48,14 @@ func resourceIdpSocial() *schema.Resource {
 				Optional: true,
 			},
 			"match_type": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:       schema.TypeString,
+				Optional:   true,
+				Deprecated: "This property was incorrectly added to this resource, you should use \"subject_match_type\"",
 			},
 			"match_attribute": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:       schema.TypeString,
+				Optional:   true,
+				Deprecated: "This property was incorrectly added to this resource, you should use \"subject_match_attribute\"",
 			},
 			"client_secret": &schema.Schema{
 				Type:      schema.TypeString,
@@ -94,6 +96,11 @@ func resourceIdpSocialRead(d *schema.ResourceData, m interface{}) error {
 
 	if err := fetchIdp(d.Id(), m, idp); err != nil {
 		return err
+	}
+
+	if idp == nil {
+		d.SetId("")
+		return nil
 	}
 
 	d.Set("name", idp.Name)

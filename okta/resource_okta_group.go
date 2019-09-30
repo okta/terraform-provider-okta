@@ -72,6 +72,12 @@ func resourceGroupExists(d *schema.ResourceData, m interface{}) (bool, error) {
 
 func resourceGroupRead(d *schema.ResourceData, m interface{}) error {
 	g, err := fetchGroup(d, m)
+
+	if g == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}

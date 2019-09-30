@@ -97,6 +97,11 @@ func resourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
+	if idp == nil {
+		d.SetId("")
+		return nil
+	}
+
 	d.Set("name", idp.Name)
 	d.Set("provisioning_action", idp.Policy.Provisioning.Action)
 	d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)

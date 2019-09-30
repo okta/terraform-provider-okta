@@ -137,6 +137,12 @@ func resourceAuthServerPolicyRuleExists(d *schema.ResourceData, m interface{}) (
 
 func resourceAuthServerPolicyRuleRead(d *schema.ResourceData, m interface{}) error {
 	authServerPolicyRule, err := fetchAuthServerPolicyRule(d, m)
+
+	if authServerPolicyRule == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}

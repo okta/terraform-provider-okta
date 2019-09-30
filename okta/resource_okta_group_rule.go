@@ -1,8 +1,9 @@
 package okta
 
 import (
-	"github.com/okta/okta-sdk-golang/okta"
 	"net/http"
+
+	"github.com/okta/okta-sdk-golang/okta"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -96,6 +97,12 @@ func resourceGroupRuleExists(d *schema.ResourceData, m interface{}) (bool, error
 
 func resourceGroupRuleRead(d *schema.ResourceData, m interface{}) error {
 	g, err := fetchGroupRule(d, m)
+
+	if g == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}

@@ -31,7 +31,7 @@ func resourceGroupRoles() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "Users associated with the group. This can also be done per user.",
+				Description: "Admin roles associated with the group. This can also be done per user.",
 			},
 		},
 	}
@@ -77,7 +77,13 @@ func resourceGroupRolesCreate(d *schema.ResourceData, m interface{}) error {
 
 func resourceGroupRolesRead(d *schema.ResourceData, m interface{}) error {
 	groupId := d.Get("group_id").(string)
-	existingRoles, _, err := getSupplementFromMetadata(m).ListAdminRoles(groupId, nil)
+	existingRoles, resp, err := getSupplementFromMetadata(m).ListAdminRoles(groupId, nil)
+
+	if is404(resp.StatusCode) {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}

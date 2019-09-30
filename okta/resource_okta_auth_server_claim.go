@@ -99,6 +99,12 @@ func resourceAuthServerClaimExists(d *schema.ResourceData, m interface{}) (bool,
 
 func resourceAuthServerClaimRead(d *schema.ResourceData, m interface{}) error {
 	authServerClaim, err := fetchAuthServerClaim(d, m)
+
+	if authServerClaim == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}

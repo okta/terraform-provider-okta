@@ -108,13 +108,15 @@ func resourcePolicySignonRuleRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List Policy Rule %v", d.Get("name").(string))
 
 	rule, err := getPolicyRule(d, m)
-	if err != nil {
-		return err
-	}
+
 	if rule == nil {
 		// if the policy rule does not exist in okta, delete from terraform state
 		d.SetId("")
 		return nil
+	}
+
+	if err != nil {
+		return err
 	}
 
 	// Update with upstream state to prevent stale state

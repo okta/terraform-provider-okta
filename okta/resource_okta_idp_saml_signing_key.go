@@ -1,9 +1,10 @@
 package okta
 
 import (
+	"net/http"
+
 	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
-	"net/http"
 )
 
 func resourceIdpSigningKey() *schema.Resource {
@@ -71,7 +72,13 @@ func resourceIdpSigningKeyExists(d *schema.ResourceData, m interface{}) (bool, e
 }
 
 func resourceIdpSigningKeyRead(d *schema.ResourceData, m interface{}) error {
-	key, _, err := getSupplementFromMetadata(m).GetIdentityProviderCertificate(d.Id())
+	key, resp, err := getSupplementFromMetadata(m).GetIdentityProviderCertificate(d.Id())
+
+	if is404(resp.StatusCode) {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}

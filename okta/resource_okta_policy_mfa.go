@@ -102,9 +102,16 @@ func resourcePolicyMfaRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List Policy %v", d.Get("name").(string))
 
 	policy, err := getPolicy(d, m)
+
+	if policy == nil {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}
+
 	syncFactor(d, "duo", policy.Settings.Factors.Duo)
 	syncFactor(d, "fido_u2f", policy.Settings.Factors.FidoU2f)
 	syncFactor(d, "fido_webauthn", policy.Settings.Factors.FidoWebauthn)
