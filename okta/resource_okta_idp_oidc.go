@@ -99,11 +99,6 @@ func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	if idp == nil {
-		d.SetId("")
-		return nil
-	}
-
 	d.Set("name", idp.Name)
 	d.Set("type", idp.Type)
 	d.Set("max_clock_skew", idp.Policy.MaxClockSkew)

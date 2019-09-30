@@ -47,6 +47,16 @@ func resourceIdpSocial() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"match_type": &schema.Schema{
+				Type:       schema.TypeString,
+				Optional:   true,
+				Deprecated: "This property was incorrectly added to this resource, you should use \"subject_match_type\"",
+			},
+			"match_attribute": &schema.Schema{
+				Type:       schema.TypeString,
+				Optional:   true,
+				Deprecated: "This property was incorrectly added to this resource, you should use \"subject_match_attribute\"",
+			},
 			"client_secret": &schema.Schema{
 				Type:      schema.TypeString,
 				Optional:  true,
