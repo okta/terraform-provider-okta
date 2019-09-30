@@ -70,7 +70,7 @@ The following arguments are supported:
 
 ## Import
 
-Okta Auto Login App can be imported via the Okta ID.
+Okta SWA App can be imported via the Okta ID.
 
 ```
 $ terraform import okta_app_swa.example <app id>

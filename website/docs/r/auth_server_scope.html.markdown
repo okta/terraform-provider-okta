@@ -3,14 +3,14 @@ layout: "okta"
 page_title: "Okta: okta_auth_server_scope"
 sidebar_current: "docs-okta-resource-auth-server-scope"
 description: |-
-  Creates an Authorization Scope.
+  Creates an Authorization Server Scope.
 ---
 
 # okta_auth_server_scope
 
 Creates an Authorization Server Scope.
 
-This resource allows you to create and configure an Auto Login Okta Application.
+This resource allows you to create and configure an Authorization Server Scope.
 
 ## Example Usage
 
