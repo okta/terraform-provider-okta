@@ -82,9 +82,10 @@ func resourceAppUserBaseSchemaDelete(d *schema.ResourceData, m interface{}) erro
 // create or modify a  subschema
 func updateAppUserBaseSubschema(d *schema.ResourceData, m interface{}) error {
 	schema := &sdk.UserSubSchema{
-		Master: getNullableMaster(d),
-		Title:  d.Get("title").(string),
-		Type:   d.Get("type").(string),
+		Master:  getNullableMaster(d),
+		Title:   d.Get("title").(string),
+		Type:    d.Get("type").(string),
+		Pattern: d.Get("pattern").(string),
 		Permissions: []*sdk.UserSchemaPermission{
 			{
 				Action:    d.Get("permissions").(string),

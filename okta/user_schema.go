@@ -158,6 +158,11 @@ var (
 			Description:  "Subschema type: string, boolean, number, integer, array, or object",
 			ForceNew:     true,
 		},
+		"pattern": &schema.Schema{
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Restrict the username schema property to a particular regex pattern. Unlike the UI you must use a regex here.",
+		},
 		"permissions": &schema.Schema{
 			Type:         schema.TypeString,
 			Optional:     true,
@@ -220,6 +225,7 @@ func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) {
 	d.Set("title", subschema.Title)
 	d.Set("type", subschema.Type)
 	d.Set("required", subschema.Required)
+	d.Set("pattern", subschema.Pattern)
 
 	if subschema.Master != nil {
 		d.Set("master", subschema.Master.Type)

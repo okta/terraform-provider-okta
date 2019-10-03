@@ -35,6 +35,8 @@ The following arguments are supported:
 
 * `required` - (Optional) Whether the property is required for this application's users.
 
+* `pattern` - (Optional) Restrict `login` schema property to a particular regex.
+
 * `permissions` - (Optional) Access control permissions for the property. It can be set to `"READ_WRITE"`, `"READ_ONLY"`, `"HIDE"`.
 
 * `master` - (Optional) Master priority for the user schema property. It can be set to `"PROFILE_MASTER"` or `"OKTA"`.
