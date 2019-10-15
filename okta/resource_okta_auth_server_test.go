@@ -47,7 +47,7 @@ func TestAccOktaAuthServer_crud(t *testing.T) {
 	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.sun_also_rises", authServer)
 	name := buildResourceName(ri)
-	mgr := newFixtureManager("okta_auth_server")
+	mgr := newFixtureManager(authServer)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
 
@@ -88,7 +88,7 @@ func TestAccOktaAuthServer_fullStack(t *testing.T) {
 	ruleName := fmt.Sprintf("%s.test", authServerPolicyRule)
 	policyName := fmt.Sprintf("%s.test", authServerPolicy)
 	scopeName := fmt.Sprintf("%s.test", authServerScope)
-	mgr := newFixtureManager("okta_auth_server")
+	mgr := newFixtureManager(authServer)
 	config := mgr.GetFixtures("full_stack.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("full_stack_with_client.tf", ri, t)
 
@@ -126,6 +126,36 @@ func TestAccOktaAuthServer_fullStack(t *testing.T) {
 					resource.TestCheckResourceAttr(policyName, "name", "test"),
 					resource.TestCheckResourceAttr(policyName, "client_whitelist.#", "1"),
 					resource.TestCheckResourceAttr(ruleName, "name", "test"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccOktaAuthServer_gh299(t *testing.T) {
+	ri := acctest.RandInt()
+	name := buildResourceName(ri)
+	resourceName := fmt.Sprintf("%s.test", authServer)
+	resource2Name := fmt.Sprintf("%s.test1", authServer)
+	mgr := newFixtureManager(authServer)
+	config := mgr.GetFixtures("dependency.tf", ri, t)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(authServer, authServerExists),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, authServerExists),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "audiences.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_rotation_mode", "AUTO"),
+
+					resource.TestCheckResourceAttr(resource2Name, "name", name+"1"),
+					resource.TestCheckResourceAttr(resource2Name, "audiences.#", "1"),
+					resource.TestCheckResourceAttr(resource2Name, "credentials_rotation_mode", "AUTO"),
 				),
 			},
 		},

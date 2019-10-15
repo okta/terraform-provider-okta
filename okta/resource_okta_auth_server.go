@@ -128,10 +128,20 @@ func resourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
-	d.Set("credentials_rotation_mode", authServer.Credentials.Signing.RotationMode)
 	d.Set("kid", authServer.Credentials.Signing.Kid)
-	d.Set("credentials_next_rotation", authServer.Credentials.Signing.NextRotation.String())
-	d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated.String())
+
+	if authServer.Credentials != nil && authServer.Credentials.Signing != nil {
+		d.Set("credentials_rotation_mode", authServer.Credentials.Signing.RotationMode)
+
+		if authServer.Credentials.Signing.NextRotation != nil {
+			d.Set("credentials_next_rotation", authServer.Credentials.Signing.NextRotation.String())
+		}
+
+		if authServer.Credentials.Signing.LastRotated != nil {
+			d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated.String())
+		}
+	}
+
 	d.Set("description", authServer.Description)
 	d.Set("name", authServer.Name)
 	d.Set("status", authServer.Status)
