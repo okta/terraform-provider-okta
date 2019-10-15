@@ -9,7 +9,6 @@ import (
 	"strings"
 	"unicode"
 
-	sdk "github.com/terraform-providers/terraform-provider-okta/sdk"
 	"github.com/okta/okta-sdk-golang/okta"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
