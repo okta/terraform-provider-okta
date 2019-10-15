@@ -26,6 +26,8 @@ data "okta_group" "example" {
 
 ## Attributes Reference
 
+* `id` - id of group.
+
 * `name` - name of group.
 
 * `description` - description of group.
