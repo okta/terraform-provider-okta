@@ -218,3 +218,9 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * Remove resource from state on 404. [GH-269]
+
+## 3.0.29
+
+BUG FIXES:
+
+* Ensure we safely sync auth server properties. [GH-299]

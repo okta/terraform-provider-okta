@@ -155,7 +155,7 @@ func TestAccOktaAuthServer_gh299(t *testing.T) {
 
 					resource.TestCheckResourceAttr(resource2Name, "name", name+"1"),
 					resource.TestCheckResourceAttr(resource2Name, "audiences.#", "1"),
-					resource.TestCheckResourceAttr(resource2Name, "credentials_rotation_mode", "AUTO"),
+					resource.TestCheckResourceAttr(resource2Name, "credentials_rotation_mode", "MANUAL"),
 				),
 			},
 		},

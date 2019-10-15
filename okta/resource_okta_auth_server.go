@@ -99,12 +99,22 @@ func buildAuthServer(d *schema.ResourceData) *sdk.AuthorizationServer {
 
 func resourceAuthServerCreate(d *schema.ResourceData, m interface{}) error {
 	authServer := buildAuthServer(d)
+
 	responseAuthServer, _, err := getSupplementFromMetadata(m).CreateAuthorizationServer(*authServer, nil)
 	if err != nil {
 		return err
 	}
 
 	d.SetId(responseAuthServer.Id)
+
+	if d.Get("credentials_rotation_mode").(string) == "MANUAL" {
+		// Auth servers can only be set to manual on update. No clue why.
+		err = resourceAuthServerUpdate(d, m)
+
+		if err != nil {
+			return err
+		}
+	}
 
 	return resourceAuthServerRead(d, m)
 }
