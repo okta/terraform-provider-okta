@@ -1,9 +1,9 @@
 package okta
 
 import (
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/terraform-providers/terraform-provider-okta/sdk"
 )
 
 var platformIncludeResource = &schema.Resource{
