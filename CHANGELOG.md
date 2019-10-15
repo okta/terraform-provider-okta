@@ -218,3 +218,10 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * Remove resource from state on 404. [GH-269]
+
+## 3.0.29
+
+BUG FIXES:
+
+* Ensure we safely sync auth server properties. [GH-299]
+* MANUAL rotation mode can only be set on an auth server on update. Ensure we run update after create for that scenario. [GH-287]
