@@ -3,7 +3,7 @@ package okta
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/articulate/terraform-provider-okta/sdk"
+	"github.com/terraform-providers/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"

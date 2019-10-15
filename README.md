@@ -18,7 +18,7 @@ This provider plugin is maintained by the Terraform team at [Articulate](https:/
 
 ## Demo
 
-For a more in depth holistic usage demo, [see our demo repository here](https://github.com/articulate/terraform-provider-okta-demos).
+For a more in depth holistic usage demo, [see our demo repository here](https://github.com/terraform-providers/terraform-provider-okta-demos).
 
 ## Usage
 
@@ -54,7 +54,7 @@ As we build out resources we build concomitant acceptance tests that require use
 
 ## Building The Provider
 
-Clone repository to: `$GOPATH/src/github.com/articulate/terraform-provider-okta`
+Clone repository to: `$GOPATH/src/github.com/terraform-providers/terraform-provider-okta`
 
 ```sh
 $ mkdir -p $GOPATH/src/github.com/articulate; cd $GOPATH/src/github.com/articulate
@@ -64,7 +64,7 @@ $ git clone git@github.com:articulate/terraform-provider-okta
 Enter the provider directory and build the provider. Ensure you have Go Modules enabled, depending on the version of Go you are using, you may have to flip it on with `GO111MODULE=on`.
 
 ```sh
-$ cd $GOPATH/src/github.com/articulate/terraform-provider-okta
+$ cd $GOPATH/src/github.com/terraform-providers/terraform-provider-okta
 $ make build
 ```
 

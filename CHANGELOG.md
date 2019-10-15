@@ -88,8 +88,8 @@ FEATURES:
 
 BUG FIXES:
 
-* Fix occasional panic when creating a user schema see https://github.com/articulate/terraform-provider-okta/issues/144
-* Users in LOCKED_OUT state are unlocked when config is ACTIVE https://github.com/articulate/terraform-provider-okta/issues/225
+* Fix occasional panic when creating a user schema see https://github.com/terraform-providers/terraform-provider-okta/issues/144
+* Users in LOCKED_OUT state are unlocked when config is ACTIVE https://github.com/terraform-providers/terraform-provider-okta/issues/225
 
 ## 3.0.12
 

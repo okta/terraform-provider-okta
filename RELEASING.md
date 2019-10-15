@@ -27,4 +27,4 @@ GITHUB_TOKEN=xxx goreleaser release --rm-dist
 
 ## See the release in Github
 
-You can find the releases in Github, e.g. [v3.0.0](https://github.com/articulate/terraform-provider-okta/releases/tag/v3.0.0).
+You can find the releases in Github, e.g. [v3.0.0](https://github.com/terraform-providers/terraform-provider-okta/releases/tag/v3.0.0).
