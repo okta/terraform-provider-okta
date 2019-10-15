@@ -1,10 +1,10 @@
 package okta
 
 import (
-	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/terraform-providers/terraform-provider-okta/sdk"
 )
 
 func resourceIdpSocial() *schema.Resource {

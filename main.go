@@ -2,8 +2,8 @@
 package main
 
 import (
-	"github.com/articulate/terraform-provider-okta/okta"
 	"github.com/hashicorp/terraform/plugin"
+	"github.com/terraform-providers/terraform-provider-okta/okta"
 )
 
 func main() {

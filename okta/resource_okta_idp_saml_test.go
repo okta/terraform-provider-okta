@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/terraform-providers/terraform-provider-okta/sdk"
 )
 
 func TestAccOktaIdpSaml_crud(t *testing.T) {

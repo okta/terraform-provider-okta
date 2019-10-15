@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
-	sdk "github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/okta/okta-sdk-golang/okta"
+	sdk "github.com/terraform-providers/terraform-provider-okta/sdk"
 )
 
 type testClient struct {

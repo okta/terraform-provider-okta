@@ -17,7 +17,7 @@ builds:
   ldflags: []
 
 archive:
-  # https://github.com/articulate/terraform-provider-okta/issues/128#issuecomment-484565435
+  # https://github.com/terraform-providers/terraform-provider-okta/issues/128#issuecomment-484565435
   name_template: "{{.ProjectName}}-{{.Os}}-{{.Arch}}"
   format_overrides:
   - goos: windows

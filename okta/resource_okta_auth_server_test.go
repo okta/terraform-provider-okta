@@ -6,10 +6,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/terraform-providers/terraform-provider-okta/sdk"
 )
 
 func findTestAuthServer(name string) bool {

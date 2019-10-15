@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/articulate/terraform-provider-okta/sdk"
+	"github.com/terraform-providers/terraform-provider-okta/sdk"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/go-cleanhttp"
