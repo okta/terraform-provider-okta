@@ -1,4 +1,3 @@
-## 3.0.1 (Unreleased)
 ## 3.0.0 (October 16, 2019)
 
 FEATURES:
