@@ -1,4 +1,4 @@
-## 3.0.0 (Unreleased)
+## 3.0.0 (October 16, 2019)
 
 FEATURES:
 
@@ -217,11 +217,11 @@ ENHANCEMENTS:
 
 BUG FIXES:
 
-* Remove resource from state on 404. [GH-269]
+* Remove resource from state on 404. ([#269](https://github.com/terraform-providers/terraform-provider-cherryservers/issues/269))
 
 ## 3.0.29
 
 BUG FIXES:
 
-* Ensure we safely sync auth server properties. [GH-299]
-* MANUAL rotation mode can only be set on an auth server on update. Ensure we run update after create for that scenario. [GH-287]
+* Ensure we safely sync auth server properties. ([#299](https://github.com/terraform-providers/terraform-provider-cherryservers/issues/299))
+* MANUAL rotation mode can only be set on an auth server on update. Ensure we run update after create for that scenario. ([#287](https://github.com/terraform-providers/terraform-provider-cherryservers/issues/287))
