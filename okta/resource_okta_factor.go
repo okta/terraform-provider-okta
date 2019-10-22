@@ -2,8 +2,8 @@ package okta
 
 import (
 	"github.com/articulate/oktasdk-go/okta"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
 // Predefined second authentication factors. They must be activated in order to use them in MFA policies.

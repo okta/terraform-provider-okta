@@ -5,7 +5,7 @@ import (
 
 	"github.com/okta/okta-sdk-golang/okta"
 
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceGroupRule() *schema.Resource {
