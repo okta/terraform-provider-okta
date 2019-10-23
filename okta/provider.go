@@ -41,6 +41,7 @@ const (
 	inlineHook             = "okta_inline_hook"
 	networkZone            = "okta_network_zone"
 	oktaGroup              = "okta_group"
+	oktaProfileMapping     = "okta_profile_mapping"
 	oktaUser               = "okta_user"
 	policyMfa              = "okta_policy_mfa"
 	policyPassword         = "okta_policy_password"
@@ -143,6 +144,7 @@ func Provider() terraform.ResourceProvider {
 			inlineHook:             resourceInlineHook(),
 			networkZone:            resourceNetworkZone(),
 			oktaGroup:              resourceGroup(),
+			oktaProfileMapping:     resourceOktaProfileMapping(),
 			oktaUser:               resourceUser(),
 			policyMfa:              resourcePolicyMfa(),
 			policyPassword:         resourcePolicyPassword(),
