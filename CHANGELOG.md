@@ -232,3 +232,9 @@ BUG FIXES:
 ENHANCEMENT:
 
 * Update to new separate Terraform SDK [GH-307]
+
+## 3.0.31
+
+BUG FIXES:
+
+* Ensure `okta_app_group_assignment` resource syncs using the right read function. [GH-307]
