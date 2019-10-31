@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -48,6 +49,18 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "group_id"),
 					resource.TestCheckResourceAttr(resourceName, "profile", "{}"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("Failed to import schema into state")
+					}
+
+					return nil
+				},
 			},
 		},
 	})

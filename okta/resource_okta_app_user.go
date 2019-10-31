@@ -10,14 +10,12 @@ import (
 func resourceAppUser() *schema.Resource {
 	return &schema.Resource{
 		// No point in having an exist function, since only the group has to exist
-		Create: resourceAppUserCreate,
-		Exists: resourceAppUserExists,
-		Read:   resourceAppUserRead,
-		Update: resourceAppUserUpdate,
-		Delete: resourceAppUserDelete,
-		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
-		},
+		Create:   resourceAppUserCreate,
+		Exists:   resourceAppUserExists,
+		Read:     resourceAppUserRead,
+		Update:   resourceAppUserUpdate,
+		Delete:   resourceAppUserDelete,
+		Importer: createCustomNestedResourceImporter([]string{"app_id", "user_id"}, "Proper import command: terraform import <app_id>/<user_id>"),
 
 		Schema: map[string]*schema.Schema{
 			"app_id": &schema.Schema{
