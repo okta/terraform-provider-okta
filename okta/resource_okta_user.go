@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
@@ -469,13 +468,9 @@ func resourceUserExists(d *schema.ResourceData, m interface{}) (bool, error) {
 
 	_, resp, err := client.User.GetUser(d.Id())
 
-	if err != nil {
-		return false, fmt.Errorf("[ERROR] Error Getting User from Okta: %v", err)
-	}
-
-	if strings.Contains(resp.Response.Status, "404") {
+	if is404(resp.StatusCode) {
 		return false, nil
 	}
 
-	return true, nil
+	return err == nil, err
 }

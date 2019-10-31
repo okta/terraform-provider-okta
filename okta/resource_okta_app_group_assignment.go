@@ -49,13 +49,17 @@ func resourceAppGroupAssignment() *schema.Resource {
 
 func resourceAppGroupAssignmentExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	client := getOktaClientFromMetadata(m)
-	g, _, err := client.Application.GetApplicationGroupAssignment(
+	_, resp, err := client.Application.GetApplicationGroupAssignment(
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
 		nil,
 	)
 
-	return g != nil, err
+	if is404(resp.StatusCode) {
+		return false, nil
+	}
+
+	return err == nil, err
 }
 
 func getAppGroupAssignment(d *schema.ResourceData) okta.ApplicationGroupAssignment {
