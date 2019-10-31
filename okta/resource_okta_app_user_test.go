@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -49,6 +50,29 @@ func TestAccOktaAppUser_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "username", fmt.Sprintf("testAcc_%d@example.com", ri)),
 					resource.TestCheckResourceAttr(resourceName, "profile", "{\"testCustom\":\"testing\"}"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("failed to find %s", resourceName)
+					}
+
+					appId := rs.Primary.Attributes["app_id"]
+					userId := rs.Primary.Attributes["user_id"]
+
+					return fmt.Sprintf("%s/%s", appId, userId), nil
+				},
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("Failed to import schema into state")
+					}
+
+					return nil
+				},
 			},
 		},
 	})

@@ -2,6 +2,8 @@ package okta
 
 import (
 	"encoding/json"
+	"errors"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/okta/okta-sdk-golang/okta"
@@ -10,12 +12,33 @@ import (
 func resourceAppUser() *schema.Resource {
 	return &schema.Resource{
 		// No point in having an exist function, since only the group has to exist
-		Create:   resourceAppUserCreate,
-		Exists:   resourceAppUserExists,
-		Read:     resourceAppUserRead,
-		Update:   resourceAppUserUpdate,
-		Delete:   resourceAppUserDelete,
-		Importer: createCustomNestedResourceImporter([]string{"app_id", "user_id"}, "Proper import command: terraform import <app_id>/<user_id>"),
+		Create: resourceAppUserCreate,
+		Exists: resourceAppUserExists,
+		Read:   resourceAppUserRead,
+		Update: resourceAppUserUpdate,
+		Delete: resourceAppUserDelete,
+		Importer: &schema.ResourceImporter{
+			State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+				parts := strings.Split(d.Id(), "/")
+				if len(parts) != 2 {
+					return nil, errors.New("Invalid resource import specifier. Use: terraform import <app_id>/<group_id>")
+				}
+
+				d.Set("app_id", parts[0])
+				d.Set("user_id", parts[1])
+
+				assignment, _, err := getOktaClientFromMetadata(m).Application.
+					GetApplicationUser(parts[0], parts[1], nil)
+
+				if err != nil {
+					return nil, err
+				}
+
+				d.SetId(assignment.Id)
+
+				return []*schema.ResourceData{d}, nil
+			},
+		},
 
 		Schema: map[string]*schema.Schema{
 			"app_id": &schema.Schema{

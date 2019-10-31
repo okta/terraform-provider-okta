@@ -54,6 +54,17 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("failed to find %s", resourceName)
+					}
+
+					appId := rs.Primary.Attributes["app_id"]
+					groupId := rs.Primary.Attributes["group_id"]
+
+					return fmt.Sprintf("%s/%s", appId, groupId), nil
+				},
 				ImportStateCheck: func(s []*terraform.InstanceState) error {
 					if len(s) != 1 {
 						return errors.New("Failed to import schema into state")
