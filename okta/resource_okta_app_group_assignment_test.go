@@ -15,6 +15,7 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 	mgr := newFixtureManager(appGroupAssignment)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
+	newUpdate := mgr.GetFixtures("force_new_update.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -32,6 +33,15 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 			},
 			{
 				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureAppGroupAssignmentExists(resourceName),
+					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "group_id"),
+					resource.TestCheckResourceAttr(resourceName, "profile", "{}"),
+				),
+			},
+			{
+				Config: newUpdate,
 				Check: resource.ComposeTestCheckFunc(
 					ensureAppGroupAssignmentExists(resourceName),
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
