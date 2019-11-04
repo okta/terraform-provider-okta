@@ -45,7 +45,7 @@ resource "okta_auth_server_policy_rule" "test" {
 
 resource "okta_app_oauth" "test" {
   status         = "ACTIVE"
-  label          = "test"
+  label          = "testAcc_replace_with_uuid"
   type           = "web"
   grant_types    = ["implicit", "authorization_code"]
   redirect_uris  = ["https://localhost:8443/redirect_uri/"]
