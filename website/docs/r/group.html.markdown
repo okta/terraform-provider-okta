@@ -29,6 +29,8 @@ The following arguments are supported:
 
 * `description` - (Optional) The description of the Okta Group.
 
+* `users` - (Optional) The users associated with the group. This can also be done per user.
+
 ## Attributes Reference
 
 * `id` - The ID of the Okta Group.
