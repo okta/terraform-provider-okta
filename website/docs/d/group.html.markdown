@@ -14,7 +14,7 @@ Use this data source to retrieve a group from Okta.
 
 ```hcl
 data "okta_group" "example" {
-  label = "Example App"
+  name = "Example App"
 }
 ```
 
