@@ -238,3 +238,10 @@ ENHANCEMENT:
 BUG FIXES:
 
 * Ensure `okta_app_group_assignment` resource syncs using the right read function. [GH-307]
+
+## 3.0.32
+
+BUG FIXES:
+
+* Ensure `okta_app_group_assignment` and `okta_app_user` resources properly take multiple ids on the import functions. [GH-307]
+* Ensure `okta_user` does not error on 404 [GH-313]
