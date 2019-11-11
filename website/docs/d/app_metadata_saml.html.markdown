@@ -1,19 +1,19 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_app_saml_metadata"
-sidebar_current: "docs-okta-datasource-app-saml-metadata"
+page_title: "Okta: okta_app_metadata_saml"
+sidebar_current: "docs-okta-datasource-app-metadata-saml"
 description: |-
   Get a SAML application's metadata from Okta.
 ---
 
-# okta_app_saml_metadata
+# okta_app_metadata_saml
 
 Use this data source to retrieve the collaborators for a given repository.
 
 ## Example Usage
 
 ```hcl
-data "okta_app_saml_metadata" "example" {
+data "okta_app_metadata_saml" "example" {
   app_id = "<app id>"
   key_id = "<cert key id>"
 }
