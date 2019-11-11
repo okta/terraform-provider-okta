@@ -1,19 +1,19 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_idp_saml_metadata"
-sidebar_current: "docs-okta-datasource-idp-saml-metadata"
+page_title: "Okta: okta_idp_metadata_saml"
+sidebar_current: "docs-okta-datasource-idp-metadata-saml"
 description: |-
   Get SAML IdP metadata from Okta.
 ---
 
-# okta_idp_saml_metadata
+# okta_idp_metadata_saml
 
 Use this data source to retrieve SAML IdP metadata from Okta.
 
 ## Example Usage
 
 ```hcl
-data "okta_idp_saml_metadata" "example" {
+data "okta_idp_metadata_saml" "example" {
   id = "<idp id>"
 }
 ```
