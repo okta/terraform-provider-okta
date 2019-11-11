@@ -18,6 +18,11 @@ This resource allows you to create an App Group assignment.
 resource "okta_app_group_assignment" "example" {
   app_id   = "<app id>"
   group_id = "<group id>"
+  profile = <<JSON
+{
+  "<app_profile_field>": "<value>"
+}
+JSON
 }
 ```
 
@@ -28,6 +33,8 @@ The following arguments are supported:
 * `app_id` - (Required) The ID of the application to assign a group to.
 
 * `group_id` - (Required) The ID of the group to assign the app to.
+
+* `profile` - (Optional) JSON document containing [application profile](https://developer.okta.com/docs/reference/api/apps/#profile-object)
 
 ## Attributes Reference
 
