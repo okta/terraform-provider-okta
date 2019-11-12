@@ -162,7 +162,6 @@ func Provider() terraform.ResourceProvider {
 			"okta_saml_idp_signing_key":      deprecateIncorrectNaming(resourceIdpSigningKey(), idpSamlKey),
 			"okta_social_idp":                deprecateIncorrectNaming(resourceIdpSocial(), idpSocial),
 			"okta_bookmark_app":              deprecateIncorrectNaming(resourceAppBookmark(), appBookmark),
-			"okta_basic_auth_app":            deprecateIncorrectNaming(resourceAppBasicAuth(), appBasicAuth),
 			"okta_saml_app":                  deprecateIncorrectNaming(resourceAppSaml(), appSaml),
 			"okta_oauth_app":                 deprecateIncorrectNaming(resourceAppOAuth(), appOAuth),
 			"okta_oauth_app_redirect_uri":    deprecateIncorrectNaming(resourceAppOAuthRedirectUri(), appOAuthRedirectUri),

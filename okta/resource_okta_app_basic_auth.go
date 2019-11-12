@@ -8,9 +8,6 @@ import (
 
 func resourceAppBasicAuth() *schema.Resource {
 	return &schema.Resource{
-		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
-			return nil
-		},
 		Create: resourceAppBasicAuthCreate,
 		Read:   resourceAppBasicAuthRead,
 		Update: resourceAppBasicAuthUpdate,

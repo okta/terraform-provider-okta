@@ -19,4 +19,6 @@ resource "okta_app_basic_auth" "test" {
     id       = "${okta_user.user.id}"
     username = "${okta_user.user.email}"
   }
+
+  groups = ["${okta_group.group.id}"]
 }

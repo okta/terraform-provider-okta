@@ -1,4 +1,4 @@
-# okta_app_bookmark
+# okta_app_basic_auth
 
 Represents an Okta Basic Auth App. [See Okta documentation for more details](https://developer.okta.com/docs/reference/api/apps/#add-basic-authentication-application).
 
