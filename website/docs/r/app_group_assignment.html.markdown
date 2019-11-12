@@ -12,6 +12,14 @@ Assigns a group to an application.
 
 This resource allows you to create an App Group assignment.
 
+__When using this resource, make sure to add the following `lifefycle` argument to the application resource you are assigning to:__
+
+```hcl
+lifecycle {
+  ignore_changes = ["groups"]
+}
+```
+
 ## Example Usage
 
 ```hcl
