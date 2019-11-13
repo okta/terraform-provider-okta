@@ -245,3 +245,10 @@ BUG FIXES:
 
 * Ensure `okta_app_group_assignment` and `okta_app_user` resources properly take multiple ids on the import functions. [GH-307]
 * Ensure `okta_user` does not error on 404 [GH-313]
+
+## 3.0.33
+
+FEATURES:
+
+* **New Resource:** `okta_profile_mapping` [GH-246]
+* **New Resource:** `okta_app_basic_auth` [GH-329]
