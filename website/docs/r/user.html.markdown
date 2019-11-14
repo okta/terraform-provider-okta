@@ -99,6 +99,12 @@ The following arguments are supported:
 
 * `zip_code` - (Optional) User profile property.
 
+* `password` - (Optional) User password.
+
+* `recovery_question` - (Optional) User password recovery question.
+
+* `recovery_answer` - (Optional) User password recovery answer.
+
 ## Attributes Reference
 
 * `index` - (Optional) ID of the User schema property.
