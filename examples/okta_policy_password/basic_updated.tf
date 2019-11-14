@@ -18,7 +18,7 @@ resource okta_policy_password test {
   password_expire_warn_days      = 15
   password_min_age_minutes       = 60
   password_history_count         = 5
-  password_max_lockout_attempts  = 3
+  password_max_lockout_attempts  = 0
   password_auto_unlock_minutes   = 2
   password_show_lockout_failures = true
   question_min_length            = 10

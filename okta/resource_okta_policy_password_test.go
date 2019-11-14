@@ -71,7 +71,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "password_expire_warn_days", "15"),
 					resource.TestCheckResourceAttr(resourceName, "password_min_age_minutes", "60"),
 					resource.TestCheckResourceAttr(resourceName, "password_history_count", "5"),
-					resource.TestCheckResourceAttr(resourceName, "password_max_lockout_attempts", "3"),
+					resource.TestCheckResourceAttr(resourceName, "password_max_lockout_attempts", "0"),
 					resource.TestCheckResourceAttr(resourceName, "password_auto_unlock_minutes", "2"),
 					resource.TestCheckResourceAttr(resourceName, "password_show_lockout_failures", "true"),
 					resource.TestCheckResourceAttr(resourceName, "question_min_length", "10"),

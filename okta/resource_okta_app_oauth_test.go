@@ -1,12 +1,14 @@
 package okta
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
 )
@@ -56,6 +58,17 @@ func TestAccAppOauth_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
 					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
 				),
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("Failed to import schema into state")
+					}
+
+					return nil
+				},
 			},
 		},
 	})
