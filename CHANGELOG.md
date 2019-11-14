@@ -252,3 +252,9 @@ FEATURES:
 
 * **New Resource:** `okta_profile_mapping` [GH-246]
 * **New Resource:** `okta_app_basic_auth` [GH-329]
+
+## 3.0.34
+
+BUG FIXES:
+
+* Policy values could not be set to 0. Doing so resulted in the SDK omitting them, resulting in Okta resetting the values to default.
