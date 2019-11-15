@@ -272,6 +272,7 @@ func resourceUser() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Sensitive:   true,
+				ValidateFunc: validation.StringLenBetween(8, 1000), // Hope no one uses password > 1000 chars
 				Description: "User Password",
 			},
 			"recovery_question": &schema.Schema{
@@ -282,7 +283,8 @@ func resourceUser() *schema.Resource {
 			"recovery_answer": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringLenBetween(4, 100), // Hope no one uses > 10
+				Sensitive:    true,
+				ValidateFunc: validation.StringLenBetween(4, 1000),
 				Description:  "User Password Recovery Answer",
 			},
 		},
