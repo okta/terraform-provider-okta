@@ -272,7 +272,6 @@ func resourceUser() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Sensitive:   true,
-				ValidateFunc: validation.StringLenBetween(8, 1000), // Hope no one uses password > 1000 chars
 				Description: "User Password",
 			},
 			"recovery_question": &schema.Schema{
@@ -317,7 +316,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	recoveryQuestion := d.Get("recovery_question").(string)
 	recoveryAnswer := d.Get("recovery_answer").(string)
 
-	if recoveryQuestion != "" && len(recoveryAnswer) < 4 {
+	if recoveryQuestion != "" {
 		return fmt.Errorf("[ERROR] Okta does not allow security answers with less than 4 characters")
 	}
 
@@ -430,6 +429,8 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	groupChange := d.HasChange("group_memberships")
 	userChange := hasProfileChange(d)
 	passwordChange := d.HasChange("password")
+	recoveryQuestionChange := d.HasChange("recovery_question")
+	recoveryAnswerChange := d.HasChange("recovery_answer")
 
 	// run the update status func first so a user that was previously deprovisioned
 	// can be updated further if it's status changed in it's terraform configs
@@ -488,6 +489,28 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		_, _, err := client.User.ChangePassword(d.Id(), *npr, nil)
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating User password in Okta: %v", err)
+		}
+	}
+
+	if recoveryQuestionChange || recoveryAnswerChange {
+		p := &okta.PasswordCredential{
+			Value: d.Get("password").(string),
+		}
+
+		rq := &okta.RecoveryQuestionCredential{
+			Question: d.Get("recovery_question").(string),
+			Answer:   d.Get("recovery_answer").(string),
+		}
+
+		nuc := &okta.UserCredentials{
+			Password:         p,
+			RecoveryQuestion: rq,
+		}
+
+		_, _, err := client.User.ChangeRecoveryQuestion(d.Id(), *nuc)
+
+		if err != nil {
+			return fmt.Errorf("[ERROR] Error Updating User password recovery credentials in Okta: %v", err)
 		}
 	}
 

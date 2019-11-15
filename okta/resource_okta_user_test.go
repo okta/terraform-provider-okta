@@ -241,7 +241,7 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
 					resource.TestCheckResourceAttr(resourceName, "login", email),
 					resource.TestCheckResourceAttr(resourceName, "email", email),
-					resource.TestCheckResourceAttr(resourceName, "password", "Abcd1234"),
+					resource.TestCheckResourceAttr(resourceName, "password", "SuperSecret007"),
 					resource.TestCheckResourceAttr(resourceName, "recovery_answer", "Forty Two"),
 				),
 			},
