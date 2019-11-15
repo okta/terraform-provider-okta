@@ -16,11 +16,14 @@ import (
 )
 
 func buildSchema(s, t map[string]*schema.Schema) map[string]*schema.Schema {
-	for key, val := range s {
-		t[key] = val
+	r := map[string]*schema.Schema{}
+	for key, val := range t {
+		r[key] = val
 	}
-
-	return t
+	for key, val := range s {
+		r[key] = val
+	}
+	return r
 }
 
 // camel cased strings from okta responses become underscore separated to match
