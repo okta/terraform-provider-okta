@@ -189,6 +189,7 @@ func buildCustomUserSchema(target map[string]*schema.Schema) map[string]*schema.
 }
 
 func syncUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) error {
+	d.Set("index", d.Id())
 	d.Set("title", subschema.Title)
 	d.Set("type", subschema.Type)
 	d.Set("description", subschema.Description)
@@ -217,6 +218,7 @@ func syncUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) error 
 }
 
 func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) {
+	d.Set("index", d.Id())
 	d.Set("title", subschema.Title)
 	d.Set("type", subschema.Type)
 	d.Set("required", subschema.Required)
