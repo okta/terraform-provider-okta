@@ -15,8 +15,11 @@ This resource allows you to manage a profile mapping by source id.
 ## Example Usage
 
 ```hcl
+data "okta_user_profile_mapping_source" "user" {}
+
 resource "okta_profile_mapping" "example" {
   source_id          = "<source id>"
+  target_id          = "${data.okta_user_profile_mapping_source.user.id}"
   delete_when_absent = true
 
   mappings {

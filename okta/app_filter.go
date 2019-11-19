@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
@@ -58,7 +59,7 @@ func collectApps(reqExe *okta.RequestExecutor, filters *appFilters, results *sea
 
 	results.Apps = append(results.Apps, filterApp(appList, filters)...)
 
-	if after := getAfterParam(res); after != "" && !filters.shouldShortCircuit(results.Apps) {
+	if after := sdk.GetAfterParam(res); after != "" && !filters.shouldShortCircuit(results.Apps) {
 		qp.After = after
 		return collectApps(reqExe, filters, results, qp)
 	}
@@ -124,7 +125,7 @@ func collectSamlApps(reqExe *okta.RequestExecutor, filters *appFilters, results 
 
 	results.SamlApps = append(results.SamlApps, filterSamlApp(appList, filters)...)
 
-	if after := getAfterParam(res); after != "" && !filters.shouldShortCircuit(results.Apps) {
+	if after := sdk.GetAfterParam(res); after != "" && !filters.shouldShortCircuit(results.Apps) {
 		qp.After = after
 		return collectApps(reqExe, filters, results, qp)
 	}

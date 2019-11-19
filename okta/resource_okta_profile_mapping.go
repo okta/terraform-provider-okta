@@ -63,8 +63,9 @@ func resourceOktaProfileMapping() *schema.Resource {
 				Computed: true,
 			},
 			"target_id": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "The target id of the mapping to manage.",
 			},
 			"target_type": &schema.Schema{
 				Type:     schema.TypeString,
@@ -120,7 +121,7 @@ func getProfileMapping(d *schema.ResourceData, m interface{}) (*sdk.Mapping, err
 
 func resourceProfileMappingCreate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
-	mapping, _, err := client.GetProfileMappingBySourceId(d.Get("source_id").(string))
+	mapping, _, err := client.GetProfileMappingBySourceId(d.Get("source_id").(string), d.Get("target_id").(string))
 
 	if err != nil || mapping == nil {
 		return fmt.Errorf("failed to retrieve source, which is required to track mappings in state, error: %v", err)
@@ -213,7 +214,7 @@ func resourceProfileMappingUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
 	newMapping := buildMapping(d)
 
-	mapping, _, err := client.GetProfileMappingBySourceId(d.Get("source_id").(string))
+	mapping, _, err := client.GetProfileMappingBySourceId(d.Get("source_id").(string), d.Get("target_id").(string))
 
 	if err != nil || mapping == nil {
 		return fmt.Errorf("failed to retrieve source, which is required to track mappings in state, error: %v", err)

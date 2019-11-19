@@ -5,14 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"net/url"
 	"regexp"
 	"strings"
 	"unicode"
 
 	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/peterhellberg/link"
-	sdk "github.com/terraform-providers/terraform-provider-okta/sdk"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -248,27 +245,6 @@ func ensureNotDefault(d *schema.ResourceData, t string) error {
 	}
 
 	return nil
-}
-
-// Grabs after link from link headers if it exists
-func getAfterParam(res *okta.Response) string {
-	if res == nil {
-		return ""
-	}
-
-	linkList := link.ParseHeader(res.Header)
-	for _, l := range linkList {
-		if l.Rel == "next" {
-			parsedURL, err := url.Parse(l.URI)
-			if err != nil {
-				continue
-			}
-			q := parsedURL.Query()
-			return q.Get("after")
-		}
-	}
-
-	return ""
 }
 
 func getMapString(m map[string]interface{}, key string) string {

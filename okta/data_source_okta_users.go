@@ -3,6 +3,7 @@ package okta
 import (
 	"fmt"
 
+	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/okta/okta-sdk-golang/okta"
@@ -58,7 +59,7 @@ func collectUsers(client *okta.Client, results *searchResults, qp *query.Params)
 
 	results.Users = append(results.Users, users...)
 
-	if after := getAfterParam(res); after != "" {
+	if after := sdk.GetAfterParam(res); after != "" {
 		qp.After = after
 		return collectUsers(client, results, qp)
 	}

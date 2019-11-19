@@ -258,3 +258,13 @@ FEATURES:
 BUG FIXES:
 
 * Policy values could not be set to 0. Doing so resulted in the SDK omitting them, resulting in Okta resetting the values to default.
+
+## 3.0.35
+
+ENHANCEMENT:
+
+* Require target_id on `okta_profile_mapping` to avoid ambiguity
+
+FEATURES:
+
+* **New Data Source:** `okta_user_profile_mapping_source` [GH-340]
