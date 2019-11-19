@@ -31,5 +31,4 @@ resource "okta_user" "test" {
   title              = "Director"
   user_type          = "Employee"
   zip_code           = "11111"
-  password           = "Abcd1234"
 }

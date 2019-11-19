@@ -316,10 +316,6 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	recoveryQuestion := d.Get("recovery_question").(string)
 	recoveryAnswer := d.Get("recovery_answer").(string)
 
-	if recoveryQuestion != "" {
-		return fmt.Errorf("[ERROR] Okta does not allow security answers with less than 4 characters")
-	}
-
 	uc := &okta.UserCredentials{
 		Password: &okta.PasswordCredential{
 			Value: password,
