@@ -268,3 +268,9 @@ ENHANCEMENT:
 FEATURES:
 
 * **New Data Source:** `okta_user_profile_mapping_source` [GH-340]
+
+## 3.0.36
+
+BUG FIXES
+
+* Schema merging helper function was mutating input schema causing side effects when used in a particular way. Used shallow copying to avoid this side effect. [GH-338] 
