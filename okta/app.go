@@ -198,7 +198,7 @@ func fetchAppById(id string, m interface{}, app okta.App) error {
 	client := getOktaClientFromMetadata(m)
 	_, response, err := client.Application.GetApplication(id, app, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
-	if response.StatusCode == 404 {
+	if response != nil && response.StatusCode == 404 {
 		app = nil
 		return nil
 	}
