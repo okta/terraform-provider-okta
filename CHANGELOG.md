@@ -275,3 +275,9 @@ BUG FIXES
 
 * Schema merging helper function was mutating input schema causing side effects when used in a particular way. Used shallow copying to avoid this side effect. [GH-338] 
 * Ensure response is not nil when checking status code [GH-307]
+
+## 3.0.37
+
+BUG FIXES
+
+* Ensure `index` is sync'd on import to avoid recreation.
