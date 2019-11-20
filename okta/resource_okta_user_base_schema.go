@@ -15,7 +15,10 @@ func resourceUserBaseSchema() *schema.Resource {
 		Delete: resourceUserBaseSchemaDelete,
 		Exists: resourceUserBaseSchemaExists,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+				d.Set("index", d.Id())
+				return []*schema.ResourceData{d}, nil
+			},
 		},
 
 		Schema: userBaseSchemaSchema,
