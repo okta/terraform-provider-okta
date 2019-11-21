@@ -281,3 +281,9 @@ BUG FIXES
 BUG FIXES
 
 * Ensure `index` is sync'd on import to avoid recreation.
+
+## 3.0.38
+
+ENHANCEMENT:
+
+* Support `password`, `recovery_answer`, and `recovery_question` as attributes on the `okta_user` resource.
