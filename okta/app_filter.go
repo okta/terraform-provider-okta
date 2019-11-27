@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/terraform-providers/terraform-provider-okta/sdk"
 )
 
 type (
