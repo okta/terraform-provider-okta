@@ -13,6 +13,12 @@ Use this data source to retrieve a users from Okta.
 ## Example Usage
 
 ```hcl
+# Get a single user by their id value
+data "okta_user" "example" {
+  user_id = "00u22mtxlrJ8YkzXQ357"
+}
+
+# Search for a single user based on supported profile properties
 data "okta_user" "example" {
   search {
     name  = "profile.firstName"
@@ -28,7 +34,9 @@ data "okta_user" "example" {
 
 ## Arguments Reference
 
-* `search` - (Required) Map of search criteria. It supports the following properties.
+* `user_id` - (Optional) String representing a specific user's id value
+
+* `search` - (Optional) Map of search criteria. It supports the following properties.
   * `name` - (Required) Name of property to search against.
   * `comparison` - (Optional) Comparison to use.
   * `value` - (Required) Value to compare with.

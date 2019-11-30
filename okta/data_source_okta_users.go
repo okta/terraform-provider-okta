@@ -6,6 +6,7 @@ import (
 	"github.com/articulate/terraform-provider-okta/sdk"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
 )
@@ -15,7 +16,30 @@ func dataSourceUsers() *schema.Resource {
 		Read: dataSourceUsersRead,
 
 		Schema: map[string]*schema.Schema{
-			"search": userSearchSchema,
+			"search": &schema.Schema{
+				Type:        schema.TypeSet,
+				Required:    true,
+				Description: "Filter to find a user, each filter will be concatenated with an AND clause. Please be aware profile properties must match what is in Okta, which is likely camel case",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": &schema.Schema{
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "Property name to search for. This requires the search feature be on. Please see Okta documentation on their filter API for users. https://developer.okta.com/docs/api/resources/users#list-users-with-search",
+						},
+						"value": &schema.Schema{
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"comparison": &schema.Schema{
+							Type:         schema.TypeString,
+							Optional:     true,
+							Default:      "eq",
+							ValidateFunc: validation.StringInSlice([]string{"eq", "lt", "gt", "sw"}, true),
+						},
+					},
+				},
+			},
 			"users": &schema.Schema{
 				Type:     schema.TypeList,
 				Optional: true,

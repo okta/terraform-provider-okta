@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/terraform-providers/terraform-provider-okta/sdk"
 	"log"
@@ -12,31 +11,6 @@ import (
 	"reflect"
 	"time"
 )
-
-var userSearchSchema = &schema.Schema{
-	Type:        schema.TypeSet,
-	Required:    true,
-	Description: "Filter to find a user, each filter will be concatenated with an AND clause. Please be aware profile properties must match what is in Okta, which is likely camel case",
-	Elem: &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Property name to search for. This requires the search feature be on. Please see Okta documentation on their filter API for users. https://developer.okta.com/docs/api/resources/users#list-users-with-search",
-			},
-			"value": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"comparison": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "eq",
-				ValidateFunc: validation.StringInSlice([]string{"eq", "lt", "gt", "sw"}, true),
-			},
-		},
-	},
-}
 
 var userProfileDataSchema = map[string]*schema.Schema{
 	"admin_roles": &schema.Schema{
