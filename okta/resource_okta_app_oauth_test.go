@@ -222,6 +222,32 @@ func TestAccAppOauth_customClientIDError(t *testing.T) {
 	})
 }
 
+// Tests an OAuth application with profile attributes. This tests with a nested JSON object as well as an array.
+func TestAccAppOauth_serviceWithJWKS(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appOAuth)
+	config := mgr.GetFixtures("service_with_jwks.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", appOAuth)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.kty", "RSA"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.kid", "SIGNING_KEY"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.e", "AQAB"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.n", "xyz"),
+				),
+			},
+		},
+	})
+}
+
 func createDoesAppExist(app okta.App) func(string) (bool, error) {
 	return func(id string) (bool, error) {
 		client := getOktaClientFromMetadata(testAccProvider.Meta())
