@@ -17,7 +17,7 @@ type (
 
 	OpenIdConnectApplicationSettingsClient struct {
 		okta.OpenIdConnectApplicationSettingsClient
-		JWKS *JWKS `json:"jwks,string"`
+		JWKS *JWKS `json:"jwks,omitempty"`
 	}
 
 	JWKS struct {
