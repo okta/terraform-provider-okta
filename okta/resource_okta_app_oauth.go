@@ -103,14 +103,16 @@ func resourceAppOAuth() *schema.Resource {
 			},
 			"client_id": &schema.Schema{
 				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "OAuth client ID.",
+				Optional:    true,
+				ForceNew:    true,
+				Description: "OAuth client ID. If set during creation, app is created with this id.",
 			},
 			"custom_client_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
 				Description: "This property allows you to set your client_id.",
+				Deprecated:  "Set the client_id instead",
 			},
 			"omit_secret": &schema.Schema{
 				Type:     schema.TypeBool,
