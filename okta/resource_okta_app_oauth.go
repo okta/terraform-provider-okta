@@ -438,8 +438,8 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 
 	if cid, ok := d.GetOk("custom_client_id"); ok {
 		// client_id, if set, gets precedence
-		// this will force recreation for clients that specify both `client_id` and `custom_client_id`, but not
-		// if they're the same
+		// this will force recreation for clients that specify both `client_id` and `custom_client_id` iff
+		// they're the same
 		if d.Get("client_id").(string) == "" {
 			app.Credentials.OauthClient.ClientId = cid.(string)
 		}
