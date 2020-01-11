@@ -105,6 +105,7 @@ func resourceAppOAuth() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
+				Computed:    true,
 				Description: "OAuth client ID. If set during creation, app is created with this id.",
 			},
 			"custom_client_id": &schema.Schema{
