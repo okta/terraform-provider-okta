@@ -474,3 +474,5 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 
 	return app
 }
+
+func getClusterID() {}
