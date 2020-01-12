@@ -113,7 +113,7 @@ func resourceAppOAuth() *schema.Resource {
 				Optional:    true,
 				ForceNew:    true,
 				Description: "This property allows you to set your client_id.",
-				Deprecated:  "Set the client_id instead",
+				Deprecated:  "This field is being replaced by client_id. Please set that field instead.",
 			},
 			"omit_secret": &schema.Schema{
 				Type:     schema.TypeBool,
@@ -437,12 +437,13 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 		app.Credentials.OauthClient.ClientSecret = sec.(string)
 	}
 
-	if cid, ok := d.GetOk("custom_client_id"); ok {
-		// client_id, if set, gets precedence
-		// this will force recreation for clients that specify both `client_id` and `custom_client_id` iff
-		// they're the same
-		if d.Get("client_id").(string) == "" {
-			app.Credentials.OauthClient.ClientId = cid.(string)
+	if ccid, ok := d.GetOk("custom_client_id"); ok {
+		// if client_id is set, gets precedence, since client_id is the future source of truth of the applications
+		// client_id.
+		// if client_id is not set, set it to the value specified by custom_client_id.
+		if cid, ok := d.GetOk("client_id"); !ok {
+			d.Set("client_id", cid.(string))
+			app.Credentials.OauthClient.ClientId = ccid.(string)
 		}
 	}
 
