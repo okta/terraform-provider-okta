@@ -103,7 +103,7 @@ func resourceAppOAuth() *schema.Resource {
 			},
 			"client_id": &schema.Schema{
 				Type: schema.TypeString,
-				// This field is Optional + Computed because we automatically set the
+				// This field is Optional + Computed because okta automatically sets the
 				// client_id value if none is specified during creation.
 				// If the client_id is set after creation, the resource will be recreated only if its different from
 				// the computed client_id.
