@@ -172,6 +172,39 @@ func TestAccAppOauth_customProfileAttributes(t *testing.T) {
 	})
 }
 
+// Tests various expected properties of client_id and custom_client_id
+// TODO: remove when custom_client_id is removed
+func TestAccAppOauth_customClientID(t *testing.T) {
+	ri := acctest.RandInt()
+	resourceName := fmt.Sprintf("%s.test", appOAuth)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				// Create App with custom_client_id set
+				Config: buildTestOAuthAppCustomClientID(ri),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "custom_client_id", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "client_id", buildResourceName(ri)),
+				),
+			},
+			{
+				// Replace custom_client_id with client_id
+				Config: buildTestOAuthAppClientID(ri),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "custom_client_id", ""),
+					resource.TestCheckResourceAttr(resourceName, "client_id", buildResourceName(ri)),
+				),
+			},
+		},
+	})
+}
+
 func createDoesAppExist(app okta.App) func(string) (bool, error) {
 	return func(id string) (bool, error) {
 		client := getOktaClientFromMetadata(testAccProvider.Meta())
@@ -188,6 +221,34 @@ func createDoesAppExist(app okta.App) func(string) (bool, error) {
 
 		return true, err
 	}
+}
+
+func buildTestOAuthAppClientID(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+resource "%s" "test" {
+  label          = "%s"
+  type           = "service"
+  response_types = ["token"]
+  grant_types    = ["implicit", "client_credentials"]
+  redirect_uris  = ["http://test.com"]
+  client_id      = "%s"
+}`, appOAuth, name, name)
+}
+
+func buildTestOAuthAppCustomClientID(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+resource "%s" "test" {
+  label            = "%s"
+  type             = "service"
+  response_types   = ["token"]
+  grant_types      = ["implicit", "client_credentials"]
+  redirect_uris    = ["http://test.com"]
+  custom_client_id = "%s"
+}`, appOAuth, name, name)
 }
 
 func buildTestOAuthConfigBadGrantTypes(rInt int) string {
