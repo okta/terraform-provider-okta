@@ -116,8 +116,7 @@ func resourceAppOAuth() *schema.Resource {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"client_id"},
-				ForceNew:      true,
-				Description:   "**Deprecated** This property allows you to set your client_id.",
+				Description:   "**Deprecated** This property allows you to set your client_id during creation. NOTE: updating after creation will be a no-op, use client_id for that behavior instead.",
 				Deprecated:    "This field is being replaced by client_id. Please set that field instead.",
 			},
 			"omit_secret": &schema.Schema{
