@@ -2,8 +2,6 @@ package okta
 
 import (
 	"encoding/json"
-	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
@@ -108,17 +106,19 @@ func resourceAppOAuth() *schema.Resource {
 				// client_id value if none is specified during creation.
 				// If the client_id is set after creation, the resource will be recreated only if its different from
 				// the computed client_id.
-				Optional:    true,
-				ForceNew:    true,
-				Computed:    true,
-				Description: "OAuth client ID. If set during creation, app is created with this id.",
+				Optional:      true,
+				ConflictsWith: []string{"custom_client_id"},
+				ForceNew:      true,
+				Computed:      true,
+				Description:   "OAuth client ID. If set during creation, app is created with this id.",
 			},
 			"custom_client_id": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				ForceNew:    true,
-				Description: "This property allows you to set your client_id.",
-				Deprecated:  "This field is being replaced by client_id. Please set that field instead.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"client_id"},
+				ForceNew:      true,
+				Description:   "**Deprecated** This property allows you to set your client_id.",
+				Deprecated:    "This field is being replaced by client_id. Please set that field instead.",
 			},
 			"omit_secret": &schema.Schema{
 				Type:     schema.TypeBool,
@@ -272,23 +272,9 @@ func validateGrantTypes(d *schema.ResourceData) error {
 	return conditionalValidator("grant_types", appType, appMap.RequiredGrantTypes, appMap.ValidGrantTypes, grantTypeList)
 }
 
-// validateClientID returns an error if both custom_client_id and client_id are specified
-// TODO: remove this in the next release when custom_client_id is marked as removed
-func validateClientID(d *schema.ResourceData) error {
-	if _, ok := d.GetOk("custom_client_id"); ok {
-		if _, ok := d.GetOk("client_id"); ok {
-			return fmt.Errorf("cannot specify both custom_client_id and client_id. Specify only client_id instead")
-		}
-	}
-	return nil
-}
-
 func resourceAppOAuthCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	if err := validateGrantTypes(d); err != nil {
-		return err
-	}
-	if err := validateClientID(d); err != nil {
 		return err
 	}
 
@@ -376,9 +362,6 @@ func resourceAppOAuthUpdate(d *schema.ResourceData, m interface{}) error {
 	if err := validateGrantTypes(d); err != nil {
 		return err
 	}
-	if err := validateClientID(d); err != nil {
-		return err
-	}
 
 	app := buildAppOAuth(d, m)
 	if _, _, err := client.Application.UpdateApplication(d.Id(), app); err != nil {
@@ -460,13 +443,7 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 	}
 
 	if ccid, ok := d.GetOk("custom_client_id"); ok {
-		// if client_id is set, gets precedence, since client_id is the future source of truth of the applications
-		// client_id.
-		// if client_id is not set, set it to the value specified by custom_client_id.
-		if cid, ok := d.GetOk("client_id"); !ok {
-			d.Set("client_id", cid.(string))
-			app.Credentials.OauthClient.ClientId = ccid.(string)
-		}
+		app.Credentials.OauthClient.ClientId = ccid.(string)
 	}
 
 	app.Settings = &okta.OpenIdConnectApplicationSettings{
@@ -497,5 +474,3 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 
 	return app
 }
-
-func getClusterID() {}
