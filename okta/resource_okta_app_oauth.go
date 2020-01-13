@@ -107,11 +107,10 @@ func resourceAppOAuth() *schema.Resource {
 				// client_id value if none is specified during creation.
 				// If the client_id is set after creation, the resource will be recreated only if its different from
 				// the computed client_id.
-				Optional:      true,
-				ConflictsWith: []string{"custom_client_id"},
-				ForceNew:      true,
-				Computed:      true,
-				Description:   "OAuth client ID. If set during creation, app is created with this id.",
+				Optional:    true,
+				ForceNew:    true,
+				Computed:    true,
+				Description: "OAuth client ID. If set during creation, app is created with this id.",
 			},
 			"custom_client_id": &schema.Schema{
 				Type:          schema.TypeString,

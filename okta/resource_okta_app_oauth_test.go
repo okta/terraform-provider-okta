@@ -216,7 +216,7 @@ func TestAccAppOauth_customClientIDError(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      buildTestOAuthAppCustomClientIDBadConfig(ri),
-				ExpectError: regexp.MustCompile(`config is invalid: 2 problems:`),
+				ExpectError: regexp.MustCompile(`config is invalid: "custom_client_id": conflicts with client_id`),
 			},
 		},
 	})
