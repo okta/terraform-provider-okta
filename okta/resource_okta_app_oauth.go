@@ -2,6 +2,7 @@ package okta
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
@@ -102,7 +103,11 @@ func resourceAppOAuth() *schema.Resource {
 				Description:  "The type of client application.",
 			},
 			"client_id": &schema.Schema{
-				Type:        schema.TypeString,
+				Type: schema.TypeString,
+				// This field is Optional + Computed because we automatically set the
+				// client_id value if none is specified during creation.
+				// If the client_id is set after creation, the resource will be recreated only if its different from
+				// the computed client_id.
 				Optional:    true,
 				ForceNew:    true,
 				Computed:    true,
@@ -267,9 +272,23 @@ func validateGrantTypes(d *schema.ResourceData) error {
 	return conditionalValidator("grant_types", appType, appMap.RequiredGrantTypes, appMap.ValidGrantTypes, grantTypeList)
 }
 
+// validateClientID returns an error if both custom_client_id and client_id are specified
+// TODO: remove this in the next release when custom_client_id is marked as removed
+func validateClientID(d *schema.ResourceData) error {
+	if _, ok := d.GetOk("custom_client_id"); ok {
+		if _, ok := d.GetOk("client_id"); ok {
+			return fmt.Errorf("cannot specify both custom_client_id and client_id. Specify only client_id instead")
+		}
+	}
+	return nil
+}
+
 func resourceAppOAuthCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	if err := validateGrantTypes(d); err != nil {
+		return err
+	}
+	if err := validateClientID(d); err != nil {
 		return err
 	}
 
@@ -355,6 +374,9 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 func resourceAppOAuthUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	if err := validateGrantTypes(d); err != nil {
+		return err
+	}
+	if err := validateClientID(d); err != nil {
 		return err
 	}
 
