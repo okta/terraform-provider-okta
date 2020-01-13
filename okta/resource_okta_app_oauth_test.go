@@ -205,6 +205,23 @@ func TestAccAppOauth_customClientID(t *testing.T) {
 	})
 }
 
+// TODO: remove when custom_client_id is removed
+func TestAccAppOauth_customClientIDError(t *testing.T) {
+	ri := acctest.RandInt()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config:      buildTestOAuthAppCustomClientIDBadConfig(ri),
+				ExpectError: regexp.MustCompile(`config is invalid: 2 problems:`),
+			},
+		},
+	})
+}
+
 func createDoesAppExist(app okta.App) func(string) (bool, error) {
 	return func(id string) (bool, error) {
 		client := getOktaClientFromMetadata(testAccProvider.Meta())
@@ -249,6 +266,21 @@ resource "%s" "test" {
   redirect_uris    = ["http://test.com"]
   custom_client_id = "%s"
 }`, appOAuth, name, name)
+}
+
+func buildTestOAuthAppCustomClientIDBadConfig(rInt int) string {
+	name := buildResourceName(rInt)
+
+	return fmt.Sprintf(`
+resource "%s" "test" {
+  label            = "%s"
+  type             = "service"
+  response_types   = ["token"]
+  grant_types      = ["implicit", "client_credentials"]
+  redirect_uris    = ["http://test.com"]
+  custom_client_id = "%s"
+  client_id        = "%s"
+}`, appOAuth, name, name, name)
 }
 
 func buildTestOAuthConfigBadGrantTypes(rInt int) string {
