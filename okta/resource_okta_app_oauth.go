@@ -442,8 +442,8 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 		app.Credentials.OauthClient.ClientSecret = sec.(string)
 	}
 
-	if ccid, ok := d.GetOk("custom_client_id"); ok {
-		app.Credentials.OauthClient.ClientId = ccid.(string)
+	if cid, ok := d.GetOk("custom_client_id"); ok {
+		app.Credentials.OauthClient.ClientId = cid.(string)
 	}
 
 	app.Settings = &okta.OpenIdConnectApplicationSettings{
