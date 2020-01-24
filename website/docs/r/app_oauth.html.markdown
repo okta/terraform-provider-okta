@@ -38,7 +38,7 @@ The following arguments are supported:
 
 * `groups` - (Optional) The groups assigned to the application. It is recommended not to use this and instead use `okta_app_group_assignment`.
 
-* `custom_client_id` - (Optional) This property allows you to set the application's client id.
+* `client_id` - (Optional) OAuth client ID. If set during creation, app is created with this id.
 
 * `omit_secret` - (Optional) This tells the provider not to persist the application's secret to state. If this is ever changes from true => false your app will be recreated.
 
