@@ -148,7 +148,7 @@ func statusMismatch(d *schema.ResourceData, factor *okta.Factor) bool {
 	status := d.Get("active").(bool)
 
 	// I miss ternary operators
-	if factor.Status == "ACTIVE" {
+	if factor != nil && factor.Status == "ACTIVE" {
 		return !status
 	}
 
