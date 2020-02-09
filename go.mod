@@ -4,16 +4,15 @@ go 1.12
 
 require (
 	github.com/articulate/oktasdk-go v1.0.1
-	github.com/aws/aws-sdk-go v1.23.16 // indirect
 	github.com/beevik/etree v1.1.0 // indirect
 	github.com/bflad/tfproviderlint v0.4.0
 	github.com/client9/misspell v0.3.4
 	github.com/crewjam/saml v0.0.0-20180831135026-ebc5f787b786
-	github.com/google/go-cmp v0.3.1 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.1
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/hashicorp/hcl2 v0.0.0-20190821123243-0c888d1241f6 // indirect
 	github.com/hashicorp/hil v0.0.0-20190212132231-97b3a9cdfa93 // indirect
-	github.com/hashicorp/terraform-plugin-sdk v1.1.1
+	github.com/hashicorp/terraform-plugin-sdk v1.6.0
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/mattn/go-isatty v0.0.9 // indirect
@@ -24,7 +23,6 @@ require (
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 	go.opencensus.io v0.22.1 // indirect
 	golang.org/x/crypto v0.0.0-20190829043050-9756ffdc2472 // indirect
-	golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297 // indirect
 	golang.org/x/sys v0.0.0-20190904154756-749cb33beabd // indirect
 	golang.org/x/tools v0.0.0-20190918214516-5a1a30219888 // indirect
 	google.golang.org/api v0.10.0 // indirect
