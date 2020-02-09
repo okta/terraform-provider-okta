@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/terraform-providers/terraform-provider-okta/sdk"
 	"log"
