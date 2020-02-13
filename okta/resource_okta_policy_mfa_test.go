@@ -41,7 +41,6 @@ func TestAccOktaMfaPolicy_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy Updated"),
-					resource.TestCheckResourceAttr(resourceName, "fido_u2f.enroll", "OPTIONAL"),
 					resource.TestCheckResourceAttr(resourceName, "okta_otp.enroll", "OPTIONAL"),
 					resource.TestCheckResourceAttr(resourceName, "okta_sms.enroll", "OPTIONAL"),
 				),
