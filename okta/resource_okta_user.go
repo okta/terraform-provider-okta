@@ -438,7 +438,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		d.SetPartial("status")
 	}
 
-	if status == "DEPROVISIONED" && (userChange || roleChange || groupChange) {
+	if status == "DEPROVISIONED" && userChange {
 		return errors.New("[ERROR] Only the status of a DEPROVISIONED user can be updated, we detected other change")
 	}
 
