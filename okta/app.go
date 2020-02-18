@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"sync"
 
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
 )
@@ -198,7 +198,7 @@ func fetchAppById(id string, m interface{}, app okta.App) error {
 	client := getOktaClientFromMetadata(m)
 	_, response, err := client.Application.GetApplication(id, app, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
-	if response.StatusCode == 404 {
+	if response != nil && response.StatusCode == 404 {
 		app = nil
 		return nil
 	}

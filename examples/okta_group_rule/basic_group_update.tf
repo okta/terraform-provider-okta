@@ -7,5 +7,5 @@ resource "okta_group_rule" "test" {
   status            = "ACTIVE"
   group_assignments = ["${okta_group.test_other.id}"]
   expression_type   = "urn:okta:expression:1.0"
-  expression_value  = "String.startsWith(user.articulateId,String.toLowerCase(\"auth0|\"))"
+  expression_value  = "String.startsWith(user.firstName,String.toLowerCase(\"bOb\"))"
 }

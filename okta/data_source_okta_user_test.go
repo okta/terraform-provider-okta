@@ -3,8 +3,8 @@ package okta
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform/helper/acctest"
-	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
 func TestAccOktaDataSourceUser_read(t *testing.T) {
@@ -33,6 +33,8 @@ func TestAccOktaDataSourceUser_read(t *testing.T) {
 					resource.TestCheckResourceAttr("data.okta_user.test", "first_name", "TestAcc"),
 					resource.TestCheckResourceAttr("data.okta_user.test", "last_name", "Smith"),
 					resource.TestCheckResourceAttrSet("okta_user.test", "id"),
+					resource.TestCheckResourceAttr("data.okta_user.read_by_id", "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr("data.okta_user.read_by_id", "last_name", "Smith"),
 				),
 			},
 		},

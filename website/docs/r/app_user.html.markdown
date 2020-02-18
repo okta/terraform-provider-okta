@@ -12,6 +12,14 @@ Creates an Application User.
 
 This resource allows you to create and configure an Application User.
 
+__When using this resource, make sure to add the following `lifefycle` argument to the application resource you are assigning to:__
+
+```hcl
+lifecycle {
+  ignore_changes = ["users"]
+}
+```
+
 ## Example Usage
 
 ```hcl

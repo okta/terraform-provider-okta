@@ -1,5 +1,5 @@
 resource okta_group test {
-  name        = "something new"
+  name        = "testAcc_replace_with_uuid"
   description = "testing, testing"
   users       = ["${okta_user.test.id}"]
 }

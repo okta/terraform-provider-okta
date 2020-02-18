@@ -2,11 +2,13 @@ package okta
 
 import (
 	"encoding/json"
+	"fmt"
 
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/terraform-providers/terraform-provider-okta/sdk"
 )
 
 type (
@@ -102,15 +104,22 @@ func resourceAppOAuth() *schema.Resource {
 				Description:  "The type of client application.",
 			},
 			"client_id": &schema.Schema{
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "OAuth client ID.",
-			},
-			"custom_client_id": &schema.Schema{
-				Type:        schema.TypeString,
+				Type: schema.TypeString,
+				// This field is Optional + Computed because okta automatically sets the
+				// client_id value if none is specified during creation.
+				// If the client_id is set after creation, the resource will be recreated only if its different from
+				// the computed client_id.
 				Optional:    true,
 				ForceNew:    true,
-				Description: "This property allows you to set your client_id.",
+				Computed:    true,
+				Description: "OAuth client ID. If set during creation, app is created with this id.",
+			},
+			"custom_client_id": &schema.Schema{
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"client_id"},
+				Description:   "**Deprecated** This property allows you to set your client_id during creation. NOTE: updating after creation will be a no-op, use client_id for that behavior instead.",
+				Deprecated:    "This field is being replaced by client_id. Please set that field instead.",
 			},
 			"omit_secret": &schema.Schema{
 				Type:     schema.TypeBool,
@@ -135,7 +144,7 @@ func resourceAppOAuth() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				ValidateFunc: validation.StringInSlice(
-					[]string{"none", "client_secret_post", "client_secret_basic", "client_secret_jwt"},
+					[]string{"none", "client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"},
 					false,
 				),
 				Default:     "client_secret_basic",
@@ -243,6 +252,35 @@ func resourceAppOAuth() *schema.Resource {
 				Optional:    true,
 				Description: "Custom JSON that represents an OAuth application's profile",
 			},
+			"jwks": &schema.Schema{
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"kid": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "Key ID",
+						},
+						"kty": {
+							Type:         schema.TypeString,
+							Required:     true,
+							Description:  "Key type",
+							ValidateFunc: validation.StringInSlice([]string{"RSA"}, false),
+						},
+						"e": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "RSA Exponent",
+						},
+						"n": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "RSA Modulus",
+						},
+					},
+				},
+			},
 		}),
 	}
 }
@@ -295,7 +333,7 @@ func resourceAppOAuthCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
-	app := okta.NewOpenIdConnectApplication()
+	app := sdk.NewOpenIdConnectApplication()
 	err := fetchApp(d, m, app)
 
 	if app == nil {
@@ -334,6 +372,22 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 	// If this is ever changed omit it.
 	if d.Get("omit_secret").(bool) {
 		d.Set("client_secret", "")
+	}
+
+	if app.Settings.OauthClient.JWKS != nil {
+		jwks := app.Settings.OauthClient.JWKS.Keys
+		arr := make([]map[string]interface{}, len(jwks))
+		for i, jwk := range jwks {
+			arr[i] = map[string]interface{}{
+				"kty": jwk.Type,
+				"kid": jwk.ID,
+				"e":   jwk.Exponent,
+				"n":   jwk.Modulus,
+			}
+		}
+		if err = setNonPrimitives(d, map[string]interface{}{"jwks": arr}); err != nil {
+			return err
+		}
 	}
 
 	if err = syncGroupsAndUsers(app.Id, d, m); err != nil {
@@ -386,9 +440,9 @@ func resourceAppOAuthDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func buildAppOAuth(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApplication {
+func buildAppOAuth(d *schema.ResourceData, m interface{}) *sdk.OpenIdConnectApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
-	app := okta.NewOpenIdConnectApplication()
+	app := sdk.NewOpenIdConnectApplication()
 
 	// Need to a bool pointer, it appears the Okta SDK uses this as a way to avoid false being omitted.
 	keyRotation := d.Get("auto_key_rotation").(bool)
@@ -438,22 +492,38 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *okta.OpenIdConnectApp
 		app.Credentials.OauthClient.ClientId = cid.(string)
 	}
 
-	app.Settings = &okta.OpenIdConnectApplicationSettings{
-		OauthClient: &okta.OpenIdConnectApplicationSettingsClient{
-			ApplicationType:        appType,
-			ClientUri:              d.Get("client_uri").(string),
-			ConsentMethod:          d.Get("consent_method").(string),
-			GrantTypes:             grantTypes,
-			InitiateLoginUri:       d.Get("login_uri").(string),
-			LogoUri:                d.Get("logo_uri").(string),
-			PolicyUri:              d.Get("policy_uri").(string),
-			RedirectUris:           convertInterfaceToStringSetNullable(d.Get("redirect_uris")),
-			PostLogoutRedirectUris: convertInterfaceToStringSetNullable(d.Get("post_logout_redirect_uris")),
-			ResponseTypes:          responseTypes,
-			TosUri:                 d.Get("tos_uri").(string),
-			IssuerMode:             d.Get("issuer_mode").(string),
+	app.Settings = &sdk.OpenIdConnectApplicationSettings{
+		OauthClient: &sdk.OpenIdConnectApplicationSettingsClient{
+			OpenIdConnectApplicationSettingsClient: okta.OpenIdConnectApplicationSettingsClient{
+				ApplicationType:        appType,
+				ClientUri:              d.Get("client_uri").(string),
+				ConsentMethod:          d.Get("consent_method").(string),
+				GrantTypes:             grantTypes,
+				InitiateLoginUri:       d.Get("login_uri").(string),
+				LogoUri:                d.Get("logo_uri").(string),
+				PolicyUri:              d.Get("policy_uri").(string),
+				RedirectUris:           convertInterfaceToStringSetNullable(d.Get("redirect_uris")),
+				PostLogoutRedirectUris: convertInterfaceToStringSetNullable(d.Get("post_logout_redirect_uris")),
+				ResponseTypes:          responseTypes,
+				TosUri:                 d.Get("tos_uri").(string),
+				IssuerMode:             d.Get("issuer_mode").(string),
+			},
 		},
 	}
+	jwks := d.Get("jwks").([]interface{})
+	if len(jwks) > 0 {
+		keys := make([]*sdk.JWK, len(jwks))
+		for i := range jwks {
+			keys[i] = &sdk.JWK{
+				ID:       d.Get(fmt.Sprintf("jwks.%d.kid", i)).(string),
+				Type:     d.Get(fmt.Sprintf("jwks.%d.kty", i)).(string),
+				Exponent: d.Get(fmt.Sprintf("jwks.%d.e", i)).(string),
+				Modulus:  d.Get(fmt.Sprintf("jwks.%d.n", i)).(string),
+			}
+		}
+		app.Settings.OauthClient.JWKS = &sdk.JWKS{Keys: keys}
+	}
+
 	app.Visibility = buildVisibility(d)
 
 	if rawAttrs, ok := d.GetOk("profile"); ok {

@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/crewjam/saml"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func syncSamlIndexEndpointBinding(d *schema.ResourceData, services []saml.IndexedEndpoint) {

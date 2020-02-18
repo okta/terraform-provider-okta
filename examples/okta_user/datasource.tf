@@ -39,3 +39,7 @@ data okta_user test {
     value = "${okta_user.test.last_name}"
   }
 }
+
+data okta_user read_by_id {
+  user_id = "${okta_user.test.id}"
+}

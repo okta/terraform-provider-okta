@@ -2,8 +2,8 @@ package okta
 
 import (
 	"github.com/articulate/oktasdk-go/okta"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
 // Predefined second authentication factors. They must be activated in order to use them in MFA policies.
@@ -148,7 +148,7 @@ func statusMismatch(d *schema.ResourceData, factor *okta.Factor) bool {
 	status := d.Get("active").(bool)
 
 	// I miss ternary operators
-	if factor.Status == "ACTIVE" {
+	if factor != nil && factor.Status == "ACTIVE" {
 		return !status
 	}
 

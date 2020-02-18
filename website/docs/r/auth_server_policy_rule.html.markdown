@@ -48,7 +48,7 @@ The following arguments are supported:
 
 * `refresh_token_lifetime_minutes` - (Optional) Lifetime of refresh token.
 
-* `refresh_token_window_minutes"` - (Optional) Window in which a refresh token can be used. It can be a value between 10 and 2628000 (5 years).
+* `refresh_token_window_minutes` - (Optional) Window in which a refresh token can be used. It can be a value between 10 and 2628000 (5 years).
 
 * `inline_hook_id` - (Optional) The ID of the inline token to trigger.
 

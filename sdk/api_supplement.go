@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 
 	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/peterhellberg/link"
 )
 
 // ApiSupplement not all APIs are supported by okta-sdk-golang, this will act as a supplement to the Okta SDK
@@ -46,4 +48,25 @@ func (m *ApiSupplement) GetXml(url string) ([]byte, *http.Response, error) {
 	data, err := ioutil.ReadAll(res.Body)
 
 	return data, res, err
+}
+
+// GetAfterParam grabs after link from link headers if it exists
+func GetAfterParam(res *okta.Response) string {
+	if res == nil {
+		return ""
+	}
+
+	linkList := link.ParseHeader(res.Header)
+	for _, l := range linkList {
+		if l.Rel == "next" {
+			parsedURL, err := url.Parse(l.URI)
+			if err != nil {
+				continue
+			}
+			q := parsedURL.Query()
+			return q.Get("after")
+		}
+	}
+
+	return ""
 }

@@ -1,7 +1,7 @@
 package okta
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/terraform-providers/terraform-provider-okta/sdk"
 )
 
@@ -15,7 +15,10 @@ func resourceUserSchema() *schema.Resource {
 		Delete: resourceUserSchemaDelete,
 		Exists: resourceUserSchemaExists,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+				d.Set("index", d.Id())
+				return []*schema.ResourceData{d}, nil
+			},
 		},
 		Schema: userSchemaSchema,
 	}

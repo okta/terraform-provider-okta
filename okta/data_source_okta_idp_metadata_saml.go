@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/crewjam/saml"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceIdpMetadataSaml() *schema.Resource {

@@ -2,9 +2,11 @@ package okta
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"strings"
 
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/okta/okta-sdk-golang/okta"
 )
 
@@ -17,7 +19,26 @@ func resourceAppGroupAssignment() *schema.Resource {
 		Delete: resourceAppGroupAssignmentDelete,
 		Update: resourceAppGroupAssignmentUpdate,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+				parts := strings.Split(d.Id(), "/")
+				if len(parts) != 2 {
+					return nil, errors.New("Invalid resource import specifier. Use: terraform import <app_id>/<group_id>")
+				}
+
+				d.Set("app_id", parts[0])
+				d.Set("group_id", parts[1])
+
+				assignment, _, err := getOktaClientFromMetadata(m).Application.
+					GetApplicationGroupAssignment(parts[0], parts[1], nil)
+
+				if err != nil {
+					return nil, err
+				}
+
+				d.SetId(assignment.Id)
+
+				return []*schema.ResourceData{d}, nil
+			},
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -49,13 +70,17 @@ func resourceAppGroupAssignment() *schema.Resource {
 
 func resourceAppGroupAssignmentExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	client := getOktaClientFromMetadata(m)
-	g, _, err := client.Application.GetApplicationGroupAssignment(
+	_, resp, err := client.Application.GetApplicationGroupAssignment(
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
 		nil,
 	)
 
-	return g != nil, err
+	if is404(resp.StatusCode) {
+		return false, nil
+	}
+
+	return err == nil, err
 }
 
 func getAppGroupAssignment(d *schema.ResourceData) okta.ApplicationGroupAssignment {
@@ -101,7 +126,7 @@ func resourceAppGroupAssignmentUpdate(d *schema.ResourceData, m interface{}) err
 		return err
 	}
 
-	return resourceAppUserRead(d, m)
+	return resourceAppGroupAssignmentRead(d, m)
 }
 
 func resourceAppGroupAssignmentRead(d *schema.ResourceData, m interface{}) error {

@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 // Resource names, defined in place, used throughout the provider and tests
 const (
 	appAutoLogin           = "okta_app_auto_login"
 	appBookmark            = "okta_app_bookmark"
+	appBasicAuth           = "okta_app_basic_auth"
 	appGroupAssignment     = "okta_app_group_assignment"
 	appUser                = "okta_app_user"
 	appOAuth               = "okta_app_oauth"
@@ -40,6 +41,7 @@ const (
 	inlineHook             = "okta_inline_hook"
 	networkZone            = "okta_network_zone"
 	oktaGroup              = "okta_group"
+	oktaProfileMapping     = "okta_profile_mapping"
 	oktaUser               = "okta_user"
 	policyMfa              = "okta_policy_mfa"
 	policyPassword         = "okta_policy_password"
@@ -116,6 +118,7 @@ func Provider() terraform.ResourceProvider {
 		ResourcesMap: map[string]*schema.Resource{
 			appAutoLogin:           resourceAppAutoLogin(),
 			appBookmark:            resourceAppBookmark(),
+			appBasicAuth:           resourceAppBasicAuth(),
 			appGroupAssignment:     resourceAppGroupAssignment(),
 			appUser:                resourceAppUser(),
 			appOAuth:               resourceAppOAuth(),
@@ -141,6 +144,7 @@ func Provider() terraform.ResourceProvider {
 			inlineHook:             resourceInlineHook(),
 			networkZone:            resourceNetworkZone(),
 			oktaGroup:              resourceGroup(),
+			oktaProfileMapping:     resourceOktaProfileMapping(),
 			oktaUser:               resourceUser(),
 			policyMfa:              resourcePolicyMfa(),
 			policyPassword:         resourcePolicyPassword(),
@@ -175,19 +179,20 @@ func Provider() terraform.ResourceProvider {
 			"okta_mfa_policy_rule":           deprecateIncorrectNaming(resourcePolicyMfaRule(), policyRuleMfa),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"okta_app":               dataSourceApp(),
-			"okta_app_saml":          dataSourceAppSaml(),
-			"okta_app_metadata_saml": dataSourceAppMetadataSaml(),
-			"okta_default_policies":  deprecatedPolicies,
-			"okta_default_policy":    dataSourceDefaultPolicies(),
-			"okta_everyone_group":    dataSourceEveryoneGroup(),
-			"okta_group":             dataSourceGroup(),
-			"okta_idp_metadata_saml": dataSourceIdpMetadataSaml(),
-			"okta_idp_saml":          dataSourceIdpSaml(),
-			"okta_policy":            dataSourcePolicy(),
-			"okta_user":              dataSourceUser(),
-			"okta_users":             dataSourceUsers(),
-			authServer:               dataSourceAuthServer(),
+			"okta_app":                         dataSourceApp(),
+			"okta_app_saml":                    dataSourceAppSaml(),
+			"okta_app_metadata_saml":           dataSourceAppMetadataSaml(),
+			"okta_default_policies":            deprecatedPolicies,
+			"okta_default_policy":              dataSourceDefaultPolicies(),
+			"okta_everyone_group":              dataSourceEveryoneGroup(),
+			"okta_group":                       dataSourceGroup(),
+			"okta_idp_metadata_saml":           dataSourceIdpMetadataSaml(),
+			"okta_idp_saml":                    dataSourceIdpSaml(),
+			"okta_policy":                      dataSourcePolicy(),
+			"okta_user_profile_mapping_source": dataSourceUserProfileMappingSource(),
+			"okta_user":                        dataSourceUser(),
+			"okta_users":                       dataSourceUsers(),
+			authServer:                         dataSourceAuthServer(),
 		},
 
 		ConfigureFunc: providerConfigure,

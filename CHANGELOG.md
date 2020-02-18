@@ -1,4 +1,3 @@
-## 3.0.1 (Unreleased)
 ## 3.0.0 (October 16, 2019)
 
 FEATURES:
@@ -226,3 +225,64 @@ BUG FIXES:
 
 * Ensure we safely sync auth server properties. ([#299](https://github.com/terraform-providers/terraform-provider-cherryservers/issues/299))
 * MANUAL rotation mode can only be set on an auth server on update. Ensure we run update after create for that scenario. ([#287](https://github.com/terraform-providers/terraform-provider-cherryservers/issues/287))
+
+## 3.0.30
+
+ENHANCEMENT:
+
+* Update to new separate Terraform SDK [GH-307]
+
+## 3.0.31
+
+BUG FIXES:
+
+* Ensure `okta_app_group_assignment` resource syncs using the right read function. [GH-307]
+
+## 3.0.32
+
+BUG FIXES:
+
+* Ensure `okta_app_group_assignment` and `okta_app_user` resources properly take multiple ids on the import functions. [GH-307]
+* Ensure `okta_user` does not error on 404 [GH-313]
+
+## 3.0.33
+
+FEATURES:
+
+* **New Resource:** `okta_profile_mapping` [GH-246]
+* **New Resource:** `okta_app_basic_auth` [GH-329]
+
+## 3.0.34
+
+BUG FIXES:
+
+* Policy values could not be set to 0. Doing so resulted in the SDK omitting them, resulting in Okta resetting the values to default.
+
+## 3.0.35
+
+ENHANCEMENT:
+
+* Require target_id on `okta_profile_mapping` to avoid ambiguity
+
+FEATURES:
+
+* **New Data Source:** `okta_user_profile_mapping_source` [GH-340]
+
+## 3.0.36
+
+BUG FIXES
+
+* Schema merging helper function was mutating input schema causing side effects when used in a particular way. Used shallow copying to avoid this side effect. [GH-338] 
+* Ensure response is not nil when checking status code [GH-307]
+
+## 3.0.37
+
+BUG FIXES
+
+* Ensure `index` is sync'd on import to avoid recreation.
+
+## 3.0.38
+
+ENHANCEMENT:
+
+* Support `password`, `recovery_answer`, and `recovery_question` as attributes on the `okta_user` resource.
