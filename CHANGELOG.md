@@ -1,3 +1,9 @@
+## 3.0.1 (Unreleased)
+
+RELEASE:
+
+* First release under terraform-providers organization with binary published to releases.hashicorp.com
+
 ## 3.0.0 (October 16, 2019)
 
 FEATURES:
