@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/terraform-providers/terraform-provider-okta/sdk"
@@ -306,6 +307,7 @@ func flattenOneOf(oneOf []*sdk.UserSchemaEnum) []interface{} {
 }
 
 func getUserSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
+	fmt.Println(d)
 	return &sdk.UserSubSchema{
 		Title:       d.Get("title").(string),
 		Type:        d.Get("type").(string),
