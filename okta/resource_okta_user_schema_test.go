@@ -34,6 +34,7 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 	mgr := newFixtureManager(userSchema)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updated := mgr.GetFixtures("updated.tf", ri, t)
+	unique := mgr.GetFixtures("unique.tf", ri, t)
 	resourceName := buildResourceFQN(userSchema, ri)
 
 	resource.Test(t, resource.TestCase{
@@ -79,6 +80,22 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enum.2", "L"),
 					resource.TestCheckResourceAttr(resourceName, "enum.3", "XXL"),
 					resource.TestCheckResourceAttr(resourceName, "one_of.#", "4"),
+				),
+			},
+			{
+				Config: unique,
+				Check: resource.ComposeTestCheckFunc(
+					testOktaUserSchemasExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test setting unique attritube to UNIQUE_VALIDATED"),
+					resource.TestCheckResourceAttr(resourceName, "type", "string"),
+					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test setting unique attritube to UNIQUE_VALIDATED"),
+					resource.TestCheckResourceAttr(resourceName, "required", "true"),
+					resource.TestCheckResourceAttr(resourceName, "min_length", "1"),
+					resource.TestCheckResourceAttr(resourceName, "max_length", "70"),
+					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_WRITE"),
+					resource.TestCheckResourceAttr(resourceName, "master", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "unique", "UNIQUE_VALIDATED"),
 				),
 			},
 			{
