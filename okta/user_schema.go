@@ -307,6 +307,7 @@ func flattenOneOf(oneOf []*sdk.UserSchemaEnum) []interface{} {
 }
 
 func getUserSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
+	fmt.Println("DO I GET CALLED??????????")
 	fmt.Println(d)
 	return &sdk.UserSubSchema{
 		Title:       d.Get("title").(string),
