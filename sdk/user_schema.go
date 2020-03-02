@@ -37,13 +37,6 @@ func (m *ApiSupplement) UpdateBaseUserSchemaProperty(id string, schema *UserSubS
 }
 
 func (m *ApiSupplement) UpdateUserSchemaProperty(schema *UserSchema) (*UserSchema, *okta.Response, error) {
-	// fmt.Println("UpdateUserSchemaProperty")
-	// b, err := json.Marshal(schema)
-	// if err != nil {
-	// 	fmt.Println(err)
-
-	// }
-	// fmt.Println(string(b))
 	req, err := m.RequestExecutor.NewRequest("POST", schemaUrl, schema)
 	if err != nil {
 		return nil, nil, err
