@@ -1,4 +1,9 @@
 ## 3.1.1 (Unreleased)
+
+FEATURES:
+
+* **New Resource:** Add `okta_event_hook` resource
+
 ## 3.1.0 (February 19, 2020)
 
 RELEASE:
