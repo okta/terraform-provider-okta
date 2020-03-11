@@ -3,7 +3,7 @@ module github.com/terraform-providers/terraform-provider-okta
 go 1.12
 
 require (
-	github.com/articulate/oktasdk-go v1.0.1
+	github.com/articulate/oktasdk-go v1.0.3-0.20200311150058-f2661b7a273f
 	github.com/beevik/etree v1.1.0 // indirect
 	github.com/bflad/tfproviderlint v0.4.0
 	github.com/client9/misspell v0.3.4

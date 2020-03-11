@@ -126,6 +126,12 @@ func resourcePolicyPassword() *schema.Resource {
 				Description: "If a user should be informed when their account is locked.",
 				Default:     false,
 			},
+			"password_lockout_notification_channels": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "Notification channels to use to notify a user when their account has been locked.",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"question_min_length": {
 				Type:        schema.TypeInt,
 				Optional:    true,
@@ -219,6 +225,9 @@ func resourcePolicyPasswordRead(d *schema.ResourceData, m interface{}) error {
 		d.Set("password_max_lockout_attempts", policy.Settings.Password.Lockout.MaxAttempts)
 		d.Set("password_auto_unlock_minutes", policy.Settings.Password.Lockout.AutoUnlockMinutes)
 		d.Set("password_show_lockout_failures", policy.Settings.Password.Lockout.ShowLockoutFailures)
+		if err := d.Set("password_lockout_notification_channels", convertStringSetToInterface(policy.Settings.Password.Lockout.UserLockoutNotificationChannels)); err != nil {
+			return fmt.Errorf("Error setting notification channels for resource %s: %s", d.Id(), err)
+		}
 		d.Set("question_min_length", policy.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLength)
 		d.Set("recovery_email_token", policy.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutes)
 		d.Set("sms_recovery", policy.Settings.Recovery.Factors.OktaSms.Status)
@@ -328,6 +337,7 @@ func buildPasswordPolicy(d *schema.ResourceData, m interface{}) *articulateOkta.
 	template.Settings.Password.Lockout.MaxAttempts = intPtr(d.Get("password_max_lockout_attempts").(int))
 	template.Settings.Password.Lockout.AutoUnlockMinutes = intPtr(d.Get("password_auto_unlock_minutes").(int))
 	template.Settings.Password.Lockout.ShowLockoutFailures = d.Get("password_show_lockout_failures").(bool)
+	template.Settings.Password.Lockout.UserLockoutNotificationChannels = convertInterfaceToStringSet(d.Get("password_lockout_notification_channels"))
 	template.Settings.Recovery.Factors.RecoveryQuestion.Status = d.Get("question_recovery").(string)
 	template.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLength = intPtr(d.Get("question_min_length").(int))
 	template.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutes = d.Get("recovery_email_token").(int)

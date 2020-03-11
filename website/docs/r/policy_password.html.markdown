@@ -72,6 +72,8 @@ The following arguments are supported:
 
 * `password_show_lockout_failures` - (Optional) If a user should be informed when their account is locked.
 
+* `password_lockout_notification_channels` - (Optional) Notification channels to use to notify a user when their account has been locked.
+
 * `question_min_length` - (Optional) Min length of the password recovery question answer.
 
 * `email_recovery` - (Optional) Enable or disable email password recovery: ACTIVE or INACTIVE.
