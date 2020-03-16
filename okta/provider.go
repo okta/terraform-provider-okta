@@ -51,6 +51,7 @@ const (
 	policyRuleSignOn       = "okta_policy_rule_signon"
 	policySignOn           = "okta_policy_signon"
 	templateEmail          = "okta_template_email"
+	templateSms            = "okta_template_sms"
 	trustedOrigin          = "okta_trusted_origin"
 	userBaseSchema         = "okta_user_base_schema"
 	userSchema             = "okta_user_schema"
@@ -154,6 +155,7 @@ func Provider() terraform.ResourceProvider {
 			policyRuleSignOn:       resourcePolicySignonRule(),
 			policySignOn:           resourcePolicySignon(),
 			templateEmail:          resourceTemplateEmail(),
+			templateSms:            resourceTemplateSms(),
 			trustedOrigin:          resourceTrustedOrigin(),
 			userSchema:             resourceUserSchema(),
 			userBaseSchema:         resourceUserBaseSchema(),
