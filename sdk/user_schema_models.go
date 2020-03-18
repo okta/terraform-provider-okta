@@ -58,6 +58,7 @@ type (
 		Title        string                  `json:"title,omitempty"`
 		Type         string                  `json:"type,omitempty"`
 		Union        string                  `json:"union,omitempty"`
+		Unique       string                  `json:"unique,omitempty"`
 		ExternalName string                  `json:"externalName,omitempty"`
 	}
 

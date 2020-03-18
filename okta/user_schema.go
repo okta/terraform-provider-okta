@@ -137,6 +137,13 @@ var (
 			Description: "Subschema external name",
 			ForceNew:    true,
 		},
+		"unique": &schema.Schema{
+			Type:          schema.TypeString,
+			Optional:      true,
+			Description:   "Subschema unique restriction",
+			ValidateFunc:  validation.StringInSlice([]string{"UNIQUE_VALIDATED", "NOT_UNIQUE"}, false),
+			ConflictsWith: []string{"one_of", "enum", "array_type"},
+		},
 	}
 
 	userBaseSchemaSchema = map[string]*schema.Schema{
@@ -197,6 +204,7 @@ func syncUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) error 
 	d.Set("max_length", subschema.MaxLength)
 	d.Set("scope", subschema.Scope)
 	d.Set("external_name", subschema.ExternalName)
+	d.Set("unique", subschema.Unique)
 
 	if subschema.Items != nil {
 		d.Set("array_type", subschema.Items.Type)
@@ -317,5 +325,6 @@ func getUserSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
 		MaxLength:    getNullableInt(d, "max_length"),
 		OneOf:        getNullableOneOf(d, "one_of"),
 		ExternalName: d.Get("external_name").(string),
+		Unique:       d.Get("unique").(string),
 	}
 }
