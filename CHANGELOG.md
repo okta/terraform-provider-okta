@@ -1,4 +1,11 @@
-## 3.1.1 (Unreleased)
+## 3.1.2 (Unreleased)
+
+## 3.1.1 (March 17, 2020)
+
+ENHANCEMENTS:
+
+* Add unique property to UserSchema. [#12](https://github.com/terraform-providers/terraform-provider-okta/pull/12) Thanks, [@gusChan](https://github.com/gusChan)! 
+
 ## 3.1.0 (February 19, 2020)
 
 RELEASE:
