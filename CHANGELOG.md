@@ -1,4 +1,4 @@
-## 3.1.1 (Unreleased)
+## 3.1.1 (March 18, 2020)
 
 ENHANCEMENTS:
 
