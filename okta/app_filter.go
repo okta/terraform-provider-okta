@@ -41,13 +41,14 @@ func (a *appFilters) String() string {
 
 func listApps(m interface{}, filters *appFilters) ([]*appID, error) {
 	result := &searchResults{Apps: []*appID{}}
-	qp := &query.Params{Limit: 200, Filter: filters.ApiFilter}
+	qp := &query.Params{Limit: 200, Filter: filters.ApiFilter, Q: filters.getQ()}
+
 	return result.Apps, collectApps(getSupplementFromMetadata(m).RequestExecutor, filters, result, qp)
 }
 
 // Recursively list apps until no next links are returned
 func collectApps(reqExe *okta.RequestExecutor, filters *appFilters, results *searchResults, qp *query.Params) error {
-	req, err := reqExe.NewRequest("GET", fmt.Sprintf("/api/v1/apps?%s", qp.String()), nil)
+	req, err := reqExe.NewRequest("GET", fmt.Sprintf("/api/v1/apps%s", qp.String()), nil)
 	if err != nil {
 		return err
 	}
@@ -59,7 +60,8 @@ func collectApps(reqExe *okta.RequestExecutor, filters *appFilters, results *sea
 
 	results.Apps = append(results.Apps, filterApp(appList, filters)...)
 
-	if after := sdk.GetAfterParam(res); after != "" && !filters.shouldShortCircuit(results.Apps) {
+	// Never attempt to request more if the same "after" link is returned
+	if after := sdk.GetAfterParam(res); after != "" && !filters.shouldShortCircuit(results.Apps) && after != qp.After {
 		qp.After = after
 		return collectApps(reqExe, filters, results, qp)
 	}
@@ -85,6 +87,15 @@ func filterApp(appList []*appID, filter *appFilters) []*appID {
 
 	}
 	return filteredList
+}
+
+// Grabs application q query param
+func (f *appFilters) getQ() string {
+	if f.Label != "" {
+		return f.Label
+	}
+
+	return ""
 }
 
 func (f *appFilters) shouldShortCircuit(appList []*appID) bool {
