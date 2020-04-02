@@ -1,4 +1,14 @@
-## 3.2.0 (Unreleased)
+## 3.3.0 (Unreleased)
+
+## 3.2.0 (April 2, 2020)
+
+BUG FIXES:
+
+* Documentation, `id` is an output of `app_oauth`. [#98]() Thanks, [beyondbill](https://github.com/beyondbill)!
+
+ENHANCEMENTS:
+
+* Improve app filtering and update Terraform SDK. [#97](https://github.com/terraform-providers/terraform-provider-okta/pull/97) Thanks, [quantumew](https://github.com/quantumew)! :tada:
 ## 3.1.1 (March 18, 2020)
 
 ENHANCEMENTS:
