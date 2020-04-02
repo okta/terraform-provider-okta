@@ -80,6 +80,8 @@ The following arguments are supported:
 
 ## Attributes Reference
 
+* `id` - ID of the application.
+
 * `name` - Name assigned to the application by Okta.
 
 * `sign_on_mode` - Sign on mode of application.
