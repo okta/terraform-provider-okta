@@ -1,6 +1,4 @@
-## 3.3.0 (Unreleased)
-
-## 3.2.0 (April 2, 2020)
+## 3.2.0 (Unreleased)
 
 BUG FIXES:
 
