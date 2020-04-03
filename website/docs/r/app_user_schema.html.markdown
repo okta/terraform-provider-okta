@@ -68,6 +68,8 @@ The following arguments are supported:
 
 * `external_name` - (Optional) External name of the user schema property.
 
+* `external_namespace` - (Optional) External namespace of the user schema property.
+
 ## Attributes Reference
 
 * `app_id` - ID of the application the user property is associated with.
