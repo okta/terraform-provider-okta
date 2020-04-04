@@ -186,6 +186,7 @@ func Provider() terraform.ResourceProvider {
 			"okta_default_policy":              dataSourceDefaultPolicies(),
 			"okta_everyone_group":              dataSourceEveryoneGroup(),
 			"okta_group":                       dataSourceGroup(),
+			"okta_groups":                      dataSourceGroups(),
 			"okta_idp_metadata_saml":           dataSourceIdpMetadataSaml(),
 			"okta_idp_saml":                    dataSourceIdpSaml(),
 			"okta_policy":                      dataSourcePolicy(),
