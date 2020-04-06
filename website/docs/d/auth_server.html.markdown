@@ -42,6 +42,6 @@ data "okta_auth_server" "example" {
 
  * `status` - the activation status of the authorization server.
 
- * `issuer` - The complete URL for a Custom Authorization Server. This becomes the `iss` claim in an access token.
+ * `issuer` - The complete URL of the authorization server. This becomes the `iss` claim in an access token.
 
  * `issuer_mode` - Can be set to `"CUSTOM_URL"` or `"ORG_URL"`
