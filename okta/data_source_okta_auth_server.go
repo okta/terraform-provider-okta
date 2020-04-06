@@ -45,6 +45,15 @@ func dataSourceAuthServer() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"issuer": &schema.Schema{
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The complete URL the authorization server. This becomes the `iss` claim in an access token.",
+			},
+			"issuer_mode": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -67,6 +76,8 @@ func dataSourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("credentials_next_rotation", authServer.Credentials.Signing.NextRotation.String())
 	d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated.String())
 	d.Set("status", authServer.Status)
+	d.Set("issuer", authServer.Issuer)
+	d.Set("issuer_mode", authServer.IssuerMode)
 
 	return nil
 }
