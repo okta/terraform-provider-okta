@@ -48,7 +48,7 @@ func dataSourceAuthServer() *schema.Resource {
 			"issuer": &schema.Schema{
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "The complete URL the authorization server. This becomes the `iss` claim in an access token.",
+				Description: "The complete URL of the authorization server. This becomes the `iss` claim in an access token.",
 			},
 			"issuer_mode": &schema.Schema{
 				Type:     schema.TypeString,
