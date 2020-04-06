@@ -10,6 +10,7 @@ import (
 func TestAccOktaDataSourceGroups_read(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager("okta_groups")
+	groups := mgr.GetFixtures("groups.tf", ri, t)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
@@ -18,6 +19,13 @@ func TestAccOktaDataSourceGroups_read(t *testing.T) {
 		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
+			{
+				Config: groups,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet("okta_group.test_1", "id"),
+					resource.TestCheckResourceAttrSet("okta_group.test_2", "id"),
+				),
+			},
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
