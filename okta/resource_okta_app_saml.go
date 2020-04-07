@@ -68,7 +68,6 @@ func resourceAppSaml() *schema.Resource {
 			"key_years_valid": {
 				Type:         schema.TypeInt,
 				Optional:     true,
-				Default:      1,
 				ValidateFunc: validation.IntAtLeast(1),
 				Description:  "Number of years the certificate is valid.",
 			},
