@@ -42,6 +42,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 						resourceName,
 						"events",
 						eventSet(&sdk.Events{
+							Type:  "EVENT_TYPE",
 							Items: []string{"user.lifecycle.create", "user.lifecycle.delete.initiated"},
 						}),
 					),
@@ -77,6 +78,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 						"events",
 						eventSet(
 							&sdk.Events{
+								Type:  "EVENT_TYPE",
 								Items: []string{
 									"user.lifecycle.create",
 									"user.lifecycle.delete.initiated",
@@ -102,6 +104,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 						resourceName,
 						"events",
 						eventSet(&sdk.Events{
+							Type:  "EVENT_TYPE",
 							Items: []string{"user.lifecycle.create", "user.lifecycle.delete.initiated"},
 						}),
 					),

@@ -169,7 +169,7 @@ func buildEventHook(d *schema.ResourceData, m interface{}) *sdk.EventHook {
 	return &sdk.EventHook{
 		Name:    d.Get("name").(string),
 		Status:  d.Get("status").(string),
-		Events:  &sdk.Events{Items: events},
+		Events:  &sdk.Events{Type: "EVENT_TYPE", Items: events},
 		Channel: buildEventChannel(d, m),
 	}
 }

@@ -33,6 +33,7 @@ type (
 	}
 
 	Events struct {
+		Type  string   `json:"type"`
 		Items []string `json:"items"`
 	}
 
@@ -53,16 +54,6 @@ type (
 		Version string   `json:"version,omitempty"`
 	}
 )
-
-func (e *Events) MarshalJSON() ([]byte, error) {
-	return json.Marshal(struct {
-		Type  string   `json:"type"`
-		Items []string `json:"items"`
-	}{
-		Type:  "EVENT_TYPE",
-		Items: e.Items,
-	})
-}
 
 func activateHook(hookType string, id string, executor *okta.RequestExecutor) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/%sHooks/%s/lifecycle/activate", hookType, id)
