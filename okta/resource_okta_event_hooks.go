@@ -125,8 +125,8 @@ func resourceEventHookRead(d *schema.ResourceData, m interface{}) error {
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"channel": flattenEventHookChannel(hook.Channel),
-		"headers": flattenHeaders(hook.Channel),
-		"auth":    flattenAuth(d, hook.Channel),
+		"headers": flattenEventHookHeaders(hook.Channel),
+		"auth":    flattenEventHookAuth(d, hook.Channel),
 	})
 }
 
@@ -169,37 +169,37 @@ func buildEventHook(d *schema.ResourceData, m interface{}) *sdk.EventHook {
 	return &sdk.EventHook{
 		Name:    d.Get("name").(string),
 		Status:  d.Get("status").(string),
-		Events:  &sdk.Events{Type: "EVENT_TYPE", Items: events},
+		Events:  &sdk.EventHookEvents{Type: "EVENT_TYPE", Items: events},
 		Channel: buildEventChannel(d, m),
 	}
 }
 
-func buildEventChannel(d *schema.ResourceData, m interface{}) *sdk.Channel {
+func buildEventChannel(d *schema.ResourceData, m interface{}) *sdk.EventHookChannel {
 	if _, ok := d.GetOk("channel"); !ok {
 		return nil
 	}
 
-	headerList := []*sdk.Header{}
+	headerList := []*sdk.EventHookHeader{}
 	if raw, ok := d.GetOk("headers"); ok {
 		for _, header := range raw.(*schema.Set).List() {
 			h, ok := header.(map[string]interface{})
 			if ok {
-				headerList = append(headerList, &sdk.Header{Key: h["key"].(string), Value: h["value"].(string)})
+				headerList = append(headerList, &sdk.EventHookHeader{Key: h["key"].(string), Value: h["value"].(string)})
 			}
 		}
 	}
 
-	var auth *sdk.AuthScheme
+	var auth *sdk.EventHookAuthScheme
 	if _, ok := d.GetOk("auth.key"); ok {
-		auth = &sdk.AuthScheme{
+		auth = &sdk.EventHookAuthScheme{
 			Key:   getStringValue(d, "auth.key"),
 			Type:  getStringValue(d, "auth.type"),
 			Value: getStringValue(d, "auth.value"),
 		}
 	}
 
-	return &sdk.Channel{
-		Config: &sdk.HookConfig{
+	return &sdk.EventHookChannel{
+		Config: &sdk.EventHookChannelConfig{
 			URI:        getStringValue(d, "channel.uri"),
 			AuthScheme: auth,
 			Headers:    headerList,
@@ -209,7 +209,21 @@ func buildEventChannel(d *schema.ResourceData, m interface{}) *sdk.Channel {
 	}
 }
 
-func flattenEventHookChannel(c *sdk.Channel) map[string]interface{} {
+func flattenEventHookAuth(d *schema.ResourceData, c *sdk.EventHookChannel) map[string]interface{} {
+	auth := map[string]interface{}{}
+
+	if c.Config.AuthScheme != nil {
+		auth = map[string]interface{}{
+			"key":  c.Config.AuthScheme.Key,
+			"type": c.Config.AuthScheme.Type,
+			// Read only
+			"value": getStringValue(d, "auth.value"),
+		}
+	}
+	return auth
+}
+
+func flattenEventHookChannel(c *sdk.EventHookChannel) map[string]interface{} {
 	return map[string]interface{}{
 		"type":    c.Type,
 		"version": c.Version,
@@ -217,7 +231,19 @@ func flattenEventHookChannel(c *sdk.Channel) map[string]interface{} {
 	}
 }
 
-func eventSet(e *sdk.Events) *schema.Set {
+func flattenEventHookHeaders(c *sdk.EventHookChannel) *schema.Set {
+	headers := make([]interface{}, len(c.Config.Headers))
+	for i, header := range c.Config.Headers {
+		headers[i] = map[string]interface{}{
+			"key":   header.Key,
+			"value": header.Value,
+		}
+	}
+
+	return schema.NewSet(schema.HashResource(headerSchema), headers)
+}
+
+func eventSet(e *sdk.EventHookEvents) *schema.Set {
 	events := make([]interface{}, len(e.Items))
 	for i, event := range e.Items {
 		events[i] = event

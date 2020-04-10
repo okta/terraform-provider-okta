@@ -41,7 +41,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(&sdk.Events{
+						eventSet(&sdk.EventHookEvents{
 							Type:  "EVENT_TYPE",
 							Items: []string{"user.lifecycle.create", "user.lifecycle.delete.initiated"},
 						}),
@@ -62,12 +62,12 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"headers",
-						testMakeHeadersSet([]sdk.Header{
-							sdk.Header{
+						testMakeEventHookHeadersSet([]sdk.EventHookHeader{
+							sdk.EventHookHeader{
 								Key:   "x-test-header",
 								Value: "test stuff",
 							},
-							sdk.Header{
+							sdk.EventHookHeader{
 								Key:   "x-another-header",
 								Value: "more test stuff",
 							},
@@ -77,8 +77,8 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 						resourceName,
 						"events",
 						eventSet(
-							&sdk.Events{
-								Type:  "EVENT_TYPE",
+							&sdk.EventHookEvents{
+								Type: "EVENT_TYPE",
 								Items: []string{
 									"user.lifecycle.create",
 									"user.lifecycle.delete.initiated",
@@ -103,7 +103,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(&sdk.Events{
+						eventSet(&sdk.EventHookEvents{
 							Type:  "EVENT_TYPE",
 							Items: []string{"user.lifecycle.create", "user.lifecycle.delete.initiated"},
 						}),
@@ -116,10 +116,13 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 
 func eventHookExists(id string) (bool, error) {
 	_, res, err := getSupplementFromMetadata(testAccProvider.Meta()).GetEventHook(id)
-	return err == nil && res.StatusCode != http.StatusNotFound, err
+	if err != nil && res.StatusCode != http.StatusNotFound {
+		return false, err
+	}
+	return res.StatusCode != http.StatusNotFound, nil
 }
 
-func testMakeHeadersSet(headers []sdk.Header) *schema.Set {
+func testMakeEventHookHeadersSet(headers []sdk.EventHookHeader) *schema.Set {
 	h := make([]interface{}, len(headers))
 	for i, header := range headers {
 		h[i] = map[string]interface{}{
