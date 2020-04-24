@@ -13,6 +13,10 @@ import (
 )
 
 var userProfileDataSchema = map[string]*schema.Schema{
+	"id": &schema.Schema {
+		Type: schema.TypeString,
+		Computed: true,
+	},
 	"admin_roles": &schema.Schema{
 		Type:     schema.TypeSet,
 		Computed: true,
@@ -427,6 +431,7 @@ func flattenUser(u *okta.User, d *schema.ResourceData) (map[string]interface{}, 
 	if err != nil {
 		return nil, fmt.Errorf("Failed to load custom_attributes to JSON")
 	}
+	attrs["id"] = u.Id
 	attrs["custom_profile_attributes"] = string(data)
 
 	return attrs, nil
