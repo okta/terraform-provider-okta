@@ -13,8 +13,8 @@ import (
 )
 
 var userProfileDataSchema = map[string]*schema.Schema{
-	"id": &schema.Schema {
-		Type: schema.TypeString,
+	"id": &schema.Schema{
+		Type:     schema.TypeString,
 		Computed: true,
 	},
 	"admin_roles": &schema.Schema{
