@@ -111,6 +111,12 @@ func TestAccAppOauth_serviceNative(t *testing.T) {
 
 // Tests creation of service app and updates it to turn on federated broker
 func TestAccAppOauth_federationBroker(t *testing.T) {
+	// TODO: This is an "Early Access Feature" and needs to be enabled by Okta
+	//       Skipping for now assuming that the okta account doesn't have this feature enabled.
+	//       If this feature is enabled or Okta releases this to all this test should be enabled.
+	//       SEE https://help.okta.com/en/prod/Content/Topics/Apps/Apps_Apps_Page.htm#Enable
+	t.Skip("This is an 'Early Access Feature' and needs to be enabled by Okta, skipping this test as it fails when this feature is not available")
+
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appOAuth)
 	config := mgr.GetFixtures("federation_broker_off.tf", ri, t)
