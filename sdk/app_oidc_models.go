@@ -13,7 +13,7 @@ type (
 	OpenIdConnectApplicationSettings struct {
 		okta.OpenIdConnectApplicationSettingsClient
 		OauthClient        *OpenIdConnectApplicationSettingsClient `json:"oauthClient,omitempty"`
-		ImplicitAssignment *bool                                   `json:"implicit_assignment",omitempty`
+		ImplicitAssignment *bool                                   `json:"implicitAssignment",omitempty`
 	}
 
 	OpenIdConnectApplicationSettingsClient struct {
