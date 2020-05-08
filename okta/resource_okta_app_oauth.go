@@ -328,10 +328,15 @@ func resourceAppOAuthCreate(d *schema.ResourceData, m interface{}) error {
 		// Needs to be set immediately, not provided again after this
 		d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
 	}
-	err = handleAppGroupsAndUsers(app.Id, d, m)
 
-	if err != nil {
-		return err
+	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
+	// So Skip setting assignments while this is on
+	if !d.Get("implicit_assignment").(bool) {
+		err = handleAppGroupsAndUsers(app.Id, d, m)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	return resourceAppOAuthRead(d, m)
@@ -396,9 +401,14 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 		}
 	}
 
-	if err = syncGroupsAndUsers(app.Id, d, m); err != nil {
-		return err
+	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
+	// So Skip reading the assignments while this is on
+	if !d.Get("implicit_assignment").(bool) {
+		if err = syncGroupsAndUsers(app.Id, d, m); err != nil {
+			return err
+		}
 	}
+
 	aggMap := map[string]interface{}{
 		"redirect_uris":             convertStringSetToInterface(app.Settings.OauthClient.RedirectUris),
 		"response_types":            convertStringSetToInterface(app.Settings.OauthClient.ResponseTypes),
@@ -425,8 +435,12 @@ func resourceAppOAuthUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	if err := handleAppGroupsAndUsers(app.Id, d, m); err != nil {
-		return err
+	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
+	// So Skip setting assignments while this is on
+	if !d.Get("implicit_assignment").(bool) {
+		if err := handleAppGroupsAndUsers(app.Id, d, m); err != nil {
+			return err
+		}
 	}
 
 	return resourceAppOAuthRead(d, m)
