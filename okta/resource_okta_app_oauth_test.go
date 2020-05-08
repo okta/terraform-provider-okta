@@ -109,6 +109,43 @@ func TestAccAppOauth_serviceNative(t *testing.T) {
 	})
 }
 
+// Tests creation of service app and updates it to turn on federated broker
+func TestAccAppOauth_federationBroker(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appOAuth)
+	config := mgr.GetFixtures("federation_broker_off.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("federation_broker_on.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", appOAuth)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "type", "web"),
+					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "false"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "type", "web"),
+					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "true"),
+				),
+			},
+		},
+	})
+}
+
 // Tests properly errors on conditional requirements.
 func TestAccAppOauth_badGrantTypes(t *testing.T) {
 	ri := acctest.RandInt()
