@@ -75,7 +75,6 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "password_auto_unlock_minutes", "2"),
 					resource.TestCheckResourceAttr(resourceName, "password_show_lockout_failures", "true"),
 					resource.TestCheckResourceAttr(resourceName, "password_lockout_notification_channels.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "password_lockout_notification_channels.4279289534", "EMAIL"),
 					resource.TestCheckResourceAttr(resourceName, "question_min_length", "10"),
 					resource.TestCheckResourceAttr(resourceName, "recovery_email_token", "20160"),
 					resource.TestCheckResourceAttr(resourceName, "sms_recovery", "ACTIVE"),
