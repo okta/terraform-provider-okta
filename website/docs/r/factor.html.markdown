@@ -16,7 +16,7 @@ This resource allows you to manage Okta MFA methods.
 
 ```hcl
 resource "okta_factor" "example" {
-  provider = "google_otp"
+  provider_id = "google_otp"
 }
 ```
 
@@ -24,10 +24,10 @@ resource "okta_factor" "example" {
 
 The following arguments are supported:
 
-* `provider` - (Required) The MFA provider name.
+* `provider_id` - (Required) The MFA provider name.
 
 * `active` - (Optional) Whether or not to activate the provider, by default it is set to `true`.
 
 ## Attributes Reference
 
-* `provider` - MFA provider name.
+* `provider_id` - MFA provider name.
