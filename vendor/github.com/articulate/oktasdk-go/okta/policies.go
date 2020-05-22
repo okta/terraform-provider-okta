@@ -100,9 +100,10 @@ type Password struct {
 		HistoryCount   *int `json:"historyCount,omitempty"`
 	} `json:"age,omitempty"`
 	Lockout struct {
-		MaxAttempts         *int `json:"maxAttempts,omitempty"`
-		AutoUnlockMinutes   *int `json:"autoUnlockMinutes,omitempty"`
-		ShowLockoutFailures bool `json:"showLockoutFailures,omitempty"`
+		MaxAttempts                     *int     `json:"maxAttempts,omitempty"`
+		AutoUnlockMinutes               *int     `json:"autoUnlockMinutes,omitempty"`
+		ShowLockoutFailures             bool     `json:"showLockoutFailures,omitempty"`
+		UserLockoutNotificationChannels []string `json:"userLockoutNotificationChannels,omitempty"`
 	} `json:"lockout,omitempty"`
 }
 
