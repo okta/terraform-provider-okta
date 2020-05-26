@@ -19,11 +19,11 @@ type ApiSupplement struct {
 }
 
 func (m *ApiSupplement) GetSAMLMetdata(id, keyID string) ([]byte, *http.Response, error) {
-	kid := ""
+	var query string
 	if keyID != "" {
-		kid = fmt.Sprintf("?kid=%s", keyID)
+		query = fmt.Sprintf("?kid=%s", keyID)
 	}
-	url := fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata%s", m.BaseURL, id, kid)
+	url := fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata%s", m.BaseURL, id, query)
 	return m.GetXml(url)
 }
 
