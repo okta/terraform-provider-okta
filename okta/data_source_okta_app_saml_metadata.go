@@ -19,7 +19,7 @@ func dataSourceAppMetadataSaml() *schema.Resource {
 			},
 			"key_id": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"metadata": {
 				Type:     schema.TypeString,
