@@ -1,4 +1,10 @@
-## 3.3.0 (Unreleased)
+## 3.3.0 (May 29, 2020)
+
+ENHANCEMENTS:
+
+* Add user lockout notification channels. [#15](https://github.com/terraform-providers/terraform-provider-okta/pull/15), Thanks, [@thehunt33r](https://github.com/thehunt33r)!
+* Adding support for SMS template changes. [#18](https://github.com/terraform-providers/terraform-provider-okta/pull/18) Thanks, [@gusChan](https://github.com/gusChan)!
+
 ## 3.2.0 (April 03, 2020)
 
 BUG FIXES:
@@ -12,7 +18,7 @@ ENHANCEMENTS:
 
 ENHANCEMENTS:
 
-* Add unique property to UserSchema. [#12](https://github.com/terraform-providers/terraform-provider-okta/pull/12) Thanks, [@gusChan](https://github.com/gusChan)! 
+* Add unique property to UserSchema. [#12](https://github.com/terraform-providers/terraform-provider-okta/pull/12) Thanks, [@gusChan](https://github.com/gusChan)!
 
 ## 3.1.0 (February 19, 2020)
 
@@ -294,7 +300,7 @@ FEATURES:
 
 BUG FIXES
 
-* Schema merging helper function was mutating input schema causing side effects when used in a particular way. Used shallow copying to avoid this side effect. [[#338](https://github.com/terraform-providers/terraform-provider-cherryservers/issues/338)] 
+* Schema merging helper function was mutating input schema causing side effects when used in a particular way. Used shallow copying to avoid this side effect. [[#338](https://github.com/terraform-providers/terraform-provider-cherryservers/issues/338)]
 * Ensure response is not nil when checking status code ([#307](https://github.com/terraform-providers/terraform-provider-cherryservers/issues/307))
 
 ## 3.0.37
