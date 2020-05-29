@@ -1,4 +1,4 @@
-## 3.3.0 (Unreleased)
+## 3.3.0 (May 29, 2020)
 
 ENHANCEMENTS:
 
@@ -300,7 +300,7 @@ FEATURES:
 
 BUG FIXES
 
-* Schema merging helper function was mutating input schema causing side effects when used in a particular way. Used shallow copying to avoid this side effect. [[#338](https://github.com/terraform-providers/terraform-provider-cherryservers/issues/338)]
+* Schema merging helper function was mutating input schema causing side effects when used in a particular way. Used shallow copying to avoid this side effect. ([#338](https://github.com/terraform-providers/terraform-provider-cherryservers/issues/338))
 * Ensure response is not nil when checking status code ([#307](https://github.com/terraform-providers/terraform-provider-cherryservers/issues/307))
 
 ## 3.0.37
