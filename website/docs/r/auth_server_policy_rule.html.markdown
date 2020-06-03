@@ -40,6 +40,8 @@ The following arguments are supported:
 
 * `priority` - (Required) Priority of the auth server policy rule.
 
+* `group_whitelist` - (Required) The list of group ids to whitelist. Can be set to group id or to the following: "EVERYONE".
+
 * `grant_type_whitelist` - (Required) Accepted grant type values, `"authorization_code"`, `"implicit"`, `"password"`
 
 * `scope_whitelist` - (Required) Scopes allowed for this policy rule. They can be whitelisted by name or all can be whitelisted with `"*"`.
