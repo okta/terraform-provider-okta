@@ -61,6 +61,11 @@ func resourceAuthServerClaim() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{"STARTS_WITH", "EQUALS", "CONTAINS", "REGEX"}, false),
 				Description:  "Required when value_type is GROUPS",
 			},
+			"default_claim": &schema.Schema{
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
 		},
 	}
 }
@@ -81,14 +86,41 @@ func buildAuthServerClaim(d *schema.ResourceData) *sdk.AuthorizationServerClaim 
 func resourceAuthServerClaimCreate(d *schema.ResourceData, m interface{}) error {
 	authServerClaim := buildAuthServerClaim(d)
 	c := getSupplementFromMetadata(m)
-	responseAuthServerClaim, _, err := c.CreateAuthorizationServerClaim(d.Get("auth_server_id").(string), *authServerClaim, nil)
-	if err != nil {
-		return err
+
+	if d.Get("default_claim").(bool) == false {
+		responseAuthServerClaim, _, err := c.CreateAuthorizationServerClaim(d.Get("auth_server_id").(string), *authServerClaim, nil)
+		if err != nil {
+			return err
+		}
+
+		d.SetId(responseAuthServerClaim.Id)
+
+		return resourceAuthServerClaimRead(d, m)
+	} else {
+		authServerClaimList, _, err := c.ListAuthorizationServerClaims(d.Get("auth_server_id").(string))
+
+		if err != nil {
+			return err
+		}
+
+		for _, AuthServerClaim := range authServerClaimList {
+			if AuthServerClaim.Name == d.Get("name").(string) {
+				d.SetId(AuthServerClaim.Id)
+				return resourceAuthServerClaimUpdate(d, m)
+			}
+		}
+
+		responseAuthServerClaim, _, err := c.CreateAuthorizationServerClaim(d.Get("auth_server_id").(string), *authServerClaim, nil)
+
+		if err != nil {
+			return err
+		}
+		d.SetId(responseAuthServerClaim.Id)
+		return resourceAuthServerClaimRead(d, m)
+
 	}
+	return nil
 
-	d.SetId(responseAuthServerClaim.Id)
-
-	return resourceAuthServerClaimRead(d, m)
 }
 
 func resourceAuthServerClaimExists(d *schema.ResourceData, m interface{}) (bool, error) {
