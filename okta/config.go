@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/terraform-providers/terraform-provider-okta/sdk"
@@ -46,6 +47,14 @@ type (
 func (c *Config) loadAndValidate() error {
 	httpClient := cleanhttp.DefaultClient()
 	httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
+
+	if len(strings.TrimSpace(c.apiToken)) == 0 {
+		return fmt.Errorf("[ERROR] api_token is empty!")
+	}
+
+	if len(strings.TrimSpace(c.orgName)) == 0 {
+		return fmt.Errorf("[ERROR] org_name is empty!")
+	}
 
 	articulateClient, err := articulateOkta.NewClientWithDomain(httpClient, c.orgName, c.domain, c.apiToken)
 
