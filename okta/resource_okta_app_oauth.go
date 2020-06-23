@@ -130,8 +130,6 @@ func resourceAppOAuth() *schema.Resource {
 			},
 			"client_secret": &schema.Schema{
 				Type:        schema.TypeString,
-				Optional:    true,
-				ForceNew:    false,
 				Computed:    true,
 				Sensitive:   true,
 				Description: "OAuth client secret key. This will be in plain text in your statefile unless you set omit_secret above.",
