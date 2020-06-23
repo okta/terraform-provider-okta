@@ -130,6 +130,8 @@ func resourceAppOAuth() *schema.Resource {
 			},
 			"client_secret": &schema.Schema{
 				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    false,
 				Computed:    true,
 				Sensitive:   true,
 				Description: "OAuth client secret key. This will be in plain text in your statefile unless you set omit_secret above.",
@@ -281,6 +283,12 @@ func resourceAppOAuth() *schema.Resource {
 					},
 				},
 			},
+			"implicit_assignment": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Federated Broker mode",
+			},
 		}),
 	}
 }
@@ -364,6 +372,7 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("auto_submit_toolbar", app.Visibility.AutoSubmitToolbar)
 	d.Set("hide_ios", app.Visibility.Hide.IOS)
 	d.Set("hide_web", app.Visibility.Hide.Web)
+	d.Set("implicit_assignment", app.Settings.ImplicitAssignment)
 
 	if app.Settings.OauthClient.IssuerMode != "" {
 		d.Set("issuer_mode", app.Settings.OauthClient.IssuerMode)
@@ -491,8 +500,9 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *sdk.OpenIdConnectAppl
 	if cid, ok := d.GetOk("custom_client_id"); ok {
 		app.Credentials.OauthClient.ClientId = cid.(string)
 	}
-
+	implicitAssign := d.Get("implicit_assignment").(bool)
 	app.Settings = &sdk.OpenIdConnectApplicationSettings{
+		ImplicitAssignment: &implicitAssign,
 		OauthClient: &sdk.OpenIdConnectApplicationSettingsClient{
 			OpenIdConnectApplicationSettingsClient: okta.OpenIdConnectApplicationSettingsClient{
 				ApplicationType:        appType,
