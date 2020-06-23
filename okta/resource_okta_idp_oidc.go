@@ -32,7 +32,7 @@ func resourceIdpOidc() *schema.Resource {
 			"user_info_binding":     optionalBindingSchema,
 			"jwks_url":              urlSchema,
 			"jwks_binding":          bindingSchema,
-			"acs_binding":           bindingSchema,
+			"acs_binding":           optionalBindingSchema,
 			"acs_type": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
