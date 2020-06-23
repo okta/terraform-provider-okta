@@ -78,7 +78,7 @@ The following arguments are supported:
 
 * `profile` - (Optional) Custom JSON that represents an OAuth application's profile.
 
-* `implicit_assignment` - (Optional) Enables/Disables Okta (Federated Broker Mode)[https://help.okta.com/en/prod/Content/Topics/Apps/Apps_Apps_Page.htm#] which allows authenticating with an app without the need to assign it to a user or group.
+* `implicit_assignment` - (Optional) Enables/Disables Okta [Federated Broker Mode](https://help.okta.com/en/prod/Content/Topics/Apps/Apps_Apps_Page.htm#) which allows authenticating with an app without the need to assign it to a user or group.
 
 ## Attributes Reference
 
