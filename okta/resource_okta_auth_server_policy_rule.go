@@ -151,6 +151,9 @@ func resourceAuthServerPolicyRuleRead(d *schema.ResourceData, m interface{}) err
 	d.Set("status", authServerPolicyRule.Status)
 	d.Set("priority", authServerPolicyRule.Priority)
 	d.Set("type", authServerPolicyRule.Type)
+	d.Set("access_token_lifetime_minutes", authServerPolicyRule.Actions.Token.AccessTokenLifetimeMinutes)
+	d.Set("refresh_token_lifetime_minutes", authServerPolicyRule.Actions.Token.RefreshTokenLifetimeMinutes)
+	d.Set("refresh_token_window_minutes", authServerPolicyRule.Actions.Token.RefreshTokenWindowMinutes)
 
 	if authServerPolicyRule.Actions.Token.InlineHook != nil {
 		d.Set("inline_hook_id", authServerPolicyRule.Actions.Token.InlineHook.Id)
