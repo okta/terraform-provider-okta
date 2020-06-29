@@ -15,6 +15,7 @@ resource okta_group_roles test {
     "MOBILE_ADMIN",
     "READ_ONLY_ADMIN",
     "HELP_DESK_ADMIN",
+    "GROUP_MEMBERSHIP_ADMIN"
   ]
 }
 
