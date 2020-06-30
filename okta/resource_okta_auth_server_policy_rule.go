@@ -53,12 +53,13 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 			},
 			"scope_whitelist": &schema.Schema{
 				Type:     schema.TypeSet,
-				Required: true,
+				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
+				Default:  "*",
 			},
 			"group_whitelist": &schema.Schema{
 				Type:     schema.TypeSet,
-				Required: false,
+				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Default:  "EVERYONE",
 			},

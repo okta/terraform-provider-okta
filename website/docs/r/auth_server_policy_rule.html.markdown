@@ -42,7 +42,7 @@ The following arguments are supported:
 
 * `grant_type_whitelist` - (Required) Accepted grant type values: `"authorization_code"`, `"implicit"`, `"password"`, and `"client_credentials"`
 
-* `scope_whitelist` - (Required) Scopes allowed for this policy rule. They can be whitelisted by name or all can be whitelisted with `"*"`.
+* `scope_whitelist` - (Optional) Scopes allowed for this policy rule. They can be whitelisted by name or all can be whitelisted with `"*"`.
 
 * `group_whitelist` - (Optional) Groups of users allowed for this policy rule. They can be whitelisted by id or you can use the reference `"EVERYONE"` as an alias for the everyone group.
 
