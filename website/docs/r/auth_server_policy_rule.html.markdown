@@ -40,9 +40,13 @@ The following arguments are supported:
 
 * `priority` - (Required) Priority of the auth server policy rule.
 
-* `grant_type_whitelist` - (Required) Accepted grant type values, `"authorization_code"`, `"implicit"`, `"password"`
+* `grant_type_whitelist` - (Required) Accepted grant type values: `"authorization_code"`, `"implicit"`, `"password"`, and `"client_credentials"`
 
 * `scope_whitelist` - (Required) Scopes allowed for this policy rule. They can be whitelisted by name or all can be whitelisted with `"*"`.
+
+* `group_whitelist` - (Optional) Groups of users allowed for this policy rule. They can be whitelisted by id or you can use the reference `"EVERYONE"` as an alias for the everyone group.
+
+* `group_blacklist` - (Optional) Groups of users denied for this policy rule. They can be black by id or you can use the reference `"EVERYONE"` as an alias for the everyone group.
 
 * `access_token_lifetime_minutes` - (Optional) Lifetime of access token. Can be set to a value between 5 and 1440.
 

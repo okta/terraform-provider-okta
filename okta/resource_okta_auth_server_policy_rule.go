@@ -49,12 +49,18 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 				Type:        schema.TypeSet,
 				Required:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "Accepted grant type values: authorization_code, implicit, password.",
+				Description: "Accepted grant type values: authorization_code, implicit, password, and client_credentials.",
 			},
 			"scope_whitelist": &schema.Schema{
 				Type:     schema.TypeSet,
-				Optional: true,
+				Required: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+			"group_whitelist": &schema.Schema{
+				Type:     schema.TypeSet,
+				Required: false,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Default:  "EVERYONE",
 			},
 			"access_token_lifetime_minutes": &schema.Schema{
 				Type:     schema.TypeInt,
