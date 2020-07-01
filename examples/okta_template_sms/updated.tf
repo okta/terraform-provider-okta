@@ -1,5 +1,5 @@
 resource "okta_template_sms" test {
-  type = "SMS_VERIFY_CODE"
+  type     = "SMS_VERIFY_CODE"
   template = "Your $${org.name} updated code is: $${code}"
   translations {
     language = "en"

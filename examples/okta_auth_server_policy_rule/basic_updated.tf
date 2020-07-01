@@ -9,7 +9,8 @@ resource "okta_auth_server_policy_rule" "test" {
   name                 = "test_updated"
   priority             = 1
   group_whitelist      = ["${data.okta_group.all.id}"]
-  grant_type_whitelist = ["password"]
+  grant_type_whitelist = ["password", "authorization_code"]
+  scope_whitelist      = ["*"]
 }
 
 resource "okta_auth_server" "test" {

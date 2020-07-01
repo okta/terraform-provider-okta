@@ -10,6 +10,7 @@ resource "okta_auth_server_policy_rule" "test" {
   priority             = 1
   group_whitelist      = ["${data.okta_group.all.id}"]
   grant_type_whitelist = ["implicit"]
+  scope_whitelist      = ["openid","profile"]
 }
 
 resource "okta_auth_server" "test" {

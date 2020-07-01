@@ -53,15 +53,13 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 			},
 			"scope_whitelist": &schema.Schema{
 				Type:     schema.TypeSet,
-				Optional: true,
+				Required: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Default:  ("*"),
 			},
 			"group_whitelist": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Default:  ("EVERYONE"),
 			},
 			"access_token_lifetime_minutes": &schema.Schema{
 				Type:     schema.TypeInt,
