@@ -14,7 +14,10 @@ endif
 default: build
 
 build: fmtcheck
-	go install
+	env GOARCH=amd64 GOOS=darwin go install
+
+linux: fmtcheck
+	env GOARCH=amd64 GOOS=linux go build -o ./
 
 sweep:
 	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
