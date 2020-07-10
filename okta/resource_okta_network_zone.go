@@ -49,6 +49,12 @@ func resourceNetworkZone() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{"IP", "DYNAMIC"}, false),
 				Description:  "Type of the Network Zone - can either be IP or DYNAMIC only",
 			},
+			"blacklist": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "If true NetworkZone will be Blacklisted",
+			},
 		},
 	}
 }
@@ -139,6 +145,7 @@ func buildNetworkZone(d *schema.ResourceData, m interface{}) *sdk.NetworkZone {
 	return &sdk.NetworkZone{
 		Name:      d.Get("name").(string),
 		Type:      zoneType,
+		Blacklist: d.Get("blacklist").(bool),
 		Gateways:  gatewaysList,
 		Locations: locationsList,
 		Proxies:   proxiesList,

@@ -25,6 +25,7 @@ type (
 		Name      string        `json:"name,omitempty"`
 		Proxies   []*AddressObj `json:"proxies,omitempty"`
 		System    bool          `json:"system,omitempty"`
+		Blacklist bool          `json:useAsBlackList,omitempty`
 		Type      string        `json:"type,omitempty"`
 	}
 )
