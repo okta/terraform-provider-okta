@@ -73,7 +73,7 @@ func Provider() terraform.ResourceProvider {
 			},
 			"api_token": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OKTA_API_TOKEN", nil),
 				Description: "API Token granting privileges to Okta API.",
 			},
