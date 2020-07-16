@@ -49,6 +49,10 @@ func findGroup(name string, d *schema.ResourceData, m interface{}) error {
 		return fmt.Errorf("failed to query for groups: %v", err)
 	} else if len(groups) < 1 {
 		return errors.New("Group not found")
+	} else if len(groups) > 1 {
+		fmt.Println("Found multiple groups with the supplied parameters. Using the first one which may only be a partial match.")
+	} else if len(groups[0].Profile.Name) != len(name) {
+		fmt.Println("Group with exact match to the supplied name not found. Using partial match which contains name as a substring.")
 	}
 
 	d.SetId(groups[0].Id)
