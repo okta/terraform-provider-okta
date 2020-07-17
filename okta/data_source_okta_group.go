@@ -18,6 +18,12 @@ func dataSourceGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"type": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     false,
+				Description: "Type of the group. When specified in the terraform resource, will act as a filter when searching for the group",
+			},
 			"description": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
@@ -44,7 +50,13 @@ func dataSourceGroupRead(d *schema.ResourceData, m interface{}) error {
 
 func findGroup(name string, d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	groups, _, err := client.Group.ListGroups(&query.Params{Q: name})
+	searchParams := &query.Params{Q: name}
+	if d.Get("type") != nil {
+		groupType := d.Get("type").(string)
+		searchParams = &query.Params{Q: name, Type: groupType}
+	}
+
+	groups, _, err := client.Group.ListGroups(searchParams)
 	if err != nil {
 		return fmt.Errorf("failed to query for groups: %v", err)
 	} else if len(groups) < 1 {
@@ -53,6 +65,7 @@ func findGroup(name string, d *schema.ResourceData, m interface{}) error {
 
 	d.SetId(groups[0].Id)
 	d.Set("description", groups[0].Profile.Description)
+	d.Set("type", groups[0].Type)
 
 	if d.Get("include_users").(bool) {
 		userIdList, err := listGroupUserIds(m, d.Id())
