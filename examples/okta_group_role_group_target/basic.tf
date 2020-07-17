@@ -8,6 +8,11 @@ resource okta_group_role test {
   role_type   = "USER_ADMIN"
 }
 
+resource okta_group_role_group_target test {
+  role_id     = "${okta_group_role.test.id}"
+  group_id    = "${okta_group.test.id}"
+}
+
 resource okta_user test {
   first_name        = "TestAcc"
   last_name         = "Smith"
