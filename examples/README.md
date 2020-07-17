@@ -26,7 +26,8 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 * [okta_auth_server_policy](./okta_auth_server_policy) Supports the management of Okta Authorization servers policies.
 * [okta_auth_server_scope](./okta_auth_server_scope) Supports the management of Okta Authorization servers scopes.
 * [okta_auth_server](./okta_auth_server) Supports the management of Okta Authorization servers.
-* [okta_group_roles](./okta_group_roles) Supports the management of Okta Group Administrator Roles.
+* [okta_group_role](./okta_group_role) Supports the management of Okta Group Administrator Roles.
+* [okta_group_role_group_target](./okta_group_role_group_target) Supports the management of Okta Group Administrator Roles targeted at specific Groups.
 * [okta_group_rule](./okta_group_rule) Supports the management of Okta Group Rules.
 * [okta_group](./okta_group) Supports the management of Okta Groups.
 * [okta_idp_metadata_saml](./okta_app_metadata_saml) Data source for SAML IdP metadata.
