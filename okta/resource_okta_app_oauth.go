@@ -304,6 +304,7 @@ func validateGrantTypes(d *schema.ResourceData) error {
 
 func resourceAppOAuthCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 	if err := validateGrantTypes(d); err != nil {
 		return err
 	}
@@ -312,7 +313,7 @@ func resourceAppOAuthCreate(d *schema.ResourceData, m interface{}) error {
 	desiredStatus := d.Get("status").(string)
 	activate := desiredStatus == "ACTIVE"
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(app, params)
+	_, _, err := client.Application.CreateApplication(ctx, app, params)
 
 	if err != nil {
 		return err
@@ -395,8 +396,8 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 	}
 	aggMap := map[string]interface{}{
 		"redirect_uris":             convertStringSetToInterface(app.Settings.OauthClient.RedirectUris),
-		"response_types":            convertStringSetToInterface(app.Settings.OauthClient.ResponseTypes),
-		"grant_types":               convertStringSetToInterface(app.Settings.OauthClient.GrantTypes),
+		"response_types":            convertStringSetToInterface(convertResponseTypesToStrings(app.Settings.OauthClient.ResponseTypes)),
+		"grant_types":               convertStringSetToInterface(convertGrantTypesToStrings(app.Settings.OauthClient.GrantTypes)),
 		"post_logout_redirect_uris": convertStringSetToInterface(app.Settings.OauthClient.PostLogoutRedirectUris),
 	}
 
@@ -405,17 +406,19 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppOAuthUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
+
 	if err := validateGrantTypes(d); err != nil {
 		return err
 	}
 
 	app := buildAppOAuth(d, m)
-	if _, _, err := client.Application.UpdateApplication(d.Id(), app); err != nil {
+	if _, _, err := client.Application.UpdateApplication(ctx, d.Id(), app); err != nil {
 		return err
 	}
 
 	desiredStatus := d.Get("status").(string)
-	if err := setAppStatus(d, client, app.Status, desiredStatus); err != nil {
+	if err := setAppStatus(ctx, d, client, app.Status, desiredStatus); err != nil {
 		return err
 	}
 
@@ -428,15 +431,16 @@ func resourceAppOAuthUpdate(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppOAuthDelete(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 
 	if d.Get("status").(string) == "ACTIVE" {
-		_, err := client.Application.DeactivateApplication(d.Id())
+		_, err := client.Application.DeactivateApplication(ctx, d.Id())
 		if err != nil {
 			return err
 		}
 	}
 
-	_, err := client.Application.DeleteApplication(d.Id())
+	_, err := client.Application.DeleteApplication(ctx, d.Id())
 	return err
 }
 
@@ -498,13 +502,13 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *sdk.OpenIdConnectAppl
 				ApplicationType:        appType,
 				ClientUri:              d.Get("client_uri").(string),
 				ConsentMethod:          d.Get("consent_method").(string),
-				GrantTypes:             grantTypes,
+				GrantTypes:             convertStringsToGrantTypes(grantTypes),
 				InitiateLoginUri:       d.Get("login_uri").(string),
 				LogoUri:                d.Get("logo_uri").(string),
 				PolicyUri:              d.Get("policy_uri").(string),
 				RedirectUris:           convertInterfaceToStringSetNullable(d.Get("redirect_uris")),
 				PostLogoutRedirectUris: convertInterfaceToStringSetNullable(d.Get("post_logout_redirect_uris")),
-				ResponseTypes:          responseTypes,
+				ResponseTypes:          convertStringsToResponseTypes(responseTypes),
 				TosUri:                 d.Get("tos_uri").(string),
 				IssuerMode:             d.Get("issuer_mode").(string),
 			},

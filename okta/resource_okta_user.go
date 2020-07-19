@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -63,7 +64,8 @@ func resourceUser() *schema.Resource {
 			State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				// Supporting id and email based imports
 				client := getOktaClientFromMetadata(meta)
-				user, _, err := client.User.GetUser(d.Id())
+				ctx := getOktaContextFromMetadata(meta)
+				user, _, err := client.User.GetUser(ctx, d.Id())
 				if err != nil {
 					return nil, err
 				}
@@ -302,7 +304,8 @@ func mapStatus(currentStatus string) string {
 func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Create User for %v", d.Get("login").(string))
 
-	client := m.(*Config).oktaClient
+	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 	profile := populateUserProfile(d)
 
 	qp := query.NewQueryParams()
@@ -329,11 +332,12 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		}
 	}
 
-	userBody := okta.User{
-		Profile:     profile,
+	createUserRequest := okta.CreateUserRequest{
 		Credentials: uc,
+		GroupIds:    []string{},
+		Profile:     profile,
 	}
-	user, _, err := client.User.CreateUser(userBody, qp)
+	user, _, err := client.User.CreateUser(ctx, createUserRequest, qp)
 
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Creating User from Okta: %v", err)
@@ -345,7 +349,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	// role assigning can only happen after the user is created so order matters here
 	roles := convertInterfaceToStringSetNullable(d.Get("admin_roles"))
 	if roles != nil {
-		if err = assignAdminRolesToUser(user.Id, roles, client); err != nil {
+		if err = assignAdminRolesToUser(ctx, user.Id, roles, client); err != nil {
 			return err
 		}
 	}
@@ -353,14 +357,14 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	// Only sync when there is opt in, consumers can chose which route they want to take
 	if _, exists := d.GetOkExists("group_memberships"); exists {
 		groups := convertInterfaceToStringSetNullable(d.Get("group_memberships"))
-		if err = assignGroupsToUser(user.Id, groups, client); err != nil {
+		if err = assignGroupsToUser(ctx, user.Id, groups, client); err != nil {
 			return err
 		}
 	}
 
 	// status changing can only happen after user is created as well
 	if d.Get("status").(string) == "SUSPENDED" || d.Get("status").(string) == "DEPROVISIONED" {
-		err := updateUserStatus(user.Id, d.Get("status").(string), client)
+		err := updateUserStatus(ctx, user.Id, d.Get("status").(string), client)
 
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating Status for User: %v", err)
@@ -373,8 +377,9 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List User %v", d.Get("login").(string))
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 
-	user, resp, err := client.User.GetUser(d.Id())
+	user, resp, err := client.User.GetUser(ctx, d.Id())
 
 	if is404(resp.StatusCode) {
 		d.SetId("")
@@ -397,13 +402,13 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	if err = setAdminRoles(d, client); err != nil {
+	if err = setAdminRoles(ctx, d, client); err != nil {
 		return err
 	}
 
 	// Only sync when it is outlined, an empty list will remove all membership
 	if _, exists := d.GetOkExists("group_memberships"); exists {
-		return setGroups(d, client)
+		return setGroups(ctx, d, client)
 	}
 	return nil
 }
@@ -418,6 +423,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 	// There are a few requests here so just making sure the state gets updated per successful downstream change
 	d.Partial(true)
 
@@ -431,7 +437,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	// run the update status func first so a user that was previously deprovisioned
 	// can be updated further if it's status changed in it's terraform configs
 	if statusChange {
-		err := updateUserStatus(d.Id(), status, client)
+		err := updateUserStatus(ctx, d.Id(), status, client)
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating Status for User: %v", err)
 		}
@@ -446,7 +452,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		profile := populateUserProfile(d)
 		userBody := okta.User{Profile: profile}
 
-		_, _, err := client.User.UpdateUser(d.Id(), userBody, nil)
+		_, _, err := client.User.UpdateUser(ctx, d.Id(), userBody, nil)
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating User in Okta: %v", err)
 		}
@@ -454,7 +460,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 	if roleChange {
 		roles := convertInterfaceToStringSet(d.Get("admin_roles"))
-		if err := updateAdminRolesOnUser(d.Id(), roles, client); err != nil {
+		if err := updateAdminRolesOnUser(ctx, d.Id(), roles, client); err != nil {
 			return err
 		}
 		d.SetPartial("admin_roles")
@@ -462,7 +468,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 	if groupChange {
 		groups := convertInterfaceToStringSet(d.Get("group_memberships"))
-		if err := updateGroupsOnUser(d.Id(), groups, client); err != nil {
+		if err := updateGroupsOnUser(ctx, d.Id(), groups, client); err != nil {
 			return err
 		}
 		d.SetPartial("group_memberships")
@@ -482,7 +488,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 			NewPassword: np,
 		}
 
-		_, _, err := client.User.ChangePassword(d.Id(), *npr, nil)
+		_, _, err := client.User.ChangePassword(ctx, d.Id(), *npr, nil)
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating User password in Okta: %v", err)
 		}
@@ -503,7 +509,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 			RecoveryQuestion: rq,
 		}
 
-		_, _, err := client.User.ChangeRecoveryQuestion(d.Id(), *nuc)
+		_, _, err := client.User.ChangeRecoveryQuestion(ctx, d.Id(), *nuc)
 
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating User password recovery credentials in Okta: %v", err)
@@ -528,10 +534,10 @@ func hasProfileChange(d *schema.ResourceData) bool {
 }
 
 func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
-	return ensureUserDelete(d.Id(), d.Get("status").(string), getOktaClientFromMetadata(m))
+	return ensureUserDelete(getOktaContextFromMetadata(m), d.Id(), d.Get("status").(string), getOktaClientFromMetadata(m))
 }
 
-func ensureUserDelete(id, status string, client *okta.Client) error {
+func ensureUserDelete(ctx context.Context, id string, status string, client *okta.Client) error {
 	// only deprovisioned users can be deleted fully from okta
 	// make two passes on the user if they aren't deprovisioned already to deprovision them first
 	passes := 2
@@ -541,7 +547,7 @@ func ensureUserDelete(id, status string, client *okta.Client) error {
 	}
 
 	for i := 0; i < passes; i++ {
-		_, err := client.User.DeactivateOrDeleteUser(id, nil)
+		_, err := client.User.DeactivateOrDeleteUser(ctx, id, nil)
 		if err != nil {
 			return fmt.Errorf("Failed to deprovision or delete user from Okta: %v", err)
 		}
@@ -551,9 +557,10 @@ func ensureUserDelete(id, status string, client *okta.Client) error {
 
 func resourceUserExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	log.Printf("[INFO] Checking Exists for User %v", d.Get("login").(string))
-	client := m.(*Config).oktaClient
+	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 
-	_, resp, err := client.User.GetUser(d.Id())
+	_, resp, err := client.User.GetUser(ctx, d.Id())
 
 	if is404(resp.StatusCode) {
 		return false, nil

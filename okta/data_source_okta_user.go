@@ -52,6 +52,7 @@ func dataSourceUser() *schema.Resource {
 
 func dataSourceUserRead(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 
 	var user *okta.User
 	var err error
@@ -60,13 +61,13 @@ func dataSourceUserRead(d *schema.ResourceData, m interface{}) error {
 	_, searchCriteriaOk := d.GetOk("search")
 
 	if userIdOk {
-		user, _, err = client.User.GetUser(userId.(string))
+		user, _, err = client.User.GetUser(ctx, userId.(string))
 		if err != nil {
 			return err
 		}
 	} else if searchCriteriaOk {
 		var users []*okta.User
-		users, _, err := client.User.ListUsers(&query.Params{Search: getSearchCriteria(d), Limit: 1})
+		users, _, err := client.User.ListUsers(ctx, &query.Params{Search: getSearchCriteria(d), Limit: 1})
 
 		if err != nil {
 			return err
@@ -88,7 +89,7 @@ func dataSourceUserRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	if err = setAdminRoles(d, client); err != nil {
+	if err = setAdminRoles(ctx, d, client); err != nil {
 		return err
 	}
 

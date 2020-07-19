@@ -28,8 +28,10 @@ func resourceAppGroupAssignment() *schema.Resource {
 				d.Set("app_id", parts[0])
 				d.Set("group_id", parts[1])
 
-				assignment, _, err := getOktaClientFromMetadata(m).Application.
-					GetApplicationGroupAssignment(parts[0], parts[1], nil)
+				client := getOktaClientFromMetadata(m)
+				ctx := getOktaContextFromMetadata(m)
+				assignment, _, err := client.Application.
+					GetApplicationGroupAssignment(ctx, parts[0], parts[1], nil)
 
 				if err != nil {
 					return nil, err
@@ -70,7 +72,9 @@ func resourceAppGroupAssignment() *schema.Resource {
 
 func resourceAppGroupAssignmentExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 	_, resp, err := client.Application.GetApplicationGroupAssignment(
+		ctx,
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
 		nil,
@@ -98,7 +102,10 @@ func getAppGroupAssignment(d *schema.ResourceData) okta.ApplicationGroupAssignme
 }
 
 func resourceAppGroupAssignmentCreate(d *schema.ResourceData, m interface{}) error {
-	assignment, _, err := getOktaClientFromMetadata(m).Application.CreateApplicationGroupAssignment(
+	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
+	assignment, _, err := client.Application.CreateApplicationGroupAssignment(
+		ctx,
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
 		getAppGroupAssignment(d),
@@ -115,8 +122,10 @@ func resourceAppGroupAssignmentCreate(d *schema.ResourceData, m interface{}) err
 
 func resourceAppGroupAssignmentUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 	// Create actually does a PUT
 	_, _, err := client.Application.CreateApplicationGroupAssignment(
+		ctx,
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
 		getAppGroupAssignment(d),
@@ -130,7 +139,10 @@ func resourceAppGroupAssignmentUpdate(d *schema.ResourceData, m interface{}) err
 }
 
 func resourceAppGroupAssignmentRead(d *schema.ResourceData, m interface{}) error {
-	g, resp, err := getOktaClientFromMetadata(m).Application.GetApplicationGroupAssignment(
+	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
+	g, resp, err := client.Application.GetApplicationGroupAssignment(
+		ctx,
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
 		nil,
@@ -157,7 +169,10 @@ func resourceAppGroupAssignmentRead(d *schema.ResourceData, m interface{}) error
 }
 
 func resourceAppGroupAssignmentDelete(d *schema.ResourceData, m interface{}) error {
-	_, err := getOktaClientFromMetadata(m).Application.DeleteApplicationGroupAssignment(
+	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
+	_, err := client.Application.DeleteApplicationGroupAssignment(
+		ctx,
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
 	)

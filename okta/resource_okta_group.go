@@ -6,7 +6,6 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func resourceGroup() *schema.Resource {
@@ -50,8 +49,10 @@ func buildGroup(d *schema.ResourceData) *okta.Group {
 }
 
 func resourceGroupCreate(d *schema.ResourceData, m interface{}) error {
+	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 	group := buildGroup(d)
-	responseGroup, _, err := getOktaClientFromMetadata(m).Group.CreateGroup(*group)
+	responseGroup, _, err := client.Group.CreateGroup(ctx, *group)
 	if err != nil {
 		return err
 	}
@@ -92,8 +93,10 @@ func resourceGroupRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceGroupUpdate(d *schema.ResourceData, m interface{}) error {
+	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 	group := buildGroup(d)
-	_, _, err := getOktaClientFromMetadata(m).Group.UpdateGroup(d.Id(), *group)
+	_, _, err := client.Group.UpdateGroup(ctx, d.Id(), *group)
 	if err != nil {
 		return err
 	}
@@ -106,13 +109,17 @@ func resourceGroupUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceGroupDelete(d *schema.ResourceData, m interface{}) error {
-	_, err := getOktaClientFromMetadata(m).Group.DeleteGroup(d.Id())
+	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
+	_, err := client.Group.DeleteGroup(ctx, d.Id())
 
 	return err
 }
 
 func fetchGroup(d *schema.ResourceData, m interface{}) (*okta.Group, error) {
-	g, resp, err := getOktaClientFromMetadata(m).Group.GetGroup(d.Id(), &query.Params{})
+	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
+	g, resp, err := client.Group.GetGroup(ctx, d.Id())
 
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil
@@ -143,7 +150,8 @@ func updateGroupUsers(d *schema.ResourceData, m interface{}) error {
 	}
 
 	client := getOktaClientFromMetadata(m)
-	existingUserList, _, err := client.Group.ListGroupUsers(d.Id(), nil)
+	ctx := getOktaContextFromMetadata(m)
+	existingUserList, _, err := client.Group.ListGroupUsers(ctx, d.Id(), nil)
 	if err != nil {
 		return err
 	}
@@ -156,7 +164,7 @@ func updateGroupUsers(d *schema.ResourceData, m interface{}) error {
 		userIdList[i] = userId
 
 		if !containsUser(existingUserList, userId) {
-			resp, err := client.Group.AddUserToGroup(d.Id(), userId)
+			resp, err := client.Group.AddUserToGroup(ctx, d.Id(), userId)
 			if err != nil {
 				return responseErr(resp, err)
 			}
@@ -165,7 +173,7 @@ func updateGroupUsers(d *schema.ResourceData, m interface{}) error {
 
 	for _, user := range existingUserList {
 		if !contains(userIdList, user.Id) {
-			err := suppressErrorOn404(client.Group.RemoveGroupUser(d.Id(), user.Id))
+			err := suppressErrorOn404(client.Group.RemoveUserFromGroup(ctx, d.Id(), user.Id))
 			if err != nil {
 				return err
 			}

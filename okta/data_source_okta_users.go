@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
@@ -53,9 +54,10 @@ func dataSourceUsers() *schema.Resource {
 
 func dataSourceUsersRead(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 	results := &searchResults{Users: []*okta.User{}}
 	params := &query.Params{Search: getSearchCriteria(d), Limit: 200, SortOrder: "0"}
-	err := collectUsers(client, results, params)
+	err := collectUsers(ctx, client, results, params)
 	if err != nil {
 		return fmt.Errorf("Error Getting User from Okta: %v", err)
 	}
@@ -75,8 +77,8 @@ func dataSourceUsersRead(d *schema.ResourceData, m interface{}) error {
 }
 
 // Recursively list apps until no next links are returned
-func collectUsers(client *okta.Client, results *searchResults, qp *query.Params) error {
-	users, res, err := client.User.ListUsers(qp)
+func collectUsers(ctx context.Context, client *okta.Client, results *searchResults, qp *query.Params) error {
+	users, res, err := client.User.ListUsers(ctx, qp)
 	if err != nil {
 		return err
 	}
@@ -85,7 +87,7 @@ func collectUsers(client *okta.Client, results *searchResults, qp *query.Params)
 
 	if after := sdk.GetAfterParam(res); after != "" {
 		qp.After = after
-		return collectUsers(client, results, qp)
+		return collectUsers(ctx, client, results, qp)
 	}
 
 	return nil

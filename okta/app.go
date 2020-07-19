@@ -456,7 +456,7 @@ func syncSamlSettings(d *schema.ResourceData, set *okta.SamlApplicationSettings)
 			"namespace": st.Namespace,
 			"type":      st.Type,
 			"values":    st.Values,
-		}
+		} //TODO: Add handling for Group attributes once upstream support for type is in
 	}
 
 	return setNonPrimitives(d, map[string]interface{}{

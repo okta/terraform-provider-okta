@@ -12,13 +12,13 @@ import (
 func sweepGroups(client *testClient) error {
 	var errorList []error
 	// Should never need to deal with pagination, limit is 10,000 by default
-	groups, _, err := client.oktaClient.Group.ListGroups(&query.Params{Q: testResourcePrefix})
+	groups, _, err := client.oktaClient.Group.ListGroups(client.oktaCtx, &query.Params{Q: testResourcePrefix})
 	if err != nil {
 		return err
 	}
 
 	for _, s := range groups {
-		if _, err := client.oktaClient.Group.DeleteGroup(s.Id); err != nil {
+		if _, err := client.oktaClient.Group.DeleteGroup(client.oktaCtx, s.Id); err != nil {
 			errorList = append(errorList, err)
 		}
 
@@ -62,7 +62,8 @@ func TestAccOktaGroups_crud(t *testing.T) {
 
 func doesGroupExist(id string) (bool, error) {
 	client := getOktaClientFromMetadata(testAccProvider.Meta())
-	_, response, err := client.Group.GetGroup(id, nil)
+	ctx := getOktaContextFromMetadata(testAccProvider.Meta())
+	_, response, err := client.Group.GetGroup(ctx, id)
 
 	return doesResourceExist(response, err)
 }

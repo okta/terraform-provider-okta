@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/terraform-providers/terraform-provider-okta/sdk"
 )
 
@@ -163,11 +165,11 @@ func buildUserDataSourceSchema(target map[string]*schema.Schema) map[string]*sch
 	return buildSchema(userProfileDataSchema, target)
 }
 
-func assignAdminRolesToUser(u string, r []string, c *okta.Client) error {
+func assignAdminRolesToUser(ctx context.Context, u string, r []string, c *okta.Client) error {
 	for _, role := range r {
 		if contains(sdk.ValidAdminRoles, role) {
-			roleStruct := okta.Role{Type: role}
-			_, _, err := c.User.AddRoleToUser(u, roleStruct)
+			roleStruct := okta.AssignRoleRequest{Type: role}
+			_, _, err := c.User.AssignRoleToUser(ctx, u, roleStruct, &query.Params{})
 
 			if err != nil {
 				return fmt.Errorf("[ERROR] Error Assigning Admin Roles to User: %v", err)
@@ -180,9 +182,9 @@ func assignAdminRolesToUser(u string, r []string, c *okta.Client) error {
 	return nil
 }
 
-func assignGroupsToUser(u string, g []string, c *okta.Client) error {
+func assignGroupsToUser(ctx context.Context, u string, g []string, c *okta.Client) error {
 	for _, group := range g {
-		_, err := c.Group.AddUserToGroup(group, u)
+		_, err := c.Group.AddUserToGroup(ctx, group, u)
 
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Assigning Group to User: %v", err)
@@ -326,8 +328,8 @@ func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 	return &profile
 }
 
-func listUserOnlyRoles(c *okta.Client, userId string) (userOnlyRoles []*okta.Role, resp *okta.Response, err error) {
-	roles, resp, err := c.User.ListAssignedRoles(userId, nil)
+func listUserOnlyRoles(ctx context.Context, c *okta.Client, userId string) (userOnlyRoles []*okta.Role, resp *okta.Response, err error) {
+	roles, resp, err := c.User.ListAssignedRolesForUser(ctx, userId, &query.Params{})
 	if err != nil {
 		return
 	}
@@ -341,11 +343,11 @@ func listUserOnlyRoles(c *okta.Client, userId string) (userOnlyRoles []*okta.Rol
 	return
 }
 
-func setAdminRoles(d *schema.ResourceData, c *okta.Client) error {
+func setAdminRoles(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
 	roleTypes := make([]interface{}, 0)
 
 	// set all roles currently attached to user in state
-	roles, resp, err := listUserOnlyRoles(c, d.Id())
+	roles, resp, err := listUserOnlyRoles(ctx, c, d.Id())
 
 	if err != nil {
 		if resp.StatusCode == http.StatusForbidden {
@@ -365,9 +367,9 @@ func setAdminRoles(d *schema.ResourceData, c *okta.Client) error {
 	})
 }
 
-func setGroups(d *schema.ResourceData, c *okta.Client) error {
+func setGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
 	// set all groups currently attached to user in state
-	groups, _, err := c.User.ListUserGroups(d.Id(), nil)
+	groups, _, err := c.User.ListUserGroups(ctx, d.Id())
 	if err != nil {
 		return err
 	}
@@ -434,22 +436,22 @@ func flattenUser(u *okta.User, d *schema.ResourceData) (map[string]interface{}, 
 }
 
 // need to remove from all current admin roles and reassign based on terraform configs when a change is detected
-func updateAdminRolesOnUser(u string, r []string, c *okta.Client) error {
-	roles, _, err := listUserOnlyRoles(c, u)
+func updateAdminRolesOnUser(ctx context.Context, u string, r []string, c *okta.Client) error {
+	roles, _, err := listUserOnlyRoles(ctx, c, u)
 
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Updating Admin Roles On User: %v", err)
 	}
 
 	for _, role := range roles {
-		_, err := c.User.RemoveRoleFromUser(u, role.Id)
+		_, err := c.User.RemoveRoleFromUser(ctx, u, role.Id)
 
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating Admin Roles On User: %v", err)
 		}
 	}
 
-	err = assignAdminRolesToUser(u, r, c)
+	err = assignAdminRolesToUser(ctx, u, r, c)
 
 	if err != nil {
 		return err
@@ -459,8 +461,8 @@ func updateAdminRolesOnUser(u string, r []string, c *okta.Client) error {
 }
 
 // need to remove from all current groups and reassign based on terraform configs when a change is detected
-func updateGroupsOnUser(u string, g []string, c *okta.Client) error {
-	groups, _, err := c.User.ListUserGroups(u, nil)
+func updateGroupsOnUser(ctx context.Context, u string, g []string, c *okta.Client) error {
+	groups, _, err := c.User.ListUserGroups(ctx, u)
 
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Updating Groups On User: %v", err)
@@ -468,7 +470,7 @@ func updateGroupsOnUser(u string, g []string, c *okta.Client) error {
 
 	for _, group := range groups {
 		if group.Profile.Name != "Everyone" {
-			_, err := c.Group.RemoveGroupUser(group.Id, u)
+			_, err := c.Group.RemoveUserFromGroup(ctx, group.Id, u)
 
 			if err != nil {
 				return fmt.Errorf("[ERROR] Error Updating Groups On User: %v", err)
@@ -476,7 +478,7 @@ func updateGroupsOnUser(u string, g []string, c *okta.Client) error {
 		}
 	}
 
-	if err = assignGroupsToUser(u, g, c); err != nil {
+	if err = assignGroupsToUser(ctx, u, g, c); err != nil {
 		return err
 	}
 
@@ -486,8 +488,8 @@ func updateGroupsOnUser(u string, g []string, c *okta.Client) error {
 // handle setting of user status based on what the current status is because okta
 // only allows transitions to certain statuses from other statuses - consult okta User API docs for more info
 // https://developer.okta.com/docs/api/resources/users#lifecycle-operations
-func updateUserStatus(uid string, desiredStatus string, c *okta.Client) error {
-	user, _, err := c.User.GetUser(uid)
+func updateUserStatus(ctx context.Context, uid string, desiredStatus string, c *okta.Client) error {
+	user, _, err := c.User.GetUser(ctx, uid)
 
 	if err != nil {
 		return err
@@ -496,21 +498,21 @@ func updateUserStatus(uid string, desiredStatus string, c *okta.Client) error {
 	var statusErr error
 	switch desiredStatus {
 	case "SUSPENDED":
-		_, statusErr = c.User.SuspendUser(uid)
+		_, statusErr = c.User.SuspendUser(ctx, uid)
 	case "DEPROVISIONED":
-		_, statusErr = c.User.DeactivateUser(uid, nil)
+		_, statusErr = c.User.DeactivateUser(ctx, uid, &query.Params{})
 	case "ACTIVE":
 		switch user.Status {
 		case "SUSPENDED":
-			_, statusErr = c.User.UnsuspendUser(uid)
+			_, statusErr = c.User.UnsuspendUser(ctx, uid)
 			break
 		case "PASSWORD_EXPIRED":
 			// Ignore password expired status. This status is already activated.
 			return nil
 		case "LOCKED_OUT":
-			_, statusErr = c.User.UnlockUser(uid)
+			_, statusErr = c.User.UnlockUser(ctx, uid)
 		default:
-			_, _, statusErr = c.User.ActivateUser(uid, nil)
+			_, _, statusErr = c.User.ActivateUser(ctx, uid, &query.Params{})
 		}
 	}
 
@@ -518,7 +520,7 @@ func updateUserStatus(uid string, desiredStatus string, c *okta.Client) error {
 		return statusErr
 	}
 
-	err = waitForStatusTransition(uid, c)
+	err = waitForStatusTransition(ctx, uid, c)
 
 	if err != nil {
 		return err
@@ -529,8 +531,8 @@ func updateUserStatus(uid string, desiredStatus string, c *okta.Client) error {
 
 // need to wait for user.TransitioningToStatus field to be empty before allowing Terraform to continue
 // so the proper current status gets set in the state during the Read operation after a Status update
-func waitForStatusTransition(u string, c *okta.Client) error {
-	user, _, err := c.User.GetUser(u)
+func waitForStatusTransition(ctx context.Context, u string, c *okta.Client) error {
+	user, _, err := c.User.GetUser(ctx, u)
 
 	if err != nil {
 		return err
@@ -543,7 +545,7 @@ func waitForStatusTransition(u string, c *okta.Client) error {
 			log.Printf("[INFO] Transitioning to status = %v; waiting for 5 more seconds...", user.TransitioningToStatus)
 			time.Sleep(5 * time.Second)
 
-			user, _, err = c.User.GetUser(u)
+			user, _, err = c.User.GetUser(ctx, u)
 
 			if err != nil {
 				return err

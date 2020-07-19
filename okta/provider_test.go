@@ -43,13 +43,13 @@ func accPreCheck() error {
 
 func oktaConfig() (*Config, error) {
 	config := &Config{
-		orgName:     os.Getenv("OKTA_ORG_NAME"),
-		apiToken:    os.Getenv("OKTA_API_TOKEN"),
-		domain:      os.Getenv("OKTA_BASE_URL"),
-		parallelism: 1,
-		retryCount:  10,
-		minWait:     30,
-		maxWait:     600,
+		orgName:           os.Getenv("OKTA_ORG_NAME"),
+		apiToken:          os.Getenv("OKTA_API_TOKEN"),
+		domain:            os.Getenv("OKTA_BASE_URL"),
+		parallelism:       1,
+		retryCount:        10,
+		connectionTimeout: 30,
+		requestTimeout:    600,
 	}
 
 	if err := config.loadAndValidate(); err != nil {

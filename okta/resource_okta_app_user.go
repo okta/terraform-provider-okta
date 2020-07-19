@@ -27,8 +27,11 @@ func resourceAppUser() *schema.Resource {
 				d.Set("app_id", parts[0])
 				d.Set("user_id", parts[1])
 
-				assignment, _, err := getOktaClientFromMetadata(m).Application.
-					GetApplicationUser(parts[0], parts[1], nil)
+				client := getOktaClientFromMetadata(m)
+				ctx := getOktaContextFromMetadata(m)
+
+				assignment, _, err := client.Application.
+					GetApplicationUser(ctx, parts[0], parts[1], nil)
 
 				if err != nil {
 					return nil, err
@@ -72,7 +75,9 @@ func resourceAppUser() *schema.Resource {
 
 func resourceAppUserExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 	g, _, err := client.Application.GetApplicationUser(
+		ctx,
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
 		nil,
@@ -83,7 +88,9 @@ func resourceAppUserExists(d *schema.ResourceData, m interface{}) (bool, error) 
 
 func resourceAppUserCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 	u, _, err := client.Application.AssignUserToApplication(
+		ctx,
 		d.Get("app_id").(string),
 		*getAppUser(d),
 	)
@@ -99,7 +106,9 @@ func resourceAppUserCreate(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppUserUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 	_, _, err := client.Application.UpdateApplicationUser(
+		ctx,
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
 		*getAppUser(d),
@@ -113,7 +122,10 @@ func resourceAppUserUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppUserRead(d *schema.ResourceData, m interface{}) error {
-	u, resp, err := getOktaClientFromMetadata(m).Application.GetApplicationUser(
+	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
+	u, resp, err := client.Application.GetApplicationUser(
+		ctx,
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
 		nil,
@@ -135,7 +147,10 @@ func resourceAppUserRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppUserDelete(d *schema.ResourceData, m interface{}) error {
-	_, err := getOktaClientFromMetadata(m).Application.DeleteApplicationUser(
+	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
+	_, err := client.Application.DeleteApplicationUser(
+		ctx,
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
 		nil,

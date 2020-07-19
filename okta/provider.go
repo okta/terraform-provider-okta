@@ -83,23 +83,17 @@ func Provider() terraform.ResourceProvider {
 				DefaultFunc: schema.EnvDefaultFunc("OKTA_BASE_URL", "okta.com"),
 				Description: "The Okta url. (Use 'oktapreview.com' for Okta testing)",
 			},
-			"backoff": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     true,
-				Description: "Use exponential back off strategy for rate limits.",
-			},
-			"min_wait_seconds": {
+			"connection_timeout": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     30,
-				Description: "minimum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
+				Description: "Timeout period for connection to the Okta organization.",
 			},
-			"max_wait_seconds": {
+			"request_timeout": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     300,
-				Description: "maximum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
+				Description: "Timeout period for the individual requests to be completed.",
 			},
 			"max_retries": {
 				Type:         schema.TypeInt,
@@ -210,14 +204,13 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	log.Printf("[INFO] Initializing Okta client")
 
 	config := Config{
-		orgName:     d.Get("org_name").(string),
-		domain:      d.Get("base_url").(string),
-		apiToken:    d.Get("api_token").(string),
-		parallelism: d.Get("parallelism").(int),
-		retryCount:  d.Get("max_retries").(int),
-		maxWait:     d.Get("max_wait_seconds").(int),
-		minWait:     d.Get("min_wait_seconds").(int),
-		backoff:     d.Get("backoff").(bool),
+		orgName:           d.Get("org_name").(string),
+		domain:            d.Get("base_url").(string),
+		apiToken:          d.Get("api_token").(string),
+		parallelism:       d.Get("parallelism").(int),
+		retryCount:        d.Get("max_retries").(int),
+		requestTimeout:    d.Get("request_timeout").(int),
+		connectionTimeout: d.Get("connection_timeout").(int),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, fmt.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)

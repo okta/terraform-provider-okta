@@ -323,6 +323,7 @@ func resourceAppSaml() *schema.Resource {
 
 func resourceAppSamlCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 	app, err := buildApp(d, m)
 
 	if err != nil {
@@ -331,7 +332,7 @@ func resourceAppSamlCreate(d *schema.ResourceData, m interface{}) error {
 
 	activate := d.Get("status").(string) == "ACTIVE"
 	params := &query.Params{Activate: &activate}
-	_, _, err = client.Application.CreateApplication(app, params)
+	_, _, err = client.Application.CreateApplication(ctx, app, params)
 
 	if err != nil {
 		return err
@@ -410,20 +411,21 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppSamlUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 	app, err := buildApp(d, m)
 
 	if err != nil {
 		return err
 	}
 
-	_, _, err = client.Application.UpdateApplication(d.Id(), app)
+	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 
 	if err != nil {
 		return err
 	}
 
 	desiredStatus := d.Get("status").(string)
-	err = setAppStatus(d, client, app.Status, desiredStatus)
+	err = setAppStatus(ctx, d, client, app.Status, desiredStatus)
 
 	if err != nil {
 		return err
@@ -446,12 +448,13 @@ func resourceAppSamlUpdate(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppSamlDelete(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	_, err := client.Application.DeactivateApplication(d.Id())
+	ctx := getOktaContextFromMetadata(m)
+	_, err := client.Application.DeactivateApplication(ctx, d.Id())
 	if err != nil {
 		return err
 	}
 
-	_, err = client.Application.DeleteApplication(d.Id())
+	_, err = client.Application.DeleteApplication(ctx, d.Id())
 
 	return err
 }
@@ -534,12 +537,12 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 		samlAttr := make([]*okta.SamlAttributeStatement, len(statements))
 		for i := range statements {
 			samlAttr[i] = &okta.SamlAttributeStatement{
-				Name:        d.Get(fmt.Sprintf("attribute_statements.%d.name", i)).(string),
-				Namespace:   d.Get(fmt.Sprintf("attribute_statements.%d.namespace", i)).(string),
-				Type:        d.Get(fmt.Sprintf("attribute_statements.%d.type", i)).(string),
-				Values:      convertInterfaceToStringArr(d.Get(fmt.Sprintf("attribute_statements.%d.values", i))),
-				FilterType:  d.Get(fmt.Sprintf("attribute_statements.%d.filter_type", i)).(string),
-				FilterValue: d.Get(fmt.Sprintf("attribute_statements.%d.filter_value", i)).(string),
+				Name:      d.Get(fmt.Sprintf("attribute_statements.%d.name", i)).(string),
+				Namespace: d.Get(fmt.Sprintf("attribute_statements.%d.namespace", i)).(string),
+				Type:      d.Get(fmt.Sprintf("attribute_statements.%d.type", i)).(string),
+				Values:    convertInterfaceToStringArr(d.Get(fmt.Sprintf("attribute_statements.%d.values", i))),
+				// FilterType:  d.Get(fmt.Sprintf("attribute_statements.%d.filter_type", i)).(string),
+				// FilterValue: d.Get(fmt.Sprintf("attribute_statements.%d.filter_value", i)).(string), //TODO: Separate attribute statements for normal and group attributes
 			}
 		}
 		app.Settings.SignOn.AttributeStatements = samlAttr
@@ -558,8 +561,9 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 
 func getCertificate(d *schema.ResourceData, m interface{}) (*okta.JsonWebKey, error) {
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 	keyId := d.Get("key.id").(string)
-	key, resp, err := client.Application.GetApplicationKey(d.Id(), keyId)
+	key, resp, err := client.Application.GetApplicationKey(ctx, d.Id(), keyId)
 	if resp.StatusCode == 404 {
 		return nil, nil
 	}
@@ -575,6 +579,7 @@ func getMetadata(d *schema.ResourceData, m interface{}, keyID string) ([]byte, e
 // Keep in mind that at the time of writing this the official SDK did not support generating certs.
 func generateCertificate(d *schema.ResourceData, m interface{}, appID string) (*okta.JsonWebKey, error) {
 	requestExecutor := getRequestExecutor(m)
+	ctx := getOktaContextFromMetadata(m)
 	years := d.Get("key_years_valid").(int)
 	url := fmt.Sprintf("/api/v1/apps/%s/credentials/keys/generate?validityYears=%d", appID, years)
 	req, err := requestExecutor.NewRequest("POST", url, nil)
@@ -583,7 +588,7 @@ func generateCertificate(d *schema.ResourceData, m interface{}, appID string) (*
 	}
 	var key *okta.JsonWebKey
 
-	_, err = requestExecutor.Do(req, &key)
+	_, err = requestExecutor.Do(ctx, req, &key)
 
 	return key, err
 }

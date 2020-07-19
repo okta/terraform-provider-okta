@@ -26,14 +26,14 @@ type (
 
 	// Config contains our provider schema values and Okta clients
 	Config struct {
-		orgName      string
-		domain       string
-		apiToken     string
-		retryCount   int
-		parallelism  int
-		waitForReset bool
-		minWait      int
-		maxWait      int
+		orgName           string
+		domain            string
+		apiToken          string
+		retryCount        int
+		parallelism       int
+		waitForReset      bool
+		connectionTimeout int
+		requestTimeout    int
 
 		articulateOktaClient *articulateOkta.Client
 		oktaClient           *okta.Client
@@ -62,8 +62,8 @@ func (c *Config) loadAndValidate() error {
 		okta.WithOrgUrl(orgUrl),
 		okta.WithToken(c.apiToken),
 		okta.WithCache(false),
-		okta.WithConnectionTimeout(int32(c.minWait)*60), // Using a i32 conversion due to times use of i64
-		okta.WithRequestTimeout(int32(c.maxWait)*60),    // TODO change these types to i64 upstream
+		okta.WithConnectionTimeout(int32(c.connectionTimeout)*1000), // Using a i32 conversion and static numbers due to type issue
+		okta.WithRequestTimeout(int32(c.requestTimeout)*1000),       // TODO: change these types to i64 upstream and rever to using time lib
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
 		okta.WithHttpClient(*httpClient),
 	)

@@ -220,6 +220,41 @@ func convertStringSetToInterface(stringList []string) *schema.Set {
 	return schema.NewSet(schema.HashString, arr)
 }
 
+// Conversions to avoid messing with other conversions
+func convertResponseTypesToStrings(responseTypes []*okta.OAuthResponseType) []string {
+	arr := make([]string, len(responseTypes))
+	for i, str := range responseTypes {
+		arr[i] = string(*str)
+	}
+	return arr
+}
+
+func convertStringsToResponseTypes(strs []string) []*okta.OAuthResponseType {
+	arr := make([]*okta.OAuthResponseType, len(strs))
+	for i, str := range strs {
+		response := okta.OAuthResponseType(str)
+		arr[i] = &response
+	}
+	return arr
+}
+
+func convertGrantTypesToStrings(responseTypes []*okta.OAuthGrantType) []string {
+	arr := make([]string, len(responseTypes))
+	for i, str := range responseTypes {
+		arr[i] = string(*str)
+	}
+	return arr
+}
+
+func convertStringsToGrantTypes(strs []string) []*okta.OAuthGrantType {
+	arr := make([]*okta.OAuthGrantType, len(strs))
+	for i, str := range strs {
+		response := okta.OAuthGrantType(str)
+		arr[i] = &response
+	}
+	return arr
+}
+
 // Allows you to chain multiple validation functions
 func createValidationChain(validationChain ...schema.SchemaValidateFunc) schema.SchemaValidateFunc {
 	return func(val interface{}, key string) ([]string, []error) {

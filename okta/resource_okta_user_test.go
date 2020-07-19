@@ -17,13 +17,13 @@ import (
 
 func sweepUsers(client *testClient) error {
 	var errorList []error
-	users, _, err := client.oktaClient.User.ListUsers(&query.Params{Q: testResourcePrefix})
+	users, _, err := client.oktaClient.User.ListUsers(client.oktaCtx, &query.Params{Q: testResourcePrefix})
 	if err != nil {
 		return err
 	}
 
 	for _, u := range users {
-		if err := ensureUserDelete(u.Id, u.Status, client.oktaClient); err != nil {
+		if err := ensureUserDelete(client.oktaCtx, u.Id, u.Status, client.oktaClient); err != nil {
 			errorList = append(errorList, err)
 		}
 	}
@@ -344,10 +344,11 @@ func TestAccOktaUser_validRole(t *testing.T) {
 }
 
 func testAccCheckUserDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*Config).oktaClient
+	client := getOktaClientFromMetadata(testAccProvider.Meta())
+	ctx := getOktaContextFromMetadata(testAccProvider.Meta())
 
 	for _, r := range s.RootModule().Resources {
-		if _, resp, err := client.User.GetUser(r.Primary.ID); err != nil {
+		if _, resp, err := client.User.GetUser(ctx, r.Primary.ID); err != nil {
 			if strings.Contains(resp.Response.Status, "404") {
 				continue
 			}
