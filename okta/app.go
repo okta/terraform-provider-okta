@@ -13,22 +13,22 @@ import (
 
 var appUserResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
-		"scope": &schema.Schema{
+		"scope": {
 			Type:        schema.TypeString,
 			Computed:    true,
 			Description: "Scope of application user.",
 		},
-		"id": &schema.Schema{
+		"id": {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "User ID.",
 		},
-		"username": &schema.Schema{
+		"username": {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "Username for user.",
 		},
-		"password": &schema.Schema{
+		"password": {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "Password for user application.",
