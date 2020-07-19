@@ -20,8 +20,7 @@ func createRedirectUriExists(name string) resource.TestCheckFunc {
 
 		uri := rs.Primary.ID
 		appId := rs.Primary.Attributes["app_id"]
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
-		ctx := getOktaContextFromMetadata(testAccProvider.Meta())
+		ctx, client := getOktaClientFromMetadata(testAccProvider.Meta())
 		app := okta.NewOpenIdConnectApplication()
 		_, response, err := client.Application.GetApplication(ctx, appId, app, nil)
 

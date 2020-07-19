@@ -363,7 +363,7 @@ func getClientFromMetadata(meta interface{}) *articulateOkta.Client {
 }
 
 func getOktaClientFromMetadata(meta interface{}) (context.Context, *okta.Client) {
-	return meta.(*Config).oktaCtx, meta.(*Config).oktaClient
+	return meta.(*Config).ctx, meta.(*Config).oktaClient
 }
 
 func getSupplementFromMetadata(meta interface{}) *sdk.ApiSupplement {

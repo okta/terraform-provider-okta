@@ -87,8 +87,7 @@ func ensureAppGroupAssignmentExists(name string) resource.TestCheckFunc {
 
 		appId := rs.Primary.Attributes["app_id"]
 		groupId := rs.Primary.Attributes["group_id"]
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
-		ctx := getOktaContextFromMetadata(testAccProvider.Meta())
+		ctx, client := getOktaClientFromMetadata(testAccProvider.Meta())
 
 		g, _, err := client.Application.GetApplicationGroupAssignment(ctx, appId, groupId, nil)
 		if err != nil {

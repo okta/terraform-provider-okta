@@ -344,8 +344,7 @@ func TestAccOktaUser_validRole(t *testing.T) {
 }
 
 func testAccCheckUserDestroy(s *terraform.State) error {
-	client := getOktaClientFromMetadata(testAccProvider.Meta())
-	ctx := getOktaContextFromMetadata(testAccProvider.Meta())
+	ctx, client := getOktaClientFromMetadata(testAccProvider.Meta())
 
 	for _, r := range s.RootModule().Resources {
 		if _, resp, err := client.User.GetUser(ctx, r.Primary.ID); err != nil {

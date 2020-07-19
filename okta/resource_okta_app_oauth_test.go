@@ -250,8 +250,8 @@ func TestAccAppOauth_serviceWithJWKS(t *testing.T) {
 
 func createDoesAppExist(app okta.App) func(string) (bool, error) {
 	return func(id string) (bool, error) {
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
-		ctx := getOktaContextFromMetadata(testAccProvider.Meta())
+		ctx, client := getOktaClientFromMetadata(testAccProvider.Meta())
+
 		_, response, err := client.Application.GetApplication(ctx, id, app, &query.Params{})
 
 		// We don't want to consider a 404 an error in some cases and thus the delineation

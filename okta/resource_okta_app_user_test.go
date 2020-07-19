@@ -87,8 +87,7 @@ func ensureAppUserExists(name string) resource.TestCheckFunc {
 
 		appId := rs.Primary.Attributes["app_id"]
 		userId := rs.Primary.Attributes["user_id"]
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
-		ctx := getOktaContextFromMetadata(testAccProvider.Meta())
+		ctx, client := getOktaClientFromMetadata(testAccProvider.Meta())
 
 		u, _, err := client.Application.GetApplicationUser(ctx, appId, userId, nil)
 		if err != nil {
@@ -110,8 +109,8 @@ func checkAppUserDestroy(s *terraform.State) error {
 		appId := rs.Primary.Attributes["app_id"]
 		userId := rs.Primary.Attributes["user_id"]
 
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
-		ctx := getOktaContextFromMetadata(testAccProvider.Meta())
+		ctx, client := getOktaClientFromMetadata(testAccProvider.Meta())
+
 		_, response, err := client.Application.GetApplicationUser(ctx, appId, userId, nil)
 		exists, err := doesResourceExist(response, err)
 		if err != nil {

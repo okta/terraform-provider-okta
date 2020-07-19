@@ -61,8 +61,8 @@ func TestAccOktaGroups_crud(t *testing.T) {
 }
 
 func doesGroupExist(id string) (bool, error) {
-	client := getOktaClientFromMetadata(testAccProvider.Meta())
-	ctx := getOktaContextFromMetadata(testAccProvider.Meta())
+	ctx, client := getOktaClientFromMetadata(testAccProvider.Meta())
+
 	_, response, err := client.Group.GetGroup(ctx, id)
 
 	return doesResourceExist(response, err)

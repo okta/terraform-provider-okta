@@ -83,8 +83,8 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 }
 
 func doesGroupRuleExist(id string) (bool, error) {
-	client := getOktaClientFromMetadata(testAccProvider.Meta())
-	ctx := getOktaContextFromMetadata(testAccProvider.Meta())
+	ctx, client := getOktaClientFromMetadata(testAccProvider.Meta())
+
 	_, response, err := client.Group.GetGroupRule(ctx, id, &query.Params{})
 
 	return doesResourceExist(response, err)

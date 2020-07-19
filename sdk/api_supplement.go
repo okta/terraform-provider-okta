@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -15,6 +16,7 @@ type ApiSupplement struct {
 	BaseURL         string
 	Client          *http.Client
 	Token           string
+	Ctx             context.Context
 	RequestExecutor *okta.RequestExecutor
 }
 
@@ -29,14 +31,12 @@ func (m *ApiSupplement) GetSAMLIdpMetdata(id string) ([]byte, *http.Response, er
 }
 
 func (m *ApiSupplement) GetXml(url string) ([]byte, *http.Response, error) {
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
-	req.Header.Add("Authorization", fmt.Sprintf("SSWS %s", m.Token))
-	req.Header.Add("User-Agent", "Terraform Okta Provider")
-	req.Header.Add("Accept", "application/xml")
-	res, err := m.RequestExecutor.DoWithRetries(okta.NewRequest(req), 0)
+
+	res, err := m.RequestExecutor.Do(ctx, req, nil)
 	if err != nil {
 		return nil, res, err
 	} else if res.StatusCode == http.StatusNotFound {

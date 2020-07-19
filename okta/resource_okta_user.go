@@ -63,8 +63,8 @@ func resourceUser() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				// Supporting id and email based imports
-				client := getOktaClientFromMetadata(meta)
-				ctx := getOktaContextFromMetadata(meta)
+				ctx, client := getOktaClientFromMetadata(meta)
+
 				user, _, err := client.User.GetUser(ctx, d.Id())
 				if err != nil {
 					return nil, err
@@ -533,7 +533,8 @@ func hasProfileChange(d *schema.ResourceData) bool {
 }
 
 func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
-	return ensureUserDelete(getOktaContextFromMetadata(m), d.Id(), d.Get("status").(string), getOktaClientFromMetadata(m))
+	ctx, client := getOktaClientFromMetadata(m)
+	return ensureUserDelete(ctx, d.Id(), d.Get("status").(string), client)
 }
 
 func ensureUserDelete(ctx context.Context, id string, status string, client *okta.Client) error {
