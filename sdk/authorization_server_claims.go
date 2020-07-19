@@ -32,7 +32,7 @@ func (m *ApiSupplement) DeleteAuthorizationServerClaim(authServerId, id string) 
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }
 
 func (m *ApiSupplement) ListAuthorizationServerClaims(authServerId string) ([]*AuthorizationServerClaim, *okta.Response, error) {
@@ -43,7 +43,7 @@ func (m *ApiSupplement) ListAuthorizationServerClaims(authServerId string) ([]*A
 	}
 
 	var auth []*AuthorizationServerClaim
-	resp, err := m.RequestExecutor.Do(req, &auth)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &auth)
 	return auth, resp, err
 }
 
@@ -58,7 +58,7 @@ func (m *ApiSupplement) CreateAuthorizationServerClaim(authServerId string, body
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &authorizationServer)
 	return &authorizationServer, resp, err
 }
 
@@ -73,7 +73,7 @@ func (m *ApiSupplement) UpdateAuthorizationServerClaim(authServerId, id string, 
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &authorizationServer)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -88,7 +88,7 @@ func (m *ApiSupplement) GetAuthorizationServerClaim(authServerId, id string, aut
 	}
 
 	authorizationServer := authorizationServerInstance
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &authorizationServer)
 	if err != nil {
 		return nil, resp, err
 	}

@@ -25,7 +25,7 @@ func (m *ApiSupplement) DeleteAdminRole(id, roleId string) (*okta.Response, erro
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }
 
 func (m *ApiSupplement) ListAdminRoles(groupId string, qp *query.Params) (roles []*Role, resp *okta.Response, err error) {
@@ -38,7 +38,7 @@ func (m *ApiSupplement) ListAdminRoles(groupId string, qp *query.Params) (roles 
 		return
 	}
 
-	resp, err = m.RequestExecutor.Do(req, &roles)
+	resp, err = m.RequestExecutor.Do(m.Ctx, req, &roles)
 	return
 }
 func (m *ApiSupplement) CreateAdminRole(groupId string, body *Role, qp *query.Params) (*Role, *okta.Response, error) {
@@ -52,6 +52,6 @@ func (m *ApiSupplement) CreateAdminRole(groupId string, body *Role, qp *query.Pa
 	}
 
 	respBody := &Role{}
-	resp, err := m.RequestExecutor.Do(req, respBody)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, respBody)
 	return respBody, resp, err
 }

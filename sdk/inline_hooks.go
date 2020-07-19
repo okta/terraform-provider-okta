@@ -49,7 +49,7 @@ func (m *ApiSupplement) ActivateInlineHook(id string) (*okta.Response, error) {
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }
 
 func (m *ApiSupplement) DeactivateInlineHook(id string) (*okta.Response, error) {
@@ -59,7 +59,7 @@ func (m *ApiSupplement) DeactivateInlineHook(id string) (*okta.Response, error) 
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }
 
 func (m *ApiSupplement) DeleteInlineHook(id string) (*okta.Response, error) {
@@ -69,7 +69,7 @@ func (m *ApiSupplement) DeleteInlineHook(id string) (*okta.Response, error) {
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }
 
 func (m *ApiSupplement) ListInlineHooks() ([]*InlineHook, *okta.Response, error) {
@@ -79,7 +79,7 @@ func (m *ApiSupplement) ListInlineHooks() ([]*InlineHook, *okta.Response, error)
 	}
 
 	var auth []*InlineHook
-	resp, err := m.RequestExecutor.Do(req, &auth)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &auth)
 	return auth, resp, err
 }
 
@@ -94,7 +94,7 @@ func (m *ApiSupplement) CreateInlineHook(body InlineHook, qp *query.Params) (*In
 	}
 
 	hook := body
-	resp, err := m.RequestExecutor.Do(req, &hook)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &hook)
 	return &hook, resp, err
 }
 
@@ -109,7 +109,7 @@ func (m *ApiSupplement) UpdateInlineHook(id string, body InlineHook, qp *query.P
 	}
 
 	hook := body
-	resp, err := m.RequestExecutor.Do(req, &hook)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &hook)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -124,7 +124,7 @@ func (m *ApiSupplement) GetInlineHook(id string) (*InlineHook, *okta.Response, e
 	}
 
 	hook := &InlineHook{}
-	resp, err := m.RequestExecutor.Do(req, &hook)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &hook)
 	if err != nil {
 		return nil, resp, err
 	}

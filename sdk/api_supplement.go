@@ -20,23 +20,23 @@ type ApiSupplement struct {
 	RequestExecutor *okta.RequestExecutor
 }
 
-func (m *ApiSupplement) GetSAMLMetdata(id, keyID string) ([]byte, *http.Response, error) {
+func (m *ApiSupplement) GetSAMLMetdata(id, keyID string) ([]byte, *okta.Response, error) {
 	url := fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata?kid=%s", m.BaseURL, id, keyID)
 	return m.GetXml(url)
 }
 
-func (m *ApiSupplement) GetSAMLIdpMetdata(id string) ([]byte, *http.Response, error) {
+func (m *ApiSupplement) GetSAMLIdpMetdata(id string) ([]byte, *okta.Response, error) {
 	url := fmt.Sprintf("%s/api/v1/idps/%s/metadata.xml", m.BaseURL, id)
 	return m.GetXml(url)
 }
 
-func (m *ApiSupplement) GetXml(url string) ([]byte, *http.Response, error) {
+func (m *ApiSupplement) GetXml(url string) ([]byte, *okta.Response, error) {
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	res, err := m.RequestExecutor.Do(ctx, req, nil)
+	res, err := m.RequestExecutor.Do(m.Ctx, req, nil)
 	if err != nil {
 		return nil, res, err
 	} else if res.StatusCode == http.StatusNotFound {

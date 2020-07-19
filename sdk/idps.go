@@ -9,6 +9,8 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
+// TODO: Convert all of these to native Okta SDK https://pkg.go.dev/github.com/okta/okta-sdk-golang/v2@v2.0.0/okta?tab=doc#IdentityProviderResource
+
 func (m *ApiSupplement) DeleteIdentityProvider(id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/idps/%s", id)
 	req, err := m.RequestExecutor.NewRequest("DELETE", url, nil)
@@ -16,7 +18,7 @@ func (m *ApiSupplement) DeleteIdentityProvider(id string) (*okta.Response, error
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }
 
 func (m *ApiSupplement) ListIdentityProviders(idps interface{}, qp *query.Params) (interface{}, *okta.Response, error) {
@@ -29,7 +31,7 @@ func (m *ApiSupplement) ListIdentityProviders(idps interface{}, qp *query.Params
 		return nil, nil, err
 	}
 
-	resp, err := m.RequestExecutor.Do(req, idps)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, idps)
 	return idps, resp, err
 }
 func (m *ApiSupplement) CreateIdentityProvider(body IdentityProvider, qp *query.Params) (IdentityProvider, *okta.Response, error) {
@@ -42,7 +44,7 @@ func (m *ApiSupplement) CreateIdentityProvider(body IdentityProvider, qp *query.
 		return nil, nil, err
 	}
 
-	resp, err := m.RequestExecutor.Do(req, body)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, body)
 	return body, resp, err
 }
 
@@ -57,7 +59,7 @@ func (m *ApiSupplement) UpdateIdentityProvider(id string, body IdentityProvider,
 	}
 
 	identityProvider := body
-	resp, err := m.RequestExecutor.Do(req, &identityProvider)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &identityProvider)
 	return identityProvider, resp, err
 }
 
@@ -67,7 +69,7 @@ func (m *ApiSupplement) GetIdentityProvider(id string, idp IdentityProvider) (Id
 	if err != nil {
 		return nil, nil, err
 	}
-	resp, err := m.RequestExecutor.Do(req, idp)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, idp)
 	return idp, resp, err
 }
 func (m *ApiSupplement) ActivateIdentityProvider(id string) (*okta.Response, error) {
@@ -77,7 +79,7 @@ func (m *ApiSupplement) ActivateIdentityProvider(id string) (*okta.Response, err
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }
 func (m *ApiSupplement) DeactivateIdentityProvider(id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/idps/%s/lifecycle/deactivate", id)
@@ -86,7 +88,7 @@ func (m *ApiSupplement) DeactivateIdentityProvider(id string) (*okta.Response, e
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }
 
 func (m *ApiSupplement) GenerateIdentityProviderSigningKey(idpId string, yearsValid int) (*SigningKey, *okta.Response, error) {
@@ -97,7 +99,7 @@ func (m *ApiSupplement) GenerateIdentityProviderSigningKey(idpId string, yearsVa
 		return key, nil, err
 	}
 
-	resp, err := m.RequestExecutor.Do(req, key)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, key)
 	return key, resp, err
 }
 
@@ -109,7 +111,7 @@ func (m *ApiSupplement) GetIdentityProviderSigningKey(idpId, kid string) (*Signi
 		return key, nil, err
 	}
 
-	resp, err := m.RequestExecutor.Do(req, key)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, key)
 	return key, resp, err
 }
 
@@ -120,7 +122,7 @@ func (m *ApiSupplement) DeleteIdentityProviderSigningKey(kid string) (*okta.Resp
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }
 
 func (m *ApiSupplement) AddIdentityProviderCertificate(cert *Certificate) (*SigningKey, *okta.Response, error) {
@@ -129,7 +131,7 @@ func (m *ApiSupplement) AddIdentityProviderCertificate(cert *Certificate) (*Sign
 	if err != nil {
 		return key, nil, err
 	}
-	resp, err := m.RequestExecutor.Do(req, key)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, key)
 	return key, resp, err
 }
 
@@ -141,7 +143,7 @@ func (m *ApiSupplement) GetIdentityProviderCertificate(kid string) (*SigningKey,
 		return key, nil, err
 	}
 
-	resp, err := m.RequestExecutor.Do(req, key)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, key)
 	return key, resp, err
 }
 
@@ -152,6 +154,6 @@ func (m *ApiSupplement) DeleteIdentityProviderCertificate(kid string) (*okta.Res
 		return nil, err
 	}
 
-	resp, err := m.RequestExecutor.Do(req, nil)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, nil)
 	return resp, err
 }

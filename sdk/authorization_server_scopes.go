@@ -23,7 +23,7 @@ func (m *ApiSupplement) DeleteAuthorizationServerScope(authServerId, id string) 
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }
 
 func (m *ApiSupplement) ListAuthorizationServerScopes(authServerId string) ([]*AuthorizationServerScope, *okta.Response, error) {
@@ -34,7 +34,7 @@ func (m *ApiSupplement) ListAuthorizationServerScopes(authServerId string) ([]*A
 	}
 
 	var auth []*AuthorizationServerScope
-	resp, err := m.RequestExecutor.Do(req, &auth)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &auth)
 	return auth, resp, err
 }
 
@@ -49,7 +49,7 @@ func (m *ApiSupplement) CreateAuthorizationServerScope(authServerId string, body
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &authorizationServer)
 	return &authorizationServer, resp, err
 }
 
@@ -64,7 +64,7 @@ func (m *ApiSupplement) UpdateAuthorizationServerScope(authServerId, id string, 
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &authorizationServer)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -79,7 +79,7 @@ func (m *ApiSupplement) GetAuthorizationServerScope(authServerId, id string, aut
 	}
 
 	authorizationServer := authorizationServerInstance
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &authorizationServer)
 	if err != nil {
 		return nil, resp, err
 	}

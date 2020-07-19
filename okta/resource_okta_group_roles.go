@@ -7,6 +7,8 @@ import (
 	"github.com/terraform-providers/terraform-provider-okta/sdk"
 )
 
+// TODO: Convert all of this to native Okta SDK https://github.com/okta/okta-sdk-golang/blob/v2.0.0/okta/group.go#L320
+
 func resourceGroupRoles() *schema.Resource {
 	return &schema.Resource{
 		// No point in having an exist function, since only the group has to exist
@@ -59,12 +61,13 @@ func getGroupRoleId(groupId string) string {
 }
 
 func resourceGroupRolesCreate(d *schema.ResourceData, m interface{}) error {
+	client := getSupplementFromMetadata(m)
 	groupId := d.Get("group_id").(string)
 	adminRoles := convertInterfaceToStringSet(d.Get("admin_roles"))
 
 	for _, role := range adminRoles {
 		groupRole := buildGroupRole(d, role)
-		_, _, err := getSupplementFromMetadata(m).CreateAdminRole(groupId, groupRole, nil)
+		_, _, err := client.CreateAdminRole(groupId, groupRole, nil)
 		if err != nil {
 			return err
 		}

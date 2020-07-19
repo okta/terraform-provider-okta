@@ -105,7 +105,7 @@ func (m *ApiSupplement) DeleteIdpDiscoveryRule(policyId, id string) (*okta.Respo
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }
 
 func (m *ApiSupplement) ListIdpDiscoveryRules(policyId string) ([]*IdpDiscoveryRule, *okta.Response, error) {
@@ -116,7 +116,7 @@ func (m *ApiSupplement) ListIdpDiscoveryRules(policyId string) ([]*IdpDiscoveryR
 	}
 
 	var auth []*IdpDiscoveryRule
-	resp, err := m.RequestExecutor.Do(req, &auth)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &auth)
 	return auth, resp, err
 }
 
@@ -131,7 +131,7 @@ func (m *ApiSupplement) CreateIdpDiscoveryRule(policyId string, body IdpDiscover
 	}
 
 	rule := body
-	resp, err := m.RequestExecutor.Do(req, &rule)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &rule)
 	return &rule, resp, err
 }
 
@@ -146,7 +146,7 @@ func (m *ApiSupplement) UpdateIdpDiscoveryRule(policyId, id string, body IdpDisc
 	}
 
 	rule := body
-	resp, err := m.RequestExecutor.Do(req, &rule)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &rule)
 	return &rule, resp, err
 }
 
@@ -157,7 +157,7 @@ func (m *ApiSupplement) GetIdpDiscoveryRule(policyId, id string) (*IdpDiscoveryR
 		return nil, nil, err
 	}
 	rule := &IdpDiscoveryRule{}
-	resp, err := m.RequestExecutor.Do(req, rule)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, rule)
 	return rule, resp, err
 }
 
@@ -168,7 +168,7 @@ func (m *ApiSupplement) ActivateRule(policyId, id string) (*okta.Response, error
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }
 
 func (m *ApiSupplement) DeactivateRule(policyId, id string) (*okta.Response, error) {
@@ -178,5 +178,5 @@ func (m *ApiSupplement) DeactivateRule(policyId, id string) (*okta.Response, err
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }

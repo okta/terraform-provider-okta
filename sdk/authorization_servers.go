@@ -33,7 +33,7 @@ func (m *ApiSupplement) DeleteAuthorizationServer(id string) (*okta.Response, er
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }
 func (m *ApiSupplement) ListAuthorizationServers() ([]*AuthorizationServer, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers")
@@ -43,7 +43,7 @@ func (m *ApiSupplement) ListAuthorizationServers() ([]*AuthorizationServer, *okt
 	}
 
 	var auth []*AuthorizationServer
-	resp, err := m.RequestExecutor.Do(req, &auth)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &auth)
 	return auth, resp, err
 }
 func (m *ApiSupplement) CreateAuthorizationServer(body AuthorizationServer, qp *query.Params) (*AuthorizationServer, *okta.Response, error) {
@@ -57,7 +57,7 @@ func (m *ApiSupplement) CreateAuthorizationServer(body AuthorizationServer, qp *
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &authorizationServer)
 	return &authorizationServer, resp, err
 }
 
@@ -72,7 +72,7 @@ func (m *ApiSupplement) UpdateAuthorizationServer(id string, body AuthorizationS
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, &authorizationServer)
 	return &authorizationServer, resp, err
 }
 
@@ -83,7 +83,7 @@ func (m *ApiSupplement) GetAuthorizationServer(id string) (*AuthorizationServer,
 		return nil, nil, err
 	}
 	authorizationServer := &AuthorizationServer{}
-	resp, err := m.RequestExecutor.Do(req, authorizationServer)
+	resp, err := m.RequestExecutor.Do(m.Ctx, req, authorizationServer)
 	return authorizationServer, resp, err
 }
 func (m *ApiSupplement) ActivateAuthorizationServer(id string) (*okta.Response, error) {
@@ -93,7 +93,7 @@ func (m *ApiSupplement) ActivateAuthorizationServer(id string) (*okta.Response, 
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }
 func (m *ApiSupplement) DeactivateAuthorizationServer(id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%s/lifecycle/deactivate", id)
@@ -102,7 +102,7 @@ func (m *ApiSupplement) DeactivateAuthorizationServer(id string) (*okta.Response
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(m.Ctx, req, nil)
 }
 
 func (c *ApiSupplement) FindAuthServer(name string, qp *query.Params) (*AuthorizationServer, error) {
