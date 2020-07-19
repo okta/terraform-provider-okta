@@ -19,7 +19,7 @@ package okta
 import (
 	"net/http"
 
-	"github.com/okta/okta-sdk-golang/okta/cache"
+	"github.com/okta/okta-sdk-golang/v2/okta/cache"
 )
 
 type config struct {
