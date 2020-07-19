@@ -196,8 +196,8 @@ func fetchApp(d *schema.ResourceData, m interface{}, app okta.App) error {
 }
 
 func fetchAppById(id string, m interface{}, app okta.App) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	_, response, err := client.Application.GetApplication(ctx, id, app, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
 	if response != nil && response.StatusCode == 404 {
@@ -209,8 +209,8 @@ func fetchAppById(id string, m interface{}, app okta.App) error {
 }
 
 func updateAppById(id string, m interface{}, app okta.App) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	_, response, err := client.Application.UpdateApplication(ctx, id, app)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
 	if response.StatusCode == 404 {
@@ -279,8 +279,7 @@ func containsAppUser(userList []*okta.AppUser, id string) bool {
 func handleAppGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) error {
 	var wg sync.WaitGroup
 	resultChan := make(chan []*result, 1)
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
 
 	groupHandlers := handleAppGroups(ctx, id, d, client)
 	userHandlers := handleAppUsers(ctx, id, d, client)
@@ -367,8 +366,8 @@ func setAppStatus(ctx context.Context, d *schema.ResourceData, client *okta.Clie
 }
 
 func syncGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	// Temporary high limit to avoid issues short term. Need to support pagination here
 	userList, _, err := client.Application.ListApplicationUsers(ctx, id, &query.Params{Limit: 200})
 	if err != nil {

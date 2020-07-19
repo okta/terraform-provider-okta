@@ -27,8 +27,7 @@ func resourceAppUser() *schema.Resource {
 				d.Set("app_id", parts[0])
 				d.Set("user_id", parts[1])
 
-				client := getOktaClientFromMetadata(m)
-				ctx := getOktaContextFromMetadata(m)
+				ctx, client := getOktaClientFromMetadata(m)
 
 				assignment, _, err := client.Application.
 					GetApplicationUser(ctx, parts[0], parts[1], nil)
@@ -74,8 +73,8 @@ func resourceAppUser() *schema.Resource {
 }
 
 func resourceAppUserExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	g, _, err := client.Application.GetApplicationUser(
 		ctx,
 		d.Get("app_id").(string),
@@ -87,8 +86,8 @@ func resourceAppUserExists(d *schema.ResourceData, m interface{}) (bool, error) 
 }
 
 func resourceAppUserCreate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	u, _, err := client.Application.AssignUserToApplication(
 		ctx,
 		d.Get("app_id").(string),
@@ -105,8 +104,8 @@ func resourceAppUserCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppUserUpdate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	_, _, err := client.Application.UpdateApplicationUser(
 		ctx,
 		d.Get("app_id").(string),
@@ -122,8 +121,8 @@ func resourceAppUserUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppUserRead(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	u, resp, err := client.Application.GetApplicationUser(
 		ctx,
 		d.Get("app_id").(string),
@@ -147,8 +146,8 @@ func resourceAppUserRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppUserDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	_, err := client.Application.DeleteApplicationUser(
 		ctx,
 		d.Get("app_id").(string),

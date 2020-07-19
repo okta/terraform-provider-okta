@@ -303,8 +303,8 @@ func validateGrantTypes(d *schema.ResourceData) error {
 }
 
 func resourceAppOAuthCreate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	if err := validateGrantTypes(d); err != nil {
 		return err
 	}
@@ -405,8 +405,7 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppOAuthUpdate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
 
 	if err := validateGrantTypes(d); err != nil {
 		return err
@@ -430,8 +429,7 @@ func resourceAppOAuthUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppOAuthDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
 
 	if d.Get("status").(string) == "ACTIVE" {
 		_, err := client.Application.DeactivateApplication(ctx, d.Id())

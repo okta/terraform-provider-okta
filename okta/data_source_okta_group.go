@@ -43,8 +43,8 @@ func dataSourceGroupRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func findGroup(name string, d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	groups, _, err := client.Group.ListGroups(ctx, &query.Params{Q: name})
 	if err != nil {
 		return fmt.Errorf("failed to query for groups: %v", err)

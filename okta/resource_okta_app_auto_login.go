@@ -73,8 +73,8 @@ func resourceAppAutoLogin() *schema.Resource {
 }
 
 func resourceAppAutoLoginCreate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	app := buildAppAutoLogin(d, m)
 	activate := d.Get("status").(string) == "ACTIVE"
 	params := &query.Params{Activate: &activate}
@@ -121,8 +121,8 @@ func resourceAppAutoLoginRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppAutoLoginUpdate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	app := buildAppAutoLogin(d, m)
 	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
 
@@ -141,8 +141,8 @@ func resourceAppAutoLoginUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppAutoLoginDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	_, err := client.Application.DeactivateApplication(ctx, d.Id())
 	if err != nil {
 		return err

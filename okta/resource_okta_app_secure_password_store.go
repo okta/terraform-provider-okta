@@ -104,8 +104,8 @@ func resourceAppSecurePasswordStore() *schema.Resource {
 }
 
 func resourceAppSecurePasswordStoreCreate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	app := buildAppSecurePasswordStore(d, m)
 	activate := d.Get("status").(string) == "ACTIVE"
 	params := &query.Params{Activate: &activate}
@@ -153,8 +153,8 @@ func resourceAppSecurePasswordStoreRead(d *schema.ResourceData, m interface{}) e
 }
 
 func resourceAppSecurePasswordStoreUpdate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	app := buildAppSecurePasswordStore(d, m)
 	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
 
@@ -173,8 +173,8 @@ func resourceAppSecurePasswordStoreUpdate(d *schema.ResourceData, m interface{})
 }
 
 func resourceAppSecurePasswordStoreDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	_, err := client.Application.DeactivateApplication(ctx, d.Id())
 	if err != nil {
 		return err

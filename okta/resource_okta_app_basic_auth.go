@@ -33,8 +33,8 @@ func resourceAppBasicAuth() *schema.Resource {
 }
 
 func resourceAppBasicAuthCreate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	app := buildAppBasicAuth(d, m)
 	activate := d.Get("status").(string) == "ACTIVE"
 	params := &query.Params{Activate: &activate}
@@ -76,8 +76,8 @@ func resourceAppBasicAuthRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppBasicAuthUpdate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	app := buildAppBasicAuth(d, m)
 	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
 
@@ -102,8 +102,8 @@ func resourceAppBasicAuthUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppBasicAuthDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	_, err := client.Application.DeactivateApplication(ctx, d.Id())
 	if err != nil {
 		return err

@@ -304,8 +304,8 @@ func mapStatus(currentStatus string) string {
 func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Create User for %v", d.Get("login").(string))
 
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	profile := populateUserProfile(d)
 
 	qp := query.NewQueryParams()
@@ -376,8 +376,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 
 func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List User %v", d.Get("login").(string))
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
 
 	user, resp, err := client.User.GetUser(ctx, d.Id())
 
@@ -422,8 +421,8 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		return fmt.Errorf("[ERROR] Okta will not allow a user to be updated to STAGED. Can set to STAGED on user creation only.")
 	}
 
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	// There are a few requests here so just making sure the state gets updated per successful downstream change
 	d.Partial(true)
 
@@ -557,8 +556,7 @@ func ensureUserDelete(ctx context.Context, id string, status string, client *okt
 
 func resourceUserExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	log.Printf("[INFO] Checking Exists for User %v", d.Get("login").(string))
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
 
 	_, resp, err := client.User.GetUser(ctx, d.Id())
 

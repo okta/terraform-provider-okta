@@ -362,20 +362,17 @@ func getClientFromMetadata(meta interface{}) *articulateOkta.Client {
 	return meta.(*Config).articulateOktaClient
 }
 
-func getOktaClientFromMetadata(meta interface{}) *okta.Client {
-	return meta.(*Config).oktaClient
-}
-
-func getOktaContextFromMetadata(meta interface{}) context.Context {
-	return meta.(*Config).ctx
+func getOktaClientFromMetadata(meta interface{}) (context.Context, *okta.Client) {
+	return meta.(*Config).oktaCtx, meta.(*Config).oktaClient
 }
 
 func getSupplementFromMetadata(meta interface{}) *sdk.ApiSupplement {
 	return meta.(*Config).supplementClient
 }
 
-func getRequestExecutor(m interface{}) *okta.RequestExecutor {
-	return getOktaClientFromMetadata(m).GetRequestExecutor()
+func getRequestExecutor(m interface{}) (context.Context, *okta.RequestExecutor) {
+	ctx, client := getOktaClientFromMetadata(m)
+	return ctx, client.GetRequestExecutor()
 }
 
 func is404(status int) bool {

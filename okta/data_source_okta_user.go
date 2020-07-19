@@ -51,8 +51,7 @@ func dataSourceUser() *schema.Resource {
 }
 
 func dataSourceUserRead(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
 
 	var user *okta.User
 	var err error

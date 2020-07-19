@@ -61,8 +61,8 @@ func resourceAppThreeField() *schema.Resource {
 }
 
 func resourceAppThreeFieldCreate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	app := buildAppThreeField(d, m)
 	activate := d.Get("status").(string) == "ACTIVE"
 	params := &query.Params{Activate: &activate}
@@ -105,8 +105,8 @@ func resourceAppThreeFieldRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppThreeFieldUpdate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	app := buildAppThreeField(d, m)
 	_, resp, err := client.Application.UpdateApplication(ctx, d.Id(), app)
 
@@ -125,8 +125,8 @@ func resourceAppThreeFieldUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppThreeFieldDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	resp, err := client.Application.DeactivateApplication(ctx, d.Id())
 	if err != nil {
 		return responseErr(resp, err)

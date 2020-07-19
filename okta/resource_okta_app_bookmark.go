@@ -38,8 +38,8 @@ func resourceAppBookmark() *schema.Resource {
 }
 
 func resourceAppBookmarkCreate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	app := buildAppBookmark(d, m)
 	activate := d.Get("status").(string) == "ACTIVE"
 	params := &query.Params{Activate: &activate}
@@ -85,8 +85,8 @@ func resourceAppBookmarkRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppBookmarkUpdate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	app := buildAppBookmark(d, m)
 	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
 
@@ -108,8 +108,8 @@ func resourceAppBookmarkUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppBookmarkDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	_, err := client.Application.DeactivateApplication(ctx, d.Id())
 	if err != nil {
 		return err

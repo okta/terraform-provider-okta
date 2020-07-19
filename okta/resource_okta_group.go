@@ -49,8 +49,8 @@ func buildGroup(d *schema.ResourceData) *okta.Group {
 }
 
 func resourceGroupCreate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	group := buildGroup(d)
 	responseGroup, _, err := client.Group.CreateGroup(ctx, *group)
 	if err != nil {
@@ -93,8 +93,8 @@ func resourceGroupRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceGroupUpdate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	group := buildGroup(d)
 	_, _, err := client.Group.UpdateGroup(ctx, d.Id(), *group)
 	if err != nil {
@@ -109,16 +109,16 @@ func resourceGroupUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceGroupDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	_, err := client.Group.DeleteGroup(ctx, d.Id())
 
 	return err
 }
 
 func fetchGroup(d *schema.ResourceData, m interface{}) (*okta.Group, error) {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	g, resp, err := client.Group.GetGroup(ctx, d.Id())
 
 	if resp.StatusCode == http.StatusNotFound {
@@ -149,8 +149,8 @@ func updateGroupUsers(d *schema.ResourceData, m interface{}) error {
 		return nil
 	}
 
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	existingUserList, _, err := client.Group.ListGroupUsers(ctx, d.Id(), nil)
 	if err != nil {
 		return err

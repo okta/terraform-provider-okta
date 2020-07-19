@@ -57,8 +57,8 @@ func resourceAppSwa() *schema.Resource {
 }
 
 func resourceAppSwaCreate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	app := buildAppSwa(d, m)
 	activate := d.Get("status").(string) == "ACTIVE"
 	params := &query.Params{Activate: &activate}
@@ -105,8 +105,8 @@ func resourceAppSwaRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppSwaUpdate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	app := buildAppSwa(d, m)
 	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
 
@@ -131,8 +131,8 @@ func resourceAppSwaUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppSwaDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	_, err := client.Application.DeactivateApplication(ctx, d.Id())
 	if err != nil {
 		return err

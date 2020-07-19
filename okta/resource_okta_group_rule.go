@@ -64,8 +64,7 @@ func buildGroupRule(d *schema.ResourceData) *okta.GroupRule {
 }
 
 func handleGroupRuleLifecycle(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
 
 	if d.Get("status").(string) == "ACTIVE" {
 		_, err := client.Group.ActivateGroupRule(ctx, d.Id())
@@ -77,8 +76,8 @@ func handleGroupRuleLifecycle(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceGroupRuleCreate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	groupRule := buildGroupRule(d)
 	responseGroupRule, _, err := client.Group.CreateGroupRule(ctx, *groupRule)
 	if err != nil {
@@ -138,8 +137,8 @@ func resourceGroupRuleUpdate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if hasGroupRuleChange(d) {
-		client := getOktaClientFromMetadata(m)
-		ctx := getOktaContextFromMetadata(m)
+		ctx, client := getOktaClientFromMetadata(m)
+
 		rule := buildGroupRule(d)
 
 		if desiredStatus == "ACTIVE" {
@@ -175,8 +174,8 @@ func hasGroupRuleChange(d *schema.ResourceData) bool {
 }
 
 func resourceGroupRuleDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	if _, err := client.Group.DeactivateGroupRule(ctx, d.Id()); err != nil {
 		return err
 	}
@@ -187,8 +186,8 @@ func resourceGroupRuleDelete(d *schema.ResourceData, m interface{}) error {
 }
 
 func fetchGroupRule(d *schema.ResourceData, m interface{}) (*okta.GroupRule, error) {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	g, resp, err := client.Group.GetGroupRule(ctx, d.Id(), &query.Params{})
 
 	if resp.StatusCode == http.StatusNotFound {

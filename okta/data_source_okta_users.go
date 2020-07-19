@@ -53,8 +53,8 @@ func dataSourceUsers() *schema.Resource {
 }
 
 func dataSourceUsersRead(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	results := &searchResults{Users: []*okta.User{}}
 	params := &query.Params{Search: getSearchCriteria(d), Limit: 200, SortOrder: "0"}
 	err := collectUsers(ctx, client, results, params)

@@ -322,8 +322,8 @@ func resourceAppSaml() *schema.Resource {
 }
 
 func resourceAppSamlCreate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	app, err := buildApp(d, m)
 
 	if err != nil {
@@ -410,8 +410,8 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppSamlUpdate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	app, err := buildApp(d, m)
 
 	if err != nil {
@@ -447,8 +447,8 @@ func resourceAppSamlUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAppSamlDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	_, err := client.Application.DeactivateApplication(ctx, d.Id())
 	if err != nil {
 		return err
@@ -560,8 +560,8 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 }
 
 func getCertificate(d *schema.ResourceData, m interface{}) (*okta.JsonWebKey, error) {
-	client := getOktaClientFromMetadata(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
+
 	keyId := d.Get("key.id").(string)
 	key, resp, err := client.Application.GetApplicationKey(ctx, d.Id(), keyId)
 	if resp.StatusCode == 404 {
@@ -578,8 +578,8 @@ func getMetadata(d *schema.ResourceData, m interface{}, keyID string) ([]byte, e
 
 // Keep in mind that at the time of writing this the official SDK did not support generating certs.
 func generateCertificate(d *schema.ResourceData, m interface{}, appID string) (*okta.JsonWebKey, error) {
-	requestExecutor := getRequestExecutor(m)
-	ctx := getOktaContextFromMetadata(m)
+	ctx, requestExecutor := getRequestExecutor(m)
+
 	years := d.Get("key_years_valid").(int)
 	url := fmt.Sprintf("/api/v1/apps/%s/credentials/keys/generate?validityYears=%d", appID, years)
 	req, err := requestExecutor.NewRequest("POST", url, nil)
