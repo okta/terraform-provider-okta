@@ -1,13 +1,14 @@
 package okta
 
 import (
+	"context"
 	"encoding/json"
 	"sync"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 var appUserResource = &schema.Resource{
@@ -196,7 +197,8 @@ func fetchApp(d *schema.ResourceData, m interface{}, app okta.App) error {
 
 func fetchAppById(id string, m interface{}, app okta.App) error {
 	client := getOktaClientFromMetadata(m)
-	_, response, err := client.Application.GetApplication(id, app, nil)
+	ctx := getOktaContextFromMetadata(m)
+	_, response, err := client.Application.GetApplication(ctx, id, app, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
 	if response != nil && response.StatusCode == 404 {
 		app = nil
@@ -208,7 +210,8 @@ func fetchAppById(id string, m interface{}, app okta.App) error {
 
 func updateAppById(id string, m interface{}, app okta.App) error {
 	client := getOktaClientFromMetadata(m)
-	_, response, err := client.Application.UpdateApplication(id, app)
+	ctx := getOktaContextFromMetadata(m)
+	_, response, err := client.Application.UpdateApplication(ctx, id, app)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
 	if response.StatusCode == 404 {
 		app = nil
@@ -218,8 +221,8 @@ func updateAppById(id string, m interface{}, app okta.App) error {
 	return responseErr(response, err)
 }
 
-func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []func() error {
-	existingGroup, _, _ := client.Application.ListApplicationGroupAssignments(id, &query.Params{})
+func handleAppGroups(ctx context.Context, id string, d *schema.ResourceData, client *okta.Client) []func() error {
+	existingGroup, _, _ := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{})
 	var (
 		asyncActionList []func() error
 		groupIdList     []string
@@ -235,7 +238,7 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 
 			if !containsGroup(existingGroup, groupID) {
 				asyncActionList = append(asyncActionList, func() error {
-					_, resp, err := client.Application.CreateApplicationGroupAssignment(id, groupID, okta.ApplicationGroupAssignment{})
+					_, resp, err := client.Application.CreateApplicationGroupAssignment(ctx, id, groupID, okta.ApplicationGroupAssignment{})
 					return responseErr(resp, err)
 				})
 			}
@@ -246,7 +249,7 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 		if !contains(groupIdList, group.Id) {
 			groupID := group.Id
 			asyncActionList = append(asyncActionList, func() error {
-				return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(id, groupID))
+				return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(ctx, id, groupID))
 			})
 		}
 	}
@@ -277,9 +280,10 @@ func handleAppGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) e
 	var wg sync.WaitGroup
 	resultChan := make(chan []*result, 1)
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 
-	groupHandlers := handleAppGroups(id, d, client)
-	userHandlers := handleAppUsers(id, d, client)
+	groupHandlers := handleAppGroups(ctx, id, d, client)
+	userHandlers := handleAppUsers(ctx, id, d, client)
 	con := getParallelismFromMetadata(m)
 	promiseAll(con, &wg, resultChan, append(groupHandlers, userHandlers...)...)
 	wg.Wait()
@@ -287,9 +291,9 @@ func handleAppGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) e
 	return getPromiseError(<-resultChan, "failed to associate user or groups with application")
 }
 
-func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []func() error {
+func handleAppUsers(ctx context.Context, id string, d *schema.ResourceData, client *okta.Client) []func() error {
 	// Looking upstream for existing user's, rather then the config for accuracy.
-	existingUsers, _, _ := client.Application.ListApplicationUsers(id, &query.Params{})
+	existingUsers, _, _ := client.Application.ListApplicationUsers(ctx, id, &query.Params{})
 	var (
 		asyncActionList []func() error
 		users           []interface{}
@@ -311,7 +315,7 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 				password, _ := userProfile["password"].(string)
 
 				asyncActionList = append(asyncActionList, func() error {
-					_, _, err := client.Application.AssignUserToApplication(id, okta.AppUser{
+					_, _, err := client.Application.AssignUserToApplication(ctx, id, okta.AppUser{
 						Id: uID,
 						Credentials: &okta.AppUserCredentials{
 							UserName: username,
@@ -333,7 +337,7 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 			if !contains(userIDList, user.Id) {
 				userID := user.Id
 				asyncActionList = append(asyncActionList, func() error {
-					return suppressErrorOn404(client.Application.DeleteApplicationUser(id, userID, nil))
+					return suppressErrorOn404(client.Application.DeleteApplicationUser(ctx, id, userID, nil))
 				})
 			}
 		}
@@ -350,12 +354,12 @@ func resourceAppExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	return app != nil && app.Id != "", err
 }
 
-func setAppStatus(d *schema.ResourceData, client *okta.Client, status string, desiredStatus string) error {
+func setAppStatus(ctx context.Context, d *schema.ResourceData, client *okta.Client, status string, desiredStatus string) error {
 	if status != desiredStatus {
 		if desiredStatus == "INACTIVE" {
-			return responseErr(client.Application.DeactivateApplication(d.Id()))
+			return responseErr(client.Application.DeactivateApplication(ctx, d.Id()))
 		} else if desiredStatus == "ACTIVE" {
-			return responseErr(client.Application.ActivateApplication(d.Id()))
+			return responseErr(client.Application.ActivateApplication(ctx, d.Id()))
 		}
 	}
 
@@ -364,14 +368,15 @@ func setAppStatus(d *schema.ResourceData, client *okta.Client, status string, de
 
 func syncGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
+	ctx := getOktaContextFromMetadata(m)
 	// Temporary high limit to avoid issues short term. Need to support pagination here
-	userList, _, err := client.Application.ListApplicationUsers(id, &query.Params{Limit: 200})
+	userList, _, err := client.Application.ListApplicationUsers(ctx, id, &query.Params{Limit: 200})
 	if err != nil {
 		return err
 	}
 
 	// Temporary high limit to avoid issues short term. Need to support pagination here
-	groupList, _, err := client.Application.ListApplicationGroupAssignments(id, &query.Params{Limit: 200})
+	groupList, _, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{Limit: 200})
 	if err != nil {
 		return err
 	}
@@ -447,12 +452,10 @@ func syncSamlSettings(d *schema.ResourceData, set *okta.SamlApplicationSettings)
 
 	for i, st := range attrStatements {
 		arr[i] = map[string]interface{}{
-			"name":         st.Name,
-			"namespace":    st.Namespace,
-			"type":         st.Type,
-			"values":       st.Values,
-			"filter_type":  st.FilterType,
-			"filter_value": st.FilterValue,
+			"name":      st.Name,
+			"namespace": st.Namespace,
+			"type":      st.Type,
+			"values":    st.Values,
 		}
 	}
 

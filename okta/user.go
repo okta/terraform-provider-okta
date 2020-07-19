@@ -3,13 +3,14 @@ package okta
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
 	"log"
 	"net/http"
 	"reflect"
 	"time"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/terraform-providers/terraform-provider-okta/sdk"
 )
 
 var userProfileDataSchema = map[string]*schema.Schema{

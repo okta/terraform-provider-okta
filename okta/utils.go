@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -9,7 +10,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/terraform-providers/terraform-provider-okta/sdk"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
@@ -328,6 +329,10 @@ func getClientFromMetadata(meta interface{}) *articulateOkta.Client {
 
 func getOktaClientFromMetadata(meta interface{}) *okta.Client {
 	return meta.(*Config).oktaClient
+}
+
+func getOktaContextFromMetadata(meta interface{}) context.Context {
+	return meta.(*Config).ctx
 }
 
 func getSupplementFromMetadata(meta interface{}) *sdk.ApiSupplement {

@@ -20,7 +20,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/okta/okta-sdk-golang/okta/cache"
+	"github.com/okta/okta-sdk-golang/v2/okta/cache"
 )
 
 type Config struct {

@@ -5,8 +5,8 @@ package sdk
 import (
 	"fmt"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func (m *ApiSupplement) DeleteIdentityProvider(id string) (*okta.Response, error) {
