@@ -20,7 +20,7 @@ var userProfileDataSchema = map[string]*schema.Schema{
 		Type:         schema.TypeSet,
 		Computed:     true,
 		Elem:         &schema.Schema{Type: schema.TypeString},
-		ValidateFunc: validation.StringInSlice([]string{"SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN", "HELP_DESK_ADMIN"}, false),
+		ValidateFunc: validation.StringInSlice(ValidAdminRoles, false),
 	},
 	"city": &schema.Schema{
 		Type:     schema.TypeString,

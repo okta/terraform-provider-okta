@@ -35,7 +35,7 @@ func resourceGroupRoles() *schema.Resource {
 				Optional:     true,
 				Elem:         &schema.Schema{Type: schema.TypeString},
 				Description:  "Admin roles associated with the group. This can also be done per user.",
-				ValidateFunc: validation.StringInSlice([]string{"SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN", "HELP_DESK_ADMIN"}, false),
+				ValidateFunc: validation.StringInSlice(ValidAdminRoles, false),
 			},
 		},
 	}
