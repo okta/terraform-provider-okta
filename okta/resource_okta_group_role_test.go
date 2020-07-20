@@ -8,12 +8,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
-func TestAccOktaGroupAdminRoles_crud(t *testing.T) {
+func TestAccOktaGroupAdminRole_crud(t *testing.T) {
 	ri := acctest.RandInt()
-	resourceName := fmt.Sprintf("%s.test", groupRoles)
-	mgr := newFixtureManager(groupRoles)
+	resourceName := fmt.Sprintf("%s.test", groupRole)
+	mgr := newFixtureManager(groupRole)
 	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("all_roles.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -23,13 +22,7 @@ func TestAccOktaGroupAdminRoles_crud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "admin_roles.#", "1"),
-				),
-			},
-			{
-				Config: updatedConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "admin_roles.#", "8"),
+					resource.TestCheckResourceAttr(resourceName, "role_type", "USER_ADMIN"),
 				),
 			},
 		},
