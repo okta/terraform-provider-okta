@@ -10,16 +10,17 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
 )
 
 var userProfileDataSchema = map[string]*schema.Schema{
 	"admin_roles": &schema.Schema{
-		Type:     schema.TypeSet,
-		Computed: true,
-		Elem:     &schema.Schema{Type: schema.TypeString},
+		Type:         schema.TypeSet,
+		Computed:     true,
+		Elem:         &schema.Schema{Type: schema.TypeString},
+		ValidateFunc: validation.StringInSlice([]string{"SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN", "HELP_DESK_ADMIN"}, false),
 	},
 	"city": &schema.Schema{
 		Type:     schema.TypeString,
@@ -167,18 +168,13 @@ func buildUserDataSourceSchema(target map[string]*schema.Schema) map[string]*sch
 
 func assignAdminRolesToUser(ctx context.Context, u string, r []string, c *okta.Client) error {
 	for _, role := range r {
-		if contains(sdk.ValidAdminRoles, role) {
-			roleStruct := okta.AssignRoleRequest{Type: role}
-			_, _, err := c.User.AssignRoleToUser(ctx, u, roleStruct, &query.Params{})
+		roleStruct := okta.AssignRoleRequest{Type: role}
+		_, _, err := c.User.AssignRoleToUser(ctx, u, roleStruct, &query.Params{})
 
-			if err != nil {
-				return fmt.Errorf("[ERROR] Error Assigning Admin Roles to User: %v", err)
-			}
-		} else {
-			return fmt.Errorf("[ERROR] %v is not a valid Okta role", role)
+		if err != nil {
+			return fmt.Errorf("[ERROR] Error Assigning Admin Roles to User: %v", err)
 		}
 	}
-
 	return nil
 }
 

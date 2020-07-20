@@ -4,7 +4,8 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 // TODO: Convert all of this to native Okta SDK https://github.com/okta/okta-sdk-golang/blob/v2.0.0/okta/group.go#L320
@@ -24,29 +25,29 @@ func resourceGroupRoles() *schema.Resource {
 			},
 		},
 		Schema: map[string]*schema.Schema{
-			"group_id": &schema.Schema{
+			"group_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "ID of group to attach admin roles to",
 			},
-			"admin_roles": &schema.Schema{
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "Admin roles associated with the group. This can also be done per user.",
+			"admin_roles": {
+				Type:         schema.TypeSet,
+				Optional:     true,
+				Elem:         &schema.Schema{Type: schema.TypeString},
+				Description:  "Admin roles associated with the group. This can also be done per user.",
+				ValidateFunc: validation.StringInSlice([]string{"SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN", "HELP_DESK_ADMIN"}, false),
 			},
 		},
 	}
 }
 
-func buildGroupRole(d *schema.ResourceData, role string) *sdk.Role {
-	return &sdk.Role{
-		AssignmentType: "GROUP",
-		Type:           role,
+func buildGroupRole(d *schema.ResourceData, role string) okta.AssignRoleRequest {
+	return okta.AssignRoleRequest{
+		Type: role,
 	}
 }
 
-func containsRole(roles []*sdk.Role, roleName string) bool {
+func containsRole(roles []*okta.Role, roleName string) bool {
 	for _, role := range roles {
 		if role.Type == roleName {
 			return true
@@ -61,13 +62,13 @@ func getGroupRoleId(groupId string) string {
 }
 
 func resourceGroupRolesCreate(d *schema.ResourceData, m interface{}) error {
-	client := getSupplementFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
 	groupId := d.Get("group_id").(string)
 	adminRoles := convertInterfaceToStringSet(d.Get("admin_roles"))
 
 	for _, role := range adminRoles {
 		groupRole := buildGroupRole(d, role)
-		_, _, err := client.CreateAdminRole(groupId, groupRole, nil)
+		_, _, err := client.Group.AssignRoleToGroup(ctx, groupId, groupRole, nil)
 		if err != nil {
 			return err
 		}
@@ -80,7 +81,8 @@ func resourceGroupRolesCreate(d *schema.ResourceData, m interface{}) error {
 
 func resourceGroupRolesRead(d *schema.ResourceData, m interface{}) error {
 	groupId := d.Get("group_id").(string)
-	existingRoles, resp, err := getSupplementFromMetadata(m).ListAdminRoles(groupId, nil)
+	ctx, client := getOktaClientFromMetadata(m)
+	existingRoles, resp, err := client.Group.ListGroupAssignedRoles(ctx, groupId, nil)
 
 	if is404(resp.StatusCode) {
 		d.SetId("")
@@ -102,9 +104,9 @@ func resourceGroupRolesRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceGroupRolesUpdate(d *schema.ResourceData, m interface{}) error {
-	client := getSupplementFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
 	groupId := d.Get("group_id").(string)
-	existingRoles, _, err := client.ListAdminRoles(groupId, nil)
+	existingRoles, _, err := client.Group.ListGroupAssignedRoles(ctx, groupId, nil)
 	if err != nil {
 		return err
 	}
@@ -114,7 +116,7 @@ func resourceGroupRolesUpdate(d *schema.ResourceData, m interface{}) error {
 
 	for _, role := range rolesToAdd {
 		groupRole := buildGroupRole(d, role)
-		_, _, err := client.CreateAdminRole(groupId, groupRole, nil)
+		_, _, err := client.Group.AssignRoleToGroup(ctx, groupId, groupRole, nil)
 
 		if err != nil {
 			return err
@@ -122,7 +124,7 @@ func resourceGroupRolesUpdate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	for _, roleId := range rolesToRemove {
-		_, err := client.DeleteAdminRole(groupId, roleId)
+		_, err := client.Group.RemoveRoleFromGroup(ctx, groupId, roleId)
 
 		if err != nil {
 			return err
@@ -133,15 +135,15 @@ func resourceGroupRolesUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceGroupRolesDelete(d *schema.ResourceData, m interface{}) error {
-	client := getSupplementFromMetadata(m)
+	ctx, client := getOktaClientFromMetadata(m)
 	groupId := d.Get("group_id").(string)
-	existingRoles, _, err := client.ListAdminRoles(groupId, nil)
+	existingRoles, _, err := client.Group.ListGroupAssignedRoles(ctx, groupId, nil)
 	if err != nil {
 		return err
 	}
 
 	for _, role := range existingRoles {
-		_, err := client.DeleteAdminRole(groupId, role.Id)
+		_, err := client.Group.RemoveRoleFromGroup(ctx, groupId, role.Id)
 
 		if err != nil {
 			return err
@@ -151,7 +153,7 @@ func resourceGroupRolesDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func splitRoles(existingRoles []*sdk.Role, expectedRoles []string) (rolesToAdd []string, rolesToRemove []string) {
+func splitRoles(existingRoles []*okta.Role, expectedRoles []string) (rolesToAdd []string, rolesToRemove []string) {
 	for _, roleName := range expectedRoles {
 		if !containsRole(existingRoles, roleName) {
 			rolesToAdd = append(rolesToAdd, roleName)
