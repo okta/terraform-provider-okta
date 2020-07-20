@@ -9,8 +9,9 @@ resource okta_group_role test {
 }
 
 resource okta_group_role_group_target test {
-  role_id     = "${okta_group_role.test.id}"
-  group_id    = "${okta_group.test.id}"
+  group_id          = "${okta_group.test.id}"
+  role_id           = "${okta_group_role.test.id}"
+  target_group_id   = "${okta_group.test.id}"
 }
 
 resource okta_user test {

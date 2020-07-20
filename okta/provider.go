@@ -32,7 +32,8 @@ const (
 	authServerScope        = "okta_auth_server_scope"
 	eventHook              = "okta_event_hook"
 	factor                 = "okta_factor"
-	groupRoles             = "okta_group_roles"
+	groupRole              = "okta_group_role"
+	groupRoleGroupTarget   = "okta_group_role_group_target"
 	groupRule              = "okta_group_rule"
 	identityProvider       = "okta_identity_provider"
 	idpResource            = "okta_idp_oidc"
@@ -138,7 +139,8 @@ func Provider() terraform.ResourceProvider {
 			authServerScope:        resourceAuthServerScope(),
 			eventHook:              resourceEventHook(),
 			factor:                 resourceFactor(),
-			groupRoles:             resourceGroupRoles(),
+			groupRole:              resourceGroupRole(),
+			groupRoleGroupTarget:   resourceGroupRoleGroupTarget(),
 			groupRule:              resourceGroupRule(),
 			idpResource:            resourceIdpOidc(),
 			idpSaml:                resourceIdpSaml(),
