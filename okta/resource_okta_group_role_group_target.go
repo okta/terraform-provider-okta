@@ -11,8 +11,8 @@ func resourceGroupRoleGroupTarget() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceGroupRoleGroupTargetCreate,
 		//Exists: resourceGroupRoleGroupTargetExists,
-		Read:   resourceGroupRoleGroupTargetRead,
-		Update: resourceGroupRoleGroupTargetUpdate,
+		Read: resourceGroupRoleGroupTargetRead,
+		//Update: resourceGroupRoleGroupTargetUpdate,
 		Delete: resourceGroupRoleGroupTargetDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -21,16 +21,19 @@ func resourceGroupRoleGroupTarget() *schema.Resource {
 			"group_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "ID of source group",
 			},
 			"role_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "ID of source group role to attach group target to",
 			},
 			"target_group_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "ID of target group",
 			},
 		},
@@ -83,11 +86,6 @@ func resourceGroupRoleGroupTargetRead(d *schema.ResourceData, m interface{}) err
 	// Target must've been deleted, set null
 	d.SetId("")
 	return nil
-}
-
-func resourceGroupRoleGroupTargetUpdate(d *schema.ResourceData, m interface{}) error {
-	// There's nothing to update...
-	return resourceGroupRoleRead(d, m)
 }
 
 func resourceGroupRoleGroupTargetDelete(d *schema.ResourceData, m interface{}) error {

@@ -9,8 +9,8 @@ func resourceGroupRole() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceGroupRoleCreate,
 		//Exists: resourceGroupRoleGroupTargetExists,
-		Read:   resourceGroupRoleRead,
-		Update: resourceGroupRoleUpdate,
+		Read: resourceGroupRoleRead,
+		//Update: resourceGroupRoleUpdate,
 		Delete: resourceGroupRoleDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -19,11 +19,13 @@ func resourceGroupRole() *schema.Resource {
 			"group_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "ID of group to attach admin roles to",
 			},
 			"role_type": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "Admin role associated with the group.",
 			},
 		},
@@ -78,11 +80,6 @@ func resourceGroupRoleRead(d *schema.ResourceData, m interface{}) error {
 	// Role must've been deleted, set null
 	d.SetId("")
 	return nil
-}
-
-func resourceGroupRoleUpdate(d *schema.ResourceData, m interface{}) error {
-	// There's nothing to update...
-	return resourceGroupRoleRead(d, m)
 }
 
 func resourceGroupRoleDelete(d *schema.ResourceData, m interface{}) error {
