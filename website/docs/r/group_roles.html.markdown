@@ -29,7 +29,6 @@ The following arguments are supported:
 
 * `admin_roles` - (Required) Admin roles associated with the group. It can be any of the following values `"SUPER_ADMIN"`, `"ORG_ADMIN"`, `"APP_ADMIN"`, `"USER_ADMIN"`, `"HELP_DESK_ADMIN"`, `"READ_ONLY_ADMIN"`, `"MOBILE_ADMIN"`, `"API_ACCESS_MANAGEMENT_ADMIN"`, `"REPORT_ADMIN"`, `"GROUP_MEMBERSHIP_ADMIN"`.
 
-> Group membership admin requires [activating the feature](https://help.okta.com/en/prod/Content/Topics/Security/admin-role-groupmembershipadmin.htm) in your tenant.
 
 ## Attributes Reference
 
