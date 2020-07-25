@@ -38,11 +38,11 @@ func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 }
 
 func testAccCheckTrustedOriginDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*Config).articulateOktaClient
+	ctx, client := getOktaClientFromMetadata(testAccProvider.Meta())
 
 	for _, r := range s.RootModule().Resources {
-		if _, _, err := client.TrustedOrigins.GetTrustedOrigin(r.Primary.ID); err != nil {
-			if client.OktaErrorCode == "E0000007" {
+		if _, resp, err := client.TrustedOrigin.GetOrigin(ctx, r.Primary.ID); err != nil {
+			if resp.Status == "404 Not Found" {
 				continue
 			}
 			return fmt.Errorf("[ERROR] Error Getting Trusted Origin in Okta: %v", err)

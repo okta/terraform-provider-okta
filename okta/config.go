@@ -62,8 +62,8 @@ func (c *Config) loadAndValidate() error {
 		okta.WithOrgUrl(orgUrl),
 		okta.WithToken(c.apiToken),
 		okta.WithCache(false),
-		okta.WithConnectionTimeout(int32(c.connectionTimeout)*1000), // Using a i32 conversion and static numbers due to type issue
-		okta.WithRequestTimeout(int32(c.requestTimeout)*1000),       // TODO: change these types to i64 upstream and rever to using time lib
+		okta.WithConnectionTimeout(int32(c.connectionTimeout)),
+		okta.WithRequestTimeout(int32(c.requestTimeout)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
 		okta.WithHttpClient(*httpClient),
 	)
