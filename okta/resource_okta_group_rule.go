@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/okta/query"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
@@ -181,9 +182,18 @@ func resourceGroupRuleDelete(d *schema.ResourceData, m interface{}) error {
 }
 
 func fetchGroupRule(d *schema.ResourceData, m interface{}) (*okta.GroupRule, error) {
-	g, resp, err := getOktaClientFromMetadata(m).Group.GetRule(d.Id())
+	client := getOktaClientFromMetadata(m)
+	g, resp, err := client.Group.GetRule(d.Id())
 
 	if resp.StatusCode == http.StatusNotFound {
+		return nil, nil
+	}
+	// If rule returns with INVALID status, it must be destroyed and re-created as if it did not exist
+	if g.Status == "INVALID" {
+		resp, err = client.Group.DeleteRule(d.Id(), &query.Params{})
+		if err != nil {
+			return nil, err
+		}
 		return nil, nil
 	}
 
