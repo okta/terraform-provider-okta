@@ -2,6 +2,7 @@ resource "okta_user_schema" "testAcc_replace_with_uuid" {
   index       = "testAcc_replace_with_uuid"
   title       = "terraform acceptance test updated"
   type        = "string"
+  pattern     = "[a-z]+"
   description = "terraform acceptance test updated"
   required    = true
   min_length  = 1

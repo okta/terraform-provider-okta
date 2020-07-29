@@ -52,6 +52,7 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "index", baseTestProp),
 					resource.TestCheckResourceAttr(resourceName, "title", "First name"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
+					resource.TestCheckResourceAttr(resourceName, "pattern", "[a-z]+"),
 					resource.TestCheckResourceAttr(resourceName, "required", "true"),
 					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_WRITE"),
 				),

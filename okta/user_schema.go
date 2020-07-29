@@ -117,6 +117,12 @@ var (
 				},
 			},
 		},
+		"pattern": &schema.Schema{
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The validation pattern to use for the subschema. Must be null, '.+', or '[<pattern>]+'",
+			ForceNew:    false,
+		},
 		"permissions": &schema.Schema{
 			Type:         schema.TypeString,
 			Optional:     true,
@@ -164,6 +170,12 @@ var (
 			ValidateFunc: validation.StringInSlice([]string{"string", "boolean", "number", "integer", "array", "object"}, false),
 			Description:  "Subschema type: string, boolean, number, integer, array, or object",
 			ForceNew:     true,
+		},
+		"pattern": &schema.Schema{
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The validation pattern to use for the subschema. Must be null, '.+', or '[<pattern>]+'",
+			ForceNew:    false,
 		},
 		"permissions": &schema.Schema{
 			Type:         schema.TypeString,
