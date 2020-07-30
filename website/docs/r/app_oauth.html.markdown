@@ -24,6 +24,23 @@ resource "okta_app_oauth" "example" {
 }
 ```
 
+```hcl
+resource "okta_app_oauth" "example" {
+  label          = "example"
+  type           = "service"
+  response_types = ["token"]
+  grant_types    = ["client_credentials"]
+  token_endpoint_auth_method = "private_key_jwt"
+
+  jwks {
+    kty = "RSA"
+    kid = "SIGNING_KEY"
+    e   = "AQAB"
+    n   = "xyz"
+  }
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
