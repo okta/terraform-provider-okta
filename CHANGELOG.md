@@ -1,4 +1,19 @@
-## 3.4.0 (Unreleased)
+## 3.5.0 (Unreleased)
+
+## 3.4.0 (July 29, 2020)
+
+ENHANCEMENTS:
+
+* Add resource definition for Okta Event Hooks. [#14](https://github.com/terraform-providers/terraform-provider-okta/pull/14), Thanks, [@mbudnek](https://github.com/mbudnek)!
+* Adding support for GROUP_MEMBERSHIP_ADMIN & REPORT_ADMIN. [#138](https://github.com/terraform-providers/terraform-provider-okta/pull/138) Thanks, [ymylei](https://github.com/ymylei)!
+
+BUG FIXES:
+
+* Documentation corrections. Thanks, to these fine individuals!
+  * [#126](https://github.com/terraform-providers/terraform-provider-okta/pull/126) [@ChristophShyper](https://github.com/ChristophShyper)
+  * [#127](https://github.com/terraform-providers/terraform-provider-okta/pull/127) [@thekbb](https://github.com/thekbb)
+  * [#151](https://github.com/terraform-providers/terraform-provider-okta/pull/151) [@varrunramani-okta](https://github.com/varrunramani-okta)
+
 ## 3.3.0 (May 29, 2020)
 
 ENHANCEMENTS:
