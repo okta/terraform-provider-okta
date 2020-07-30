@@ -1,4 +1,4 @@
-## 3.4.0 (Unreleased)
+## 3.4.0 (July 30, 2020)
 
 ENHANCEMENTS:
 
