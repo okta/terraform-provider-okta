@@ -8,55 +8,27 @@ import (
 	"net/http"
 )
 
-var headerSchema = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"key": &schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-		},
-		"value": &schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-		},
-	},
-}
-
-func resourceInlineHook() *schema.Resource {
+func resourceEventHook() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceInlineHookCreate,
-		Read:   resourceInlineHookRead,
-		Update: resourceInlineHookUpdate,
-		Delete: resourceInlineHookDelete,
-		Exists: resourceInlineHookExists,
+		Create: resourceEventHookCreate,
+		Read:   resourceEventHookRead,
+		Update: resourceEventHookUpdate,
+		Delete: resourceEventHookDelete,
+		Exists: resourceEventHookExists,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
 
-		// For those familiar with Terraform schemas be sure to check the base hook schema and/or
-		// the examples in the documentation
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"status": statusSchema,
-			"type": &schema.Schema{
-				Type:     schema.TypeString,
+			"events": &schema.Schema{
+				Type:     schema.TypeSet,
 				Required: true,
-				ForceNew: true,
-				ValidateFunc: validation.StringInSlice(
-					[]string{
-						"com.okta.oauth2.tokens.transform",
-						"com.okta.import.transform",
-						"com.okta.saml.tokens.transform",
-						"com.okta.user.pre-registration",
-					},
-					false,
-				),
-			},
-			"version": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"headers": &schema.Schema{
 				Type:     schema.TypeSet,
@@ -70,17 +42,17 @@ func resourceInlineHook() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"key": &schema.Schema{
 							Type:     schema.TypeString,
-							Optional: true,
+							Required: true,
 						},
 						"type": &schema.Schema{
 							Type:         schema.TypeString,
-							Optional:     true,
+							Required:     true,
 							Default:      "HEADER",
 							ValidateFunc: validation.StringInSlice([]string{"HEADER"}, false),
 						},
 						"value": &schema.Schema{
 							Type:      schema.TypeString,
-							Optional:  true,
+							Required:  true,
 							Sensitive: true,
 						},
 					},
@@ -88,26 +60,22 @@ func resourceInlineHook() *schema.Resource {
 			},
 			"channel": &schema.Schema{
 				Type:     schema.TypeMap,
-				Optional: true,
+				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": &schema.Schema{
-							Type:     schema.TypeBool,
+							Type:     schema.TypeString,
+							Required: true,
 							Default:  "HTTP",
-							Optional: true,
 						},
 						"version": &schema.Schema{
 							Type:     schema.TypeString,
 							Required: true,
+							Default:  "1.0.0",
 						},
 						"uri": &schema.Schema{
 							Type:     schema.TypeString,
 							Required: true,
-						},
-						"method": &schema.Schema{
-							Type:     schema.TypeString,
-							Default:  "POST",
-							Optional: true,
 						},
 					},
 				},
@@ -116,31 +84,31 @@ func resourceInlineHook() *schema.Resource {
 	}
 }
 
-func resourceInlineHookCreate(d *schema.ResourceData, m interface{}) error {
+func resourceEventHookCreate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
-	hook := buildInlineHook(d, m)
-	newHook, _, err := client.CreateInlineHook(*hook, nil)
+	hook := buildEventHook(d, m)
+	newHook, _, err := client.CreateEventHook(*hook, nil)
 	if err != nil {
 		return err
 	}
 
 	d.SetId(newHook.ID)
 	desiredStatus := d.Get("status").(string)
-	err = setHookStatus(d, client, newHook.Status, desiredStatus)
+	err = setEventHookStatus(d, client, newHook.Status, desiredStatus)
 	if err != nil {
 		return err
 	}
 
-	return resourceInlineHookRead(d, m)
+	return resourceEventHookRead(d, m)
 }
 
-func resourceInlineHookExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	_, res, err := getSupplementFromMetadata(m).GetInlineHook(d.Id())
+func resourceEventHookExists(d *schema.ResourceData, m interface{}) (bool, error) {
+	_, res, err := getSupplementFromMetadata(m).GetEventHook(d.Id())
 	return err == nil && res.StatusCode != http.StatusNotFound, err
 }
 
-func resourceInlineHookRead(d *schema.ResourceData, m interface{}) error {
-	hook, resp, err := getSupplementFromMetadata(m).GetInlineHook(d.Id())
+func resourceEventHookRead(d *schema.ResourceData, m interface{}) error {
+	hook, resp, err := getSupplementFromMetadata(m).GetEventHook(d.Id())
 
 	if is404(resp.StatusCode) {
 		d.SetId("")
@@ -153,93 +121,95 @@ func resourceInlineHookRead(d *schema.ResourceData, m interface{}) error {
 
 	d.Set("name", hook.Name)
 	d.Set("status", hook.Status)
-	d.Set("type", hook.Type)
-	d.Set("version", hook.Version)
+	d.Set("events", eventSet(hook.Events))
 
 	return setNonPrimitives(d, map[string]interface{}{
-		"channel": flattenInlineHookChannel(hook.Channel),
-		"headers": flattenInlineHookHeaders(hook.Channel),
-		"auth":    flattenInlineHookAuth(d, hook.Channel),
+		"channel": flattenEventHookChannel(hook.Channel),
+		"headers": flattenEventHookHeaders(hook.Channel),
+		"auth":    flattenEventHookAuth(d, hook.Channel),
 	})
 }
 
-func resourceInlineHookUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceEventHookUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
-	hook := buildInlineHook(d, m)
-	newHook, _, err := client.UpdateInlineHook(d.Id(), *hook, nil)
+	hook := buildEventHook(d, m)
+	newHook, _, err := client.UpdateEventHook(d.Id(), *hook, nil)
 
 	if err != nil {
 		return err
 	}
 
 	desiredStatus := d.Get("status").(string)
-	err = setHookStatus(d, client, newHook.Status, desiredStatus)
+	err = setEventHookStatus(d, client, newHook.Status, desiredStatus)
 	if err != nil {
 		return err
 	}
 
-	return resourceInlineHookRead(d, m)
+	return resourceEventHookRead(d, m)
 }
 
-func resourceInlineHookDelete(d *schema.ResourceData, m interface{}) error {
+func resourceEventHookDelete(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
-	res, err := client.DeactivateInlineHook(d.Id())
+	res, err := client.DeactivateEventHook(d.Id())
 	if err != nil {
 		return responseErr(res, err)
 	}
 
-	_, err = client.DeleteInlineHook(d.Id())
+	_, err = client.DeleteEventHook(d.Id())
 
 	return err
 }
 
-func buildInlineHook(d *schema.ResourceData, m interface{}) *sdk.InlineHook {
-	return &sdk.InlineHook{
+func buildEventHook(d *schema.ResourceData, m interface{}) *sdk.EventHook {
+	eventSet := d.Get("events").(*schema.Set).List()
+	events := make([]string, len(eventSet))
+	for i, v := range eventSet {
+		events[i] = v.(string)
+	}
+	return &sdk.EventHook{
 		Name:    d.Get("name").(string),
 		Status:  d.Get("status").(string),
-		Type:    d.Get("type").(string),
-		Version: d.Get("version").(string),
-		Channel: buildInlineChannel(d, m),
+		Events:  &sdk.EventHookEvents{Type: "EVENT_TYPE", Items: events},
+		Channel: buildEventChannel(d, m),
 	}
 }
 
-func buildInlineChannel(d *schema.ResourceData, m interface{}) *sdk.InlineHookChannel {
+func buildEventChannel(d *schema.ResourceData, m interface{}) *sdk.EventHookChannel {
 	if _, ok := d.GetOk("channel"); !ok {
 		return nil
 	}
 
-	headerList := []*sdk.InlineHookHeader{}
+	headerList := []*sdk.EventHookHeader{}
 	if raw, ok := d.GetOk("headers"); ok {
 		for _, header := range raw.(*schema.Set).List() {
 			h, ok := header.(map[string]interface{})
 			if ok {
-				headerList = append(headerList, &sdk.InlineHookHeader{Key: h["key"].(string), Value: h["value"].(string)})
+				headerList = append(headerList, &sdk.EventHookHeader{Key: h["key"].(string), Value: h["value"].(string)})
 			}
 		}
 	}
 
-	var auth *sdk.InlineHookAuthScheme
+	var auth *sdk.EventHookAuthScheme
 	if _, ok := d.GetOk("auth.key"); ok {
-		auth = &sdk.InlineHookAuthScheme{
+		auth = &sdk.EventHookAuthScheme{
 			Key:   getStringValue(d, "auth.key"),
 			Type:  getStringValue(d, "auth.type"),
 			Value: getStringValue(d, "auth.value"),
 		}
 	}
 
-	return &sdk.InlineHookChannel{
-		Config: &sdk.InlineHookChannelConfig{
+	return &sdk.EventHookChannel{
+		Config: &sdk.EventHookChannelConfig{
 			URI:        getStringValue(d, "channel.uri"),
 			AuthScheme: auth,
 			Headers:    headerList,
-			Method:     getStringValue(d, "channel.method"),
 		},
 		Type:    getStringValue(d, "channel.type"),
 		Version: getStringValue(d, "channel.version"),
 	}
 }
 
-func flattenInlineHookAuth(d *schema.ResourceData, c *sdk.InlineHookChannel) map[string]interface{} {
+func flattenEventHookAuth(d *schema.ResourceData, c *sdk.EventHookChannel) map[string]interface{} {
 	auth := map[string]interface{}{}
 
 	if c.Config.AuthScheme != nil {
@@ -253,16 +223,15 @@ func flattenInlineHookAuth(d *schema.ResourceData, c *sdk.InlineHookChannel) map
 	return auth
 }
 
-func flattenInlineHookChannel(c *sdk.InlineHookChannel) map[string]interface{} {
+func flattenEventHookChannel(c *sdk.EventHookChannel) map[string]interface{} {
 	return map[string]interface{}{
 		"type":    c.Type,
 		"version": c.Version,
 		"uri":     c.Config.URI,
-		"method":  c.Config.Method,
 	}
 }
 
-func flattenInlineHookHeaders(c *sdk.InlineHookChannel) *schema.Set {
+func flattenEventHookHeaders(c *sdk.EventHookChannel) *schema.Set {
 	headers := make([]interface{}, len(c.Config.Headers))
 	for i, header := range c.Config.Headers {
 		headers[i] = map[string]interface{}{
@@ -274,12 +243,21 @@ func flattenInlineHookHeaders(c *sdk.InlineHookChannel) *schema.Set {
 	return schema.NewSet(schema.HashResource(headerSchema), headers)
 }
 
-func setHookStatus(d *schema.ResourceData, client *sdk.ApiSupplement, status string, desiredStatus string) error {
+func eventSet(e *sdk.EventHookEvents) *schema.Set {
+	events := make([]interface{}, len(e.Items))
+	for i, event := range e.Items {
+		events[i] = event
+	}
+
+	return schema.NewSet(schema.HashString, events)
+}
+
+func setEventHookStatus(d *schema.ResourceData, client *sdk.ApiSupplement, status string, desiredStatus string) error {
 	if status != desiredStatus {
 		if desiredStatus == "INACTIVE" {
-			return responseErr(client.DeactivateInlineHook(d.Id()))
+			return responseErr(client.DeactivateEventHook(d.Id()))
 		} else if desiredStatus == "ACTIVE" {
-			return responseErr(client.ActivateInlineHook(d.Id()))
+			return responseErr(client.ActivateEventHook(d.Id()))
 		}
 	}
 

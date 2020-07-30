@@ -20,12 +20,12 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(authServer, hookExists),
+		CheckDestroy: createCheckResourceDestroy(inlineHook, inlineHookExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, hookExists),
+					ensureResourceExists(resourceName, inlineHookExists),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.oauth2.tokens.transform"),
@@ -41,7 +41,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, hookExists),
+					ensureResourceExists(resourceName, inlineHookExists),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.import.transform"),
@@ -55,7 +55,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 			{
 				Config: activatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, hookExists),
+					ensureResourceExists(resourceName, inlineHookExists),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.import.transform"),
@@ -69,7 +69,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 			{
 				Config: registration,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, hookExists),
+					ensureResourceExists(resourceName, inlineHookExists),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.user.pre-registration"),
@@ -84,7 +84,10 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 	})
 }
 
-func hookExists(id string) (bool, error) {
+func inlineHookExists(id string) (bool, error) {
 	_, res, err := getSupplementFromMetadata(testAccProvider.Meta()).GetInlineHook(id)
-	return err == nil && res.StatusCode != http.StatusNotFound, err
+	if err != nil && res.StatusCode != http.StatusNotFound {
+		return false, err
+	}
+	return res.StatusCode != http.StatusNotFound, nil
 }
