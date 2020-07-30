@@ -16,7 +16,7 @@ type (
 	}
 )
 
-var ValidAdminRoles = []string{"SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN", "HELP_DESK_ADMIN"}
+var ValidAdminRoles = []string{"SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN", "HELP_DESK_ADMIN", "REPORT_ADMIN", "GROUP_MEMBERSHIP_ADMIN"}
 
 func (m *ApiSupplement) DeleteAdminRole(id, roleId string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/groups/%s/roles/%s", id, roleId)
