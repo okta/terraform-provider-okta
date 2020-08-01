@@ -82,6 +82,48 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 	})
 }
 
+func TestAccOktaGroupRule_inval(t *testing.T) {
+	ri := acctest.RandInt()
+	resourceName := fmt.Sprintf("%s.test", groupRule)
+	mgr := newFixtureManager("okta_group_rule")
+	build := mgr.GetFixtures("inval_build.tf", ri, t)
+	setup := mgr.GetFixtures("inval_setup.tf", ri, t)
+	killGroup := mgr.GetFixtures("inval_update_rule.tf", ri, t)
+	updateRule := mgr.GetFixtures("inval_kill_group.tf", ri, t)
+	name := buildResourceName(ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: createCheckResourceDestroy(groupRule, doesGroupRuleExist),
+		Steps: []resource.TestStep{
+			{
+				Config: build,
+				Check:  resource.TestCheckResourceAttr("okta_group.test", "name", name),
+			},
+			{
+				Config: setup,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+				),
+			},
+			{
+				Config: killGroup,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", "INVALID"),
+				),
+			},
+			{
+				Config: updateRule,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+				),
+			},
+		},
+	})
+}
+
 func doesGroupRuleExist(id string) (bool, error) {
 	client := getOktaClientFromMetadata(testAccProvider.Meta())
 	_, response, err := client.Group.GetRule(id)

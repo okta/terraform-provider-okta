@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
@@ -42,6 +41,11 @@ func resourceGroupRule() *schema.Resource {
 			},
 			"status": statusSchema,
 		},
+		// CustomizeDiff: customdiff.All(
+		// 	customdiff.ForceNewIf("status", func(old, new, meta interface{}) bool {
+		// 		return old.(string) == "INVALID"
+		// 	}),
+		// ),
 	}
 }
 
@@ -69,6 +73,10 @@ func handleGroupRuleLifecycle(d *schema.ResourceData, m interface{}) error {
 	if d.Get("status").(string) == "ACTIVE" {
 		_, err := client.Group.ActivateRule(d.Id())
 		return err
+	}
+
+	if d.Get("status").(string) == "INVALID" {
+		return nil
 	}
 
 	_, err := client.Group.DeactivateRule(d.Id())
@@ -172,8 +180,11 @@ func hasGroupRuleChange(d *schema.ResourceData) bool {
 
 func resourceGroupRuleDelete(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	if _, err := client.Group.DeactivateRule(d.Id()); err != nil {
-		return err
+
+	if d.Get("status").(string) == "ACTIVE" {
+		if _, err := client.Group.DeactivateRule(d.Id()); err != nil {
+			return err
+		}
 	}
 
 	_, err := client.Group.DeleteRule(d.Id(), nil)
@@ -186,14 +197,6 @@ func fetchGroupRule(d *schema.ResourceData, m interface{}) (*okta.GroupRule, err
 	g, resp, err := client.Group.GetRule(d.Id())
 
 	if resp.StatusCode == http.StatusNotFound {
-		return nil, nil
-	}
-	// If rule returns with INVALID status, it must be destroyed and re-created as if it did not exist
-	if g.Status == "INVALID" {
-		resp, err = client.Group.DeleteRule(d.Id(), &query.Params{})
-		if err != nil {
-			return nil, err
-		}
 		return nil, nil
 	}
 
