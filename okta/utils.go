@@ -16,13 +16,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
-func buildSchema(s, t map[string]*schema.Schema) map[string]*schema.Schema {
+func buildSchema(schemas ...map[string]*schema.Schema) map[string]*schema.Schema {
 	r := map[string]*schema.Schema{}
-	for key, val := range t {
-		r[key] = val
-	}
-	for key, val := range s {
-		r[key] = val
+	for _, s := range schemas {
+		for key, val := range s {
+			r[key] = val
+		}
 	}
 	return r
 }
