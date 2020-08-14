@@ -1,4 +1,11 @@
 ## 3.5.0 (Unreleased)
+
+## 3.4.1 (July 31, 2020)
+
+RELEASE:
+
+* First release under oktadeveloper organization with binary published to [registry.hashicorp.com](https://registry.terraform.io/).
+
 ## 3.4.0 (July 30, 2020)
 
 ENHANCEMENTS:
