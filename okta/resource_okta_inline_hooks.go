@@ -50,6 +50,7 @@ func resourceInlineHook() *schema.Resource {
 						"com.okta.import.transform",
 						"com.okta.saml.tokens.transform",
 						"com.okta.user.pre-registration",
+						"com.okta.user.credential.password.import",
 					},
 					false,
 				),
