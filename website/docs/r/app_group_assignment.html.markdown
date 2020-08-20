@@ -26,7 +26,7 @@ JSON
 }
 
 ```
-__NOTE__: When using this resource in conjunction with other application resources (e.g. `okta_app_oauth`) it is advisable to add the following `lifefycle` argument to the associated `app_*` resources to prevent the groups being unassigned on subsequent runs:
+__NOTE__: When using this resource in conjunction with other application resources (e.g. `okta_app_oauth`) it is advisable to add the following `lifecycle` argument to the associated `app_*` resources to prevent the groups being unassigned on subsequent runs:
 
 ```hcl
 resource "okta_app_oauth" "app" {
