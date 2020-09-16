@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
 )
@@ -418,9 +418,6 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	client := getOktaClientFromMetadata(m)
-	// There are a few requests here so just making sure the state gets updated per successful downstream change
-	d.Partial(true)
-
 	roleChange := d.HasChange("admin_roles")
 	groupChange := d.HasChange("group_memberships")
 	userChange := hasProfileChange(d)
@@ -435,7 +432,6 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating Status for User: %v", err)
 		}
-		d.SetPartial("status")
 	}
 
 	if status == "DEPROVISIONED" && userChange {
@@ -457,7 +453,6 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		if err := updateAdminRolesOnUser(d.Id(), roles, client); err != nil {
 			return err
 		}
-		d.SetPartial("admin_roles")
 	}
 
 	if groupChange {
@@ -465,7 +460,6 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		if err := updateGroupsOnUser(d.Id(), groups, client); err != nil {
 			return err
 		}
-		d.SetPartial("group_memberships")
 	}
 
 	if passwordChange {
@@ -509,8 +503,6 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 			return fmt.Errorf("[ERROR] Error Updating User password recovery credentials in Okta: %v", err)
 		}
 	}
-
-	d.Partial(false)
 
 	return resourceUserRead(d, m)
 }

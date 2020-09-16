@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func getPolicyFactorSchema(key string) map[string]*schema.Schema {
@@ -15,7 +15,7 @@ func getPolicyFactorSchema(key string) map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		key: &schema.Schema{
 			Optional: true,
-			Type:     schema.TypeMap,
+			Type:     schema.TypeSet,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"enroll": &schema.Schema{
@@ -134,13 +134,11 @@ func resourcePolicyMfaUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Partial(true)
 	policy := buildMfaPolicy(d, m)
 	err := updatePolicy(d, m, policy)
 	if err != nil {
 		return err
 	}
-	d.Partial(false)
 
 	return resourcePolicyMfaRead(d, m)
 }

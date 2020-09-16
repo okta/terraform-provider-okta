@@ -13,7 +13,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-okta/sdk"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func buildSchema(s, t map[string]*schema.Schema) map[string]*schema.Schema {

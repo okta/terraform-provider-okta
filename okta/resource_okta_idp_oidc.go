@@ -1,8 +1,8 @@
 package okta
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/terraform-providers/terraform-provider-okta/sdk"
 )
@@ -154,13 +154,10 @@ func syncEndpoint(key string, e *sdk.Endpoint, d *schema.ResourceData) {
 
 func resourceIdpUpdate(d *schema.ResourceData, m interface{}) error {
 	idp := buildOidcIdp(d)
-	d.Partial(true)
 
 	if err := updateIdp(d.Id(), m, idp); err != nil {
 		return err
 	}
-
-	d.Partial(false)
 
 	if err := setIdpStatus(idp.ID, idp.Status, d.Get("status").(string), m); err != nil {
 		return err

@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 const (
@@ -219,7 +219,6 @@ func updateRule(d *schema.ResourceData, meta interface{}, updatedRule interface{
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR] Error runing update against Sign On Policy Rule: %v", err)
 	}
-	d.Partial(false)
 	err = policyRuleActivate(d, meta)
 
 	return rule, err

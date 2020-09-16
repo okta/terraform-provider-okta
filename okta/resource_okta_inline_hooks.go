@@ -1,8 +1,8 @@
 package okta
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/terraform-providers/terraform-provider-okta/sdk"
 
 	"net/http"
@@ -65,7 +65,7 @@ func resourceInlineHook() *schema.Resource {
 				Elem:     headerSchema,
 			},
 			"auth": &schema.Schema{
-				Type:     schema.TypeMap,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -88,7 +88,7 @@ func resourceInlineHook() *schema.Resource {
 				},
 			},
 			"channel": &schema.Schema{
-				Type:     schema.TypeMap,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{

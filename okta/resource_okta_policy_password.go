@@ -5,8 +5,8 @@ import (
 	"log"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourcePolicyPassword() *schema.Resource {
@@ -264,14 +264,12 @@ func resourcePolicyPasswordUpdate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	log.Printf("[INFO] Update Policy %v", d.Get("name").(string))
-	d.Partial(true)
 
 	template := buildPasswordPolicy(d, m)
 	err := updatePolicy(d, m, template)
 	if err != nil {
 		return err
 	}
-	d.Partial(false)
 
 	return resourcePolicyPasswordRead(d, m)
 }

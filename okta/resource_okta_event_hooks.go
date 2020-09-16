@@ -1,8 +1,8 @@
 package okta
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/terraform-providers/terraform-provider-okta/sdk"
 
 	"net/http"
@@ -36,7 +36,7 @@ func resourceEventHook() *schema.Resource {
 				Elem:     headerSchema,
 			},
 			"auth": &schema.Schema{
-				Type:     schema.TypeMap,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -46,8 +46,8 @@ func resourceEventHook() *schema.Resource {
 						},
 						"type": &schema.Schema{
 							Type:         schema.TypeString,
-							Required:     true,
 							Default:      "HEADER",
+							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"HEADER"}, false),
 						},
 						"value": &schema.Schema{
@@ -59,18 +59,18 @@ func resourceEventHook() *schema.Resource {
 				},
 			},
 			"channel": &schema.Schema{
-				Type:     schema.TypeMap,
+				Type:     schema.TypeSet,
 				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": &schema.Schema{
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 							Default:  "HTTP",
 						},
 						"version": &schema.Schema{
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 							Default:  "1.0.0",
 						},
 						"uri": &schema.Schema{

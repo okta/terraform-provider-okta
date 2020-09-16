@@ -3,7 +3,7 @@ package okta
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/terraform-providers/terraform-provider-okta/sdk"
 	"log"
@@ -31,9 +31,8 @@ var userProfileDataSchema = map[string]*schema.Schema{
 		Computed: true,
 	},
 	"custom_profile_attributes": &schema.Schema{
-		Type:      schema.TypeString,
-		StateFunc: normalizeDataJSON,
-		Computed:  true,
+		Type:     schema.TypeString,
+		Computed: true,
 	},
 	"department": &schema.Schema{
 		Type:     schema.TypeString,
