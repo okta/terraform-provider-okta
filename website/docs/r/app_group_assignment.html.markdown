@@ -50,8 +50,8 @@ The following arguments are supported:
 
 ## Import
 
-An application group assignment can be imported via assignment ID.
+An application group assignment can be imported via the `app_id` and the `group_id`.
 
 ```
-$ terraform import okta_app_group_assignment.example <id>
+$ terraform import okta_app_group_assignment.example <app_id>/<group_id>
 ```
