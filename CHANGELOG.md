@@ -1,4 +1,38 @@
-## 3.4.0 (Unreleased)
+## 3.6.0 (Unreleased)
+
+## 3.5.0 (August 31, 2020)
+
+ENHANCEMENTS:
+
+* Add password import inline hook type. [#168](https://github.com/oktadeveloper/terraform-provider-okta/pull/168), Thanks, [@noinarisak](https://github.com/noinarisak) aka me! :tada:
+* Add external_namespace property for app_user_schema and user_schema. [#102](https://github.com/oktadeveloper/terraform-provider-okta/pull/102), Thanks, [@thehunt33r](https://github.com/thehunt33r)!
+
+BUGS:
+
+* Fix inline hook example code to match version that is supported. [#175](https://github.com/oktadeveloper/terraform-provider-okta/pull/175), Thanks, [@noinarisak](https://github.com/noinarisak) me again! :smiley:
+* Update app_group_assignment.html.markdown. [#165](https://github.com/oktadeveloper/terraform-provider-okta/pull/165), Thanks, [snolan-amount](https://github.com/snolan-amount)!
+
+
+## 3.4.1 (July 31, 2020)
+
+RELEASE:
+
+* First release under oktadeveloper organization with binary published to [registry.hashicorp.com](https://registry.terraform.io/).
+
+## 3.4.0 (July 30, 2020)
+
+ENHANCEMENTS:
+
+* Add resource definition for Okta Event Hooks. [#14](https://github.com/terraform-providers/terraform-provider-okta/pull/14), Thanks, [@mbudnek](https://github.com/mbudnek)!
+* Adding support for GROUP_MEMBERSHIP_ADMIN & REPORT_ADMIN. [#138](https://github.com/terraform-providers/terraform-provider-okta/pull/138) Thanks, [ymylei](https://github.com/ymylei)!
+
+BUG FIXES:
+
+* Documentation corrections. Thanks, to these fine individuals!
+  * [#126](https://github.com/terraform-providers/terraform-provider-okta/pull/126) [@ChristophShyper](https://github.com/ChristophShyper)
+  * [#127](https://github.com/terraform-providers/terraform-provider-okta/pull/127) [@thekbb](https://github.com/thekbb)
+  * [#151](https://github.com/terraform-providers/terraform-provider-okta/pull/151) [@varrunramani-okta](https://github.com/varrunramani-okta)
+
 ## 3.3.0 (May 29, 2020)
 
 ENHANCEMENTS:

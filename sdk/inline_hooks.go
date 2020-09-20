@@ -7,37 +7,37 @@ import (
 )
 
 type (
-	AuthScheme struct {
+	InlineHookAuthScheme struct {
 		Key   string `json:"key,omitempty"`
 		Type  string `json:"type,omitempty"`
 		Value string `json:"value,omitempty"`
 	}
 
-	Channel struct {
-		Config  *HookConfig `json:"config"`
-		Type    string      `json:"type,omitempty"`
-		Version string      `json:"version,omitempty"`
+	InlineHookChannel struct {
+		Config  *InlineHookChannelConfig `json:"config"`
+		Type    string                   `json:"type,omitempty"`
+		Version string                   `json:"version,omitempty"`
 	}
 
-	HookConfig struct {
-		AuthScheme *AuthScheme `json:"authScheme,omitempty"`
-		Headers    []*Header   `json:"headers,omitempty"`
-		URI        string      `json:"uri,omitempty"`
-		Method     string      `json:"method,omitempty"`
+	InlineHookChannelConfig struct {
+		AuthScheme *InlineHookAuthScheme `json:"authScheme,omitempty"`
+		Headers    []*InlineHookHeader   `json:"headers,omitempty"`
+		URI        string                `json:"uri,omitempty"`
+		Method     string                `json:"method,omitempty"`
 	}
 
-	Header struct {
+	InlineHookHeader struct {
 		Key   string `json:"key,omitempty"`
 		Value string `json:"value,omitempty"`
 	}
 
 	InlineHook struct {
-		Channel *Channel `json:"channel"`
-		ID      string   `json:"id,omitempty"`
-		Name    string   `json:"name,omitempty"`
-		Status  string   `json:"status,omitempty"`
-		Type    string   `json:"type,omitempty"`
-		Version string   `json:"version,omitempty"`
+		Channel *InlineHookChannel `json:"channel"`
+		ID      string             `json:"id,omitempty"`
+		Name    string             `json:"name,omitempty"`
+		Status  string             `json:"status,omitempty"`
+		Type    string             `json:"type,omitempty"`
+		Version string             `json:"version,omitempty"`
 	}
 )
 

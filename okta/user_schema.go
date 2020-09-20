@@ -137,6 +137,12 @@ var (
 			Description: "Subschema external name",
 			ForceNew:    true,
 		},
+		"external_namespace": &schema.Schema{
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Subschema external namespace",
+			ForceNew:    true,
+		},
 		"unique": &schema.Schema{
 			Type:          schema.TypeString,
 			Optional:      true,
@@ -204,6 +210,7 @@ func syncUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) error 
 	d.Set("max_length", subschema.MaxLength)
 	d.Set("scope", subschema.Scope)
 	d.Set("external_name", subschema.ExternalName)
+	d.Set("external_namespace", subschema.ExternalNamespace)
 	d.Set("unique", subschema.Unique)
 
 	if subschema.Items != nil {
@@ -317,14 +324,15 @@ func getUserSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
 				Principal: "SELF",
 			},
 		},
-		Scope:        d.Get("scope").(string),
-		Enum:         convertInterfaceToStringArrNullable(d.Get("enum")),
-		Master:       getNullableMaster(d),
-		Items:        getNullableItem(d),
-		MinLength:    getNullableInt(d, "min_length"),
-		MaxLength:    getNullableInt(d, "max_length"),
-		OneOf:        getNullableOneOf(d, "one_of"),
-		ExternalName: d.Get("external_name").(string),
-		Unique:       d.Get("unique").(string),
+		Scope:             d.Get("scope").(string),
+		Enum:              convertInterfaceToStringArrNullable(d.Get("enum")),
+		Master:            getNullableMaster(d),
+		Items:             getNullableItem(d),
+		MinLength:         getNullableInt(d, "min_length"),
+		MaxLength:         getNullableInt(d, "max_length"),
+		OneOf:             getNullableOneOf(d, "one_of"),
+		ExternalName:      d.Get("external_name").(string),
+		ExternalNamespace: d.Get("external_namespace").(string),
+		Unique:            d.Get("unique").(string),
 	}
 }
