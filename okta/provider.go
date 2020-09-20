@@ -30,6 +30,7 @@ const (
 	authServerPolicy       = "okta_auth_server_policy"
 	authServerPolicyRule   = "okta_auth_server_policy_rule"
 	authServerScope        = "okta_auth_server_scope"
+	eventHook              = "okta_event_hook"
 	factor                 = "okta_factor"
 	groupRoles             = "okta_group_roles"
 	groupRule              = "okta_group_rule"
@@ -135,6 +136,7 @@ func Provider() terraform.ResourceProvider {
 			authServerPolicy:       resourceAuthServerPolicy(),
 			authServerPolicyRule:   resourceAuthServerPolicyRule(),
 			authServerScope:        resourceAuthServerScope(),
+			eventHook:              resourceEventHook(),
 			factor:                 resourceFactor(),
 			groupRoles:             resourceGroupRoles(),
 			groupRule:              resourceGroupRule(),
