@@ -3,6 +3,7 @@ package okta
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"strings"
 )
 
 const customSchema = "custom"
@@ -16,7 +17,16 @@ func resourceUserSchema() *schema.Resource {
 		Exists: resourceUserSchemaExists,
 		Importer: &schema.ResourceImporter{
 			State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-				d.Set("index", d.Id())
+				resourceIndex := d.Id()
+				resourceUserType := "default"
+				if strings.Contains(d.Id(), ".") {
+					resourceUserType = strings.Split(d.Id(), ".")[0]
+					resourceIndex = strings.Split(d.Id(), ".")[1]
+				}
+
+				d.SetId(resourceIndex)
+				d.Set("index", resourceIndex)
+				d.Set("user_type", resourceUserType)
 				return []*schema.ResourceData{d}, nil
 			},
 		},
@@ -25,7 +35,13 @@ func resourceUserSchema() *schema.Resource {
 }
 
 func resourceUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
-	if err := updateSubschema(d, m); err != nil {
+	schemaUrl, err := getSupplementFromMetadata(m).GetUserTypeSchemaUrl(d.Get("user_type").(string), nil)
+
+	if err != nil {
+		return err
+	}
+
+	if err := updateSubschema(schemaUrl, d, m); err != nil {
 		return err
 	}
 	d.SetId(d.Get("index").(string))
@@ -34,13 +50,24 @@ func resourceUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUserSchemaExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	subschema, err := getSubSchema(d, m)
+	schemaUrl, err := getSupplementFromMetadata(m).GetUserTypeSchemaUrl(d.Get("user_type").(string), nil)
+
+	if err != nil {
+		return false, err
+	}
+	subschema, err := getSubSchema(schemaUrl, d, m)
 
 	return subschema != nil, err
 }
 
 func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
-	subschema, err := getSubSchema(d, m)
+	schemaUrl, err := getSupplementFromMetadata(m).GetUserTypeSchemaUrl(d.Get("user_type").(string), nil)
+
+	if err != nil {
+		return err
+	}
+
+	subschema, err := getSubSchema(schemaUrl, d, m)
 	if err != nil {
 		return err
 	} else if subschema == nil {
@@ -51,12 +78,12 @@ func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
 	return syncUserSchema(d, subschema)
 }
 
-func getSubSchema(d *schema.ResourceData, m interface{}) (subschema *sdk.UserSubSchema, err error) {
+func getSubSchema(schemaUrl string, d *schema.ResourceData, m interface{}) (subschema *sdk.UserSubSchema, err error) {
 	var schema *sdk.UserSchema
 
-	schema, _, err = getSupplementFromMetadata(m).GetUserSchema()
+	schema, _, err = getSupplementFromMetadata(m).GetUserSchema(schemaUrl)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	subschema = getCustomProperty(schema, d.Id())
@@ -64,7 +91,12 @@ func getSubSchema(d *schema.ResourceData, m interface{}) (subschema *sdk.UserSub
 }
 
 func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
-	if err := updateSubschema(d, m); err != nil {
+	schemaUrl, err := getSupplementFromMetadata(m).GetUserTypeSchemaUrl(d.Get("user_type").(string), nil)
+
+	if err != nil {
+		return err
+	}
+	if err := updateSubschema(schemaUrl, d, m); err != nil {
 		return err
 	}
 
@@ -72,15 +104,20 @@ func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUserSchemaDelete(d *schema.ResourceData, m interface{}) error {
-	_, err := getSupplementFromMetadata(m).DeleteUserSchemaProperty(d.Id())
+	schemaUrl, err := getSupplementFromMetadata(m).GetUserTypeSchemaUrl(d.Get("user_type").(string), nil)
 
-	return err
+	if err != nil {
+		return err
+	}
+	_, schemaPropertyError := getSupplementFromMetadata(m).DeleteUserSchemaProperty(schemaUrl, d.Id())
+
+	return schemaPropertyError
 }
 
 // create or modify a custom subschema
-func updateSubschema(d *schema.ResourceData, m interface{}) error {
+func updateSubschema(schemaUrl string, d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
-	_, _, err := client.UpdateCustomUserSchemaProperty(d.Get("index").(string), getUserSubSchema(d))
+	_, _, err := client.UpdateCustomUserSchemaProperty(schemaUrl, d.Get("index").(string), getUserSubSchema(d))
 
 	return err
 }

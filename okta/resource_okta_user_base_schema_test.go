@@ -14,11 +14,15 @@ import (
 const baseTestProp = "firstName"
 
 func sweepUserBaseSchema(client *testClient) error {
-	_, _, err := client.artClient.Schemas.GetUserSchema()
-	if err != nil {
-		return err
-	}
+	userTypeList, _, _ := client.apiSupplement.ListUserTypes()
 	var errorList []error
+	for _, value := range userTypeList {
+		schemaUrl := value.Links.Schema.Href
+		_, _, err := client.apiSupplement.GetUserSchema(schemaUrl)
+		if err != nil {
+			return err
+		}
+	}
 
 	return condenseError(errorList)
 }
@@ -28,6 +32,7 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 	mgr := newFixtureManager(userBaseSchema)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updated := mgr.GetFixtures("updated.tf", ri, t)
+	nondefaultusertypeconfig := mgr.GetFixtures("nondefaultusertype.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.%s", userBaseSchema, baseTestProp)
 
 	resource.Test(t, resource.TestCase{
@@ -57,11 +62,21 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 				),
 			},
 			{
+				Config: nondefaultusertypeconfig,
+				Check: resource.ComposeTestCheckFunc(
+					testOktaUserBaseSchemasExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "index", baseTestProp),
+					resource.TestCheckResourceAttr(resourceName, "title", "First name"),
+					resource.TestCheckResourceAttr(resourceName, "type", "string"),
+					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_ONLY"),
+				),
+			},
+			{
 				ResourceName: resourceName,
 				ImportState:  true,
 				ImportStateCheck: func(s []*terraform.InstanceState) error {
 					if len(s) != 1 {
-						return errors.New("Failed to import schema into state")
+						return errors.New("failed to import schema into state")
 					}
 
 					return nil
@@ -79,23 +94,33 @@ func testOktaUserBaseSchemasExists(name string) resource.TestCheckFunc {
 			return fmt.Errorf("Not found: %s", name)
 		}
 
-		if exists, _ := testUserBaseSchemaExists(rs.Primary.ID); !exists {
+		var schemaUserType = "default"
+		if rs.Primary.Attributes["user_type"] != "" {
+			schemaUserType = rs.Primary.Attributes["user_type"]
+		}
+
+		if exists, _ := testUserBaseSchemaExists(schemaUserType, rs.Primary.ID); !exists {
 			return fmt.Errorf("Failed to find %s", rs.Primary.ID)
 		}
 		return nil
 	}
 }
 
-func testUserBaseSchemaExists(index string) (bool, error) {
-	client := getClientFromMetadata(testAccProvider.Meta())
-	subschema, _, err := client.Schemas.GetUserSubSchemaIndex(baseSchema)
+func testUserBaseSchemaExists(schemaUserType string, index string) (bool, error) {
+	schemaUrl, err := getSupplementFromMetadata(testAccProvider.Meta()).GetUserTypeSchemaUrl(schemaUserType, nil)
+
 	if err != nil {
-		return false, fmt.Errorf("Error Listing User Subschema in Okta: %v", err)
+		return false, err
 	}
-	for _, key := range subschema {
-		if key == index {
-			return true, nil
-		}
+
+	schema, _, err := getSupplementFromMetadata(testAccProvider.Meta()).GetUserSchema(schemaUrl)
+	if err != nil {
+		return false, err
+	}
+
+	part := getBaseProperty(schema, index)
+	if part != nil {
+		return true, nil
 	}
 
 	return false, nil
