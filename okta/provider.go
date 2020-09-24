@@ -115,6 +115,17 @@ func Provider() terraform.ResourceProvider {
 				Default:     1,
 				Description: "Number of concurrent requests to make within a resource where bulk operations are not possible. Take note of https://developer.okta.com/docs/api/getting_started/rate-limits.",
 			},
+			"max_requests": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  100,
+				Description: "(Experimental) controls how many requests can be made to each Okta endpoint by the provider. " +
+					"It's used to prevent rate limit violations. By default request throttling is disabled meaning provider " +
+					"might cause rate limits violations. Expects an integer representing a percentage value - e.g. `40`. " +
+					"`40` means that provider is allowed to use up to 40% of the rate limit. E.g. assuming rate limit for " +
+					"`/api/v1/apps` endpoint is 25, up to 10 requests will be made that burn `/api/v1/apps` rate limit. " +
+					"Currently request throttling works only for `/api/v1/apps` rate limit.",
+			},
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -220,6 +231,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		maxWait:     d.Get("max_wait_seconds").(int),
 		minWait:     d.Get("min_wait_seconds").(int),
 		backoff:     d.Get("backoff").(bool),
+		maxRequests: d.Get("max_requests").(int),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, fmt.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)
