@@ -34,7 +34,7 @@ func resourceAuthServerPolicy() *schema.Resource {
 			"status": statusSchema,
 			"priority": &schema.Schema{
 				Type:        schema.TypeInt,
-				Required:    true,
+				Optional:    true,
 				Description: "Priority of the auth server policy",
 			},
 			"description": &schema.Schema{

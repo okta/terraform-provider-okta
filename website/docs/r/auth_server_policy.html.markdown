@@ -35,7 +35,7 @@ The following arguments are supported:
 
 * `status` - (Optional) The status of the Auth Server Policy.
 
-* `priority` - (Required) The priority of the Auth Server Policy.
+* `priority` - (Optional) The priority of the Auth Server Policy.
 
 * `description` - (Optional) The description of the Auth Server Policy.
 
