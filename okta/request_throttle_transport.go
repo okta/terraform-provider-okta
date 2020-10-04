@@ -9,90 +9,116 @@ import (
 	"time"
 )
 
-func isAPIV1AppsEndpoint(path string) bool {
-	endpointsPatterns := []*regexp.Regexp{
-		// apps pattern
-		regexp.MustCompile(`/api/v1/apps$`),
-		// groups pattern
-		regexp.MustCompile(`/api/v1/apps/(?P<AppID>[[:alnum:]]+)/groups$`),
-		// group pattern
-		regexp.MustCompile(`/api/v1/apps/(?P<AppID>[[:alnum:]]+)/groups/(?P<GroupID>[[:alnum:]]+)$`),
-		// users pattern
-		regexp.MustCompile(`/api/v1/apps/(?P<AppID>[[:alnum:]]+)/users$`),
-	}
-	// Check if endpoint match to one of the patterns.
-	var foundLen int
-	for _, p := range endpointsPatterns {
-		foundLen += len(p.FindStringSubmatch(path))
-	}
-	return foundLen != 0
-}
-
-type requestThrottleTransport struct {
-	base                                http.RoundTripper
-	percentageOfLimitRate               int
-	apiV1AppsEndpointCalls              int
-	apiV1AppsEndpointRateLimit          int
-	apiV1AppsEndpointRateLimitResetTime time.Time
+type rateLimitThrottle struct {
+	endpointsPatterns  []*regexp.Regexp
+	noRequestsMade     int
+	maxRequests        int
+	rateLimit          int
+	rateLimitResetTime time.Time
 	sync.Mutex
 }
 
-func (tt *requestThrottleTransport) RoundTrip(req *http.Request) (res *http.Response, err error) {
-	// Nothing to throttle, just bypass.
-	if !isAPIV1AppsEndpoint(req.URL.Path) {
-		return tt.base.RoundTrip(req)
+func newRateLimitThrottle(endpointsRegexes []string, maxRequests int) rateLimitThrottle {
+	endpointsPatterns := make([]*regexp.Regexp, len(endpointsRegexes))
+	for i, endpointRegex := range endpointsRegexes {
+		endpointsPatterns[i] = regexp.MustCompile(endpointRegex)
 	}
+	return rateLimitThrottle{
+		endpointsPatterns: endpointsPatterns,
+		maxRequests:       maxRequests,
+	}
+}
 
-	// Perform throttling (wait with making a request).
-	log.Println("[DEBUG] special isApiV1AppsEndpoint request throttle handling")
-	tt.Lock()
-	tt.apiV1AppsEndpointCalls++
+func (throttle *rateLimitThrottle) checkIsEndpoint(path string) bool {
+	for _, pattern := range throttle.endpointsPatterns {
+		if len(pattern.FindStringSubmatch(path)) != 0 {
+			return true
+		}
+	}
+	return false
+}
+
+func (throttle *rateLimitThrottle) preRequestHook(path string) {
+	if !throttle.checkIsEndpoint(path) {
+		return
+	}
+	log.Println("[DEBUG] special preRequestHook request throttle handling")
+	throttle.Lock()
+	defer throttle.Unlock()
+	throttle.noRequestsMade += 1
 	// TODO hardcoded 10 for testing, change it to calculating on the fly using
-	// apiV1AppsEndpointRateLimit * c.maxRequests / 100
-	if tt.apiV1AppsEndpointCalls >= 10 {
-		tt.apiV1AppsEndpointCalls = 0
+	// throttle.rateLimit * throttle.maxRequests / 100
+	if throttle.noRequestsMade >= 10 {
+		throttle.noRequestsMade = 0
 		// add an extra margin to account for the clock skew
-		timeToSleep := tt.apiV1AppsEndpointRateLimitResetTime.Add(2 * time.Second).Sub(time.Now())
+		timeToSleep := throttle.rateLimitResetTime.Add(2 * time.Second).Sub(time.Now())
 		if timeToSleep > 0 {
 			log.Printf(
-				"[INFO] Throttling /api/v1/apps requests, sleeping until rate limit reset for %s",
+				"[INFO] Throttling %s requests, sleeping until rate limit reset for %s",
+				path,
 				timeToSleep,
 			)
 			time.Sleep(timeToSleep)
 		}
 	}
-	tt.Unlock()
+}
 
-	// Make a request after throttling phase.
-	resp, err := tt.base.RoundTrip(req)
-	if err != nil {
-		return resp, err
+func (throttle *rateLimitThrottle) postRequestHook(resp *http.Response) {
+	if !throttle.checkIsEndpoint(resp.Request.URL.Path) {
+		return
 	}
-	// Above throttled request ended successfully, update information about limits in throttler.
-	tt.Lock()
-	tt.apiV1AppsEndpointRateLimit, err = strconv.Atoi(resp.Header.Get("X-Rate-Limit-Limit"))
+	throttle.Lock()
+	defer throttle.Unlock()
+	var err error
+	throttle.rateLimit, err = strconv.Atoi(resp.Header.Get("X-Rate-Limit-Limit"))
 	if err != nil {
 		// TODO
 	}
-	log.Printf("[DEBUG] /api/v1/apps rate limit limit: %v", tt.apiV1AppsEndpointRateLimit)
+	log.Printf("[DEBUG] %s rate limit limit: %v", resp.Request.URL.Path, throttle.rateLimit)
 	resetTime, err := strconv.Atoi(resp.Header.Get("X-Rate-Limit-Reset"))
 	if err != nil {
 		// TODO
 	}
 	futureResetTime := time.Unix(int64(resetTime), 0)
-	log.Printf("[DEBUG] future /api/v1/apps rate limit reset time: %v", futureResetTime)
-	if futureResetTime != tt.apiV1AppsEndpointRateLimitResetTime {
-		tt.apiV1AppsEndpointCalls = 1
+	log.Printf("[DEBUG] future %s rate limit reset time: %v", resp.Request.URL.Path, futureResetTime)
+	if futureResetTime != throttle.rateLimitResetTime {
+		throttle.noRequestsMade = 1
 	}
-	tt.apiV1AppsEndpointRateLimitResetTime = futureResetTime
-	tt.Unlock()
+	throttle.rateLimitResetTime = futureResetTime
+}
 
-	return resp, nil
+type requestThrottleTransport struct {
+	base               http.RoundTripper
+	throttledEndpoints []*rateLimitThrottle
+}
+
+func (transport *requestThrottleTransport) RoundTrip(req *http.Request) (res *http.Response, err error) {
+	for i, _ := range transport.throttledEndpoints {
+		transport.throttledEndpoints[i].preRequestHook(req.URL.Path)
+	}
+	resp, err := transport.base.RoundTrip(req)
+	if err != nil {
+		return resp, err
+	}
+	for i, _ := range transport.throttledEndpoints {
+		transport.throttledEndpoints[i].postRequestHook(resp)
+	}
+	return resp, err
 }
 
 // NewRequestThrottleTransport returns RoundTripper which provides throttling according to maxRequests.
-// Every time new instance is returned which does not share any state with any of returned previously.
-// Hence for every Okta API client instanced for particular Okta Organization the same throttler should be used.
-func NewRequestThrottleTransport(base http.RoundTripper, percentageOfLimitRate int) *requestThrottleTransport {
-	return &requestThrottleTransport{base: base, percentageOfLimitRate: percentageOfLimitRate}
+// Every new instance returned has its own local state. Hence for every Okta API client instanced for
+// particular Okta Organization the same throttler should be used.
+func NewRequestThrottleTransport(base http.RoundTripper, maxRequests int) *requestThrottleTransport {
+	apiV1AppsEndpoint := newRateLimitThrottle([]string{
+		// the following endpoints share the same rate limit
+		`/api/v1/apps$`,
+		`/api/v1/apps/(?P<AppID>[[:alnum:]]+)/groups$`,
+		`/api/v1/apps/(?P<AppID>[[:alnum:]]+)/groups/(?P<GroupID>[[:alnum:]]+)$`,
+		`/api/v1/apps/(?P<AppID>[[:alnum:]]+)/users$`,
+	}, maxRequests)
+	return &requestThrottleTransport{
+		base:               base,
+		throttledEndpoints: []*rateLimitThrottle{&apiV1AppsEndpoint},
+	}
 }

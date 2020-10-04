@@ -5,19 +5,26 @@ import (
 )
 
 func TestIsApiV1AppsEndpoint(t *testing.T) {
-	if isAPIV1AppsEndpoint("/api/v1/apps") != true {
+	apiV1AppsEndpoint := newRateLimitThrottle([]string{
+		// the following endpoints share the same rate limit
+		`/api/v1/apps$`,
+		`/api/v1/apps/(?P<AppID>[[:alnum:]]+)/groups$`,
+		`/api/v1/apps/(?P<AppID>[[:alnum:]]+)/groups/(?P<GroupID>[[:alnum:]]+)$`,
+		`/api/v1/apps/(?P<AppID>[[:alnum:]]+)/users$`,
+	}, 5)
+	if apiV1AppsEndpoint.checkIsEndpoint("/api/v1/apps") != true {
 		t.Error()
 	}
-	if isAPIV1AppsEndpoint("/api/v1/apps/123/groups") != true {
+	if apiV1AppsEndpoint.checkIsEndpoint("/api/v1/apps/123/groups") != true {
 		t.Error()
 	}
-	if isAPIV1AppsEndpoint("/api/v1/apps/123/users") != true {
+	if apiV1AppsEndpoint.checkIsEndpoint("/api/v1/apps/123/users") != true {
 		t.Error()
 	}
-	if isAPIV1AppsEndpoint("/api/v1/apps/123/groups/456") != true {
+	if apiV1AppsEndpoint.checkIsEndpoint("/api/v1/apps/123/groups/456") != true {
 		t.Error()
 	}
-	if isAPIV1AppsEndpoint("/api/v1/apps/123") != false {
+	if apiV1AppsEndpoint.checkIsEndpoint("/api/v1/apps/123") != false {
 		t.Error()
 	}
 }
