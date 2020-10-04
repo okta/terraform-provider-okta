@@ -46,10 +46,8 @@ func (throttle *rateLimitThrottle) preRequestHook(path string) {
 	throttle.Lock()
 	defer throttle.Unlock()
 	throttle.noRequestsMade += 1
-	// TODO hardcoded 10 for testing, change it to calculating on the fly using
-	// throttle.rateLimit * throttle.maxRequests / 100
-	if throttle.noRequestsMade >= 10 {
-		throttle.noRequestsMade = 0
+	if throttle.rateLimit != 0 && throttle.noRequestsMade >= (throttle.rateLimit*throttle.maxRequests/100) {
+		throttle.noRequestsMade = 1
 		// add an extra margin to account for the clock skew
 		timeToSleep := throttle.rateLimitResetTime.Add(2 * time.Second).Sub(time.Now())
 		if timeToSleep > 0 {
@@ -82,6 +80,7 @@ func (throttle *rateLimitThrottle) postRequestHook(resp *http.Response) {
 	futureResetTime := time.Unix(int64(resetTime), 0)
 	log.Printf("[DEBUG] future %s rate limit reset time: %v", resp.Request.URL.Path, futureResetTime)
 	if futureResetTime != throttle.rateLimitResetTime {
+		log.Printf("[DEBUG] %s rate limit reset detected", resp.Request.URL.Path)
 		throttle.noRequestsMade = 1
 	}
 	throttle.rateLimitResetTime = futureResetTime
