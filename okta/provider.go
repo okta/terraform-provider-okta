@@ -116,9 +116,10 @@ func Provider() terraform.ResourceProvider {
 				Description: "Number of concurrent requests to make within a resource where bulk operations are not possible. Take note of https://developer.okta.com/docs/api/getting_started/rate-limits.",
 			},
 			"max_requests": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Default:  100,
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      100,
+				ValidateFunc: validation.IntBetween(1, 100),
 				Description: "(Experimental) controls how many requests can be made to each Okta endpoint by the provider. " +
 					"It's used to prevent rate limit violations. By default request throttling is disabled meaning provider " +
 					"might cause rate limits violations. Expects an integer representing a percentage value - e.g. `40`. " +
