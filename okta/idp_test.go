@@ -2,7 +2,7 @@ package okta
 
 import (
 	"github.com/okta/okta-sdk-golang/okta/query"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func createDoesIdpExist(idp sdk.IdentityProvider) func(string) (bool, error) {
