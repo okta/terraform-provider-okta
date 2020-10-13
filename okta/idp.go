@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
@@ -183,7 +183,7 @@ func resourceDeleteAnyIdp(d *schema.ResourceData, m interface{}, active bool) er
 func fetchIdp(id string, m interface{}, idp sdk.IdentityProvider) error {
 	client := getSupplementFromMetadata(m)
 	_, response, err := client.GetIdentityProvider(id, idp)
-	if response.StatusCode == http.StatusNotFound {
+	if response != nil && response.StatusCode == http.StatusNotFound {
 		idp = nil
 		return nil
 	}
@@ -195,7 +195,7 @@ func updateIdp(id string, m interface{}, idp sdk.IdentityProvider) error {
 	client := getSupplementFromMetadata(m)
 	_, response, err := client.UpdateIdentityProvider(id, idp, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
-	if response.StatusCode == 404 {
+	if response != nil && response.StatusCode == 404 {
 		idp = nil
 		return nil
 	}
@@ -207,7 +207,7 @@ func createIdp(m interface{}, idp sdk.IdentityProvider) error {
 	client := getSupplementFromMetadata(m)
 	_, response, err := client.CreateIdentityProvider(idp, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
-	if response.StatusCode == 404 {
+	if response != nil && response.StatusCode == 404 {
 		idp = nil
 		return nil
 	}

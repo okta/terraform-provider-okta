@@ -218,7 +218,6 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		parallelism: d.Get("parallelism").(int),
 		retryCount:  d.Get("max_retries").(int),
 		maxWait:     d.Get("max_wait_seconds").(int),
-		minWait:     d.Get("min_wait_seconds").(int),
 		backoff:     d.Get("backoff").(bool),
 	}
 	if err := config.loadAndValidate(); err != nil {

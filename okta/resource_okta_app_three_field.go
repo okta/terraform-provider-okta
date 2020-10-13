@@ -1,9 +1,11 @@
 package okta
 
 import (
+	"context"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func resourceAppThreeField() *schema.Resource {
@@ -65,7 +67,7 @@ func resourceAppThreeFieldCreate(d *schema.ResourceData, m interface{}) error {
 	app := buildAppThreeField(d, m)
 	activate := d.Get("status").(string) == "ACTIVE"
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(app, params)
+	_, _, err := client.Application.CreateApplication(context.Background(), app, params)
 
 	if err != nil {
 		return err
@@ -106,7 +108,7 @@ func resourceAppThreeFieldRead(d *schema.ResourceData, m interface{}) error {
 func resourceAppThreeFieldUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	app := buildAppThreeField(d, m)
-	_, resp, err := client.Application.UpdateApplication(d.Id(), app)
+	_, resp, err := client.Application.UpdateApplication(context.Background(), d.Id(), app)
 
 	if err != nil {
 		return responseErr(resp, err)
@@ -124,12 +126,12 @@ func resourceAppThreeFieldUpdate(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppThreeFieldDelete(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	resp, err := client.Application.DeactivateApplication(d.Id())
+	resp, err := client.Application.DeactivateApplication(context.Background(), d.Id())
 	if err != nil {
 		return responseErr(resp, err)
 	}
 
-	return responseErr(client.Application.DeleteApplication(d.Id()))
+	return responseErr(client.Application.DeleteApplication(context.Background(), d.Id()))
 }
 
 func buildAppThreeField(d *schema.ResourceData, m interface{}) *okta.SwaThreeFieldApplication {

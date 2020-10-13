@@ -32,6 +32,9 @@ func deletePolicyRulesByType(ruleType string, client *testClient) error {
 			for _, rule := range rules.Rules {
 				if strings.HasPrefix(rule.Name, testResourcePrefix) {
 					_, err = client.artClient.Policies.DeletePolicyRule(policy.ID, rule.ID)
+					if err != nil {
+						return err
+					}
 				}
 			}
 		}

@@ -1,10 +1,12 @@
 package okta
 
 import (
+	"context"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func resourceAppSecurePasswordStore() *schema.Resource {
@@ -108,7 +110,7 @@ func resourceAppSecurePasswordStoreCreate(d *schema.ResourceData, m interface{})
 	app := buildAppSecurePasswordStore(d, m)
 	activate := d.Get("status").(string) == "ACTIVE"
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(app, params)
+	_, _, err := client.Application.CreateApplication(context.Background(), app, params)
 
 	if err != nil {
 		return err
@@ -154,7 +156,7 @@ func resourceAppSecurePasswordStoreRead(d *schema.ResourceData, m interface{}) e
 func resourceAppSecurePasswordStoreUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	app := buildAppSecurePasswordStore(d, m)
-	_, _, err := client.Application.UpdateApplication(d.Id(), app)
+	_, _, err := client.Application.UpdateApplication(context.Background(), d.Id(), app)
 
 	if err != nil {
 		return err
@@ -172,12 +174,12 @@ func resourceAppSecurePasswordStoreUpdate(d *schema.ResourceData, m interface{})
 
 func resourceAppSecurePasswordStoreDelete(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	_, err := client.Application.DeactivateApplication(d.Id())
+	_, err := client.Application.DeactivateApplication(context.Background(), d.Id())
 	if err != nil {
 		return err
 	}
 
-	_, err = client.Application.DeleteApplication(d.Id())
+	_, err = client.Application.DeleteApplication(context.Background(), d.Id())
 
 	return err
 }

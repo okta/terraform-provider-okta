@@ -1,13 +1,14 @@
 package okta
 
 import (
+	"context"
 	"encoding/json"
 	"sync"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 var appUserResource = &schema.Resource{
@@ -196,7 +197,7 @@ func fetchApp(d *schema.ResourceData, m interface{}, app okta.App) error {
 
 func fetchAppById(id string, m interface{}, app okta.App) error {
 	client := getOktaClientFromMetadata(m)
-	_, response, err := client.Application.GetApplication(id, app, nil)
+	_, response, err := client.Application.GetApplication(context.Background(), id, app, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
 	if response != nil && response.StatusCode == 404 {
 		app = nil
@@ -208,9 +209,9 @@ func fetchAppById(id string, m interface{}, app okta.App) error {
 
 func updateAppById(id string, m interface{}, app okta.App) error {
 	client := getOktaClientFromMetadata(m)
-	_, response, err := client.Application.UpdateApplication(id, app)
+	_, response, err := client.Application.UpdateApplication(context.Background(), id, app)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
-	if response.StatusCode == 404 {
+	if response != nil && response.StatusCode == 404 {
 		app = nil
 		return nil
 	}
@@ -219,7 +220,7 @@ func updateAppById(id string, m interface{}, app okta.App) error {
 }
 
 func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []func() error {
-	existingGroup, _, _ := client.Application.ListApplicationGroupAssignments(id, &query.Params{})
+	existingGroup, _, _ := client.Application.ListApplicationGroupAssignments(context.Background(), id, nil)
 	var (
 		asyncActionList []func() error
 		groupIdList     []string
@@ -235,7 +236,8 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 
 			if !containsGroup(existingGroup, groupID) {
 				asyncActionList = append(asyncActionList, func() error {
-					_, resp, err := client.Application.CreateApplicationGroupAssignment(id, groupID, okta.ApplicationGroupAssignment{})
+					_, resp, err := client.Application.CreateApplicationGroupAssignment(context.Background(), id,
+						groupID, okta.ApplicationGroupAssignment{})
 					return responseErr(resp, err)
 				})
 			}
@@ -246,7 +248,7 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 		if !contains(groupIdList, group.Id) {
 			groupID := group.Id
 			asyncActionList = append(asyncActionList, func() error {
-				return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(id, groupID))
+				return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(context.Background(), id, groupID))
 			})
 		}
 	}
@@ -289,7 +291,7 @@ func handleAppGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) e
 
 func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []func() error {
 	// Looking upstream for existing user's, rather then the config for accuracy.
-	existingUsers, _, _ := client.Application.ListApplicationUsers(id, &query.Params{})
+	existingUsers, _, _ := client.Application.ListApplicationUsers(context.Background(), id, nil)
 	var (
 		asyncActionList []func() error
 		users           []interface{}
@@ -311,7 +313,7 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 				password, _ := userProfile["password"].(string)
 
 				asyncActionList = append(asyncActionList, func() error {
-					_, _, err := client.Application.AssignUserToApplication(id, okta.AppUser{
+					_, _, err := client.Application.AssignUserToApplication(context.Background(), id, okta.AppUser{
 						Id: uID,
 						Credentials: &okta.AppUserCredentials{
 							UserName: username,
@@ -333,7 +335,7 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 			if !contains(userIDList, user.Id) {
 				userID := user.Id
 				asyncActionList = append(asyncActionList, func() error {
-					return suppressErrorOn404(client.Application.DeleteApplicationUser(id, userID, nil))
+					return suppressErrorOn404(client.Application.DeleteApplicationUser(context.Background(), id, userID, nil))
 				})
 			}
 		}
@@ -353,9 +355,9 @@ func resourceAppExists(d *schema.ResourceData, m interface{}) (bool, error) {
 func setAppStatus(d *schema.ResourceData, client *okta.Client, status string, desiredStatus string) error {
 	if status != desiredStatus {
 		if desiredStatus == "INACTIVE" {
-			return responseErr(client.Application.DeactivateApplication(d.Id()))
+			return responseErr(client.Application.DeactivateApplication(context.Background(), d.Id()))
 		} else if desiredStatus == "ACTIVE" {
-			return responseErr(client.Application.ActivateApplication(d.Id()))
+			return responseErr(client.Application.ActivateApplication(context.Background(), d.Id()))
 		}
 	}
 
@@ -365,13 +367,13 @@ func setAppStatus(d *schema.ResourceData, client *okta.Client, status string, de
 func syncGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	// Temporary high limit to avoid issues short term. Need to support pagination here
-	userList, _, err := client.Application.ListApplicationUsers(id, &query.Params{Limit: 200})
+	userList, _, err := client.Application.ListApplicationUsers(context.Background(), id, &query.Params{Limit: 200})
 	if err != nil {
 		return err
 	}
 
 	// Temporary high limit to avoid issues short term. Need to support pagination here
-	groupList, _, err := client.Application.ListApplicationGroupAssignments(id, &query.Params{Limit: 200})
+	groupList, _, err := client.Application.ListApplicationGroupAssignments(context.Background(), id, &query.Params{Limit: 200})
 	if err != nil {
 		return err
 	}
@@ -447,12 +449,10 @@ func syncSamlSettings(d *schema.ResourceData, set *okta.SamlApplicationSettings)
 
 	for i, st := range attrStatements {
 		arr[i] = map[string]interface{}{
-			"name":         st.Name,
-			"namespace":    st.Namespace,
-			"type":         st.Type,
-			"values":       st.Values,
-			"filter_type":  st.FilterType,
-			"filter_value": st.FilterValue,
+			"name":      st.Name,
+			"namespace": st.Namespace,
+			"type":      st.Type,
+			"values":    st.Values,
 		}
 	}
 

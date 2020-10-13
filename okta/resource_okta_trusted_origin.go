@@ -119,6 +119,9 @@ func resourceTrustedOriginRead(d *schema.ResourceData, m interface{}) error {
 
 	if exists == true {
 		trustedOrigin, _, err = client.TrustedOrigins.GetTrustedOrigin(d.Id())
+		if err != nil {
+			return err
+		}
 	} else {
 		d.SetId("")
 		return nil

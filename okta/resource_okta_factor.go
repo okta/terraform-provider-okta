@@ -1,7 +1,7 @@
 package okta
 
 import (
-	"github.com/articulate/oktasdk-go/okta"
+	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
@@ -28,18 +28,18 @@ func resourceFactor() *schema.Resource {
 				Required: true,
 				ValidateFunc: validation.StringInSlice(
 					[]string{
-						okta.DuoFactor,
-						okta.FidoU2fFactor,
-						okta.FidoWebauthnFactor,
-						okta.GoogleOtpFactor,
-						okta.OktaCallFactor,
-						okta.OktaOtpFactor,
-						okta.OktaPushFactor,
-						okta.OktaQuestionFactor,
-						okta.OktaSmsFactor,
-						okta.RsaTokenFactor,
-						okta.SymantecVipFactor,
-						okta.YubikeyTokenFactor,
+						articulateOkta.DuoFactor,
+						articulateOkta.FidoU2fFactor,
+						articulateOkta.FidoWebauthnFactor,
+						articulateOkta.GoogleOtpFactor,
+						articulateOkta.OktaCallFactor,
+						articulateOkta.OktaOtpFactor,
+						articulateOkta.OktaPushFactor,
+						articulateOkta.OktaQuestionFactor,
+						articulateOkta.OktaSmsFactor,
+						articulateOkta.RsaTokenFactor,
+						articulateOkta.SymantecVipFactor,
+						articulateOkta.YubikeyTokenFactor,
 					},
 					false,
 				),
@@ -125,7 +125,7 @@ func activateFactor(d *schema.ResourceData, m interface{}) error {
 
 // This API is in Beta hence the inability to do a single get. I must list then find.
 // Fear is clearly not a factor for me.
-func findFactor(d *schema.ResourceData, m interface{}) (*okta.Factor, error) {
+func findFactor(d *schema.ResourceData, m interface{}) (*articulateOkta.Factor, error) {
 	client := getClientFromMetadata(m)
 	factorList, _, err := client.Org.ListFactors()
 
@@ -144,7 +144,7 @@ func findFactor(d *schema.ResourceData, m interface{}) (*okta.Factor, error) {
 	return nil, nil
 }
 
-func statusMismatch(d *schema.ResourceData, factor *okta.Factor) bool {
+func statusMismatch(d *schema.ResourceData, factor *articulateOkta.Factor) bool {
 	status := d.Get("active").(bool)
 
 	// I miss ternary operators

@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"encoding/json"
 	"encoding/xml"
 	"errors"
@@ -9,8 +10,8 @@ import (
 	"github.com/crewjam/saml"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 const (
@@ -331,7 +332,7 @@ func resourceAppSamlCreate(d *schema.ResourceData, m interface{}) error {
 
 	activate := d.Get("status").(string) == "ACTIVE"
 	params := &query.Params{Activate: &activate}
-	_, _, err = client.Application.CreateApplication(app, params)
+	_, _, err = client.Application.CreateApplication(context.Background(), app, params)
 
 	if err != nil {
 		return err
@@ -416,7 +417,7 @@ func resourceAppSamlUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	_, _, err = client.Application.UpdateApplication(d.Id(), app)
+	_, _, err = client.Application.UpdateApplication(context.Background(), d.Id(), app)
 
 	if err != nil {
 		return err
@@ -446,12 +447,12 @@ func resourceAppSamlUpdate(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppSamlDelete(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	_, err := client.Application.DeactivateApplication(d.Id())
+	_, err := client.Application.DeactivateApplication(context.Background(), d.Id())
 	if err != nil {
 		return err
 	}
 
-	_, err = client.Application.DeleteApplication(d.Id())
+	_, err = client.Application.DeleteApplication(context.Background(), d.Id())
 
 	return err
 }
@@ -534,12 +535,10 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 		samlAttr := make([]*okta.SamlAttributeStatement, len(statements))
 		for i := range statements {
 			samlAttr[i] = &okta.SamlAttributeStatement{
-				Name:        d.Get(fmt.Sprintf("attribute_statements.%d.name", i)).(string),
-				Namespace:   d.Get(fmt.Sprintf("attribute_statements.%d.namespace", i)).(string),
-				Type:        d.Get(fmt.Sprintf("attribute_statements.%d.type", i)).(string),
-				Values:      convertInterfaceToStringArr(d.Get(fmt.Sprintf("attribute_statements.%d.values", i))),
-				FilterType:  d.Get(fmt.Sprintf("attribute_statements.%d.filter_type", i)).(string),
-				FilterValue: d.Get(fmt.Sprintf("attribute_statements.%d.filter_value", i)).(string),
+				Name:      d.Get(fmt.Sprintf("attribute_statements.%d.name", i)).(string),
+				Namespace: d.Get(fmt.Sprintf("attribute_statements.%d.namespace", i)).(string),
+				Type:      d.Get(fmt.Sprintf("attribute_statements.%d.type", i)).(string),
+				Values:    convertInterfaceToStringArr(d.Get(fmt.Sprintf("attribute_statements.%d.values", i))),
 			}
 		}
 		app.Settings.SignOn.AttributeStatements = samlAttr
@@ -559,7 +558,7 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 func getCertificate(d *schema.ResourceData, m interface{}) (*okta.JsonWebKey, error) {
 	client := getOktaClientFromMetadata(m)
 	keyId := d.Get("key.id").(string)
-	key, resp, err := client.Application.GetApplicationKey(d.Id(), keyId)
+	key, resp, err := client.Application.GetApplicationKey(context.Background(), d.Id(), keyId)
 	if resp.StatusCode == 404 {
 		return nil, nil
 	}
@@ -583,7 +582,7 @@ func generateCertificate(d *schema.ResourceData, m interface{}, appID string) (*
 	}
 	var key *okta.JsonWebKey
 
-	_, err = requestExecutor.Do(req, &key)
+	_, err = requestExecutor.Do(context.Background(), req, &key)
 
 	return key, err
 }

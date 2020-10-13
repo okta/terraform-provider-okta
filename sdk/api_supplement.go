@@ -1,12 +1,13 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/peterhellberg/link"
 )
 
@@ -36,18 +37,18 @@ func (m *ApiSupplement) GetXml(url string) ([]byte, *http.Response, error) {
 	req.Header.Add("Authorization", fmt.Sprintf("SSWS %s", m.Token))
 	req.Header.Add("User-Agent", "Terraform Okta Provider")
 	req.Header.Add("Accept", "application/xml")
-	res, err := m.RequestExecutor.DoWithRetries(okta.NewRequest(req), 0)
+	res, err := m.RequestExecutor.Do(context.Background(), req, 0)
 	if err != nil {
-		return nil, res, err
+		return nil, res.Response, err
 	} else if res.StatusCode == http.StatusNotFound {
-		return nil, res, nil
+		return nil, res.Response, nil
 	} else if res.StatusCode != http.StatusOK {
-		return nil, res, fmt.Errorf("failed to get metadata for url: %s, status: %s", url, res.Status)
+		return nil, res.Response, fmt.Errorf("failed to get metadata for url: %s, status: %s", url, res.Status)
 	}
 	defer res.Body.Close()
 	data, err := ioutil.ReadAll(res.Body)
 
-	return data, res, err
+	return data, res.Response, err
 }
 
 // GetAfterParam grabs after link from link headers if it exists

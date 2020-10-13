@@ -1,14 +1,15 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 type (
@@ -53,7 +54,7 @@ func collectApps(reqExe *okta.RequestExecutor, filters *appFilters, results *sea
 		return err
 	}
 	var appList []*appID
-	res, err := reqExe.Do(req, &appList)
+	res, err := reqExe.Do(context.Background(), req, &appList)
 	if err != nil {
 		return err
 	}
@@ -129,7 +130,7 @@ func collectSamlApps(reqExe *okta.RequestExecutor, filters *appFilters, results 
 		return err
 	}
 	var appList []*okta.SamlApplication
-	res, err := reqExe.Do(req, &appList)
+	res, err := reqExe.Do(context.Background(), req, &appList)
 	if err != nil {
 		return err
 	}

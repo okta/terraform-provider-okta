@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -135,6 +135,7 @@ func ensureNotDefaultPolicy(d *schema.ResourceData) error {
 }
 
 func getGroups(d *schema.ResourceData) *articulateOkta.People {
+
 	var people *articulateOkta.People
 
 	if include, ok := d.GetOk("groups_included"); ok {

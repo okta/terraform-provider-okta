@@ -1,14 +1,15 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 // All profile properties here so we can do a diff against the config to see if any have changed before making the
@@ -63,7 +64,7 @@ func resourceUser() *schema.Resource {
 			State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				// Supporting id and email based imports
 				client := getOktaClientFromMetadata(meta)
-				user, _, err := client.User.GetUser(d.Id())
+				user, _, err := client.User.GetUser(context.Background(), d.Id())
 				if err != nil {
 					return nil, err
 				}
@@ -329,11 +330,11 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		}
 	}
 
-	userBody := okta.User{
+	userBody := okta.CreateUserRequest{
 		Profile:     profile,
 		Credentials: uc,
 	}
-	user, _, err := client.User.CreateUser(userBody, qp)
+	user, _, err := client.User.CreateUser(context.Background(), userBody, qp)
 
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Creating User from Okta: %v", err)
@@ -374,7 +375,7 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List User %v", d.Get("login").(string))
 	client := getOktaClientFromMetadata(m)
 
-	user, resp, err := client.User.GetUser(d.Id())
+	user, resp, err := client.User.GetUser(context.Background(), d.Id())
 
 	if is404(resp.StatusCode) {
 		d.SetId("")
@@ -446,7 +447,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		profile := populateUserProfile(d)
 		userBody := okta.User{Profile: profile}
 
-		_, _, err := client.User.UpdateUser(d.Id(), userBody, nil)
+		_, _, err := client.User.UpdateUser(context.Background(), d.Id(), userBody, nil)
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating User in Okta: %v", err)
 		}
@@ -482,7 +483,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 			NewPassword: np,
 		}
 
-		_, _, err := client.User.ChangePassword(d.Id(), *npr, nil)
+		_, _, err := client.User.ChangePassword(context.Background(), d.Id(), *npr, nil)
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating User password in Okta: %v", err)
 		}
@@ -503,7 +504,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 			RecoveryQuestion: rq,
 		}
 
-		_, _, err := client.User.ChangeRecoveryQuestion(d.Id(), *nuc)
+		_, _, err := client.User.ChangeRecoveryQuestion(context.Background(), d.Id(), *nuc)
 
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating User password recovery credentials in Okta: %v", err)
@@ -541,7 +542,7 @@ func ensureUserDelete(id, status string, client *okta.Client) error {
 	}
 
 	for i := 0; i < passes; i++ {
-		_, err := client.User.DeactivateOrDeleteUser(id, nil)
+		_, err := client.User.DeactivateOrDeleteUser(context.Background(), id, nil)
 		if err != nil {
 			return fmt.Errorf("Failed to deprovision or delete user from Okta: %v", err)
 		}
@@ -553,7 +554,7 @@ func resourceUserExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	log.Printf("[INFO] Checking Exists for User %v", d.Get("login").(string))
 	client := m.(*Config).oktaClient
 
-	_, resp, err := client.User.GetUser(d.Id())
+	_, resp, err := client.User.GetUser(context.Background(), d.Id())
 
 	if is404(resp.StatusCode) {
 		return false, nil

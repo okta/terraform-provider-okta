@@ -3,6 +3,8 @@ TEST?=$$(go list ./... |grep -v 'vendor')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=okta
+GOLINT=./bin/golangci-lint
+TFPROVIDERLINT=tfproviderlint
 
 # Expression to match against tests
 # go test -run <filter>
@@ -55,10 +57,10 @@ test-compile:
 	fi
 	go test -c $(TEST) $(TESTARGS)
 
-lint:
+lint: tools
 	@echo "==> Checking source code against linters..."
-	@GOGC=30 ./bin/golangci-lint run ./$(PKG_NAME)
-	@tfproviderlint \
+	@GOGC=30 $(GOLINT) run ./$(PKG_NAME)
+	@$(TFPROVIDERLINT) \
 		-c 1 \
 		-AT001 \
     -R004 \
@@ -82,8 +84,8 @@ lint:
 		./$(PKG_NAME)
 
 tools:
-	@curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.17.1
-	@go install github.com/bflad/tfproviderlint/cmd/tfproviderlint
+	@which $(GOLINT) || curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.25.0
+	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint
 
 website:
 ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))

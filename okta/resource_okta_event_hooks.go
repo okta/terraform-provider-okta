@@ -3,7 +3,7 @@ package okta
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 
 	"net/http"
 )
@@ -20,37 +20,37 @@ func resourceEventHook() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"status": statusSchema,
-			"events": &schema.Schema{
+			"events": {
 				Type:     schema.TypeSet,
 				Required: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			"headers": &schema.Schema{
+			"headers": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     headerSchema,
 			},
-			"auth": &schema.Schema{
+			"auth": {
 				Type:     schema.TypeMap,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"key": &schema.Schema{
+						"key": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"type": &schema.Schema{
+						"type": {
 							Type:         schema.TypeString,
 							Required:     true,
 							Default:      "HEADER",
 							ValidateFunc: validation.StringInSlice([]string{"HEADER"}, false),
 						},
-						"value": &schema.Schema{
+						"value": {
 							Type:      schema.TypeString,
 							Required:  true,
 							Sensitive: true,
@@ -58,22 +58,22 @@ func resourceEventHook() *schema.Resource {
 					},
 				},
 			},
-			"channel": &schema.Schema{
+			"channel": {
 				Type:     schema.TypeMap,
 				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"type": &schema.Schema{
+						"type": {
 							Type:     schema.TypeString,
 							Required: true,
 							Default:  "HTTP",
 						},
-						"version": &schema.Schema{
+						"version": {
 							Type:     schema.TypeString,
 							Required: true,
 							Default:  "1.0.0",
 						},
-						"uri": &schema.Schema{
+						"uri": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
@@ -179,7 +179,7 @@ func buildEventChannel(d *schema.ResourceData, m interface{}) *sdk.EventHookChan
 		return nil
 	}
 
-	headerList := []*sdk.EventHookHeader{}
+	var headerList []*sdk.EventHookHeader
 	if raw, ok := d.GetOk("headers"); ok {
 		for _, header := range raw.(*schema.Set).List() {
 			h, ok := header.(map[string]interface{})

@@ -48,7 +48,6 @@ func oktaConfig() (*Config, error) {
 		domain:      os.Getenv("OKTA_BASE_URL"),
 		parallelism: 1,
 		retryCount:  10,
-		minWait:     30,
 		maxWait:     600,
 	}
 
