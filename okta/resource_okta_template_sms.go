@@ -111,7 +111,7 @@ func resourceTemplateSmsRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-_ = d.Set("translations", flattenSmsTranlations(temp.Translations))
+	_ = d.Set("translations", flattenSmsTranlations(temp.Translations))
 
 	return nil
 }

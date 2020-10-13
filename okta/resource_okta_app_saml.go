@@ -386,12 +386,12 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 
 	if app.Credentials.Signing.Kid != "" && app.Status != "INACTIVE" {
 		keyID := app.Credentials.Signing.Kid
-	_ = d.Set("key_id", keyID)
+		_ = d.Set("key_id", keyID)
 		keyMetadata, err := getMetadata(d, m, keyID)
 		if err != nil {
 			return err
 		}
-	_ = d.Set("metadata", string(keyMetadata))
+		_ = d.Set("metadata", string(keyMetadata))
 
 		metadataRoot := &saml.EntityDescriptor{}
 		err = xml.Unmarshal(keyMetadata, metadataRoot)
@@ -402,9 +402,9 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 		syncSamlEndpointBinding(d, desc.SingleSignOnServices)
 		uri := metadataRoot.EntityID
 		key := getExternalID(uri, app.Settings.SignOn.IdpIssuer)
-	_ = d.Set("entity_url", uri)
-	_ = d.Set("entity_key", key)
-	_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
+		_ = d.Set("entity_url", uri)
+		_ = d.Set("entity_key", key)
+		_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
 	}
 
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
@@ -587,7 +587,7 @@ func tryCreateCertificate(d *schema.ResourceData, m interface{}, appID string) e
 		}
 
 		// Set ID and the read done at the end of update and create will do the GET on metadata
-	_ = d.Set("key_id", key.Kid)
+		_ = d.Set("key_id", key.Kid)
 	}
 
 	return nil

@@ -25,8 +25,8 @@ func resourceAppUser() *schema.Resource {
 					return nil, errors.New("Invalid resource import specifier. Use: terraform import <app_id>/<group_id>")
 				}
 
-			_ = d.Set("app_id", parts[0])
-			_ = d.Set("user_id", parts[1])
+				_ = d.Set("app_id", parts[0])
+				_ = d.Set("user_id", parts[1])
 
 				assignment, _, err := getOktaClientFromMetadata(m).Application.
 					GetApplicationUser(context.Background(), parts[0], parts[1], nil)
@@ -133,8 +133,8 @@ func resourceAppUserRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-_ = d.Set("profile", u.Profile)
-_ = d.Set("username", u.Credentials.UserName)
+	_ = d.Set("profile", u.Profile)
+	_ = d.Set("username", u.Credentials.UserName)
 
 	return nil
 }

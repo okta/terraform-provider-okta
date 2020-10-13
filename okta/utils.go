@@ -180,7 +180,7 @@ func createCustomNestedResourceImporter(fields []string, errMessage string) *sch
 					d.SetId(parts[i])
 					continue
 				}
-			_ = d.Set(field, parts[i])
+				_ = d.Set(field, parts[i])
 			}
 
 			return []*schema.ResourceData{d}, nil

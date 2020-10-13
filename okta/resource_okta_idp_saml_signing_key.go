@@ -83,12 +83,12 @@ func resourceIdpSigningKeyRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-_ = d.Set("created", key.Created)
-_ = d.Set("expires_at", key.ExpiresAt)
-_ = d.Set("kid", key.Kid)
-_ = d.Set("kty", key.Kty)
-_ = d.Set("use", key.Use)
-_ = d.Set("x5t_s256", key.X5T256)
+	_ = d.Set("created", key.Created)
+	_ = d.Set("expires_at", key.ExpiresAt)
+	_ = d.Set("kid", key.Kid)
+	_ = d.Set("kty", key.Kty)
+	_ = d.Set("use", key.Use)
+	_ = d.Set("x5t_s256", key.X5T256)
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"x5c": convertStringSetToInterface(key.X5C),

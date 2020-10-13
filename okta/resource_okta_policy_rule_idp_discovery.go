@@ -322,12 +322,12 @@ func resourcePolicyRuleIdpDiscoveryRead(d *schema.ResourceData, m interface{}) e
 		return responseErr(resp, err)
 	}
 
-_ = d.Set("name", rule.Name)
-_ = d.Set("status", rule.Status)
-_ = d.Set("priority", rule.Priority)
-_ = d.Set("user_identifier_attribute", rule.Conditions.UserIdentifier.Attribute)
-_ = d.Set("user_identifier_type", rule.Conditions.UserIdentifier.Type)
-_ = d.Set("network_connection", rule.Conditions.Network.Connection)
+	_ = d.Set("name", rule.Name)
+	_ = d.Set("status", rule.Status)
+	_ = d.Set("priority", rule.Priority)
+	_ = d.Set("user_identifier_attribute", rule.Conditions.UserIdentifier.Attribute)
+	_ = d.Set("user_identifier_type", rule.Conditions.UserIdentifier.Type)
+	_ = d.Set("network_connection", rule.Conditions.Network.Connection)
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"network_includes":         convertStringArrToInterface(rule.Conditions.Network.Include),

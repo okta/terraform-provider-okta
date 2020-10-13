@@ -33,8 +33,8 @@ func dataSourceUserProfileMappingSourceRead(d *schema.ResourceData, m interface{
 	}
 
 	d.SetId(mapping.ID)
-_ = d.Set("type", mapping.Type)
-_ = d.Set("name", mapping.Name)
+	_ = d.Set("type", mapping.Type)
+	_ = d.Set("name", mapping.Name)
 
 	return nil
 }

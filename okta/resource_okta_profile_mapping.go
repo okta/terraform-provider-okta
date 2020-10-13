@@ -165,12 +165,12 @@ func resourceProfileMappingRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-_ = d.Set("source_type", mapping.Source.Type)
-_ = d.Set("source_name", mapping.Source.Name)
-_ = d.Set("target_type", mapping.Target.Type)
-_ = d.Set("target_id", mapping.Target.ID)
-_ = d.Set("target_name", mapping.Target.Name)
-_ = d.Set("mappings", flattenMappingProperties(mapping.Properties))
+	_ = d.Set("source_type", mapping.Source.Type)
+	_ = d.Set("source_name", mapping.Source.Name)
+	_ = d.Set("target_type", mapping.Target.Type)
+	_ = d.Set("target_id", mapping.Target.ID)
+	_ = d.Set("target_name", mapping.Target.Name)
+	_ = d.Set("mappings", flattenMappingProperties(mapping.Properties))
 
 	return nil
 }

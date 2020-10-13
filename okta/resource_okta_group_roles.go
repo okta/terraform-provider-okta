@@ -16,7 +16,7 @@ func resourceGroupRoles() *schema.Resource {
 		Delete: resourceGroupRolesDelete,
 		Importer: &schema.ResourceImporter{
 			State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-			_ = d.Set("group_id", d.Id())
+				_ = d.Set("group_id", d.Id())
 				d.SetId(getGroupRoleId(d.Id()))
 				return []*schema.ResourceData{d}, nil
 			},
@@ -93,7 +93,7 @@ func resourceGroupRolesRead(d *schema.ResourceData, m interface{}) error {
 	for i, role := range existingRoles {
 		adminRoles[i] = role.Type
 	}
-_ = d.Set("admin_roles", convertStringSetToInterface(adminRoles))
+	_ = d.Set("admin_roles", convertStringSetToInterface(adminRoles))
 
 	return nil
 }

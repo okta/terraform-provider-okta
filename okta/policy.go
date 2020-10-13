@@ -209,10 +209,10 @@ func resourcePolicyExists(d *schema.ResourceData, m interface{}) (b bool, e erro
 }
 
 func syncPolicyFromUpstream(d *schema.ResourceData, policy *articulateOkta.Policy) error {
-_ = d.Set("name", policy.Name)
-_ = d.Set("description", policy.Description)
-_ = d.Set("status", policy.Status)
-_ = d.Set("priority", policy.Priority)
+	_ = d.Set("name", policy.Name)
+	_ = d.Set("description", policy.Description)
+	_ = d.Set("status", policy.Status)
+	_ = d.Set("priority", policy.Priority)
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"groups_included": convertStringSetToInterface(policy.Conditions.People.Groups.Include),

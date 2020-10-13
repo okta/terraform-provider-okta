@@ -82,9 +82,9 @@ func resourcePolicyPasswordRuleRead(d *schema.ResourceData, m interface{}) error
 	}
 
 	// Update with upstream state to prevent stale state
-_ = d.Set("password_change", rule.Actions.PasswordChange.Access)
-_ = d.Set("password_unlock", rule.Actions.SelfServiceUnlock.Access)
-_ = d.Set("password_reset", rule.Actions.SelfServicePasswordReset.Access)
+	_ = d.Set("password_change", rule.Actions.PasswordChange.Access)
+	_ = d.Set("password_unlock", rule.Actions.SelfServiceUnlock.Access)
+	_ = d.Set("password_reset", rule.Actions.SelfServicePasswordReset.Access)
 
 	return syncRuleFromUpstream(d, rule)
 }

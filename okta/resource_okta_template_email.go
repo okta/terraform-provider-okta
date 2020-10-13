@@ -120,8 +120,8 @@ func resourceTemplateEmailRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-_ = d.Set("translations", flattenEmailTranlations(temp.Translations))
-_ = d.Set("default_language", temp.DefaultLanguage)
+	_ = d.Set("translations", flattenEmailTranlations(temp.Translations))
+	_ = d.Set("default_language", temp.DefaultLanguage)
 
 	return nil
 }

@@ -26,8 +26,8 @@ func resourceAppGroupAssignment() *schema.Resource {
 					return nil, errors.New("Invalid resource import specifier. Use: terraform import <app_id>/<group_id>")
 				}
 
-			_ = d.Set("app_id", parts[0])
-			_ = d.Set("group_id", parts[1])
+				_ = d.Set("app_id", parts[0])
+				_ = d.Set("group_id", parts[1])
 
 				assignment, _, err := getOktaClientFromMetadata(m).Application.
 					GetApplicationGroupAssignment(context.Background(), parts[0], parts[1], nil)
@@ -155,8 +155,8 @@ func resourceAppGroupAssignmentRead(d *schema.ResourceData, m interface{}) error
 		return fmt.Errorf("Failed to marshal app user profile to JSON, error: %s", err)
 	}
 
-_ = d.Set("profile", string(jsonProfile))
-_ = d.Set("priority", g.Priority)
+	_ = d.Set("profile", string(jsonProfile))
+	_ = d.Set("priority", g.Priority)
 
 	return nil
 }

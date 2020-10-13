@@ -120,17 +120,17 @@ func resourcePolicySignonRuleRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	// Update with upstream state to prevent stale state
-_ = d.Set("authtype", rule.Conditions.AuthContext.AuthType)
-_ = d.Set("access", rule.Actions.SignOn.Access)
-_ = d.Set("mfa_required", rule.Actions.SignOn.RequireFactor)
-_ = d.Set("mfa_remember_device", rule.Actions.SignOn.RememberDeviceByDefault)
-_ = d.Set("mfa_lifetime", rule.Actions.SignOn.FactorLifetime)
-_ = d.Set("session_idle", rule.Actions.SignOn.Session.MaxSessionIdleMinutes)
-_ = d.Set("session_lifetime", rule.Actions.SignOn.Session.MaxSessionLifetimeMinutes)
-_ = d.Set("session_persistent", rule.Actions.SignOn.Session.UsePersistentCookie)
+	_ = d.Set("authtype", rule.Conditions.AuthContext.AuthType)
+	_ = d.Set("access", rule.Actions.SignOn.Access)
+	_ = d.Set("mfa_required", rule.Actions.SignOn.RequireFactor)
+	_ = d.Set("mfa_remember_device", rule.Actions.SignOn.RememberDeviceByDefault)
+	_ = d.Set("mfa_lifetime", rule.Actions.SignOn.FactorLifetime)
+	_ = d.Set("session_idle", rule.Actions.SignOn.Session.MaxSessionIdleMinutes)
+	_ = d.Set("session_lifetime", rule.Actions.SignOn.Session.MaxSessionLifetimeMinutes)
+	_ = d.Set("session_persistent", rule.Actions.SignOn.Session.UsePersistentCookie)
 
 	if rule.Actions.FactorPromptMode != "" {
-	_ = d.Set("mfa_prompt", rule.Actions.FactorPromptMode)
+		_ = d.Set("mfa_prompt", rule.Actions.FactorPromptMode)
 	}
 
 	return syncRuleFromUpstream(d, rule)

@@ -202,27 +202,27 @@ func buildCustomUserSchema(target map[string]*schema.Schema) map[string]*schema.
 }
 
 func syncUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) error {
-_ = d.Set("title", subschema.Title)
-_ = d.Set("type", subschema.Type)
-_ = d.Set("description", subschema.Description)
-_ = d.Set("required", subschema.Required)
-_ = d.Set("min_length", subschema.MinLength)
-_ = d.Set("max_length", subschema.MaxLength)
-_ = d.Set("scope", subschema.Scope)
-_ = d.Set("external_name", subschema.ExternalName)
-_ = d.Set("external_namespace", subschema.ExternalNamespace)
-_ = d.Set("unique", subschema.Unique)
+	_ = d.Set("title", subschema.Title)
+	_ = d.Set("type", subschema.Type)
+	_ = d.Set("description", subschema.Description)
+	_ = d.Set("required", subschema.Required)
+	_ = d.Set("min_length", subschema.MinLength)
+	_ = d.Set("max_length", subschema.MaxLength)
+	_ = d.Set("scope", subschema.Scope)
+	_ = d.Set("external_name", subschema.ExternalName)
+	_ = d.Set("external_namespace", subschema.ExternalNamespace)
+	_ = d.Set("unique", subschema.Unique)
 
 	if subschema.Items != nil {
-	_ = d.Set("array_type", subschema.Items.Type)
+		_ = d.Set("array_type", subschema.Items.Type)
 	}
 
 	if subschema.Master != nil {
-	_ = d.Set("master", subschema.Master.Type)
+		_ = d.Set("master", subschema.Master.Type)
 	}
 
 	if len(subschema.Permissions) > 0 {
-	_ = d.Set("permissions", subschema.Permissions[0].Action)
+		_ = d.Set("permissions", subschema.Permissions[0].Action)
 	}
 
 	return setNonPrimitives(d, map[string]interface{}{
@@ -232,16 +232,16 @@ _ = d.Set("unique", subschema.Unique)
 }
 
 func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) {
-_ = d.Set("title", subschema.Title)
-_ = d.Set("type", subschema.Type)
-_ = d.Set("required", subschema.Required)
+	_ = d.Set("title", subschema.Title)
+	_ = d.Set("type", subschema.Type)
+	_ = d.Set("required", subschema.Required)
 
 	if subschema.Master != nil {
-	_ = d.Set("master", subschema.Master.Type)
+		_ = d.Set("master", subschema.Master.Type)
 	}
 
 	if len(subschema.Permissions) > 0 {
-	_ = d.Set("permissions", subschema.Permissions[0].Action)
+		_ = d.Set("permissions", subschema.Permissions[0].Action)
 	}
 }
 

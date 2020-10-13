@@ -132,9 +132,9 @@ func resourceTrustedOriginRead(d *schema.ResourceData, m interface{}) error {
 		scopes = append(scopes, scope["type"])
 	}
 
-_ = d.Set("active", trustedOrigin.Status == "ACTIVE")
-_ = d.Set("origin", trustedOrigin.Origin)
-_ = d.Set("name", trustedOrigin.Name)
+	_ = d.Set("active", trustedOrigin.Status == "ACTIVE")
+	_ = d.Set("origin", trustedOrigin.Origin)
+	_ = d.Set("name", trustedOrigin.Name)
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"scopes": scopes,
