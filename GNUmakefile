@@ -15,7 +15,11 @@ endif
 
 default: build
 
-build: fmtcheck
+dep: # Download required dependencies
+	go mod tidy
+	go mod vendor
+
+build: dep fmtcheck
 	go install
 
 sweep:
