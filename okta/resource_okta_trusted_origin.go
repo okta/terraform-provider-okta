@@ -117,7 +117,7 @@ func resourceTrustedOriginRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	if exists == true {
+	if exists {
 		trustedOrigin, _, err = client.TrustedOrigins.GetTrustedOrigin(d.Id())
 		if err != nil {
 			return err
@@ -132,9 +132,9 @@ func resourceTrustedOriginRead(d *schema.ResourceData, m interface{}) error {
 		scopes = append(scopes, scope["type"])
 	}
 
-	d.Set("active", trustedOrigin.Status == "ACTIVE")
-	d.Set("origin", trustedOrigin.Origin)
-	d.Set("name", trustedOrigin.Name)
+_ = d.Set("active", trustedOrigin.Status == "ACTIVE")
+_ = d.Set("origin", trustedOrigin.Origin)
+_ = d.Set("name", trustedOrigin.Name)
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"scopes": scopes,
@@ -154,7 +154,7 @@ func resourceTrustedOriginUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	if exists == true {
+	if exists {
 		if d.HasChange("active") {
 			_, err = client.TrustedOrigins.ActivateTrustedOrigin(d.Id(), d.Get("active").(bool))
 			if err != nil {
@@ -184,7 +184,7 @@ func resourceTrustedOriginDelete(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
-	if exists == true {
+	if exists {
 		_, err = client.TrustedOrigins.DeleteTrustedOrigin(d.Id())
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Deleting Trusted Origin from Okta: %v", err)

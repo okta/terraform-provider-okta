@@ -31,7 +31,6 @@ type (
 		apiToken             string
 		retryCount           int
 		parallelism          int
-		waitForReset         bool
 		backoff              bool
 		maxWait              int
 		articulateOktaClient *articulateOkta.Client

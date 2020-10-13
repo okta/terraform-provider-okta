@@ -119,9 +119,9 @@ func resourceEventHookRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", hook.Name)
-	d.Set("status", hook.Status)
-	d.Set("events", eventSet(hook.Events))
+	_ = d.Set("name", hook.Name)
+	_ = d.Set("status", hook.Status)
+	_ = d.Set("events", eventSet(hook.Events))
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"channel": flattenEventHookChannel(hook.Channel),

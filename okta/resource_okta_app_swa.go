@@ -93,13 +93,13 @@ func resourceAppSwaRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("button_field", app.Settings.App.ButtonField)
-	d.Set("password_field", app.Settings.App.PasswordField)
-	d.Set("username_field", app.Settings.App.UsernameField)
-	d.Set("url", app.Settings.App.Url)
-	d.Set("url_regex", app.Settings.App.LoginUrlRegex)
-	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
-	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+_ = d.Set("button_field", app.Settings.App.ButtonField)
+_ = d.Set("password_field", app.Settings.App.PasswordField)
+_ = d.Set("username_field", app.Settings.App.UsernameField)
+_ = d.Set("url", app.Settings.App.Url)
+_ = d.Set("url_regex", app.Settings.App.LoginUrlRegex)
+_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
+_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 
 	return syncGroupsAndUsers(app.Id, d, m)

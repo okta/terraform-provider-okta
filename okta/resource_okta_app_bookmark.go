@@ -72,9 +72,9 @@ func resourceAppBookmarkRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("url", app.Settings.App.Url)
-	d.Set("label", app.Label)
-	d.Set("request_integration", app.Settings.App.RequestIntegration)
+_ = d.Set("url", app.Settings.App.Url)
+_ = d.Set("label", app.Label)
+_ = d.Set("request_integration", app.Settings.App.RequestIntegration)
 
 	if err = syncGroupsAndUsers(app.Id, d, m); err != nil {
 		return err

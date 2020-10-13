@@ -215,13 +215,11 @@ func buildIdentifier(d *schema.ResourceData) *sdk.IdpDiscoveryRuleUserIdentifier
 func flattenUserIdPatterns(patterns []*sdk.IdpDiscoveryRulePattern) *schema.Set {
 	var flattened []interface{}
 
-	if patterns != nil {
-		for _, v := range patterns {
-			flattened = append(flattened, map[string]interface{}{
-				"match_type": v.MatchType,
-				"value":      v.Value,
-			})
-		}
+	for _, v := range patterns {
+		flattened = append(flattened, map[string]interface{}{
+			"match_type": v.MatchType,
+			"value":      v.Value,
+		})
 	}
 
 	return schema.NewSet(schema.HashResource(userIdPatternResource), flattened)
@@ -288,7 +286,10 @@ func resourcePolicyRuleIdpDiscoveryCreate(d *schema.ResourceData, m interface{})
 	}
 
 	d.SetId(rule.ID)
-	setRuleStatus(d, m, rule.Status)
+	err = setRuleStatus(d, m, rule.Status)
+	if err != nil {
+		return err
+	}
 
 	return resourcePolicyRuleIdpDiscoveryRead(d, m)
 }
@@ -321,12 +322,12 @@ func resourcePolicyRuleIdpDiscoveryRead(d *schema.ResourceData, m interface{}) e
 		return responseErr(resp, err)
 	}
 
-	d.Set("name", rule.Name)
-	d.Set("status", rule.Status)
-	d.Set("priority", rule.Priority)
-	d.Set("user_identifier_attribute", rule.Conditions.UserIdentifier.Attribute)
-	d.Set("user_identifier_type", rule.Conditions.UserIdentifier.Type)
-	d.Set("network_connection", rule.Conditions.Network.Connection)
+_ = d.Set("name", rule.Name)
+_ = d.Set("status", rule.Status)
+_ = d.Set("priority", rule.Priority)
+_ = d.Set("user_identifier_attribute", rule.Conditions.UserIdentifier.Attribute)
+_ = d.Set("user_identifier_type", rule.Conditions.UserIdentifier.Type)
+_ = d.Set("network_connection", rule.Conditions.Network.Connection)
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"network_includes":         convertStringArrToInterface(rule.Conditions.Network.Include),
@@ -346,7 +347,10 @@ func resourcePolicyRuleIdpDiscoveryUpdate(d *schema.ResourceData, m interface{})
 		return responseErr(resp, err)
 	}
 
-	setRuleStatus(d, m, rule.Status)
+	err = setRuleStatus(d, m, rule.Status)
+	if err != nil {
+		return err
+	}
 
 	return resourcePolicyRuleIdpDiscoveryRead(d, m)
 }

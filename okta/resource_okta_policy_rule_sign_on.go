@@ -120,17 +120,17 @@ func resourcePolicySignonRuleRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	// Update with upstream state to prevent stale state
-	d.Set("authtype", rule.Conditions.AuthContext.AuthType)
-	d.Set("access", rule.Actions.SignOn.Access)
-	d.Set("mfa_required", rule.Actions.SignOn.RequireFactor)
-	d.Set("mfa_remember_device", rule.Actions.SignOn.RememberDeviceByDefault)
-	d.Set("mfa_lifetime", rule.Actions.SignOn.FactorLifetime)
-	d.Set("session_idle", rule.Actions.SignOn.Session.MaxSessionIdleMinutes)
-	d.Set("session_lifetime", rule.Actions.SignOn.Session.MaxSessionLifetimeMinutes)
-	d.Set("session_persistent", rule.Actions.SignOn.Session.UsePersistentCookie)
+_ = d.Set("authtype", rule.Conditions.AuthContext.AuthType)
+_ = d.Set("access", rule.Actions.SignOn.Access)
+_ = d.Set("mfa_required", rule.Actions.SignOn.RequireFactor)
+_ = d.Set("mfa_remember_device", rule.Actions.SignOn.RememberDeviceByDefault)
+_ = d.Set("mfa_lifetime", rule.Actions.SignOn.FactorLifetime)
+_ = d.Set("session_idle", rule.Actions.SignOn.Session.MaxSessionIdleMinutes)
+_ = d.Set("session_lifetime", rule.Actions.SignOn.Session.MaxSessionLifetimeMinutes)
+_ = d.Set("session_persistent", rule.Actions.SignOn.Session.UsePersistentCookie)
 
 	if rule.Actions.FactorPromptMode != "" {
-		d.Set("mfa_prompt", rule.Actions.FactorPromptMode)
+	_ = d.Set("mfa_prompt", rule.Actions.FactorPromptMode)
 	}
 
 	return syncRuleFromUpstream(d, rule)
@@ -175,7 +175,7 @@ func resourcePolicySignonRuleDelete(d *schema.ResourceData, m interface{}) error
 	}
 
 	if rule != nil && rule.ID != "" {
-		if rule.System == true {
+		if rule.System {
 			log.Printf("[INFO] Policy Rule %v is a System Policy, cannot delete from Okta", d.Get("name").(string))
 		} else {
 			_, err = client.Policies.DeletePolicyRule(d.Get("policyid").(string), rule.ID)

@@ -368,14 +368,17 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if app.Settings != nil && app.Settings.SignOn != nil {
-		syncSamlSettings(d, app.Settings)
+		err = syncSamlSettings(d, app.Settings)
+		if err != nil {
+			return err
+		}
 	}
 
-	d.Set("features", convertStringSetToInterface(app.Features))
-	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
-	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
-	d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
-	d.Set("preconfigured_app", app.Name)
+	_ = d.Set("features", convertStringSetToInterface(app.Features))
+	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
+	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
+	_ = d.Set("preconfigured_app", app.Name)
 	err = setAppSettings(d, app.Settings.App)
 	if err != nil {
 		return err
@@ -383,12 +386,12 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 
 	if app.Credentials.Signing.Kid != "" && app.Status != "INACTIVE" {
 		keyID := app.Credentials.Signing.Kid
-		d.Set("key_id", keyID)
+	_ = d.Set("key_id", keyID)
 		keyMetadata, err := getMetadata(d, m, keyID)
 		if err != nil {
 			return err
 		}
-		d.Set("metadata", string(keyMetadata))
+	_ = d.Set("metadata", string(keyMetadata))
 
 		metadataRoot := &saml.EntityDescriptor{}
 		err = xml.Unmarshal(keyMetadata, metadataRoot)
@@ -399,9 +402,9 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 		syncSamlEndpointBinding(d, desc.SingleSignOnServices)
 		uri := metadataRoot.EntityID
 		key := getExternalID(uri, app.Settings.SignOn.IdpIssuer)
-		d.Set("entity_url", uri)
-		d.Set("entity_key", key)
-		d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
+	_ = d.Set("entity_url", uri)
+	_ = d.Set("entity_key", key)
+	_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
 	}
 
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
@@ -464,7 +467,7 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 	responseSigned := d.Get("response_signed").(bool)
 	assertionSigned := d.Get("assertion_signed").(bool)
 
-	preconfigName, isPreconfig := d.GetOkExists("preconfigured_app")
+	preconfigName, isPreconfig := d.GetOkExists("preconfigured_app") // nolint:staticcheck
 
 	if isPreconfig {
 		app.Name = preconfigName.(string)
@@ -497,7 +500,7 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 	}
 	if appSettings, ok := d.GetOk("app_settings_json"); ok {
 		payload := map[string]interface{}{}
-		json.Unmarshal([]byte(appSettings.(string)), &payload)
+		_ = json.Unmarshal([]byte(appSettings.(string)), &payload)
 		settings := okta.ApplicationSettingsApplication(payload)
 		app.Settings.App = &settings
 	}
@@ -555,17 +558,6 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 	return app, nil
 }
 
-func getCertificate(d *schema.ResourceData, m interface{}) (*okta.JsonWebKey, error) {
-	client := getOktaClientFromMetadata(m)
-	keyId := d.Get("key.id").(string)
-	key, resp, err := client.Application.GetApplicationKey(context.Background(), d.Id(), keyId)
-	if resp.StatusCode == 404 {
-		return nil, nil
-	}
-
-	return key, err
-}
-
 func getMetadata(d *schema.ResourceData, m interface{}, keyID string) ([]byte, error) {
 	key, _, err := getSupplementFromMetadata(m).GetSAMLMetdata(d.Id(), keyID)
 	return key, err
@@ -595,7 +587,7 @@ func tryCreateCertificate(d *schema.ResourceData, m interface{}, appID string) e
 		}
 
 		// Set ID and the read done at the end of update and create will do the GET on metadata
-		d.Set("key_id", key.Kid)
+	_ = d.Set("key_id", key.Kid)
 	}
 
 	return nil

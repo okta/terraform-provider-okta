@@ -69,8 +69,8 @@ func resourceAppBasicAuthRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("url", app.Settings.App.Url)
-	d.Set("auth_url", app.Settings.App.AuthURL)
+_ = d.Set("url", app.Settings.App.Url)
+_ = d.Set("auth_url", app.Settings.App.AuthURL)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 
 	return syncGroupsAndUsers(app.Id, d, m)

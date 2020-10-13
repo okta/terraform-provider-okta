@@ -139,15 +139,15 @@ var baseappSwaSchema = map[string]*schema.Schema{
 
 // Wish there was some better polymorphism that could make these similarities easier to deal with
 func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *okta.ApplicationAccessibility, vis *okta.ApplicationVisibility) {
-	d.Set("name", name)
-	d.Set("status", status)
-	d.Set("sign_on_mode", signOn)
-	d.Set("label", label)
-	d.Set("accessibility_self_service", accy.SelfService)
-	d.Set("accessibility_error_redirect_url", accy.ErrorRedirectUrl)
-	d.Set("auto_submit_toolbar", vis.AutoSubmitToolbar)
-	d.Set("hide_ios", vis.Hide.IOS)
-	d.Set("hide_web", vis.Hide.Web)
+	_ = d.Set("name", name)
+	_ = d.Set("status", status)
+	_ = d.Set("sign_on_mode", signOn)
+	_ = d.Set("label", label)
+	_ = d.Set("accessibility_self_service", accy.SelfService)
+	_ = d.Set("accessibility_error_redirect_url", accy.ErrorRedirectUrl)
+	_ = d.Set("auto_submit_toolbar", vis.AutoSubmitToolbar)
+	_ = d.Set("hide_ios", vis.Hide.IOS)
+	_ = d.Set("hide_web", vis.Hide.Web)
 }
 
 func buildAppSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
@@ -200,7 +200,6 @@ func fetchAppById(id string, m interface{}, app okta.App) error {
 	_, response, err := client.Application.GetApplication(context.Background(), id, app, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
 	if response != nil && response.StatusCode == 404 {
-		app = nil
 		return nil
 	}
 
@@ -212,7 +211,6 @@ func updateAppById(id string, m interface{}, app okta.App) error {
 	_, response, err := client.Application.UpdateApplication(context.Background(), id, app)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
 	if response != nil && response.StatusCode == 404 {
-		app = nil
 		return nil
 	}
 
@@ -429,20 +427,20 @@ func setAppSettings(d *schema.ResourceData, settings *okta.ApplicationSettingsAp
 }
 
 func syncSamlSettings(d *schema.ResourceData, set *okta.SamlApplicationSettings) error {
-	d.Set("default_relay_state", set.SignOn.DefaultRelayState)
-	d.Set("sso_url", set.SignOn.SsoAcsUrl)
-	d.Set("recipient", set.SignOn.Recipient)
-	d.Set("destination", set.SignOn.Destination)
-	d.Set("audience", set.SignOn.Audience)
-	d.Set("idp_issuer", set.SignOn.IdpIssuer)
-	d.Set("subject_name_id_template", set.SignOn.SubjectNameIdTemplate)
-	d.Set("subject_name_id_format", set.SignOn.SubjectNameIdFormat)
-	d.Set("response_signed", set.SignOn.ResponseSigned)
-	d.Set("assertion_signed", set.SignOn.AssertionSigned)
-	d.Set("signature_algorithm", set.SignOn.SignatureAlgorithm)
-	d.Set("digest_algorithm", set.SignOn.DigestAlgorithm)
-	d.Set("honor_force_authn", set.SignOn.HonorForceAuthn)
-	d.Set("authn_context_class_ref", set.SignOn.AuthnContextClassRef)
+	_ = d.Set("default_relay_state", set.SignOn.DefaultRelayState)
+	_ = d.Set("sso_url", set.SignOn.SsoAcsUrl)
+	_ = d.Set("recipient", set.SignOn.Recipient)
+	_ = d.Set("destination", set.SignOn.Destination)
+	_ = d.Set("audience", set.SignOn.Audience)
+	_ = d.Set("idp_issuer", set.SignOn.IdpIssuer)
+	_ = d.Set("subject_name_id_template", set.SignOn.SubjectNameIdTemplate)
+	_ = d.Set("subject_name_id_format", set.SignOn.SubjectNameIdFormat)
+	_ = d.Set("response_signed", set.SignOn.ResponseSigned)
+	_ = d.Set("assertion_signed", set.SignOn.AssertionSigned)
+	_ = d.Set("signature_algorithm", set.SignOn.SignatureAlgorithm)
+	_ = d.Set("digest_algorithm", set.SignOn.DigestAlgorithm)
+	_ = d.Set("honor_force_authn", set.SignOn.HonorForceAuthn)
+	_ = d.Set("authn_context_class_ref", set.SignOn.AuthnContextClassRef)
 
 	attrStatements := set.SignOn.AttributeStatements
 	arr := make([]map[string]interface{}, len(attrStatements))

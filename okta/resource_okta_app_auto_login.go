@@ -104,18 +104,18 @@ func resourceAppAutoLoginRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if app.Settings.SignOn != nil {
-		d.Set("sign_on_url", app.Settings.SignOn.LoginUrl)
-		d.Set("sign_on_redirect_url", app.Settings.SignOn.RedirectUrl)
+		_ = d.Set("sign_on_url", app.Settings.SignOn.LoginUrl)
+		_ = d.Set("sign_on_redirect_url", app.Settings.SignOn.RedirectUrl)
 	}
 
-	d.Set("credentials_scheme", app.Credentials.Scheme)
-	d.Set("reveal_password", app.Credentials.RevealPassword)
+	_ = d.Set("credentials_scheme", app.Credentials.Scheme)
+	_ = d.Set("reveal_password", app.Credentials.RevealPassword)
 
 	// We can sync shared username but not password from upstream
-	d.Set("shared_username", app.Credentials.UserName)
+	_ = d.Set("shared_username", app.Credentials.UserName)
 
-	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
-	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
+	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 
 	return nil

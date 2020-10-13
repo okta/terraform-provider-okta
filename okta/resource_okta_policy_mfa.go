@@ -134,13 +134,11 @@ func resourcePolicyMfaUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Partial(true)
 	policy := buildMfaPolicy(d, m)
 	err := updatePolicy(d, m, policy)
 	if err != nil {
 		return err
 	}
-	d.Partial(false)
 
 	return resourcePolicyMfaRead(d, m)
 }
@@ -221,7 +219,7 @@ func buildFactorProvider(d *schema.ResourceData, key string) *articulateOkta.Fac
 
 func syncFactor(d *schema.ResourceData, k string, f *articulateOkta.FactorProvider) {
 	if f != nil {
-		d.Set(fmt.Sprintf("%s.consent_type", k), f.Consent.Type)
-		d.Set(fmt.Sprintf("%s.enroll", k), f.Enroll.Self)
+		_ = d.Set(fmt.Sprintf("%s.consent_type", k), f.Consent.Type)
+		_ = d.Set(fmt.Sprintf("%s.enroll", k), f.Enroll.Self)
 	}
 }

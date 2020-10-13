@@ -201,7 +201,7 @@ func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 		str := rawAttrs.(string)
 
 		// We validate the JSON, no need to check error
-		json.Unmarshal([]byte(str), &attrs)
+		_ = json.Unmarshal([]byte(str), &attrs)
 		for k, v := range attrs {
 			profile[k] = v
 		}

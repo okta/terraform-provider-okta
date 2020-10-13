@@ -102,17 +102,17 @@ func resourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
 		return nil
 	}
 
-	d.Set("name", idp.Name)
-	d.Set("provisioning_action", idp.Policy.Provisioning.Action)
-	d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
-	d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
-	d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
-	d.Set("subject_match_type", idp.Policy.Subject.MatchType)
-	d.Set("subject_filter", idp.Policy.Subject.Filter)
-	d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
-	d.Set("issuer", idp.Protocol.Credentials.Trust.Issuer)
-	d.Set("audience", idp.Protocol.Credentials.Trust.Audience)
-	d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
+	_ = d.Set("name", idp.Name)
+	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
+	_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
+	_ = d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
+	_ = d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
+	_ = d.Set("subject_match_type", idp.Policy.Subject.MatchType)
+	_ = d.Set("subject_filter", idp.Policy.Subject.Filter)
+	_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
+	_ = d.Set("issuer", idp.Protocol.Credentials.Trust.Issuer)
+	_ = d.Set("audience", idp.Protocol.Credentials.Trust.Audience)
+	_ = d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
 	syncAlgo(d, idp.Protocol.Algorithms)
 
 	if err := syncGroupActions(d, idp.Policy.Provisioning.Groups); err != nil {
@@ -120,7 +120,7 @@ func resourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if idp.IssuerMode != "" {
-		d.Set("issuer_mode", idp.IssuerMode)
+		_ = d.Set("issuer_mode", idp.IssuerMode)
 	}
 
 	setMap := map[string]interface{}{
@@ -128,7 +128,7 @@ func resourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if idp.Policy.AccountLink != nil {
-		d.Set("account_link_action", idp.Policy.AccountLink.Action)
+		_ = d.Set("account_link_action", idp.Policy.AccountLink.Action)
 
 		if idp.Policy.AccountLink.Filter != nil {
 			setMap["account_link_group_include"] = convertStringSetToInterface(idp.Policy.AccountLink.Filter.Groups.Include)
@@ -140,13 +140,10 @@ func resourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceIdpSamlUpdate(d *schema.ResourceData, m interface{}) error {
 	idp := buildidpSaml(d)
-	d.Partial(true)
 
 	if err := updateIdp(d.Id(), m, idp); err != nil {
 		return err
 	}
-
-	d.Partial(false)
 
 	if err := setIdpStatus(idp.ID, idp.Status, d.Get("status").(string), m); err != nil {
 		return err

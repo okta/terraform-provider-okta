@@ -88,7 +88,7 @@ func resourceAppOAuth() *schema.Resource {
 			// Force new if omit_secret goes from true to false
 			if d.Id() != "" {
 				old, new := d.GetChange("omit_secret")
-				if old.(bool) == true && new.(bool) == false {
+				if old.(bool) && !new.(bool) {
 					return d.ForceNew("omit_secret")
 				}
 			}
@@ -322,7 +322,7 @@ func resourceAppOAuthCreate(d *schema.ResourceData, m interface{}) error {
 	d.SetId(app.Id)
 	if !d.Get("omit_secret").(bool) {
 		// Needs to be set immediately, not provided again after this
-		d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
+	_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
 	}
 	err = handleAppGroupsAndUsers(app.Id, d, m)
 
@@ -346,33 +346,33 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", app.Name)
-	d.Set("status", app.Status)
-	d.Set("sign_on_mode", app.SignOnMode)
-	d.Set("label", app.Label)
-	d.Set("profile", app.Profile)
-	d.Set("type", app.Settings.OauthClient.ApplicationType)
+_ = d.Set("name", app.Name)
+_ = d.Set("status", app.Status)
+_ = d.Set("sign_on_mode", app.SignOnMode)
+_ = d.Set("label", app.Label)
+_ = d.Set("profile", app.Profile)
+_ = d.Set("type", app.Settings.OauthClient.ApplicationType)
 	// Not setting client_secret, it is only provided on create for auth methods that require it
-	d.Set("client_id", app.Credentials.OauthClient.ClientId)
-	d.Set("token_endpoint_auth_method", app.Credentials.OauthClient.TokenEndpointAuthMethod)
-	d.Set("auto_key_rotation", app.Credentials.OauthClient.AutoKeyRotation)
-	d.Set("consent_method", app.Settings.OauthClient.ConsentMethod)
-	d.Set("client_uri", app.Settings.OauthClient.ClientUri)
-	d.Set("logo_uri", app.Settings.OauthClient.LogoUri)
-	d.Set("tos_uri", app.Settings.OauthClient.TosUri)
-	d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
-	d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
-	d.Set("auto_submit_toolbar", app.Visibility.AutoSubmitToolbar)
-	d.Set("hide_ios", app.Visibility.Hide.IOS)
-	d.Set("hide_web", app.Visibility.Hide.Web)
+_ = d.Set("client_id", app.Credentials.OauthClient.ClientId)
+_ = d.Set("token_endpoint_auth_method", app.Credentials.OauthClient.TokenEndpointAuthMethod)
+_ = d.Set("auto_key_rotation", app.Credentials.OauthClient.AutoKeyRotation)
+_ = d.Set("consent_method", app.Settings.OauthClient.ConsentMethod)
+_ = d.Set("client_uri", app.Settings.OauthClient.ClientUri)
+_ = d.Set("logo_uri", app.Settings.OauthClient.LogoUri)
+_ = d.Set("tos_uri", app.Settings.OauthClient.TosUri)
+_ = d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
+_ = d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
+_ = d.Set("auto_submit_toolbar", app.Visibility.AutoSubmitToolbar)
+_ = d.Set("hide_ios", app.Visibility.Hide.IOS)
+_ = d.Set("hide_web", app.Visibility.Hide.Web)
 
 	if app.Settings.OauthClient.IssuerMode != "" {
-		d.Set("issuer_mode", app.Settings.OauthClient.IssuerMode)
+	_ = d.Set("issuer_mode", app.Settings.OauthClient.IssuerMode)
 	}
 
 	// If this is ever changed omit it.
 	if d.Get("omit_secret").(bool) {
-		d.Set("client_secret", "")
+	_ = d.Set("client_secret", "")
 	}
 
 	if app.Settings.OauthClient.JWKS != nil {
@@ -550,7 +550,7 @@ func buildAppOAuth(d *schema.ResourceData, m interface{}) *sdk.OpenIdConnectAppl
 	if rawAttrs, ok := d.GetOk("profile"); ok {
 		var attrs map[string]interface{}
 		str := rawAttrs.(string)
-		json.Unmarshal([]byte(str), &attrs)
+		_ = json.Unmarshal([]byte(str), &attrs)
 
 		app.Profile = attrs
 	}

@@ -243,37 +243,3 @@ resource "%s" "%s" {
 }
 `, rInt, passwordPolicyType, policyRulePassword, name, rInt, name)
 }
-
-func testOktaPolicyRulePasswordSignOnErrors(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-data "okta_default_policy" "default-%d" {
-	type = "%s"
-}
-
-resource "%s" "%s" {
-	policyid = "${data.okta_default_policy.default-%d.id}"
-	name     = "%s"
-	status   = "ACTIVE"
-	session_idle = 240
-}
-`, rInt, passwordPolicyType, policyRulePassword, name, rInt, name)
-}
-
-func testOktaPolicyRulePasswordAuthErrors(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-data "okta_default_policy" "default-%d" {
-	type = "%s"
-}
-
-resource "%s" "%s" {
-	policyid = "${data.okta_default_policy.default-%d.id}"
-	name     = "%s"
-	status   = "ACTIVE"
-	auth_type = "RADIUS"
-}
-`, rInt, passwordPolicyType, policyRulePassword, name, rInt, name)
-}

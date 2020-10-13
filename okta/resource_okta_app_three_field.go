@@ -91,15 +91,15 @@ func resourceAppThreeFieldRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("button_selector", app.Settings.App.ButtonSelector)
-	d.Set("password_selector", app.Settings.App.PasswordSelector)
-	d.Set("username_selector", app.Settings.App.UserNameSelector)
-	d.Set("extra_field_selector", app.Settings.App.ExtraFieldSelector)
-	d.Set("extra_field_value", app.Settings.App.ExtraFieldValue)
-	d.Set("url", app.Settings.App.TargetURL)
-	d.Set("url_regex", app.Settings.App.LoginUrlRegex)
-	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
-	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("button_selector", app.Settings.App.ButtonSelector)
+	_ = d.Set("password_selector", app.Settings.App.PasswordSelector)
+	_ = d.Set("username_selector", app.Settings.App.UserNameSelector)
+	_ = d.Set("extra_field_selector", app.Settings.App.ExtraFieldSelector)
+	_ = d.Set("extra_field_value", app.Settings.App.ExtraFieldValue)
+	_ = d.Set("url", app.Settings.App.TargetURL)
+	_ = d.Set("url_regex", app.Settings.App.LoginUrlRegex)
+	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
+	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 
 	return nil

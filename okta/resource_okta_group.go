@@ -82,8 +82,8 @@ func resourceGroupRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", g.Profile.Name)
-	d.Set("description", g.Profile.Description)
+	_ = d.Set("name", g.Profile.Name)
+	_ = d.Set("description", g.Profile.Description)
 	if err := syncGroupUsers(d, m); err != nil {
 		return err
 	}
@@ -123,7 +123,7 @@ func fetchGroup(d *schema.ResourceData, m interface{}) (*okta.Group, error) {
 
 func syncGroupUsers(d *schema.ResourceData, m interface{}) error {
 	// Only sync when the user opts in by outlining users in the group config
-	if _, exists := d.GetOkExists("users"); !exists {
+	if _, exists := d.GetOkExists("users"); !exists { // nolint:staticcheck
 		return nil
 	}
 	userIdList, err := listGroupUserIds(m, d.Id())
@@ -137,7 +137,7 @@ func syncGroupUsers(d *schema.ResourceData, m interface{}) error {
 func updateGroupUsers(d *schema.ResourceData, m interface{}) error {
 	// Only sync when the user opts in by outlining users in the group config
 	// To remove all users, define an empty set
-	arr, exists := d.GetOkExists("users")
+	arr, exists := d.GetOkExists("users") // nolint:staticcheck
 	if !exists {
 		return nil
 	}

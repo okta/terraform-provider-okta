@@ -53,7 +53,7 @@ func findGroup(name string, d *schema.ResourceData, m interface{}) error {
 	}
 
 	d.SetId(groups[0].Id)
-	d.Set("description", groups[0].Profile.Description)
+	_ = d.Set("description", groups[0].Profile.Description)
 
 	if d.Get("include_users").(bool) {
 		userIdList, err := listGroupUserIds(m, d.Id())

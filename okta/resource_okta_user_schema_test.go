@@ -19,7 +19,7 @@ func sweepUserSchema(client *testClient) error {
 	}
 	var errorList []error
 
-	for key, _ := range schema.Definitions.Custom.Properties {
+	for key := range schema.Definitions.Custom.Properties {
 		if strings.HasPrefix(key, testResourcePrefix) {
 			if _, err := client.apiSupplement.DeleteUserSchemaProperty(key); err != nil {
 				errorList = append(errorList, err)

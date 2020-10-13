@@ -12,9 +12,9 @@ func syncSamlIndexEndpointBinding(d *schema.ResourceData, services []saml.Indexe
 	for _, service := range services {
 		switch service.Binding {
 		case postBinding:
-			d.Set("http_post_binding", service.Location)
+		_ = d.Set("http_post_binding", service.Location)
 		case redirectBinding:
-			d.Set("http_redirect_binding", service.Location)
+		_ = d.Set("http_redirect_binding", service.Location)
 		}
 	}
 }
@@ -24,9 +24,9 @@ func syncSamlEndpointBinding(d *schema.ResourceData, services []saml.Endpoint) {
 	for _, service := range services {
 		switch service.Binding {
 		case postBinding:
-			d.Set("http_post_binding", service.Location)
+		_ = d.Set("http_post_binding", service.Location)
 		case redirectBinding:
-			d.Set("http_redirect_binding", service.Location)
+		_ = d.Set("http_redirect_binding", service.Location)
 		}
 	}
 }
@@ -42,9 +42,9 @@ func syncSamlCertificates(d *schema.ResourceData, descriptors []saml.KeyDescript
 	for _, desc := range descriptors {
 		switch desc.Use {
 		case "encryption":
-			d.Set("encryption_certificate", desc.KeyInfo.Certificate)
+		_ = d.Set("encryption_certificate", desc.KeyInfo.Certificate)
 		case "signing":
-			d.Set("signing_certificate", desc.KeyInfo.Certificate)
+		_ = d.Set("signing_certificate", desc.KeyInfo.Certificate)
 		}
 	}
 }

@@ -85,8 +85,8 @@ func resourceFactorRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("active", factor.Status == "ACTIVE")
-	d.Set("provider_id", factor.Id)
+_ = d.Set("active", factor.Status == "ACTIVE")
+_ = d.Set("provider_id", factor.Id)
 
 	return nil
 }

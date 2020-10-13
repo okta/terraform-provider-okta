@@ -165,22 +165,6 @@ func filterSamlApp(appList []*okta.SamlApplication, filter *appFilters) []*okta.
 	return filteredList
 }
 
-func (f *appFilters) shouldSamlShortCircuit(appList []*appID) bool {
-	if f.LabelPrefix != "" {
-		return false
-	}
-
-	if f.ID != "" && f.Label != "" {
-		return len(appList) > 1
-	}
-
-	if f.ID != "" || f.Label != "" {
-		return len(appList) > 0
-	}
-
-	return false
-}
-
 func getAppFilters(d *schema.ResourceData) (*appFilters, error) {
 	id := d.Get("id").(string)
 	label := d.Get("label").(string)

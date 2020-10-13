@@ -16,7 +16,7 @@ func resourceUserBaseSchema() *schema.Resource {
 		Exists: resourceUserBaseSchemaExists,
 		Importer: &schema.ResourceImporter{
 			State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-				d.Set("index", d.Id())
+			_ = d.Set("index", d.Id())
 				return []*schema.ResourceData{d}, nil
 			},
 		},

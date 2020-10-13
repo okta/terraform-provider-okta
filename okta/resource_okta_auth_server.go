@@ -137,29 +137,29 @@ func resourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
-	d.Set("kid", authServer.Credentials.Signing.Kid)
+_ = d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
+_ = d.Set("kid", authServer.Credentials.Signing.Kid)
 
 	if authServer.Credentials != nil && authServer.Credentials.Signing != nil {
-		d.Set("credentials_rotation_mode", authServer.Credentials.Signing.RotationMode)
+	_ = d.Set("credentials_rotation_mode", authServer.Credentials.Signing.RotationMode)
 
 		if authServer.Credentials.Signing.NextRotation != nil {
-			d.Set("credentials_next_rotation", authServer.Credentials.Signing.NextRotation.String())
+		_ = d.Set("credentials_next_rotation", authServer.Credentials.Signing.NextRotation.String())
 		}
 
 		if authServer.Credentials.Signing.LastRotated != nil {
-			d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated.String())
+		_ = d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated.String())
 		}
 	}
 
-	d.Set("description", authServer.Description)
-	d.Set("name", authServer.Name)
-	d.Set("status", authServer.Status)
-	d.Set("issuer", authServer.Issuer)
+_ = d.Set("description", authServer.Description)
+_ = d.Set("name", authServer.Name)
+_ = d.Set("status", authServer.Status)
+_ = d.Set("issuer", authServer.Issuer)
 
 	// Do not sync these unless the issuer mode is specified since it is an EA feature and is computed in some cases
 	if authServer.IssuerMode != "" {
-		d.Set("issuer_mode", authServer.IssuerMode)
+	_ = d.Set("issuer_mode", authServer.IssuerMode)
 	}
 
 	return nil
@@ -168,7 +168,10 @@ func resourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 func resourceAuthServerUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
 	if d.HasChange("status") {
-		handleAuthServerLifecycle(d, m)
+		err := handleAuthServerLifecycle(d, m)
+		if err != nil {
+			return err
+		}
 	}
 
 	authServer := buildAuthServer(d)

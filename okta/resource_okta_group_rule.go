@@ -108,14 +108,14 @@ func resourceGroupRuleRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", g.Name)
-	d.Set("type", g.Type)
-	d.Set("status", g.Status)
+	_ = d.Set("name", g.Name)
+	_ = d.Set("type", g.Type)
+	_ = d.Set("status", g.Status)
 
 	// Just for the sake of safety, should never be nil
 	if g.Conditions != nil && g.Conditions.Expression != nil {
-		d.Set("expression_type", g.Conditions.Expression.Type)
-		d.Set("expression_value", g.Conditions.Expression.Value)
+		_ = d.Set("expression_type", g.Conditions.Expression.Type)
+		_ = d.Set("expression_value", g.Conditions.Expression.Value)
 	}
 
 	return setNonPrimitives(d, map[string]interface{}{
@@ -130,8 +130,8 @@ func resourceGroupRuleUpdate(d *schema.ResourceData, m interface{}) error {
 		if err := handleGroupRuleLifecycle(d, m); err != nil {
 			return err
 		}
-		d.SetPartial("status")
-		d.Partial(false)
+		d.SetPartial("status") //nolint:staticcheck
+
 	}
 
 	if hasGroupRuleChange(d) {
