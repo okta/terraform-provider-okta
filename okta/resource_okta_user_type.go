@@ -3,7 +3,7 @@ package okta
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceUserType() *schema.Resource {

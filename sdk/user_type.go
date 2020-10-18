@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/okta/okta-sdk-golang/okta"
 	"github.com/okta/okta-sdk-golang/okta/query"
+	"net/url"
 	"strings"
 )
 
@@ -122,7 +123,8 @@ func (c *ApiSupplement) GetUserTypeSchemaUrl(id string, qp *query.Params) (strin
 	}
 
 	if userType != nil {
-		href := strings.Replace(userType.Links.Schema.Href, c.BaseURL, "", 1)
+		u, _ := url.Parse(userType.Links.Schema.Href)
+		var href = u.EscapedPath()
 		return href, nil
 	}
 	return "", nil

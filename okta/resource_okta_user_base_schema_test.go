@@ -3,6 +3,7 @@ package okta
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
@@ -14,13 +15,19 @@ import (
 const baseTestProp = "firstName"
 
 func sweepUserBaseSchema(client *testClient) error {
-	userTypeList, _, _ := client.apiSupplement.ListUserTypes()
 	var errorList []error
-	for _, value := range userTypeList {
-		schemaUrl := value.Links.Schema.Href
-		_, _, err := client.apiSupplement.GetUserSchema(schemaUrl)
-		if err != nil {
-			return err
+	schemaUrl := "/api/v1/meta/schemas/user/default"
+
+	schema, _, err := client.apiSupplement.GetUserSchema(schemaUrl)
+	if err != nil {
+		return err
+	}
+
+	for key, _ := range schema.Definitions.Custom.Properties {
+		if strings.HasPrefix(key, testResourcePrefix) {
+			if _, err := client.apiSupplement.DeleteUserSchemaProperty(schemaUrl, key); err != nil {
+				errorList = append(errorList, err)
+			}
 		}
 	}
 

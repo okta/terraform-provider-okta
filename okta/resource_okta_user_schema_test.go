@@ -3,6 +3,7 @@ package okta
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 	"testing"
@@ -17,7 +18,10 @@ func sweepUserSchema(client *testClient) error {
 	var errorList []error
 	for _, value := range userTypeList {
 		schemaUrl := value.Links.Schema.Href
-		schema, _, err := client.apiSupplement.GetUserSchema(schemaUrl)
+		u, _ := url.Parse(schemaUrl)
+
+		var relativeSchemaUrl = u.EscapedPath()
+		schema, _, err := client.apiSupplement.GetUserSchema(relativeSchemaUrl)
 		if err != nil {
 			return err
 		}
