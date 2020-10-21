@@ -5,6 +5,7 @@ resource "okta_app_oauth" "test" {
   redirect_uris  = ["http://d.com/"]
   response_types = ["code", "token", "id_token"]
   issuer_mode    = "ORG_URL"
+  consent_method = "TRUSTED"
 }
 
 data "okta_app" "test" {

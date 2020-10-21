@@ -152,10 +152,10 @@ func resourceInlineHookRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", hook.Name)
-	d.Set("status", hook.Status)
-	d.Set("type", hook.Type)
-	d.Set("version", hook.Version)
+	_ = d.Set("name", hook.Name)
+	_ = d.Set("status", hook.Status)
+	_ = d.Set("type", hook.Type)
+	_ = d.Set("version", hook.Version)
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"channel": flattenInlineHookChannel(hook.Channel),

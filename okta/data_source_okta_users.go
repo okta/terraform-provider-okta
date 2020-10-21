@@ -1,13 +1,14 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
@@ -76,7 +77,7 @@ func dataSourceUsersRead(d *schema.ResourceData, m interface{}) error {
 
 // Recursively list apps until no next links are returned
 func collectUsers(client *okta.Client, results *searchResults, qp *query.Params) error {
-	users, res, err := client.User.ListUsers(qp)
+	users, res, err := client.User.ListUsers(context.Background(), qp)
 	if err != nil {
 		return err
 	}

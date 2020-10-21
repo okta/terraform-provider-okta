@@ -4,14 +4,13 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/logging"
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func (adt *AddHeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {
@@ -27,19 +26,17 @@ type (
 
 	// Config contains our provider schema values and Okta clients
 	Config struct {
-		orgName      string
-		domain       string
-		apiToken     string
-		retryCount   int
-		parallelism  int
-		waitForReset bool
-		backoff      bool
-		minWait      int
-		maxWait      int
-
+		orgName              string
+		domain               string
+		apiToken             string
+		retryCount           int
+		parallelism          int
+		backoff              bool
+		maxWait              int
 		articulateOktaClient *articulateOkta.Client
 		oktaClient           *okta.Client
 		supplementClient     *sdk.ApiSupplement
+		ctx                  context.Context
 	}
 )
 
@@ -57,17 +54,14 @@ func (c *Config) loadAndValidate() error {
 	}
 
 	orgUrl := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
-
-	client, err := okta.NewClient(
+	ctx, client, err := okta.NewClient(
 		context.Background(),
 		okta.WithOrgUrl(orgUrl),
 		okta.WithToken(c.apiToken),
 		okta.WithCache(false),
-		okta.WithBackoff(c.backoff),
-		okta.WithMinWait(time.Duration(c.minWait)*time.Second),
-		okta.WithMaxWait(time.Duration(c.maxWait)*time.Second),
-		okta.WithRetries(int32(c.retryCount)),
 		okta.WithHttpClient(*httpClient),
+		okta.WithRequestTimeout(int32(c.maxWait)),
+		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
 		okta.WithUserAgentExtra("okta-terraform/3.5.0"),
 	)
 	if err != nil {
@@ -82,5 +76,6 @@ func (c *Config) loadAndValidate() error {
 
 	// add the Okta SDK client object to Config
 	c.oktaClient = client
+	c.ctx = ctx
 	return nil
 }

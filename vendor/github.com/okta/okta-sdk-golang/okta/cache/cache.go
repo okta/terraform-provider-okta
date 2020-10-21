@@ -25,6 +25,8 @@ import (
 type Cache interface {
 	Get(key string) *http.Response
 	Set(key string, value *http.Response)
+	GetString(key string) string
+	SetString(key string, value string)
 	Delete(key string)
 	Clear()
 	Has(key string) bool

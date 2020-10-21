@@ -1,10 +1,11 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 type (
@@ -25,7 +26,7 @@ func (m *ApiSupplement) DeleteAdminRole(id, roleId string) (*okta.Response, erro
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(context.Background(), req, nil)
 }
 
 func (m *ApiSupplement) ListAdminRoles(groupId string, qp *query.Params) (roles []*Role, resp *okta.Response, err error) {
@@ -38,7 +39,7 @@ func (m *ApiSupplement) ListAdminRoles(groupId string, qp *query.Params) (roles 
 		return
 	}
 
-	resp, err = m.RequestExecutor.Do(req, &roles)
+	resp, err = m.RequestExecutor.Do(context.Background(), req, &roles)
 	return
 }
 func (m *ApiSupplement) CreateAdminRole(groupId string, body *Role, qp *query.Params) (*Role, *okta.Response, error) {
@@ -52,6 +53,6 @@ func (m *ApiSupplement) CreateAdminRole(groupId string, body *Role, qp *query.Pa
 	}
 
 	respBody := &Role{}
-	resp, err := m.RequestExecutor.Do(req, respBody)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, respBody)
 	return respBody, resp, err
 }

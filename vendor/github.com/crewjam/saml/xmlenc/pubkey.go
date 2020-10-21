@@ -94,7 +94,7 @@ func (e RSA) Encrypt(certificate interface{}, plaintext []byte) (*etree.Element,
 
 // Decrypt implements Decryptor. `key` must be an *rsa.PrivateKey.
 func (e RSA) Decrypt(key interface{}, ciphertextEl *etree.Element) ([]byte, error) {
-	rsaKey, err := validateRSAKey(key, ciphertextEl)
+	rsaKey, err := validateRSAKeyIfPresent(key, ciphertextEl)
 	if err != nil {
 		return nil, err
 	}
@@ -107,14 +107,15 @@ func (e RSA) Decrypt(key interface{}, ciphertextEl *etree.Element) ([]byte, erro
 	{
 		digestMethodEl := ciphertextEl.FindElement("./EncryptionMethod/DigestMethod")
 		if digestMethodEl == nil {
-			return nil, fmt.Errorf("cannot find required DigestMethod element")
+			e.DigestMethod = SHA1
+		} else {
+			hashAlgorithmStr := digestMethodEl.SelectAttrValue("Algorithm", "")
+			digestMethod, ok := digestMethods[hashAlgorithmStr]
+			if !ok {
+				return nil, ErrAlgorithmNotImplemented(hashAlgorithmStr)
+			}
+			e.DigestMethod = digestMethod
 		}
-		hashAlgorithmStr := digestMethodEl.SelectAttrValue("Algorithm", "")
-		digestMethod, ok := digestMethods[hashAlgorithmStr]
-		if !ok {
-			return nil, ErrAlgorithmNotImplemented(hashAlgorithmStr)
-		}
-		e.DigestMethod = digestMethod
 	}
 
 	return e.keyDecrypter(e, rsaKey, ciphertext)

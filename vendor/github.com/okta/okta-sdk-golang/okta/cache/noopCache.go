@@ -33,6 +33,14 @@ func (c NoOpCache) Set(key string, value *http.Response) {
 
 }
 
+func (c NoOpCache) GetString(key string) string {
+	return ""
+}
+
+func (c NoOpCache) SetString(key string, value string) {
+
+}
+
 func (c NoOpCache) Delete(key string) {
 
 }

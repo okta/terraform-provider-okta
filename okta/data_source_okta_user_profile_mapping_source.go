@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func dataSourceUserProfileMappingSource() *schema.Resource {
@@ -33,8 +33,8 @@ func dataSourceUserProfileMappingSourceRead(d *schema.ResourceData, m interface{
 	}
 
 	d.SetId(mapping.ID)
-	d.Set("type", mapping.Type)
-	d.Set("name", mapping.Name)
+	_ = d.Set("type", mapping.Type)
+	_ = d.Set("name", mapping.Name)
 
 	return nil
 }

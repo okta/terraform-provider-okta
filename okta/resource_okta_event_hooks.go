@@ -47,7 +47,7 @@ func resourceEventHook() *schema.Resource {
 						"type": &schema.Schema{
 							Type:         schema.TypeString,
 							Required:     true,
-							Default:      "HEADER",
+							DefaultFunc:  func() (interface{}, error) { return "HEADER", nil },
 							ValidateFunc: validation.StringInSlice([]string{"HEADER"}, false),
 						},
 						"value": &schema.Schema{
@@ -64,14 +64,14 @@ func resourceEventHook() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": &schema.Schema{
-							Type:     schema.TypeString,
-							Required: true,
-							Default:  "HTTP",
+							Type:        schema.TypeString,
+							Required:    true,
+							DefaultFunc: func() (interface{}, error) { return "HTTP", nil },
 						},
 						"version": &schema.Schema{
-							Type:     schema.TypeString,
-							Required: true,
-							Default:  "1.0.0",
+							Type:        schema.TypeString,
+							Required:    true,
+							DefaultFunc: func() (interface{}, error) { return "1.0.0", nil },
 						},
 						"uri": &schema.Schema{
 							Type:     schema.TypeString,
@@ -119,9 +119,9 @@ func resourceEventHookRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", hook.Name)
-	d.Set("status", hook.Status)
-	d.Set("events", eventSet(hook.Events))
+	_ = d.Set("name", hook.Name)
+	_ = d.Set("status", hook.Status)
+	_ = d.Set("events", eventSet(hook.Events))
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"channel": flattenEventHookChannel(hook.Channel),
@@ -179,7 +179,7 @@ func buildEventChannel(d *schema.ResourceData, m interface{}) *sdk.EventHookChan
 		return nil
 	}
 
-	headerList := []*sdk.EventHookHeader{}
+	var headerList []*sdk.EventHookHeader
 	if raw, ok := d.GetOk("headers"); ok {
 		for _, header := range raw.(*schema.Set).List() {
 			h, ok := header.(map[string]interface{})

@@ -64,10 +64,10 @@ func dataSourceAppRead(d *schema.ResourceData, m interface{}) error {
 	}
 	app := appList[0]
 	d.SetId(app.ID)
-	d.Set("label", app.Label)
-	d.Set("description", app.Description)
-	d.Set("name", app.Name)
-	d.Set("status", app.Status)
+	_ = d.Set("label", app.Label)
+	_ = d.Set("description", app.Description)
+	_ = d.Set("name", app.Name)
+	_ = d.Set("status", app.Status)
 
 	return nil
 }

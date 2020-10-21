@@ -22,7 +22,9 @@ resource okta_app_saml test {
   attribute_statements {
     type         = "GROUP"
     name         = "Attr Two"
-    filter_type  = "STARTS_WITH"
-    filter_value = "test"
-  }
+    // TODO uncomment when Okta SDK v2 adds missing fields for attributes
+    // https://github.com/okta/okta-sdk-golang/blob/v2.0.0/okta/samlAttributeStatement.go#L23
+    // filter_type  = "STARTS_WITH"
+    // filter_value = "test"
+}
 }

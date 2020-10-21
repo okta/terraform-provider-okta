@@ -207,33 +207,33 @@ func resourcePolicyPasswordRead(d *schema.ResourceData, m interface{}) error {
 	// Update with upstream state when it is manually updated from Okta UI or API directly.
 	// See https://github.com/terraform-providers/terraform-provider-okta/issues/61
 	if policy.Conditions.AuthProvider != nil && policy.Conditions.AuthProvider.Provider != "" {
-		d.Set("auth_provider", policy.Conditions.AuthProvider.Provider)
+		_ = d.Set("auth_provider", policy.Conditions.AuthProvider.Provider)
 	}
 
 	if policy.Settings != nil {
-		d.Set("password_min_length", policy.Settings.Password.Complexity.MinLength)
-		d.Set("password_min_lowercase", policy.Settings.Password.Complexity.MinLowerCase)
-		d.Set("password_min_uppercase", policy.Settings.Password.Complexity.MinUpperCase)
-		d.Set("password_min_number", policy.Settings.Password.Complexity.MinNumber)
-		d.Set("password_min_symbol", policy.Settings.Password.Complexity.MinSymbol)
-		d.Set("password_exclude_username", policy.Settings.Password.Complexity.ExcludeUsername)
-		d.Set("password_dictionary_lookup", policy.Settings.Password.Complexity.Dictionary.Common.Exclude)
-		d.Set("password_max_age_days", policy.Settings.Password.Age.MaxAgeDays)
-		d.Set("password_expire_warn_days", policy.Settings.Password.Age.ExpireWarnDays)
-		d.Set("password_min_age_minutes", policy.Settings.Password.Age.MinAgeMinutes)
-		d.Set("password_history_count", policy.Settings.Password.Age.HistoryCount)
-		d.Set("password_max_lockout_attempts", policy.Settings.Password.Lockout.MaxAttempts)
-		d.Set("password_auto_unlock_minutes", policy.Settings.Password.Lockout.AutoUnlockMinutes)
-		d.Set("password_show_lockout_failures", policy.Settings.Password.Lockout.ShowLockoutFailures)
+		_ = d.Set("password_min_length", policy.Settings.Password.Complexity.MinLength)
+		_ = d.Set("password_min_lowercase", policy.Settings.Password.Complexity.MinLowerCase)
+		_ = d.Set("password_min_uppercase", policy.Settings.Password.Complexity.MinUpperCase)
+		_ = d.Set("password_min_number", policy.Settings.Password.Complexity.MinNumber)
+		_ = d.Set("password_min_symbol", policy.Settings.Password.Complexity.MinSymbol)
+		_ = d.Set("password_exclude_username", policy.Settings.Password.Complexity.ExcludeUsername)
+		_ = d.Set("password_dictionary_lookup", policy.Settings.Password.Complexity.Dictionary.Common.Exclude)
+		_ = d.Set("password_max_age_days", policy.Settings.Password.Age.MaxAgeDays)
+		_ = d.Set("password_expire_warn_days", policy.Settings.Password.Age.ExpireWarnDays)
+		_ = d.Set("password_min_age_minutes", policy.Settings.Password.Age.MinAgeMinutes)
+		_ = d.Set("password_history_count", policy.Settings.Password.Age.HistoryCount)
+		_ = d.Set("password_max_lockout_attempts", policy.Settings.Password.Lockout.MaxAttempts)
+		_ = d.Set("password_auto_unlock_minutes", policy.Settings.Password.Lockout.AutoUnlockMinutes)
+		_ = d.Set("password_show_lockout_failures", policy.Settings.Password.Lockout.ShowLockoutFailures)
 		if err := d.Set("password_lockout_notification_channels", convertStringSetToInterface(policy.Settings.Password.Lockout.UserLockoutNotificationChannels)); err != nil {
 			return fmt.Errorf("Error setting notification channels for resource %s: %s", d.Id(), err)
 		}
-		d.Set("question_min_length", policy.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLength)
-		d.Set("recovery_email_token", policy.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutes)
-		d.Set("sms_recovery", policy.Settings.Recovery.Factors.OktaSms.Status)
-		d.Set("email_recovery", policy.Settings.Recovery.Factors.OktaEmail.Status)
-		d.Set("question_recovery", policy.Settings.Recovery.Factors.RecoveryQuestion.Status)
-		d.Set("skip_unlock", policy.Settings.Delegation.Options.SkipUnlock)
+		_ = d.Set("question_min_length", policy.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLength)
+		_ = d.Set("recovery_email_token", policy.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutes)
+		_ = d.Set("sms_recovery", policy.Settings.Recovery.Factors.OktaSms.Status)
+		_ = d.Set("email_recovery", policy.Settings.Recovery.Factors.OktaEmail.Status)
+		_ = d.Set("question_recovery", policy.Settings.Recovery.Factors.RecoveryQuestion.Status)
+		_ = d.Set("skip_unlock", policy.Settings.Delegation.Options.SkipUnlock)
 
 		valueMap := map[string]interface{}{}
 
@@ -242,9 +242,9 @@ func resourcePolicyPasswordRead(d *schema.ResourceData, m interface{}) error {
 			for _, v := range excludedAttrs {
 				switch v {
 				case "firstName":
-					d.Set("password_excluded_first_name", true)
+					_ = d.Set("password_excluded_first_name", true)
 				case "lastName":
-					d.Set("password_excluded_last_name", true)
+					_ = d.Set("password_excluded_last_name", true)
 				}
 			}
 		}
@@ -264,14 +264,12 @@ func resourcePolicyPasswordUpdate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	log.Printf("[INFO] Update Policy %v", d.Get("name").(string))
-	d.Partial(true)
 
 	template := buildPasswordPolicy(d, m)
 	err := updatePolicy(d, m, template)
 	if err != nil {
 		return err
 	}
-	d.Partial(false)
 
 	return resourcePolicyPasswordRead(d, m)
 }
@@ -349,13 +347,13 @@ func buildPasswordPolicy(d *schema.ResourceData, m interface{}) *articulateOkta.
 }
 
 func getExcludedAttrs(excludeFirstName bool, excludeLastName bool) []string {
-	excludedAttrs := []string{}
+	var excludedAttrs []string
 
-	if excludeFirstName == true {
+	if excludeFirstName {
 		excludedAttrs = append(excludedAttrs, "firstName")
 	}
 
-	if excludeLastName == true {
+	if excludeLastName {
 		excludedAttrs = append(excludedAttrs, "lastName")
 	}
 
