@@ -12,6 +12,11 @@ func dataSourceUserProfileMappingSource() *schema.Resource {
 		Read: dataSourceUserProfileMappingSourceRead,
 
 		Schema: map[string]*schema.Schema{
+			"id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "ID of the source",
+			},
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
