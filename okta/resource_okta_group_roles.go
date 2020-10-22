@@ -1,9 +1,11 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
@@ -63,8 +65,9 @@ func resourceGroupRolesCreate(d *schema.ResourceData, m interface{}) error {
 	adminRoles := convertInterfaceToStringSet(d.Get("admin_roles"))
 
 	for _, role := range adminRoles {
-		groupRole := buildGroupRole(d, role)
-		_, _, err := getSupplementFromMetadata(m).CreateAdminRole(groupId, groupRole, nil)
+		_, _, err := getOktaClientFromMetadata(m).Group.AssignRoleToGroup(context.Background(), groupId, okta.AssignRoleRequest{
+			Type: role,
+		}, nil)
 		if err != nil {
 			return err
 		}
