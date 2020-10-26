@@ -60,7 +60,7 @@ func (c *Config) loadAndValidate() error {
 		okta.WithToken(c.apiToken),
 		okta.WithCache(false),
 		okta.WithHttpClient(*httpClient),
-		okta.WithRequestTimeout(int32(c.maxWait)),
+		okta.WithRequestTimeout(int64(c.maxWait)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
 		okta.WithUserAgentExtra("okta-terraform/3.5.0"),
 	)

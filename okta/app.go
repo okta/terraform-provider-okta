@@ -447,10 +447,12 @@ func syncSamlSettings(d *schema.ResourceData, set *okta.SamlApplicationSettings)
 
 	for i, st := range attrStatements {
 		arr[i] = map[string]interface{}{
-			"name":      st.Name,
-			"namespace": st.Namespace,
-			"type":      st.Type,
-			"values":    st.Values,
+			"name":         st.Name,
+			"namespace":    st.Namespace,
+			"type":         st.Type,
+			"values":       st.Values,
+			"filter_type":  st.FilterType,
+			"filter_value": st.FilterValue,
 		}
 	}
 

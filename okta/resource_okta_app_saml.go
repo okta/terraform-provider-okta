@@ -538,10 +538,12 @@ func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, err
 		samlAttr := make([]*okta.SamlAttributeStatement, len(statements))
 		for i := range statements {
 			samlAttr[i] = &okta.SamlAttributeStatement{
-				Name:      d.Get(fmt.Sprintf("attribute_statements.%d.name", i)).(string),
-				Namespace: d.Get(fmt.Sprintf("attribute_statements.%d.namespace", i)).(string),
-				Type:      d.Get(fmt.Sprintf("attribute_statements.%d.type", i)).(string),
-				Values:    convertInterfaceToStringArr(d.Get(fmt.Sprintf("attribute_statements.%d.values", i))),
+				FilterType:  d.Get(fmt.Sprintf("attribute_statements.%d.filter_type", i)).(string),
+				FilterValue: d.Get(fmt.Sprintf("attribute_statements.%d.filter_value", i)).(string),
+				Name:        d.Get(fmt.Sprintf("attribute_statements.%d.name", i)).(string),
+				Namespace:   d.Get(fmt.Sprintf("attribute_statements.%d.namespace", i)).(string),
+				Type:        d.Get(fmt.Sprintf("attribute_statements.%d.type", i)).(string),
+				Values:      convertInterfaceToStringArr(d.Get(fmt.Sprintf("attribute_statements.%d.values", i))),
 			}
 		}
 		app.Settings.SignOn.AttributeStatements = samlAttr
