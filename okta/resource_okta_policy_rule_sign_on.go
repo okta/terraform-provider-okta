@@ -66,7 +66,7 @@ func resourcePolicySignonRule() *schema.Resource {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: "Max minutes a session is active: Disable = 0.",
-				Default:     120,
+				Default:     0,
 			},
 			"session_persistent": {
 				Type:        schema.TypeBool,
