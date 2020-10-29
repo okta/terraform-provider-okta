@@ -1,4 +1,14 @@
-## 3.6.0 (Unreleased)
+## 3.7.0 (Unreleased)
+
+## 3.6.0 (October 12, 2020)
+
+ENHANCEMENTS:
+* Upgrade to Okta SDK 2.0.0 [#203](https://github.com/oktadeveloper/terraform-provider-okta/pull/203). Thanks a ton! [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)
+* Fix validation false positive when api_token is set via environment variable. [#147](https://github.com/oktadeveloper/terraform-provider-okta/pull/147). Thanks, [@jgeurts](https://github.com/jgeurts)
+* Update required to optional and more [#208](https://github.com/oktadeveloper/terraform-provider-okta/pull/208), Thanks, me! :smile:
+
+BUGS:
+* Update config.go [#207](https://github.com/oktadeveloper/terraform-provider-okta/pull/207), Thanks, me! :smile:
 
 ## 3.5.1 (October 9, 2020)
 
