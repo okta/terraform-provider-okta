@@ -1,10 +1,11 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 type (
@@ -34,7 +35,7 @@ func (m *ApiSupplement) RemovePropertyMapping(mappingId, id string) (*okta.Respo
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(context.Background(), req, nil)
 }
 
 func (m *ApiSupplement) GetProfileMappingBySourceId(sourceId, targetId string) (*Mapping, *okta.Response, error) {
@@ -46,7 +47,10 @@ func (m *ApiSupplement) GetProfileMappingBySourceId(sourceId, targetId string) (
 	}
 
 	var mappings []*Mapping
-	resp, err := m.RequestExecutor.Do(req, &mappings)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &mappings)
+	if err != nil {
+		return nil, resp, err
+	}
 
 	for _, mapping := range mappings {
 		if mapping.Source.ID == sourceId {
@@ -65,7 +69,7 @@ func (m *ApiSupplement) GetProfileMapping(mappingId string) (*Mapping, *okta.Res
 	}
 
 	mapping := &Mapping{}
-	resp, err := m.RequestExecutor.Do(req, mapping)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, mapping)
 	return mapping, resp, err
 }
 
@@ -80,7 +84,7 @@ func (m *ApiSupplement) AddPropertyMapping(mappingId string, body Mapping, qp *q
 	}
 
 	mapping := body
-	resp, err := m.RequestExecutor.Do(req, &mapping)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &mapping)
 	return &mapping, resp, err
 }
 
@@ -95,7 +99,7 @@ func (m *ApiSupplement) UpdateMapping(mappingId string, body Mapping, qp *query.
 	}
 
 	mapping := body
-	resp, err := m.RequestExecutor.Do(req, &mapping)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &mapping)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -117,7 +121,10 @@ func (m *ApiSupplement) FindProfileMappingSource(name, typ string, qp *query.Par
 	}
 
 	mappings := []*Mapping{}
-	res, err := m.RequestExecutor.Do(req, &mappings)
+	res, err := m.RequestExecutor.Do(context.Background(), req, &mappings)
+	if err != nil {
+		return nil, res, err
+	}
 
 	for _, m := range mappings {
 		if m.Target.Name == name && m.Target.Type == typ {

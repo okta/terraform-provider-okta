@@ -1,14 +1,15 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 // All profile properties here so we can do a diff against the config to see if any have changed before making the
@@ -63,7 +64,7 @@ func resourceUser() *schema.Resource {
 			State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				// Supporting id and email based imports
 				client := getOktaClientFromMetadata(meta)
-				user, _, err := client.User.GetUser(d.Id())
+				user, _, err := client.User.GetUser(context.Background(), d.Id())
 				if err != nil {
 					return nil, err
 				}
@@ -329,11 +330,11 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		}
 	}
 
-	userBody := okta.User{
+	userBody := okta.CreateUserRequest{
 		Profile:     profile,
 		Credentials: uc,
 	}
-	user, _, err := client.User.CreateUser(userBody, qp)
+	user, _, err := client.User.CreateUser(context.Background(), userBody, qp)
 
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Creating User from Okta: %v", err)
@@ -351,7 +352,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	// Only sync when there is opt in, consumers can chose which route they want to take
-	if _, exists := d.GetOkExists("group_memberships"); exists {
+	if _, exists := d.GetOkExists("group_memberships"); exists { // nolint:staticcheck
 		groups := convertInterfaceToStringSetNullable(d.Get("group_memberships"))
 		if err = assignGroupsToUser(user.Id, groups, client); err != nil {
 			return err
@@ -374,7 +375,7 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] List User %v", d.Get("login").(string))
 	client := getOktaClientFromMetadata(m)
 
-	user, resp, err := client.User.GetUser(d.Id())
+	user, resp, err := client.User.GetUser(context.Background(), d.Id())
 
 	if is404(resp.StatusCode) {
 		d.SetId("")
@@ -385,8 +386,8 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 		return fmt.Errorf("[ERROR] Error Getting User from Okta: %v", err)
 	}
 
-	d.Set("status", mapStatus(user.Status))
-	d.Set("raw_status", user.Status)
+	_ = d.Set("status", mapStatus(user.Status))
+	_ = d.Set("raw_status", user.Status)
 
 	rawMap, err := flattenUser(user, d)
 	if err != nil {
@@ -402,7 +403,7 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	// Only sync when it is outlined, an empty list will remove all membership
-	if _, exists := d.GetOkExists("group_memberships"); exists {
+	if _, exists := d.GetOkExists("group_memberships"); exists { // nolint:staticcheck
 		return setGroups(d, client)
 	}
 	return nil
@@ -419,7 +420,6 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 	client := getOktaClientFromMetadata(m)
 	// There are a few requests here so just making sure the state gets updated per successful downstream change
-	d.Partial(true)
 
 	roleChange := d.HasChange("admin_roles")
 	groupChange := d.HasChange("group_memberships")
@@ -435,7 +435,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating Status for User: %v", err)
 		}
-		d.SetPartial("status")
+		d.SetPartial("status") // nolint:staticcheck
 	}
 
 	if status == "DEPROVISIONED" && userChange {
@@ -446,7 +446,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		profile := populateUserProfile(d)
 		userBody := okta.User{Profile: profile}
 
-		_, _, err := client.User.UpdateUser(d.Id(), userBody, nil)
+		_, _, err := client.User.UpdateUser(context.Background(), d.Id(), userBody, nil)
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating User in Okta: %v", err)
 		}
@@ -457,7 +457,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		if err := updateAdminRolesOnUser(d.Id(), roles, client); err != nil {
 			return err
 		}
-		d.SetPartial("admin_roles")
+		d.SetPartial("admin_roles") //nolint:staticcheck
 	}
 
 	if groupChange {
@@ -465,7 +465,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		if err := updateGroupsOnUser(d.Id(), groups, client); err != nil {
 			return err
 		}
-		d.SetPartial("group_memberships")
+		d.SetPartial("group_memberships") //nolint:staticcheck
 	}
 
 	if passwordChange {
@@ -482,7 +482,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 			NewPassword: np,
 		}
 
-		_, _, err := client.User.ChangePassword(d.Id(), *npr, nil)
+		_, _, err := client.User.ChangePassword(context.Background(), d.Id(), *npr, nil)
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating User password in Okta: %v", err)
 		}
@@ -503,14 +503,12 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 			RecoveryQuestion: rq,
 		}
 
-		_, _, err := client.User.ChangeRecoveryQuestion(d.Id(), *nuc)
+		_, _, err := client.User.ChangeRecoveryQuestion(context.Background(), d.Id(), *nuc)
 
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating User password recovery credentials in Okta: %v", err)
 		}
 	}
-
-	d.Partial(false)
 
 	return resourceUserRead(d, m)
 }
@@ -541,7 +539,7 @@ func ensureUserDelete(id, status string, client *okta.Client) error {
 	}
 
 	for i := 0; i < passes; i++ {
-		_, err := client.User.DeactivateOrDeleteUser(id, nil)
+		_, err := client.User.DeactivateOrDeleteUser(context.Background(), id, nil)
 		if err != nil {
 			return fmt.Errorf("Failed to deprovision or delete user from Okta: %v", err)
 		}
@@ -553,7 +551,7 @@ func resourceUserExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	log.Printf("[INFO] Checking Exists for User %v", d.Get("login").(string))
 	client := m.(*Config).oktaClient
 
-	_, resp, err := client.User.GetUser(d.Id())
+	_, resp, err := client.User.GetUser(context.Background(), d.Id())
 
 	if is404(resp.StatusCode) {
 		return false, nil

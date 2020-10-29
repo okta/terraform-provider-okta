@@ -10,11 +10,10 @@ import (
 )
 
 const (
-	passwordPolicyType   = "PASSWORD"
-	signOnPolicyType     = "OKTA_SIGN_ON"
-	mfaPolicyType        = "MFA_ENROLL"
-	singOnPolicyRuleType = "SIGN_ON"
-	idpDiscovery         = "IDP_DISCOVERY"
+	passwordPolicyType = "PASSWORD"
+	signOnPolicyType   = "OKTA_SIGN_ON"
+	mfaPolicyType      = "MFA_ENROLL"
+	idpDiscovery       = "IDP_DISCOVERY"
 )
 
 var userExcludedSchema = map[string]*schema.Schema{
@@ -125,7 +124,7 @@ func createPolicyRuleImporter() *schema.ResourceImporter {
 			if len(parts) != 2 {
 				return nil, fmt.Errorf("Invalid policy rule specifier. Expecting {policyID}/{ruleID}")
 			}
-			d.Set("policyid", parts[0])
+			_ = d.Set("policyid", parts[0])
 			d.SetId(parts[1])
 			return []*schema.ResourceData{d}, nil
 		},
@@ -196,10 +195,10 @@ func resourcePolicyRuleExists(d *schema.ResourceData, m interface{}) (b bool, e 
 }
 
 func syncRuleFromUpstream(d *schema.ResourceData, rule *articulateOkta.Rule) error {
-	d.Set("name", rule.Name)
-	d.Set("status", rule.Status)
-	d.Set("priority", rule.Priority)
-	d.Set("network_connection", rule.Conditions.Network.Connection)
+	_ = d.Set("name", rule.Name)
+	_ = d.Set("status", rule.Status)
+	_ = d.Set("priority", rule.Priority)
+	_ = d.Set("network_connection", rule.Conditions.Network.Connection)
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"users_excluded":   convertStringSetToInterface(rule.Conditions.People.Users.Exclude),
@@ -219,7 +218,7 @@ func updateRule(d *schema.ResourceData, meta interface{}, updatedRule interface{
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR] Error runing update against Sign On Policy Rule: %v", err)
 	}
-	d.Partial(false)
+
 	err = policyRuleActivate(d, meta)
 
 	return rule, err

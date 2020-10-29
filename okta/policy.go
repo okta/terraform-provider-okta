@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -135,6 +135,7 @@ func ensureNotDefaultPolicy(d *schema.ResourceData) error {
 }
 
 func getGroups(d *schema.ResourceData) *articulateOkta.People {
+
 	var people *articulateOkta.People
 
 	if include, ok := d.GetOk("groups_included"); ok {
@@ -208,10 +209,10 @@ func resourcePolicyExists(d *schema.ResourceData, m interface{}) (b bool, e erro
 }
 
 func syncPolicyFromUpstream(d *schema.ResourceData, policy *articulateOkta.Policy) error {
-	d.Set("name", policy.Name)
-	d.Set("description", policy.Description)
-	d.Set("status", policy.Status)
-	d.Set("priority", policy.Priority)
+	_ = d.Set("name", policy.Name)
+	_ = d.Set("description", policy.Description)
+	_ = d.Set("status", policy.Status)
+	_ = d.Set("priority", policy.Priority)
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"groups_included": convertStringSetToInterface(policy.Conditions.People.Groups.Include),
