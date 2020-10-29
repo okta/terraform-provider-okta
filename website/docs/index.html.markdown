@@ -58,7 +58,7 @@ explained below:
 
 ### Environment variables
 
-You can provider your credentials via the `OKTA_ORG_NAME`, `OKTA_BASE_URL` and `OKTA_API_TOKEN`, environment variables, representing your Okta Organization Name, Okta Base URL (ie. `"okta.com"` or `"oktapreview.com"`) and Okta API Token, respectively.
+You can provide your credentials via the `OKTA_ORG_NAME`, `OKTA_BASE_URL` and `OKTA_API_TOKEN`, environment variables, representing your Okta Organization Name, Okta Base URL (ie. `"okta.com"` or `"oktapreview.com"`) and Okta API Token, respectively.
 
 ```hcl
 provider "okta" {}
