@@ -26,18 +26,21 @@ func TestAccOktaProfileMapping_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "delete_when_absent", "false"),
 				),
+				ExpectNonEmptyPlan: true,
 			},
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "delete_when_absent", "true"),
 				),
+				ExpectNonEmptyPlan: true,
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "delete_when_absent", "true"),
 				),
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})

@@ -110,16 +110,16 @@ func resourceAuthServerClaimRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if authServerClaim.Conditions != nil && len(authServerClaim.Conditions.Scopes) > 0 {
-		d.Set("scopes", convertStringSetToInterface(authServerClaim.Conditions.Scopes))
+		_ = d.Set("scopes", convertStringSetToInterface(authServerClaim.Conditions.Scopes))
 	}
 
-	d.Set("name", authServerClaim.Name)
-	d.Set("status", authServerClaim.Status)
-	d.Set("value", authServerClaim.Value)
-	d.Set("value_type", authServerClaim.ValueType)
-	d.Set("claim_type", authServerClaim.ClaimType)
-	d.Set("always_include_in_token", authServerClaim.AlwaysIncludeInToken)
-	d.Set("group_filter_type", authServerClaim.GroupFilterType)
+	_ = d.Set("name", authServerClaim.Name)
+	_ = d.Set("status", authServerClaim.Status)
+	_ = d.Set("value", authServerClaim.Value)
+	_ = d.Set("value_type", authServerClaim.ValueType)
+	_ = d.Set("claim_type", authServerClaim.ClaimType)
+	_ = d.Set("always_include_in_token", authServerClaim.AlwaysIncludeInToken)
+	_ = d.Set("group_filter_type", authServerClaim.GroupFilterType)
 
 	return nil
 }

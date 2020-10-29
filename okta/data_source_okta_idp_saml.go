@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
@@ -107,17 +107,17 @@ func dataSourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	d.SetId(idp.ID)
-	d.Set("name", idp.Name)
-	d.Set("type", idp.Type)
-	d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
-	d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
-	d.Set("sso_url", idp.Protocol.Endpoints.Sso.URL)
-	d.Set("sso_binding", idp.Protocol.Endpoints.Sso.Binding)
-	d.Set("sso_destination", idp.Protocol.Endpoints.Sso.Destination)
-	d.Set("subject_filter", idp.Policy.Subject.Filter)
-	d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
-	d.Set("issuer", idp.Protocol.Credentials.Trust.Issuer)
-	d.Set("audience", idp.Protocol.Credentials.Trust.Audience)
+	_ = d.Set("name", idp.Name)
+	_ = d.Set("type", idp.Type)
+	_ = d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
+	_ = d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
+	_ = d.Set("sso_url", idp.Protocol.Endpoints.Sso.URL)
+	_ = d.Set("sso_binding", idp.Protocol.Endpoints.Sso.Binding)
+	_ = d.Set("sso_destination", idp.Protocol.Endpoints.Sso.Destination)
+	_ = d.Set("subject_filter", idp.Policy.Subject.Filter)
+	_ = d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
+	_ = d.Set("issuer", idp.Protocol.Credentials.Trust.Issuer)
+	_ = d.Set("audience", idp.Protocol.Credentials.Trust.Audience)
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"subject_format": convertStringSetToInterface(idp.Policy.Subject.Format),

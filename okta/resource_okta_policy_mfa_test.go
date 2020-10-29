@@ -12,6 +12,7 @@ func deleteMfaPolicies(client *testClient) error {
 	return deletePolicyByType(mfaPolicyType, client)
 }
 
+// Note: at least one factor (e.g. `okta_otp`) should be enabled before running this test.
 func TestAccOktaMfaPolicy_crud(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(policyMfa)
@@ -31,7 +32,7 @@ func TestAccOktaMfaPolicy_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy"),
-					resource.TestCheckResourceAttr(resourceName, "okta_otp.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "google_otp.enroll", "REQUIRED"),
 				),
 			},
 			{
@@ -41,8 +42,8 @@ func TestAccOktaMfaPolicy_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy Updated"),
-					resource.TestCheckResourceAttr(resourceName, "okta_otp.enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "okta_sms.enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "google_otp.enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "google_otp.enroll", "OPTIONAL"),
 				),
 			},
 		},

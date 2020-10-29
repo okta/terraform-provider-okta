@@ -77,8 +77,8 @@ func resourceNetworkZoneRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", zone.Name)
-	d.Set("type", zone.Type)
+	_ = d.Set("name", zone.Name)
+	_ = d.Set("type", zone.Type)
 
 	return setNonPrimitives(d, map[string]interface{}{
 		// TODO

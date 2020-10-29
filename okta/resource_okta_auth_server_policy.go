@@ -97,11 +97,11 @@ func resourceAuthServerPolicyRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", authServerPolicy.Name)
-	d.Set("description", authServerPolicy.Description)
-	d.Set("status", authServerPolicy.Status)
-	d.Set("priority", authServerPolicy.Priority)
-	d.Set("client_whitelist", convertStringSetToInterface(authServerPolicy.Conditions.Clients.Include))
+	_ = d.Set("name", authServerPolicy.Name)
+	_ = d.Set("description", authServerPolicy.Description)
+	_ = d.Set("status", authServerPolicy.Status)
+	_ = d.Set("priority", authServerPolicy.Priority)
+	_ = d.Set("client_whitelist", convertStringSetToInterface(authServerPolicy.Conditions.Clients.Include))
 
 	return nil
 }

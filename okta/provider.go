@@ -34,7 +34,6 @@ const (
 	factor                 = "okta_factor"
 	groupRoles             = "okta_group_roles"
 	groupRule              = "okta_group_rule"
-	identityProvider       = "okta_identity_provider"
 	idpResource            = "okta_idp_oidc"
 	idpSaml                = "okta_idp_saml"
 	idpSamlKey             = "okta_idp_saml_key"
@@ -218,7 +217,6 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		parallelism: d.Get("parallelism").(int),
 		retryCount:  d.Get("max_retries").(int),
 		maxWait:     d.Get("max_wait_seconds").(int),
-		minWait:     d.Get("min_wait_seconds").(int),
 		backoff:     d.Get("backoff").(bool),
 	}
 	if err := config.loadAndValidate(); err != nil {

@@ -147,13 +147,13 @@ func resourceAuthServerPolicyRuleRead(d *schema.ResourceData, m interface{}) err
 		return err
 	}
 
-	d.Set("name", authServerPolicyRule.Name)
-	d.Set("status", authServerPolicyRule.Status)
-	d.Set("priority", authServerPolicyRule.Priority)
-	d.Set("type", authServerPolicyRule.Type)
+	_ = d.Set("name", authServerPolicyRule.Name)
+	_ = d.Set("status", authServerPolicyRule.Status)
+	_ = d.Set("priority", authServerPolicyRule.Priority)
+	_ = d.Set("type", authServerPolicyRule.Type)
 
 	if authServerPolicyRule.Actions.Token.InlineHook != nil {
-		d.Set("inline_hook_id", authServerPolicyRule.Actions.Token.InlineHook.Id)
+		_ = d.Set("inline_hook_id", authServerPolicyRule.Actions.Token.InlineHook.Id)
 	}
 
 	err = setNonPrimitives(d, map[string]interface{}{

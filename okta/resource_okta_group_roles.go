@@ -1,9 +1,11 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
@@ -16,7 +18,7 @@ func resourceGroupRoles() *schema.Resource {
 		Delete: resourceGroupRolesDelete,
 		Importer: &schema.ResourceImporter{
 			State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-				d.Set("group_id", d.Id())
+				_ = d.Set("group_id", d.Id())
 				d.SetId(getGroupRoleId(d.Id()))
 				return []*schema.ResourceData{d}, nil
 			},
@@ -63,8 +65,9 @@ func resourceGroupRolesCreate(d *schema.ResourceData, m interface{}) error {
 	adminRoles := convertInterfaceToStringSet(d.Get("admin_roles"))
 
 	for _, role := range adminRoles {
-		groupRole := buildGroupRole(d, role)
-		_, _, err := getSupplementFromMetadata(m).CreateAdminRole(groupId, groupRole, nil)
+		_, _, err := getOktaClientFromMetadata(m).Group.AssignRoleToGroup(context.Background(), groupId, okta.AssignRoleRequest{
+			Type: role,
+		}, nil)
 		if err != nil {
 			return err
 		}
@@ -93,7 +96,7 @@ func resourceGroupRolesRead(d *schema.ResourceData, m interface{}) error {
 	for i, role := range existingRoles {
 		adminRoles[i] = role.Type
 	}
-	d.Set("admin_roles", convertStringSetToInterface(adminRoles))
+	_ = d.Set("admin_roles", convertStringSetToInterface(adminRoles))
 
 	return nil
 }

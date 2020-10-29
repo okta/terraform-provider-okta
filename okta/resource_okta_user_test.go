@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"regexp"
@@ -8,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
@@ -17,7 +18,7 @@ import (
 
 func sweepUsers(client *testClient) error {
 	var errorList []error
-	users, _, err := client.oktaClient.User.ListUsers(&query.Params{Q: testResourcePrefix})
+	users, _, err := client.oktaClient.User.ListUsers(context.Background(), &query.Params{Q: testResourcePrefix})
 	if err != nil {
 		return err
 	}
@@ -347,7 +348,7 @@ func testAccCheckUserDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*Config).oktaClient
 
 	for _, r := range s.RootModule().Resources {
-		if _, resp, err := client.User.GetUser(r.Primary.ID); err != nil {
+		if _, resp, err := client.User.GetUser(context.Background(), r.Primary.ID); err != nil {
 			if strings.Contains(resp.Response.Status, "404") {
 				continue
 			}

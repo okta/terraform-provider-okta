@@ -1,13 +1,14 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func createRedirectUriExists(name string) resource.TestCheckFunc {
@@ -22,7 +23,7 @@ func createRedirectUriExists(name string) resource.TestCheckFunc {
 		appId := rs.Primary.Attributes["app_id"]
 		client := getOktaClientFromMetadata(testAccProvider.Meta())
 		app := okta.NewOpenIdConnectApplication()
-		_, response, err := client.Application.GetApplication(appId, app, nil)
+		_, response, err := client.Application.GetApplication(context.Background(), appId, app, nil)
 
 		// We don't want to consider a 404 an error in some cases and thus the delineation
 		if response.StatusCode == 404 {

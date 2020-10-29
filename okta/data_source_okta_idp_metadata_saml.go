@@ -60,12 +60,12 @@ func dataSourceIdpSamlMetadataRead(d *schema.ResourceData, m interface{}) error 
 	id := d.Get("idp_id").(string)
 	d.SetId(fmt.Sprintf("%s_metadata", id))
 	client := getSupplementFromMetadata(m)
-	metadata, _, err := client.GetSAMLIdpMetdata(id)
+	metadata, err := client.GetSAMLIdpMetdata(id)
 	if err != nil {
 		return err
 	}
 
-	d.Set("metadata", string(metadata))
+	_ = d.Set("metadata", string(metadata))
 	metadataRoot := &saml.EntityDescriptor{}
 	err = xml.Unmarshal(metadata, metadataRoot)
 	if err != nil {
@@ -74,9 +74,9 @@ func dataSourceIdpSamlMetadataRead(d *schema.ResourceData, m interface{}) error 
 
 	desc := metadataRoot.SPSSODescriptors[0]
 	syncSamlIndexEndpointBinding(d, desc.AssertionConsumerServices)
-	d.Set("entity_id", metadataRoot.EntityID)
-	d.Set("authn_request_signed", desc.AuthnRequestsSigned)
-	d.Set("assertions_signed", desc.WantAssertionsSigned)
+	_ = d.Set("entity_id", metadataRoot.EntityID)
+	_ = d.Set("authn_request_signed", desc.AuthnRequestsSigned)
+	_ = d.Set("assertions_signed", desc.WantAssertionsSigned)
 	syncSamlCertificates(d, desc.KeyDescriptors)
 	return nil
 }

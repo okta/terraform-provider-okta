@@ -96,13 +96,13 @@ func resourceAuthServerScopeRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", authServerScope.Name)
-	d.Set("description", authServerScope.Description)
-	d.Set("metadata_publish", authServerScope.MetadataPublish)
-	d.Set("default", authServerScope.Default)
+	_ = d.Set("name", authServerScope.Name)
+	_ = d.Set("description", authServerScope.Description)
+	_ = d.Set("metadata_publish", authServerScope.MetadataPublish)
+	_ = d.Set("default", authServerScope.Default)
 
 	if authServerScope.Consent != "" {
-		d.Set("consent", authServerScope.Consent)
+		_ = d.Set("consent", authServerScope.Consent)
 	}
 
 	return nil
