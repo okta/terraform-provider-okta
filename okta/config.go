@@ -62,7 +62,7 @@ func (c *Config) loadAndValidate() error {
 		okta.WithHttpClient(*httpClient),
 		okta.WithRequestTimeout(int64(c.maxWait)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
-		okta.WithUserAgentExtra("okta-terraform/3.5.0"),
+		okta.WithUserAgentExtra("okta-terraform/3.6.0"),
 	)
 	if err != nil {
 		return err
