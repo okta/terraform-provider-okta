@@ -1,12 +1,13 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
@@ -60,13 +61,13 @@ func dataSourceUserRead(d *schema.ResourceData, m interface{}) error {
 	_, searchCriteriaOk := d.GetOk("search")
 
 	if userIdOk {
-		user, _, err = client.User.GetUser(userId.(string))
+		user, _, err = client.User.GetUser(context.Background(), userId.(string))
 		if err != nil {
 			return err
 		}
 	} else if searchCriteriaOk {
 		var users []*okta.User
-		users, _, err := client.User.ListUsers(&query.Params{Search: getSearchCriteria(d), Limit: 1})
+		users, _, err := client.User.ListUsers(context.Background(), &query.Params{Search: getSearchCriteria(d), Limit: 1})
 
 		if err != nil {
 			return err

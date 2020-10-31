@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"testing"
@@ -89,7 +90,7 @@ func ensureAppUserExists(name string) resource.TestCheckFunc {
 		userId := rs.Primary.Attributes["user_id"]
 		client := getOktaClientFromMetadata(testAccProvider.Meta())
 
-		u, _, err := client.Application.GetApplicationUser(appId, userId, nil)
+		u, _, err := client.Application.GetApplicationUser(context.Background(), appId, userId, nil)
 		if err != nil {
 			return err
 		} else if u == nil {
@@ -110,7 +111,7 @@ func checkAppUserDestroy(s *terraform.State) error {
 		userId := rs.Primary.Attributes["user_id"]
 
 		client := getOktaClientFromMetadata(testAccProvider.Meta())
-		_, response, err := client.Application.GetApplicationUser(appId, userId, nil)
+		_, response, err := client.Application.GetApplicationUser(context.Background(), appId, userId, nil)
 		exists, err := doesResourceExist(response, err)
 		if err != nil {
 			return err

@@ -17,7 +17,7 @@ This resource allows you to create and configure an inline hook.
 ```hcl
 resource "okta_inline_hook" "example" {
   name    = "example"
-  version = "1.0.1"
+  version = "1.0.0"
   type    = "com.okta.oauth2.tokens.transform"
 
   channel = {
@@ -40,7 +40,7 @@ The following arguments are supported:
 
 * `name` - (Required) The inline hook display name.
 
-* `version` - (Required) The version of the hook.
+* `version` - (Required) The version of the hook. The currently-supported version is `"1.0.0"`.
 
 * `type` - (Required) The type of hook to create. [See here for supported types](https://developer.okta.com/docs/reference/api/inline-hooks/#supported-inline-hook-types).
 

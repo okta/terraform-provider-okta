@@ -1,12 +1,13 @@
 package okta
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceAppUser() *schema.Resource {
@@ -24,11 +25,11 @@ func resourceAppUser() *schema.Resource {
 					return nil, errors.New("Invalid resource import specifier. Use: terraform import <app_id>/<group_id>")
 				}
 
-				d.Set("app_id", parts[0])
-				d.Set("user_id", parts[1])
+				_ = d.Set("app_id", parts[0])
+				_ = d.Set("user_id", parts[1])
 
 				assignment, _, err := getOktaClientFromMetadata(m).Application.
-					GetApplicationUser(parts[0], parts[1], nil)
+					GetApplicationUser(context.Background(), parts[0], parts[1], nil)
 
 				if err != nil {
 					return nil, err
@@ -73,6 +74,7 @@ func resourceAppUser() *schema.Resource {
 func resourceAppUserExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	client := getOktaClientFromMetadata(m)
 	g, _, err := client.Application.GetApplicationUser(
+		context.Background(),
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
 		nil,
@@ -84,6 +86,7 @@ func resourceAppUserExists(d *schema.ResourceData, m interface{}) (bool, error) 
 func resourceAppUserCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	u, _, err := client.Application.AssignUserToApplication(
+		context.Background(),
 		d.Get("app_id").(string),
 		*getAppUser(d),
 	)
@@ -100,6 +103,7 @@ func resourceAppUserCreate(d *schema.ResourceData, m interface{}) error {
 func resourceAppUserUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	_, _, err := client.Application.UpdateApplicationUser(
+		context.Background(),
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
 		*getAppUser(d),
@@ -114,6 +118,7 @@ func resourceAppUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppUserRead(d *schema.ResourceData, m interface{}) error {
 	u, resp, err := getOktaClientFromMetadata(m).Application.GetApplicationUser(
+		context.Background(),
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
 		nil,
@@ -128,14 +133,15 @@ func resourceAppUserRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("profile", u.Profile)
-	d.Set("username", u.Credentials.UserName)
+	_ = d.Set("profile", u.Profile)
+	_ = d.Set("username", u.Credentials.UserName)
 
 	return nil
 }
 
 func resourceAppUserDelete(d *schema.ResourceData, m interface{}) error {
 	_, err := getOktaClientFromMetadata(m).Application.DeleteApplicationUser(
+		context.Background(),
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
 		nil,
@@ -148,7 +154,7 @@ func getAppUser(d *schema.ResourceData) *okta.AppUser {
 
 	rawProfile := d.Get("profile").(string)
 	// JSON is already validated
-	json.Unmarshal([]byte(rawProfile), &profile)
+	_ = json.Unmarshal([]byte(rawProfile), &profile)
 
 	return &okta.AppUser{
 		Id: d.Get("user_id").(string),

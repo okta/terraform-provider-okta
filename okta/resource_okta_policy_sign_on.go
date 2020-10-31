@@ -62,13 +62,12 @@ func resourcePolicySignonUpdate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	log.Printf("[INFO] Update Policy %v", d.Get("name").(string))
-	d.Partial(true)
+
 	template := buildSignOnPolicy(d, m)
 	err := updatePolicy(d, m, template)
 	if err != nil {
 		return err
 	}
-	d.Partial(false)
 
 	return resourcePolicySignonRead(d, m)
 }

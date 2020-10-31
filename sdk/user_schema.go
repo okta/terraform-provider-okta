@@ -1,7 +1,9 @@
 package sdk
 
 import (
-	"github.com/okta/okta-sdk-golang/okta"
+	"context"
+
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 var (
@@ -14,7 +16,7 @@ func (m *ApiSupplement) DeleteUserSchemaProperty(id string) (*okta.Response, err
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(context.Background(), req, nil)
 }
 
 func (m *ApiSupplement) AddCustomUserSchemaProperty(schema *UserSubSchema) (*UserSchema, *okta.Response, error) {
@@ -24,7 +26,7 @@ func (m *ApiSupplement) AddCustomUserSchemaProperty(schema *UserSubSchema) (*Use
 	}
 
 	fullSchema := &UserSchema{}
-	resp, err := m.RequestExecutor.Do(req, fullSchema)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, fullSchema)
 	return fullSchema, resp, err
 }
 
@@ -43,7 +45,7 @@ func (m *ApiSupplement) UpdateUserSchemaProperty(schema *UserSchema) (*UserSchem
 	}
 
 	fullSchema := &UserSchema{}
-	resp, err := m.RequestExecutor.Do(req, fullSchema)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, fullSchema)
 	return fullSchema, resp, err
 }
 
@@ -53,7 +55,7 @@ func (m *ApiSupplement) GetUserSchema() (*UserSchema, *okta.Response, error) {
 		return nil, nil, err
 	}
 	schema := &UserSchema{}
-	resp, err := m.RequestExecutor.Do(req, schema)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, schema)
 	return schema, resp, err
 }
 
