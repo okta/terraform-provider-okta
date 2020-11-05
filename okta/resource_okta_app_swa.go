@@ -100,6 +100,7 @@ func resourceAppSwaRead(d *schema.ResourceData, m interface{}) error {
 	_ = d.Set("url_regex", app.Settings.App.LoginUrlRegex)
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 
 	return syncGroupsAndUsers(app.Id, d, m)

@@ -148,6 +148,7 @@ func resourceAppSecurePasswordStoreRead(d *schema.ResourceData, m interface{}) e
 	_ = d.Set("shared_username", app.Credentials.UserName)
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 
 	return nil
