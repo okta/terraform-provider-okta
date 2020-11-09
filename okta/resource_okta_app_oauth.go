@@ -34,7 +34,7 @@ const (
 // NOTE: opened a ticket to Okta to fix their docs, they are off.
 // https://developer.okta.com/docs/api/resources/apps#credentials-settings-details
 var appGrantTypeMap = map[string]*applicationMap{
-	"web": &applicationMap{
+	"web": {
 		RequiredGrantTypes: []string{
 			authorizationCode,
 		},
@@ -45,7 +45,7 @@ var appGrantTypeMap = map[string]*applicationMap{
 			clientCredentials,
 		},
 	},
-	"native": &applicationMap{
+	"native": {
 		Type: "native",
 		RequiredGrantTypes: []string{
 			authorizationCode,
@@ -57,13 +57,13 @@ var appGrantTypeMap = map[string]*applicationMap{
 			password,
 		},
 	},
-	"browser": &applicationMap{
+	"browser": {
 		ValidGrantTypes: []string{
 			implicit,
 			authorizationCode,
 		},
 	},
-	"service": &applicationMap{
+	"service": {
 		ValidGrantTypes: []string{
 			clientCredentials,
 			implicit,
@@ -97,14 +97,14 @@ func resourceAppOAuth() *schema.Resource {
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
 		Schema: buildAppSchema(map[string]*schema.Schema{
-			"type": &schema.Schema{
+			"type": {
 				Type:         schema.TypeString,
 				ValidateFunc: validation.StringInSlice([]string{"web", "native", "browser", "service"}, false),
 				Required:     true,
 				ForceNew:     true,
 				Description:  "The type of client application.",
 			},
-			"client_id": &schema.Schema{
+			"client_id": {
 				Type: schema.TypeString,
 				// This field is Optional + Computed because okta automatically sets the
 				// client_id value if none is specified during creation.
@@ -115,33 +115,33 @@ func resourceAppOAuth() *schema.Resource {
 				Computed:    true,
 				Description: "OAuth client ID. If set during creation, app is created with this id.",
 			},
-			"custom_client_id": &schema.Schema{
+			"custom_client_id": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"client_id"},
 				Description:   "**Deprecated** This property allows you to set your client_id during creation. NOTE: updating after creation will be a no-op, use client_id for that behavior instead.",
 				Deprecated:    "This field is being replaced by client_id. Please set that field instead.",
 			},
-			"omit_secret": &schema.Schema{
+			"omit_secret": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				// No ForceNew to avoid recreating when going from false => true
 				Description: "This tells the provider not to persist the application's secret to state. If this is ever changes from true => false your app will be recreated.",
 				Default:     false,
 			},
-			"client_secret": &schema.Schema{
+			"client_secret": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Sensitive:   true,
 				Description: "OAuth client secret key. This will be in plain text in your statefile unless you set omit_secret above.",
 			},
-			"client_basic_secret": &schema.Schema{
+			"client_basic_secret": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Sensitive:   true,
 				Description: "OAuth client secret key, this can be set when token_endpoint_auth_method is client_secret_basic.",
 			},
-			"token_endpoint_auth_method": &schema.Schema{
+			"token_endpoint_auth_method": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ValidateFunc: validation.StringInSlice(
@@ -151,40 +151,40 @@ func resourceAppOAuth() *schema.Resource {
 				Default:     "client_secret_basic",
 				Description: "Requested authentication method for the token endpoint.",
 			},
-			"auto_key_rotation": &schema.Schema{
+			"auto_key_rotation": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     true,
 				Description: "Requested key rotation mode.",
 			},
-			"client_uri": &schema.Schema{
+			"client_uri": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "URI to a web page providing information about the client.",
 			},
-			"logo_uri": &schema.Schema{
+			"logo_uri": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "URI that references a logo for the client.",
 			},
-			"login_uri": &schema.Schema{
+			"login_uri": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "URI that initiates login.",
 			},
-			"redirect_uris": &schema.Schema{
+			"redirect_uris": {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
 				Description: "List of URIs for use in the redirect-based flow. This is required for all application types except service. Note: see okta_app_oauth_redirect_uri for appending to this list in a decentralized way.",
 			},
-			"post_logout_redirect_uris": &schema.Schema{
+			"post_logout_redirect_uris": {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
 				Description: "List of URIs for redirection after logout",
 			},
-			"response_types": &schema.Schema{
+			"response_types": {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
@@ -193,7 +193,7 @@ func resourceAppOAuth() *schema.Resource {
 				Optional:    true,
 				Description: "List of OAuth 2.0 response type strings.",
 			},
-			"grant_types": &schema.Schema{
+			"grant_types": {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -206,55 +206,55 @@ func resourceAppOAuth() *schema.Resource {
 				Description: "List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.",
 			},
 			// "Early access" properties.. looks to be in beta which requires opt-in per account
-			"tos_uri": &schema.Schema{
+			"tos_uri": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "*Early Access Property*. URI to web page providing client tos (terms of service).",
 			},
-			"policy_uri": &schema.Schema{
+			"policy_uri": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "*Early Access Property*. URI to web page providing client policy document.",
 			},
-			"consent_method": &schema.Schema{
+			"consent_method": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Default:      "TRUSTED",
 				ValidateFunc: validation.StringInSlice([]string{"REQUIRED", "TRUSTED"}, false),
 				Description:  "*Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED",
 			},
-			"issuer_mode": &schema.Schema{
+			"issuer_mode": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"CUSTOM_URL", "ORG_URL"}, false),
 				Default:      "ORG_URL",
 				Description:  "*Early Access Property*. Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.",
 			},
-			"auto_submit_toolbar": &schema.Schema{
+			"auto_submit_toolbar": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
 				Description: "Display auto submit toolbar",
 			},
-			"hide_ios": &schema.Schema{
+			"hide_ios": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     true,
 				Description: "Do not display application icon on mobile app",
 			},
-			"hide_web": &schema.Schema{
+			"hide_web": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     true,
 				Description: "Do not display application icon to users",
 			},
-			"profile": &schema.Schema{
+			"profile": {
 				Type:        schema.TypeString,
 				StateFunc:   normalizeDataJSON,
 				Optional:    true,
 				Description: "Custom JSON that represents an OAuth application's profile",
 			},
-			"jwks": &schema.Schema{
+			"jwks": {
 				Type:     schema.TypeList,
 				Optional: true,
 				Elem: &schema.Resource{
