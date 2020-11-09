@@ -10,16 +10,16 @@ import (
 
 type (
 	AuthorizationServerPolicy struct {
-		Status      string            `json:"status,omitempty"`
-		Priority    int               `json:"priority,omitempty"`
-		Type        string            `json:"type,omitempty"`
-		Description string            `json:"description,omitempty"`
-		Name        string            `json:"name,omitempty"`
-		Id          string            `json:"id,omitempty"`
-		Conditions  *PolicyConditions `json:"conditions,omitempty"`
+		Status      string                               `json:"status,omitempty"`
+		Priority    int                                  `json:"priority,omitempty"`
+		Type        string                               `json:"type,omitempty"`
+		Description string                               `json:"description,omitempty"`
+		Name        string                               `json:"name,omitempty"`
+		Id          string                               `json:"id,omitempty"`
+		Conditions  *AuthorizationServerPolicyConditions `json:"conditions,omitempty"`
 	}
 
-	PolicyConditions struct {
+	AuthorizationServerPolicyConditions struct {
 		Clients *Whitelist `json:"clients,omitempty"`
 	}
 

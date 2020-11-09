@@ -6,10 +6,11 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func deleteMfaPolicies(client *testClient) error {
-	return deletePolicyByType(mfaPolicyType, client)
+	return deletePolicyByType(sdk.MfaPolicyType, client)
 }
 
 // Note: at least one factor (e.g. `okta_otp`) should be enabled before running this test.

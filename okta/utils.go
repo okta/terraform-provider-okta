@@ -9,11 +9,9 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
-
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func buildSchema(s, t map[string]*schema.Schema) map[string]*schema.Schema {
@@ -245,11 +243,6 @@ func doesResourceExist(response *okta.Response, err error) (bool, error) {
 	return true, err
 }
 
-func intPtr(b int) (ptr *int) {
-	ptr = &b
-	return
-}
-
 func getNullableInt(d *schema.ResourceData, key string) *int {
 	if v, ok := d.GetOk(key); ok {
 		i := v.(int)
@@ -280,10 +273,6 @@ func getStringValue(d *schema.ResourceData, key string) string {
 
 func getParallelismFromMetadata(meta interface{}) int {
 	return meta.(*Config).parallelism
-}
-
-func getClientFromMetadata(meta interface{}) *articulateOkta.Client {
-	return meta.(*Config).articulateOktaClient
 }
 
 func getOktaClientFromMetadata(meta interface{}) *okta.Client {
@@ -381,10 +370,9 @@ func validateIsURL(val interface{}, b string) ([]string, []error) {
 	return nil, nil
 }
 
-func validatePriority(in int, out int) error {
+func validatePriority(in, out int64) error {
 	if in > 0 && in != out {
 		return fmt.Errorf("provided priority was not valid, got: %d, API responded with: %d. See schema for attribute details", in, out)
 	}
-
 	return nil
 }

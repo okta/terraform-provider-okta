@@ -6,15 +6,13 @@ import (
 	"strconv"
 	"testing"
 
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/okta/okta-sdk-golang/v2/okta"
-	sdk "github.com/oktadeveloper/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 type testClient struct {
 	oktaClient    *okta.Client
-	artClient     *articulateOkta.Client
 	apiSupplement *sdk.ApiSupplement
 }
 
@@ -29,7 +27,7 @@ func TestMain(m *testing.M) {
 	setupSweeper(policyRuleIdpDiscovery, deletePolicyRuleIdpDiscovery)
 	setupSweeper(policyMfa, deleteMfaPolicies)
 	setupSweeper(policyRuleSignOn, deleteSignOnPolicyRules)
-	setupSweeper(policyRulePassword, deletepolicyRulePasswords)
+	setupSweeper(policyRulePassword, deletePolicyRulePasswords)
 	setupSweeper("okta_*_app", deleteTestApps)
 	setupSweeper("okta_*_idp", deleteTestIdps)
 	setupSweeper(policyRuleMfa, deleteMfaPolicyRules)
@@ -47,13 +45,13 @@ func setupSweeper(resourceType string, del func(*testClient) error) {
 	resource.AddTestSweepers(resourceType, &resource.Sweeper{
 		Name: resourceType,
 		F: func(region string) error {
-			articulateOktaClient, client, apiSupplement, err := sharedClient(region)
+			client, apiSupplement, err := sharedClient(region)
 
 			if err != nil {
 				return err
 			}
 
-			return del(&testClient{client, articulateOktaClient, apiSupplement})
+			return del(&testClient{oktaClient: client, apiSupplement: apiSupplement})
 		},
 	})
 }
@@ -68,25 +66,17 @@ func buildResourceName(testID int) string {
 }
 
 // sharedClient returns a common Okta Client for sweepers, which currently requires the original SDK and the official beta SDK
-func sharedClient(region string) (*articulateOkta.Client, *okta.Client, *sdk.ApiSupplement, error) {
+func sharedClient(region string) (*okta.Client, *sdk.ApiSupplement, error) {
 	err := accPreCheck()
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, err
 	}
-
 	c, err := oktaConfig()
 	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	articulateClient, err := articulateOkta.NewClientWithDomain(nil, c.orgName, c.domain, c.apiToken)
-
-	if err != nil {
-		return nil, nil, nil, fmt.Errorf("[ERROR] Error creating Articulate Okta client: %v", err)
+		return nil, nil, err
 	}
 
 	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
-
 	_, client, err := okta.NewClient(
 		context.Background(),
 		okta.WithOrgUrl(orgURL),
@@ -94,9 +84,9 @@ func sharedClient(region string) (*articulateOkta.Client, *okta.Client, *sdk.Api
 		okta.WithRateLimitMaxRetries(20),
 	)
 	if err != nil {
-		return articulateClient, client, nil, err
+		return client, nil, err
 	}
 	api := &sdk.ApiSupplement{RequestExecutor: client.GetRequestExecutor()}
 
-	return articulateClient, client, api, nil
+	return client, api, nil
 }

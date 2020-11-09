@@ -98,7 +98,7 @@ func buildAuthServerPolicyRule(d *schema.ResourceData) *sdk.AuthorizationServerP
 		Status:   d.Get("status").(string),
 		Priority: d.Get("priority").(int),
 		Type:     d.Get("type").(string),
-		Actions: &sdk.PolicyRuleActions{
+		Actions: &sdk.AuthorizationServerPolicyRuleActions{
 			Token: &sdk.TokenActions{
 				AccessTokenLifetimeMinutes:  d.Get("access_token_lifetime_minutes").(int),
 				RefreshTokenLifetimeMinutes: d.Get("refresh_token_lifetime_minutes").(int),
@@ -106,7 +106,7 @@ func buildAuthServerPolicyRule(d *schema.ResourceData) *sdk.AuthorizationServerP
 				InlineHook:                  hook,
 			},
 		},
-		Conditions: &sdk.PolicyRuleConditions{
+		Conditions: &sdk.AuthorizationServerPolicyRuleConditions{
 			GrantTypes: &sdk.Whitelist{Include: convertInterfaceToStringSet(d.Get("grant_type_whitelist"))},
 			Scopes:     &sdk.Whitelist{Include: convertInterfaceToStringSet(d.Get("scope_whitelist"))},
 			People:     getPeopleConditions(d),

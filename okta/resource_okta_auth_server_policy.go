@@ -20,7 +20,7 @@ func resourceAuthServerPolicy() *schema.Resource {
 			"type": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				Default:     "OAUTH_AUTHORIZATION_POLICY",
+				Default:     sdk.OauthAuthorizationPolicyType,
 				Description: "Auth server policy type, unlikely this will be anything other then the default",
 			},
 			"name": &schema.Schema{
@@ -58,7 +58,7 @@ func buildAuthServerPolicy(d *schema.ResourceData) *sdk.AuthorizationServerPolic
 		Status:      d.Get("status").(string),
 		Priority:    d.Get("priority").(int),
 		Description: d.Get("description").(string),
-		Conditions: &sdk.PolicyConditions{
+		Conditions: &sdk.AuthorizationServerPolicyConditions{
 			Clients: &sdk.Whitelist{
 				Include: convertInterfaceToStringSet(d.Get("client_whitelist")),
 			},

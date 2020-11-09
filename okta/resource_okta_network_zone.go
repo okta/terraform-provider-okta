@@ -124,14 +124,12 @@ func buildNetworkZone(d *schema.ResourceData, m interface{}) *sdk.NetworkZone {
 		if values, ok := d.GetOk("proxies"); ok {
 			proxiesList = buildAddressObjList(values.(*schema.Set))
 		}
-	} else {
-		if values, ok := d.GetOk("dynamic_locations"); ok {
-			for _, value := range values.(*schema.Set).List() {
-				if strings.Contains(value.(string), "-") {
-					locationsList = append(locationsList, &sdk.Location{Country: strings.Split(value.(string), "-")[0], Region: value.(string)})
-				} else {
-					locationsList = append(locationsList, &sdk.Location{Country: value.(string)})
-				}
+	} else if values, ok := d.GetOk("dynamic_locations"); ok {
+		for _, value := range values.(*schema.Set).List() {
+			if strings.Contains(value.(string), "-") {
+				locationsList = append(locationsList, &sdk.Location{Country: strings.Split(value.(string), "-")[0], Region: value.(string)})
+			} else {
+				locationsList = append(locationsList, &sdk.Location{Country: value.(string)})
 			}
 		}
 	}

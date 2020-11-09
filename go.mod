@@ -3,11 +3,9 @@ module github.com/oktadeveloper/terraform-provider-okta
 go 1.15
 
 require (
-	github.com/articulate/oktasdk-go v1.0.3-0.20200311150058-f2661b7a273f
 	github.com/bflad/tfproviderlint v0.19.0
 	github.com/client9/misspell v0.3.4
 	github.com/crewjam/saml v0.4.2
-	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.1
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/terraform-plugin-sdk v1.16.0

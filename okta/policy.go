@@ -1,38 +1,38 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"log"
 
-	"github.com/okta/okta-sdk-golang/v2/okta"
-
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 // Basis of policy schema
 var (
 	basePolicySchema = map[string]*schema.Schema{
-		"name": &schema.Schema{
+		"name": {
 			Type:        schema.TypeString,
 			Required:    true,
 			ForceNew:    true,
 			Description: "Policy Name",
 		},
-		"description": &schema.Schema{
+		"description": {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "Policy Description",
 		},
-		"priority": &schema.Schema{
+		"priority": {
 			Type:        schema.TypeInt,
 			Optional:    true,
 			Description: "Policy Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last/lowest if not there.",
 			// Suppress diff if config is empty.
 			DiffSuppressFunc: createValueDiffSuppression("0"),
 		},
-		"status": &schema.Schema{
+		"status": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "ACTIVE",
@@ -51,22 +51,22 @@ var (
 
 	// Pattern used in a few spots, whitelisting/blacklisting users and groups
 	peopleSchema = map[string]*schema.Schema{
-		"user_whitelist": &schema.Schema{
+		"user_whitelist": {
 			Type:     schema.TypeSet,
 			Elem:     &schema.Schema{Type: schema.TypeString},
 			Optional: true,
 		},
-		"user_blacklist": &schema.Schema{
+		"user_blacklist": {
 			Type:     schema.TypeSet,
 			Elem:     &schema.Schema{Type: schema.TypeString},
 			Optional: true,
 		},
-		"group_whitelist": &schema.Schema{
+		"group_whitelist": {
 			Type:     schema.TypeSet,
 			Elem:     &schema.Schema{Type: schema.TypeString},
 			Optional: true,
 		},
-		"group_blacklist": &schema.Schema{
+		"group_blacklist": {
 			Type:     schema.TypeSet,
 			Elem:     &schema.Schema{Type: schema.TypeString},
 			Optional: true,
@@ -112,14 +112,14 @@ func buildPolicySchema(target map[string]*schema.Schema) map[string]*schema.Sche
 	return buildSchema(basePolicySchema, target)
 }
 
-func createPolicy(d *schema.ResourceData, meta interface{}, template *articulateOkta.Policy) error {
-	client := getClientFromMetadata(meta)
-	policy, _, err := client.Policies.CreatePolicy(template)
+func createPolicy(d *schema.ResourceData, m interface{}, template sdk.Policy) error {
+	client := getSupplementFromMetadata(m)
+	policy, _, err := client.CreatePolicy(context.Background(), template)
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Creating Policy: %v", err)
 	}
 	log.Printf("[INFO] Okta Policy Created: %+v. Adding Policy to Terraform.", policy)
-	d.SetId(policy.ID)
+	d.SetId(policy.Id)
 
 	// Even if priority is invalid we want to add the policy to Terraform to reflect upstream.
 	err = validatePriority(template.Priority, policy.Priority)
@@ -127,52 +127,47 @@ func createPolicy(d *schema.ResourceData, meta interface{}, template *articulate
 		return err
 	}
 
-	return policyActivate(d, meta)
+	return policyActivate(d, m)
 }
 
 func ensureNotDefaultPolicy(d *schema.ResourceData) error {
 	return ensureNotDefault(d, "Policy")
 }
 
-func getGroups(d *schema.ResourceData) *articulateOkta.People {
-
-	var people *articulateOkta.People
-
+func getGroups(d *schema.ResourceData) *okta.PolicyPeopleCondition {
+	var people *okta.PolicyPeopleCondition
 	if include, ok := d.GetOk("groups_included"); ok {
-		people = &articulateOkta.People{
-			Groups: &articulateOkta.Groups{
+		people = &okta.PolicyPeopleCondition{
+			Groups: &okta.GroupCondition{
 				Include: convertInterfaceToStringSet(include),
 			},
 		}
 	}
-
 	return people
 }
 
 // Grabs policy from upstream, if the resource does not exist the returned policy will be nil which is not considered an error
-func getPolicy(d *schema.ResourceData, m interface{}) (*articulateOkta.Policy, error) {
-	client := m.(*Config).articulateOktaClient
-	policy, resp, err := client.Policies.GetPolicy(d.Id())
-
-	if is404(resp.StatusCode) {
+func getPolicy(d *schema.ResourceData, m interface{}) (*sdk.Policy, error) {
+	policy, resp, err := getSupplementFromMetadata(m).GetPolicy(context.Background(), d.Id())
+	if resp != nil && is404(resp.StatusCode) {
+		d.SetId("")
 		return nil, nil
 	}
-
 	return policy, err
 }
 
 // activate or deactivate a policy according to the terraform schema status field
 func policyActivate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*Config).articulateOktaClient
+	client := getOktaClientFromMetadata(m)
 
 	if d.Get("status").(string) == "ACTIVE" {
-		_, err := client.Policies.ActivatePolicy(d.Id())
+		_, err := client.Policy.ActivatePolicy(context.Background(), d.Id())
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Activating Policy: %v", err)
 		}
 	}
 	if d.Get("status").(string) == "INACTIVE" {
-		_, err := client.Policies.DeactivatePolicy(d.Id())
+		_, err := client.Policy.DeactivatePolicy(context.Background(), d.Id())
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Deactivating Policy: %v", err)
 		}
@@ -180,9 +175,9 @@ func policyActivate(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func updatePolicy(d *schema.ResourceData, meta interface{}, template *articulateOkta.Policy) error {
-	client := getClientFromMetadata(meta)
-	policy, _, err := client.Policies.UpdatePolicy(d.Id(), template)
+func updatePolicy(d *schema.ResourceData, m interface{}, template sdk.Policy) error {
+	client := getSupplementFromMetadata(m)
+	policy, _, err := client.UpdatePolicy(context.Background(), d.Id(), template)
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error Updating Policy: %v", err)
 	}
@@ -193,10 +188,25 @@ func updatePolicy(d *schema.ResourceData, meta interface{}, template *articulate
 	}
 	log.Printf("[INFO] Okta Policy Updated: %+v", policy)
 
-	return policyActivate(d, meta)
+	return policyActivate(d, m)
 }
 
-func resourcePolicyExists(d *schema.ResourceData, m interface{}) (b bool, e error) {
+func deletePolicy(d *schema.ResourceData, m interface{}) error {
+	if err := ensureNotDefaultPolicy(d); err != nil {
+		return err
+	}
+	log.Printf("[INFO] Delete Policy %v", d.Get("name").(string))
+	client := getOktaClientFromMetadata(m)
+	_, err := client.Policy.DeletePolicy(context.Background(), d.Id())
+	if err != nil {
+		return fmt.Errorf("[ERROR] Error Deleting Policy from Okta: %v", err)
+	}
+	// remove the policy resource from terraform
+	d.SetId("")
+	return nil
+}
+
+func resourcePolicyExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	// Exists - This is called to verify a resource still exists. It is called prior to Read,
 	// and lowers the burden of Read to be able to assume the resource exists.
 	policy, err := getPolicy(d, m)
@@ -208,7 +218,7 @@ func resourcePolicyExists(d *schema.ResourceData, m interface{}) (b bool, e erro
 	return true, nil
 }
 
-func syncPolicyFromUpstream(d *schema.ResourceData, policy *articulateOkta.Policy) error {
+func syncPolicyFromUpstream(d *schema.ResourceData, policy *sdk.Policy) error {
 	_ = d.Set("name", policy.Name)
 	_ = d.Set("description", policy.Description)
 	_ = d.Set("status", policy.Status)

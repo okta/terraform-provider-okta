@@ -386,7 +386,7 @@ func buildIdpDiscoveryRule(d *schema.ResourceData, m interface{}) *sdk.IdpDiscov
 			Platform:       buildPlatformInclude(d),
 			UserIdentifier: buildIdentifier(d),
 		},
-		Type:   idpDiscovery,
+		Type:   sdk.IdpDiscoveryType,
 		Name:   d.Get("name").(string),
 		Status: d.Get("status").(string),
 	}

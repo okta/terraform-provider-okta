@@ -13,22 +13,22 @@ import (
 
 var appUserResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
-		"scope": &schema.Schema{
+		"scope": {
 			Type:        schema.TypeString,
 			Computed:    true,
 			Description: "Scope of application user.",
 		},
-		"id": &schema.Schema{
+		"id": {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "User ID.",
 		},
-		"username": &schema.Schema{
+		"username": {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "Username for user.",
 		},
-		"password": &schema.Schema{
+		"password": {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "Password for user application.",
@@ -37,34 +37,34 @@ var appUserResource = &schema.Resource{
 }
 
 var baseAppSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
+	"name": {
 		Type:        schema.TypeString,
 		Computed:    true,
 		Description: "name of app.",
 	},
-	"label": &schema.Schema{
+	"label": {
 		Type:        schema.TypeString,
 		Required:    true,
 		Description: "Pretty name of app.",
 	},
-	"sign_on_mode": &schema.Schema{
+	"sign_on_mode": {
 		Type:        schema.TypeString,
 		Computed:    true,
 		Description: "Sign on mode of application.",
 	},
-	"users": &schema.Schema{
+	"users": {
 		Type:        schema.TypeSet,
 		Optional:    true,
 		Elem:        appUserResource,
 		Description: "Users associated with the application",
 	},
-	"groups": &schema.Schema{
+	"groups": {
 		Type:        schema.TypeSet,
 		Optional:    true,
 		Elem:        &schema.Schema{Type: schema.TypeString},
 		Description: "Groups associated with the application",
 	},
-	"status": &schema.Schema{
+	"status": {
 		Type:         schema.TypeString,
 		Optional:     true,
 		Default:      "ACTIVE",
@@ -74,19 +74,19 @@ var baseAppSchema = map[string]*schema.Schema{
 }
 
 var appVisibilitySchema = map[string]*schema.Schema{
-	"auto_submit_toolbar": &schema.Schema{
+	"auto_submit_toolbar": {
 		Type:        schema.TypeBool,
 		Optional:    true,
 		Default:     false,
 		Description: "Display auto submit toolbar",
 	},
-	"hide_ios": &schema.Schema{
+	"hide_ios": {
 		Type:        schema.TypeBool,
 		Optional:    true,
 		Default:     false,
 		Description: "Do not display application icon on mobile app",
 	},
-	"hide_web": &schema.Schema{
+	"hide_web": {
 		Type:        schema.TypeBool,
 		Optional:    true,
 		Default:     false,
@@ -95,42 +95,42 @@ var appVisibilitySchema = map[string]*schema.Schema{
 }
 
 var baseappSwaSchema = map[string]*schema.Schema{
-	"accessibility_self_service": &schema.Schema{
+	"accessibility_self_service": {
 		Type:        schema.TypeBool,
 		Optional:    true,
 		Default:     false,
 		Description: "Enable self service",
 	},
-	"accessibility_error_redirect_url": &schema.Schema{
+	"accessibility_error_redirect_url": {
 		Type:         schema.TypeString,
 		Optional:     true,
 		Description:  "Custom error page URL",
 		ValidateFunc: validateIsURL,
 	},
-	"auto_submit_toolbar": &schema.Schema{
+	"auto_submit_toolbar": {
 		Type:        schema.TypeBool,
 		Optional:    true,
 		Default:     false,
 		Description: "Display auto submit toolbar",
 	},
-	"hide_ios": &schema.Schema{
+	"hide_ios": {
 		Type:        schema.TypeBool,
 		Optional:    true,
 		Default:     false,
 		Description: "Do not display application icon on mobile app",
 	},
-	"hide_web": &schema.Schema{
+	"hide_web": {
 		Type:        schema.TypeBool,
 		Optional:    true,
 		Default:     false,
 		Description: "Do not display application icon to users",
 	},
-	"user_name_template": &schema.Schema{
+	"user_name_template": {
 		Type:        schema.TypeString,
 		Computed:    true,
 		Description: "Username template",
 	},
-	"user_name_template_type": &schema.Schema{
+	"user_name_template_type": {
 		Type:        schema.TypeString,
 		Computed:    true,
 		Description: "Username template type",

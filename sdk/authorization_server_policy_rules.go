@@ -10,24 +10,24 @@ import (
 
 type (
 	AuthorizationServerPolicyRule struct {
-		Status     string                `json:"status,omitempty"`
-		Priority   int                   `json:"priority,omitempty"`
-		Type       string                `json:"type,omitempty"`
-		Name       string                `json:"name,omitempty"`
-		Id         string                `json:"id,omitempty"`
-		Conditions *PolicyRuleConditions `json:"conditions,omitempty"`
-		Actions    *PolicyRuleActions    `json:"actions,omitempty"`
+		Status     string                                   `json:"status,omitempty"`
+		Priority   int                                      `json:"priority,omitempty"`
+		Type       string                                   `json:"type,omitempty"`
+		Name       string                                   `json:"name,omitempty"`
+		Id         string                                   `json:"id,omitempty"`
+		Conditions *AuthorizationServerPolicyRuleConditions `json:"conditions,omitempty"`
+		Actions    *AuthorizationServerPolicyRuleActions    `json:"actions,omitempty"`
 	}
 
 	AuthServerInlineHook struct {
 		Id string `json:"id,omitempty"`
 	}
 
-	PolicyRuleActions struct {
+	AuthorizationServerPolicyRuleActions struct {
 		Token *TokenActions `json:"token,omitempty"`
 	}
 
-	PolicyRuleConditions struct {
+	AuthorizationServerPolicyRuleConditions struct {
 		GrantTypes *Whitelist                     `json:"grantTypes,omitempty"`
 		People     *okta.GroupRulePeopleCondition `json:"people,omitempty"`
 		Scopes     *Whitelist                     `json:"scopes,omitempty"`

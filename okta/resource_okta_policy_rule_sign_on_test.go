@@ -7,10 +7,11 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func deleteSignOnPolicyRules(client *testClient) error {
-	return deletePolicyRulesByType(signOnPolicyType, client)
+	return deletePolicyRulesByType(sdk.SignOnPolicyType, client)
 }
 
 func TestAccOktaPolicyRuleSignon_defaultErrors(t *testing.T) {

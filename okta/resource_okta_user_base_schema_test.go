@@ -5,16 +5,15 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 )
 
 const baseTestProp = "firstName"
 
 func sweepUserBaseSchema(client *testClient) error {
-	_, _, err := client.artClient.Schemas.GetUserSchema()
+	_, _, err := client.apiSupplement.GetUserSchema()
 	if err != nil {
 		return err
 	}
@@ -76,27 +75,15 @@ func testOktaUserBaseSchemasExists(name string) resource.TestCheckFunc {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("Not found: %s", name)
+			return fmt.Errorf("not found: %s", name)
 		}
-
-		if exists, _ := testUserBaseSchemaExists(rs.Primary.ID); !exists {
-			return fmt.Errorf("Failed to find %s", rs.Primary.ID)
+		exists, err := testSchemaPropertyExists(rs.Primary.ID, baseSchema)
+		if err != nil {
+			return fmt.Errorf("failed to find: %v", err)
+		}
+		if !exists {
+			return fmt.Errorf("base property %s does not exist in a profile subschema", rs.Primary.ID)
 		}
 		return nil
 	}
-}
-
-func testUserBaseSchemaExists(index string) (bool, error) {
-	client := getClientFromMetadata(testAccProvider.Meta())
-	subschema, _, err := client.Schemas.GetUserSubSchemaIndex(baseSchema)
-	if err != nil {
-		return false, fmt.Errorf("Error Listing User Subschema in Okta: %v", err)
-	}
-	for _, key := range subschema {
-		if key == index {
-			return true, nil
-		}
-	}
-
-	return false, nil
 }

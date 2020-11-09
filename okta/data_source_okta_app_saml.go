@@ -12,36 +12,36 @@ func dataSourceAppSaml() *schema.Resource {
 		Read: dataSourceAppSamlRead,
 
 		Schema: map[string]*schema.Schema{
-			"id": &schema.Schema{
+			"id": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"label", "label_prefix"},
 			},
-			"label": &schema.Schema{
+			"label": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"id", "label_prefix"},
 			},
-			"label_prefix": &schema.Schema{
+			"label_prefix": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"id", "label"},
 			},
-			"active_only": &schema.Schema{
+			"active_only": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     true,
 				Description: "Search only ACTIVE applications.",
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"status": &schema.Schema{
+			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -191,18 +191,18 @@ func dataSourceAppSaml() *schema.Resource {
 				Description: "features to enable",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			"user_name_template": &schema.Schema{
+			"user_name_template": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "${source.login}",
 				Description: "Username template",
 			},
-			"user_name_template_suffix": &schema.Schema{
+			"user_name_template_suffix": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Username template suffix",
 			},
-			"user_name_template_type": &schema.Schema{
+			"user_name_template_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Default:      "BUILT_IN",
