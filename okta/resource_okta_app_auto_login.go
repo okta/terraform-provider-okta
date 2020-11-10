@@ -87,6 +87,12 @@ func resourceAppAutoLoginCreate(d *schema.ResourceData, m interface{}) error {
 
 	d.SetId(app.Id)
 
+	err = handleAppGroupsAndUsers(app.Id, d, m)
+
+	if err != nil {
+		return err
+	}
+
 	return resourceAppAutoLoginRead(d, m)
 }
 
@@ -116,9 +122,10 @@ func resourceAppAutoLoginRead(d *schema.ResourceData, m interface{}) error {
 
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 
-	return nil
+	return syncGroupsAndUsers(app.Id, d, m)
 }
 
 func resourceAppAutoLoginUpdate(d *schema.ResourceData, m interface{}) error {
@@ -132,6 +139,12 @@ func resourceAppAutoLoginUpdate(d *schema.ResourceData, m interface{}) error {
 
 	desiredStatus := d.Get("status").(string)
 	err = setAppStatus(d, client, app.Status, desiredStatus)
+
+	if err != nil {
+		return err
+	}
+
+	err = handleAppGroupsAndUsers(app.Id, d, m)
 
 	if err != nil {
 		return err

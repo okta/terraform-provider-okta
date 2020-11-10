@@ -94,7 +94,7 @@ var appVisibilitySchema = map[string]*schema.Schema{
 	},
 }
 
-var baseappSwaSchema = map[string]*schema.Schema{
+var baseAppSwaSchema = map[string]*schema.Schema{
 	"accessibility_self_service": &schema.Schema{
 		Type:        schema.TypeBool,
 		Optional:    true,
@@ -127,13 +127,21 @@ var baseappSwaSchema = map[string]*schema.Schema{
 	},
 	"user_name_template": &schema.Schema{
 		Type:        schema.TypeString,
-		Computed:    true,
+		Optional:    true,
+		Default:     "${source.login}",
 		Description: "Username template",
 	},
-	"user_name_template_type": &schema.Schema{
+	"user_name_template_suffix": &schema.Schema{
 		Type:        schema.TypeString,
-		Computed:    true,
-		Description: "Username template type",
+		Optional:    true,
+		Description: "Username template suffix",
+	},
+	"user_name_template_type": &schema.Schema{
+		Type:         schema.TypeString,
+		Optional:     true,
+		Default:      "BUILT_IN",
+		Description:  "Username template type",
+		ValidateFunc: validation.StringInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}, false),
 	},
 }
 
@@ -155,8 +163,7 @@ func buildAppSchema(appSchema map[string]*schema.Schema) map[string]*schema.Sche
 }
 
 func buildAppSchemaWithVisibility(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	schema := buildSchema(baseAppSchema, appSchema)
-	return buildSchema(appVisibilitySchema, schema)
+	return buildSchema(baseAppSchema, appVisibilitySchema, appSchema)
 }
 
 func buildSchemeCreds(d *schema.ResourceData) *okta.SchemeApplicationCredentials {
@@ -165,7 +172,12 @@ func buildSchemeCreds(d *schema.ResourceData) *okta.SchemeApplicationCredentials
 	return &okta.SchemeApplicationCredentials{
 		RevealPassword: &revealPass,
 		Scheme:         d.Get("credentials_scheme").(string),
-		UserName:       d.Get("shared_username").(string),
+		UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
+			Template: d.Get("user_name_template").(string),
+			Type:     d.Get("user_name_template_type").(string),
+			Suffix:   d.Get("user_name_template_suffix").(string),
+		},
+		UserName: d.Get("shared_username").(string),
 		Password: &okta.PasswordCredential{
 			Value: d.Get("shared_password").(string),
 		},
@@ -173,8 +185,7 @@ func buildSchemeCreds(d *schema.ResourceData) *okta.SchemeApplicationCredentials
 }
 
 func buildAppSwaSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	s := buildAppSchema(appSchema)
-	return buildSchema(baseappSwaSchema, s)
+	return buildSchema(baseAppSchema, baseAppSwaSchema, appSchema)
 }
 
 func buildVisibility(d *schema.ResourceData) *okta.ApplicationVisibility {
