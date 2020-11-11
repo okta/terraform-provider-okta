@@ -2,7 +2,6 @@ package okta
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
@@ -49,7 +48,7 @@ func findGroup(name string, d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return fmt.Errorf("failed to query for groups: %v", err)
 	} else if len(groups) < 1 {
-		return errors.New("group not found")
+		return fmt.Errorf("group \"%s\" not found", name)
 	}
 
 	d.SetId(groups[0].Id)

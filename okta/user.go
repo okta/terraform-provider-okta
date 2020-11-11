@@ -349,6 +349,8 @@ func flattenUser(u *okta.User) (map[string]interface{}, error) {
 		}
 	}
 
+	attrs["status"] = mapStatus(u.Status)
+
 	data, err := json.Marshal(customAttributes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load custom_attributes to JSON")
