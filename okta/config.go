@@ -41,10 +41,10 @@ func (c *Config) loadAndValidate() error {
 	httpClient := cleanhttp.DefaultClient()
 	httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
 
-	orgUrl := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
+	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
 	ctx, client, err := okta.NewClient(
 		context.Background(),
-		okta.WithOrgUrl(orgUrl),
+		okta.WithOrgUrl(orgURL),
 		okta.WithToken(c.apiToken),
 		okta.WithCache(false),
 		okta.WithHttpClient(*httpClient),

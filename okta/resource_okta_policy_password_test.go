@@ -52,7 +52,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test Password Policy"),
 				),
 			},
@@ -61,7 +61,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test Password Policy Updated"),
 					resource.TestCheckResourceAttr(resourceName, "password_min_length", "12"),
 					resource.TestCheckResourceAttr(resourceName, "password_min_lowercase", "0"),
@@ -81,7 +81,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "password_lockout_notification_channels.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "question_min_length", "10"),
 					resource.TestCheckResourceAttr(resourceName, "recovery_email_token", "20160"),
-					resource.TestCheckResourceAttr(resourceName, "sms_recovery", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "sms_recovery", statusActive),
 				),
 			},
 		},

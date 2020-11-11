@@ -31,7 +31,7 @@ func syncSamlEndpointBinding(d *schema.ResourceData, services []saml.Endpoint) {
 	}
 }
 
-func getExternalID(url string, pattern string) string {
+func getExternalID(url, pattern string) string {
 	// Default idp issuer is such that I can extract the ID. If someone enters a custom value
 	// this will result in "" most likely, which seems fine
 	pur := strings.Replace(pattern, "${org.externalKey}", "", -1)

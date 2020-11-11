@@ -52,7 +52,7 @@ func condenseError(errorList []error) error {
 		msgList[i] = err.Error()
 	}
 
-	return fmt.Errorf("Series of errors occurred: %s", strings.Join(msgList, ", "))
+	return fmt.Errorf("series of errors occurred: %s", strings.Join(msgList, ", "))
 }
 
 func conditionalRequire(d *schema.ResourceData, propList []string, reason string) error {
@@ -72,7 +72,7 @@ func conditionalRequire(d *schema.ResourceData, propList []string, reason string
 }
 
 // Conditionally validates a slice of strings for required and valid values.
-func conditionalValidator(field string, typeValue string, require []string, valid []string, actual []string) error {
+func conditionalValidator(field, typeValue string, require, valid, actual []string) error {
 	explanation := fmt.Sprintf("failed conditional validation for field \"%s\" of type \"%s\", it can contain %s", field, typeValue, strings.Join(valid, ", "))
 
 	if len(require) > 0 {
@@ -169,7 +169,7 @@ func createCustomNestedResourceImporter(fields []string, errMessage string) *sch
 		State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 			parts := strings.Split(d.Id(), "/")
 			if len(parts) != len(fields) {
-				return nil, fmt.Errorf("Invalid resource import specifier. %s", errMessage)
+				return nil, fmt.Errorf("invalid resource import specifier. %s", errMessage)
 			}
 
 			for i, field := range fields {
@@ -290,13 +290,14 @@ func is404(status int) bool {
 	return status == http.StatusNotFound
 }
 
+var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+
 // regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
-func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []error) {
-	re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-	if !re.MatchString(val.(string)) {
-		errors = append(errors, fmt.Errorf("%s field not a valid email address", key))
+func matchEmailRegexp(val interface{}, key string) (warnings []string, errs []error) {
+	if !emailRegex.MatchString(val.(string)) {
+		errs = append(errs, fmt.Errorf("%s field not a valid email address", key))
 	}
-	return warnings, errors
+	return warnings, errs
 }
 
 func normalizeDataJSON(val interface{}) string {

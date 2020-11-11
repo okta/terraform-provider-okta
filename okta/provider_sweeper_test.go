@@ -44,8 +44,8 @@ func TestMain(m *testing.M) {
 func setupSweeper(resourceType string, del func(*testClient) error) {
 	resource.AddTestSweepers(resourceType, &resource.Sweeper{
 		Name: resourceType,
-		F: func(region string) error {
-			client, apiSupplement, err := sharedClient(region)
+		F: func(_ string) error {
+			client, apiSupplement, err := sharedClient()
 
 			if err != nil {
 				return err
@@ -66,7 +66,7 @@ func buildResourceName(testID int) string {
 }
 
 // sharedClient returns a common Okta Client for sweepers, which currently requires the original SDK and the official beta SDK
-func sharedClient(region string) (*okta.Client, *sdk.ApiSupplement, error) {
+func sharedClient() (*okta.Client, *sdk.ApiSupplement, error) {
 	err := accPreCheck()
 	if err != nil {
 		return nil, nil, err

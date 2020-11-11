@@ -123,9 +123,9 @@ func buildTrustedOrigin(d *schema.ResourceData) okta.TrustedOrigin {
 		Origin: d.Get("origin").(string),
 	}
 	if d.Get("active").(bool) {
-		trustedOrigin.Status = "ACTIVE"
+		trustedOrigin.Status = statusActive
 	} else {
-		trustedOrigin.Status = "INACTIVE"
+		trustedOrigin.Status = statusInactive
 	}
 
 	resScopes := d.Get("scopes").([]interface{})
@@ -148,7 +148,7 @@ func setTrustedOrigin(d *schema.ResourceData, to *okta.TrustedOrigin) error {
 		scopes[i] = scope.Type
 	}
 
-	_ = d.Set("active", to.Status == "ACTIVE")
+	_ = d.Set("active", to.Status == statusActive)
 	_ = d.Set("origin", to.Origin)
 	_ = d.Set("name", to.Name)
 

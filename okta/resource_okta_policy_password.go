@@ -141,9 +141,9 @@ func resourcePolicyPassword() *schema.Resource {
 			"email_recovery": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
+				ValidateFunc: validation.StringInSlice([]string{statusActive, statusInactive}, false),
 				Description:  "Enable or disable email password recovery: ACTIVE or INACTIVE.",
-				Default:      "ACTIVE",
+				Default:      statusActive,
 			},
 			"recovery_email_token": {
 				Type:        schema.TypeInt,
@@ -154,16 +154,16 @@ func resourcePolicyPassword() *schema.Resource {
 			"sms_recovery": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
+				ValidateFunc: validation.StringInSlice([]string{statusActive, statusInactive}, false),
 				Description:  "Enable or disable SMS password recovery: ACTIVE or INACTIVE.",
-				Default:      "INACTIVE",
+				Default:      statusInactive,
 			},
 			"question_recovery": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
+				ValidateFunc: validation.StringInSlice([]string{statusActive, statusInactive}, false),
 				Description:  "Enable or disable security question password recovery: ACTIVE or INACTIVE.",
-				Default:      "ACTIVE",
+				Default:      statusActive,
 			},
 			"skip_unlock": {
 				Type:        schema.TypeBool,
@@ -210,6 +210,10 @@ func resourcePolicyPasswordRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if policy.Settings != nil {
+		err = d.Set("password_lockout_notification_channels", convertStringSetToInterface(policy.Settings.Password.Lockout.UserLockoutNotificationChannels))
+		if err != nil {
+			return fmt.Errorf("error setting notification channels for resource %s: %s", d.Id(), err)
+		}
 		_ = d.Set("password_min_length", policy.Settings.Password.Complexity.MinLength)
 		_ = d.Set("password_min_lowercase", policy.Settings.Password.Complexity.MinLowerCase)
 		_ = d.Set("password_min_uppercase", policy.Settings.Password.Complexity.MinUpperCase)
@@ -224,9 +228,6 @@ func resourcePolicyPasswordRead(d *schema.ResourceData, m interface{}) error {
 		_ = d.Set("password_max_lockout_attempts", policy.Settings.Password.Lockout.MaxAttempts)
 		_ = d.Set("password_auto_unlock_minutes", policy.Settings.Password.Lockout.AutoUnlockMinutes)
 		_ = d.Set("password_show_lockout_failures", policy.Settings.Password.Lockout.ShowLockoutFailures)
-		if err := d.Set("password_lockout_notification_channels", convertStringSetToInterface(policy.Settings.Password.Lockout.UserLockoutNotificationChannels)); err != nil {
-			return fmt.Errorf("error setting notification channels for resource %s: %s", d.Id(), err)
-		}
 		_ = d.Set("question_min_length", policy.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLength)
 		_ = d.Set("recovery_email_token", policy.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutes)
 		_ = d.Set("sms_recovery", policy.Settings.Recovery.Factors.OktaSms.Status)

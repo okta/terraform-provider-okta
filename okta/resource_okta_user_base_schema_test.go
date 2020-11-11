@@ -60,7 +60,7 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 				ImportState:  true,
 				ImportStateCheck: func(s []*terraform.InstanceState) error {
 					if len(s) != 1 {
-						return errors.New("Failed to import schema into state")
+						return errors.New("failed to import schema into state")
 					}
 
 					return nil

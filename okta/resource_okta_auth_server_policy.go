@@ -17,31 +17,31 @@ func resourceAuthServerPolicy() *schema.Resource {
 		Importer: createNestedResourceImporter([]string{"auth_server_id", "id"}),
 
 		Schema: map[string]*schema.Schema{
-			"type": &schema.Schema{
+			"type": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     sdk.OauthAuthorizationPolicyType,
 				Description: "Auth server policy type, unlikely this will be anything other then the default",
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"auth_server_id": &schema.Schema{
+			"auth_server_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"status": statusSchema,
-			"priority": &schema.Schema{
+			"priority": {
 				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "Priority of the auth server policy",
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"client_whitelist": &schema.Schema{
+			"client_whitelist": {
 				Type:        schema.TypeSet,
 				Required:    true,
 				Description: "Use [\"ALL_CLIENTS\"] when unsure.",

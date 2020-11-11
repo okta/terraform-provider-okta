@@ -2,17 +2,17 @@ package okta
 
 import "context"
 
-func listGroupUserIds(m interface{}, id string) ([]string, error) {
+func listGroupUserIDs(m interface{}, id string) ([]string, error) {
 	client := getOktaClientFromMetadata(m)
 	arr, _, err := client.Group.ListGroupUsers(context.Background(), id, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	userIdList := make([]string, len(arr))
+	userIDList := make([]string, len(arr))
 	for i, user := range arr {
-		userIdList[i] = user.Id
+		userIDList[i] = user.Id
 	}
 
-	return userIdList, nil
+	return userIDList, nil
 }

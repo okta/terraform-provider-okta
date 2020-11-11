@@ -41,8 +41,8 @@ type (
 	}
 )
 
-func (m *ApiSupplement) DeleteAuthorizationServerPolicyRule(authServerId, policyId, id string) (*okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules/%s", authServerId, policyId, id)
+func (m *ApiSupplement) DeleteAuthorizationServerPolicyRule(authServerID, policyID, id string) (*okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules/%s", authServerID, policyID, id)
 	req, err := m.RequestExecutor.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err
@@ -51,8 +51,8 @@ func (m *ApiSupplement) DeleteAuthorizationServerPolicyRule(authServerId, policy
 	return m.RequestExecutor.Do(context.Background(), req, nil)
 }
 
-func (m *ApiSupplement) ListAuthorizationServerPolicyRules(authServerId, policyId string) ([]*AuthorizationServerPolicyRule, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules", authServerId, policyId)
+func (m *ApiSupplement) ListAuthorizationServerPolicyRules(authServerID, policyID string) ([]*AuthorizationServerPolicyRule, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules", authServerID, policyID)
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
@@ -63,8 +63,8 @@ func (m *ApiSupplement) ListAuthorizationServerPolicyRules(authServerId, policyI
 	return auth, resp, err
 }
 
-func (m *ApiSupplement) CreateAuthorizationServerPolicyRule(authServerId, policyId string, body AuthorizationServerPolicyRule, qp *query.Params) (*AuthorizationServerPolicyRule, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules", authServerId, policyId)
+func (m *ApiSupplement) CreateAuthorizationServerPolicyRule(authServerID, policyID string, body AuthorizationServerPolicyRule, qp *query.Params) (*AuthorizationServerPolicyRule, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules", authServerID, policyID)
 	if qp != nil {
 		url = url + qp.String()
 	}
@@ -78,8 +78,8 @@ func (m *ApiSupplement) CreateAuthorizationServerPolicyRule(authServerId, policy
 	return &authorizationServer, resp, err
 }
 
-func (m *ApiSupplement) UpdateAuthorizationServerPolicyRule(authServerId, policyId, id string, body AuthorizationServerPolicyRule, qp *query.Params) (*AuthorizationServerPolicyRule, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules/%s", authServerId, policyId, id)
+func (m *ApiSupplement) UpdateAuthorizationServerPolicyRule(authServerID, policyID, id string, body AuthorizationServerPolicyRule, qp *query.Params) (*AuthorizationServerPolicyRule, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules/%s", authServerID, policyID, id)
 	if qp != nil {
 		url = url + qp.String()
 	}
@@ -96,8 +96,8 @@ func (m *ApiSupplement) UpdateAuthorizationServerPolicyRule(authServerId, policy
 	return &authorizationServer, resp, nil
 }
 
-func (m *ApiSupplement) GetAuthorizationServerPolicyRule(authServerId, policyId, id string, authorizationServerInstance AuthorizationServerPolicyRule) (*AuthorizationServerPolicyRule, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules/%s", authServerId, policyId, id)
+func (m *ApiSupplement) GetAuthorizationServerPolicyRule(authServerID, policyID, id string, authorizationServerInstance AuthorizationServerPolicyRule) (*AuthorizationServerPolicyRule, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules/%s", authServerID, policyID, id)
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err

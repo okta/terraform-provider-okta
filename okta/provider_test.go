@@ -52,7 +52,7 @@ func oktaConfig() (*Config, error) {
 	}
 
 	if err := config.loadAndValidate(); err != nil {
-		return config, fmt.Errorf("Error initializing Okta client: %v", err)
+		return config, fmt.Errorf("error initializing Okta client: %v", err)
 	}
 
 	return config, nil

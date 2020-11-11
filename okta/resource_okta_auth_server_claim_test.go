@@ -23,7 +23,7 @@ func TestAccOktaAuthServerClaim_create(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "name", "test"),
 					resource.TestCheckResourceAttr(resourceName, "value_type", "EXPRESSION"),
 					resource.TestCheckResourceAttr(resourceName, "value", "cool"),
@@ -33,7 +33,7 @@ func TestAccOktaAuthServerClaim_create(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "name", "test_updated"),
 					resource.TestCheckResourceAttr(resourceName, "value_type", "EXPRESSION"),
 					resource.TestCheckResourceAttr(resourceName, "value", "cool_updated"),
@@ -59,14 +59,14 @@ func TestAccOktaAuthServerClaim_groupType(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "name", "test"),
 					resource.TestCheckResourceAttr(resourceName, "group_filter_type", "EQUALS"),
 					resource.TestCheckResourceAttr(resourceName, "value_type", "GROUPS"),
 					resource.TestCheckResourceAttr(resourceName, "value", "Everyone"),
 					resource.TestCheckResourceAttr(resourceName, "claim_type", "RESOURCE"),
 
-					resource.TestCheckResourceAttr(swResourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(swResourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(swResourceName, "name", "test_sw"),
 					resource.TestCheckResourceAttr(swResourceName, "group_filter_type", "STARTS_WITH"),
 					resource.TestCheckResourceAttr(swResourceName, "value_type", "GROUPS"),

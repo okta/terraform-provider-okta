@@ -161,8 +161,8 @@ type Enroll struct {
 }
 
 // Gets a policy.
-func (m *ApiSupplement) GetPolicy(ctx context.Context, policyId string) (*Policy, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/policies/%v", policyId)
+func (m *ApiSupplement) GetPolicy(ctx context.Context, policyID string) (*Policy, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/policies/%v", policyID)
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
@@ -194,8 +194,8 @@ func (m *ApiSupplement) ListPolicies(ctx context.Context, qp *query.Params) ([]P
 }
 
 // Updates a policy.
-func (m *ApiSupplement) UpdatePolicy(ctx context.Context, policyId string, body Policy) (*Policy, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/policies/%v", policyId)
+func (m *ApiSupplement) UpdatePolicy(ctx context.Context, policyID string, body Policy) (*Policy, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/policies/%v", policyID)
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest("PUT", url, body)
 	if err != nil {
 		return nil, nil, err

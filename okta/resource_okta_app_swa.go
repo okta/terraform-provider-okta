@@ -23,33 +23,33 @@ func resourceAppSwa() *schema.Resource {
 		},
 
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
-			"preconfigured_app": &schema.Schema{
+			"preconfigured_app": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Preconfigured app name",
 			},
-			"button_field": &schema.Schema{
+			"button_field": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Login button field",
 			},
-			"password_field": &schema.Schema{
+			"password_field": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Login password field",
 			},
-			"username_field": &schema.Schema{
+			"username_field": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Login username field",
 			},
-			"url": &schema.Schema{
+			"url": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "Login URL",
 				ValidateFunc: validateIsURL,
 			},
-			"url_regex": &schema.Schema{
+			"url_regex": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "A regex that further restricts URL to the specified regex",
@@ -60,8 +60,8 @@ func resourceAppSwa() *schema.Resource {
 
 func resourceAppSwaCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppSwa(d, m)
-	activate := d.Get("status").(string) == "ACTIVE"
+	app := buildAppSwa(d)
+	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
 	_, _, err := client.Application.CreateApplication(context.Background(), app, params)
 
@@ -108,7 +108,7 @@ func resourceAppSwaRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppSwaUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppSwa(d, m)
+	app := buildAppSwa(d)
 	_, _, err := client.Application.UpdateApplication(context.Background(), d.Id(), app)
 
 	if err != nil {
@@ -143,7 +143,7 @@ func resourceAppSwaDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func buildAppSwa(d *schema.ResourceData, m interface{}) *okta.SwaApplication {
+func buildAppSwa(d *schema.ResourceData) *okta.SwaApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewSwaApplication()
 	app.Label = d.Get("label").(string)

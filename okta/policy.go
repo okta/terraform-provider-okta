@@ -35,8 +35,8 @@ var (
 		"status": {
 			Type:         schema.TypeString,
 			Optional:     true,
-			Default:      "ACTIVE",
-			ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
+			Default:      statusActive,
+			ValidateFunc: validation.StringInSlice([]string{statusActive, statusInactive}, false),
 			Description:  "Policy Status: ACTIVE or INACTIVE.",
 		},
 		"groups_included": {
@@ -76,8 +76,8 @@ var (
 	statusSchema = &schema.Schema{
 		Type:         schema.TypeString,
 		Optional:     true,
-		Default:      "ACTIVE",
-		ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
+		Default:      statusActive,
+		ValidateFunc: validation.StringInSlice([]string{statusActive, statusInactive}, false),
 	}
 )
 
@@ -160,13 +160,13 @@ func getPolicy(d *schema.ResourceData, m interface{}) (*sdk.Policy, error) {
 func policyActivate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 
-	if d.Get("status").(string) == "ACTIVE" {
+	if d.Get("status").(string) == statusActive {
 		_, err := client.Policy.ActivatePolicy(context.Background(), d.Id())
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Activating Policy: %v", err)
 		}
 	}
-	if d.Get("status").(string) == "INACTIVE" {
+	if d.Get("status").(string) == statusInactive {
 		_, err := client.Policy.DeactivatePolicy(context.Background(), d.Id())
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Deactivating Policy: %v", err)

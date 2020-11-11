@@ -24,30 +24,30 @@ var userExcludedSchema = map[string]*schema.Schema{
 // Basis of policy rules
 var baseRuleSchema = map[string]*schema.Schema{
 	// Ugh vestigial incorrect naming. Should switch to policy_id
-	"policyid": &schema.Schema{
+	"policyid": {
 		Type:        schema.TypeString,
 		ForceNew:    true,
 		Required:    true,
 		Description: "Policy ID of the Rule",
 	},
-	"name": &schema.Schema{
+	"name": {
 		Type:        schema.TypeString,
 		ForceNew:    true,
 		Required:    true,
 		Description: "Policy Rule Name",
 	},
-	"priority": &schema.Schema{
+	"priority": {
 		Type:        schema.TypeInt,
 		Optional:    true,
 		Description: "Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last/lowest if not there.",
 		// Suppress diff if config is empty.
 		DiffSuppressFunc: createValueDiffSuppression("0"),
 	},
-	"status": &schema.Schema{
+	"status": {
 		Type:         schema.TypeString,
 		Optional:     true,
-		Default:      "ACTIVE",
-		ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
+		Default:      statusActive,
+		ValidateFunc: validation.StringInSlice([]string{statusActive, statusInactive}, false),
 		Description:  "Policy Rule Status: ACTIVE or INACTIVE.",
 	},
 	"network_connection": {
@@ -97,9 +97,9 @@ func createRule(d *schema.ResourceData, meta interface{}, template sdk.PolicyRul
 		return nil, fmt.Errorf("failed to list policy rules: %v", err)
 	}
 	ruleName := d.Get("name").(string)
-	for _, rule := range rules {
-		if rule.Name == ruleName {
-			return nil, fmt.Errorf("policy rule %v already exists in Okta. Please use 'import' to import it into terrafrom. terraform import %s.%s %s/%s", rule.Name, ruleType, rule.Name, policyID, rule.Id)
+	for i := range rules {
+		if rules[i].Name == ruleName {
+			return nil, fmt.Errorf("policy rule %v already exists in Okta. Please use 'import' to import it into terrafrom. terraform import %s.%s %s/%s", rules[i].Name, ruleType, rules[i].Name, policyID, rules[i].Id)
 		}
 	}
 	rule, _, err := client.CreatePolicyRule(ctx, policyID, template)
@@ -114,7 +114,7 @@ func createPolicyRuleImporter() *schema.ResourceImporter {
 		State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 			parts := strings.Split(d.Id(), "/")
 			if len(parts) != 2 {
-				return nil, fmt.Errorf("Invalid policy rule specifier. Expecting {policyID}/{ruleID}")
+				return nil, fmt.Errorf("invalid policy rule specifier. Expecting {policyID}/{ruleID}")
 			}
 			_ = d.Set("policyid", parts[0])
 			d.SetId(parts[1])

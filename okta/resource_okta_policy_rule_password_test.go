@@ -32,9 +32,9 @@ func deletePolicyRulesByType(ruleType string, client *testClient) error {
 		}
 		// Tests have always used default policy, I don't really think that is necessarily a good idea but
 		// leaving for now, that means we only delete the rules and not the policy, we can keep it around.
-		for _, rule := range rules {
-			if strings.HasPrefix(rule.Name, testResourcePrefix) {
-				_, err = client.oktaClient.Policy.DeletePolicyRule(ctx, policy.Id, rule.Id)
+		for i := range rules {
+			if strings.HasPrefix(rules[i].Name, testResourcePrefix) {
+				_, err = client.oktaClient.Policy.DeletePolicyRule(ctx, policy.Id, rules[i].Id)
 				if err != nil {
 					return err
 				}
@@ -60,7 +60,7 @@ func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 				),
 			},
 			{
@@ -68,7 +68,7 @@ func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "password_change", "DENY"),
 					resource.TestCheckResourceAttr(resourceName, "password_reset", "DENY"),
 					resource.TestCheckResourceAttr(resourceName, "password_unlock", "ALLOW"),
@@ -156,7 +156,7 @@ func createRuleCheckDestroy(ruleType string) func(*terraform.State) error {
 			}
 
 			if exists {
-				return fmt.Errorf("Rule still exists, ID: %s, PolicyID: %s", ID, policyID)
+				return fmt.Errorf("rule still exists, ID: %s, PolicyID: %s", ID, policyID)
 			}
 		}
 		return nil

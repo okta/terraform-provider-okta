@@ -23,22 +23,22 @@ func dataSourceUser() *schema.Resource {
 				Description: "Retrieve a single user based on their id",
 				Optional:    true,
 			},
-			"search": &schema.Schema{
+			"search": {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Filter to find a user, each filter will be concatenated with an AND clause. Please be aware profile properties must match what is in Okta, which is likely camel case",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": &schema.Schema{
+						"name": {
 							Type:        schema.TypeString,
 							Required:    true,
 							Description: "Property name to search for. This requires the search feature be on. Please see Okta documentation on their filter API for users. https://developer.okta.com/docs/api/resources/users#list-users-with-search",
 						},
-						"value": &schema.Schema{
+						"value": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"comparison": &schema.Schema{
+						"comparison": {
 							Type:         schema.TypeString,
 							Optional:     true,
 							Default:      "eq",
@@ -57,17 +57,17 @@ func dataSourceUserRead(d *schema.ResourceData, m interface{}) error {
 	var user *okta.User
 	var err error
 
-	userId, userIdOk := d.GetOk("user_id")
+	userID, ok := d.GetOk("user_id")
 	_, searchCriteriaOk := d.GetOk("search")
 
-	if userIdOk {
-		user, _, err = client.User.GetUser(context.Background(), userId.(string))
+	if ok {
+		user, _, err = client.User.GetUser(context.Background(), userID.(string))
 		if err != nil {
 			return err
 		}
 	} else if searchCriteriaOk {
 		var users []*okta.User
-		users, _, err := client.User.ListUsers(context.Background(), &query.Params{Search: getSearchCriteria(d), Limit: 1})
+		users, _, err = client.User.ListUsers(context.Background(), &query.Params{Search: getSearchCriteria(d), Limit: 1})
 
 		if err != nil {
 			return err
@@ -80,20 +80,17 @@ func dataSourceUserRead(d *schema.ResourceData, m interface{}) error {
 
 	d.SetId(user.Id)
 
-	rawMap, err := flattenUser(user, d)
+	rawMap, err := flattenUser(user)
 	if err != nil {
 		return err
 	}
 
-	if err = setNonPrimitives(d, rawMap); err != nil {
+	err = setNonPrimitives(d, rawMap)
+	if err != nil {
 		return err
 	}
 
-	if err = setAdminRoles(d, client); err != nil {
-		return err
-	}
-
-	return nil
+	return setAdminRoles(d, client)
 }
 
 func getSearchCriteria(d *schema.ResourceData) string {

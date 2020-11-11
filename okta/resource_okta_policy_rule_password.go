@@ -119,13 +119,13 @@ func resourcePolicyPasswordRuleDelete(d *schema.ResourceData, m interface{}) err
 func policyRuleActivate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
 
-	if d.Get("status").(string) == "ACTIVE" {
+	if d.Get("status").(string) == statusActive {
 		_, err := client.ActivatePolicyRule(context.Background(), d.Get("policyid").(string), d.Id())
 		if err != nil {
 			return fmt.Errorf("failed to activate policy rule: %v", err)
 		}
 	}
-	if d.Get("status").(string) == "INACTIVE" {
+	if d.Get("status").(string) == statusInactive {
 		_, err := client.DeactivatePolicyRule(context.Background(), d.Get("policyid").(string), d.Id())
 		if err != nil {
 			return fmt.Errorf("failed to deactivate policy rule: %v", err)

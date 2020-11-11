@@ -58,9 +58,9 @@ func dataSourceAppRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 	if len(appList) < 1 {
-		return fmt.Errorf("No application found with provided filter: %s", filters)
+		return fmt.Errorf("no application found with provided filter: %s", filters)
 	} else if len(appList) > 1 {
-		fmt.Println("Found multiple applications with the criteria supplied, using the first one, sorted by creation date.")
+		fmt.Println("found multiple applications with the criteria supplied, using the first one, sorted by creation date.")
 	}
 	app := appList[0]
 	d.SetId(app.ID)

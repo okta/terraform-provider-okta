@@ -24,7 +24,7 @@ func resourceFactor() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 		Schema: map[string]*schema.Schema{
-			"provider_id": &schema.Schema{
+			"provider_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ValidateFunc: validation.StringInSlice(
@@ -79,7 +79,7 @@ func resourceFactorRead(d *schema.ResourceData, m interface{}) error {
 		d.SetId("")
 		return nil
 	}
-	_ = d.Set("active", factor.Status == "ACTIVE")
+	_ = d.Set("active", factor.Status == statusActive)
 	_ = d.Set("provider_id", factor.Id)
 	return nil
 }
@@ -134,7 +134,7 @@ func statusMismatch(d *schema.ResourceData, factor *sdk.Factor) bool {
 	status := d.Get("active").(bool)
 
 	// I miss ternary operators
-	if factor != nil && factor.Status == "ACTIVE" {
+	if factor != nil && factor.Status == statusActive {
 		return !status
 	}
 

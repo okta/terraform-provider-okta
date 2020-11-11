@@ -67,8 +67,8 @@ var baseAppSchema = map[string]*schema.Schema{
 	"status": {
 		Type:         schema.TypeString,
 		Optional:     true,
-		Default:      "ACTIVE",
-		ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
+		Default:      statusActive,
+		ValidateFunc: validation.StringInSlice([]string{statusActive, statusInactive}, false),
 		Description:  "Status of application.",
 	},
 }
@@ -131,18 +131,64 @@ var baseAppSwaSchema = map[string]*schema.Schema{
 		Default:     "${source.login}",
 		Description: "Username template",
 	},
-	"user_name_template_suffix": &schema.Schema{
+	"user_name_template_suffix": {
 		Type:        schema.TypeString,
 		Optional:    true,
 		Description: "Username template suffix",
 	},
-	"user_name_template_type": &schema.Schema{
+	"user_name_template_type": {
 		Type:         schema.TypeString,
 		Optional:     true,
 		Default:      "BUILT_IN",
 		Description:  "Username template type",
 		ValidateFunc: validation.StringInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}, false),
 	},
+}
+
+var attributeStatements = map[string]*schema.Schema{
+	"filter_type": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Type of group attribute filter",
+	},
+	"filter_value": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Filter value to use",
+	},
+	"name": {
+		Type:     schema.TypeString,
+		Required: true,
+	},
+	"namespace": {
+		Type:     schema.TypeString,
+		Optional: true,
+		Default:  "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+		ValidateFunc: validation.StringInSlice([]string{
+			"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+			"urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
+			"urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
+		}, false),
+	},
+	"type": {
+		Type:     schema.TypeString,
+		Optional: true,
+		Default:  "EXPRESSION",
+		ValidateFunc: validation.StringInSlice([]string{
+			"EXPRESSION",
+			"GROUP",
+		}, false),
+	},
+	"values": {
+		Type:     schema.TypeList,
+		Optional: true,
+		Elem:     &schema.Schema{Type: schema.TypeString},
+	},
+}
+
+var appSamlDiffSuppressFunc = func(k, old, new string, d *schema.ResourceData) bool {
+	// Conditional default
+	return new == "" && old == "http://www.okta.com/${org.externalKey}"
 }
 
 // Wish there was some better polymorphism that could make these similarities easier to deal with
@@ -203,10 +249,10 @@ func buildVisibility(d *schema.ResourceData) *okta.ApplicationVisibility {
 }
 
 func fetchApp(d *schema.ResourceData, m interface{}, app okta.App) error {
-	return fetchAppById(d.Id(), m, app)
+	return fetchAppByID(d.Id(), m, app)
 }
 
-func fetchAppById(id string, m interface{}, app okta.App) error {
+func fetchAppByID(id string, m interface{}, app okta.App) error {
 	client := getOktaClientFromMetadata(m)
 	_, response, err := client.Application.GetApplication(context.Background(), id, app, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
@@ -217,7 +263,7 @@ func fetchAppById(id string, m interface{}, app okta.App) error {
 	return responseErr(response, err)
 }
 
-func updateAppById(id string, m interface{}, app okta.App) error {
+func updateAppByID(id string, m interface{}, app okta.App) error {
 	client := getOktaClientFromMetadata(m)
 	_, response, err := client.Application.UpdateApplication(context.Background(), id, app)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
@@ -232,16 +278,16 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 	existingGroup, _, _ := client.Application.ListApplicationGroupAssignments(context.Background(), id, nil)
 	var (
 		asyncActionList []func() error
-		groupIdList     []string
+		groupIDList     []string
 	)
 
 	if arr, ok := d.GetOk("groups"); ok {
 		rawArr := arr.(*schema.Set).List()
-		groupIdList = make([]string, len(rawArr))
+		groupIDList = make([]string, len(rawArr))
 
 		for i, gID := range rawArr {
 			groupID := gID.(string)
-			groupIdList[i] = groupID
+			groupIDList[i] = groupID
 
 			if !containsGroup(existingGroup, groupID) {
 				asyncActionList = append(asyncActionList, func() error {
@@ -254,7 +300,7 @@ func handleAppGroups(id string, d *schema.ResourceData, client *okta.Client) []f
 	}
 
 	for _, group := range existingGroup {
-		if !contains(groupIdList, group.Id) {
+		if !contains(groupIDList, group.Id) {
 			groupID := group.Id
 			asyncActionList = append(asyncActionList, func() error {
 				return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(context.Background(), id, groupID))
@@ -276,7 +322,7 @@ func containsGroup(groupList []*okta.ApplicationGroupAssignment, id string) bool
 
 func containsAppUser(userList []*okta.AppUser, id string) bool {
 	for _, user := range userList {
-		if user.Id == id && user.Scope == "USER" {
+		if user.Id == id && user.Scope == userScope {
 			return true
 		}
 	}
@@ -336,11 +382,10 @@ func handleAppUsers(id string, d *schema.ResourceData, client *okta.Client) []fu
 				})
 			}
 		}
-
 	}
 
 	for _, user := range existingUsers {
-		if user.Scope == "USER" {
+		if user.Scope == userScope {
 			if !contains(userIDList, user.Id) {
 				userID := user.Id
 				asyncActionList = append(asyncActionList, func() error {
@@ -361,11 +406,11 @@ func resourceAppExists(d *schema.ResourceData, m interface{}) (bool, error) {
 	return app != nil && app.Id != "", err
 }
 
-func setAppStatus(d *schema.ResourceData, client *okta.Client, status string, desiredStatus string) error {
+func setAppStatus(d *schema.ResourceData, client *okta.Client, status, desiredStatus string) error {
 	if status != desiredStatus {
-		if desiredStatus == "INACTIVE" {
+		if desiredStatus == statusInactive {
 			return responseErr(client.Application.DeactivateApplication(context.Background(), d.Id()))
-		} else if desiredStatus == "ACTIVE" {
+		} else if desiredStatus == statusActive {
 			return responseErr(client.Application.ActivateApplication(context.Background(), d.Id()))
 		}
 	}
@@ -395,7 +440,7 @@ func syncGroupsAndUsers(id string, d *schema.ResourceData, m interface{}) error 
 	var flattenedUserList []interface{}
 
 	for _, user := range userList {
-		if user.Scope == "USER" {
+		if user.Scope == userScope {
 			flattenedUserList = append(flattenedUserList, map[string]interface{}{
 				"id":       user.Id,
 				"username": user.Credentials.UserName,

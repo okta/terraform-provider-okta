@@ -17,8 +17,8 @@ type AuthorizationServerScope struct {
 	Default         bool   `json:"default"`
 }
 
-func (m *ApiSupplement) DeleteAuthorizationServerScope(authServerId, id string) (*okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes/%s", authServerId, id)
+func (m *ApiSupplement) DeleteAuthorizationServerScope(authServerID, id string) (*okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes/%s", authServerID, id)
 	req, err := m.RequestExecutor.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err
@@ -27,8 +27,8 @@ func (m *ApiSupplement) DeleteAuthorizationServerScope(authServerId, id string) 
 	return m.RequestExecutor.Do(context.Background(), req, nil)
 }
 
-func (m *ApiSupplement) ListAuthorizationServerScopes(authServerId string) ([]*AuthorizationServerScope, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes", authServerId)
+func (m *ApiSupplement) ListAuthorizationServerScopes(authServerID string) ([]*AuthorizationServerScope, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes", authServerID)
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
@@ -39,8 +39,8 @@ func (m *ApiSupplement) ListAuthorizationServerScopes(authServerId string) ([]*A
 	return auth, resp, err
 }
 
-func (m *ApiSupplement) CreateAuthorizationServerScope(authServerId string, body AuthorizationServerScope, qp *query.Params) (*AuthorizationServerScope, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes", authServerId)
+func (m *ApiSupplement) CreateAuthorizationServerScope(authServerID string, body AuthorizationServerScope, qp *query.Params) (*AuthorizationServerScope, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes", authServerID)
 	if qp != nil {
 		url = url + qp.String()
 	}
@@ -54,8 +54,8 @@ func (m *ApiSupplement) CreateAuthorizationServerScope(authServerId string, body
 	return &authorizationServer, resp, err
 }
 
-func (m *ApiSupplement) UpdateAuthorizationServerScope(authServerId, id string, body AuthorizationServerScope, qp *query.Params) (*AuthorizationServerScope, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes/%s", authServerId, id)
+func (m *ApiSupplement) UpdateAuthorizationServerScope(authServerID, id string, body AuthorizationServerScope, qp *query.Params) (*AuthorizationServerScope, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes/%s", authServerID, id)
 	if qp != nil {
 		url = url + qp.String()
 	}
@@ -72,8 +72,8 @@ func (m *ApiSupplement) UpdateAuthorizationServerScope(authServerId, id string, 
 	return &authorizationServer, resp, nil
 }
 
-func (m *ApiSupplement) GetAuthorizationServerScope(authServerId, id string, authorizationServerInstance AuthorizationServerScope) (*AuthorizationServerScope, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes/%s", authServerId, id)
+func (m *ApiSupplement) GetAuthorizationServerScope(authServerID, id string, authorizationServerInstance AuthorizationServerScope) (*AuthorizationServerScope, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes/%s", authServerID, id)
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err

@@ -8,51 +8,51 @@ import (
 
 var (
 	userSchemaSchema = map[string]*schema.Schema{
-		"index": &schema.Schema{
+		"index": {
 			Type:        schema.TypeString,
 			Required:    true,
 			Description: "Subschema unique string identifier",
 			ForceNew:    true,
 		},
-		"title": &schema.Schema{
+		"title": {
 			Type:        schema.TypeString,
 			Required:    true,
 			Description: "Subschema title (display name)",
 		},
-		"type": &schema.Schema{
+		"type": {
 			Type:         schema.TypeString,
 			Required:     true,
 			ValidateFunc: validation.StringInSlice([]string{"string", "boolean", "number", "integer", "array", "object"}, false),
 			Description:  "Subschema type: string, boolean, number, integer, array, or object",
 			ForceNew:     true,
 		},
-		"array_type": &schema.Schema{
+		"array_type": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			ValidateFunc: validation.StringInSlice([]string{"string", "number", "integer", "reference"}, false),
 			Description:  "Subschema array type: string, number, integer, reference. Type field must be an array.",
 			ForceNew:     true,
 		},
-		"array_enum": &schema.Schema{
+		"array_enum": {
 			Type:        schema.TypeList,
 			Optional:    true,
 			ForceNew:    true,
 			Description: "Custom Subschema enumerated value of a property of type array.",
 			Elem:        &schema.Schema{Type: schema.TypeString},
 		},
-		"array_one_of": &schema.Schema{
+		"array_one_of": {
 			Type:        schema.TypeList,
 			ForceNew:    true,
 			Optional:    true,
 			Description: "array of valid JSON schemas for property type array.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					"const": &schema.Schema{
+					"const": {
 						Required:    true,
 						Type:        schema.TypeString,
 						Description: "Enum value",
 					},
-					"title": &schema.Schema{
+					"title": {
 						Required:    true,
 						Type:        schema.TypeString,
 						Description: "Enum title",
@@ -60,29 +60,29 @@ var (
 				},
 			},
 		},
-		"description": &schema.Schema{
+		"description": {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "Custom Subschema description",
 		},
-		"required": &schema.Schema{
+		"required": {
 			Type:        schema.TypeBool,
 			Optional:    true,
 			Description: "Whether the Subschema is required",
 		},
-		"min_length": &schema.Schema{
+		"min_length": {
 			Type:         schema.TypeInt,
 			Optional:     true,
 			Description:  "Subschema of type string minimum length",
 			ValidateFunc: validation.IntAtLeast(1),
 		},
-		"max_length": &schema.Schema{
+		"max_length": {
 			Type:         schema.TypeInt,
 			Optional:     true,
 			Description:  "Subschema of type string maximum length",
 			ValidateFunc: validation.IntAtLeast(1),
 		},
-		"enum": &schema.Schema{
+		"enum": {
 			Type:          schema.TypeList,
 			Optional:      true,
 			ForceNew:      true,
@@ -90,13 +90,13 @@ var (
 			ConflictsWith: []string{"array_type"},
 			Elem:          &schema.Schema{Type: schema.TypeString},
 		},
-		"scope": &schema.Schema{
+		"scope": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "NONE",
 			ValidateFunc: validation.StringInSlice([]string{"SELF", "NONE", ""}, false),
 		},
-		"one_of": &schema.Schema{
+		"one_of": {
 			Type:          schema.TypeList,
 			ForceNew:      true,
 			Optional:      true,
@@ -104,12 +104,12 @@ var (
 			ConflictsWith: []string{"array_type"},
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					"const": &schema.Schema{
+					"const": {
 						Required:    true,
 						Type:        schema.TypeString,
 						Description: "Enum value",
 					},
-					"title": &schema.Schema{
+					"title": {
 						Required:    true,
 						Type:        schema.TypeString,
 						Description: "Enum title",
@@ -117,33 +117,33 @@ var (
 				},
 			},
 		},
-		"permissions": &schema.Schema{
+		"permissions": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			ValidateFunc: validation.StringInSlice([]string{"HIDE", "READ_ONLY", "READ_WRITE"}, false),
 			Description:  "SubSchema permissions: HIDE, READ_ONLY, or READ_WRITE.",
 			Default:      "READ_ONLY",
 		},
-		"master": &schema.Schema{
+		"master": {
 			Type:     schema.TypeString,
 			Optional: true,
 			// Accepting an empty value to allow for zero value (when provisioning is off)
 			ValidateFunc: validation.StringInSlice([]string{"PROFILE_MASTER", "OKTA", ""}, false),
 			Description:  "SubSchema profile manager, if not set it will inherit its setting.",
 		},
-		"external_name": &schema.Schema{
+		"external_name": {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "Subschema external name",
 			ForceNew:    true,
 		},
-		"external_namespace": &schema.Schema{
+		"external_namespace": {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "Subschema external namespace",
 			ForceNew:    true,
 		},
-		"unique": &schema.Schema{
+		"unique": {
 			Type:          schema.TypeString,
 			Optional:      true,
 			Description:   "Subschema unique restriction",
@@ -153,39 +153,39 @@ var (
 	}
 
 	userBaseSchemaSchema = map[string]*schema.Schema{
-		"index": &schema.Schema{
+		"index": {
 			Type:        schema.TypeString,
 			Required:    true,
 			Description: "Subschema unique string identifier",
 			ForceNew:    true,
 		},
-		"title": &schema.Schema{
+		"title": {
 			Type:        schema.TypeString,
 			Required:    true,
 			Description: "Subschema title (display name)",
 		},
-		"type": &schema.Schema{
+		"type": {
 			Type:         schema.TypeString,
 			Required:     true,
 			ValidateFunc: validation.StringInSlice([]string{"string", "boolean", "number", "integer", "array", "object"}, false),
 			Description:  "Subschema type: string, boolean, number, integer, array, or object",
 			ForceNew:     true,
 		},
-		"permissions": &schema.Schema{
+		"permissions": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			ValidateFunc: validation.StringInSlice([]string{"HIDE", "READ_ONLY", "READ_WRITE"}, false),
 			Description:  "SubSchema permissions: HIDE, READ_ONLY, or READ_WRITE.",
 			Default:      "READ_ONLY",
 		},
-		"master": &schema.Schema{
+		"master": {
 			Type:     schema.TypeString,
 			Optional: true,
 			// Accepting an empty value to allow for zero value (when provisioning is off)
 			ValidateFunc: validation.StringInSlice([]string{"PROFILE_MASTER", "OKTA", ""}, false),
 			Description:  "SubSchema profile manager, if not set it will inherit its setting.",
 		},
-		"required": &schema.Schema{
+		"required": {
 			Type:        schema.TypeBool,
 			Optional:    true,
 			Description: "Whether the Subschema is required",
@@ -245,18 +245,17 @@ func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) {
 	}
 }
 
-func getBaseProperty(schema *sdk.UserSchema, id string) *sdk.UserSubSchema {
-	for key, part := range schema.Definitions.Base.Properties {
+func getBaseProperty(us *sdk.UserSchema, id string) *sdk.UserSubSchema {
+	for key, part := range us.Definitions.Base.Properties {
 		if key == id {
 			return part
 		}
 	}
-
 	return nil
 }
 
-func getCustomProperty(schema *sdk.UserSchema, id string) *sdk.UserSubSchema {
-	for key, part := range schema.Definitions.Custom.Properties {
+func getCustomProperty(s *sdk.UserSchema, id string) *sdk.UserSubSchema {
+	for key, part := range s.Definitions.Custom.Properties {
 		if key == id {
 			return part
 		}

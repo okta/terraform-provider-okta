@@ -11,7 +11,7 @@ func dataSourceEveryoneGroup() *schema.Resource {
 		Read: dataSourceEveryoneGroupRead,
 
 		Schema: map[string]*schema.Schema{
-			"include_users": &schema.Schema{
+			"include_users": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,

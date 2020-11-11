@@ -75,28 +75,28 @@ func resourceUser() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"admin_roles": &schema.Schema{
+			"admin_roles": {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "User Okta admin roles - ie. ['APP_ADMIN', 'USER_ADMIN']",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			"city": &schema.Schema{
+			"city": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User city",
 			},
-			"cost_center": &schema.Schema{
+			"cost_center": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User cost center",
 			},
-			"country_code": &schema.Schema{
+			"country_code": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User country code",
 			},
-			"custom_profile_attributes": &schema.Schema{
+			"custom_profile_attributes": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validateDataJSON,
@@ -104,33 +104,33 @@ func resourceUser() *schema.Resource {
 				Default:      "{}",
 				Description:  "JSON formatted custom attributes for a user. It must be JSON due to various types Okta allows.",
 			},
-			"department": &schema.Schema{
+			"department": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User department",
 			},
-			"display_name": &schema.Schema{
+			"display_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User display name, suitable to show end users",
 			},
-			"division": &schema.Schema{
+			"division": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User division",
 			},
-			"email": &schema.Schema{
+			"email": {
 				Type:         schema.TypeString,
 				Required:     true,
 				Description:  "User primary email address",
 				ValidateFunc: matchEmailRegexp,
 			},
-			"employee_number": &schema.Schema{
+			"employee_number": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User employee number",
 			},
-			"first_name": &schema.Schema{
+			"first_name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "User first name",
@@ -141,146 +141,146 @@ func resourceUser() *schema.Resource {
 				Description: "The groups that you want this user to be a part of. This can also be done via the group using the `users` property.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			"honorific_prefix": &schema.Schema{
+			"honorific_prefix": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User honorific prefix",
 			},
-			"honorific_suffix": &schema.Schema{
+			"honorific_suffix": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User honorific suffix",
 			},
-			"last_name": &schema.Schema{
+			"last_name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "User last name",
 			},
-			"locale": &schema.Schema{
+			"locale": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User default location",
 			},
-			"login": &schema.Schema{
+			"login": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "User Okta login",
 				ForceNew:    true,
 			},
-			"manager": &schema.Schema{
+			"manager": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Manager of User",
 			},
-			"manager_id": &schema.Schema{
+			"manager_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Manager ID of User",
 			},
-			"middle_name": &schema.Schema{
+			"middle_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User middle name",
 			},
-			"mobile_phone": &schema.Schema{
+			"mobile_phone": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User mobile phone number",
 			},
-			"nick_name": &schema.Schema{
+			"nick_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User nickname",
 			},
-			"organization": &schema.Schema{
+			"organization": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User organization",
 			},
-			"postal_address": &schema.Schema{
+			"postal_address": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User mailing address",
 			},
-			"preferred_language": &schema.Schema{
+			"preferred_language": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User preferred language",
 			},
-			"primary_phone": &schema.Schema{
+			"primary_phone": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User primary phone number",
 			},
-			"profile_url": &schema.Schema{
+			"profile_url": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User online profile (web page)",
 			},
-			"second_email": &schema.Schema{
+			"second_email": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User secondary email address, used for account recovery",
 			},
-			"state": &schema.Schema{
+			"state": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User state or region",
 			},
-			"status": &schema.Schema{
+			"status": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "The status of the User in Okta - remove to set user back to active/provisioned",
-				Default:      "ACTIVE",
-				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "STAGED", "DEPROVISIONED", "SUSPENDED"}, false),
+				Default:      statusActive,
+				ValidateFunc: validation.StringInSlice([]string{statusActive, userStatusStaged, userStatusDeprovisioned, userStatusSuspended}, false),
 				// ignore diff changing to ACTIVE if state is set to PROVISIONED or PASSWORD_EXPIRED
 				// since this is a similar status in Okta terms
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return old == "PROVISIONED" && new == "ACTIVE" || old == "PASSWORD_EXPIRED" && new == "ACTIVE"
+					return old == userStatusProvisioned && new == statusActive || old == userStatusPasswordExpired && new == statusActive
 				},
 			},
-			"raw_status": &schema.Schema{
+			"raw_status": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "The raw status of the User in Okta - (status is mapped)",
 			},
-			"street_address": &schema.Schema{
+			"street_address": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User street address",
 			},
-			"timezone": &schema.Schema{
+			"timezone": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User default timezone",
 			},
-			"title": &schema.Schema{
+			"title": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User title",
 			},
-			"user_type": &schema.Schema{
+			"user_type": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User employee type",
 			},
-			"zip_code": &schema.Schema{
+			"zip_code": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User zipcode or postal code",
 			},
-			"password": &schema.Schema{
+			"password": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Sensitive:   true,
 				Description: "User Password",
 			},
-			"recovery_question": &schema.Schema{
+			"recovery_question": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "User Password Recovery Question",
 			},
-			"recovery_answer": &schema.Schema{
+			"recovery_answer": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Sensitive:    true,
@@ -293,8 +293,8 @@ func resourceUser() *schema.Resource {
 
 func mapStatus(currentStatus string) string {
 	// PASSWORD_EXPIRED is effectively ACTIVE for our purposes
-	if currentStatus == "PASSWORD_EXPIRED" || currentStatus == "RECOVERY" {
-		return "ACTIVE"
+	if currentStatus == userStatusPasswordExpired || currentStatus == userStatusRecovery {
+		return statusActive
 	}
 
 	return currentStatus
@@ -309,7 +309,7 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	qp := query.NewQueryParams()
 
 	// setting activate to false on user creation will leave the user with a status of STAGED
-	if d.Get("status").(string) == "STAGED" {
+	if d.Get("status").(string) == userStatusStaged {
 		qp = query.NewQueryParams(query.WithActivate(false))
 	}
 
@@ -346,7 +346,8 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	// role assigning can only happen after the user is created so order matters here
 	roles := convertInterfaceToStringSetNullable(d.Get("admin_roles"))
 	if roles != nil {
-		if err = assignAdminRolesToUser(user.Id, roles, client); err != nil {
+		err = assignAdminRolesToUser(user.Id, roles, client)
+		if err != nil {
 			return err
 		}
 	}
@@ -354,13 +355,14 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 	// Only sync when there is opt in, consumers can chose which route they want to take
 	if _, exists := d.GetOkExists("group_memberships"); exists { // nolint:staticcheck
 		groups := convertInterfaceToStringSetNullable(d.Get("group_memberships"))
-		if err = assignGroupsToUser(user.Id, groups, client); err != nil {
+		err = assignGroupsToUser(user.Id, groups, client)
+		if err != nil {
 			return err
 		}
 	}
 
 	// status changing can only happen after user is created as well
-	if d.Get("status").(string) == "SUSPENDED" || d.Get("status").(string) == "DEPROVISIONED" {
+	if d.Get("status").(string) == userStatusSuspended || d.Get("status").(string) == userStatusDeprovisioned {
 		err := updateUserStatus(user.Id, d.Get("status").(string), client)
 
 		if err != nil {
@@ -377,7 +379,7 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 
 	user, resp, err := client.User.GetUser(context.Background(), d.Id())
 
-	if is404(resp.StatusCode) {
+	if resp != nil && is404(resp.StatusCode) {
 		d.SetId("")
 		return nil
 	}
@@ -389,16 +391,16 @@ func resourceUserRead(d *schema.ResourceData, m interface{}) error {
 	_ = d.Set("status", mapStatus(user.Status))
 	_ = d.Set("raw_status", user.Status)
 
-	rawMap, err := flattenUser(user, d)
+	rawMap, err := flattenUser(user)
 	if err != nil {
 		return err
 	}
-
-	if err = setNonPrimitives(d, rawMap); err != nil {
+	err = setNonPrimitives(d, rawMap)
+	if err != nil {
 		return err
 	}
-
-	if err = setAdminRoles(d, client); err != nil {
+	err = setAdminRoles(d, client)
+	if err != nil {
 		return err
 	}
 
@@ -414,8 +416,8 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 	status := d.Get("status").(string)
 	statusChange := d.HasChange("status")
 
-	if status == "STAGED" && statusChange {
-		return fmt.Errorf("[ERROR] Okta will not allow a user to be updated to STAGED. Can set to STAGED on user creation only.")
+	if status == userStatusStaged && statusChange {
+		return fmt.Errorf("[ERROR] Okta will not allow a user to be updated to STAGED. Can set to STAGED on user creation only")
 	}
 
 	client := getOktaClientFromMetadata(m)
@@ -438,7 +440,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		d.SetPartial("status") // nolint:staticcheck
 	}
 
-	if status == "DEPROVISIONED" && userChange {
+	if status == userStatusDeprovisioned && userChange {
 		return errors.New("[ERROR] Only the status of a DEPROVISIONED user can be updated, we detected other change")
 	}
 
@@ -534,14 +536,14 @@ func ensureUserDelete(id, status string, client *okta.Client) error {
 	// make two passes on the user if they aren't deprovisioned already to deprovision them first
 	passes := 2
 
-	if status == "DEPROVISIONED" {
+	if status == userStatusDeprovisioned {
 		passes = 1
 	}
 
 	for i := 0; i < passes; i++ {
 		_, err := client.User.DeactivateOrDeleteUser(context.Background(), id, nil)
 		if err != nil {
-			return fmt.Errorf("Failed to deprovision or delete user from Okta: %v", err)
+			return fmt.Errorf("failed to deprovision or delete user from Okta: %v", err)
 		}
 	}
 	return nil
@@ -553,7 +555,7 @@ func resourceUserExists(d *schema.ResourceData, m interface{}) (bool, error) {
 
 	_, resp, err := client.User.GetUser(context.Background(), d.Id())
 
-	if is404(resp.StatusCode) {
+	if resp != nil && is404(resp.StatusCode) {
 		return false, nil
 	}
 

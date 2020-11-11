@@ -18,34 +18,34 @@ func resourceAuthServerScope() *schema.Resource {
 		Importer: createNestedResourceImporter([]string{"auth_server_id", "id"}),
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Auth server scope name",
 			},
-			"auth_server_id": &schema.Schema{
+			"auth_server_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Auth server ID",
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"consent": &schema.Schema{
+			"consent": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "IMPLICIT",
 				Description: "EA Feature and thus it is simply ignored if the feature is off",
 			},
-			"metadata_publish": &schema.Schema{
+			"metadata_publish": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Default:      "ALL_CLIENTS",
 				Description:  "Whether to publish metadata or not, matching API type despite the fact it could just be a boolean",
 				ValidateFunc: validation.StringInSlice([]string{"ALL_CLIENTS", "NO_CLIENTS"}, false),
 			},
-			"default": &schema.Schema{
+			"default": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,

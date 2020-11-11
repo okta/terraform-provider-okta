@@ -97,13 +97,10 @@ func dataSourceAppSaml() *schema.Resource {
 				Description: "Audience Restriction",
 			},
 			"idp_issuer": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "SAML issuer ID",
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					// Conditional default
-					return new == "" && old == "http://www.okta.com/${org.externalKey}"
-				},
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "SAML issuer ID",
+				DiffSuppressFunc: appSamlDiffSuppressFunc,
 			},
 			"sp_issuer": {
 				Type:        schema.TypeString,
@@ -223,46 +220,7 @@ func dataSourceAppSaml() *schema.Resource {
 				Type:     schema.TypeList,
 				Optional: true,
 				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"filter_type": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "Type of group attribute filter",
-						},
-						"filter_value": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "Filter value to use",
-						},
-						"name": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"namespace": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Default:  "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
-							ValidateFunc: validation.StringInSlice([]string{
-								"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
-								"urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
-								"urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
-							}, false),
-						},
-						"type": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Default:  "EXPRESSION",
-							ValidateFunc: validation.StringInSlice([]string{
-								"EXPRESSION",
-								"GROUP",
-							}, false),
-						},
-						"values": {
-							Type:     schema.TypeList,
-							Optional: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-						},
-					},
+					Schema: attributeStatements,
 				},
 			},
 		},
@@ -280,7 +238,7 @@ func dataSourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 	if len(appList) < 1 {
-		return fmt.Errorf("No application found with provided filter: %s", filters)
+		return fmt.Errorf("no application found with provided filter: %s", filters)
 	} else if len(appList) > 1 {
 		fmt.Println("Found multiple applications with the criteria supplied, using the first one, sorted by creation date.")
 	}

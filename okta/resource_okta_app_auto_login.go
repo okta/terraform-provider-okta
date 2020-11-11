@@ -21,24 +21,24 @@ func resourceAppAutoLogin() *schema.Resource {
 		},
 
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
-			"preconfigured_app": &schema.Schema{
+			"preconfigured_app": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Preconfigured app name",
 			},
-			"sign_on_url": &schema.Schema{
+			"sign_on_url": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "Login URL",
 				ValidateFunc: validateIsURL,
 			},
-			"sign_on_redirect_url": &schema.Schema{
+			"sign_on_redirect_url": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "Post login redirect URL",
 				ValidateFunc: validateIsURL,
 			},
-			"credentials_scheme": &schema.Schema{
+			"credentials_scheme": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ValidateFunc: validation.StringInSlice(
@@ -54,18 +54,18 @@ func resourceAppAutoLogin() *schema.Resource {
 				Default:     "EDIT_USERNAME_AND_PASSWORD",
 				Description: "Application credentials scheme",
 			},
-			"reveal_password": &schema.Schema{
+			"reveal_password": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
 				Description: "Allow user to reveal password",
 			},
-			"shared_username": &schema.Schema{
+			"shared_username": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Shared username, required for certain schemes.",
 			},
-			"shared_password": &schema.Schema{
+			"shared_password": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Shared password, required for certain schemes.",
@@ -76,8 +76,8 @@ func resourceAppAutoLogin() *schema.Resource {
 
 func resourceAppAutoLoginCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppAutoLogin(d, m)
-	activate := d.Get("status").(string) == "ACTIVE"
+	app := buildAppAutoLogin(d)
+	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
 	_, _, err := client.Application.CreateApplication(context.Background(), app, params)
 
@@ -130,7 +130,7 @@ func resourceAppAutoLoginRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppAutoLoginUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppAutoLogin(d, m)
+	app := buildAppAutoLogin(d)
 	_, _, err := client.Application.UpdateApplication(context.Background(), d.Id(), app)
 
 	if err != nil {
@@ -165,7 +165,7 @@ func resourceAppAutoLoginDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func buildAppAutoLogin(d *schema.ResourceData, m interface{}) *okta.AutoLoginApplication {
+func buildAppAutoLogin(d *schema.ResourceData) *okta.AutoLoginApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewAutoLoginApplication()
 	app.Label = d.Get("label").(string)

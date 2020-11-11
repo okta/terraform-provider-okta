@@ -18,44 +18,44 @@ func resourceAuthServerClaim() *schema.Resource {
 		Importer: createNestedResourceImporter([]string{"auth_server_id", "id"}),
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Auth server claim name",
 			},
-			"auth_server_id": &schema.Schema{
+			"auth_server_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Auth server ID",
 			},
-			"scopes": &schema.Schema{
+			"scopes": {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Auth server claim list of scopes",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"status": statusSchema,
-			"value": &schema.Schema{
+			"value": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"value_type": &schema.Schema{
+			"value_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"EXPRESSION", "GROUPS"}, false),
 				Default:      "EXPRESSION",
 			},
-			"claim_type": &schema.Schema{
+			"claim_type": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringInSlice([]string{"RESOURCE", "IDENTITY"}, false),
 			},
-			"always_include_in_token": &schema.Schema{
+			"always_include_in_token": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
 			},
-			"group_filter_type": &schema.Schema{
+			"group_filter_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"STARTS_WITH", "EQUALS", "CONTAINS", "REGEX"}, false),

@@ -20,12 +20,12 @@ func resourceAppBasicAuth() *schema.Resource {
 		},
 
 		Schema: buildAppSchemaWithVisibility(map[string]*schema.Schema{
-			"auth_url": &schema.Schema{
+			"auth_url": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Login button field",
 			},
-			"url": &schema.Schema{
+			"url": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Login password field",
@@ -36,8 +36,8 @@ func resourceAppBasicAuth() *schema.Resource {
 
 func resourceAppBasicAuthCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppBasicAuth(d, m)
-	activate := d.Get("status").(string) == "ACTIVE"
+	app := buildAppBasicAuth(d)
+	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
 	_, _, err := client.Application.CreateApplication(context.Background(), app, params)
 
@@ -78,7 +78,7 @@ func resourceAppBasicAuthRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppBasicAuthUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppBasicAuth(d, m)
+	app := buildAppBasicAuth(d)
 	_, _, err := client.Application.UpdateApplication(context.Background(), d.Id(), app)
 
 	if err != nil {
@@ -113,7 +113,7 @@ func resourceAppBasicAuthDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func buildAppBasicAuth(d *schema.ResourceData, m interface{}) *okta.BasicAuthApplication {
+func buildAppBasicAuth(d *schema.ResourceData) *okta.BasicAuthApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewBasicAuthApplication()
 	app.Label = d.Get("label").(string)

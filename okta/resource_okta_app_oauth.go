@@ -310,9 +310,9 @@ func resourceAppOAuthCreate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	app := buildAppOAuth(d, m)
+	app := buildAppOAuth(d)
 	desiredStatus := d.Get("status").(string)
-	activate := desiredStatus == "ACTIVE"
+	activate := desiredStatus == statusActive
 	params := &query.Params{Activate: &activate}
 	_, _, err := client.Application.CreateApplication(context.Background(), app, params)
 
@@ -388,7 +388,8 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 				"n":   jwk.Modulus,
 			}
 		}
-		if err = setNonPrimitives(d, map[string]interface{}{"jwks": arr}); err != nil {
+		err = setNonPrimitives(d, map[string]interface{}{"jwks": arr})
+		if err != nil {
 			return err
 		}
 	}
@@ -402,7 +403,8 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 		grantTypes[i] = string(*app.Settings.OauthClient.GrantTypes[i])
 	}
 
-	if err = syncGroupsAndUsers(app.Id, d, m); err != nil {
+	err = syncGroupsAndUsers(app.Id, d, m)
+	if err != nil {
 		return err
 	}
 	aggMap := map[string]interface{}{
@@ -421,7 +423,7 @@ func resourceAppOAuthUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	app := buildAppOAuth(d, m)
+	app := buildAppOAuth(d)
 	if _, _, err := client.Application.UpdateApplication(context.Background(), d.Id(), app); err != nil {
 		return err
 	}
@@ -441,7 +443,7 @@ func resourceAppOAuthUpdate(d *schema.ResourceData, m interface{}) error {
 func resourceAppOAuthDelete(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 
-	if d.Get("status").(string) == "ACTIVE" {
+	if d.Get("status").(string) == statusActive {
 		_, err := client.Application.DeactivateApplication(context.Background(), d.Id())
 		if err != nil {
 			return err
@@ -452,7 +454,7 @@ func resourceAppOAuthDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func buildAppOAuth(d *schema.ResourceData, m interface{}) *sdk.OpenIdConnectApplication {
+func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := sdk.NewOpenIdConnectApplication()
 

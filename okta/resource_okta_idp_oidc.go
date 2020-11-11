@@ -20,7 +20,7 @@ func resourceIdpOidc() *schema.Resource {
 
 		// Note the base schema
 		Schema: buildIdpSchema(map[string]*schema.Schema{
-			"type": &schema.Schema{
+			"type": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -28,49 +28,49 @@ func resourceIdpOidc() *schema.Resource {
 			"authorization_binding": bindingSchema,
 			"token_url":             urlSchema,
 			"token_binding":         bindingSchema,
-			"user_info_url":         optionalUrlSchema,
+			"user_info_url":         optionalURLSchema,
 			"user_info_binding":     optionalBindingSchema,
 			"jwks_url":              urlSchema,
 			"jwks_binding":          bindingSchema,
 			"acs_binding":           bindingSchema,
-			"acs_type": &schema.Schema{
+			"acs_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Default:      "INSTANCE",
 				ValidateFunc: validation.StringInSlice([]string{"INSTANCE"}, false),
 			},
-			"scopes": &schema.Schema{
+			"scopes": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Required: true,
 			},
-			"protocol_type": &schema.Schema{
+			"protocol_type": {
 				Type:         schema.TypeString,
 				Default:      "OIDC",
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"OIDC", "OAUTH2"}, false),
 			},
-			"client_id": &schema.Schema{
+			"client_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"client_secret": &schema.Schema{
+			"client_secret": {
 				Type:      schema.TypeString,
 				Required:  true,
 				Sensitive: true,
 			},
-			"issuer_url": &schema.Schema{
+			"issuer_url": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"issuer_mode": &schema.Schema{
+			"issuer_mode": {
 				Type:         schema.TypeString,
 				Description:  "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
 				ValidateFunc: validation.StringInSlice([]string{"ORG_URL", "CUSTOM_URL"}, false),
 				Default:      "ORG_URL",
 				Optional:     true,
 			},
-			"max_clock_skew": &schema.Schema{
+			"max_clock_skew": {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},

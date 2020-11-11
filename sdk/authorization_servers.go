@@ -106,8 +106,8 @@ func (m *ApiSupplement) DeactivateAuthorizationServer(id string) (*okta.Response
 	return m.RequestExecutor.Do(context.Background(), req, nil)
 }
 
-func (c *ApiSupplement) FindAuthServer(name string, qp *query.Params) (*AuthorizationServer, error) {
-	authServerList, res, err := c.ListAuthorizationServers()
+func (m *ApiSupplement) FindAuthServer(name string, qp *query.Params) (*AuthorizationServer, error) {
+	authServerList, res, err := m.ListAuthorizationServers()
 	if err != nil {
 		return nil, err
 	}
@@ -120,13 +120,13 @@ func (c *ApiSupplement) FindAuthServer(name string, qp *query.Params) (*Authoriz
 
 	if after := getNextLinkOffset(res); after != "" {
 		qp.After = after
-		return c.FindAuthServer(name, qp)
+		return m.FindAuthServer(name, qp)
 	}
 	return nil, nil
 }
 
-func (c *ApiSupplement) FilterAuthServers(qp *query.Params, arr []*AuthorizationServer, compare func(string) bool) ([]*AuthorizationServer, error) {
-	authServerList, res, err := c.ListAuthorizationServers()
+func (m *ApiSupplement) FilterAuthServers(qp *query.Params, arr []*AuthorizationServer, compare func(string) bool) ([]*AuthorizationServer, error) {
+	authServerList, res, err := m.ListAuthorizationServers()
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +139,7 @@ func (c *ApiSupplement) FilterAuthServers(qp *query.Params, arr []*Authorization
 
 	if after := getNextLinkOffset(res); after != "" {
 		qp.After = after
-		return c.FilterAuthServers(qp, arr, compare)
+		return m.FilterAuthServers(qp, arr, compare)
 	}
 
 	return arr, nil

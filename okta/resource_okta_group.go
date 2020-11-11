@@ -20,17 +20,17 @@ func resourceGroup() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Group name",
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Group description",
 			},
-			"users": &schema.Schema{
+			"users": {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -114,7 +114,7 @@ func resourceGroupDelete(d *schema.ResourceData, m interface{}) error {
 func fetchGroup(d *schema.ResourceData, m interface{}) (*okta.Group, error) {
 	g, resp, err := getOktaClientFromMetadata(m).Group.GetGroup(context.Background(), d.Id())
 
-	if resp.StatusCode == http.StatusNotFound {
+	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return nil, nil
 	}
 
@@ -123,21 +123,21 @@ func fetchGroup(d *schema.ResourceData, m interface{}) (*okta.Group, error) {
 
 func syncGroupUsers(d *schema.ResourceData, m interface{}) error {
 	// Only sync when the user opts in by outlining users in the group config
-	if _, exists := d.GetOkExists("users"); !exists { // nolint:staticcheck
+	if _, exists := d.GetOk("users"); !exists {
 		return nil
 	}
-	userIdList, err := listGroupUserIds(m, d.Id())
+	userIDList, err := listGroupUserIDs(m, d.Id())
 	if err != nil {
 		return err
 	}
 
-	return d.Set("users", convertStringSetToInterface(userIdList))
+	return d.Set("users", convertStringSetToInterface(userIDList))
 }
 
 func updateGroupUsers(d *schema.ResourceData, m interface{}) error {
 	// Only sync when the user opts in by outlining users in the group config
 	// To remove all users, define an empty set
-	arr, exists := d.GetOkExists("users") // nolint:staticcheck
+	arr, exists := d.GetOk("users")
 	if !exists {
 		return nil
 	}
@@ -149,14 +149,14 @@ func updateGroupUsers(d *schema.ResourceData, m interface{}) error {
 	}
 
 	rawArr := arr.(*schema.Set).List()
-	userIdList := make([]string, len(rawArr))
+	userIDList := make([]string, len(rawArr))
 
-	for i, ifaceId := range rawArr {
-		userId := ifaceId.(string)
-		userIdList[i] = userId
+	for i, ifaceID := range rawArr {
+		userID := ifaceID.(string)
+		userIDList[i] = userID
 
-		if !containsUser(existingUserList, userId) {
-			resp, err := client.Group.AddUserToGroup(context.Background(), d.Id(), userId)
+		if !containsUser(existingUserList, userID) {
+			resp, err := client.Group.AddUserToGroup(context.Background(), d.Id(), userID)
 			if err != nil {
 				return responseErr(resp, err)
 			}
@@ -164,7 +164,7 @@ func updateGroupUsers(d *schema.ResourceData, m interface{}) error {
 	}
 
 	for _, user := range existingUserList {
-		if !contains(userIdList, user.Id) {
+		if !contains(userIDList, user.Id) {
 			err := suppressErrorOn404(client.Group.RemoveUserFromGroup(context.Background(), d.Id(), user.Id))
 			if err != nil {
 				return err
