@@ -63,7 +63,7 @@ func TestAccOktaAuthServerClaim_groupType(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", "test"),
 					resource.TestCheckResourceAttr(resourceName, "group_filter_type", "EQUALS"),
 					resource.TestCheckResourceAttr(resourceName, "value_type", "GROUPS"),
-					resource.TestCheckResourceAttr(resourceName, "value", "Everyone"),
+					resource.TestCheckResourceAttr(resourceName, "value", groupProfileEveryone),
 					resource.TestCheckResourceAttr(resourceName, "claim_type", "RESOURCE"),
 
 					resource.TestCheckResourceAttr(swResourceName, "status", statusActive),

@@ -5,7 +5,6 @@ import (
 )
 
 // data source to retrieve information on the Everyone Group
-
 func dataSourceEveryoneGroup() *schema.Resource {
 	return &schema.Resource{
 		Read: dataSourceEveryoneGroupRead,
@@ -22,5 +21,5 @@ func dataSourceEveryoneGroup() *schema.Resource {
 }
 
 func dataSourceEveryoneGroupRead(d *schema.ResourceData, m interface{}) error {
-	return findGroup("Everyone", d, m)
+	return findGroup(groupProfileEveryone, d, m)
 }
