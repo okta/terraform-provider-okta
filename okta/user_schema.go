@@ -3,7 +3,7 @@ package okta
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 var (
@@ -137,6 +137,12 @@ var (
 			Description: "Subschema external name",
 			ForceNew:    true,
 		},
+		"external_namespace": &schema.Schema{
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Subschema external namespace",
+			ForceNew:    true,
+		},
 		"unique": &schema.Schema{
 			Type:          schema.TypeString,
 			Optional:      true,
@@ -196,26 +202,27 @@ func buildCustomUserSchema(target map[string]*schema.Schema) map[string]*schema.
 }
 
 func syncUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) error {
-	d.Set("title", subschema.Title)
-	d.Set("type", subschema.Type)
-	d.Set("description", subschema.Description)
-	d.Set("required", subschema.Required)
-	d.Set("min_length", subschema.MinLength)
-	d.Set("max_length", subschema.MaxLength)
-	d.Set("scope", subschema.Scope)
-	d.Set("external_name", subschema.ExternalName)
-	d.Set("unique", subschema.Unique)
+	_ = d.Set("title", subschema.Title)
+	_ = d.Set("type", subschema.Type)
+	_ = d.Set("description", subschema.Description)
+	_ = d.Set("required", subschema.Required)
+	_ = d.Set("min_length", subschema.MinLength)
+	_ = d.Set("max_length", subschema.MaxLength)
+	_ = d.Set("scope", subschema.Scope)
+	_ = d.Set("external_name", subschema.ExternalName)
+	_ = d.Set("external_namespace", subschema.ExternalNamespace)
+	_ = d.Set("unique", subschema.Unique)
 
 	if subschema.Items != nil {
-		d.Set("array_type", subschema.Items.Type)
+		_ = d.Set("array_type", subschema.Items.Type)
 	}
 
 	if subschema.Master != nil {
-		d.Set("master", subschema.Master.Type)
+		_ = d.Set("master", subschema.Master.Type)
 	}
 
 	if len(subschema.Permissions) > 0 {
-		d.Set("permissions", subschema.Permissions[0].Action)
+		_ = d.Set("permissions", subschema.Permissions[0].Action)
 	}
 
 	return setNonPrimitives(d, map[string]interface{}{
@@ -225,16 +232,16 @@ func syncUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) error 
 }
 
 func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) {
-	d.Set("title", subschema.Title)
-	d.Set("type", subschema.Type)
-	d.Set("required", subschema.Required)
+	_ = d.Set("title", subschema.Title)
+	_ = d.Set("type", subschema.Type)
+	_ = d.Set("required", subschema.Required)
 
 	if subschema.Master != nil {
-		d.Set("master", subschema.Master.Type)
+		_ = d.Set("master", subschema.Master.Type)
 	}
 
 	if len(subschema.Permissions) > 0 {
-		d.Set("permissions", subschema.Permissions[0].Action)
+		_ = d.Set("permissions", subschema.Permissions[0].Action)
 	}
 }
 
@@ -317,14 +324,15 @@ func getUserSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
 				Principal: "SELF",
 			},
 		},
-		Scope:        d.Get("scope").(string),
-		Enum:         convertInterfaceToStringArrNullable(d.Get("enum")),
-		Master:       getNullableMaster(d),
-		Items:        getNullableItem(d),
-		MinLength:    getNullableInt(d, "min_length"),
-		MaxLength:    getNullableInt(d, "max_length"),
-		OneOf:        getNullableOneOf(d, "one_of"),
-		ExternalName: d.Get("external_name").(string),
-		Unique:       d.Get("unique").(string),
+		Scope:             d.Get("scope").(string),
+		Enum:              convertInterfaceToStringArrNullable(d.Get("enum")),
+		Master:            getNullableMaster(d),
+		Items:             getNullableItem(d),
+		MinLength:         getNullableInt(d, "min_length"),
+		MaxLength:         getNullableInt(d, "max_length"),
+		OneOf:             getNullableOneOf(d, "one_of"),
+		ExternalName:      d.Get("external_name").(string),
+		ExternalNamespace: d.Get("external_namespace").(string),
+		Unique:            d.Get("unique").(string),
 	}
 }

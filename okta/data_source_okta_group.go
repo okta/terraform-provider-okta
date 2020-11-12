@@ -1,12 +1,12 @@
 package okta
 
 import (
-	"errors"
+	"context"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func dataSourceGroup() *schema.Resource {
@@ -56,16 +56,16 @@ func findGroup(name string, d *schema.ResourceData, m interface{}) error {
 		searchParams.Type = d.Get("type").(string)
 	}
 
-	groups, _, err := client.Group.ListGroups(searchParams)
+	groups, _, err := client.Group.ListGroups(context.Background(), searchParams)
 	if err != nil {
 		return fmt.Errorf("failed to query for groups: %v", err)
 	} else if len(groups) < 1 {
-		return errors.New("Group not found")
+		return fmt.Errorf("Group \"%s\" not found", name)
 	}
 
 	d.SetId(groups[0].Id)
-	d.Set("description", groups[0].Profile.Description)
-	d.Set("type", groups[0].Type)
+	_ = d.Set("description", groups[0].Profile.Description)
+	_ = d.Set("type", groups[0].Type)
 
 	if d.Get("include_users").(bool) {
 		userIdList, err := listGroupUserIds(m, d.Id())

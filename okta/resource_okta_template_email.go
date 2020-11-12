@@ -2,7 +2,7 @@ package okta
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 var translationResource = &schema.Resource{
@@ -120,8 +120,8 @@ func resourceTemplateEmailRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("translations", flattenEmailTranlations(temp.Translations))
-	d.Set("default_language", temp.DefaultLanguage)
+	_ = d.Set("translations", flattenEmailTranlations(temp.Translations))
+	_ = d.Set("default_language", temp.DefaultLanguage)
 
 	return nil
 }

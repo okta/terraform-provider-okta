@@ -3,8 +3,8 @@ package okta
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceIdpSocial() *schema.Resource {
@@ -103,24 +103,24 @@ func resourceIdpSocialRead(d *schema.ResourceData, m interface{}) error {
 		return nil
 	}
 
-	d.Set("name", idp.Name)
-	d.Set("max_clock_skew", idp.Policy.MaxClockSkew)
-	d.Set("provisioning_action", idp.Policy.Provisioning.Action)
-	d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
-	d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
-	d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
-	d.Set("subject_match_type", idp.Policy.Subject.MatchType)
-	d.Set("subject_match_attribute", idp.Policy.Subject.MatchAttribute)
-	d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
-	d.Set("client_id", idp.Protocol.Credentials.Client.ClientID)
-	d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
+	_ = d.Set("name", idp.Name)
+	_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkew)
+	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
+	_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
+	_ = d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
+	_ = d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
+	_ = d.Set("subject_match_type", idp.Policy.Subject.MatchType)
+	_ = d.Set("subject_match_attribute", idp.Policy.Subject.MatchAttribute)
+	_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
+	_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientID)
+	_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
 
 	if err := syncGroupActions(d, idp.Policy.Provisioning.Groups); err != nil {
 		return err
 	}
 
 	if idp.IssuerMode != "" {
-		d.Set("issuer_mode", idp.IssuerMode)
+		_ = d.Set("issuer_mode", idp.IssuerMode)
 	}
 
 	setMap := map[string]interface{}{
@@ -128,7 +128,7 @@ func resourceIdpSocialRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if idp.Policy.AccountLink != nil {
-		d.Set("account_link_action", idp.Policy.AccountLink.Action)
+		_ = d.Set("account_link_action", idp.Policy.AccountLink.Action)
 
 		if idp.Policy.AccountLink.Filter != nil {
 			setMap["account_link_group_include"] = convertStringSetToInterface(idp.Policy.AccountLink.Filter.Groups.Include)
@@ -140,13 +140,10 @@ func resourceIdpSocialRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceIdpSocialUpdate(d *schema.ResourceData, m interface{}) error {
 	idp := buildidpSocial(d)
-	d.Partial(true)
 
 	if err := updateIdp(d.Id(), m, idp); err != nil {
 		return err
 	}
-
-	d.Partial(false)
 
 	if err := setIdpStatus(idp.ID, idp.Status, d.Get("status").(string), m); err != nil {
 		return err

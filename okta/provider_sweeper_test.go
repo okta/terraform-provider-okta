@@ -8,8 +8,8 @@ import (
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/okta/okta-sdk-golang/okta"
-	sdk "github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	sdk "github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 type testClient struct {
@@ -87,12 +87,11 @@ func sharedClient(region string) (*articulateOkta.Client, *okta.Client, *sdk.Api
 
 	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
 
-	client, err := okta.NewClient(
+	_, client, err := okta.NewClient(
 		context.Background(),
 		okta.WithOrgUrl(orgURL),
 		okta.WithToken(c.apiToken),
-		okta.WithBackoff(true),
-		okta.WithRetries(20),
+		okta.WithRateLimitMaxRetries(20),
 	)
 	if err != nil {
 		return articulateClient, client, nil, err

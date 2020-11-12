@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceAuthServerPolicy() *schema.Resource {
@@ -97,11 +97,11 @@ func resourceAuthServerPolicyRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", authServerPolicy.Name)
-	d.Set("description", authServerPolicy.Description)
-	d.Set("status", authServerPolicy.Status)
-	d.Set("priority", authServerPolicy.Priority)
-	d.Set("client_whitelist", convertStringSetToInterface(authServerPolicy.Conditions.Clients.Include))
+	_ = d.Set("name", authServerPolicy.Name)
+	_ = d.Set("description", authServerPolicy.Description)
+	_ = d.Set("status", authServerPolicy.Status)
+	_ = d.Set("priority", authServerPolicy.Priority)
+	_ = d.Set("client_whitelist", convertStringSetToInterface(authServerPolicy.Conditions.Clients.Include))
 
 	return nil
 }

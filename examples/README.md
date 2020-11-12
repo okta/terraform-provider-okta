@@ -29,10 +29,10 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 * [okta_group_roles](./okta_group_roles) Supports the management of Okta Group Administrator Roles.
 * [okta_group_rule](./okta_group_rule) Supports the management of Okta Group Rules.
 * [okta_group](./okta_group) Supports the management of Okta Groups.
+* [okta_event_hook](./okta_event_hook) Supports the management of Okta Event Hooks.
 * [okta_idp_metadata_saml](./okta_app_metadata_saml) Data source for SAML IdP metadata.
 * [okta_idp_saml](./okta_idp_saml) Supports the management of Okta SAML Identity Providers.
 * [okta_idp_social](./okta_idp_social) Supports the management of Okta Social Identity Providers. Such as Google, Facebook, Microsoft, and LinkedIn.
-* [okta_idp](./okta_idp) Supports the management of Okta OIDC Identity Providers.
 * [okta_inline_hook](./okta_inline_hook) Supports the management of Okta Inline Hooks EA feature.
 * [okta_network_zone](./okta_network_zone) Supports the management of Okta Network Zones for whitelisting IPs or countries dynamically.
 * [okta_policy_mfa](./okta_policy_mfa) Supports the management of MFA policies.

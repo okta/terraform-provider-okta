@@ -43,23 +43,24 @@ type (
 	}
 
 	UserSubSchema struct {
-		Description  string                  `json:"description,omitempty"`
-		Enum         []string                `json:"enum,omitempty"`
-		Format       string                  `json:"format,omitempty"`
-		Items        *UserSchemaItem         `json:"items,omitempty"`
-		Master       *UserSchemaMaster       `json:"master,omitempty"`
-		MaxLength    *int                    `json:"maxLength,omitempty"`
-		MinLength    *int                    `json:"minLength,omitempty"`
-		Mutability   string                  `json:"mutability,omitempty"`
-		OneOf        []*UserSchemaEnum       `json:"oneOf,omitempty"`
-		Permissions  []*UserSchemaPermission `json:"permissions,omitempty"`
-		Required     *bool                   `json:"required,omitempty"`
-		Scope        string                  `json:"scope,omitempty"`
-		Title        string                  `json:"title,omitempty"`
-		Type         string                  `json:"type,omitempty"`
-		Union        string                  `json:"union,omitempty"`
-		Unique       string                  `json:"unique,omitempty"`
-		ExternalName string                  `json:"externalName,omitempty"`
+		Description       string                  `json:"description,omitempty"`
+		Enum              []string                `json:"enum,omitempty"`
+		Format            string                  `json:"format,omitempty"`
+		Items             *UserSchemaItem         `json:"items,omitempty"`
+		Master            *UserSchemaMaster       `json:"master,omitempty"`
+		MaxLength         *int                    `json:"maxLength,omitempty"`
+		MinLength         *int                    `json:"minLength,omitempty"`
+		Mutability        string                  `json:"mutability,omitempty"`
+		OneOf             []*UserSchemaEnum       `json:"oneOf,omitempty"`
+		Permissions       []*UserSchemaPermission `json:"permissions,omitempty"`
+		Required          *bool                   `json:"required,omitempty"`
+		Scope             string                  `json:"scope,omitempty"`
+		Title             string                  `json:"title,omitempty"`
+		Type              string                  `json:"type,omitempty"`
+		Union             string                  `json:"union,omitempty"`
+		Unique            string                  `json:"unique,omitempty"`
+		ExternalName      string                  `json:"externalName,omitempty"`
+		ExternalNamespace string                  `json:"externalNamespace,omitempty"`
 	}
 
 	UserSubSchemaProperties struct {

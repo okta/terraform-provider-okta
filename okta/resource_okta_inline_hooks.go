@@ -3,7 +3,7 @@ package okta
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 
 	"net/http"
 )
@@ -50,6 +50,7 @@ func resourceInlineHook() *schema.Resource {
 						"com.okta.import.transform",
 						"com.okta.saml.tokens.transform",
 						"com.okta.user.pre-registration",
+						"com.okta.user.credential.password.import",
 					},
 					false,
 				),
@@ -151,15 +152,15 @@ func resourceInlineHookRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", hook.Name)
-	d.Set("status", hook.Status)
-	d.Set("type", hook.Type)
-	d.Set("version", hook.Version)
+	_ = d.Set("name", hook.Name)
+	_ = d.Set("status", hook.Status)
+	_ = d.Set("type", hook.Type)
+	_ = d.Set("version", hook.Version)
 
 	return setNonPrimitives(d, map[string]interface{}{
-		"channel": flattenHookChannel(hook.Channel),
-		"headers": flattenHeaders(hook.Channel),
-		"auth":    flattenAuth(d, hook.Channel),
+		"channel": flattenInlineHookChannel(hook.Channel),
+		"headers": flattenInlineHookHeaders(hook.Channel),
+		"auth":    flattenInlineHookAuth(d, hook.Channel),
 	})
 }
 
@@ -203,32 +204,32 @@ func buildInlineHook(d *schema.ResourceData, m interface{}) *sdk.InlineHook {
 	}
 }
 
-func buildInlineChannel(d *schema.ResourceData, m interface{}) *sdk.Channel {
+func buildInlineChannel(d *schema.ResourceData, m interface{}) *sdk.InlineHookChannel {
 	if _, ok := d.GetOk("channel"); !ok {
 		return nil
 	}
 
-	headerList := []*sdk.Header{}
+	headerList := []*sdk.InlineHookHeader{}
 	if raw, ok := d.GetOk("headers"); ok {
 		for _, header := range raw.(*schema.Set).List() {
 			h, ok := header.(map[string]interface{})
 			if ok {
-				headerList = append(headerList, &sdk.Header{Key: h["key"].(string), Value: h["value"].(string)})
+				headerList = append(headerList, &sdk.InlineHookHeader{Key: h["key"].(string), Value: h["value"].(string)})
 			}
 		}
 	}
 
-	var auth *sdk.AuthScheme
+	var auth *sdk.InlineHookAuthScheme
 	if _, ok := d.GetOk("auth.key"); ok {
-		auth = &sdk.AuthScheme{
+		auth = &sdk.InlineHookAuthScheme{
 			Key:   getStringValue(d, "auth.key"),
 			Type:  getStringValue(d, "auth.type"),
 			Value: getStringValue(d, "auth.value"),
 		}
 	}
 
-	return &sdk.Channel{
-		Config: &sdk.HookConfig{
+	return &sdk.InlineHookChannel{
+		Config: &sdk.InlineHookChannelConfig{
 			URI:        getStringValue(d, "channel.uri"),
 			AuthScheme: auth,
 			Headers:    headerList,
@@ -239,7 +240,7 @@ func buildInlineChannel(d *schema.ResourceData, m interface{}) *sdk.Channel {
 	}
 }
 
-func flattenAuth(d *schema.ResourceData, c *sdk.Channel) map[string]interface{} {
+func flattenInlineHookAuth(d *schema.ResourceData, c *sdk.InlineHookChannel) map[string]interface{} {
 	auth := map[string]interface{}{}
 
 	if c.Config.AuthScheme != nil {
@@ -253,7 +254,7 @@ func flattenAuth(d *schema.ResourceData, c *sdk.Channel) map[string]interface{} 
 	return auth
 }
 
-func flattenHookChannel(c *sdk.Channel) map[string]interface{} {
+func flattenInlineHookChannel(c *sdk.InlineHookChannel) map[string]interface{} {
 	return map[string]interface{}{
 		"type":    c.Type,
 		"version": c.Version,
@@ -262,7 +263,7 @@ func flattenHookChannel(c *sdk.Channel) map[string]interface{} {
 	}
 }
 
-func flattenHeaders(c *sdk.Channel) *schema.Set {
+func flattenInlineHookHeaders(c *sdk.InlineHookChannel) *schema.Set {
 	headers := make([]interface{}, len(c.Config.Headers))
 	for i, header := range c.Config.Headers {
 		headers[i] = map[string]interface{}{

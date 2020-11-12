@@ -3,8 +3,8 @@ package okta
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceIdpOidc() *schema.Resource {
@@ -99,18 +99,18 @@ func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", idp.Name)
-	d.Set("type", idp.Type)
-	d.Set("max_clock_skew", idp.Policy.MaxClockSkew)
-	d.Set("provisioning_action", idp.Policy.Provisioning.Action)
-	d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
-	d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
-	d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
-	d.Set("subject_match_type", idp.Policy.Subject.MatchType)
-	d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
-	d.Set("issuer_url", idp.Protocol.Issuer.URL)
-	d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
-	d.Set("client_id", idp.Protocol.Credentials.Client.ClientID)
+	_ = d.Set("name", idp.Name)
+	_ = d.Set("type", idp.Type)
+	_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkew)
+	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
+	_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
+	_ = d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
+	_ = d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
+	_ = d.Set("subject_match_type", idp.Policy.Subject.MatchType)
+	_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
+	_ = d.Set("issuer_url", idp.Protocol.Issuer.URL)
+	_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
+	_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientID)
 	syncEndpoint("authorization", idp.Protocol.Endpoints.Authorization, d)
 	syncEndpoint("token", idp.Protocol.Endpoints.Token, d)
 	syncEndpoint("user_info", idp.Protocol.Endpoints.UserInfo, d)
@@ -122,12 +122,12 @@ func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if idp.Protocol.Endpoints.Acs != nil {
-		d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
-		d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
+		_ = d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
+		_ = d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
 	}
 
 	if idp.IssuerMode != "" {
-		d.Set("issuer_mode", idp.IssuerMode)
+		_ = d.Set("issuer_mode", idp.IssuerMode)
 	}
 
 	setMap := map[string]interface{}{
@@ -135,7 +135,7 @@ func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if idp.Policy.AccountLink != nil {
-		d.Set("account_link_action", idp.Policy.AccountLink.Action)
+		_ = d.Set("account_link_action", idp.Policy.AccountLink.Action)
 
 		if idp.Policy.AccountLink.Filter != nil {
 			setMap["account_link_group_include"] = convertStringSetToInterface(idp.Policy.AccountLink.Filter.Groups.Include)
@@ -147,20 +147,17 @@ func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
 
 func syncEndpoint(key string, e *sdk.Endpoint, d *schema.ResourceData) {
 	if e != nil {
-		d.Set(key+"_binding", e.Binding)
-		d.Set(key+"_url", e.URL)
+		_ = d.Set(key+"_binding", e.Binding)
+		_ = d.Set(key+"_url", e.URL)
 	}
 }
 
 func resourceIdpUpdate(d *schema.ResourceData, m interface{}) error {
 	idp := buildOidcIdp(d)
-	d.Partial(true)
 
 	if err := updateIdp(d.Id(), m, idp); err != nil {
 		return err
 	}
-
-	d.Partial(false)
 
 	if err := setIdpStatus(idp.ID, idp.Status, d.Get("status").(string), m); err != nil {
 		return err

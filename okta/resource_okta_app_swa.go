@@ -1,9 +1,11 @@
 package okta
 
 import (
+	"context"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func resourceAppSwa() *schema.Resource {
@@ -61,7 +63,7 @@ func resourceAppSwaCreate(d *schema.ResourceData, m interface{}) error {
 	app := buildAppSwa(d, m)
 	activate := d.Get("status").(string) == "ACTIVE"
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(app, params)
+	_, _, err := client.Application.CreateApplication(context.Background(), app, params)
 
 	if err != nil {
 		return err
@@ -91,13 +93,14 @@ func resourceAppSwaRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("button_field", app.Settings.App.ButtonField)
-	d.Set("password_field", app.Settings.App.PasswordField)
-	d.Set("username_field", app.Settings.App.UsernameField)
-	d.Set("url", app.Settings.App.Url)
-	d.Set("url_regex", app.Settings.App.LoginUrlRegex)
-	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
-	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("button_field", app.Settings.App.ButtonField)
+	_ = d.Set("password_field", app.Settings.App.PasswordField)
+	_ = d.Set("username_field", app.Settings.App.UsernameField)
+	_ = d.Set("url", app.Settings.App.Url)
+	_ = d.Set("url_regex", app.Settings.App.LoginUrlRegex)
+	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
+	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 
 	return syncGroupsAndUsers(app.Id, d, m)
@@ -106,7 +109,7 @@ func resourceAppSwaRead(d *schema.ResourceData, m interface{}) error {
 func resourceAppSwaUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	app := buildAppSwa(d, m)
-	_, _, err := client.Application.UpdateApplication(d.Id(), app)
+	_, _, err := client.Application.UpdateApplication(context.Background(), d.Id(), app)
 
 	if err != nil {
 		return err
@@ -130,12 +133,12 @@ func resourceAppSwaUpdate(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppSwaDelete(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	_, err := client.Application.DeactivateApplication(d.Id())
+	_, err := client.Application.DeactivateApplication(context.Background(), d.Id())
 	if err != nil {
 		return err
 	}
 
-	_, err = client.Application.DeleteApplication(d.Id())
+	_, err = client.Application.DeleteApplication(context.Background(), d.Id())
 
 	return err
 }

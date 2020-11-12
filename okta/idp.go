@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
@@ -158,10 +158,6 @@ func resourceIdpDelete(d *schema.ResourceData, m interface{}) error {
 	return resourceDeleteAnyIdp(d, m, d.Get("status").(string) == "ACTIVE")
 }
 
-func resourceIdentityProviderDelete(d *schema.ResourceData, m interface{}) error {
-	return resourceDeleteAnyIdp(d, m, d.Get("active").(bool))
-}
-
 func resourceDeleteAnyIdp(d *schema.ResourceData, m interface{}, active bool) error {
 	client := getSupplementFromMetadata(m)
 
@@ -183,8 +179,7 @@ func resourceDeleteAnyIdp(d *schema.ResourceData, m interface{}, active bool) er
 func fetchIdp(id string, m interface{}, idp sdk.IdentityProvider) error {
 	client := getSupplementFromMetadata(m)
 	_, response, err := client.GetIdentityProvider(id, idp)
-	if response.StatusCode == http.StatusNotFound {
-		idp = nil
+	if response != nil && response.StatusCode == http.StatusNotFound {
 		return nil
 	}
 
@@ -195,8 +190,7 @@ func updateIdp(id string, m interface{}, idp sdk.IdentityProvider) error {
 	client := getSupplementFromMetadata(m)
 	_, response, err := client.UpdateIdentityProvider(id, idp, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
-	if response.StatusCode == 404 {
-		idp = nil
+	if response != nil && response.StatusCode == 404 {
 		return nil
 	}
 
@@ -207,8 +201,7 @@ func createIdp(m interface{}, idp sdk.IdentityProvider) error {
 	client := getSupplementFromMetadata(m)
 	_, response, err := client.CreateIdentityProvider(idp, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
-	if response.StatusCode == 404 {
-		idp = nil
+	if response != nil && response.StatusCode == 404 {
 		return nil
 	}
 
@@ -231,8 +224,8 @@ func setIdpStatus(id, status, desiredStatus string, m interface{}) error {
 
 func syncGroupActions(d *schema.ResourceData, groups *sdk.IDPGroupsAction) error {
 	if groups != nil {
-		d.Set("groups_action", groups.Action)
-		d.Set("groups_attribute", groups.SourceAttributeName)
+		_ = d.Set("groups_action", groups.Action)
+		_ = d.Set("groups_attribute", groups.SourceAttributeName)
 
 		return setNonPrimitives(d, map[string]interface{}{
 			"groups_assignment": groups.Assignments,
@@ -335,15 +328,15 @@ func syncAlgo(d *schema.ResourceData, alg *sdk.Algorithms) {
 		if alg.Request != nil && alg.Request.Signature != nil {
 			reqSign := alg.Request.Signature
 
-			d.Set("request_algorithm", reqSign.Algorithm)
-			d.Set("request_scope", reqSign.Scope)
+			_ = d.Set("request_algorithm", reqSign.Algorithm)
+			_ = d.Set("request_scope", reqSign.Scope)
 		}
 
 		if alg.Response != nil && alg.Response.Signature != nil {
 			resSign := alg.Response.Signature
 
-			d.Set("response_algorithm", resSign.Algorithm)
-			d.Set("response_scope", resSign.Scope)
+			_ = d.Set("response_algorithm", resSign.Algorithm)
+			_ = d.Set("response_scope", resSign.Scope)
 		}
 	}
 

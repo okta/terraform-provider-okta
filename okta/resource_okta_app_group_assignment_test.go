@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"testing"
@@ -89,7 +90,7 @@ func ensureAppGroupAssignmentExists(name string) resource.TestCheckFunc {
 		groupId := rs.Primary.Attributes["group_id"]
 		client := getOktaClientFromMetadata(testAccProvider.Meta())
 
-		g, _, err := client.Application.GetApplicationGroupAssignment(appId, groupId, nil)
+		g, _, err := client.Application.GetApplicationGroupAssignment(context.Background(), appId, groupId, nil)
 		if err != nil {
 			return err
 		} else if g == nil {

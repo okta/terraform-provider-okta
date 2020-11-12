@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 var (
@@ -165,12 +165,12 @@ func resourceProfileMappingRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("source_type", mapping.Source.Type)
-	d.Set("source_name", mapping.Source.Name)
-	d.Set("target_type", mapping.Target.Type)
-	d.Set("target_id", mapping.Target.ID)
-	d.Set("target_name", mapping.Target.Name)
-	d.Set("mappings", flattenMappingProperties(mapping.Properties))
+	_ = d.Set("source_type", mapping.Source.Type)
+	_ = d.Set("source_name", mapping.Source.Name)
+	_ = d.Set("target_type", mapping.Target.Type)
+	_ = d.Set("target_id", mapping.Target.ID)
+	_ = d.Set("target_name", mapping.Target.Name)
+	_ = d.Set("mappings", flattenMappingProperties(mapping.Properties))
 
 	return nil
 }

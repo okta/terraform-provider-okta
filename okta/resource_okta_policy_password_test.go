@@ -25,6 +25,9 @@ func deletePolicyByType(t string, client *testClient) error {
 	for _, policy := range col.Policies {
 		if strings.HasPrefix(policy.Name, testResourcePrefix) {
 			_, err = client.artClient.Policies.DeletePolicy(policy.ID)
+			if err != nil {
+				return err
+			}
 		}
 	}
 

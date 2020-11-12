@@ -1,10 +1,11 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 type (
@@ -34,7 +35,7 @@ func (m *ApiSupplement) DeleteAuthorizationServerPolicy(authServerId, id string)
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(context.Background(), req, nil)
 }
 
 func (m *ApiSupplement) ListAuthorizationServerPolicies(authServerId string) ([]*AuthorizationServerPolicy, *okta.Response, error) {
@@ -45,7 +46,7 @@ func (m *ApiSupplement) ListAuthorizationServerPolicies(authServerId string) ([]
 	}
 
 	var auth []*AuthorizationServerPolicy
-	resp, err := m.RequestExecutor.Do(req, &auth)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &auth)
 	return auth, resp, err
 }
 
@@ -60,7 +61,7 @@ func (m *ApiSupplement) CreateAuthorizationServerPolicy(authServerId string, bod
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &authorizationServer)
 	return &authorizationServer, resp, err
 }
 
@@ -75,7 +76,7 @@ func (m *ApiSupplement) UpdateAuthorizationServerPolicy(authServerId, id string,
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &authorizationServer)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -90,7 +91,7 @@ func (m *ApiSupplement) GetAuthorizationServerPolicy(authServerId, id string, au
 	}
 
 	authorizationServer := authorizationServerInstance
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &authorizationServer)
 	if err != nil {
 		return nil, resp, err
 	}

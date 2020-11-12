@@ -14,7 +14,7 @@ Use this data source to retrieve SAML IdP metadata from Okta.
 
 ```hcl
 data "okta_idp_metadata_saml" "example" {
-  id = "<idp id>"
+  idp_id = "<idp id>"
 }
 ```
 
