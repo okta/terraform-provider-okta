@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/okta/okta-sdk-golang/okta/query"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/okta/okta-sdk-golang/okta/query"
 )
 
 func dataSourceGroup() *schema.Resource {
@@ -19,10 +19,11 @@ func dataSourceGroup() *schema.Resource {
 				Required: true,
 			},
 			"type": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     false,
-				Description: "Type of the group. When specified in the terraform resource, will act as a filter when searching for the group",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      false,
+				Description:  "Type of the group. When specified in the terraform resource, will act as a filter when searching for the group",
+				ValidateFunc: validation.StringInSlice([]string{"OKTA_GROUP", "APP_GROUP", "BUILT_IN"}, false),
 			},
 			"description": &schema.Schema{
 				Type:     schema.TypeString,
@@ -52,8 +53,7 @@ func findGroup(name string, d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	searchParams := &query.Params{Q: name}
 	if d.Get("type") != nil {
-		groupType := d.Get("type").(string)
-		searchParams = &query.Params{Q: name, Type: groupType}
+		searchParams.Type = d.Get("type").(string)
 	}
 
 	groups, _, err := client.Group.ListGroups(searchParams)
