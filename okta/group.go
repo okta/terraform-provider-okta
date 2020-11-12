@@ -1,8 +1,10 @@
 package okta
 
+import "context"
+
 func listGroupUserIds(m interface{}, id string) ([]string, error) {
 	client := getOktaClientFromMetadata(m)
-	arr, _, err := client.Group.ListGroupUsers(id, nil)
+	arr, _, err := client.Group.ListGroupUsers(context.Background(), id, nil)
 	if err != nil {
 		return nil, err
 	}

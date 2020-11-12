@@ -9,20 +9,19 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 
 	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
-func buildSchema(s, t map[string]*schema.Schema) map[string]*schema.Schema {
+func buildSchema(schemas ...map[string]*schema.Schema) map[string]*schema.Schema {
 	r := map[string]*schema.Schema{}
-	for key, val := range t {
-		r[key] = val
-	}
-	for key, val := range s {
-		r[key] = val
+	for _, s := range schemas {
+		for key, val := range s {
+			r[key] = val
+		}
 	}
 	return r
 }
@@ -62,7 +61,7 @@ func conditionalRequire(d *schema.ResourceData, propList []string, reason string
 	var missing []string
 
 	for _, prop := range propList {
-		if _, ok := d.GetOkExists(prop); !ok {
+		if _, ok := d.GetOkExists(prop); !ok { // nolint:staticcheck
 			missing = append(missing, prop)
 		}
 	}
@@ -129,21 +128,6 @@ func containsOne(s []string, elements ...string) bool {
 	return false
 }
 
-func convertBoolToInt(b bool) int {
-	if b == true {
-		return 1
-	}
-	return 0
-}
-
-func convertIntToBool(i int) bool {
-	if i > 0 {
-		return true
-	}
-
-	return false
-}
-
 func convertInterfaceToStringSet(purportedSet interface{}) []string {
 	return convertInterfaceToStringArr(purportedSet.(*schema.Set).List())
 }
@@ -195,7 +179,7 @@ func createCustomNestedResourceImporter(fields []string, errMessage string) *sch
 					d.SetId(parts[i])
 					continue
 				}
-				d.Set(field, parts[i])
+				_ = d.Set(field, parts[i])
 			}
 
 			return []*schema.ResourceData{d}, nil
@@ -217,22 +201,6 @@ func convertStringSetToInterface(stringList []string) *schema.Set {
 		arr[i] = str
 	}
 	return schema.NewSet(schema.HashString, arr)
-}
-
-// Allows you to chain multiple validation functions
-func createValidationChain(validationChain ...schema.SchemaValidateFunc) schema.SchemaValidateFunc {
-	return func(val interface{}, key string) ([]string, []error) {
-		var warningList []string
-		var errorList []error
-
-		for _, cb := range validationChain {
-			warnings, errors := cb(val, key)
-			errorList = append(errorList, errors...)
-			warningList = append(warningList, warnings...)
-		}
-
-		return warningList, errorList
-	}
 }
 
 func createValueDiffSuppression(newValueToIgnore string) schema.SchemaDiffSuppressFunc {
@@ -301,15 +269,6 @@ func suppressErrorOn404(resp *okta.Response, err error) error {
 	return responseErr(resp, err)
 }
 
-func getApiToken(m interface{}) string {
-	return m.(*Config).apiToken
-}
-
-func getBaseUrl(m interface{}) string {
-	c := m.(*Config)
-	return fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
-}
-
 // Safely get string value
 func getStringValue(d *schema.ResourceData, key string) string {
 	if v, ok := d.GetOk(key); ok {
@@ -345,25 +304,17 @@ func is404(status int) bool {
 // regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
 func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []error) {
 	re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-	if re.MatchString(val.(string)) == false {
+	if !re.MatchString(val.(string)) {
 		errors = append(errors, fmt.Errorf("%s field not a valid email address", key))
 	}
 	return warnings, errors
-}
-
-func mergeMaps(target, source map[string]interface{}) map[string]interface{} {
-	for key, value := range source {
-		target[key] = value
-	}
-
-	return target
 }
 
 func normalizeDataJSON(val interface{}) string {
 	dataMap := map[string]interface{}{}
 
 	// Ignoring errors since we know it is valid
-	json.Unmarshal([]byte(val.(string)), &dataMap)
+	_ = json.Unmarshal([]byte(val.(string)), &dataMap)
 	ret, _ := json.Marshal(dataMap)
 
 	return string(ret)
@@ -379,16 +330,6 @@ func remove(arr []string, el string) []string {
 		}
 	}
 	return newArr
-}
-
-func requireOneOf(d *schema.ResourceData, propList ...string) error {
-	for _, prop := range propList {
-		if _, ok := d.GetOkExists(prop); !ok {
-			return nil
-		}
-	}
-
-	return fmt.Errorf("One of the following fields must be set: %s", strings.Join(propList, ", "))
 }
 
 // Okta SDK will (not often) return just `Okta API has returned an error: ""`` when the error is not valid JSON.
@@ -416,14 +357,6 @@ func setNonPrimitives(data *schema.ResourceData, valueMap map[string]interface{}
 	}
 
 	return nil
-}
-
-func suppressDefaultedArrayDiff(k, old, new string, d *schema.ResourceData) bool {
-	return new == "0"
-}
-
-func suppressDefaultedDiff(k, old, new string, d *schema.ResourceData) bool {
-	return new == ""
 }
 
 func validateDataJSON(val interface{}, k string) ([]string, []error) {

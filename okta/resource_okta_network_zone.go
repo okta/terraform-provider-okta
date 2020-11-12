@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceNetworkZone() *schema.Resource {
@@ -77,8 +77,8 @@ func resourceNetworkZoneRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", zone.Name)
-	d.Set("type", zone.Type)
+	_ = d.Set("name", zone.Name)
+	_ = d.Set("type", zone.Type)
 
 	return setNonPrimitives(d, map[string]interface{}{
 		// TODO

@@ -30,10 +30,10 @@ const (
 	authServerPolicy       = "okta_auth_server_policy"
 	authServerPolicyRule   = "okta_auth_server_policy_rule"
 	authServerScope        = "okta_auth_server_scope"
+	eventHook              = "okta_event_hook"
 	factor                 = "okta_factor"
 	groupRoles             = "okta_group_roles"
 	groupRule              = "okta_group_rule"
-	identityProvider       = "okta_identity_provider"
 	idpResource            = "okta_idp_oidc"
 	idpSaml                = "okta_idp_saml"
 	idpSamlKey             = "okta_idp_saml_key"
@@ -67,13 +67,13 @@ func Provider() terraform.ResourceProvider {
 		Schema: map[string]*schema.Schema{
 			"org_name": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OKTA_ORG_NAME", nil),
 				Description: "The organization to manage in Okta.",
 			},
 			"api_token": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OKTA_API_TOKEN", nil),
 				Description: "API Token granting privileges to Okta API.",
 			},
@@ -135,6 +135,7 @@ func Provider() terraform.ResourceProvider {
 			authServerPolicy:       resourceAuthServerPolicy(),
 			authServerPolicyRule:   resourceAuthServerPolicyRule(),
 			authServerScope:        resourceAuthServerScope(),
+			eventHook:              resourceEventHook(),
 			factor:                 resourceFactor(),
 			groupRoles:             resourceGroupRoles(),
 			groupRule:              resourceGroupRule(),
@@ -216,7 +217,6 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		parallelism: d.Get("parallelism").(int),
 		retryCount:  d.Get("max_retries").(int),
 		maxWait:     d.Get("max_wait_seconds").(int),
-		minWait:     d.Get("min_wait_seconds").(int),
 		backoff:     d.Get("backoff").(bool),
 	}
 	if err := config.loadAndValidate(); err != nil {

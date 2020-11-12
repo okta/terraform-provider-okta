@@ -3,7 +3,7 @@ package okta
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 var translationSmsResource = &schema.Resource{
@@ -111,7 +111,7 @@ func resourceTemplateSmsRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("translations", flattenSmsTranlations(temp.Translations))
+	_ = d.Set("translations", flattenSmsTranlations(temp.Translations))
 
 	return nil
 }

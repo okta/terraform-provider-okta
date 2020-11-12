@@ -65,4 +65,8 @@ resource okta_idp_social google {
   username_template = "idpuser.email"
 }
 
-data okta_user_profile_mapping_source user {}
+data okta_user_profile_mapping_source user {
+  depends_on = [
+    okta_idp_social.google]
+}
+

@@ -286,19 +286,22 @@ func dataSourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 	}
 	app := appList[0]
 	d.SetId(app.Id)
-	d.Set("label", app.Label)
-	d.Set("name", app.Name)
-	d.Set("status", app.Status)
-	d.Set("key_id", app.Credentials.Signing.Kid)
+	_ = d.Set("label", app.Label)
+	_ = d.Set("name", app.Name)
+	_ = d.Set("status", app.Status)
+	_ = d.Set("key_id", app.Credentials.Signing.Kid)
 
 	if app.Settings != nil && app.Settings.SignOn != nil {
-		syncSamlSettings(d, app.Settings)
+		err = syncSamlSettings(d, app.Settings)
+		if err != nil {
+			return err
+		}
 	}
 
-	d.Set("features", convertStringSetToInterface(app.Features))
-	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
-	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
-	d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
+	_ = d.Set("features", convertStringSetToInterface(app.Features))
+	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
+	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 
 	return nil
 }
