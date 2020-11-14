@@ -273,7 +273,7 @@ func setAdminRoles(d *schema.ResourceData, c *okta.Client) error {
 	roles, resp, err := listUserOnlyRoles(c, d.Id())
 
 	if err != nil {
-		if resp.StatusCode == http.StatusForbidden {
+		if resp != nil && resp.StatusCode == http.StatusForbidden {
 			log.Printf("[INFO] Insufficient permissions to get Admin Roles, skipping.")
 		} else {
 			return err
