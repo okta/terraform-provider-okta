@@ -65,7 +65,7 @@ func dataSourceAppMetadataSamlRead(d *schema.ResourceData, m interface{}) error 
 	metadataRoot := &saml.EntityDescriptor{}
 	err = xml.Unmarshal(metadata, metadataRoot)
 	if err != nil {
-		return fmt.Errorf("Could not parse SAML app metadata, error: %s", err)
+		return fmt.Errorf("could not parse SAML app metadata, error: %s", err)
 	}
 
 	desc := metadataRoot.IDPSSODescriptors[0]

@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"regexp"
@@ -10,37 +11,37 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
-func deletepolicyRulePasswords(client *testClient) error {
-	return deletePolicyRulesByType(passwordPolicyType, client)
+func deletePolicyRulePasswords(client *testClient) error {
+	return deletePolicyRulesByType(sdk.PasswordPolicyType, client)
 }
 
 func deletePolicyRulesByType(ruleType string, client *testClient) error {
-	policies, _, err := client.artClient.Policies.GetPoliciesByType(ruleType)
-
+	ctx := context.Background()
+	policies, _, err := client.oktaClient.Policy.ListPolicies(ctx, &query.Params{Type: ruleType})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to list policies in order to properly destroy rules: %v", err)
 	}
-
-	for _, policy := range policies.Policies {
-		rules, _, err := client.artClient.Policies.GetPolicyRules(policy.ID)
-
-		if err == nil && rules != nil {
-			// Tests have always used default policy, I don't really think that is necessarily a good idea but
-			// leaving for now, that means we only delete the rules and not the policy, we can keep it around.
-			for _, rule := range rules.Rules {
-				if strings.HasPrefix(rule.Name, testResourcePrefix) {
-					_, err = client.artClient.Policies.DeletePolicyRule(policy.ID, rule.ID)
-					if err != nil {
-						return err
-					}
+	for _, policy := range policies {
+		rules, _, err := client.apiSupplement.ListPolicyRules(ctx, policy.Id)
+		if err != nil {
+			return err
+		}
+		// Tests have always used default policy, I don't really think that is necessarily a good idea but
+		// leaving for now, that means we only delete the rules and not the policy, we can keep it around.
+		for i := range rules {
+			if strings.HasPrefix(rules[i].Name, testResourcePrefix) {
+				_, err = client.oktaClient.Policy.DeletePolicyRule(ctx, policy.Id, rules[i].Id)
+				if err != nil {
+					return err
 				}
 			}
 		}
 	}
-
-	return err
+	return nil
 }
 
 func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
@@ -59,7 +60,7 @@ func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 				),
 			},
 			{
@@ -67,7 +68,7 @@ func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "password_change", "DENY"),
 					resource.TestCheckResourceAttr(resourceName, "password_reset", "DENY"),
 					resource.TestCheckResourceAttr(resourceName, "password_unlock", "ALLOW"),
@@ -155,24 +156,22 @@ func createRuleCheckDestroy(ruleType string) func(*terraform.State) error {
 			}
 
 			if exists {
-				return fmt.Errorf("Rule still exists, ID: %s, PolicyID: %s", ID, policyID)
+				return fmt.Errorf("rule still exists, ID: %s, PolicyID: %s", ID, policyID)
 			}
 		}
 		return nil
 	}
 }
 
-func doesRuleExistsUpstream(policyID string, ID string) (bool, error) {
-	client := getClientFromMetadata(testAccProvider.Meta())
-
-	rule, resp, err := client.Policies.GetPolicyRule(policyID, ID)
+func doesRuleExistsUpstream(policyID, id string) (bool, error) {
+	rule, resp, err := getSupplementFromMetadata(testAccProvider.Meta()).GetPolicyRule(context.Background(), policyID, id)
 	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return false, nil
 	} else if err != nil {
 		return false, err
 	}
 
-	return rule.ID != "", nil
+	return rule.Id != "", nil
 }
 
 func testOktaPolicyRulePassword(rInt int) string {
@@ -188,7 +187,7 @@ resource "%s" "%s" {
 	name     = "%s"
 	status   = "ACTIVE"
 }
-`, rInt, passwordPolicyType, policyRulePassword, name, rInt, name)
+`, rInt, sdk.PasswordPolicyType, policyRulePassword, name, rInt, name)
 }
 
 func testOktaPolicyRulePriority(rInt int) string {
@@ -205,7 +204,7 @@ resource "%s" "%s" {
 	priority = 1
 	status   = "ACTIVE"
 }
-`, rInt, passwordPolicyType, policyRulePassword, name, rInt, name)
+`, rInt, sdk.PasswordPolicyType, policyRulePassword, name, rInt, name)
 }
 
 func testOktaPolicyRulePriorityError(rInt int) string {
@@ -222,7 +221,7 @@ resource "%s" "%s" {
 	priority = 999
 	status   = "ACTIVE"
 }
-`, rInt, passwordPolicyType, policyRulePassword, name, rInt, name)
+`, rInt, sdk.PasswordPolicyType, policyRulePassword, name, rInt, name)
 }
 
 func testOktaPolicyRulePasswordUpdated(rInt int) string {
@@ -241,5 +240,5 @@ resource "%s" "%s" {
 	password_reset  = "DENY"
 	password_unlock = "ALLOW"
 }
-`, rInt, passwordPolicyType, policyRulePassword, name, rInt, name)
+`, rInt, sdk.PasswordPolicyType, policyRulePassword, name, rInt, name)
 }

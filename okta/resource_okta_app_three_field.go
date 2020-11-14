@@ -22,38 +22,38 @@ func resourceAppThreeField() *schema.Resource {
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
-			"button_selector": &schema.Schema{
+			"button_selector": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Login button field CSS selector",
 			},
-			"password_selector": &schema.Schema{
+			"password_selector": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Login password field CSS selector",
 			},
-			"username_selector": &schema.Schema{
+			"username_selector": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Login username field CSS selector",
 			},
-			"extra_field_selector": &schema.Schema{
+			"extra_field_selector": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Extra field CSS selector",
 			},
-			"extra_field_value": &schema.Schema{
+			"extra_field_value": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Value for extra form field",
 			},
-			"url": &schema.Schema{
+			"url": {
 				Type:         schema.TypeString,
 				Required:     true,
 				Description:  "Login URL",
 				ValidateFunc: validateIsURL,
 			},
-			"url_regex": &schema.Schema{
+			"url_regex": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "A regex that further restricts URL to the specified regex",
@@ -64,8 +64,8 @@ func resourceAppThreeField() *schema.Resource {
 
 func resourceAppThreeFieldCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppThreeField(d, m)
-	activate := d.Get("status").(string) == "ACTIVE"
+	app := buildAppThreeField(d)
+	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
 	_, _, err := client.Application.CreateApplication(context.Background(), app, params)
 
@@ -108,7 +108,7 @@ func resourceAppThreeFieldRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppThreeFieldUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppThreeField(d, m)
+	app := buildAppThreeField(d)
 	_, resp, err := client.Application.UpdateApplication(context.Background(), d.Id(), app)
 
 	if err != nil {
@@ -135,7 +135,7 @@ func resourceAppThreeFieldDelete(d *schema.ResourceData, m interface{}) error {
 	return responseErr(client.Application.DeleteApplication(context.Background(), d.Id()))
 }
 
-func buildAppThreeField(d *schema.ResourceData, m interface{}) *okta.SwaThreeFieldApplication {
+func buildAppThreeField(d *schema.ResourceData) *okta.SwaThreeFieldApplication {
 	app := okta.NewSwaThreeFieldApplication()
 	app.Label = d.Get("label").(string)
 

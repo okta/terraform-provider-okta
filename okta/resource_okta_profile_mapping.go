@@ -11,16 +11,16 @@ import (
 var (
 	mappingResource = &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"id": &schema.Schema{
+			"id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The mapping property key.",
 			},
-			"expression": &schema.Schema{
+			"expression": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"push_status": &schema.Schema{
+			"push_status": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Default:      dontPush,
@@ -44,38 +44,38 @@ func resourceOktaProfileMapping() *schema.Resource {
 		Exists: resourceProfileMappingExists,
 
 		Schema: map[string]*schema.Schema{
-			"source_id": &schema.Schema{
+			"source_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The source id of the mapping to manage.",
 			},
-			"delete_when_absent": &schema.Schema{
+			"delete_when_absent": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "When turned on this flag will trigger the provider to delete mapping properties that are not defined in config. By default, we do not delete missing properties.",
 			},
-			"source_type": &schema.Schema{
+			"source_type": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"source_name": &schema.Schema{
+			"source_name": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"target_id": &schema.Schema{
+			"target_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The target id of the mapping to manage.",
 			},
-			"target_type": &schema.Schema{
+			"target_type": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"target_name": &schema.Schema{
+			"target_name": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"mappings": &schema.Schema{
+			"mappings": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     mappingResource,
@@ -112,7 +112,7 @@ func getProfileMapping(d *schema.ResourceData, m interface{}) (*sdk.Mapping, err
 	client := getSupplementFromMetadata(m)
 	mapping, resp, err := client.GetProfileMapping(d.Id())
 
-	if is404(resp.StatusCode) {
+	if resp != nil && is404(resp.StatusCode) {
 		return nil, nil
 	}
 

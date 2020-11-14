@@ -69,8 +69,8 @@ func resourceAppSaml() *schema.Resource {
 			"key_years_valid": {
 				Type:         schema.TypeInt,
 				Optional:     true,
-				Default:      1,
-				ValidateFunc: validation.IntAtLeast(1),
+				Default:      2,
+				ValidateFunc: validation.IntBetween(2, 10),
 				Description:  "Number of years the certificate is valid.",
 			},
 			"metadata": {
@@ -150,13 +150,10 @@ func resourceAppSaml() *schema.Resource {
 				Description: "Audience Restriction",
 			},
 			"idp_issuer": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "SAML issuer ID",
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					// Conditional default
-					return new == "" && old == "http://www.okta.com/${org.externalKey}"
-				},
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "SAML issuer ID",
+				DiffSuppressFunc: appSamlDiffSuppressFunc,
 			},
 			"sp_issuer": {
 				Type:        schema.TypeString,
@@ -244,18 +241,18 @@ func resourceAppSaml() *schema.Resource {
 				Description: "features to enable",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			"user_name_template": &schema.Schema{
+			"user_name_template": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "${source.login}",
 				Description: "Username template",
 			},
-			"user_name_template_suffix": &schema.Schema{
+			"user_name_template_suffix": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Username template suffix",
 			},
-			"user_name_template_type": &schema.Schema{
+			"user_name_template_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Default:      "BUILT_IN",
@@ -276,46 +273,7 @@ func resourceAppSaml() *schema.Resource {
 				Type:     schema.TypeList,
 				Optional: true,
 				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"filter_type": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "Type of group attribute filter",
-						},
-						"filter_value": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "Filter value to use",
-						},
-						"name": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"namespace": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Default:  "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
-							ValidateFunc: validation.StringInSlice([]string{
-								"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
-								"urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
-								"urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
-							}, false),
-						},
-						"type": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Default:  "EXPRESSION",
-							ValidateFunc: validation.StringInSlice([]string{
-								"EXPRESSION",
-								"GROUP",
-							}, false),
-						},
-						"values": {
-							Type:     schema.TypeList,
-							Optional: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-						},
-					},
+					Schema: attributeStatements,
 				},
 			},
 		}),
@@ -324,13 +282,13 @@ func resourceAppSaml() *schema.Resource {
 
 func resourceAppSamlCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app, err := buildApp(d, m)
+	app, err := buildApp(d)
 
 	if err != nil {
 		return err
 	}
 
-	activate := d.Get("status").(string) == "ACTIVE"
+	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
 	_, _, err = client.Application.CreateApplication(context.Background(), app, params)
 
@@ -384,7 +342,7 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	if app.Credentials.Signing.Kid != "" && app.Status != "INACTIVE" {
+	if app.Credentials.Signing.Kid != "" && app.Status != statusInactive {
 		keyID := app.Credentials.Signing.Kid
 		_ = d.Set("key_id", keyID)
 		keyMetadata, err := getSupplementFromMetadata(m).GetSAMLMetdata(d.Id(), keyID)
@@ -396,7 +354,7 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 		metadataRoot := &saml.EntityDescriptor{}
 		err = xml.Unmarshal(keyMetadata, metadataRoot)
 		if err != nil {
-			return fmt.Errorf("Could not parse SAML app metadata, error: %s", err)
+			return fmt.Errorf("could not parse SAML app metadata, error: %s", err)
 		}
 		desc := metadataRoot.IDPSSODescriptors[0]
 		syncSamlEndpointBinding(d, desc.SingleSignOnServices)
@@ -414,7 +372,7 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppSamlUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app, err := buildApp(d, m)
+	app, err := buildApp(d)
 
 	if err != nil {
 		return err
@@ -460,7 +418,7 @@ func resourceAppSamlDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func buildApp(d *schema.ResourceData, m interface{}) (*okta.SamlApplication, error) {
+func buildApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewSamlApplication()
 	app.Label = d.Get("label").(string)

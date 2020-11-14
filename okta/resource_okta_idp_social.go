@@ -20,11 +20,11 @@ func resourceIdpSocial() *schema.Resource {
 
 		// Note the base schema
 		Schema: buildIdpSchema(map[string]*schema.Schema{
-			"authorization_url":     optUrlSchema,
+			"authorization_url":     optURLSchema,
 			"authorization_binding": optBindingSchema,
-			"token_url":             optUrlSchema,
+			"token_url":             optURLSchema,
 			"token_binding":         optBindingSchema,
-			"type": &schema.Schema{
+			"type": {
 				Type:     schema.TypeString,
 				Required: true,
 				ValidateFunc: validation.StringInSlice(
@@ -32,41 +32,41 @@ func resourceIdpSocial() *schema.Resource {
 					false,
 				),
 			},
-			"scopes": &schema.Schema{
+			"scopes": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Required: true,
 			},
-			"protocol_type": &schema.Schema{
+			"protocol_type": {
 				Type:         schema.TypeString,
 				Default:      "OAUTH2",
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"OIDC", "OAUTH2"}, false),
 			},
-			"client_id": &schema.Schema{
+			"client_id": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"match_type": &schema.Schema{
+			"match_type": {
 				Type:       schema.TypeString,
 				Optional:   true,
 				Deprecated: "This property was incorrectly added to this resource, you should use \"subject_match_type\"",
 			},
-			"match_attribute": &schema.Schema{
+			"match_attribute": {
 				Type:       schema.TypeString,
 				Optional:   true,
 				Deprecated: "This property was incorrectly added to this resource, you should use \"subject_match_attribute\"",
 			},
-			"client_secret": &schema.Schema{
+			"client_secret": {
 				Type:      schema.TypeString,
 				Optional:  true,
 				Sensitive: true,
 			},
-			"max_clock_skew": &schema.Schema{
+			"max_clock_skew": {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
-			"issuer_mode": &schema.Schema{
+			"issuer_mode": {
 				Type:         schema.TypeString,
 				Description:  "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
 				ValidateFunc: validation.StringInSlice([]string{"ORG_URL", "CUSTOM_URL"}, false),

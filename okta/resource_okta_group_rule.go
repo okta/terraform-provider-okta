@@ -20,23 +20,23 @@ func resourceGroupRule() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"group_assignments": &schema.Schema{
+			"group_assignments": {
 				Type:     schema.TypeSet,
 				Required: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				// Actions cannot be updated even on a deactivated rule
 				ForceNew: true,
 			},
-			"expression_type": &schema.Schema{
+			"expression_type": {
 				Type:     schema.TypeString,
 				Default:  "urn:okta:expression:1.0",
 				Optional: true,
 			},
-			"expression_value": &schema.Schema{
+			"expression_value": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
@@ -66,7 +66,7 @@ func buildGroupRule(d *schema.ResourceData) *okta.GroupRule {
 func handleGroupRuleLifecycle(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 
-	if d.Get("status").(string) == "ACTIVE" {
+	if d.Get("status").(string) == statusActive {
 		_, err := client.Group.ActivateGroupRule(context.Background(), d.Id())
 		return err
 	}
@@ -131,14 +131,13 @@ func resourceGroupRuleUpdate(d *schema.ResourceData, m interface{}) error {
 			return err
 		}
 		d.SetPartial("status") //nolint:staticcheck
-
 	}
 
 	if hasGroupRuleChange(d) {
 		client := getOktaClientFromMetadata(m)
 		rule := buildGroupRule(d)
 
-		if desiredStatus == "ACTIVE" {
+		if desiredStatus == statusActive {
 			// Only inactive rules can be changed, thus we should deactivate the rule in case it was "ACTIVE"
 			if _, err := client.Group.DeactivateGroupRule(context.Background(), d.Id()); err != nil {
 				return err
@@ -150,7 +149,7 @@ func resourceGroupRuleUpdate(d *schema.ResourceData, m interface{}) error {
 			return err
 		}
 
-		if desiredStatus == "ACTIVE" {
+		if desiredStatus == statusActive {
 			// We should reactivate the rule in case it was deactivated.
 			if _, err := client.Group.ActivateGroupRule(context.Background(), d.Id()); err != nil {
 				return err

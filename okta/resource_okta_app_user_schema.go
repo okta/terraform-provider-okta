@@ -17,7 +17,7 @@ func resourceAppUserSchema() *schema.Resource {
 		Importer: createNestedResourceImporter([]string{"app_id", "id"}),
 
 		Schema: buildCustomUserSchema(map[string]*schema.Schema{
-			"app_id": &schema.Schema{
+			"app_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
@@ -66,16 +66,12 @@ func resourceAppUserSchemaDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func getAppUserSubSchema(d *schema.ResourceData, m interface{}) (subschema *sdk.UserSubSchema, err error) {
-	var schema *sdk.UserSchema
-
-	schema, _, err = getSupplementFromMetadata(m).GetAppUserSchema(d.Get("app_id").(string))
+func getAppUserSubSchema(d *schema.ResourceData, m interface{}) (*sdk.UserSubSchema, error) {
+	us, _, err := getSupplementFromMetadata(m).GetAppUserSchema(d.Get("app_id").(string))
 	if err != nil {
-		return
+		return nil, err
 	}
-
-	subschema = getCustomProperty(schema, d.Get("index").(string))
-	return
+	return getCustomProperty(us, d.Get("index").(string)), nil
 }
 
 func updateAppUserSubschema(d *schema.ResourceData, m interface{}) error {

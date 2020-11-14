@@ -22,7 +22,6 @@ func sweepGroups(client *testClient) error {
 		if _, err := client.oktaClient.Group.DeleteGroup(context.Background(), s.Id); err != nil {
 			errorList = append(errorList, err)
 		}
-
 	}
 	return condenseError(errorList)
 }

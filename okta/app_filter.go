@@ -22,7 +22,7 @@ type (
 	}
 
 	appFilters struct {
-		ApiFilter         string
+		APIFilter         string
 		ID                string
 		Label             string
 		LabelPrefix       string
@@ -36,13 +36,13 @@ type (
 	}
 )
 
-func (a *appFilters) String() string {
-	return fmt.Sprintf(`id: "%s", label: "%s", label_prefix: "%s"`, a.ID, a.Label, a.LabelPrefix)
+func (f *appFilters) String() string {
+	return fmt.Sprintf(`id: "%s", label: "%s", label_prefix: "%s"`, f.ID, f.Label, f.LabelPrefix)
 }
 
 func listApps(m interface{}, filters *appFilters) ([]*appID, error) {
 	result := &searchResults{Apps: []*appID{}}
-	qp := &query.Params{Limit: 200, Filter: filters.ApiFilter, Q: filters.getQ()}
+	qp := &query.Params{Limit: 200, Filter: filters.APIFilter, Q: filters.getQ()}
 
 	return result.Apps, collectApps(getSupplementFromMetadata(m).RequestExecutor, filters, result, qp)
 }
@@ -81,11 +81,9 @@ func filterApp(appList []*appID, filter *appFilters) []*appID {
 		if (filter.ID != "" && filter.ID == app.ID) || (filter.Label != "" && filter.Label == app.Label) {
 			filteredList = append(filteredList, app)
 		}
-
 		if filter.LabelPrefix != "" && strings.HasPrefix(app.Label, filter.LabelPrefix) {
 			filteredList = append(filteredList, app)
 		}
-
 	}
 	return filteredList
 }
@@ -119,7 +117,7 @@ func (f *appFilters) shouldShortCircuit(appList []*appID) bool {
 // not worth the squeeze.
 func listSamlApps(m interface{}, filters *appFilters) ([]*okta.SamlApplication, error) {
 	result := &searchResults{SamlApps: []*okta.SamlApplication{}}
-	qp := &query.Params{Limit: 200, Filter: filters.ApiFilter}
+	qp := &query.Params{Limit: 200, Filter: filters.APIFilter}
 	return result.SamlApps, collectSamlApps(getSupplementFromMetadata(m).RequestExecutor, filters, result, qp)
 }
 
@@ -160,7 +158,6 @@ func filterSamlApp(appList []*okta.SamlApplication, filter *appFilters) []*okta.
 		if filter.LabelPrefix != "" && strings.HasPrefix(app.Label, filter.LabelPrefix) {
 			filteredList = append(filteredList, app)
 		}
-
 	}
 	return filteredList
 }
@@ -172,7 +169,7 @@ func getAppFilters(d *schema.ResourceData) (*appFilters, error) {
 	filters := &appFilters{ID: id, Label: label, LabelPrefix: labelPrefix}
 
 	if d.Get("active_only").(bool) {
-		filters.ApiFilter = `status eq "ACTIVE"`
+		filters.APIFilter = fmt.Sprintf(`status eq "%s"`, statusActive)
 	}
 
 	if id == "" && label == "" && labelPrefix == "" {

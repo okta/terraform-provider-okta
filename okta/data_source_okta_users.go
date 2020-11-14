@@ -17,22 +17,22 @@ func dataSourceUsers() *schema.Resource {
 		Read: dataSourceUsersRead,
 
 		Schema: map[string]*schema.Schema{
-			"search": &schema.Schema{
+			"search": {
 				Type:        schema.TypeSet,
 				Required:    true,
 				Description: "Filter to find a user, each filter will be concatenated with an AND clause. Please be aware profile properties must match what is in Okta, which is likely camel case",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": &schema.Schema{
+						"name": {
 							Type:        schema.TypeString,
 							Required:    true,
 							Description: "Property name to search for. This requires the search feature be on. Please see Okta documentation on their filter API for users. https://developer.okta.com/docs/api/resources/users#list-users-with-search",
 						},
-						"value": &schema.Schema{
+						"value": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"comparison": &schema.Schema{
+						"comparison": {
 							Type:         schema.TypeString,
 							Optional:     true,
 							Default:      "eq",
@@ -41,7 +41,7 @@ func dataSourceUsers() *schema.Resource {
 					},
 				},
 			},
-			"users": &schema.Schema{
+			"users": {
 				Type:     schema.TypeList,
 				Optional: true,
 				Elem: &schema.Resource{
@@ -58,14 +58,14 @@ func dataSourceUsersRead(d *schema.ResourceData, m interface{}) error {
 	params := &query.Params{Search: getSearchCriteria(d), Limit: 200, SortOrder: "0"}
 	err := collectUsers(client, results, params)
 	if err != nil {
-		return fmt.Errorf("Error Getting User from Okta: %v", err)
+		return fmt.Errorf("error Getting User from Okta: %v", err)
 	}
 
 	d.SetId(fmt.Sprintf("%d", hashcode.String(params.String())))
 	arr := make([]map[string]interface{}, len(results.Users))
 
 	for i, user := range results.Users {
-		rawMap, err := flattenUser(user, d)
+		rawMap, err := flattenUser(user)
 		if err != nil {
 			return err
 		}

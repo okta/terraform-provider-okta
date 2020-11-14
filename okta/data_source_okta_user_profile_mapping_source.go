@@ -34,7 +34,7 @@ func dataSourceUserProfileMappingSourceRead(d *schema.ResourceData, m interface{
 
 	mapping, _, err := client.FindProfileMappingSource("user", "user", &query.Params{})
 	if err != nil {
-		return fmt.Errorf("Error Listing User Profile Mapping Source in Okta: %v", err)
+		return fmt.Errorf("error Listing User Profile Mapping Source in Okta: %v", err)
 	}
 
 	d.SetId(mapping.ID)

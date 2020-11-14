@@ -23,53 +23,53 @@ func resourceAppSecurePasswordStore() *schema.Resource {
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
-			"password_field": &schema.Schema{
+			"password_field": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Login password field",
 			},
-			"username_field": &schema.Schema{
+			"username_field": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Login username field",
 			},
-			"url": &schema.Schema{
+			"url": {
 				Type:         schema.TypeString,
 				Required:     true,
 				Description:  "Login URL",
 				ValidateFunc: validateIsURL,
 			},
-			"optional_field1": &schema.Schema{
+			"optional_field1": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Name of optional param in the login form",
 			},
-			"optional_field1_value": &schema.Schema{
+			"optional_field1_value": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Name of optional value in login form",
 			},
-			"optional_field2": &schema.Schema{
+			"optional_field2": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Name of optional param in the login form",
 			},
-			"optional_field2_value": &schema.Schema{
+			"optional_field2_value": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Name of optional value in login form",
 			},
-			"optional_field3": &schema.Schema{
+			"optional_field3": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Name of optional param in the login form",
 			},
-			"optional_field3_value": &schema.Schema{
+			"optional_field3_value": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Name of optional value in login form",
 			},
-			"credentials_scheme": &schema.Schema{
+			"credentials_scheme": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "EDIT_USERNAME_AND_PASSWORD",
@@ -85,18 +85,18 @@ func resourceAppSecurePasswordStore() *schema.Resource {
 				),
 				Description: "Application credentials scheme",
 			},
-			"reveal_password": &schema.Schema{
+			"reveal_password": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
 				Description: "Allow user to reveal password",
 			},
-			"shared_username": &schema.Schema{
+			"shared_username": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Shared username, required for certain schemes.",
 			},
-			"shared_password": &schema.Schema{
+			"shared_password": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Shared password, required for certain schemes.",
@@ -107,8 +107,8 @@ func resourceAppSecurePasswordStore() *schema.Resource {
 
 func resourceAppSecurePasswordStoreCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppSecurePasswordStore(d, m)
-	activate := d.Get("status").(string) == "ACTIVE"
+	app := buildAppSecurePasswordStore(d)
+	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
 	_, _, err := client.Application.CreateApplication(context.Background(), app, params)
 
@@ -156,7 +156,7 @@ func resourceAppSecurePasswordStoreRead(d *schema.ResourceData, m interface{}) e
 
 func resourceAppSecurePasswordStoreUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppSecurePasswordStore(d, m)
+	app := buildAppSecurePasswordStore(d)
 	_, _, err := client.Application.UpdateApplication(context.Background(), d.Id(), app)
 
 	if err != nil {
@@ -185,7 +185,7 @@ func resourceAppSecurePasswordStoreDelete(d *schema.ResourceData, m interface{})
 	return err
 }
 
-func buildAppSecurePasswordStore(d *schema.ResourceData, m interface{}) *okta.SecurePasswordStoreApplication {
+func buildAppSecurePasswordStore(d *schema.ResourceData) *okta.SecurePasswordStoreApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewSecurePasswordStoreApplication()
 	app.Label = d.Get("label").(string)

@@ -37,7 +37,7 @@ func TestAccAppSecurePasswordStoreApplication_credsSchemes(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSecurePasswordStoreApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "url", "http://test.com"),
 					resource.TestCheckResourceAttr(resourceName, "username_field", "user"),
 					resource.TestCheckResourceAttr(resourceName, "password_field", "pass"),

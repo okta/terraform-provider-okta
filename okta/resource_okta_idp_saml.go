@@ -18,22 +18,22 @@ func resourceIdpSaml() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 		Schema: buildIdpSchema(map[string]*schema.Schema{
-			"type": &schema.Schema{
+			"type": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
 			"acs_binding": bindingSchema,
-			"acs_type": &schema.Schema{
+			"acs_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Default:      "INSTANCE",
 				ValidateFunc: validation.StringInSlice([]string{"INSTANCE", "ORG"}, false),
 			},
-			"sso_url": &schema.Schema{
+			"sso_url": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"sso_binding": &schema.Schema{
+			"sso_binding": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ValidateFunc: validation.StringInSlice(
@@ -42,34 +42,34 @@ func resourceIdpSaml() *schema.Resource {
 				),
 				Default: postBindingAlias,
 			},
-			"sso_destination": &schema.Schema{
+			"sso_destination": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"name_format": &schema.Schema{
+			"name_format": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
 			},
-			"subject_format": &schema.Schema{
+			"subject_format": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
 			},
-			"subject_filter": &schema.Schema{
+			"subject_filter": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"issuer": &schema.Schema{
+			"issuer": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"issuer_mode": issuerMode,
-			"audience": &schema.Schema{
+			"audience": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"kid": &schema.Schema{
+			"kid": {
 				Type:     schema.TypeString,
 				Required: true,
 			},

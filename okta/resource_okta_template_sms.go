@@ -8,11 +8,11 @@ import (
 
 var translationSmsResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
-		"language": &schema.Schema{
+		"language": {
 			Type:     schema.TypeString,
 			Required: true,
 		},
-		"template": &schema.Schema{
+		"template": {
 			Type:         schema.TypeString,
 			Required:     true,
 			ValidateFunc: validation.StringLenBetween(1, 161),
@@ -31,18 +31,18 @@ func resourceTemplateSms() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 		Schema: map[string]*schema.Schema{
-			"type": &schema.Schema{
+			"type": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "SMS template type",
 			},
-			"template": &schema.Schema{
+			"template": {
 				Type:         schema.TypeString,
 				Required:     true,
 				Description:  "SMS default template",
 				ValidateFunc: validation.StringLenBetween(1, 161),
 			},
-			"translations": &schema.Schema{
+			"translations": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     translationSmsResource,
@@ -102,7 +102,7 @@ func resourceTemplateSmsExists(d *schema.ResourceData, m interface{}) (bool, err
 func resourceTemplateSmsRead(d *schema.ResourceData, m interface{}) error {
 	temp, resp, err := getSupplementFromMetadata(m).GetSmsTemplate(d.Id())
 
-	if is404(resp.StatusCode) {
+	if resp != nil && is404(resp.StatusCode) {
 		d.SetId("")
 		return nil
 	}

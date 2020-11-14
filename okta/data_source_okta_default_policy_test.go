@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func TestAccOktaDataSourceDefaultPolicy_read(t *testing.T) {
@@ -34,5 +35,5 @@ func testAccDataSourceDefaultPolicyConfig(rInt int) string {
 data "okta_default_policy" "default-%d" {
   type = "%s"
 }
-`, rInt, passwordPolicyType)
+`, rInt, sdk.PasswordPolicyType)
 }

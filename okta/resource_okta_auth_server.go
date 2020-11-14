@@ -21,46 +21,46 @@ func resourceAuthServer() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 		Schema: map[string]*schema.Schema{
-			"audiences": &schema.Schema{
+			"audiences": {
 				Type:        schema.TypeSet,
 				Required:    true,
 				Description: "Currently Okta only supports a single value here",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"status": statusSchema,
-			"kid": &schema.Schema{
+			"kid": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"credentials_last_rotated": &schema.Schema{
+			"credentials_last_rotated": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"credentials_next_rotation": &schema.Schema{
+			"credentials_next_rotation": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"credentials_rotation_mode": &schema.Schema{
+			"credentials_rotation_mode": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"AUTO", "MANUAL"}, false),
 				Default:      "AUTO",
 				Description:  "Credential rotation mode, in many cases you cannot set this to MANUAL, the API will ignore the value and you will get a perpetual diff. This should rarely be used.",
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"issuer": &schema.Schema{
+			"issuer": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "EA Feature: allows you to use a custom issuer URL",
 			},
-			"issuer_mode": &schema.Schema{
+			"issuer_mode": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "EA Feature: allows you to use a custom issuer URL",
@@ -74,7 +74,7 @@ func resourceAuthServer() *schema.Resource {
 func handleAuthServerLifecycle(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
 
-	if d.Get("status").(string) == "ACTIVE" {
+	if d.Get("status").(string) == statusActive {
 		_, err := client.ActivateAuthorizationServer(d.Id())
 		return err
 	}

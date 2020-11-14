@@ -12,7 +12,6 @@ import (
 
 func resourceAppUser() *schema.Resource {
 	return &schema.Resource{
-		// No point in having an exist function, since only the group has to exist
 		Create: resourceAppUserCreate,
 		Exists: resourceAppUserExists,
 		Read:   resourceAppUserRead,
@@ -22,7 +21,7 @@ func resourceAppUser() *schema.Resource {
 			State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				parts := strings.Split(d.Id(), "/")
 				if len(parts) != 2 {
-					return nil, errors.New("Invalid resource import specifier. Use: terraform import <app_id>/<group_id>")
+					return nil, errors.New("invalid resource import specifier. Use: terraform import <app_id>/<user_id>")
 				}
 
 				_ = d.Set("app_id", parts[0])
@@ -42,26 +41,26 @@ func resourceAppUser() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"app_id": &schema.Schema{
+			"app_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "App to associate user with",
 			},
-			"user_id": &schema.Schema{
+			"user_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "User associated with the application",
 			},
-			"username": &schema.Schema{
+			"username": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"password": &schema.Schema{
+			"password": {
 				Type:      schema.TypeString,
 				Sensitive: true,
 				Optional:  true,
 			},
-			"profile": &schema.Schema{
+			"profile": {
 				Type:      schema.TypeString,
 				StateFunc: normalizeDataJSON,
 				Optional:  true,
@@ -124,7 +123,7 @@ func resourceAppUserRead(d *schema.ResourceData, m interface{}) error {
 		nil,
 	)
 
-	if is404(resp.StatusCode) {
+	if resp != nil && is404(resp.StatusCode) {
 		d.SetId("")
 		return nil
 	}

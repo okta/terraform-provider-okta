@@ -12,36 +12,36 @@ func dataSourceAuthServer() *schema.Resource {
 		Read: dataSourceAuthServerRead,
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"audiences": &schema.Schema{
+			"audiences": {
 				Type:     schema.TypeSet,
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			"kid": &schema.Schema{
+			"kid": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"credentials_last_rotated": &schema.Schema{
+			"credentials_last_rotated": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"credentials_next_rotation": &schema.Schema{
+			"credentials_next_rotation": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"credentials_rotation_mode": &schema.Schema{
+			"credentials_rotation_mode": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"status": &schema.Schema{
+			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -56,7 +56,7 @@ func dataSourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 	if authServer == nil {
-		return fmt.Errorf("No authorization server found with provided name %s", name)
+		return fmt.Errorf("no authorization server found with provided name %s", name)
 	}
 	d.SetId(authServer.Id)
 	_ = d.Set("name", authServer.Name)

@@ -29,7 +29,6 @@ func deleteAuthServers(client *testClient) error {
 		if _, err := client.apiSupplement.DeleteAuthorizationServer(s.Id); err != nil {
 			return err
 		}
-
 	}
 	return nil
 }

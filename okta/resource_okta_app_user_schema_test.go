@@ -65,11 +65,11 @@ func testAppUserSchemasExists(name string) resource.TestCheckFunc {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("Not found: %s", name)
+			return fmt.Errorf("not found: %s", name)
 		}
 
 		if exists, _ := testAppUserSchemaExists(rs.Primary.ID); !exists {
-			return fmt.Errorf("Failed to find %s", rs.Primary.ID)
+			return fmt.Errorf("failed to find %s", rs.Primary.ID)
 		}
 		return nil
 	}
@@ -83,7 +83,7 @@ func testAppUserSchemaExists(index string) (bool, error) {
 		if resp.StatusCode == 404 {
 			return false, nil
 		}
-		return false, fmt.Errorf("Error Listing App User Schema in Okta: %v", err)
+		return false, fmt.Errorf("error Listing App User Schema in Okta: %v", err)
 	}
 	cu := getCustomProperty(schema, ids[1])
 	if cu != nil {

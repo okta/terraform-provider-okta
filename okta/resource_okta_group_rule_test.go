@@ -19,7 +19,7 @@ func sweepGroupRules(client *testClient) error {
 	}
 
 	for _, s := range rules {
-		if s.Status == "ACTIVE" {
+		if s.Status == statusActive {
 			if _, err := client.oktaClient.Group.DeactivateGroupRule(context.Background(), s.Id); err != nil {
 				errorList = append(errorList, err)
 				continue
@@ -28,7 +28,6 @@ func sweepGroupRules(client *testClient) error {
 		if _, err := client.oktaClient.Group.DeleteGroupRule(context.Background(), s.Id); err != nil {
 			errorList = append(errorList, err)
 		}
-
 	}
 	return condenseError(errorList)
 }
@@ -54,7 +53,7 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "expression_type", "urn:okta:expression:1.0"),
 					resource.TestCheckResourceAttr(resourceName, "expression_value", "String.startsWith(user.firstName,\"andy\")"),
 				),
@@ -63,21 +62,21 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 				),
 			},
 			{
 				Config: groupUpdate,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name2),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 				),
 			},
 			{
 				Config: deactivated,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name2),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 				),
 			},
 		},
