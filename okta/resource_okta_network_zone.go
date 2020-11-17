@@ -32,7 +32,7 @@ func resourceNetworkZone() *schema.Resource {
 				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Name of the Network Zone Resource",
@@ -43,7 +43,7 @@ func resourceNetworkZone() *schema.Resource {
 				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			"type": &schema.Schema{
+			"type": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringInSlice([]string{"IP", "DYNAMIC"}, false),
@@ -55,7 +55,7 @@ func resourceNetworkZone() *schema.Resource {
 
 func resourceNetworkZoneCreate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
-	networkZone := buildNetworkZone(d, m)
+	networkZone := buildNetworkZone(d)
 	networkZone, _, err := client.CreateNetworkZone(*networkZone, nil)
 	if err != nil {
 		return err
@@ -68,7 +68,7 @@ func resourceNetworkZoneCreate(d *schema.ResourceData, m interface{}) error {
 func resourceNetworkZoneRead(d *schema.ResourceData, m interface{}) error {
 	zone, resp, err := getSupplementFromMetadata(m).GetNetworkZone(d.Id())
 
-	if is404(resp.StatusCode) {
+	if resp != nil && is404(resp.StatusCode) {
 		d.SetId("")
 		return nil
 	}
@@ -90,7 +90,7 @@ func resourceNetworkZoneRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceNetworkZoneUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
-	networkZone := buildNetworkZone(d, m)
+	networkZone := buildNetworkZone(d)
 	_, _, err := client.UpdateNetworkZone(d.Id(), *networkZone, nil)
 
 	if err != nil {
@@ -111,10 +111,10 @@ func resourceNetworkZoneDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func buildNetworkZone(d *schema.ResourceData, m interface{}) *sdk.NetworkZone {
-	gatewaysList := []*sdk.AddressObj{}
-	proxiesList := []*sdk.AddressObj{}
-	locationsList := []*sdk.Location{}
+func buildNetworkZone(d *schema.ResourceData) *sdk.NetworkZone {
+	var gatewaysList []*sdk.AddressObj
+	var proxiesList []*sdk.AddressObj
+	var locationsList []*sdk.Location
 	zoneType := d.Get("type").(string)
 
 	if strings.TrimRight(zoneType, "\n") == "IP" {
@@ -124,14 +124,12 @@ func buildNetworkZone(d *schema.ResourceData, m interface{}) *sdk.NetworkZone {
 		if values, ok := d.GetOk("proxies"); ok {
 			proxiesList = buildAddressObjList(values.(*schema.Set))
 		}
-	} else {
-		if values, ok := d.GetOk("dynamic_locations"); ok {
-			for _, value := range values.(*schema.Set).List() {
-				if strings.Contains(value.(string), "-") {
-					locationsList = append(locationsList, &sdk.Location{Country: strings.Split(value.(string), "-")[0], Region: value.(string)})
-				} else {
-					locationsList = append(locationsList, &sdk.Location{Country: value.(string)})
-				}
+	} else if values, ok := d.GetOk("dynamic_locations"); ok {
+		for _, value := range values.(*schema.Set).List() {
+			if strings.Contains(value.(string), "-") {
+				locationsList = append(locationsList, &sdk.Location{Country: strings.Split(value.(string), "-")[0], Region: value.(string)})
+			} else {
+				locationsList = append(locationsList, &sdk.Location{Country: value.(string)})
 			}
 		}
 	}

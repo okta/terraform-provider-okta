@@ -14,7 +14,7 @@ func dataSourceGroup() *schema.Resource {
 		Read: dataSourceGroupRead,
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
@@ -25,17 +25,17 @@ func dataSourceGroup() *schema.Resource {
 				Description:  "Type of the group. When specified in the terraform resource, will act as a filter when searching for the group",
 				ValidateFunc: validation.StringInSlice([]string{"OKTA_GROUP", "APP_GROUP", "BUILT_IN"}, false),
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"include_users": &schema.Schema{
+			"include_users": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
 				Description: "Fetch group users, having default off cuts down on API calls.",
 			},
-			"users": &schema.Schema{
+			"users": {
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -63,9 +63,9 @@ func findGroup(name string, d *schema.ResourceData, m interface{}) error {
 
 	if len(groups) < 1 {
 		if d.Get("type") != nil {
-			return fmt.Errorf("Group \"%s\" not found with type \"%s\"", name, d.Get("type").(string))
+			return fmt.Errorf("group \"%s\" was not found with type \"%s\"", name, d.Get("type").(string))
 		}
-		return fmt.Errorf("Group \"%s\" not found", name)
+		return fmt.Errorf("group \"%s\" was not found", name)
 	}
 
 	d.SetId(groups[0].Id)
@@ -73,13 +73,13 @@ func findGroup(name string, d *schema.ResourceData, m interface{}) error {
 	_ = d.Set("type", groups[0].Type)
 
 	if d.Get("include_users").(bool) {
-		userIdList, err := listGroupUserIds(m, d.Id())
+		userIDList, err := listGroupUserIDs(m, d.Id())
 		if err != nil {
 			return err
 		}
 
 		// just user ids for now
-		return d.Set("users", convertStringSetToInterface(userIdList))
+		return d.Set("users", convertStringSetToInterface(userIDList))
 	}
 
 	return nil

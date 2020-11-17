@@ -22,15 +22,15 @@ func resourceAppBookmark() *schema.Resource {
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
 		Schema: buildAppSchemaWithVisibility(map[string]*schema.Schema{
-			"label": &schema.Schema{
+			"label": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"url": &schema.Schema{
+			"url": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"request_integration": &schema.Schema{
+			"request_integration": {
 				Type:     schema.TypeBool,
 				Default:  false,
 				Optional: true,
@@ -41,8 +41,8 @@ func resourceAppBookmark() *schema.Resource {
 
 func resourceAppBookmarkCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppBookmark(d, m)
-	activate := d.Get("status").(string) == "ACTIVE"
+	app := buildAppBookmark(d)
+	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
 	_, _, err := client.Application.CreateApplication(context.Background(), app, params)
 
@@ -62,21 +62,21 @@ func resourceAppBookmarkCreate(d *schema.ResourceData, m interface{}) error {
 func resourceAppBookmarkRead(d *schema.ResourceData, m interface{}) error {
 	app := okta.NewBookmarkApplication()
 	err := fetchApp(d, m, app)
+	if err != nil {
+		return err
+	}
 
 	if app == nil {
 		d.SetId("")
 		return nil
 	}
 
-	if err != nil {
-		return err
-	}
-
 	_ = d.Set("url", app.Settings.App.Url)
 	_ = d.Set("label", app.Label)
 	_ = d.Set("request_integration", app.Settings.App.RequestIntegration)
 
-	if err = syncGroupsAndUsers(app.Id, d, m); err != nil {
+	err = syncGroupsAndUsers(app.Id, d, m)
+	if err != nil {
 		return err
 	}
 
@@ -87,7 +87,7 @@ func resourceAppBookmarkRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppBookmarkUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppBookmark(d, m)
+	app := buildAppBookmark(d)
 	_, _, err := client.Application.UpdateApplication(context.Background(), d.Id(), app)
 
 	if err != nil {
@@ -119,7 +119,7 @@ func resourceAppBookmarkDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func buildAppBookmark(d *schema.ResourceData, m interface{}) *okta.BookmarkApplication {
+func buildAppBookmark(d *schema.ResourceData) *okta.BookmarkApplication {
 	app := okta.NewBookmarkApplication()
 	integration := d.Get("request_integration").(bool)
 	app.Label = d.Get("label").(string)

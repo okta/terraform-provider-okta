@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourcePolicyPassword() *schema.Resource {
@@ -19,7 +20,6 @@ func resourcePolicyPassword() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
-
 		Schema: buildPolicySchema(map[string]*schema.Schema{
 			"auth_provider": {
 				Type:         schema.TypeString,
@@ -141,9 +141,9 @@ func resourcePolicyPassword() *schema.Resource {
 			"email_recovery": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
+				ValidateFunc: validation.StringInSlice([]string{statusActive, statusInactive}, false),
 				Description:  "Enable or disable email password recovery: ACTIVE or INACTIVE.",
-				Default:      "ACTIVE",
+				Default:      statusActive,
 			},
 			"recovery_email_token": {
 				Type:        schema.TypeInt,
@@ -154,16 +154,16 @@ func resourcePolicyPassword() *schema.Resource {
 			"sms_recovery": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
+				ValidateFunc: validation.StringInSlice([]string{statusActive, statusInactive}, false),
 				Description:  "Enable or disable SMS password recovery: ACTIVE or INACTIVE.",
-				Default:      "INACTIVE",
+				Default:      statusInactive,
 			},
 			"question_recovery": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
+				ValidateFunc: validation.StringInSlice([]string{statusActive, statusInactive}, false),
 				Description:  "Enable or disable security question password recovery: ACTIVE or INACTIVE.",
-				Default:      "ACTIVE",
+				Default:      statusActive,
 			},
 			"skip_unlock": {
 				Type:        schema.TypeBool,
@@ -179,9 +179,8 @@ func resourcePolicyPasswordCreate(d *schema.ResourceData, m interface{}) error {
 	if err := ensureNotDefaultPolicy(d); err != nil {
 		return err
 	}
-
 	log.Printf("[INFO] Creating Policy %v", d.Get("name").(string))
-	template := buildPasswordPolicy(d, m)
+	template := buildPasswordPolicy(d)
 	err := createPolicy(d, m, template)
 	if err != nil {
 		return err
@@ -211,6 +210,10 @@ func resourcePolicyPasswordRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if policy.Settings != nil {
+		err = d.Set("password_lockout_notification_channels", convertStringSetToInterface(policy.Settings.Password.Lockout.UserLockoutNotificationChannels))
+		if err != nil {
+			return fmt.Errorf("error setting notification channels for resource %s: %s", d.Id(), err)
+		}
 		_ = d.Set("password_min_length", policy.Settings.Password.Complexity.MinLength)
 		_ = d.Set("password_min_lowercase", policy.Settings.Password.Complexity.MinLowerCase)
 		_ = d.Set("password_min_uppercase", policy.Settings.Password.Complexity.MinUpperCase)
@@ -225,9 +228,6 @@ func resourcePolicyPasswordRead(d *schema.ResourceData, m interface{}) error {
 		_ = d.Set("password_max_lockout_attempts", policy.Settings.Password.Lockout.MaxAttempts)
 		_ = d.Set("password_auto_unlock_minutes", policy.Settings.Password.Lockout.AutoUnlockMinutes)
 		_ = d.Set("password_show_lockout_failures", policy.Settings.Password.Lockout.ShowLockoutFailures)
-		if err := d.Set("password_lockout_notification_channels", convertStringSetToInterface(policy.Settings.Password.Lockout.UserLockoutNotificationChannels)); err != nil {
-			return fmt.Errorf("Error setting notification channels for resource %s: %s", d.Id(), err)
-		}
 		_ = d.Set("question_min_length", policy.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLength)
 		_ = d.Set("recovery_email_token", policy.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutes)
 		_ = d.Set("sms_recovery", policy.Settings.Recovery.Factors.OktaSms.Status)
@@ -265,7 +265,7 @@ func resourcePolicyPasswordUpdate(d *schema.ResourceData, m interface{}) error {
 
 	log.Printf("[INFO] Update Policy %v", d.Get("name").(string))
 
-	template := buildPasswordPolicy(d, m)
+	template := buildPasswordPolicy(d)
 	err := updatePolicy(d, m, template)
 	if err != nil {
 		return err
@@ -275,87 +275,96 @@ func resourcePolicyPasswordUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourcePolicyPasswordDelete(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultPolicy(d); err != nil {
-		return err
-	}
-
-	log.Printf("[INFO] Delete Policy %v", d.Get("name").(string))
-	client := m.(*Config).articulateOktaClient
-
-	_, err := client.Policies.DeletePolicy(d.Id())
-	if err != nil {
-		return fmt.Errorf("[ERROR] Error Deleting Policy from Okta: %v", err)
-	}
-	// remove the policy resource from terraform
-	d.SetId("")
-
-	return nil
+	return deletePolicy(d, m)
 }
 
 // create or update a password policy
-func buildPasswordPolicy(d *schema.ResourceData, m interface{}) *articulateOkta.Policy {
-	client := getClientFromMetadata(m)
-
-	template := client.Policies.PasswordPolicy()
+func buildPasswordPolicy(d *schema.ResourceData) sdk.Policy {
+	template := sdk.PasswordPolicy()
 	template.Name = d.Get("name").(string)
 	template.Status = d.Get("status").(string)
-	template.Type = passwordPolicyType
 	if description, ok := d.GetOk("description"); ok {
 		template.Description = description.(string)
 	}
 	if priority, ok := d.GetOk("priority"); ok {
-		template.Priority = priority.(int)
+		template.Priority = int64(priority.(int))
 	}
-	template.Conditions = &articulateOkta.PolicyConditions{
-		AuthProvider: &articulateOkta.AuthProvider{},
-		People:       getGroups(d),
+	template.Conditions = &okta.PolicyRuleConditions{
+		AuthProvider: &okta.PasswordPolicyAuthenticationProviderCondition{
+			Provider: d.Get("auth_provider").(string),
+		},
+		People: getGroups(d),
 	}
-
 	// Okta defaults
 	// we add the defaults here & not in the schema map to avoid defaults appearing in the terraform plan diff
-	template.Settings = &articulateOkta.PolicySettings{
-		Password:   &articulateOkta.Password{},
-		Recovery:   &articulateOkta.Recovery{},
-		Delegation: &articulateOkta.Delegation{},
+	template.Settings = &sdk.PolicySettings{
+		Password: &sdk.PasswordPolicyPasswordSettings{
+			Age: &sdk.PasswordPolicyPasswordSettingsAge{
+				ExpireWarnDays: int64(d.Get("password_expire_warn_days").(int)),
+				HistoryCount:   int64(d.Get("password_history_count").(int)),
+				MaxAgeDays:     int64(d.Get("password_max_age_days").(int)),
+				MinAgeMinutes:  int64(d.Get("password_min_age_minutes").(int)),
+			},
+			Complexity: &sdk.PasswordPolicyPasswordSettingsComplexity{
+				Dictionary: &okta.PasswordDictionary{
+					Common: &okta.PasswordDictionaryCommon{
+						Exclude: boolPtr(d.Get("password_dictionary_lookup").(bool)),
+					},
+				},
+				ExcludeAttributes: getExcludedAttrs(d.Get("password_exclude_first_name").(bool), d.Get("password_exclude_last_name").(bool)),
+				ExcludeUsername:   boolPtr(d.Get("password_exclude_username").(bool)),
+				MinLength:         int64(d.Get("password_min_length").(int)),
+				MinLowerCase:      int64(d.Get("password_min_lowercase").(int)),
+				MinNumber:         int64(d.Get("password_min_number").(int)),
+				MinSymbol:         int64(d.Get("password_min_symbol").(int)),
+				MinUpperCase:      int64(d.Get("password_min_uppercase").(int)),
+			},
+			Lockout: &sdk.PasswordPolicyPasswordSettingsLockout{
+				AutoUnlockMinutes:               int64(d.Get("password_auto_unlock_minutes").(int)),
+				MaxAttempts:                     int64(d.Get("password_max_lockout_attempts").(int)),
+				ShowLockoutFailures:             boolPtr(d.Get("password_show_lockout_failures").(bool)),
+				UserLockoutNotificationChannels: convertInterfaceToStringSet(d.Get("password_lockout_notification_channels")),
+			},
+		},
+		Recovery: &sdk.PasswordPolicyRecoverySettings{
+			Factors: &sdk.PasswordPolicyRecoveryFactors{
+				OktaEmail: &sdk.PasswordPolicyRecoveryEmail{
+					Properties: &sdk.PasswordPolicyRecoveryEmailProperties{
+						RecoveryToken: &sdk.PasswordPolicyRecoveryEmailRecoveryToken{
+							TokenLifetimeMinutes: int64(d.Get("recovery_email_token").(int)),
+						},
+					},
+					Status: d.Get("email_recovery").(string),
+				},
+				OktaSms: &okta.PasswordPolicyRecoveryFactorSettings{
+					Status: d.Get("sms_recovery").(string),
+				},
+				RecoveryQuestion: &sdk.PasswordPolicyRecoveryQuestion{
+					Properties: &sdk.PasswordPolicyRecoveryQuestionProperties{
+						Complexity: &sdk.PasswordPolicyRecoveryQuestionComplexity{
+							MinLength: int64(d.Get("question_min_length").(int)),
+						},
+					},
+					Status: d.Get("question_recovery").(string),
+				},
+			},
+		},
+		Delegation: &okta.PasswordPolicyDelegationSettings{
+			Options: &okta.PasswordPolicyDelegationSettingsOptions{
+				SkipUnlock: boolPtr(d.Get("skip_unlock").(bool)),
+			},
+		},
 	}
-
-	template.Conditions.AuthProvider.Provider = d.Get("auth_provider").(string)
-	template.Settings.Password.Complexity.MinLength = intPtr(d.Get("password_min_length").(int))
-	template.Settings.Password.Complexity.MinLowerCase = intPtr(d.Get("password_min_lowercase").(int))
-	template.Settings.Password.Complexity.MinUpperCase = intPtr(d.Get("password_min_uppercase").(int))
-	template.Settings.Password.Complexity.MinNumber = intPtr(d.Get("password_min_number").(int))
-	template.Settings.Password.Complexity.MinSymbol = intPtr(d.Get("password_min_symbol").(int))
-	template.Settings.Password.Complexity.ExcludeUsername = d.Get("password_exclude_username").(bool)
-	template.Settings.Password.Complexity.ExcludeAttributes = getExcludedAttrs(d.Get("password_exclude_first_name").(bool), d.Get("password_exclude_last_name").(bool))
-	template.Settings.Password.Complexity.Dictionary.Common.Exclude = d.Get("password_dictionary_lookup").(bool)
-	template.Settings.Password.Age.MaxAgeDays = intPtr(d.Get("password_max_age_days").(int))
-	template.Settings.Password.Age.ExpireWarnDays = intPtr(d.Get("password_expire_warn_days").(int))
-	template.Settings.Password.Age.MinAgeMinutes = intPtr(d.Get("password_min_age_minutes").(int))
-	template.Settings.Password.Age.HistoryCount = intPtr(d.Get("password_history_count").(int))
-	template.Settings.Password.Lockout.MaxAttempts = intPtr(d.Get("password_max_lockout_attempts").(int))
-	template.Settings.Password.Lockout.AutoUnlockMinutes = intPtr(d.Get("password_auto_unlock_minutes").(int))
-	template.Settings.Password.Lockout.ShowLockoutFailures = d.Get("password_show_lockout_failures").(bool)
-	template.Settings.Password.Lockout.UserLockoutNotificationChannels = convertInterfaceToStringSet(d.Get("password_lockout_notification_channels"))
-	template.Settings.Recovery.Factors.RecoveryQuestion.Status = d.Get("question_recovery").(string)
-	template.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLength = intPtr(d.Get("question_min_length").(int))
-	template.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutes = d.Get("recovery_email_token").(int)
-	template.Settings.Recovery.Factors.OktaSms.Status = d.Get("sms_recovery").(string)
-	template.Settings.Recovery.Factors.OktaEmail.Status = d.Get("email_recovery").(string)
-	template.Settings.Delegation.Options.SkipUnlock = d.Get("skip_unlock").(bool)
-
-	return &template
+	return template
 }
 
-func getExcludedAttrs(excludeFirstName bool, excludeLastName bool) []string {
+func getExcludedAttrs(excludeFirstName, excludeLastName bool) []string {
 	var excludedAttrs []string
-
 	if excludeFirstName {
 		excludedAttrs = append(excludedAttrs, "firstName")
 	}
-
 	if excludeLastName {
 		excludedAttrs = append(excludedAttrs, "lastName")
 	}
-
 	return excludedAttrs
 }

@@ -8,19 +8,19 @@ import (
 
 var platformIncludeResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
-		"type": &schema.Schema{
+		"type": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "ANY",
 			ValidateFunc: validation.StringInSlice([]string{"ANY", "MOBILE", "DESKTOP"}, false),
 		},
-		"os_type": &schema.Schema{
+		"os_type": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "ANY",
 			ValidateFunc: validation.StringInSlice([]string{"ANY", "IOS", "WINDOWS", "ANDROID", "OTHER", "OSX"}, false),
 		},
-		"os_expression": &schema.Schema{
+		"os_expression": {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "Only available with OTHER OS type",
@@ -28,14 +28,14 @@ var platformIncludeResource = &schema.Resource{
 	},
 }
 
-var userIdPatternResource = &schema.Resource{
+var userIDPatternResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
-		"match_type": &schema.Schema{
+		"match_type": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			ValidateFunc: validation.StringInSlice([]string{"SUFFIX", "EQUALS", "STARTS_WITH", "CONTAINS", "EXPRESSION"}, false),
 		},
-		"value": &schema.Schema{
+		"value": {
 			Type:     schema.TypeString,
 			Optional: true,
 		},
@@ -45,16 +45,16 @@ var userIdPatternResource = &schema.Resource{
 //https://developer.okta.com/docs/reference/api/policy/#application-and-app-instance-condition-object
 var appResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
-		"type": &schema.Schema{
+		"type": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			ValidateFunc: validation.StringInSlice([]string{"APP", "APP_TYPE"}, false),
 		},
-		"name": &schema.Schema{
+		"name": {
 			Type:     schema.TypeString,
 			Optional: true,
 		},
-		"id": &schema.Schema{
+		"id": {
 			Type:     schema.TypeString,
 			Optional: true,
 		},
@@ -71,52 +71,52 @@ func resourcePolicyRuleIdpDiscovery() *schema.Resource {
 		Importer: createPolicyRuleImporter(),
 
 		Schema: buildBaseRuleSchema(map[string]*schema.Schema{
-			"idp_id": &schema.Schema{
+			"idp_id": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"idp_type": &schema.Schema{
+			"idp_type": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "OKTA",
 			},
-			"app_include": &schema.Schema{
+			"app_include": {
 				Type:        schema.TypeSet,
 				Elem:        appResource,
 				Optional:    true,
 				Description: "Applications to include in discovery rule",
 			},
-			"app_exclude": &schema.Schema{
+			"app_exclude": {
 				Type:        schema.TypeSet,
 				Elem:        appResource,
 				Optional:    true,
 				Description: "Applications to exclude in discovery rule",
 			},
-			"platform_include": &schema.Schema{
+			"platform_include": {
 				Type:     schema.TypeSet,
 				Elem:     platformIncludeResource,
 				Optional: true,
 			},
-			"user_identifier_type": &schema.Schema{
+			"user_identifier_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"IDENTIFIER", "ATTRIBUTE", ""}, false),
 			},
-			"user_identifier_attribute": &schema.Schema{
+			"user_identifier_attribute": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"user_identifier_patterns": &schema.Schema{
+			"user_identifier_patterns": {
 				Type:     schema.TypeSet,
 				Optional: true,
-				Elem:     userIdPatternResource,
+				Elem:     userIDPatternResource,
 			},
 		}),
 	}
 }
 
 func buildPlatformInclude(d *schema.ResourceData) *sdk.IdpDiscoveryRulePlatform {
-	includeList := []*sdk.IdpDiscoveryRulePlatformInclude{}
+	var includeList []*sdk.IdpDiscoveryRulePlatformInclude
 
 	if v, ok := d.GetOk("platform_include"); ok {
 		valueList := v.(*schema.Set).List()
@@ -138,7 +138,6 @@ func buildPlatformInclude(d *schema.ResourceData) *sdk.IdpDiscoveryRulePlatform 
 		}
 	}
 	return nil
-
 }
 
 func buildAppConditions(d *schema.ResourceData) *sdk.IdpDiscoveryRuleApp {
@@ -180,7 +179,7 @@ func buildAppConditions(d *schema.ResourceData) *sdk.IdpDiscoveryRuleApp {
 	}
 }
 
-func buildUserIdPatterns(d *schema.ResourceData) []*sdk.IdpDiscoveryRulePattern {
+func buildUserIDPatterns(d *schema.ResourceData) []*sdk.IdpDiscoveryRulePattern {
 	var patternList []*sdk.IdpDiscoveryRulePattern
 
 	if raw, ok := d.GetOk("user_identifier_patterns"); ok {
@@ -205,24 +204,24 @@ func buildIdentifier(d *schema.ResourceData) *sdk.IdpDiscoveryRuleUserIdentifier
 		return &sdk.IdpDiscoveryRuleUserIdentifier{
 			Attribute: d.Get("user_identifier_attribute").(string),
 			Type:      uidType,
-			Patterns:  buildUserIdPatterns(d),
+			Patterns:  buildUserIDPatterns(d),
 		}
 	}
 
 	return nil
 }
 
-func flattenUserIdPatterns(patterns []*sdk.IdpDiscoveryRulePattern) *schema.Set {
-	var flattened []interface{}
+func flattenUserIDPatterns(patterns []*sdk.IdpDiscoveryRulePattern) *schema.Set {
+	flattened := make([]interface{}, len(patterns))
 
-	for _, v := range patterns {
-		flattened = append(flattened, map[string]interface{}{
-			"match_type": v.MatchType,
-			"value":      v.Value,
-		})
+	for i := range patterns {
+		flattened[i] = map[string]interface{}{
+			"match_type": patterns[i].MatchType,
+			"value":      patterns[i].Value,
+		}
 	}
 
-	return schema.NewSet(schema.HashResource(userIdPatternResource), flattened)
+	return schema.NewSet(schema.HashResource(userIDPatternResource), flattened)
 }
 
 func flattenPlatformInclude(platform *sdk.IdpDiscoveryRulePlatform) *schema.Set {
@@ -278,7 +277,7 @@ func resourcePolicyRuleIdpDiscoveryExists(d *schema.ResourceData, m interface{})
 }
 
 func resourcePolicyRuleIdpDiscoveryCreate(d *schema.ResourceData, m interface{}) error {
-	newRule := buildIdpDiscoveryRule(d, m)
+	newRule := buildIdpDiscoveryRule(d)
 	client := getSupplementFromMetadata(m)
 	rule, resp, err := client.CreateIdpDiscoveryRule(d.Get("policyid").(string), *newRule, nil)
 	if err != nil {
@@ -299,9 +298,9 @@ func setRuleStatus(d *schema.ResourceData, m interface{}, status string) error {
 
 	if status != desiredStatus {
 		client := getSupplementFromMetadata(m)
-		if desiredStatus == "INACTIVE" {
+		if desiredStatus == statusInactive {
 			return responseErr(client.DeactivateRule(d.Get("policyid").(string), d.Id()))
-		} else if desiredStatus == "ACTIVE" {
+		} else if desiredStatus == statusActive {
 			return responseErr(client.ActivateRule(d.Get("policyid").(string), d.Id()))
 		}
 	}
@@ -313,7 +312,7 @@ func resourcePolicyRuleIdpDiscoveryRead(d *schema.ResourceData, m interface{}) e
 	client := getSupplementFromMetadata(m)
 	rule, resp, err := client.GetIdpDiscoveryRule(d.Get("policyid").(string), d.Id())
 
-	if is404(resp.StatusCode) {
+	if resp != nil && is404(resp.StatusCode) {
 		d.SetId("")
 		return nil
 	}
@@ -333,14 +332,14 @@ func resourcePolicyRuleIdpDiscoveryRead(d *schema.ResourceData, m interface{}) e
 		"network_includes":         convertStringArrToInterface(rule.Conditions.Network.Include),
 		"network_excludes":         convertStringArrToInterface(rule.Conditions.Network.Exclude),
 		"platform_include":         flattenPlatformInclude(rule.Conditions.Platform),
-		"user_identifier_patterns": flattenUserIdPatterns(rule.Conditions.UserIdentifier.Patterns),
+		"user_identifier_patterns": flattenUserIDPatterns(rule.Conditions.UserIdentifier.Patterns),
 		"app_include":              flattenAppInclude(rule.Conditions.App),
 		"app_exclude":              flattenAppExclude(rule.Conditions.App),
 	})
 }
 
 func resourcePolicyRuleIdpDiscoveryUpdate(d *schema.ResourceData, m interface{}) error {
-	newRule := buildIdpDiscoveryRule(d, m)
+	newRule := buildIdpDiscoveryRule(d)
 	client := getSupplementFromMetadata(m)
 	rule, resp, err := client.UpdateIdpDiscoveryRule(d.Get("policyid").(string), d.Id(), *newRule, nil)
 	if err != nil {
@@ -363,7 +362,7 @@ func resourcePolicyRuleIdpDiscoveryDelete(d *schema.ResourceData, m interface{})
 }
 
 // Build Policy Sign On Rule from resource data
-func buildIdpDiscoveryRule(d *schema.ResourceData, m interface{}) *sdk.IdpDiscoveryRule {
+func buildIdpDiscoveryRule(d *schema.ResourceData) *sdk.IdpDiscoveryRule {
 	rule := &sdk.IdpDiscoveryRule{
 		Actions: &sdk.IdpDiscoveryRuleActions{
 			IDP: &sdk.IdpDiscoveryRuleIdp{
@@ -386,7 +385,7 @@ func buildIdpDiscoveryRule(d *schema.ResourceData, m interface{}) *sdk.IdpDiscov
 			Platform:       buildPlatformInclude(d),
 			UserIdentifier: buildIdentifier(d),
 		},
-		Type:   idpDiscovery,
+		Type:   sdk.IdpDiscoveryType,
 		Name:   d.Get("name").(string),
 		Status: d.Get("status").(string),
 	}

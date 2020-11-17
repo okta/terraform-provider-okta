@@ -28,52 +28,52 @@ func dataSourceIdpSaml() *schema.Resource {
 				Optional:      true,
 				ConflictsWith: []string{"id"},
 			},
-			"type": &schema.Schema{
+			"type": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"acs_binding": &schema.Schema{
+			"acs_binding": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"acs_type": &schema.Schema{
+			"acs_type": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"sso_url": &schema.Schema{
+			"sso_url": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"sso_binding": &schema.Schema{
+			"sso_binding": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"sso_destination": &schema.Schema{
+			"sso_destination": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"subject_format": &schema.Schema{
+			"subject_format": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Computed: true,
 			},
-			"subject_filter": &schema.Schema{
+			"subject_filter": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"issuer": &schema.Schema{
+			"issuer": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"issuer_mode": &schema.Schema{
+			"issuer_mode": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"audience": &schema.Schema{
+			"audience": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"kid": &schema.Schema{
+			"kid": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -91,11 +91,11 @@ func dataSourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
 	name := d.Get("name").(string)
 
 	if id == "" && name == "" {
-		return errors.New("Config must provide an id or name to retrieve the IdP")
+		return errors.New("config must provide an id or name to retrieve the IdP")
 	}
 
 	if id != "" {
-		idp, err = getIdpById(m, id)
+		idp, err = getIdentityProviderByID(m, id)
 	} else {
 		idp, err = getIdpByName(m, name)
 	}
@@ -103,7 +103,7 @@ func dataSourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	} else if idp == nil {
-		return fmt.Errorf("Failed to find IdP via filter, id %s, name %s", id, name)
+		return fmt.Errorf("failed to find IdP via filter, id %s, name %s", id, name)
 	}
 
 	d.SetId(idp.ID)
@@ -124,13 +124,12 @@ func dataSourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
 	})
 }
 
-func getIdpById(m interface{}, id string) (*sdk.SAMLIdentityProvider, error) {
+func getIdentityProviderByID(m interface{}, id string) (*sdk.SAMLIdentityProvider, error) {
 	var idp sdk.SAMLIdentityProvider
 	client := getSupplementFromMetadata(m)
 	_, resp, err := client.GetIdentityProvider(id, &idp)
 
 	return &idp, responseErr(resp, err)
-
 }
 
 func getIdpByName(m interface{}, label string) (*sdk.SAMLIdentityProvider, error) {

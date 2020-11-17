@@ -9,11 +9,9 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
-
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func buildSchema(schemas ...map[string]*schema.Schema) map[string]*schema.Schema {
@@ -54,7 +52,7 @@ func condenseError(errorList []error) error {
 		msgList[i] = err.Error()
 	}
 
-	return fmt.Errorf("Series of errors occurred: %s", strings.Join(msgList, ", "))
+	return fmt.Errorf("series of errors occurred: %s", strings.Join(msgList, ", "))
 }
 
 func conditionalRequire(d *schema.ResourceData, propList []string, reason string) error {
@@ -74,7 +72,7 @@ func conditionalRequire(d *schema.ResourceData, propList []string, reason string
 }
 
 // Conditionally validates a slice of strings for required and valid values.
-func conditionalValidator(field string, typeValue string, require []string, valid []string, actual []string) error {
+func conditionalValidator(field, typeValue string, require, valid, actual []string) error {
 	explanation := fmt.Sprintf("failed conditional validation for field \"%s\" of type \"%s\", it can contain %s", field, typeValue, strings.Join(valid, ", "))
 
 	if len(require) > 0 {
@@ -171,7 +169,7 @@ func createCustomNestedResourceImporter(fields []string, errMessage string) *sch
 		State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 			parts := strings.Split(d.Id(), "/")
 			if len(parts) != len(fields) {
-				return nil, fmt.Errorf("Invalid resource import specifier. %s", errMessage)
+				return nil, fmt.Errorf("invalid resource import specifier. %s", errMessage)
 			}
 
 			for i, field := range fields {
@@ -244,11 +242,6 @@ func doesResourceExist(response *okta.Response, err error) (bool, error) {
 	return true, err
 }
 
-func intPtr(b int) (ptr *int) {
-	ptr = &b
-	return
-}
-
 func getNullableInt(d *schema.ResourceData, key string) *int {
 	if v, ok := d.GetOk(key); ok {
 		i := v.(int)
@@ -281,10 +274,6 @@ func getParallelismFromMetadata(meta interface{}) int {
 	return meta.(*Config).parallelism
 }
 
-func getClientFromMetadata(meta interface{}) *articulateOkta.Client {
-	return meta.(*Config).articulateOktaClient
-}
-
 func getOktaClientFromMetadata(meta interface{}) *okta.Client {
 	return meta.(*Config).oktaClient
 }
@@ -301,13 +290,14 @@ func is404(status int) bool {
 	return status == http.StatusNotFound
 }
 
+var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+
 // regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
-func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []error) {
-	re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-	if !re.MatchString(val.(string)) {
-		errors = append(errors, fmt.Errorf("%s field not a valid email address", key))
+func matchEmailRegexp(val interface{}, key string) (warnings []string, errs []error) {
+	if !emailRegex.MatchString(val.(string)) {
+		errs = append(errs, fmt.Errorf("%s field not a valid email address", key))
 	}
-	return warnings, errors
+	return warnings, errs
 }
 
 func normalizeDataJSON(val interface{}) string {
@@ -380,10 +370,9 @@ func validateIsURL(val interface{}, b string) ([]string, []error) {
 	return nil, nil
 }
 
-func validatePriority(in int, out int) error {
+func validatePriority(in, out int64) error {
 	if in > 0 && in != out {
 		return fmt.Errorf("provided priority was not valid, got: %d, API responded with: %d. See schema for attribute details", in, out)
 	}
-
 	return nil
 }

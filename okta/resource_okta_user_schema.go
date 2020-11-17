@@ -51,16 +51,12 @@ func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
 	return syncUserSchema(d, subschema)
 }
 
-func getSubSchema(d *schema.ResourceData, m interface{}) (subschema *sdk.UserSubSchema, err error) {
-	var schema *sdk.UserSchema
-
-	schema, _, err = getSupplementFromMetadata(m).GetUserSchema()
+func getSubSchema(d *schema.ResourceData, m interface{}) (*sdk.UserSubSchema, error) {
+	s, _, err := getSupplementFromMetadata(m).GetUserSchema()
 	if err != nil {
-		return
+		return nil, err
 	}
-
-	subschema = getCustomProperty(schema, d.Id())
-	return
+	return getCustomProperty(s, d.Id()), err
 }
 
 func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {

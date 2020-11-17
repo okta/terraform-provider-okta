@@ -28,7 +28,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, inlineHookExists),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.oauth2.tokens.transform"),
 					resource.TestCheckResourceAttr(resourceName, "version", "1.0.1"),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
@@ -44,7 +44,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, inlineHookExists),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.import.transform"),
 					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
@@ -58,7 +58,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, inlineHookExists),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.import.transform"),
 					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
@@ -72,7 +72,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, inlineHookExists),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.user.pre-registration"),
 					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
@@ -86,7 +86,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, inlineHookExists),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.user.credential.password.import"),
 					resource.TestCheckResourceAttr(resourceName, "version", "1.0.0"),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),

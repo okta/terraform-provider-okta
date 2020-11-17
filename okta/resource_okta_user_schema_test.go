@@ -87,9 +87,9 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
-					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test setting unique attritube to UNIQUE_VALIDATED"),
+					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test setting unique attribute to UNIQUE_VALIDATED"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
-					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test setting unique attritube to UNIQUE_VALIDATED"),
+					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test setting unique attribute to UNIQUE_VALIDATED"),
 					resource.TestCheckResourceAttr(resourceName, "required", "true"),
 					resource.TestCheckResourceAttr(resourceName, "min_length", "1"),
 					resource.TestCheckResourceAttr(resourceName, "max_length", "70"),
@@ -103,7 +103,7 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 				ImportState:  true,
 				ImportStateCheck: func(s []*terraform.InstanceState) error {
 					if len(s) != 1 {
-						return errors.New("Failed to import schema into state")
+						return errors.New("failed to import schema into state")
 					}
 
 					return nil
@@ -181,27 +181,43 @@ func testOktaUserSchemasExists(name string) resource.TestCheckFunc {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("Not found: %s", name)
+			return fmt.Errorf("not found: %s", name)
 		}
-
-		if exists, _ := testUserSchemaExists(rs.Primary.ID); !exists {
-			return fmt.Errorf("Failed to find %s", rs.Primary.ID)
+		exists, err := testSchemaPropertyExists(rs.Primary.ID, customSchema)
+		if err != nil {
+			return fmt.Errorf("failed to find: %v", err)
+		}
+		if !exists {
+			return fmt.Errorf("custom property %s does not exist in a profile subschema", rs.Primary.ID)
 		}
 		return nil
 	}
 }
 
 func testUserSchemaExists(index string) (bool, error) {
-	client := getClientFromMetadata(testAccProvider.Meta())
-	subschema, _, err := client.Schemas.GetUserSubSchemaIndex(customSchema)
-	if err != nil {
-		return false, fmt.Errorf("Error Listing User Subschema in Okta: %v", err)
-	}
-	for _, key := range subschema {
-		if key == index {
-			return true, nil
-		}
-	}
+	return testSchemaPropertyExists(index, customSchema)
+}
 
+func testSchemaPropertyExists(index, resolutionScope string) (bool, error) {
+	s, _, err := getSupplementFromMetadata(testAccProvider.Meta()).GetUserSchema()
+	if err != nil {
+		return false, fmt.Errorf("failed to get user schema: %v", err)
+	}
+	switch resolutionScope {
+	case baseSchema:
+		for key := range s.Definitions.Base.Properties {
+			if key == index {
+				return true, nil
+			}
+		}
+	case customSchema:
+		for key := range s.Definitions.Custom.Properties {
+			if key == index {
+				return true, nil
+			}
+		}
+	default:
+		return false, fmt.Errorf("resolution scope can be 'base' or 'custom'")
+	}
 	return false, nil
 }

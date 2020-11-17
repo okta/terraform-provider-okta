@@ -13,7 +13,6 @@ import (
 
 func resourceAppGroupAssignment() *schema.Resource {
 	return &schema.Resource{
-		// No point in having an exist function, since only the group has to exist
 		Create: resourceAppGroupAssignmentCreate,
 		Exists: resourceAppGroupAssignmentExists,
 		Read:   resourceAppGroupAssignmentRead,
@@ -23,7 +22,7 @@ func resourceAppGroupAssignment() *schema.Resource {
 			State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				parts := strings.Split(d.Id(), "/")
 				if len(parts) != 2 {
-					return nil, errors.New("Invalid resource import specifier. Use: terraform import <app_id>/<group_id>")
+					return nil, errors.New("invalid resource import specifier. Use: terraform import <app_id>/<group_id>")
 				}
 
 				_ = d.Set("app_id", parts[0])
@@ -43,23 +42,23 @@ func resourceAppGroupAssignment() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"app_id": &schema.Schema{
+			"app_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "App to associate group with",
 				ForceNew:    true,
 			},
-			"group_id": &schema.Schema{
+			"group_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Group associated with the application",
 				ForceNew:    true,
 			},
-			"priority": &schema.Schema{
+			"priority": {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
-			"profile": &schema.Schema{
+			"profile": {
 				Type:      schema.TypeString,
 				StateFunc: normalizeDataJSON,
 				Optional:  true,
@@ -78,7 +77,7 @@ func resourceAppGroupAssignmentExists(d *schema.ResourceData, m interface{}) (bo
 		nil,
 	)
 
-	if is404(resp.StatusCode) {
+	if resp != nil && is404(resp.StatusCode) {
 		return false, nil
 	}
 
@@ -141,7 +140,7 @@ func resourceAppGroupAssignmentRead(d *schema.ResourceData, m interface{}) error
 		nil,
 	)
 
-	if is404(resp.StatusCode) {
+	if resp != nil && is404(resp.StatusCode) {
 		d.SetId("")
 		return nil
 	}
@@ -152,7 +151,7 @@ func resourceAppGroupAssignmentRead(d *schema.ResourceData, m interface{}) error
 
 	jsonProfile, err := json.Marshal(g.Profile)
 	if err != nil {
-		return fmt.Errorf("Failed to marshal app user profile to JSON, error: %s", err)
+		return fmt.Errorf("failed to marshal app user profile to JSON, error: %s", err)
 	}
 
 	_ = d.Set("profile", string(jsonProfile))

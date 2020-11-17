@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -11,9 +12,10 @@ import (
 
 func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager("okta_trusted_origin")
+	mgr := newFixtureManager(trustedOrigin)
 	config := mgr.GetFixtures("okta_trusted_origin.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("okta_trusted_origin_updated.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.testAcc_%d", trustedOrigin, ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -26,11 +28,8 @@ func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(
-						fmt.Sprintf("okta_trusted_origin.testAcc_%d", ri),
-						"origin",
-						fmt.Sprintf("https://example2-%d.com", ri),
-					),
+					resource.TestCheckResourceAttr(resourceName, "origin", fmt.Sprintf("https://example2-%d.com", ri)),
+					resource.TestCheckResourceAttr(resourceName, "active", "false"),
 				),
 			},
 		},
@@ -38,16 +37,17 @@ func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 }
 
 func testAccCheckTrustedOriginDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*Config).articulateOktaClient
+	client := getOktaClientFromMetadata(testAccProvider.Meta())
 
 	for _, r := range s.RootModule().Resources {
-		if _, _, err := client.TrustedOrigins.GetTrustedOrigin(r.Primary.ID); err != nil {
-			if client.OktaErrorCode == "E0000007" {
-				continue
-			}
-			return fmt.Errorf("[ERROR] Error Getting Trusted Origin in Okta: %v", err)
+		_, resp, err := client.TrustedOrigin.GetOrigin(context.Background(), r.Primary.ID)
+		if resp != nil && is404(resp.StatusCode) {
+			continue
 		}
-		return fmt.Errorf("Trusted Origin still exists")
+		if err != nil {
+			return fmt.Errorf("error getting tructed origin: %v", err)
+		}
+		return fmt.Errorf("trusted origin still exists")
 	}
 
 	return nil
