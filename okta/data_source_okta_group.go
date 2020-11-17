@@ -59,7 +59,12 @@ func findGroup(name string, d *schema.ResourceData, m interface{}) error {
 	groups, _, err := client.Group.ListGroups(context.Background(), searchParams)
 	if err != nil {
 		return fmt.Errorf("failed to query for groups: %v", err)
-	} else if len(groups) < 1 {
+	}
+
+	if len(groups) < 1 {
+		if d.Get("type") != nil {
+			return fmt.Errorf("Group \"%s\" not found with type \"%s\"", name, d.Get("type").(string))
+		}
 		return fmt.Errorf("Group \"%s\" not found", name)
 	}
 
