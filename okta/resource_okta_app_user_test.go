@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"testing"
@@ -60,14 +61,14 @@ func TestAccOktaAppUser_crud(t *testing.T) {
 						return "", fmt.Errorf("failed to find %s", resourceName)
 					}
 
-					appId := rs.Primary.Attributes["app_id"]
-					userId := rs.Primary.Attributes["user_id"]
+					appID := rs.Primary.Attributes["app_id"]
+					userID := rs.Primary.Attributes["user_id"]
 
-					return fmt.Sprintf("%s/%s", appId, userId), nil
+					return fmt.Sprintf("%s/%s", appID, userID), nil
 				},
 				ImportStateCheck: func(s []*terraform.InstanceState) error {
 					if len(s) != 1 {
-						return errors.New("Failed to import schema into state")
+						return errors.New("failed to import schema into state")
 					}
 
 					return nil
@@ -85,11 +86,11 @@ func ensureAppUserExists(name string) resource.TestCheckFunc {
 			return missingErr
 		}
 
-		appId := rs.Primary.Attributes["app_id"]
-		userId := rs.Primary.Attributes["user_id"]
+		appID := rs.Primary.Attributes["app_id"]
+		userID := rs.Primary.Attributes["user_id"]
 		client := getOktaClientFromMetadata(testAccProvider.Meta())
 
-		u, _, err := client.Application.GetApplicationUser(appId, userId, nil)
+		u, _, err := client.Application.GetApplicationUser(context.Background(), appID, userID, nil)
 		if err != nil {
 			return err
 		} else if u == nil {
@@ -106,18 +107,18 @@ func checkAppUserDestroy(s *terraform.State) error {
 			continue
 		}
 
-		appId := rs.Primary.Attributes["app_id"]
-		userId := rs.Primary.Attributes["user_id"]
+		appID := rs.Primary.Attributes["app_id"]
+		userID := rs.Primary.Attributes["user_id"]
 
 		client := getOktaClientFromMetadata(testAccProvider.Meta())
-		_, response, err := client.Application.GetApplicationUser(appId, userId, nil)
+		_, response, err := client.Application.GetApplicationUser(context.Background(), appID, userID, nil)
 		exists, err := doesResourceExist(response, err)
 		if err != nil {
 			return err
 		}
 
 		if exists {
-			return fmt.Errorf("resource still exists, App Id: %s, User Id: %s", appId, userId)
+			return fmt.Errorf("resource still exists, App Id: %s, User Id: %s", appID, userID)
 		}
 	}
 

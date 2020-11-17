@@ -12,14 +12,6 @@ Assigns a group to an application.
 
 This resource allows you to create an App Group assignment.
 
-__When using this resource, make sure to add the following `lifefycle` argument to the application resource you are assigning to:__
-
-```hcl
-lifecycle {
-  ignore_changes = ["groups"]
-}
-```
-
 ## Example Usage
 
 ```hcl
@@ -31,6 +23,17 @@ resource "okta_app_group_assignment" "example" {
   "<app_profile_field>": "<value>"
 }
 JSON
+}
+
+```
+!> **NOTE** When using this resource in conjunction with other application resources (e.g. `okta_app_oauth`) it is advisable to add the following `lifecycle` argument to the associated `app_*` resources to prevent the groups being unassigned on subsequent runs:
+
+```hcl
+resource "okta_app_oauth" "app" {
+  ...
+  lifecycle {
+     ignore_changes = [groups]
+  }
 }
 ```
 
@@ -50,8 +53,8 @@ The following arguments are supported:
 
 ## Import
 
-An application group assignment can be imported via assignment ID.
+An application group assignment can be imported via the `app_id` and the `group_id`.
 
 ```
-$ terraform import okta_app_group_assignment.example <id>
+$ terraform import okta_app_group_assignment.example <app_id>/<group_id>
 ```

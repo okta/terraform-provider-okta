@@ -29,7 +29,7 @@ func TestAccOktaGroupAdminRoles_crud(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "admin_roles.#", "8"),
+					resource.TestCheckResourceAttr(resourceName, "admin_roles.#", "10"),
 				),
 			},
 		},

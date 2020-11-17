@@ -1,7 +1,7 @@
 package sdk
 
 import (
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 type (

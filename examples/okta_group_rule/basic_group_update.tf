@@ -1,5 +1,5 @@
 resource "okta_group" "test_other" {
-  name = "testAcc_new_uuid"
+  name = "testAcc_replace_with_uuid"
 }
 
 resource "okta_group_rule" "test" {

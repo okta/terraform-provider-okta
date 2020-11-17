@@ -44,6 +44,7 @@ resource "okta_app_saml" "test" {
   groups = ["${okta_group.group.id}", "${okta_group.group1.id}", "${okta_group.group2.id}"]
 
   key_years_valid = 3
+  key_name = "hello"
 
   app_settings_json = <<EOT
 {

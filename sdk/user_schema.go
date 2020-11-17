@@ -1,30 +1,32 @@
 package sdk
 
 import (
-	"github.com/okta/okta-sdk-golang/okta"
+	"context"
+
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 var (
-	schemaUrl = "/api/v1/meta/schemas/user/default"
+	schemaURL = "/api/v1/meta/schemas/user/default"
 )
 
 func (m *ApiSupplement) DeleteUserSchemaProperty(id string) (*okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("POST", schemaUrl, getCustomUserSchema(id, nil))
+	req, err := m.RequestExecutor.NewRequest("POST", schemaURL, getCustomUserSchema(id, nil))
 	if err != nil {
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(context.Background(), req, nil)
 }
 
 func (m *ApiSupplement) AddCustomUserSchemaProperty(schema *UserSubSchema) (*UserSchema, *okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("POST", schemaUrl, schema)
+	req, err := m.RequestExecutor.NewRequest("POST", schemaURL, schema)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	fullSchema := &UserSchema{}
-	resp, err := m.RequestExecutor.Do(req, fullSchema)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, fullSchema)
 	return fullSchema, resp, err
 }
 
@@ -37,23 +39,23 @@ func (m *ApiSupplement) UpdateBaseUserSchemaProperty(id string, schema *UserSubS
 }
 
 func (m *ApiSupplement) UpdateUserSchemaProperty(schema *UserSchema) (*UserSchema, *okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("POST", schemaUrl, schema)
+	req, err := m.RequestExecutor.NewRequest("POST", schemaURL, schema)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	fullSchema := &UserSchema{}
-	resp, err := m.RequestExecutor.Do(req, fullSchema)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, fullSchema)
 	return fullSchema, resp, err
 }
 
 func (m *ApiSupplement) GetUserSchema() (*UserSchema, *okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("GET", schemaUrl, nil)
+	req, err := m.RequestExecutor.NewRequest("GET", schemaURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	schema := &UserSchema{}
-	resp, err := m.RequestExecutor.Do(req, schema)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, schema)
 	return schema, resp, err
 }
 

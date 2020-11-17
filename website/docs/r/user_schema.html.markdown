@@ -65,6 +65,8 @@ The following arguments are supported:
 
 * `external_name` - (Optional) External name of the user schema property.
 
+* `external_namespace` - (Optional) External name of the user schema property.
+
 * `unique` - (Optional) Whether the property should be unique. It can be set to `"UNIQUE_VALIDATED"` or `"NOT_UNIQUE"`.
 
 ## Attributes Reference

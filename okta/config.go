@@ -4,14 +4,11 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"time"
 
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
-
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/logging"
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func (adt *AddHeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {
@@ -27,19 +24,16 @@ type (
 
 	// Config contains our provider schema values and Okta clients
 	Config struct {
-		orgName      string
-		domain       string
-		apiToken     string
-		retryCount   int
-		parallelism  int
-		waitForReset bool
-		backoff      bool
-		minWait      int
-		maxWait      int
-
-		articulateOktaClient *articulateOkta.Client
-		oktaClient           *okta.Client
-		supplementClient     *sdk.ApiSupplement
+		orgName          string
+		domain           string
+		apiToken         string
+		retryCount       int
+		parallelism      int
+		backoff          bool
+		maxWait          int
+		oktaClient       *okta.Client
+		supplementClient *sdk.ApiSupplement
+		ctx              context.Context
 	}
 )
 
@@ -47,27 +41,16 @@ func (c *Config) loadAndValidate() error {
 	httpClient := cleanhttp.DefaultClient()
 	httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
 
-	articulateClient, err := articulateOkta.NewClientWithDomain(httpClient, c.orgName, c.domain, c.apiToken)
-
-	// add the Articulate Okta client object to Config
-	c.articulateOktaClient = articulateClient
-
-	if err != nil {
-		return fmt.Errorf("[ERROR] Error creating Articulate Okta client: %v", err)
-	}
-
-	orgUrl := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
-
-	client, err := okta.NewClient(
+	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
+	ctx, client, err := okta.NewClient(
 		context.Background(),
-		okta.WithOrgUrl(orgUrl),
+		okta.WithOrgUrl(orgURL),
 		okta.WithToken(c.apiToken),
 		okta.WithCache(false),
-		okta.WithBackoff(c.backoff),
-		okta.WithMinWait(time.Duration(c.minWait)*time.Second),
-		okta.WithMaxWait(time.Duration(c.maxWait)*time.Second),
-		okta.WithRetries(int32(c.retryCount)),
 		okta.WithHttpClient(*httpClient),
+		okta.WithRequestTimeout(int64(c.maxWait)),
+		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
+		okta.WithUserAgentExtra("okta-terraform/3.6.0"),
 	)
 	if err != nil {
 		return err
@@ -81,5 +64,6 @@ func (c *Config) loadAndValidate() error {
 
 	// add the Okta SDK client object to Config
 	c.oktaClient = client
+	c.ctx = ctx
 	return nil
 }

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceAuthServerPolicy() *schema.Resource {
@@ -17,31 +17,31 @@ func resourceAuthServerPolicy() *schema.Resource {
 		Importer: createNestedResourceImporter([]string{"auth_server_id", "id"}),
 
 		Schema: map[string]*schema.Schema{
-			"type": &schema.Schema{
+			"type": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Default:     "OAUTH_AUTHORIZATION_POLICY",
+				Default:     sdk.OauthAuthorizationPolicyType,
 				Description: "Auth server policy type, unlikely this will be anything other then the default",
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"auth_server_id": &schema.Schema{
+			"auth_server_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"status": statusSchema,
-			"priority": &schema.Schema{
+			"priority": {
 				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "Priority of the auth server policy",
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"client_whitelist": &schema.Schema{
+			"client_whitelist": {
 				Type:        schema.TypeSet,
 				Required:    true,
 				Description: "Use [\"ALL_CLIENTS\"] when unsure.",
@@ -58,7 +58,7 @@ func buildAuthServerPolicy(d *schema.ResourceData) *sdk.AuthorizationServerPolic
 		Status:      d.Get("status").(string),
 		Priority:    d.Get("priority").(int),
 		Description: d.Get("description").(string),
-		Conditions: &sdk.PolicyConditions{
+		Conditions: &sdk.AuthorizationServerPolicyConditions{
 			Clients: &sdk.Whitelist{
 				Include: convertInterfaceToStringSet(d.Get("client_whitelist")),
 			},
@@ -97,11 +97,11 @@ func resourceAuthServerPolicyRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", authServerPolicy.Name)
-	d.Set("description", authServerPolicy.Description)
-	d.Set("status", authServerPolicy.Status)
-	d.Set("priority", authServerPolicy.Priority)
-	d.Set("client_whitelist", convertStringSetToInterface(authServerPolicy.Conditions.Clients.Include))
+	_ = d.Set("name", authServerPolicy.Name)
+	_ = d.Set("description", authServerPolicy.Description)
+	_ = d.Set("status", authServerPolicy.Status)
+	_ = d.Set("priority", authServerPolicy.Priority)
+	_ = d.Set("client_whitelist", convertStringSetToInterface(authServerPolicy.Conditions.Clients.Include))
 
 	return nil
 }
