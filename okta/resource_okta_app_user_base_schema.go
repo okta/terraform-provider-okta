@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceAppUserBaseSchema() *schema.Resource {
@@ -17,7 +17,7 @@ func resourceAppUserBaseSchema() *schema.Resource {
 		Importer: createNestedResourceImporter([]string{"app_id", "id"}),
 
 		Schema: buildBaseUserSchema(map[string]*schema.Schema{
-			"app_id": &schema.Schema{
+			"app_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
@@ -54,16 +54,12 @@ func resourceAppUserBaseSchemaRead(d *schema.ResourceData, m interface{}) error 
 	return nil
 }
 
-func getAppUserBaseSubSchema(d *schema.ResourceData, m interface{}) (subschema *sdk.UserSubSchema, err error) {
-	var schema *sdk.UserSchema
-
-	schema, _, err = getSupplementFromMetadata(m).GetAppUserSchema(d.Get("app_id").(string))
+func getAppUserBaseSubSchema(d *schema.ResourceData, m interface{}) (*sdk.UserSubSchema, error) {
+	us, _, err := getSupplementFromMetadata(m).GetAppUserSchema(d.Get("app_id").(string))
 	if err != nil {
-		return
+		return nil, err
 	}
-
-	subschema = getBaseProperty(schema, d.Get("index").(string))
-	return
+	return getBaseProperty(us, d.Get("index").(string)), nil
 }
 
 func resourceAppUserBaseSchemaUpdate(d *schema.ResourceData, m interface{}) error {
@@ -81,7 +77,7 @@ func resourceAppUserBaseSchemaDelete(d *schema.ResourceData, m interface{}) erro
 
 // create or modify a  subschema
 func updateAppUserBaseSubschema(d *schema.ResourceData, m interface{}) error {
-	schema := &sdk.UserSubSchema{
+	subSchema := &sdk.UserSubSchema{
 		Master: getNullableMaster(d),
 		Title:  d.Get("title").(string),
 		Type:   d.Get("type").(string),
@@ -97,7 +93,7 @@ func updateAppUserBaseSubschema(d *schema.ResourceData, m interface{}) error {
 	_, _, err := getSupplementFromMetadata(m).UpdateBaseAppUserSchemaProperty(
 		d.Get("index").(string),
 		d.Get("app_id").(string),
-		schema,
+		subSchema,
 	)
 
 	return err

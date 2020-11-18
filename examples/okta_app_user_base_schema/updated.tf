@@ -4,7 +4,7 @@ resource okta_app_user_base_schema test {
   permissions = "READ_ONLY"
   title       = "Name"
   type        = "string"
-  app_id      = "${okta_app_oauth.test.id}"
+  app_id      = okta_app_oauth.test.id
   required    = false
 }
 

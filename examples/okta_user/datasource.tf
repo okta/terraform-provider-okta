@@ -11,7 +11,7 @@ resource okta_user_schema test_number {
   title      = "terraform acceptance test"
   type       = "number"
   master     = "PROFILE_MASTER"
-  depends_on = ["okta_user_schema.test_array"]
+  depends_on = [okta_user_schema.test_array]
 }
 
 resource okta_user test {
@@ -31,15 +31,15 @@ JSON
 data okta_user test {
   search {
     name  = "profile.firstName"
-    value = "${okta_user.test.first_name}"
+    value = okta_user.test.first_name
   }
 
   search {
     name  = "profile.lastName"
-    value = "${okta_user.test.last_name}"
+    value = okta_user.test.last_name
   }
 }
 
 data okta_user read_by_id {
-  user_id = "${okta_user.test.id}"
+  user_id = okta_user.test.id
 }

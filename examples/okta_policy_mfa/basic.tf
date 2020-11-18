@@ -7,14 +7,14 @@ resource okta_policy_mfa test {
   status      = "ACTIVE"
   description = "Terraform Acceptance Test MFA Policy"
 
-  okta_otp = {
+  google_otp = {
     enroll = "REQUIRED"
   }
 
-  groups_included = ["${data.okta_group.all.id}"]
-  depends_on      = ["okta_factor.okta_otp"]
+  groups_included = [data.okta_group.all.id]
+  depends_on      = [okta_factor.google_otp]
 }
 
-resource okta_factor okta_otp {
-  provider_id = "okta_otp"
+resource okta_factor google_otp {
+  provider_id = "google_otp"
 }

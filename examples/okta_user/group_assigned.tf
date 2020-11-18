@@ -9,5 +9,5 @@ resource "okta_user" "test" {
   login      = "test-acc-replace_with_uuid@example.com"
   email      = "test-acc-replace_with_uuid@example.com"
 
-  group_memberships = ["${okta_group.test.id}"]
+  group_memberships = [okta_group.test.id]
 }

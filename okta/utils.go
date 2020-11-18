@@ -9,20 +9,17 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
-
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
-func buildSchema(s, t map[string]*schema.Schema) map[string]*schema.Schema {
+func buildSchema(schemas ...map[string]*schema.Schema) map[string]*schema.Schema {
 	r := map[string]*schema.Schema{}
-	for key, val := range t {
-		r[key] = val
-	}
-	for key, val := range s {
-		r[key] = val
+	for _, s := range schemas {
+		for key, val := range s {
+			r[key] = val
+		}
 	}
 	return r
 }
@@ -55,14 +52,14 @@ func condenseError(errorList []error) error {
 		msgList[i] = err.Error()
 	}
 
-	return fmt.Errorf("Series of errors occurred: %s", strings.Join(msgList, ", "))
+	return fmt.Errorf("series of errors occurred: %s", strings.Join(msgList, ", "))
 }
 
 func conditionalRequire(d *schema.ResourceData, propList []string, reason string) error {
 	var missing []string
 
 	for _, prop := range propList {
-		if _, ok := d.GetOkExists(prop); !ok {
+		if _, ok := d.GetOkExists(prop); !ok { // nolint:staticcheck
 			missing = append(missing, prop)
 		}
 	}
@@ -75,7 +72,7 @@ func conditionalRequire(d *schema.ResourceData, propList []string, reason string
 }
 
 // Conditionally validates a slice of strings for required and valid values.
-func conditionalValidator(field string, typeValue string, require []string, valid []string, actual []string) error {
+func conditionalValidator(field, typeValue string, require, valid, actual []string) error {
 	explanation := fmt.Sprintf("failed conditional validation for field \"%s\" of type \"%s\", it can contain %s", field, typeValue, strings.Join(valid, ", "))
 
 	if len(require) > 0 {
@@ -129,21 +126,6 @@ func containsOne(s []string, elements ...string) bool {
 	return false
 }
 
-func convertBoolToInt(b bool) int {
-	if b == true {
-		return 1
-	}
-	return 0
-}
-
-func convertIntToBool(i int) bool {
-	if i > 0 {
-		return true
-	}
-
-	return false
-}
-
 func convertInterfaceToStringSet(purportedSet interface{}) []string {
 	return convertInterfaceToStringArr(purportedSet.(*schema.Set).List())
 }
@@ -187,7 +169,7 @@ func createCustomNestedResourceImporter(fields []string, errMessage string) *sch
 		State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 			parts := strings.Split(d.Id(), "/")
 			if len(parts) != len(fields) {
-				return nil, fmt.Errorf("Invalid resource import specifier. %s", errMessage)
+				return nil, fmt.Errorf("invalid resource import specifier. %s", errMessage)
 			}
 
 			for i, field := range fields {
@@ -195,7 +177,7 @@ func createCustomNestedResourceImporter(fields []string, errMessage string) *sch
 					d.SetId(parts[i])
 					continue
 				}
-				d.Set(field, parts[i])
+				_ = d.Set(field, parts[i])
 			}
 
 			return []*schema.ResourceData{d}, nil
@@ -217,22 +199,6 @@ func convertStringSetToInterface(stringList []string) *schema.Set {
 		arr[i] = str
 	}
 	return schema.NewSet(schema.HashString, arr)
-}
-
-// Allows you to chain multiple validation functions
-func createValidationChain(validationChain ...schema.SchemaValidateFunc) schema.SchemaValidateFunc {
-	return func(val interface{}, key string) ([]string, []error) {
-		var warningList []string
-		var errorList []error
-
-		for _, cb := range validationChain {
-			warnings, errors := cb(val, key)
-			errorList = append(errorList, errors...)
-			warningList = append(warningList, warnings...)
-		}
-
-		return warningList, errorList
-	}
 }
 
 func createValueDiffSuppression(newValueToIgnore string) schema.SchemaDiffSuppressFunc {
@@ -276,11 +242,6 @@ func doesResourceExist(response *okta.Response, err error) (bool, error) {
 	return true, err
 }
 
-func intPtr(b int) (ptr *int) {
-	ptr = &b
-	return
-}
-
 func getNullableInt(d *schema.ResourceData, key string) *int {
 	if v, ok := d.GetOk(key); ok {
 		i := v.(int)
@@ -301,15 +262,6 @@ func suppressErrorOn404(resp *okta.Response, err error) error {
 	return responseErr(resp, err)
 }
 
-func getApiToken(m interface{}) string {
-	return m.(*Config).apiToken
-}
-
-func getBaseUrl(m interface{}) string {
-	c := m.(*Config)
-	return fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
-}
-
 // Safely get string value
 func getStringValue(d *schema.ResourceData, key string) string {
 	if v, ok := d.GetOk(key); ok {
@@ -320,10 +272,6 @@ func getStringValue(d *schema.ResourceData, key string) string {
 
 func getParallelismFromMetadata(meta interface{}) int {
 	return meta.(*Config).parallelism
-}
-
-func getClientFromMetadata(meta interface{}) *articulateOkta.Client {
-	return meta.(*Config).articulateOktaClient
 }
 
 func getOktaClientFromMetadata(meta interface{}) *okta.Client {
@@ -342,28 +290,21 @@ func is404(status int) bool {
 	return status == http.StatusNotFound
 }
 
+var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+
 // regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
-func matchEmailRegexp(val interface{}, key string) (warnings []string, errors []error) {
-	re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-	if re.MatchString(val.(string)) == false {
-		errors = append(errors, fmt.Errorf("%s field not a valid email address", key))
+func matchEmailRegexp(val interface{}, key string) (warnings []string, errs []error) {
+	if !emailRegex.MatchString(val.(string)) {
+		errs = append(errs, fmt.Errorf("%s field not a valid email address", key))
 	}
-	return warnings, errors
-}
-
-func mergeMaps(target, source map[string]interface{}) map[string]interface{} {
-	for key, value := range source {
-		target[key] = value
-	}
-
-	return target
+	return warnings, errs
 }
 
 func normalizeDataJSON(val interface{}) string {
 	dataMap := map[string]interface{}{}
 
 	// Ignoring errors since we know it is valid
-	json.Unmarshal([]byte(val.(string)), &dataMap)
+	_ = json.Unmarshal([]byte(val.(string)), &dataMap)
 	ret, _ := json.Marshal(dataMap)
 
 	return string(ret)
@@ -379,16 +320,6 @@ func remove(arr []string, el string) []string {
 		}
 	}
 	return newArr
-}
-
-func requireOneOf(d *schema.ResourceData, propList ...string) error {
-	for _, prop := range propList {
-		if _, ok := d.GetOkExists(prop); !ok {
-			return nil
-		}
-	}
-
-	return fmt.Errorf("One of the following fields must be set: %s", strings.Join(propList, ", "))
 }
 
 // Okta SDK will (not often) return just `Okta API has returned an error: ""`` when the error is not valid JSON.
@@ -418,14 +349,6 @@ func setNonPrimitives(data *schema.ResourceData, valueMap map[string]interface{}
 	return nil
 }
 
-func suppressDefaultedArrayDiff(k, old, new string, d *schema.ResourceData) bool {
-	return new == "0"
-}
-
-func suppressDefaultedDiff(k, old, new string, d *schema.ResourceData) bool {
-	return new == ""
-}
-
 func validateDataJSON(val interface{}, k string) ([]string, []error) {
 	err := json.Unmarshal([]byte(val.(string)), &map[string]interface{}{})
 	if err != nil {
@@ -447,10 +370,9 @@ func validateIsURL(val interface{}, b string) ([]string, []error) {
 	return nil, nil
 }
 
-func validatePriority(in int, out int) error {
+func validatePriority(in, out int64) error {
 	if in > 0 && in != out {
 		return fmt.Errorf("provided priority was not valid, got: %d, API responded with: %d. See schema for attribute details", in, out)
 	}
-
 	return nil
 }

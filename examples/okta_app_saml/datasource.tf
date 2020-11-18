@@ -14,9 +14,9 @@ resource okta_app_saml test {
 }
 
 data okta_app_saml test {
-  id = "${okta_app_saml.test.id}"
+  id = okta_app_saml.test.id
 }
 
 data okta_app_saml test_label {
-  label = "${okta_app_saml.test.label}"
+  label = okta_app_saml.test.label
 }

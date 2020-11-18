@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func TestAccAppAutoLoginApplication_crud(t *testing.T) {
@@ -30,6 +30,8 @@ func TestAccAppAutoLoginApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "sign_on_redirect_url", "https://example.com"),
 					resource.TestCheckResourceAttr(resourceName, "reveal_password", "true"),
 					resource.TestCheckResourceAttr(resourceName, "credentials_scheme", "EDIT_USERNAME_AND_PASSWORD"),
+					resource.TestCheckResourceAttr(resourceName, "user_name_template_type", "CUSTOM"),
+					resource.TestCheckResourceAttr(resourceName, "user_name_template", "user.firstName"),
 				),
 			},
 			{
@@ -37,13 +39,15 @@ func TestAccAppAutoLoginApplication_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewAutoLoginApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "sign_on_url", "https://exampleupdate.com/login.html"),
 					resource.TestCheckResourceAttr(resourceName, "sign_on_redirect_url", "https://exampleupdate.com"),
 					resource.TestCheckResourceAttr(resourceName, "reveal_password", "false"),
 					resource.TestCheckResourceAttr(resourceName, "shared_password", "sharedpassword"),
 					resource.TestCheckResourceAttr(resourceName, "shared_username", "sharedusername"),
 					resource.TestCheckResourceAttr(resourceName, "credentials_scheme", "SHARED_USERNAME_AND_PASSWORD"),
+					resource.TestCheckResourceAttr(resourceName, "user_name_template_type", "CUSTOM"),
+					resource.TestCheckResourceAttr(resourceName, "user_name_template", "user.firstName"),
 				),
 			},
 		},

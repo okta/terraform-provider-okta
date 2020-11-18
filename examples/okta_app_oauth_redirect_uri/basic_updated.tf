@@ -15,6 +15,6 @@ resource "okta_app_oauth" "test" {
 }
 
 resource "okta_app_oauth_redirect_uri" "test" {
-  app_id = "${okta_app_oauth.test.id}"
+  app_id = okta_app_oauth.test.id
   uri    = "http://google-updated.com"
 }

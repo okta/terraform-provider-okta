@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 // Test creation of a simple AWS SWA app. The preconfigured apps are created by name.
@@ -26,7 +26,7 @@ func TestAccAppSwaApplication_preconfig(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaApplication())),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 				),
 			},
@@ -35,7 +35,7 @@ func TestAccAppSwaApplication_preconfig(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 				),
 			},
 		},
@@ -71,7 +71,7 @@ func TestAccAppSwaApplication_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://example.com/login-updated.html"),
 					resource.TestCheckResourceAttr(resourceName, "button_field", "btn-login-updated"),
 					resource.TestCheckResourceAttr(resourceName, "password_field", "txtbox-password-updated"),
