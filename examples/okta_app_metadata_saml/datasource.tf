@@ -14,6 +14,6 @@ resource okta_app_saml test {
 }
 
 data okta_app_metadata_saml test {
-  app_id = "${okta_app_saml.test.id}"
-  key_id = "${okta_app_saml.test.key_id}"
+  app_id = okta_app_saml.test.id
+  key_id = okta_app_saml.test.key_id
 }
