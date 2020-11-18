@@ -24,5 +24,5 @@ resource okta_app_saml test {
     name         = "Attr Two"
     filter_type  = "STARTS_WITH"
     filter_value = "test"
-}
+  }
 }

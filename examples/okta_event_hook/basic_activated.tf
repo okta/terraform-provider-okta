@@ -1,7 +1,7 @@
 resource okta_event_hook test {
-  name    = "testAcc_replace_with_uuid"
-  status  = "ACTIVE"
-  events  = [
+  name   = "testAcc_replace_with_uuid"
+  status = "ACTIVE"
+  events = [
     "user.lifecycle.create",
     "user.lifecycle.delete.initiated",
   ]

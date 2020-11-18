@@ -57,7 +57,7 @@ resource okta_idp_social microsoft {
   client_secret     = "abcd123"
   username_template = "idpuser.userPrincipalName"
   groups_action     = "ASSIGN"
-  groups_assignment = ["${okta_group.test.id}"]
+  groups_assignment = [okta_group.test.id]
 }
 
 resource "okta_group" "test" {

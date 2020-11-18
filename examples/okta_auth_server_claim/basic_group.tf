@@ -5,7 +5,7 @@ resource "okta_auth_server_claim" "test" {
   value_type        = "GROUPS"
   group_filter_type = "EQUALS"
   value             = "Everyone"
-  auth_server_id    = "${okta_auth_server.test.id}"
+  auth_server_id    = okta_auth_server.test.id
 }
 
 resource "okta_auth_server_claim" "test_sw" {
@@ -15,7 +15,7 @@ resource "okta_auth_server_claim" "test_sw" {
   value_type        = "GROUPS"
   group_filter_type = "STARTS_WITH"
   value             = "Every"
-  auth_server_id    = "${okta_auth_server.test.id}"
+  auth_server_id    = okta_auth_server.test.id
 }
 
 resource "okta_auth_server" "test" {
