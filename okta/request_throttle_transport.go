@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"regexp"
@@ -11,26 +12,26 @@ import (
 
 type rateLimitThrottle struct {
 	endpointsPatterns  []*regexp.Regexp
-	noRequestsMade     int
+	noOfRequestsMade   int
 	maxRequests        int
 	rateLimit          int
 	rateLimitResetTime time.Time
 	sync.Mutex
 }
 
-func newRateLimitThrottle(endpointsRegexes []string, maxRequests int) rateLimitThrottle {
+func newRateLimitThrottle(endpointsRegexes []string, maxRequests int) *rateLimitThrottle {
 	endpointsPatterns := make([]*regexp.Regexp, len(endpointsRegexes))
 	for i, endpointRegex := range endpointsRegexes {
 		endpointsPatterns[i] = regexp.MustCompile(endpointRegex)
 	}
-	return rateLimitThrottle{
+	return &rateLimitThrottle{
 		endpointsPatterns: endpointsPatterns,
 		maxRequests:       maxRequests,
 	}
 }
 
-func (throttle *rateLimitThrottle) checkIsEndpoint(path string) bool {
-	for _, pattern := range throttle.endpointsPatterns {
+func (t *rateLimitThrottle) checkIsEndpoint(path string) bool {
+	for _, pattern := range t.endpointsPatterns {
 		if len(pattern.FindStringSubmatch(path)) != 0 {
 			return true
 		}
@@ -38,52 +39,57 @@ func (throttle *rateLimitThrottle) checkIsEndpoint(path string) bool {
 	return false
 }
 
-func (throttle *rateLimitThrottle) preRequestHook(path string) {
-	if !throttle.checkIsEndpoint(path) {
-		return
+func (t *rateLimitThrottle) preRequestHook(ctx context.Context, path string) error {
+	if !t.checkIsEndpoint(path) {
+		return nil
 	}
 	log.Println("[DEBUG] special preRequestHook request throttle handling")
-	throttle.Lock()
-	defer throttle.Unlock()
-	throttle.noRequestsMade += 1
-	if throttle.rateLimit != 0 && throttle.noRequestsMade >= (throttle.rateLimit*throttle.maxRequests/100.0) {
-		throttle.noRequestsMade = 1
+	t.Lock()
+	defer t.Unlock()
+	t.noOfRequestsMade += 1
+	if t.rateLimit != 0 && t.noOfRequestsMade >= (t.rateLimit*t.maxRequests/100.0) {
+		t.noOfRequestsMade = 1
 		// add an extra margin to account for the clock skew
-		timeToSleep := throttle.rateLimitResetTime.Add(2 * time.Second).Sub(time.Now())
+		timeToSleep := t.rateLimitResetTime.Add(2 * time.Second).Sub(time.Now())
 		if timeToSleep > 0 {
 			log.Printf(
-				"[INFO] Throttling %s requests, sleeping until rate limit reset for %s",
-				path,
-				timeToSleep,
-			)
-			time.Sleep(timeToSleep)
+				"[INFO] Throttling %s requests, sleeping for %s until rate limit reset", path, timeToSleep)
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			case <-time.NewTimer(timeToSleep).C:
+				return nil
+			}
 		}
 	}
+	return nil
 }
 
-func (throttle *rateLimitThrottle) postRequestHook(resp *http.Response) {
-	if !throttle.checkIsEndpoint(resp.Request.URL.Path) {
+func (t *rateLimitThrottle) postRequestHook(resp *http.Response) {
+	if !t.checkIsEndpoint(resp.Request.URL.Path) {
 		return
 	}
-	throttle.Lock()
-	defer throttle.Unlock()
+	t.Lock()
+	defer t.Unlock()
 	var err error
-	throttle.rateLimit, err = strconv.Atoi(resp.Header.Get("X-Rate-Limit-Limit"))
+	t.rateLimit, err = strconv.Atoi(resp.Header.Get("X-Rate-Limit-Limit"))
 	if err != nil {
-		// TODO
+		log.Printf("[WARN] X-Rate-Limit-Limit response header is missing or invalid, skipping postRequestHook: %v", err)
+		return
 	}
-	log.Printf("[DEBUG] %s rate limit limit: %v", resp.Request.URL.Path, throttle.rateLimit)
+	log.Printf("[DEBUG] %s rate limit: %d", resp.Request.URL.Path, t.rateLimit)
 	resetTime, err := strconv.Atoi(resp.Header.Get("X-Rate-Limit-Reset"))
 	if err != nil {
-		// TODO
+		log.Printf("[WARN] X-Rate-Limit-Reset response header is missing or invalid, skipping postRequestHook: %v", err)
+		return
 	}
 	futureResetTime := time.Unix(int64(resetTime), 0)
 	log.Printf("[DEBUG] future %s rate limit reset time: %v", resp.Request.URL.Path, futureResetTime)
-	if !throttle.rateLimitResetTime.IsZero() && futureResetTime != throttle.rateLimitResetTime {
+	if !t.rateLimitResetTime.IsZero() && futureResetTime != t.rateLimitResetTime {
 		log.Printf("[DEBUG] %s rate limit reset detected", resp.Request.URL.Path)
-		throttle.noRequestsMade = 1
+		t.noOfRequestsMade = 1
 	}
-	throttle.rateLimitResetTime = futureResetTime
+	t.rateLimitResetTime = futureResetTime
 }
 
 type requestThrottleTransport struct {
@@ -91,25 +97,28 @@ type requestThrottleTransport struct {
 	throttledEndpoints []*rateLimitThrottle
 }
 
-func (transport *requestThrottleTransport) RoundTrip(req *http.Request) (res *http.Response, err error) {
-	for i, _ := range transport.throttledEndpoints {
-		transport.throttledEndpoints[i].preRequestHook(req.URL.Path)
+func (t *requestThrottleTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	for i := range t.throttledEndpoints {
+		err := t.throttledEndpoints[i].preRequestHook(req.Context(), req.URL.Path)
+		if err != nil {
+			return nil, err
+		}
 	}
-	resp, err := transport.base.RoundTrip(req)
+	resp, err := t.base.RoundTrip(req)
 	if err != nil {
-		return resp, err
+		return nil, err
 	}
-	for i, _ := range transport.throttledEndpoints {
-		transport.throttledEndpoints[i].postRequestHook(resp)
+	for i := range t.throttledEndpoints {
+		t.throttledEndpoints[i].postRequestHook(resp)
 	}
-	return resp, err
+	return resp, nil
 }
 
 // NewRequestThrottleTransport returns RoundTripper which provides throttling according to maxRequests.
 // Every new instance returned has its own local state. Hence for every Okta API client instanced for
 // particular Okta Organization the same throttler should be used.
 func NewRequestThrottleTransport(base http.RoundTripper, maxRequests int) *requestThrottleTransport {
-	apiV1AppsEndpoint := newRateLimitThrottle([]string{
+	apiV1AppsEndpoints := newRateLimitThrottle([]string{
 		// the following endpoints share the same rate limit
 		`/api/v1/apps$`,
 		`/api/v1/apps/(?P<AppID>[[:alnum:]]+)/groups$`,
@@ -118,6 +127,6 @@ func NewRequestThrottleTransport(base http.RoundTripper, maxRequests int) *reque
 	}, maxRequests)
 	return &requestThrottleTransport{
 		base:               base,
-		throttledEndpoints: []*rateLimitThrottle{&apiV1AppsEndpoint},
+		throttledEndpoints: []*rateLimitThrottle{apiV1AppsEndpoints},
 	}
 }

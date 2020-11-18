@@ -89,12 +89,6 @@ func Provider() terraform.ResourceProvider {
 				Default:     true,
 				Description: "Use exponential back off strategy for rate limits.",
 			},
-			"min_wait_seconds": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Default:     30,
-				Description: "minimum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
-			},
 			"max_wait_seconds": {
 				Type:        schema.TypeInt,
 				Optional:    true,

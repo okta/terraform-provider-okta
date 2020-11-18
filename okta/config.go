@@ -32,11 +32,9 @@ type (
 		parallelism      int
 		backoff          bool
 		maxWait          int
-		waitForReset bool
-		maxRequests  int // experimental
+		maxRequests      int // experimental
 		oktaClient       *okta.Client
 		supplementClient *sdk.ApiSupplement
-		ctx              context.Context
 	}
 )
 
@@ -49,7 +47,7 @@ func (c *Config) loadAndValidate() error {
 	}
 
 	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
-	ctx, client, err := okta.NewClient(
+	_, client, err := okta.NewClient(
 		context.Background(),
 		okta.WithOrgUrl(orgURL),
 		okta.WithToken(c.apiToken),
@@ -57,7 +55,7 @@ func (c *Config) loadAndValidate() error {
 		okta.WithHttpClient(*httpClient),
 		okta.WithRequestTimeout(int64(c.maxWait)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
-		okta.WithUserAgentExtra("okta-terraform/3.6.0"),
+		okta.WithUserAgentExtra("okta-terraform/3.6.1"),
 	)
 	if err != nil {
 		return err
@@ -71,6 +69,5 @@ func (c *Config) loadAndValidate() error {
 
 	// add the Okta SDK client object to Config
 	c.oktaClient = client
-	c.ctx = ctx
 	return nil
 }

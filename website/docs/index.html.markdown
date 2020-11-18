@@ -87,8 +87,6 @@ In addition to [generic `provider` arguments](https://www.terraform.io/docs/conf
 
 * `backoff` - (Optional) Whether to use exponential back off strategy for rate limits, the default is `true`.
 
-* `min_wait_seconds` - (Optional) Minimum seconds to wait when rate limit is hit, the default is `30`.
-
 * `max_wait_seconds` - (Optional) Maximum seconds to wait when rate limit is hit, the default is `300`.
 
 * `max_retries` - (Optional) Maximum number of retries to attempt before returning an error, the default is `5`.
