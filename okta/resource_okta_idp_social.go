@@ -15,7 +15,7 @@ func resourceIdpSocial() *schema.Resource {
 		Delete: resourceIdpDelete,
 		Exists: getIdentityProviderExists(&sdk.SAMLIdentityProvider{}),
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		// Note the base schema

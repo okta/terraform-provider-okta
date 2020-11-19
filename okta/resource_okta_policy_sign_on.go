@@ -16,7 +16,7 @@ func resourcePolicySignOn() *schema.Resource {
 		Update: resourcePolicySignOnUpdate,
 		Delete: resourcePolicySignOnDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: basePolicySchema,
 	}

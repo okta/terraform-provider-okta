@@ -73,7 +73,7 @@ func resourcePolicyMfa() *schema.Resource {
 		Update: resourcePolicyMfaUpdate,
 		Delete: resourcePolicyMfaDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: buildPolicySchema(
 			// List of factor provider above, they all follow the same schema

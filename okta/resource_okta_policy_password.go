@@ -18,7 +18,7 @@ func resourcePolicyPassword() *schema.Resource {
 		Update: resourcePolicyPasswordUpdate,
 		Delete: resourcePolicyPasswordDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: buildPolicySchema(map[string]*schema.Schema{
 			"auth_provider": {

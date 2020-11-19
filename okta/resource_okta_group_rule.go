@@ -17,7 +17,7 @@ func resourceGroupRule() *schema.Resource {
 		Update: resourceGroupRuleUpdate,
 		Delete: resourceGroupRuleDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
 			"name": {

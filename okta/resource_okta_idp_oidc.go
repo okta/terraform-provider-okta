@@ -15,7 +15,7 @@ func resourceIdpOidc() *schema.Resource {
 		Delete: resourceIdpDelete,
 		Exists: getIdentityProviderExists(&sdk.OIDCIdentityProvider{}),
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		// Note the base schema

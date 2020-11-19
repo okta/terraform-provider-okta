@@ -21,7 +21,7 @@ func resourceFactor() *schema.Resource {
 		Exists: resourceFactorExists,
 		Delete: resourceFactorDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
 			"provider_id": {

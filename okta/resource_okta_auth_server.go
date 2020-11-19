@@ -18,7 +18,7 @@ func resourceAuthServer() *schema.Resource {
 		Update: resourceAuthServerUpdate,
 		Delete: resourceAuthServerDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
 			"audiences": {

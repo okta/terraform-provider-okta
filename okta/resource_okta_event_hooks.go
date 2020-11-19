@@ -16,7 +16,7 @@ func resourceEventHook() *schema.Resource {
 		Delete: resourceEventHookDelete,
 		Exists: resourceEventHookExists,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{

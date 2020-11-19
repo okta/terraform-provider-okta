@@ -15,7 +15,7 @@ func resourceIdpSaml() *schema.Resource {
 		Delete: resourceIdpDelete,
 		Exists: getIdentityProviderExists(&sdk.SAMLIdentityProvider{}),
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: buildIdpSchema(map[string]*schema.Schema{
 			"type": {

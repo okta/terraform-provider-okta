@@ -14,7 +14,7 @@ func resourceIdpSigningKey() *schema.Resource {
 		Delete: resourceIdpSigningKeyDelete,
 		Exists: resourceIdpSigningKeyExists,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
 			"x5c": {

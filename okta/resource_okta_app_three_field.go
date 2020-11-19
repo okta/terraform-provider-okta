@@ -16,7 +16,7 @@ func resourceAppThreeField() *schema.Resource {
 		Delete: resourceAppThreeFieldDelete,
 		Exists: resourceAppExists,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or

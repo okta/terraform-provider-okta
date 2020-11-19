@@ -28,7 +28,7 @@ func resourceTemplateSms() *schema.Resource {
 		Update: resourceTemplateSmsUpdate,
 		Delete: resourceTemplateSmsDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
 			"type": {

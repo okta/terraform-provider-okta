@@ -29,7 +29,7 @@ func resourceInlineHook() *schema.Resource {
 		Delete: resourceInlineHookDelete,
 		Exists: resourceInlineHookExists,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		// For those familiar with Terraform schemas be sure to check the base hook schema and/or

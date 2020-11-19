@@ -82,7 +82,7 @@ func resourceAppOAuth() *schema.Resource {
 		Delete: resourceAppOAuthDelete,
 		Exists: resourceAppOAuthExists,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
 			// Force new if omit_secret goes from true to false

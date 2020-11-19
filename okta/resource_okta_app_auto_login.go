@@ -17,7 +17,7 @@ func resourceAppAutoLogin() *schema.Resource {
 		Delete: resourceAppAutoLoginDelete,
 		Exists: resourceAppExists,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
