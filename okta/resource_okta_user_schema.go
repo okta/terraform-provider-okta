@@ -1,7 +1,7 @@
 package okta
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 

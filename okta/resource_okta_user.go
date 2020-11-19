@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
@@ -437,7 +437,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		if err != nil {
 			return fmt.Errorf("[ERROR] Error Updating Status for User: %v", err)
 		}
-		d.SetPartial("status") // nolint:staticcheck
+		_ = d.Set("status", status)
 	}
 
 	if status == userStatusDeprovisioned && userChange {
@@ -459,7 +459,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		if err := updateAdminRolesOnUser(d.Id(), roles, client); err != nil {
 			return err
 		}
-		d.SetPartial("admin_roles") //nolint:staticcheck
+		_ = d.Set("admin_roles", roles)
 	}
 
 	if groupChange {
@@ -467,7 +467,7 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 		if err := updateGroupsOnUser(d.Id(), groups, client); err != nil {
 			return err
 		}
-		d.SetPartial("group_memberships") //nolint:staticcheck
+		_ = d.Set("group_memberships", groups)
 	}
 
 	if passwordChange {

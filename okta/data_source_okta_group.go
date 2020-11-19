@@ -6,7 +6,7 @@ import (
 
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceGroup() *schema.Resource {

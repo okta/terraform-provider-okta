@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 // Resource names, defined in place, used throughout the provider and tests
@@ -59,7 +58,7 @@ const (
 
 // Provider establishes a client connection to an okta site
 // determined by its schema string values
-func Provider() terraform.ResourceProvider {
+func Provider() *schema.Provider {
 	deprecatedPolicies := dataSourceDefaultPolicies()
 	deprecatedPolicies.DeprecationMessage = "This data source will be deprecated in favor of okta_default_policy or okta_policy data sources."
 

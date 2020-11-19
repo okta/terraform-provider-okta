@@ -6,7 +6,7 @@ import (
 
 	"github.com/okta/okta-sdk-golang/v2/okta"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceGroupRule() *schema.Resource {
@@ -130,7 +130,7 @@ func resourceGroupRuleUpdate(d *schema.ResourceData, m interface{}) error {
 		if err := handleGroupRuleLifecycle(d, m); err != nil {
 			return err
 		}
-		d.SetPartial("status") //nolint:staticcheck
+		_ = d.Set("status", desiredStatus)
 	}
 
 	if hasGroupRuleChange(d) {
