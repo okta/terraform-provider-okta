@@ -50,7 +50,7 @@ func (t *rateLimitThrottle) preRequestHook(ctx context.Context, path string) err
 	if t.rateLimit != 0 && t.noOfRequestsMade >= (t.rateLimit*t.maxRequests/100.0) {
 		t.noOfRequestsMade = 1
 		// add an extra margin to account for the clock skew
-		timeToSleep := t.rateLimitResetTime.Add(2 * time.Second).Sub(time.Now())
+		timeToSleep := time.Until(t.rateLimitResetTime.Add(2 * time.Second))
 		if timeToSleep > 0 {
 			log.Printf(
 				"[INFO] Throttling %s requests, sleeping for %s until rate limit reset", path, timeToSleep)
