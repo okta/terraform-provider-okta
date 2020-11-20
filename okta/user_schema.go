@@ -150,7 +150,7 @@ var (
 			ValidateFunc:  validation.StringInSlice([]string{"UNIQUE_VALIDATED", "NOT_UNIQUE"}, false),
 			ConflictsWith: []string{"one_of", "enum", "array_type"},
 		},
-		"user_type": &schema.Schema{
+		"user_type": {
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "Custom Subschema usertype",
@@ -194,12 +194,12 @@ var (
 		"required": {
 			Type:        schema.TypeBool,
 			Optional:    true,
-			Description: "Whether the Subschema is required",
+			Description: "Whether the SubSchema is required",
 		},
-		"user_type": &schema.Schema{
+		"user_type": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "Custom Subschema usertype",
+			Description: "Custom SubSchema usertype",
 			Default:     "default",
 		},
 	}

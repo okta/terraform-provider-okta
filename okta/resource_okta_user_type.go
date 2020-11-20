@@ -1,9 +1,11 @@
 package okta
 
 import (
+	"context"
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceUserType() *schema.Resource {
@@ -19,12 +21,12 @@ func resourceUserType() *schema.Resource {
 			},
 		},
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The display name for the type",
 			},
-			"display_name": &schema.Schema{
+			"display_name": {
 				Type:     schema.TypeString,
 				Required: true,
 				Description: "The display name for the type	",
@@ -38,8 +40,8 @@ func resourceUserType() *schema.Resource {
 	}
 }
 
-func buildUserType(d *schema.ResourceData) *sdk.UserType {
-	return &sdk.UserType{
+func buildUserType(d *schema.ResourceData) okta.UserType {
+	return okta.UserType{
 		Name:        d.Get("name").(string),
 		DisplayName: d.Get("display_name").(string),
 		Description: d.Get("description").(string),
@@ -47,63 +49,50 @@ func buildUserType(d *schema.ResourceData) *sdk.UserType {
 }
 
 func resourceUserTypeCreate(d *schema.ResourceData, m interface{}) error {
-	client := getSupplementFromMetadata(m)
-	userType := buildUserType(d)
-	newUserType, _, err := client.CreateUserType(*userType, nil)
+	newUserType, _, err := getOktaClientFromMetadata(m).UserType.CreateUserType(context.Background(), buildUserType(d))
 	if err != nil {
 		return err
 	}
-
 	d.SetId(newUserType.Id)
-	if err != nil {
-		return err
-	}
-
 	return resourceUserTypeRead(d, m)
 }
 
 func resourceUserTypeUpdate(d *schema.ResourceData, m interface{}) error {
-	client := getSupplementFromMetadata(m)
 	userType := buildUserType(d)
-	_, _, err := client.UpdateUserType(d.Id(), *userType, nil)
-
+	_, _, err := getOktaClientFromMetadata(m).UserType.UpdateUserType(context.Background(), d.Id(), userType)
 	if err != nil {
 		return err
 	}
-
 	return resourceUserTypeRead(d, m)
 }
 
 func resourceUserTypeRead(d *schema.ResourceData, m interface{}) error {
-	userType, resp, err := getSupplementFromMetadata(m).GetUserType(d.Id())
-
-	if is404(resp.StatusCode) {
+	userType, resp, err := getOktaClientFromMetadata(m).UserType.GetUserType(context.Background(), d.Id())
+	if resp != nil && is404(resp.StatusCode) {
 		d.SetId("")
 		return nil
 	}
-
 	if err != nil {
 		return err
 	}
-
-	d.Set("name", userType.Name)
-	d.Set("display_name", userType.DisplayName)
-	d.Set("description", userType.Description)
-
+	_ = d.Set("name", userType.Name)
+	_ = d.Set("display_name", userType.DisplayName)
+	_ = d.Set("description", userType.Description)
 	return nil
 }
 
 func resourceUserTypeDelete(d *schema.ResourceData, m interface{}) error {
-	client := getSupplementFromMetadata(m)
-	_, err := client.DeleteUserType(d.Id())
-
+	_, err := getOktaClientFromMetadata(m).UserType.DeleteUserType(context.Background(), d.Id())
 	return err
 }
 
 func resourceUserTypeExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	_, _, err := getSupplementFromMetadata(m).GetUserType(d.Id())
+	_, resp, err := getOktaClientFromMetadata(m).UserType.GetUserType(context.Background(), d.Id())
 	if err != nil {
-		return false, fmt.Errorf("[ERROR] Error Getting User Type: %v", err)
+		return false, fmt.Errorf("failed to get user type: %v", err)
+	}
+	if resp != nil && is404(resp.StatusCode) {
+		return false, nil
 	}
 	return true, nil
 }

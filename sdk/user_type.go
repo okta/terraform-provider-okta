@@ -1,11 +1,12 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
 	"net/url"
-	"strings"
+
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 type (
@@ -24,93 +25,29 @@ type (
 	}
 )
 
-func (m *ApiSupplement) DeleteUserType(id string) (*okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/meta/types/user/%s", id)
-	req, err := m.RequestExecutor.NewRequest("DELETE", url, nil)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return m.RequestExecutor.Do(req, nil)
-}
-
 func (m *ApiSupplement) ListUserTypes() ([]*UserType, *okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("GET", "/api/v1/meta/types/user/", nil)
+	req, err := m.RequestExecutor.NewRequest("GET", "/api/v1/meta/types/user", nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var auth []*UserType
-	resp, err := m.RequestExecutor.Do(req, &auth)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &auth)
 	return auth, resp, err
 }
 
-func (m *ApiSupplement) CreateUserType(body UserType, qp *query.Params) (*UserType, *okta.Response, error) {
-	url := "/api/v1/meta/types/user/"
-	if qp != nil {
-		url += qp.String()
-	}
-	req, err := m.RequestExecutor.NewRequest("POST", url, body)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	userType := body
-	resp, err := m.RequestExecutor.Do(req, &userType)
-	return &userType, resp, err
-}
-
-func (m *ApiSupplement) UpdateUserType(id string, body UserType, qp *query.Params) (*UserType, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/meta/types/user/%s", id)
-	if qp != nil {
-		url += qp.String()
-	}
-	req, err := m.RequestExecutor.NewRequest("PUT", url, body)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	userType := body
-	resp, err := m.RequestExecutor.Do(req, &userType)
-	if err != nil {
-		return nil, resp, err
-	}
-	return &userType, resp, nil
-}
-
 func (m *ApiSupplement) GetUserType(id string) (*UserType, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/meta/types/user/%s", id)
-	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
+	req, err := m.RequestExecutor.NewRequest("GET", fmt.Sprintf("/api/v1/meta/types/user/%s", id), nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	userType := &UserType{}
-	resp, err := m.RequestExecutor.Do(req, &userType)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &userType)
 	if err != nil {
 		return nil, resp, err
 	}
 	return userType, resp, nil
-}
-
-func (c *ApiSupplement) FindUserType(name string, qp *query.Params) (*UserType, error) {
-	userTypeList, res, err := c.ListUserTypes()
-	if err != nil {
-		return nil, err
-	}
-
-	for _, userType := range userTypeList {
-		if strings.EqualFold(name, userType.Name) {
-			return userType, nil
-		}
-	}
-
-	if after := getNextLinkOffset(res); after != "" {
-		qp.After = after
-		return c.FindUserType(name, qp)
-	}
-	return nil, nil
 }
 
 func (c *ApiSupplement) GetUserTypeSchemaUrl(id string, qp *query.Params) (string, error) {

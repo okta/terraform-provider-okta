@@ -1,7 +1,7 @@
-resource "okta_user_type" userbaseschematest_usertype {
-  name   = "testAcc_replace_with_uuid"
+resource "okta_user_type" non_default_user_type {
+  name         = "testAcc_replace_with_uuid"
   display_name = "testAcc_replace_with_uuid"
-  description = "Terraform Acceptance Test Schema User Type"
+  description  = "Terraform Acceptance Test Schema User Type"
 }
 
 resource "okta_user_base_schema" "firstName" {
@@ -10,5 +10,5 @@ resource "okta_user_base_schema" "firstName" {
   permissions = "READ_ONLY"
   title       = "First name"
   type        = "string"
-  user_type   = "${okta_user_type.userbaseschematest_usertype.id}"
+  user_type   = okta_user_type.non_default_user_type.id
 }

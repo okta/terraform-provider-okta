@@ -22,7 +22,7 @@ func sweepUserBaseSchema(client *testClient) error {
 		return err
 	}
 
-	for key, _ := range schema.Definitions.Custom.Properties {
+	for key := range schema.Definitions.Custom.Properties {
 		if strings.HasPrefix(key, testResourcePrefix) {
 			if _, err := client.apiSupplement.DeleteUserSchemaProperty(schemaUrl, key); err != nil {
 				errorList = append(errorList, err)
@@ -38,7 +38,7 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 	mgr := newFixtureManager(userBaseSchema)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updated := mgr.GetFixtures("updated.tf", ri, t)
-	nondefaultusertypeconfig := mgr.GetFixtures("nondefaultusertype.tf", ri, t)
+	nonDefault := mgr.GetFixtures("non_default_user_type.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.%s", userBaseSchema, baseTestProp)
 
 	resource.Test(t, resource.TestCase{
@@ -68,7 +68,7 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 				),
 			},
 			{
-				Config: nondefaultusertypeconfig,
+				Config: nonDefault,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserBaseSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "index", baseTestProp),
@@ -103,8 +103,7 @@ func testOktaUserBaseSchemasExists(name string) resource.TestCheckFunc {
 		if rs.Primary.Attributes["user_type"] != "" {
 			schemaUserType = rs.Primary.Attributes["user_type"]
 		}
-
-		exists, err := testUserBaseSchemaExists(schemaUserType, rs.Primary.ID)
+		exists, err := testSchemaPropertyExists(schemaUserType, rs.Primary.ID, baseSchema)
 		if err != nil {
 			return fmt.Errorf("failed to find: %v", err)
 		}
@@ -113,16 +112,4 @@ func testOktaUserBaseSchemasExists(name string) resource.TestCheckFunc {
 		}
 		return nil
 	}
-}
-
-func testUserBaseSchemaExists(schemaUserType string, index string) (bool, error) {
-	schemaUrl, err := getSupplementFromMetadata(testAccProvider.Meta()).GetUserTypeSchemaUrl(schemaUserType, nil)
-	if err != nil {
-		return false, err
-	}
-	schema, _, err := getSupplementFromMetadata(testAccProvider.Meta()).GetUserSchema(schemaUrl)
-	if err != nil {
-		return false, err
-	}
-	return getBaseProperty(schema, index) != nil, nil
 }

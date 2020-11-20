@@ -1,9 +1,10 @@
 package okta
 
 import (
+	"strings"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
-	"strings"
 )
 
 const customSchema = "custom"
@@ -99,13 +100,11 @@ func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
 
 func resourceUserSchemaDelete(d *schema.ResourceData, m interface{}) error {
 	schemaUrl, err := getSupplementFromMetadata(m).GetUserTypeSchemaUrl(d.Get("user_type").(string), nil)
-
 	if err != nil {
 		return err
 	}
-	_, schemaPropertyError := getSupplementFromMetadata(m).DeleteUserSchemaProperty(schemaUrl, d.Id())
-
-	return schemaPropertyError
+	_, err = getSupplementFromMetadata(m).DeleteUserSchemaProperty(schemaUrl, d.Id())
+	return err
 }
 
 // create or modify a custom subschema

@@ -1,9 +1,10 @@
 package okta
 
 import (
+	"strings"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
-	"strings"
 )
 
 const baseSchema = "base"
