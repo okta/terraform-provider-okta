@@ -68,7 +68,7 @@ var (
 		"required": {
 			Type:        schema.TypeBool,
 			Optional:    true,
-			Description: "Whether the Subschema is required",
+			Description: "Whether the subschema is required",
 		},
 		"min_length": {
 			Type:         schema.TypeInt,
@@ -153,7 +153,7 @@ var (
 		"user_type": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "Custom Subschema usertype",
+			Description: "Custom subschema user type",
 			Default:     "default",
 		},
 	}
@@ -194,12 +194,12 @@ var (
 		"required": {
 			Type:        schema.TypeBool,
 			Optional:    true,
-			Description: "Whether the SubSchema is required",
+			Description: "Whether the subschema is required",
 		},
 		"user_type": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "Custom SubSchema usertype",
+			Description: "Custom subschema user type",
 			Default:     "default",
 		},
 	}
