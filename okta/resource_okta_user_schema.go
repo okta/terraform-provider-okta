@@ -25,8 +25,8 @@ func resourceUserSchema() *schema.Resource {
 				}
 
 				d.SetId(resourceIndex)
-				d.Set("index", resourceIndex)
-				d.Set("user_type", resourceUserType)
+				_ = d.Set("index", resourceIndex)
+				_ = d.Set("user_type", resourceUserType)
 				return []*schema.ResourceData{d}, nil
 			},
 		},
@@ -78,28 +78,22 @@ func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
 	return syncUserSchema(d, subschema)
 }
 
-func getSubSchema(schemaUrl string, d *schema.ResourceData, m interface{}) (subschema *sdk.UserSubSchema, err error) {
-	var schema *sdk.UserSchema
-
-	schema, _, err = getSupplementFromMetadata(m).GetUserSchema(schemaUrl)
+func getSubSchema(schemaUrl string, d *schema.ResourceData, m interface{}) (*sdk.UserSubSchema, error) {
+	s, _, err := getSupplementFromMetadata(m).GetUserSchema(schemaUrl)
 	if err != nil {
 		return nil, err
 	}
-
-	subschema = getCustomProperty(schema, d.Id())
-	return
+	return getCustomProperty(s, d.Id()), err
 }
 
 func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
 	schemaUrl, err := getSupplementFromMetadata(m).GetUserTypeSchemaUrl(d.Get("user_type").(string), nil)
-
 	if err != nil {
 		return err
 	}
 	if err := updateSubschema(schemaUrl, d, m); err != nil {
 		return err
 	}
-
 	return resourceUserSchemaRead(d, m)
 }
 

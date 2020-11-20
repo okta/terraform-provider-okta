@@ -26,7 +26,7 @@ func sweepUserSchema(client *testClient) error {
 			return err
 		}
 
-		for key, _ := range schema.Definitions.Custom.Properties {
+		for key := range schema.Definitions.Custom.Properties {
 			if strings.HasPrefix(key, testResourcePrefix) {
 				if _, err := client.apiSupplement.DeleteUserSchemaProperty(schemaUrl, key); err != nil {
 					errorList = append(errorList, err)
@@ -34,7 +34,6 @@ func sweepUserSchema(client *testClient) error {
 			}
 		}
 	}
-
 	return condenseError(errorList)
 }
 
@@ -97,9 +96,9 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
-					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test setting unique attritube to UNIQUE_VALIDATED"),
+					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test setting unique attribute to UNIQUE_VALIDATED"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
-					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test setting unique attritube to UNIQUE_VALIDATED"),
+					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test setting unique attribute to UNIQUE_VALIDATED"),
 					resource.TestCheckResourceAttr(resourceName, "required", "true"),
 					resource.TestCheckResourceAttr(resourceName, "min_length", "1"),
 					resource.TestCheckResourceAttr(resourceName, "max_length", "70"),
@@ -230,7 +229,7 @@ func testOktaUserSchemasExists(name string) resource.TestCheckFunc {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("Not found: %s", name)
+			return fmt.Errorf("not found: %s", name)
 		}
 
 		var schemaUserType = "default"
@@ -238,8 +237,12 @@ func testOktaUserSchemasExists(name string) resource.TestCheckFunc {
 			schemaUserType = rs.Primary.Attributes["user_type"]
 		}
 
-		if exists, _ := testUserSchemaExists(schemaUserType, rs.Primary.ID); !exists {
-			return fmt.Errorf("Failed to find %s", rs.Primary.ID)
+		exists, err := testUserSchemaExists(schemaUserType, rs.Primary.ID)
+		if err != nil {
+			return fmt.Errorf("failed to find: %v", err)
+		}
+		if !exists {
+			return fmt.Errorf("custom property %s does not exist in a profile subschema", rs.Primary.ID)
 		}
 		return nil
 	}
@@ -247,20 +250,16 @@ func testOktaUserSchemasExists(name string) resource.TestCheckFunc {
 
 func testUserSchemaExists(schemaUserType string, index string) (bool, error) {
 	schemaUrl, err := getSupplementFromMetadata(testAccProvider.Meta()).GetUserTypeSchemaUrl(schemaUserType, nil)
-
 	if err != nil {
 		return false, err
 	}
-
 	schema, _, err := getSupplementFromMetadata(testAccProvider.Meta()).GetUserSchema(schemaUrl)
 	if err != nil {
 		return false, err
 	}
-
 	part := getCustomProperty(schema, index)
 	if part != nil {
 		return true, nil
 	}
-
 	return false, nil
 }

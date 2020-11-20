@@ -7,15 +7,15 @@ import (
 
 var translationResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
-		"language": &schema.Schema{
+		"language": {
 			Type:     schema.TypeString,
 			Required: true,
 		},
-		"subject": &schema.Schema{
+		"subject": {
 			Type:     schema.TypeString,
 			Required: true,
 		},
-		"template": &schema.Schema{
+		"template": {
 			Type:     schema.TypeString,
 			Required: true,
 		},
@@ -33,17 +33,17 @@ func resourceTemplateEmail() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 		Schema: map[string]*schema.Schema{
-			"default_language": &schema.Schema{
+			"default_language": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "en",
 			},
-			"type": &schema.Schema{
+			"type": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Email template type",
 			},
-			"translations": &schema.Schema{
+			"translations": {
 				Type:     schema.TypeSet,
 				Required: true,
 				Elem:     translationResource,
@@ -111,7 +111,7 @@ func resourceTemplateEmailExists(d *schema.ResourceData, m interface{}) (bool, e
 func resourceTemplateEmailRead(d *schema.ResourceData, m interface{}) error {
 	temp, resp, err := getSupplementFromMetadata(m).GetEmailTemplate(d.Id())
 
-	if is404(resp.StatusCode) {
+	if resp != nil && is404(resp.StatusCode) {
 		d.SetId("")
 		return nil
 	}
@@ -120,8 +120,8 @@ func resourceTemplateEmailRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("translations", flattenEmailTranlations(temp.Translations))
-	d.Set("default_language", temp.DefaultLanguage)
+	_ = d.Set("translations", flattenEmailTranlations(temp.Translations))
+	_ = d.Set("default_language", temp.DefaultLanguage)
 
 	return nil
 }

@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
@@ -32,7 +31,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, eventHookExists),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
 					resource.TestCheckResourceAttr(resourceName, "channel.uri", "https://example.com/test"),
@@ -53,7 +52,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, eventHookExists),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
 					resource.TestCheckResourceAttr(resourceName, "channel.uri", "https://example.com/testUpdated"),
@@ -63,11 +62,11 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 						resourceName,
 						"headers",
 						testMakeEventHookHeadersSet([]sdk.EventHookHeader{
-							sdk.EventHookHeader{
+							{
 								Key:   "x-test-header",
 								Value: "test stuff",
 							},
-							sdk.EventHookHeader{
+							{
 								Key:   "x-another-header",
 								Value: "more test stuff",
 							},
@@ -94,7 +93,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, eventHookExists),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
 					resource.TestCheckResourceAttr(resourceName, "channel.uri", "https://example.com/test"),
@@ -137,17 +136,17 @@ func testMakeEventHookHeadersSet(headers []sdk.EventHookHeader) *schema.Set {
 // Create a TestCheckFunc that compares a Set to the current state
 // Works for TypeSet attributes with TypeString elements or Resource elements
 // Resource elements cannot be nested
-func testCheckResourceSetAttr(resourceName string, attribute string, set *schema.Set) resource.TestCheckFunc {
+func testCheckResourceSetAttr(resourceName, attribute string, set *schema.Set) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		ms := s.RootModule()
 		rs, ok := ms.Resources[resourceName]
 		if !ok {
-			return fmt.Errorf("Not found: %s in %s", resourceName, ms.Path)
+			return fmt.Errorf("not found: %s in %s", resourceName, ms.Path)
 		}
 
 		is := rs.Primary
 		if is == nil {
-			return fmt.Errorf("No primary instance: %s in %s", resourceName, ms.Path)
+			return fmt.Errorf("no primary instance: %s in %s", resourceName, ms.Path)
 		}
 
 		// Look through all attributes looking for attributes that match the one we're looking for

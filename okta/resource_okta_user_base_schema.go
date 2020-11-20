@@ -25,8 +25,8 @@ func resourceUserBaseSchema() *schema.Resource {
 				}
 
 				d.SetId(resourceIndex)
-				d.Set("index", resourceIndex)
-				d.Set("user_type", resourceUserType)
+				_ = d.Set("index", resourceIndex)
+				_ = d.Set("user_type", resourceUserType)
 				return []*schema.ResourceData{d}, nil
 			},
 		},
@@ -79,29 +79,22 @@ func resourceUserBaseSchemaRead(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func getBaseSubSchema(schemaUrl string, d *schema.ResourceData, m interface{}) (subschema *sdk.UserSubSchema, err error) {
-	var schema *sdk.UserSchema
-
-	schema, _, err = getSupplementFromMetadata(m).GetUserSchema(schemaUrl)
+func getBaseSubSchema(schemaUrl string, d *schema.ResourceData, m interface{}) (*sdk.UserSubSchema, error) {
+	s, _, err := getSupplementFromMetadata(m).GetUserSchema(schemaUrl)
 	if err != nil {
-		return
+		return nil, err
 	}
-
-	subschema = getBaseProperty(schema, d.Id())
-	return
+	return getBaseProperty(s, d.Id()), err
 }
 
 func resourceUserBaseSchemaUpdate(d *schema.ResourceData, m interface{}) error {
 	schemaUrl, err := getSupplementFromMetadata(m).GetUserTypeSchemaUrl(d.Get("user_type").(string), nil)
-
 	if err != nil {
 		return err
 	}
-
 	if err := updateBaseSubschema(schemaUrl, d, m); err != nil {
 		return err
 	}
-
 	return resourceUserBaseSchemaRead(d, m)
 }
 
@@ -112,7 +105,7 @@ func resourceUserBaseSchemaDelete(d *schema.ResourceData, m interface{}) error {
 
 // create or modify a  subschema
 func updateBaseSubschema(schemaUrl string, d *schema.ResourceData, m interface{}) error {
-	schema := &sdk.UserSubSchema{
+	subSchema := &sdk.UserSubSchema{
 		Master: getNullableMaster(d),
 		Title:  d.Get("title").(string),
 		Type:   d.Get("type").(string),
@@ -125,7 +118,7 @@ func updateBaseSubschema(schemaUrl string, d *schema.ResourceData, m interface{}
 		Required: boolPtr(d.Get("required").(bool)),
 	}
 
-	_, _, err := getSupplementFromMetadata(m).UpdateBaseUserSchemaProperty(schemaUrl, d.Get("index").(string), schema)
+	_, _, err := getSupplementFromMetadata(m).UpdateBaseUserSchemaProperty(schemaUrl, d.Get("index").(string), subSchema)
 
 	return err
 }

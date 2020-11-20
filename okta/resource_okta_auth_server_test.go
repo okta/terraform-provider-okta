@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
@@ -29,7 +29,6 @@ func deleteAuthServers(client *testClient) error {
 		if _, err := client.apiSupplement.DeleteAuthorizationServer(s.Id); err != nil {
 			return err
 		}
-
 	}
 	return nil
 }

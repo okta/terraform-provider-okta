@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"regexp"
@@ -9,8 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 // Tests a standard OAuth application with an updated type. This tests the ForceNew on type and tests creating an
@@ -32,7 +33,7 @@ func TestAccAppOauth_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "web"),
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "hide_ios", "true"),
@@ -49,7 +50,7 @@ func TestAccAppOauth_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
 					resource.TestCheckResourceAttr(resourceName, "hide_ios", "true"),
 					resource.TestCheckResourceAttr(resourceName, "hide_web", "true"),
@@ -64,7 +65,7 @@ func TestAccAppOauth_basic(t *testing.T) {
 				ImportState:  true,
 				ImportStateCheck: func(s []*terraform.InstanceState) error {
 					if len(s) != 1 {
-						return errors.New("Failed to import schema into state")
+						return errors.New("failed to import schema into state")
 					}
 
 					return nil
@@ -92,7 +93,7 @@ func TestAccAppOauth_serviceNative(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "service"),
 				),
 			},
@@ -101,7 +102,7 @@ func TestAccAppOauth_serviceNative(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "native"),
 				),
 			},
@@ -146,7 +147,7 @@ func TestAccAppOauth_customProfileAttributes(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "profile", "{\"customAttribute123\":\"testing-custom-attribute\"}"),
 				),
 			},
@@ -155,7 +156,7 @@ func TestAccAppOauth_customProfileAttributes(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "profile", "{\"groups\":{\"whitelist\":[\"Whitelist Group\"]}}"),
 				),
 			},
@@ -164,7 +165,7 @@ func TestAccAppOauth_customProfileAttributes(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "profile", ""),
 				),
 			},
@@ -241,7 +242,7 @@ func TestAccAppOauth_serviceWithJWKS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.kty", "RSA"),
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.kid", "SIGNING_KEY"),
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.e", "AQAB"),
-					resource.TestCheckResourceAttr(resourceName, "jwks.0.n", "xyz"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.n", "owfoXNHcAlAVpIO41840ZU2tZraLGw3yEr3xZvAti7oEZPUKCytk88IDgH7440JOuz8GC_D6vtduWOqnEt0j0_faJnhKHgfj7DTWBOCxzSdjrM-Uyj6-e_XLFvZXzYsQvt52PnBJUV15G1W9QTjlghT_pFrW0xrTtbO1c281u1HJdPd5BeIyPb0pGbciySlx53OqGyxrAxPAt5P5h-n36HJkVsSQtNvgptLyOwWYkX50lgnh2szbJ0_O581bqkNBy9uqlnVeK1RZDQUl4mk8roWYhsx_JOgjpC3YyeXA6hHsT5xWZos_gNx98AHivNaAjzIzvyVItX2-hP0Aoscfff"),
 				),
 			},
 		},
@@ -251,10 +252,10 @@ func TestAccAppOauth_serviceWithJWKS(t *testing.T) {
 func createDoesAppExist(app okta.App) func(string) (bool, error) {
 	return func(id string) (bool, error) {
 		client := getOktaClientFromMetadata(testAccProvider.Meta())
-		_, response, err := client.Application.GetApplication(id, app, &query.Params{})
+		_, response, err := client.Application.GetApplication(context.Background(), id, app, &query.Params{})
 
 		// We don't want to consider a 404 an error in some cases and thus the delineation
-		if response.StatusCode == 404 {
+		if response != nil && response.StatusCode == 404 {
 			return false, nil
 		}
 

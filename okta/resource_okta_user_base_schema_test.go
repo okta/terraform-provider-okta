@@ -6,10 +6,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 )
 
 const baseTestProp = "firstName"
@@ -98,16 +97,19 @@ func testOktaUserBaseSchemasExists(name string) resource.TestCheckFunc {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("Not found: %s", name)
+			return fmt.Errorf("not found: %s", name)
 		}
-
 		var schemaUserType = "default"
 		if rs.Primary.Attributes["user_type"] != "" {
 			schemaUserType = rs.Primary.Attributes["user_type"]
 		}
 
-		if exists, _ := testUserBaseSchemaExists(schemaUserType, rs.Primary.ID); !exists {
-			return fmt.Errorf("Failed to find %s", rs.Primary.ID)
+		exists, err := testUserBaseSchemaExists(schemaUserType, rs.Primary.ID)
+		if err != nil {
+			return fmt.Errorf("failed to find: %v", err)
+		}
+		if !exists {
+			return fmt.Errorf("base property %s does not exist in a profile subschema", rs.Primary.ID)
 		}
 		return nil
 	}
@@ -115,20 +117,12 @@ func testOktaUserBaseSchemasExists(name string) resource.TestCheckFunc {
 
 func testUserBaseSchemaExists(schemaUserType string, index string) (bool, error) {
 	schemaUrl, err := getSupplementFromMetadata(testAccProvider.Meta()).GetUserTypeSchemaUrl(schemaUserType, nil)
-
 	if err != nil {
 		return false, err
 	}
-
 	schema, _, err := getSupplementFromMetadata(testAccProvider.Meta()).GetUserSchema(schemaUrl)
 	if err != nil {
 		return false, err
 	}
-
-	part := getBaseProperty(schema, index)
-	if part != nil {
-		return true, nil
-	}
-
-	return false, nil
+	return getBaseProperty(schema, index) != nil, nil
 }

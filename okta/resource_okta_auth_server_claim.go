@@ -18,44 +18,44 @@ func resourceAuthServerClaim() *schema.Resource {
 		Importer: createNestedResourceImporter([]string{"auth_server_id", "id"}),
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Auth server claim name",
 			},
-			"auth_server_id": &schema.Schema{
+			"auth_server_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Auth server ID",
 			},
-			"scopes": &schema.Schema{
+			"scopes": {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Auth server claim list of scopes",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"status": statusSchema,
-			"value": &schema.Schema{
+			"value": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"value_type": &schema.Schema{
+			"value_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"EXPRESSION", "GROUPS"}, false),
 				Default:      "EXPRESSION",
 			},
-			"claim_type": &schema.Schema{
+			"claim_type": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringInSlice([]string{"RESOURCE", "IDENTITY"}, false),
 			},
-			"always_include_in_token": &schema.Schema{
+			"always_include_in_token": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
 			},
-			"group_filter_type": &schema.Schema{
+			"group_filter_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"STARTS_WITH", "EQUALS", "CONTAINS", "REGEX"}, false),
@@ -110,16 +110,16 @@ func resourceAuthServerClaimRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if authServerClaim.Conditions != nil && len(authServerClaim.Conditions.Scopes) > 0 {
-		d.Set("scopes", convertStringSetToInterface(authServerClaim.Conditions.Scopes))
+		_ = d.Set("scopes", convertStringSetToInterface(authServerClaim.Conditions.Scopes))
 	}
 
-	d.Set("name", authServerClaim.Name)
-	d.Set("status", authServerClaim.Status)
-	d.Set("value", authServerClaim.Value)
-	d.Set("value_type", authServerClaim.ValueType)
-	d.Set("claim_type", authServerClaim.ClaimType)
-	d.Set("always_include_in_token", authServerClaim.AlwaysIncludeInToken)
-	d.Set("group_filter_type", authServerClaim.GroupFilterType)
+	_ = d.Set("name", authServerClaim.Name)
+	_ = d.Set("status", authServerClaim.Status)
+	_ = d.Set("value", authServerClaim.Value)
+	_ = d.Set("value_type", authServerClaim.ValueType)
+	_ = d.Set("claim_type", authServerClaim.ClaimType)
+	_ = d.Set("always_include_in_token", authServerClaim.AlwaysIncludeInToken)
+	_ = d.Set("group_filter_type", authServerClaim.GroupFilterType)
 
 	return nil
 }

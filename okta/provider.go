@@ -18,7 +18,7 @@ const (
 	appGroupAssignment     = "okta_app_group_assignment"
 	appUser                = "okta_app_user"
 	appOAuth               = "okta_app_oauth"
-	appOAuthRedirectUri    = "okta_app_oauth_redirect_uri"
+	appOAuthRedirectURI    = "okta_app_oauth_redirect_uri"
 	appSaml                = "okta_app_saml"
 	appSecurePasswordStore = "okta_app_secure_password_store"
 	appSwa                 = "okta_app_swa"
@@ -34,7 +34,6 @@ const (
 	factor                 = "okta_factor"
 	groupRoles             = "okta_group_roles"
 	groupRule              = "okta_group_rule"
-	identityProvider       = "okta_identity_provider"
 	idpResource            = "okta_idp_oidc"
 	idpSaml                = "okta_idp_saml"
 	idpSamlKey             = "okta_idp_saml_key"
@@ -69,13 +68,13 @@ func Provider() terraform.ResourceProvider {
 		Schema: map[string]*schema.Schema{
 			"org_name": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OKTA_ORG_NAME", nil),
 				Description: "The organization to manage in Okta.",
 			},
 			"api_token": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OKTA_API_TOKEN", nil),
 				Description: "API Token granting privileges to Okta API.",
 			},
@@ -125,7 +124,7 @@ func Provider() terraform.ResourceProvider {
 			appGroupAssignment:     resourceAppGroupAssignment(),
 			appUser:                resourceAppUser(),
 			appOAuth:               resourceAppOAuth(),
-			appOAuthRedirectUri:    resourceAppOAuthRedirectUri(),
+			appOAuthRedirectURI:    resourceAppOAuthRedirectURI(),
 			appSaml:                resourceAppSaml(),
 			appSecurePasswordStore: resourceAppSecurePasswordStore(),
 			appSwa:                 resourceAppSwa(),
@@ -152,11 +151,11 @@ func Provider() terraform.ResourceProvider {
 			oktaUser:               resourceUser(),
 			policyMfa:              resourcePolicyMfa(),
 			policyPassword:         resourcePolicyPassword(),
+			policySignOn:           resourcePolicySignOn(),
 			policyRuleIdpDiscovery: resourcePolicyRuleIdpDiscovery(),
 			policyRuleMfa:          resourcePolicyMfaRule(),
 			policyRulePassword:     resourcePolicyPasswordRule(),
 			policyRuleSignOn:       resourcePolicySignonRule(),
-			policySignOn:           resourcePolicySignon(),
 			templateEmail:          resourceTemplateEmail(),
 			templateSms:            resourceTemplateSms(),
 			trustedOrigin:          resourceTrustedOrigin(),
@@ -172,13 +171,13 @@ func Provider() terraform.ResourceProvider {
 			"okta_bookmark_app":              deprecateIncorrectNaming(resourceAppBookmark(), appBookmark),
 			"okta_saml_app":                  deprecateIncorrectNaming(resourceAppSaml(), appSaml),
 			"okta_oauth_app":                 deprecateIncorrectNaming(resourceAppOAuth(), appOAuth),
-			"okta_oauth_app_redirect_uri":    deprecateIncorrectNaming(resourceAppOAuthRedirectUri(), appOAuthRedirectUri),
+			"okta_oauth_app_redirect_uri":    deprecateIncorrectNaming(resourceAppOAuthRedirectURI(), appOAuthRedirectURI),
 			"okta_auto_login_app":            deprecateIncorrectNaming(resourceAppAutoLogin(), appAutoLogin),
 			"okta_secure_password_store_app": deprecateIncorrectNaming(resourceAppSecurePasswordStore(), appSecurePasswordStore),
 			"okta_three_field_app":           deprecateIncorrectNaming(resourceAppThreeField(), appThreeField),
 			"okta_swa_app":                   deprecateIncorrectNaming(resourceAppSwa(), appSwa),
 			"okta_password_policy":           deprecateIncorrectNaming(resourcePolicyPassword(), policyPassword),
-			"okta_signon_policy":             deprecateIncorrectNaming(resourcePolicySignon(), policySignOn),
+			"okta_signon_policy":             deprecateIncorrectNaming(resourcePolicySignOn(), policySignOn),
 			"okta_signon_policy_rule":        deprecateIncorrectNaming(resourcePolicySignonRule(), policyRuleSignOn),
 			"okta_password_policy_rule":      deprecateIncorrectNaming(resourcePolicyPasswordRule(), policyRulePassword),
 			"okta_mfa_policy":                deprecateIncorrectNaming(resourcePolicyMfa(), policyMfa),
@@ -221,7 +220,6 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		parallelism: d.Get("parallelism").(int),
 		retryCount:  d.Get("max_retries").(int),
 		maxWait:     d.Get("max_wait_seconds").(int),
-		minWait:     d.Get("min_wait_seconds").(int),
 		backoff:     d.Get("backoff").(bool),
 	}
 	if err := config.loadAndValidate(); err != nil {

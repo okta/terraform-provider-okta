@@ -17,23 +17,23 @@ const (
 
 var (
 	baseIdpSchema = map[string]*schema.Schema{
-		"name": &schema.Schema{
+		"name": {
 			Type:        schema.TypeString,
 			Required:    true,
 			Description: "name of idp",
 		},
 		"status": statusSchema,
-		"account_link_action": &schema.Schema{
+		"account_link_action": {
 			Type:     schema.TypeString,
 			Optional: true,
 			Default:  "AUTO",
 		},
-		"account_link_group_include": &schema.Schema{
+		"account_link_group_include": {
 			Type:     schema.TypeSet,
 			Elem:     &schema.Schema{Type: schema.TypeString},
 			Optional: true,
 		},
-		"provisioning_action": &schema.Schema{
+		"provisioning_action": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			ValidateFunc: validation.StringInSlice([]string{"AUTO", "DISABLED", ""}, false),
@@ -41,53 +41,53 @@ var (
 		},
 		"deprovisioned_action": actionSchema,
 		"suspended_action":     actionSchema,
-		"groups_action": &schema.Schema{
+		"groups_action": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Default:      "NONE",
 			ValidateFunc: validation.StringInSlice([]string{"NONE", "SYNC", "APPEND", "ASSIGN"}, false),
 		},
-		"groups_attribute": &schema.Schema{
+		"groups_attribute": {
 			Type:     schema.TypeString,
 			Optional: true,
 		},
-		"groups_assignment": &schema.Schema{
+		"groups_assignment": {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 			Optional: true,
 			Type:     schema.TypeSet,
 		},
-		"groups_filter": &schema.Schema{
+		"groups_filter": {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 			Optional: true,
 			Type:     schema.TypeSet,
 		},
-		"username_template": &schema.Schema{
+		"username_template": {
 			Type:     schema.TypeString,
 			Optional: true,
 			Default:  "idpuser.email",
 		},
-		"subject_match_type": &schema.Schema{
+		"subject_match_type": {
 			Type:     schema.TypeString,
 			Optional: true,
 			Default:  "USERNAME",
 		},
-		"subject_match_attribute": &schema.Schema{
+		"subject_match_attribute": {
 			Type:     schema.TypeString,
 			Optional: true,
 		},
-		"profile_master": &schema.Schema{
+		"profile_master": {
 			Type:     schema.TypeBool,
 			Optional: true,
 		},
 		"request_signature_algorithm": algorithmSchema,
-		"request_signature_scope": &schema.Schema{
+		"request_signature_scope": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Description:  "algorithm to use to sign response",
 			ValidateFunc: validation.StringInSlice([]string{"REQUEST", ""}, false),
 		},
 		"response_signature_algorithm": algorithmSchema,
-		"response_signature_scope": &schema.Schema{
+		"response_signature_scope": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Description:  "algorithm to use to sign response",
@@ -114,12 +114,12 @@ var (
 		Computed: true,
 	}
 
-	optUrlSchema = &schema.Schema{
+	optURLSchema = &schema.Schema{
 		Type:     schema.TypeString,
 		Computed: true,
 	}
 
-	optionalUrlSchema = &schema.Schema{
+	optionalURLSchema = &schema.Schema{
 		Type:     schema.TypeString,
 		Optional: true,
 	}
@@ -155,11 +155,7 @@ func buildIdpSchema(idpSchema map[string]*schema.Schema) map[string]*schema.Sche
 }
 
 func resourceIdpDelete(d *schema.ResourceData, m interface{}) error {
-	return resourceDeleteAnyIdp(d, m, d.Get("status").(string) == "ACTIVE")
-}
-
-func resourceIdentityProviderDelete(d *schema.ResourceData, m interface{}) error {
-	return resourceDeleteAnyIdp(d, m, d.Get("active").(bool))
+	return resourceDeleteAnyIdp(d, m, d.Get("status").(string) == statusActive)
 }
 
 func resourceDeleteAnyIdp(d *schema.ResourceData, m interface{}, active bool) error {
@@ -183,8 +179,7 @@ func resourceDeleteAnyIdp(d *schema.ResourceData, m interface{}, active bool) er
 func fetchIdp(id string, m interface{}, idp sdk.IdentityProvider) error {
 	client := getSupplementFromMetadata(m)
 	_, response, err := client.GetIdentityProvider(id, idp)
-	if response.StatusCode == http.StatusNotFound {
-		idp = nil
+	if response != nil && response.StatusCode == http.StatusNotFound {
 		return nil
 	}
 
@@ -195,8 +190,7 @@ func updateIdp(id string, m interface{}, idp sdk.IdentityProvider) error {
 	client := getSupplementFromMetadata(m)
 	_, response, err := client.UpdateIdentityProvider(id, idp, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
-	if response.StatusCode == 404 {
-		idp = nil
+	if response != nil && response.StatusCode == 404 {
 		return nil
 	}
 
@@ -207,8 +201,7 @@ func createIdp(m interface{}, idp sdk.IdentityProvider) error {
 	client := getSupplementFromMetadata(m)
 	_, response, err := client.CreateIdentityProvider(idp, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
-	if response.StatusCode == 404 {
-		idp = nil
+	if response != nil && response.StatusCode == 404 {
 		return nil
 	}
 
@@ -219,9 +212,9 @@ func setIdpStatus(id, status, desiredStatus string, m interface{}) error {
 	if status != desiredStatus {
 		c := getSupplementFromMetadata(m)
 
-		if desiredStatus == "INACTIVE" {
+		if desiredStatus == statusInactive {
 			return responseErr(c.DeactivateIdentityProvider(id))
-		} else if desiredStatus == "ACTIVE" {
+		} else if desiredStatus == statusActive {
 			return responseErr(c.ActivateIdentityProvider(id))
 		}
 	}
@@ -231,8 +224,8 @@ func setIdpStatus(id, status, desiredStatus string, m interface{}) error {
 
 func syncGroupActions(d *schema.ResourceData, groups *sdk.IDPGroupsAction) error {
 	if groups != nil {
-		d.Set("groups_action", groups.Action)
-		d.Set("groups_attribute", groups.SourceAttributeName)
+		_ = d.Set("groups_action", groups.Action)
+		_ = d.Set("groups_attribute", groups.SourceAttributeName)
 
 		return setNonPrimitives(d, map[string]interface{}{
 			"groups_assignment": groups.Assignments,
@@ -335,16 +328,15 @@ func syncAlgo(d *schema.ResourceData, alg *sdk.Algorithms) {
 		if alg.Request != nil && alg.Request.Signature != nil {
 			reqSign := alg.Request.Signature
 
-			d.Set("request_algorithm", reqSign.Algorithm)
-			d.Set("request_scope", reqSign.Scope)
+			_ = d.Set("request_algorithm", reqSign.Algorithm)
+			_ = d.Set("request_scope", reqSign.Scope)
 		}
 
 		if alg.Response != nil && alg.Response.Signature != nil {
 			resSign := alg.Response.Signature
 
-			d.Set("response_algorithm", resSign.Algorithm)
-			d.Set("response_scope", resSign.Scope)
+			_ = d.Set("response_algorithm", resSign.Algorithm)
+			_ = d.Set("response_scope", resSign.Scope)
 		}
 	}
-
 }

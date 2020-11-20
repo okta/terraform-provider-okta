@@ -55,23 +55,23 @@ func dataSourceAppMetadataSaml() *schema.Resource {
 func dataSourceAppMetadataSamlRead(d *schema.ResourceData, m interface{}) error {
 	id := d.Get("app_id").(string)
 	kid := d.Get("key_id").(string)
-	metadata, _, err := getSupplementFromMetadata(m).GetSAMLMetdata(id, kid)
+	metadata, err := getSupplementFromMetadata(m).GetSAMLMetdata(id, kid)
 	if err != nil {
 		return err
 	}
 	d.SetId(fmt.Sprintf("%s/%s_metadata", id, kid))
 
-	d.Set("metadata", string(metadata))
+	_ = d.Set("metadata", string(metadata))
 	metadataRoot := &saml.EntityDescriptor{}
 	err = xml.Unmarshal(metadata, metadataRoot)
 	if err != nil {
-		return fmt.Errorf("Could not parse SAML app metadata, error: %s", err)
+		return fmt.Errorf("could not parse SAML app metadata, error: %s", err)
 	}
 
 	desc := metadataRoot.IDPSSODescriptors[0]
 	syncSamlEndpointBinding(d, desc.SingleSignOnServices)
-	d.Set("entity_id", metadataRoot.EntityID)
-	d.Set("want_authn_requests_signed", desc.WantAuthnRequestsSigned)
-	d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
+	_ = d.Set("entity_id", metadataRoot.EntityID)
+	_ = d.Set("want_authn_requests_signed", desc.WantAuthnRequestsSigned)
+	_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
 	return nil
 }

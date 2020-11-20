@@ -6,12 +6,14 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func deleteMfaPolicies(client *testClient) error {
-	return deletePolicyByType(mfaPolicyType, client)
+	return deletePolicyByType(sdk.MfaPolicyType, client)
 }
 
+// Note: at least one factor (e.g. `okta_otp`) should be enabled before running this test.
 func TestAccOktaMfaPolicy_crud(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(policyMfa)
@@ -29,9 +31,9 @@ func TestAccOktaMfaPolicy_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy"),
-					resource.TestCheckResourceAttr(resourceName, "okta_otp.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "google_otp.enroll", "REQUIRED"),
 				),
 			},
 			{
@@ -39,10 +41,10 @@ func TestAccOktaMfaPolicy_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy Updated"),
-					resource.TestCheckResourceAttr(resourceName, "okta_otp.enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "okta_sms.enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "google_otp.enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "google_otp.enroll", "OPTIONAL"),
 				),
 			},
 		},

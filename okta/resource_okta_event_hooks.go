@@ -20,37 +20,37 @@ func resourceEventHook() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"status": statusSchema,
-			"events": &schema.Schema{
+			"events": {
 				Type:     schema.TypeSet,
 				Required: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			"headers": &schema.Schema{
+			"headers": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     headerSchema,
 			},
-			"auth": &schema.Schema{
+			"auth": {
 				Type:     schema.TypeMap,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"key": &schema.Schema{
+						"key": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"type": &schema.Schema{
+						"type": {
 							Type:         schema.TypeString,
 							Required:     true,
-							Default:      "HEADER",
+							DefaultFunc:  func() (interface{}, error) { return "HEADER", nil },
 							ValidateFunc: validation.StringInSlice([]string{"HEADER"}, false),
 						},
-						"value": &schema.Schema{
+						"value": {
 							Type:      schema.TypeString,
 							Required:  true,
 							Sensitive: true,
@@ -58,22 +58,22 @@ func resourceEventHook() *schema.Resource {
 					},
 				},
 			},
-			"channel": &schema.Schema{
+			"channel": {
 				Type:     schema.TypeMap,
 				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"type": &schema.Schema{
-							Type:     schema.TypeString,
-							Required: true,
-							Default:  "HTTP",
+						"type": {
+							Type:        schema.TypeString,
+							Required:    true,
+							DefaultFunc: func() (interface{}, error) { return "HTTP", nil },
 						},
-						"version": &schema.Schema{
-							Type:     schema.TypeString,
-							Required: true,
-							Default:  "1.0.0",
+						"version": {
+							Type:        schema.TypeString,
+							Required:    true,
+							DefaultFunc: func() (interface{}, error) { return "1.0.0", nil },
 						},
-						"uri": &schema.Schema{
+						"uri": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
@@ -86,7 +86,7 @@ func resourceEventHook() *schema.Resource {
 
 func resourceEventHookCreate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
-	hook := buildEventHook(d, m)
+	hook := buildEventHook(d)
 	newHook, _, err := client.CreateEventHook(*hook, nil)
 	if err != nil {
 		return err
@@ -110,7 +110,7 @@ func resourceEventHookExists(d *schema.ResourceData, m interface{}) (bool, error
 func resourceEventHookRead(d *schema.ResourceData, m interface{}) error {
 	hook, resp, err := getSupplementFromMetadata(m).GetEventHook(d.Id())
 
-	if is404(resp.StatusCode) {
+	if resp != nil && is404(resp.StatusCode) {
 		d.SetId("")
 		return nil
 	}
@@ -119,9 +119,9 @@ func resourceEventHookRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", hook.Name)
-	d.Set("status", hook.Status)
-	d.Set("events", eventSet(hook.Events))
+	_ = d.Set("name", hook.Name)
+	_ = d.Set("status", hook.Status)
+	_ = d.Set("events", eventSet(hook.Events))
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"channel": flattenEventHookChannel(hook.Channel),
@@ -132,7 +132,7 @@ func resourceEventHookRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceEventHookUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
-	hook := buildEventHook(d, m)
+	hook := buildEventHook(d)
 	newHook, _, err := client.UpdateEventHook(d.Id(), *hook, nil)
 
 	if err != nil {
@@ -160,7 +160,7 @@ func resourceEventHookDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func buildEventHook(d *schema.ResourceData, m interface{}) *sdk.EventHook {
+func buildEventHook(d *schema.ResourceData) *sdk.EventHook {
 	eventSet := d.Get("events").(*schema.Set).List()
 	events := make([]string, len(eventSet))
 	for i, v := range eventSet {
@@ -170,16 +170,16 @@ func buildEventHook(d *schema.ResourceData, m interface{}) *sdk.EventHook {
 		Name:    d.Get("name").(string),
 		Status:  d.Get("status").(string),
 		Events:  &sdk.EventHookEvents{Type: "EVENT_TYPE", Items: events},
-		Channel: buildEventChannel(d, m),
+		Channel: buildEventChannel(d),
 	}
 }
 
-func buildEventChannel(d *schema.ResourceData, m interface{}) *sdk.EventHookChannel {
+func buildEventChannel(d *schema.ResourceData) *sdk.EventHookChannel {
 	if _, ok := d.GetOk("channel"); !ok {
 		return nil
 	}
 
-	headerList := []*sdk.EventHookHeader{}
+	var headerList []*sdk.EventHookHeader
 	if raw, ok := d.GetOk("headers"); ok {
 		for _, header := range raw.(*schema.Set).List() {
 			h, ok := header.(map[string]interface{})
@@ -252,11 +252,11 @@ func eventSet(e *sdk.EventHookEvents) *schema.Set {
 	return schema.NewSet(schema.HashString, events)
 }
 
-func setEventHookStatus(d *schema.ResourceData, client *sdk.ApiSupplement, status string, desiredStatus string) error {
+func setEventHookStatus(d *schema.ResourceData, client *sdk.ApiSupplement, status, desiredStatus string) error {
 	if status != desiredStatus {
-		if desiredStatus == "INACTIVE" {
+		if desiredStatus == statusInactive {
 			return responseErr(client.DeactivateEventHook(d.Id()))
-		} else if desiredStatus == "ACTIVE" {
+		} else if desiredStatus == statusActive {
 			return responseErr(client.ActivateEventHook(d.Id()))
 		}
 	}

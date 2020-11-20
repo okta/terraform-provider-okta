@@ -10,11 +10,11 @@ import (
 
 var headerSchema = &schema.Resource{
 	Schema: map[string]*schema.Schema{
-		"key": &schema.Schema{
+		"key": {
 			Type:     schema.TypeString,
 			Optional: true,
 		},
-		"value": &schema.Schema{
+		"value": {
 			Type:     schema.TypeString,
 			Optional: true,
 		},
@@ -35,12 +35,12 @@ func resourceInlineHook() *schema.Resource {
 		// For those familiar with Terraform schemas be sure to check the base hook schema and/or
 		// the examples in the documentation
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"status": statusSchema,
-			"type": &schema.Schema{
+			"type": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
@@ -55,31 +55,31 @@ func resourceInlineHook() *schema.Resource {
 					false,
 				),
 			},
-			"version": &schema.Schema{
+			"version": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"headers": &schema.Schema{
+			"headers": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     headerSchema,
 			},
-			"auth": &schema.Schema{
+			"auth": {
 				Type:     schema.TypeMap,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"key": &schema.Schema{
+						"key": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"type": &schema.Schema{
+						"type": {
 							Type:         schema.TypeString,
 							Optional:     true,
 							Default:      "HEADER",
 							ValidateFunc: validation.StringInSlice([]string{"HEADER"}, false),
 						},
-						"value": &schema.Schema{
+						"value": {
 							Type:      schema.TypeString,
 							Optional:  true,
 							Sensitive: true,
@@ -87,25 +87,25 @@ func resourceInlineHook() *schema.Resource {
 					},
 				},
 			},
-			"channel": &schema.Schema{
+			"channel": {
 				Type:     schema.TypeMap,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"type": &schema.Schema{
+						"type": {
 							Type:     schema.TypeBool,
 							Default:  "HTTP",
 							Optional: true,
 						},
-						"version": &schema.Schema{
+						"version": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"uri": &schema.Schema{
+						"uri": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"method": &schema.Schema{
+						"method": {
 							Type:     schema.TypeString,
 							Default:  "POST",
 							Optional: true,
@@ -119,7 +119,7 @@ func resourceInlineHook() *schema.Resource {
 
 func resourceInlineHookCreate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
-	hook := buildInlineHook(d, m)
+	hook := buildInlineHook(d)
 	newHook, _, err := client.CreateInlineHook(*hook, nil)
 	if err != nil {
 		return err
@@ -143,7 +143,7 @@ func resourceInlineHookExists(d *schema.ResourceData, m interface{}) (bool, erro
 func resourceInlineHookRead(d *schema.ResourceData, m interface{}) error {
 	hook, resp, err := getSupplementFromMetadata(m).GetInlineHook(d.Id())
 
-	if is404(resp.StatusCode) {
+	if resp != nil && is404(resp.StatusCode) {
 		d.SetId("")
 		return nil
 	}
@@ -152,10 +152,10 @@ func resourceInlineHookRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("name", hook.Name)
-	d.Set("status", hook.Status)
-	d.Set("type", hook.Type)
-	d.Set("version", hook.Version)
+	_ = d.Set("name", hook.Name)
+	_ = d.Set("status", hook.Status)
+	_ = d.Set("type", hook.Type)
+	_ = d.Set("version", hook.Version)
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"channel": flattenInlineHookChannel(hook.Channel),
@@ -166,7 +166,7 @@ func resourceInlineHookRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceInlineHookUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
-	hook := buildInlineHook(d, m)
+	hook := buildInlineHook(d)
 	newHook, _, err := client.UpdateInlineHook(d.Id(), *hook, nil)
 
 	if err != nil {
@@ -194,22 +194,22 @@ func resourceInlineHookDelete(d *schema.ResourceData, m interface{}) error {
 	return err
 }
 
-func buildInlineHook(d *schema.ResourceData, m interface{}) *sdk.InlineHook {
+func buildInlineHook(d *schema.ResourceData) *sdk.InlineHook {
 	return &sdk.InlineHook{
 		Name:    d.Get("name").(string),
 		Status:  d.Get("status").(string),
 		Type:    d.Get("type").(string),
 		Version: d.Get("version").(string),
-		Channel: buildInlineChannel(d, m),
+		Channel: buildInlineChannel(d),
 	}
 }
 
-func buildInlineChannel(d *schema.ResourceData, m interface{}) *sdk.InlineHookChannel {
+func buildInlineChannel(d *schema.ResourceData) *sdk.InlineHookChannel {
 	if _, ok := d.GetOk("channel"); !ok {
 		return nil
 	}
 
-	headerList := []*sdk.InlineHookHeader{}
+	var headerList []*sdk.InlineHookHeader
 	if raw, ok := d.GetOk("headers"); ok {
 		for _, header := range raw.(*schema.Set).List() {
 			h, ok := header.(map[string]interface{})
@@ -275,11 +275,11 @@ func flattenInlineHookHeaders(c *sdk.InlineHookChannel) *schema.Set {
 	return schema.NewSet(schema.HashResource(headerSchema), headers)
 }
 
-func setHookStatus(d *schema.ResourceData, client *sdk.ApiSupplement, status string, desiredStatus string) error {
+func setHookStatus(d *schema.ResourceData, client *sdk.ApiSupplement, status, desiredStatus string) error {
 	if status != desiredStatus {
-		if desiredStatus == "INACTIVE" {
+		if desiredStatus == statusInactive {
 			return responseErr(client.DeactivateInlineHook(d.Id()))
-		} else if desiredStatus == "ACTIVE" {
+		} else if desiredStatus == statusActive {
 			return responseErr(client.ActivateInlineHook(d.Id()))
 		}
 	}
