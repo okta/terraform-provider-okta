@@ -36,8 +36,7 @@ func resourceUserSchema() *schema.Resource {
 }
 
 func resourceUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
-	schemaUrl, err := getSupplementFromMetadata(m).GetUserTypeSchemaUrl(d.Get("user_type").(string), nil)
-
+	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
 	if err != nil {
 		return err
 	}
@@ -51,8 +50,7 @@ func resourceUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUserSchemaExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	schemaUrl, err := getSupplementFromMetadata(m).GetUserTypeSchemaUrl(d.Get("user_type").(string), nil)
-
+	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
 	if err != nil {
 		return false, err
 	}
@@ -62,8 +60,7 @@ func resourceUserSchemaExists(d *schema.ResourceData, m interface{}) (bool, erro
 }
 
 func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
-	schemaUrl, err := getSupplementFromMetadata(m).GetUserTypeSchemaUrl(d.Get("user_type").(string), nil)
-
+	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
 	if err != nil {
 		return err
 	}
@@ -88,7 +85,7 @@ func getSubSchema(schemaUrl string, d *schema.ResourceData, m interface{}) (*sdk
 }
 
 func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
-	schemaUrl, err := getSupplementFromMetadata(m).GetUserTypeSchemaUrl(d.Get("user_type").(string), nil)
+	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
 	if err != nil {
 		return err
 	}
@@ -99,7 +96,7 @@ func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUserSchemaDelete(d *schema.ResourceData, m interface{}) error {
-	schemaUrl, err := getSupplementFromMetadata(m).GetUserTypeSchemaUrl(d.Get("user_type").(string), nil)
+	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
 	if err != nil {
 		return err
 	}

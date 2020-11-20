@@ -1,9 +1,9 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
-	"net/url"
 	"strconv"
 	"strings"
 	"testing"
@@ -14,18 +14,14 @@ import (
 )
 
 func sweepUserSchema(client *testClient) error {
-	userTypeList, _, _ := client.apiSupplement.ListUserTypes()
+	userTypeList, _, _ := client.oktaClient.UserType.ListUserTypes(context.Background())
 	var errorList []error
-	for _, value := range userTypeList {
-		schemaUrl := value.Links.Schema.Href
-		u, _ := url.Parse(schemaUrl)
-
-		var relativeSchemaUrl = u.EscapedPath()
-		schema, _, err := client.apiSupplement.GetUserSchema(relativeSchemaUrl)
+	for _, ut := range userTypeList {
+		schemaUrl := userTypeURL(ut)
+		schema, _, err := client.apiSupplement.GetUserSchema(schemaUrl)
 		if err != nil {
 			return err
 		}
-
 		for key := range schema.Definitions.Custom.Properties {
 			if strings.HasPrefix(key, testResourcePrefix) {
 				if _, err := client.apiSupplement.DeleteUserSchemaProperty(schemaUrl, key); err != nil {
@@ -246,7 +242,7 @@ func testOktaUserSchemasExists(name string) resource.TestCheckFunc {
 }
 
 func testSchemaPropertyExists(schemaUserType, index, resolutionScope string) (bool, error) {
-	schemaUrl, err := getSupplementFromMetadata(testAccProvider.Meta()).GetUserTypeSchemaUrl(schemaUserType, nil)
+	schemaUrl, err := getUserTypeSchemaUrl(testAccProvider.Meta(), schemaUserType)
 	if err != nil {
 		return false, err
 	}

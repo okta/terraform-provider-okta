@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"testing"
@@ -52,8 +53,6 @@ func TestAccOktaUserType_crud(t *testing.T) {
 }
 
 func doesUserTypeExist(id string) (bool, error) {
-	client := getSupplementFromMetadata(testAccProvider.Meta())
-	_, response, err := client.GetUserType(id)
-
+	_, response, err := getOktaClientFromMetadata(testAccProvider.Meta()).UserType.GetUserType(context.Background(), id)
 	return doesResourceExist(response, err)
 }
