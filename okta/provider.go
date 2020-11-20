@@ -81,7 +81,7 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OKTA_BASE_URL", "okta.com"),
-				Description: "The Okta url. (Use 'oktapreview.com' for Okta testing)",
+				Description: "The Okta url. (Use 'oktapreview.com' for Okta testing).",
 			},
 			"backoff": {
 				Type:        schema.TypeBool,
@@ -93,14 +93,14 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     300,
-				Description: "maximum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
+				Description: "Maximum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
 			},
 			"max_retries": {
 				Type:         schema.TypeInt,
 				Optional:     true,
 				Default:      5,
 				ValidateFunc: validation.IntAtMost(100), // Have to cut it off somewhere right?
-				Description:  "maximum number of retries to attempt before erroring out.",
+				Description:  "Maximum number of retries to attempt before erroring out.",
 			},
 			"parallelism": {
 				Type:        schema.TypeInt,
@@ -114,7 +114,7 @@ func Provider() terraform.ResourceProvider {
 				Default:      100,
 				ValidateFunc: validation.IntBetween(1, 100),
 				Description: "(Experimental) controls how many requests can be made to each Okta endpoint by the provider. " +
-					"It's used to prevent rate limit violations. By default request throttling is disabled meaning provider " +
+					"It is used to prevent rate limit violations. By default request throttling is disabled meaning provider " +
 					"might cause rate limits violations. Expects an integer representing a percentage value - e.g. `40`. " +
 					"`40` means that provider is allowed to use up to 40% of the rate limit. E.g. assuming rate limit for " +
 					"`/api/v1/apps` endpoint is 25, up to 10 requests will be made that burn `/api/v1/apps` rate limit. " +
