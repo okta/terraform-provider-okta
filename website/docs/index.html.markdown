@@ -95,3 +95,5 @@ In addition to [generic `provider` arguments](https://www.terraform.io/docs/conf
   By default request throttling is disabled meaning the provider might cause rate limits violations. Expects an integer representing a percentage value - e.g. `40`.
   `40` means that the provider is allowed to use up to 40% of the rate limit. E.g. assuming the rate limit for `/api/v1/apps` endpoint is 25, up to 10 requests will
   be made that burn `/api/v1/apps` rate limit. Currently request throttling works only for `/api/v1/apps` rate limit.
+
+* `request_timeout` - (Optional) Timeout for single request (in seconds) which is made to Okta, the default is `0` (means no limit is set). The maximum value can be `100`.

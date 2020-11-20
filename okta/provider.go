@@ -120,6 +120,13 @@ func Provider() terraform.ResourceProvider {
 					"`/api/v1/apps` endpoint is 25, up to 10 requests will be made that burn `/api/v1/apps` rate limit. " +
 					"Currently request throttling works only for `/api/v1/apps` rate limit.",
 			},
+			"request_timeout": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      0,
+				ValidateFunc: validation.IntBetween(0, 100),
+				Description:  "Timeout for single request (in seconds) which is made to Okta, the default is `0` (means no limit is set). The maximum value can be `100`.",
+			},
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -217,14 +224,15 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	log.Printf("[INFO] Initializing Okta client")
 
 	config := Config{
-		orgName:     d.Get("org_name").(string),
-		domain:      d.Get("base_url").(string),
-		apiToken:    d.Get("api_token").(string),
-		parallelism: d.Get("parallelism").(int),
-		retryCount:  d.Get("max_retries").(int),
-		maxWait:     d.Get("max_wait_seconds").(int),
-		backoff:     d.Get("backoff").(bool),
-		maxRequests: d.Get("max_requests").(int),
+		orgName:        d.Get("org_name").(string),
+		domain:         d.Get("base_url").(string),
+		apiToken:       d.Get("api_token").(string),
+		parallelism:    d.Get("parallelism").(int),
+		retryCount:     d.Get("max_retries").(int),
+		maxWait:        d.Get("max_wait_seconds").(int),
+		backoff:        d.Get("backoff").(bool),
+		maxRequests:    d.Get("max_requests").(int),
+		requestTimeout: d.Get("request_timeout").(int),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, fmt.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)
