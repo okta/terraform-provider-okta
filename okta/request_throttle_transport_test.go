@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -30,6 +31,41 @@ func TestRateLimitThrottleCheckIsEndpoint(t *testing.T) {
 	}
 	if apiV1AppsEndpoints.checkIsEndpoint("/api/v1/apps/123") != false {
 		t.Error()
+	}
+}
+
+func TestRateLimitThrottlePreRequestHook(t *testing.T) {
+	apiV1AppsEndpoints := newRateLimitThrottle([]string{
+		// the following endpoints share the same rate limit
+		`/api/v1/apps$`,
+		`/api/v1/apps/(?P<AppID>[[:alnum:]]+)/groups$`,
+		`/api/v1/apps/(?P<AppID>[[:alnum:]]+)/groups/(?P<GroupID>[[:alnum:]]+)$`,
+		`/api/v1/apps/(?P<AppID>[[:alnum:]]+)/users$`,
+	}, 5)
+	apiV1AppsEndpoints.maxRequests = 40
+	apiV1AppsEndpoints.rateLimit = 25
+	apiV1AppsEndpoints.rateLimitResetTime = time.Now().Add(time.Minute)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	allowedRequests := apiV1AppsEndpoints.rateLimit * apiV1AppsEndpoints.maxRequests / 100.
+	for requestNo := 1; requestNo <= allowedRequests; requestNo++ {
+		err := apiV1AppsEndpoints.preRequestHook(ctx, "/api/v1/apps")
+		if apiV1AppsEndpoints.noOfRequestsMade != requestNo {
+			t.Errorf(
+				"Incorrect request count after request number %v. Expected %v, got %v.",
+				requestNo,
+				requestNo,
+				apiV1AppsEndpoints.noOfRequestsMade,
+			)
+		}
+		if err != nil {
+			t.Errorf("Unexpected error after request number %v: %v", requestNo, err)
+		}
+	}
+	if err := apiV1AppsEndpoints.preRequestHook(ctx, "/api/v1/apps"); err != context.Canceled {
+		t.Errorf("Expected %v error, got %v.", context.Canceled, err)
 	}
 }
 
