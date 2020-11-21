@@ -49,8 +49,11 @@ func (t *rateLimitThrottle) preRequestHook(ctx context.Context, path string) err
 	t.noOfRequestsMade++
 	if t.rateLimit != 0 && float64(t.noOfRequestsMade) > math.Max(float64(t.rateLimit*t.maxRequests)/100.0, 1) {
 		t.noOfRequestsMade = 1
-		// add an extra margin to account for the clock skew
-		timeToSleep := time.Until(t.rateLimitResetTime.Add(2 * time.Second))
+		timeToSleep := time.Minute
+		if !t.rateLimitResetTime.Equal(time.Time{}) {
+			// add an extra margin to account for the clock skew
+			timeToSleep = time.Until(t.rateLimitResetTime.Add(2 * time.Second))
+		}
 		if timeToSleep > 0 {
 			log.Printf(
 				"[INFO] Throttling %s requests, sleeping for %s until rate limit reset", path, timeToSleep)
