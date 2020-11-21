@@ -17,7 +17,8 @@ type rateLimitThrottle struct {
 	maxRequests        int
 	rateLimit          int
 	rateLimitResetTime time.Time
-	sync.Mutex
+	variablesMx        sync.Mutex
+	throttlingMx       sync.Mutex
 }
 
 func newRateLimitThrottle(endpointsRegexes []string, maxRequests int) *rateLimitThrottle {
@@ -44,8 +45,9 @@ func (t *rateLimitThrottle) preRequestHook(ctx context.Context, path string) err
 	if !t.checkIsEndpoint(path) {
 		return nil
 	}
-	t.Lock()
-	defer t.Unlock()
+	t.throttlingMx.Lock()
+	defer t.throttlingMx.Unlock()
+	t.variablesMx.Lock()
 	t.noOfRequestsMade++
 	if t.rateLimit != 0 && float64(t.noOfRequestsMade) > math.Max(float64(t.rateLimit*t.maxRequests)/100.0, 1) {
 		t.noOfRequestsMade = 1
@@ -55,17 +57,21 @@ func (t *rateLimitThrottle) preRequestHook(ctx context.Context, path string) err
 			timeToSleep = time.Until(t.rateLimitResetTime.Add(2 * time.Second))
 		}
 		if timeToSleep > 0 {
+			t.variablesMx.Unlock()
 			log.Printf(
 				"[INFO] Throttling %s requests, sleeping for %s until rate limit reset", path, timeToSleep)
 			select {
 			case <-ctx.Done():
 				return ctx.Err()
-			case <-time.NewTimer(timeToSleep).C: // TODO postRequestHook shouldn't be blocked when sleeping here
+			case <-time.NewTimer(timeToSleep).C:
+				t.variablesMx.Lock()
+				defer t.variablesMx.Unlock()
 				t.rateLimitResetTime = time.Time{}
 				return nil
 			}
 		}
 	}
+	t.variablesMx.Unlock()
 	return nil
 }
 
@@ -73,8 +79,8 @@ func (t *rateLimitThrottle) postRequestHook(resp *http.Response) {
 	if !t.checkIsEndpoint(resp.Request.URL.Path) {
 		return
 	}
-	t.Lock()
-	defer t.Unlock()
+	t.variablesMx.Lock()
+	defer t.variablesMx.Unlock()
 	rateLimit, err := strconv.Atoi(resp.Header.Get("X-Rate-Limit-Limit"))
 	if err != nil {
 		log.Printf("[WARN] X-Rate-Limit-Limit response header is missing or invalid, skipping postRequestHook: %v", err)
@@ -88,7 +94,7 @@ func (t *rateLimitThrottle) postRequestHook(resp *http.Response) {
 		return
 	}
 	futureResetTime := time.Unix(int64(resetTime), 0)
-	if !t.rateLimitResetTime.IsZero() && futureResetTime.After(t.rateLimitResetTime)  {
+	if !t.rateLimitResetTime.IsZero() && futureResetTime.After(t.rateLimitResetTime) {
 		log.Printf("[DEBUG] %s rate limit reset detected", resp.Request.URL.Path)
 		t.noOfRequestsMade = 1
 	}
