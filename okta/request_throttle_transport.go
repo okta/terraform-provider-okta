@@ -71,12 +71,12 @@ func (t *rateLimitThrottle) postRequestHook(resp *http.Response) {
 	}
 	t.Lock()
 	defer t.Unlock()
-	var err error
-	t.rateLimit, err = strconv.Atoi(resp.Header.Get("X-Rate-Limit-Limit"))
+	rateLimit, err := strconv.Atoi(resp.Header.Get("X-Rate-Limit-Limit"))
 	if err != nil {
 		log.Printf("[WARN] X-Rate-Limit-Limit response header is missing or invalid, skipping postRequestHook: %v", err)
 		return
 	}
+	t.rateLimit = rateLimit
 	log.Printf("[DEBUG] %s rate limit: %d", resp.Request.URL.Path, t.rateLimit)
 	resetTime, err := strconv.Atoi(resp.Header.Get("X-Rate-Limit-Reset"))
 	if err != nil {
