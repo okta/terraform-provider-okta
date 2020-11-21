@@ -50,7 +50,7 @@ func (t *rateLimitThrottle) preRequestHook(ctx context.Context, path string) err
 	if t.rateLimit != 0 && float64(t.noOfRequestsMade) > math.Max(float64(t.rateLimit*t.maxRequests)/100.0, 1) {
 		t.noOfRequestsMade = 1
 		timeToSleep := time.Minute
-		if !t.rateLimitResetTime.Equal(time.Time{}) {
+		if !t.rateLimitResetTime.IsZero() {
 			// add an extra margin to account for the clock skew
 			timeToSleep = time.Until(t.rateLimitResetTime.Add(2 * time.Second))
 		}
