@@ -82,7 +82,7 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OKTA_BASE_URL", "okta.com"),
-				Description: "The Okta url. (Use 'oktapreview.com' for Okta testing)",
+				Description: "The Okta url. (Use 'oktapreview.com' for Okta testing).",
 			},
 			"backoff": {
 				Type:        schema.TypeBool,
@@ -94,14 +94,14 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     300,
-				Description: "maximum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
+				Description: "Maximum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
 			},
 			"max_retries": {
 				Type:         schema.TypeInt,
 				Optional:     true,
 				Default:      5,
 				ValidateFunc: validation.IntAtMost(100), // Have to cut it off somewhere right?
-				Description:  "maximum number of retries to attempt before erroring out.",
+				Description:  "Maximum number of retries to attempt before erroring out.",
 			},
 			"parallelism": {
 				Type:        schema.TypeInt,
@@ -115,11 +115,18 @@ func Provider() terraform.ResourceProvider {
 				Default:      100,
 				ValidateFunc: validation.IntBetween(1, 100),
 				Description: "(Experimental) controls how many requests can be made to each Okta endpoint by the provider. " +
-					"It's used to prevent rate limit violations. By default request throttling is disabled meaning provider " +
+					"It is used to prevent rate limit violations. By default request throttling is disabled meaning the provider " +
 					"might cause rate limits violations. Expects an integer representing a percentage value - e.g. `40`. " +
-					"`40` means that provider is allowed to use up to 40% of the rate limit. E.g. assuming rate limit for " +
+					"`40` means that the provider is allowed to use up to 40% of the rate limit. E.g. assuming rate limit for " +
 					"`/api/v1/apps` endpoint is 25, up to 10 requests will be made that burn `/api/v1/apps` rate limit. " +
 					"Currently request throttling works only for `/api/v1/apps` rate limit.",
+			},
+			"request_timeout": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      0,
+				ValidateFunc: validation.IntBetween(0, 100),
+				Description:  "Timeout for single request (in seconds) which is made to Okta, the default is `0` (means no limit is set). The maximum value can be `100`.",
 			},
 		},
 
@@ -220,14 +227,15 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	log.Printf("[INFO] Initializing Okta client")
 
 	config := Config{
-		orgName:     d.Get("org_name").(string),
-		domain:      d.Get("base_url").(string),
-		apiToken:    d.Get("api_token").(string),
-		parallelism: d.Get("parallelism").(int),
-		retryCount:  d.Get("max_retries").(int),
-		maxWait:     d.Get("max_wait_seconds").(int),
-		backoff:     d.Get("backoff").(bool),
-		maxRequests: d.Get("max_requests").(int),
+		orgName:        d.Get("org_name").(string),
+		domain:         d.Get("base_url").(string),
+		apiToken:       d.Get("api_token").(string),
+		parallelism:    d.Get("parallelism").(int),
+		retryCount:     d.Get("max_retries").(int),
+		maxWait:        d.Get("max_wait_seconds").(int),
+		backoff:        d.Get("backoff").(bool),
+		maxRequests:    d.Get("max_requests").(int),
+		requestTimeout: d.Get("request_timeout").(int),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, fmt.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)

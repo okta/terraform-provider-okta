@@ -32,7 +32,7 @@ func newRateLimitThrottle(endpointsRegexes []string, maxRequests int) *rateLimit
 
 func (t *rateLimitThrottle) checkIsEndpoint(path string) bool {
 	for _, pattern := range t.endpointsPatterns {
-		if len(pattern.FindStringSubmatch(path)) != 0 {
+		if len(pattern.FindStringSubmatch(path)) > 0 {
 			return true
 		}
 	}
@@ -46,8 +46,8 @@ func (t *rateLimitThrottle) preRequestHook(ctx context.Context, path string) err
 	log.Println("[DEBUG] special preRequestHook request throttle handling")
 	t.Lock()
 	defer t.Unlock()
-	t.noOfRequestsMade += 1
-	if t.rateLimit != 0 && t.noOfRequestsMade >= (t.rateLimit*t.maxRequests/100.0) {
+	t.noOfRequestsMade++
+	if t.rateLimit != 0 && t.noOfRequestsMade >= t.rateLimit*t.maxRequests/100.0 {
 		t.noOfRequestsMade = 1
 		// add an extra margin to account for the clock skew
 		timeToSleep := time.Until(t.rateLimitResetTime.Add(2 * time.Second))
@@ -98,9 +98,8 @@ type requestThrottleTransport struct {
 }
 
 func (t *requestThrottleTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	for i := range t.throttledEndpoints {
-		err := t.throttledEndpoints[i].preRequestHook(req.Context(), req.URL.Path)
-		if err != nil {
+	for _, endpoint := range t.throttledEndpoints {
+		if err := endpoint.preRequestHook(req.Context(), req.URL.Path); err != nil {
 			return nil, err
 		}
 	}
@@ -108,8 +107,8 @@ func (t *requestThrottleTransport) RoundTrip(req *http.Request) (*http.Response,
 	if err != nil {
 		return nil, err
 	}
-	for i := range t.throttledEndpoints {
-		t.throttledEndpoints[i].postRequestHook(resp)
+	for _, endpoint := range t.throttledEndpoints {
+		endpoint.postRequestHook(resp)
 	}
 	return resp, nil
 }

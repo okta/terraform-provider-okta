@@ -33,6 +33,7 @@ type (
 		backoff          bool
 		maxWait          int
 		maxRequests      int // experimental
+		requestTimeout   int
 		oktaClient       *okta.Client
 		supplementClient *sdk.ApiSupplement
 	}
@@ -54,6 +55,7 @@ func (c *Config) loadAndValidate() error {
 		okta.WithCache(false),
 		okta.WithHttpClient(*httpClient),
 		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
+		okta.WithRequestTimeout(int64(c.requestTimeout)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
 		okta.WithUserAgentExtra("okta-terraform/3.6.1"),
 	)
