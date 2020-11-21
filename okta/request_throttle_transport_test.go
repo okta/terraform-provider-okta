@@ -17,20 +17,19 @@ func TestRateLimitThrottleCheckIsEndpoint(t *testing.T) {
 		`/api/v1/apps/(?P<AppID>[[:alnum:]]+)/groups/(?P<GroupID>[[:alnum:]]+)$`,
 		`/api/v1/apps/(?P<AppID>[[:alnum:]]+)/users$`,
 	}, 5)
-	if apiV1AppsEndpoints.checkIsEndpoint("/api/v1/apps") != true {
-		t.Error()
+	tests := map[string]bool{
+		"/api/v1/apps":                true,
+		"/api/v1/apps/123/groups":     true,
+		"/api/v1/apps/123/users":      true,
+		"/api/v1/apps/123/groups/456": true,
+		"/api/v1/apps/123":            false,
 	}
-	if apiV1AppsEndpoints.checkIsEndpoint("/api/v1/apps/123/groups") != true {
-		t.Error()
-	}
-	if apiV1AppsEndpoints.checkIsEndpoint("/api/v1/apps/123/users") != true {
-		t.Error()
-	}
-	if apiV1AppsEndpoints.checkIsEndpoint("/api/v1/apps/123/groups/456") != true {
-		t.Error()
-	}
-	if apiV1AppsEndpoints.checkIsEndpoint("/api/v1/apps/123") != false {
-		t.Error()
+	for path, expected := range tests {
+		t.Run(path, func(t *testing.T) {
+			if apiV1AppsEndpoints.checkIsEndpoint(path) != expected {
+				t.Errorf("Path %v got incorrectly interpreted.", path)
+			}
+		})
 	}
 }
 
