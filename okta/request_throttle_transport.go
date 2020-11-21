@@ -61,6 +61,7 @@ func (t *rateLimitThrottle) preRequestHook(ctx context.Context, path string) err
 			case <-ctx.Done():
 				return ctx.Err()
 			case <-time.NewTimer(timeToSleep).C:
+				t.rateLimitResetTime = time.Time{}
 				return nil
 			}
 		}
