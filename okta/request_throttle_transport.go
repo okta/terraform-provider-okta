@@ -84,11 +84,11 @@ func (t *rateLimitThrottle) postRequestHook(resp *http.Response) {
 		return
 	}
 	futureResetTime := time.Unix(int64(resetTime), 0)
-	log.Printf("[DEBUG] future %s rate limit reset time: %v", resp.Request.URL.Path, futureResetTime)
 	if !t.rateLimitResetTime.IsZero() && futureResetTime != t.rateLimitResetTime {
 		log.Printf("[DEBUG] %s rate limit reset detected", resp.Request.URL.Path)
 		t.noOfRequestsMade = 1
 	}
+	log.Printf("[DEBUG] future %s rate limit reset time: %v", resp.Request.URL.Path, futureResetTime)
 	t.rateLimitResetTime = futureResetTime
 }
 
