@@ -22,6 +22,7 @@ resource "okta_user_schema" "example" {
   description = "My custom property name"
   master      = "OKTA"
   scope       = "SELF"
+  user_type   = "${data.okta_user_type.example.id}"
 }
 ```
 
@@ -69,14 +70,22 @@ The following arguments are supported:
 
 * `unique` - (Optional) Whether the property should be unique. It can be set to `"UNIQUE_VALIDATED"` or `"NOT_UNIQUE"`.
 
+* `user_type` - (Optional) User type ID
+
 ## Attributes Reference
 
 * `index` - ID of the user schema property.
 
 ## Import
 
-User schema property can be imported via the property index.
+User schema property of default user type can be imported via the property index.
 
 ```
 $ terraform import okta_user_schema.example <index>
+```
+
+User schema property of custom user type can be imported via user type id and property index
+
+```
+$ terraform import okta_user_schema.example <user type id>.<index>
 ```
