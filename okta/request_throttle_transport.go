@@ -3,6 +3,7 @@ package okta
 import (
 	"context"
 	"log"
+	"math"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -47,7 +48,7 @@ func (t *rateLimitThrottle) preRequestHook(ctx context.Context, path string) err
 	t.Lock()
 	defer t.Unlock()
 	t.noOfRequestsMade++
-	if t.rateLimit != 0 && float64(t.noOfRequestsMade) > float64(t.rateLimit*t.maxRequests)/100.0 {
+	if t.rateLimit != 0 && float64(t.noOfRequestsMade) > math.Max(float64(t.rateLimit*t.maxRequests)/100.0, 1) {
 		t.noOfRequestsMade = 1
 		// add an extra margin to account for the clock skew
 		timeToSleep := time.Until(t.rateLimitResetTime.Add(2 * time.Second))
