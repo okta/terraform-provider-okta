@@ -60,7 +60,7 @@ func (t *rateLimitThrottle) preRequestHook(ctx context.Context, path string) err
 			select {
 			case <-ctx.Done():
 				return ctx.Err()
-			case <-time.NewTimer(timeToSleep).C:
+			case <-time.NewTimer(timeToSleep).C: // TODO postRequestHook shouldn't be blocked when sleeping here
 				t.rateLimitResetTime = time.Time{}
 				return nil
 			}
@@ -88,7 +88,7 @@ func (t *rateLimitThrottle) postRequestHook(resp *http.Response) {
 		return
 	}
 	futureResetTime := time.Unix(int64(resetTime), 0)
-	if !t.rateLimitResetTime.IsZero() && futureResetTime != t.rateLimitResetTime {
+	if !t.rateLimitResetTime.IsZero() && futureResetTime.After(t.rateLimitResetTime)  {
 		log.Printf("[DEBUG] %s rate limit reset detected", resp.Request.URL.Path)
 		t.noOfRequestsMade = 1
 	}
