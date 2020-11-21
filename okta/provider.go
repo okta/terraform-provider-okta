@@ -55,6 +55,7 @@ const (
 	trustedOrigin          = "okta_trusted_origin"
 	userBaseSchema         = "okta_user_base_schema"
 	userSchema             = "okta_user_schema"
+	userType               = "okta_user_type"
 )
 
 // Provider establishes a client connection to an okta site
@@ -166,6 +167,7 @@ func Provider() terraform.ResourceProvider {
 			trustedOrigin:          resourceTrustedOrigin(),
 			userSchema:             resourceUserSchema(),
 			userBaseSchema:         resourceUserBaseSchema(),
+			userType:               resourceUserType(),
 
 			// The day I realized I was naming stuff wrong :'-(
 			"okta_idp":                       deprecateIncorrectNaming(resourceIdpOidc(), idpResource),
@@ -202,6 +204,7 @@ func Provider() terraform.ResourceProvider {
 			"okta_user":                        dataSourceUser(),
 			"okta_users":                       dataSourceUsers(),
 			authServer:                         dataSourceAuthServer(),
+			userType:                           dataSourceUserType(),
 		},
 
 		ConfigureFunc: providerConfigure,
