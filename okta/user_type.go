@@ -7,7 +7,7 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
-func getUserTypeSchemaUrl(m interface{}, id string) (string, error) {
+func getUserTypeSchemaURL(m interface{}, id string) (string, error) {
 	ut, _, err := getOktaClientFromMetadata(m).UserType.GetUserType(context.Background(), id)
 	if err != nil {
 		return "", err

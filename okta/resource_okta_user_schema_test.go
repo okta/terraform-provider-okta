@@ -17,14 +17,14 @@ func sweepUserSchema(client *testClient) error {
 	userTypeList, _, _ := client.oktaClient.UserType.ListUserTypes(context.Background())
 	var errorList []error
 	for _, ut := range userTypeList {
-		schemaUrl := userTypeURL(ut)
-		schema, _, err := client.apiSupplement.GetUserSchema(schemaUrl)
+		schemaURL := userTypeURL(ut)
+		schema, _, err := client.apiSupplement.GetUserSchema(schemaURL)
 		if err != nil {
 			return err
 		}
 		for key := range schema.Definitions.Custom.Properties {
 			if strings.HasPrefix(key, testResourcePrefix) {
-				if _, err := client.apiSupplement.DeleteUserSchemaProperty(schemaUrl, key); err != nil {
+				if _, err := client.apiSupplement.DeleteUserSchemaProperty(schemaURL, key); err != nil {
 					errorList = append(errorList, err)
 				}
 			}
@@ -242,11 +242,11 @@ func testOktaUserSchemasExists(name string) resource.TestCheckFunc {
 }
 
 func testSchemaPropertyExists(schemaUserType, index, resolutionScope string) (bool, error) {
-	schemaUrl, err := getUserTypeSchemaUrl(testAccProvider.Meta(), schemaUserType)
+	schemaURL, err := getUserTypeSchemaURL(testAccProvider.Meta(), schemaUserType)
 	if err != nil {
 		return false, err
 	}
-	s, _, err := getSupplementFromMetadata(testAccProvider.Meta()).GetUserSchema(schemaUrl)
+	s, _, err := getSupplementFromMetadata(testAccProvider.Meta()).GetUserSchema(schemaURL)
 	if err != nil {
 		return false, fmt.Errorf("failed to get user schema: %v", err)
 	}

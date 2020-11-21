@@ -44,7 +44,7 @@ func (c *Config) loadAndValidate() error {
 	httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
 	if c.maxRequests != 100 {
 		log.Printf("[DEBUG] running with experimental max_requests configuration")
-		httpClient.Transport = NewRequestThrottleTransport(httpClient.Transport, c.maxRequests)
+		httpClient.Transport = newRequestThrottleTransport(httpClient.Transport, c.maxRequests)
 	}
 
 	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)

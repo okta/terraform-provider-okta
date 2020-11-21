@@ -113,10 +113,10 @@ func (t *requestThrottleTransport) RoundTrip(req *http.Request) (*http.Response,
 	return resp, nil
 }
 
-// NewRequestThrottleTransport returns RoundTripper which provides throttling according to maxRequests.
+// newRequestThrottleTransport returns RoundTripper which provides throttling according to maxRequests.
 // Every new instance returned has its own local state. Hence for every Okta API client instanced for
 // particular Okta Organization the same throttler should be used.
-func NewRequestThrottleTransport(base http.RoundTripper, maxRequests int) *requestThrottleTransport {
+func newRequestThrottleTransport(base http.RoundTripper, maxRequests int) *requestThrottleTransport {
 	apiV1AppsEndpoints := newRateLimitThrottle([]string{
 		// the following endpoints share the same rate limit
 		`/api/v1/apps$`,

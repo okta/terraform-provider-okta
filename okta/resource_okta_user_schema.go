@@ -36,12 +36,12 @@ func resourceUserSchema() *schema.Resource {
 }
 
 func resourceUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
-	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+	schemaURL, err := getUserTypeSchemaURL(m, d.Get("user_type").(string))
 	if err != nil {
 		return err
 	}
 
-	if err := updateSubschema(schemaUrl, d, m); err != nil {
+	if err := updateSubschema(schemaURL, d, m); err != nil {
 		return err
 	}
 	d.SetId(d.Get("index").(string))
@@ -50,22 +50,22 @@ func resourceUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUserSchemaExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+	schemaURL, err := getUserTypeSchemaURL(m, d.Get("user_type").(string))
 	if err != nil {
 		return false, err
 	}
-	subschema, err := getSubSchema(schemaUrl, d, m)
+	subschema, err := getSubSchema(schemaURL, d, m)
 
 	return subschema != nil, err
 }
 
 func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
-	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+	schemaURL, err := getUserTypeSchemaURL(m, d.Get("user_type").(string))
 	if err != nil {
 		return err
 	}
 
-	subschema, err := getSubSchema(schemaUrl, d, m)
+	subschema, err := getSubSchema(schemaURL, d, m)
 	if err != nil {
 		return err
 	} else if subschema == nil {
@@ -76,8 +76,8 @@ func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
 	return syncUserSchema(d, subschema)
 }
 
-func getSubSchema(schemaUrl string, d *schema.ResourceData, m interface{}) (*sdk.UserSubSchema, error) {
-	s, _, err := getSupplementFromMetadata(m).GetUserSchema(schemaUrl)
+func getSubSchema(schemaURL string, d *schema.ResourceData, m interface{}) (*sdk.UserSubSchema, error) {
+	s, _, err := getSupplementFromMetadata(m).GetUserSchema(schemaURL)
 	if err != nil {
 		return nil, err
 	}
@@ -85,29 +85,29 @@ func getSubSchema(schemaUrl string, d *schema.ResourceData, m interface{}) (*sdk
 }
 
 func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
-	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+	schemaURL, err := getUserTypeSchemaURL(m, d.Get("user_type").(string))
 	if err != nil {
 		return err
 	}
-	if err := updateSubschema(schemaUrl, d, m); err != nil {
+	if err := updateSubschema(schemaURL, d, m); err != nil {
 		return err
 	}
 	return resourceUserSchemaRead(d, m)
 }
 
 func resourceUserSchemaDelete(d *schema.ResourceData, m interface{}) error {
-	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+	schemaURL, err := getUserTypeSchemaURL(m, d.Get("user_type").(string))
 	if err != nil {
 		return err
 	}
-	_, err = getSupplementFromMetadata(m).DeleteUserSchemaProperty(schemaUrl, d.Id())
+	_, err = getSupplementFromMetadata(m).DeleteUserSchemaProperty(schemaURL, d.Id())
 	return err
 }
 
 // create or modify a custom subschema
-func updateSubschema(schemaUrl string, d *schema.ResourceData, m interface{}) error {
+func updateSubschema(schemaURL string, d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
-	_, _, err := client.UpdateCustomUserSchemaProperty(schemaUrl, d.Get("index").(string), getUserSubSchema(d))
+	_, _, err := client.UpdateCustomUserSchemaProperty(schemaURL, d.Get("index").(string), getUserSubSchema(d))
 
 	return err
 }

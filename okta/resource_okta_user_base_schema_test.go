@@ -15,16 +15,16 @@ const baseTestProp = "firstName"
 
 func sweepUserBaseSchema(client *testClient) error {
 	var errorList []error
-	schemaUrl := "/api/v1/meta/schemas/user/default"
+	schemaURL := "/api/v1/meta/schemas/user/default"
 
-	schema, _, err := client.apiSupplement.GetUserSchema(schemaUrl)
+	schema, _, err := client.apiSupplement.GetUserSchema(schemaURL)
 	if err != nil {
 		return err
 	}
 
 	for key := range schema.Definitions.Custom.Properties {
 		if strings.HasPrefix(key, testResourcePrefix) {
-			if _, err := client.apiSupplement.DeleteUserSchemaProperty(schemaUrl, key); err != nil {
+			if _, err := client.apiSupplement.DeleteUserSchemaProperty(schemaURL, key); err != nil {
 				errorList = append(errorList, err)
 			}
 		}
