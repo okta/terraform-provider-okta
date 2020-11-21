@@ -44,7 +44,6 @@ func (t *rateLimitThrottle) preRequestHook(ctx context.Context, path string) err
 	if !t.checkIsEndpoint(path) {
 		return nil
 	}
-	log.Println("[DEBUG] special preRequestHook request throttle handling")
 	t.Lock()
 	defer t.Unlock()
 	t.noOfRequestsMade++
