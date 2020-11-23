@@ -101,8 +101,8 @@ func resourceUser() *schema.Resource {
 				Optional:     true,
 				ValidateFunc: validateDataJSON,
 				// StateFunc:    normalizeDataJSON,
-				Default:      "{}",
-				Description:  "JSON formatted custom attributes for a user. It must be JSON due to various types Okta allows.",
+				Default:     "{}",
+				Description: "JSON formatted custom attributes for a user. It must be JSON due to various types Okta allows.",
 			},
 			"department": {
 				Type:        schema.TypeString,
