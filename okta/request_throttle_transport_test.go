@@ -3,6 +3,8 @@ package okta
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"testing"
@@ -10,6 +12,7 @@ import (
 )
 
 func TestRateLimitThrottleCheckIsEndpoint(t *testing.T) {
+	log.SetOutput(ioutil.Discard)
 	apiV1AppsEndpoints := newRateLimitThrottle([]string{
 		// the following endpoints share the same rate limit
 		`/api/v1/apps$`,
@@ -34,6 +37,7 @@ func TestRateLimitThrottleCheckIsEndpoint(t *testing.T) {
 }
 
 func TestRateLimitThrottlePreRequestHook(t *testing.T) {
+	log.SetOutput(ioutil.Discard)
 	apiV1AppsEndpoints := newRateLimitThrottle([]string{
 		// the following endpoints share the same rate limit
 		`/api/v1/apps$`,
@@ -69,6 +73,7 @@ func TestRateLimitThrottlePreRequestHook(t *testing.T) {
 }
 
 func TestRateLimitThrottlePostRequestHook(t *testing.T) {
+	log.SetOutput(ioutil.Discard)
 	apiV1AppsEndpoints := newRateLimitThrottle([]string{
 		// the following endpoints share the same rate limit
 		`/api/v1/apps$`,
