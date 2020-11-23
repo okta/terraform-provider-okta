@@ -21,7 +21,6 @@ func dataSourceGroup() *schema.Resource {
 			"type": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
-				Default:      false,
 				Description:  "Type of the group. When specified in the terraform resource, will act as a filter when searching for the group",
 				ValidateFunc: validation.StringInSlice([]string{"OKTA_GROUP", "APP_GROUP", "BUILT_IN"}, false),
 			},
@@ -52,8 +51,8 @@ func dataSourceGroupRead(d *schema.ResourceData, m interface{}) error {
 func findGroup(name string, d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	searchParams := &query.Params{Q: name}
-	if d.Get("type") != nil {
-		searchParams.Type = d.Get("type").(string)
+	if d.Get("type") != nil && d.Get("type").(string) != "" {
+		searchParams.Filter = fmt.Sprintf("type+eq+\"%s\"", d.Get("type").(string))
 	}
 
 	groups, _, err := client.Group.ListGroups(context.Background(), searchParams)
