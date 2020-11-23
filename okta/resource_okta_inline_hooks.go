@@ -65,7 +65,7 @@ func resourceInlineHook() *schema.Resource {
 				Elem:     headerSchema,
 			},
 			"auth": {
-				Type:     schema.TypeMap,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -88,7 +88,7 @@ func resourceInlineHook() *schema.Resource {
 				},
 			},
 			"channel": {
-				Type:     schema.TypeMap,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{

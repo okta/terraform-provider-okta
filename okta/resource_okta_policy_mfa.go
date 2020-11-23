@@ -14,7 +14,7 @@ func getPolicyFactorSchema(key string) map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		key: {
 			Optional: true,
-			Type:     schema.TypeMap,
+			Type:     schema.TypeSet,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"enroll": {

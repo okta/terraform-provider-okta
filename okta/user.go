@@ -51,7 +51,7 @@ var userProfileDataSchema = map[string]*schema.Schema{
 	},
 	"custom_profile_attributes": {
 		Type:      schema.TypeString,
-		StateFunc: normalizeDataJSON,
+		// StateFunc: normalizeDataJSON,
 		Computed:  true,
 	},
 	"department": {

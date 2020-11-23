@@ -3,8 +3,8 @@ package okta
 import (
 	"context"
 	"fmt"
+	"hash/crc32"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -61,7 +61,7 @@ func dataSourceUsersRead(d *schema.ResourceData, m interface{}) error {
 		return fmt.Errorf("error Getting User from Okta: %v", err)
 	}
 
-	d.SetId(fmt.Sprintf("%d", hashcode.String(params.String())))
+	d.SetId(fmt.Sprintf("%d", crc32.ChecksumIEEE([]byte(params.String()))))
 	arr := make([]map[string]interface{}, len(results.Users))
 
 	for i, user := range results.Users {

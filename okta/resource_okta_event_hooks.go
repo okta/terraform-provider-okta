@@ -36,7 +36,7 @@ func resourceEventHook() *schema.Resource {
 				Elem:     headerSchema,
 			},
 			"auth": {
-				Type:     schema.TypeMap,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -59,7 +59,7 @@ func resourceEventHook() *schema.Resource {
 				},
 			},
 			"channel": {
-				Type:     schema.TypeMap,
+				Type:     schema.TypeSet,
 				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
