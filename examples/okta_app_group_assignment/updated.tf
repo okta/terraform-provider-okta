@@ -16,7 +16,7 @@ resource okta_group test {
 }
 
 resource okta_app_group_assignment test {
-  app_id   = "${okta_app_oauth.test.id}"
-  group_id = "${okta_group.test.id}"
+  app_id   = okta_app_oauth.test.id
+  group_id = okta_group.test.id
   priority = 1
 }

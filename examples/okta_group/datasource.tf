@@ -1,7 +1,7 @@
 resource okta_group test {
   name        = "testAcc_replace_with_uuid"
   description = "testing, testing"
-  users       = ["${okta_user.test.id}"]
+  users       = [okta_user.test.id]
 }
 
 resource okta_user test {
@@ -13,5 +13,5 @@ resource okta_user test {
 
 data okta_group test {
   include_users = true
-  name          = "${okta_group.test.name}"
+  name          = okta_group.test.name
 }

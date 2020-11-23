@@ -1,10 +1,11 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 type (
@@ -25,30 +26,30 @@ type (
 	}
 )
 
-func (m *ApiSupplement) DeleteAuthorizationServerClaim(authServerId, id string) (*okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/claims/%s", authServerId, id)
+func (m *ApiSupplement) DeleteAuthorizationServerClaim(authServerID, id string) (*okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/claims/%s", authServerID, id)
 	req, err := m.RequestExecutor.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(context.Background(), req, nil)
 }
 
-func (m *ApiSupplement) ListAuthorizationServerClaims(authServerId string) ([]*AuthorizationServerClaim, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/claims", authServerId)
+func (m *ApiSupplement) ListAuthorizationServerClaims(authServerID string) ([]*AuthorizationServerClaim, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/claims", authServerID)
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var auth []*AuthorizationServerClaim
-	resp, err := m.RequestExecutor.Do(req, &auth)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &auth)
 	return auth, resp, err
 }
 
-func (m *ApiSupplement) CreateAuthorizationServerClaim(authServerId string, body AuthorizationServerClaim, qp *query.Params) (*AuthorizationServerClaim, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/claims", authServerId)
+func (m *ApiSupplement) CreateAuthorizationServerClaim(authServerID string, body AuthorizationServerClaim, qp *query.Params) (*AuthorizationServerClaim, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/claims", authServerID)
 	if qp != nil {
 		url = url + qp.String()
 	}
@@ -58,12 +59,12 @@ func (m *ApiSupplement) CreateAuthorizationServerClaim(authServerId string, body
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &authorizationServer)
 	return &authorizationServer, resp, err
 }
 
-func (m *ApiSupplement) UpdateAuthorizationServerClaim(authServerId, id string, body AuthorizationServerClaim, qp *query.Params) (*AuthorizationServerClaim, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/claims/%s", authServerId, id)
+func (m *ApiSupplement) UpdateAuthorizationServerClaim(authServerID, id string, body AuthorizationServerClaim, qp *query.Params) (*AuthorizationServerClaim, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/claims/%s", authServerID, id)
 	if qp != nil {
 		url = url + qp.String()
 	}
@@ -73,22 +74,22 @@ func (m *ApiSupplement) UpdateAuthorizationServerClaim(authServerId, id string, 
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &authorizationServer)
 	if err != nil {
 		return nil, resp, err
 	}
 	return &authorizationServer, resp, nil
 }
 
-func (m *ApiSupplement) GetAuthorizationServerClaim(authServerId, id string, authorizationServerInstance AuthorizationServerClaim) (*AuthorizationServerClaim, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/claims/%s", authServerId, id)
+func (m *ApiSupplement) GetAuthorizationServerClaim(authServerID, id string, authorizationServerInstance AuthorizationServerClaim) (*AuthorizationServerClaim, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/claims/%s", authServerID, id)
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	authorizationServer := authorizationServerInstance
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &authorizationServer)
 	if err != nil {
 		return nil, resp, err
 	}

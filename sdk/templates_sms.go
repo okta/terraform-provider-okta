@@ -1,10 +1,12 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
-	"github.com/okta/okta-sdk-golang/okta/query"
 
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
+
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 type (
@@ -27,7 +29,7 @@ func (m *ApiSupplement) ListSmsTemplates() ([]*SmsTemplate, *okta.Response, erro
 	}
 
 	var temp []*SmsTemplate
-	resp, err := m.RequestExecutor.Do(req, &temp)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &temp)
 	return temp, resp, err
 }
 
@@ -39,7 +41,7 @@ func (m *ApiSupplement) GetSmsTemplate(id string) (*SmsTemplate, *okta.Response,
 	}
 
 	temp := &SmsTemplate{}
-	resp, err := m.RequestExecutor.Do(req, temp)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, temp)
 
 	return temp, resp, err
 }
@@ -55,7 +57,7 @@ func (m *ApiSupplement) CreateSmsTemplate(body SmsTemplate, qp *query.Params) (*
 		return nil, nil, err
 	}
 	temp := &SmsTemplate{}
-	resp, err := m.RequestExecutor.Do(req, temp)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, temp)
 	return temp, resp, err
 }
 
@@ -69,7 +71,7 @@ func (m *ApiSupplement) UpdateSmsTemplate(id string, body SmsTemplate, qp *query
 		return nil, nil, err
 	}
 	temp := &SmsTemplate{}
-	resp, err := m.RequestExecutor.Do(req, temp)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, temp)
 	return temp, resp, err
 }
 
@@ -79,6 +81,5 @@ func (m *ApiSupplement) DeleteSmsTemplate(id string) (*okta.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	resp, err := m.RequestExecutor.Do(req, nil)
-	return resp, err
+	return m.RequestExecutor.Do(context.Background(), req, nil)
 }

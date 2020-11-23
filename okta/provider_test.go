@@ -48,12 +48,11 @@ func oktaConfig() (*Config, error) {
 		domain:      os.Getenv("OKTA_BASE_URL"),
 		parallelism: 1,
 		retryCount:  10,
-		minWait:     30,
-		maxWait:     600,
+		maxWait:     30,
 	}
 
 	if err := config.loadAndValidate(); err != nil {
-		return config, fmt.Errorf("Error initializing Okta client: %v", err)
+		return config, fmt.Errorf("error initializing Okta client: %v", err)
 	}
 
 	return config, nil

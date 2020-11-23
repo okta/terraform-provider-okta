@@ -26,5 +26,5 @@ resource okta_policy_password test {
   question_min_length                    = 10
   recovery_email_token                   = 20160
   sms_recovery                           = "ACTIVE"
-  groups_included                        = ["${data.okta_group.all.id}"]
+  groups_included                        = [data.okta_group.all.id]
 }

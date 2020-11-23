@@ -1,10 +1,11 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 type (
@@ -40,7 +41,7 @@ func (m *ApiSupplement) CreateNetworkZone(body NetworkZone, qp *query.Params) (*
 	}
 
 	zone := body
-	resp, err := m.RequestExecutor.Do(req, &zone)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &zone)
 	return &zone, resp, err
 }
 
@@ -52,7 +53,7 @@ func (m *ApiSupplement) GetNetworkZone(id string) (*NetworkZone, *okta.Response,
 	}
 
 	zone := &NetworkZone{}
-	resp, err := m.RequestExecutor.Do(req, &zone)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &zone)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -66,7 +67,7 @@ func (m *ApiSupplement) DeleteNetworkZone(id string) (*okta.Response, error) {
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(context.Background(), req, nil)
 }
 
 func (m *ApiSupplement) UpdateNetworkZone(id string, body NetworkZone, qp *query.Params) (*NetworkZone, *okta.Response, error) {
@@ -80,7 +81,7 @@ func (m *ApiSupplement) UpdateNetworkZone(id string, body NetworkZone, qp *query
 	}
 
 	zone := body
-	resp, err := m.RequestExecutor.Do(req, &zone)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &zone)
 	if err != nil {
 		return nil, resp, err
 	}

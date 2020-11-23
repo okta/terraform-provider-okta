@@ -23,7 +23,7 @@ func TestAccOktaAuthServerPolicy_crud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "name", "test"),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 				),
@@ -31,7 +31,7 @@ func TestAccOktaAuthServerPolicy_crud(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "name", "test_updated"),
 					resource.TestCheckResourceAttr(resourceName, "description", "test updated"),
 				),

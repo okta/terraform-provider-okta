@@ -1,10 +1,11 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 type (
@@ -32,7 +33,7 @@ func (m *ApiSupplement) ListEmailTemplates() ([]*EmailTemplate, *okta.Response, 
 	}
 
 	var auth []*EmailTemplate
-	resp, err := m.RequestExecutor.Do(req, &auth)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &auth)
 	return auth, resp, err
 }
 
@@ -47,7 +48,7 @@ func (m *ApiSupplement) CreateEmailTemplate(id string, body EmailTemplate, qp *q
 	}
 
 	temp := &EmailTemplate{}
-	resp, err := m.RequestExecutor.Do(req, temp)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, temp)
 	return temp, resp, err
 }
 
@@ -62,7 +63,7 @@ func (m *ApiSupplement) UpdateEmailTemplate(id string, body EmailTemplate, qp *q
 	}
 
 	temp := &EmailTemplate{}
-	resp, err := m.RequestExecutor.Do(req, temp)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, temp)
 	return temp, resp, err
 }
 
@@ -73,7 +74,7 @@ func (m *ApiSupplement) GetEmailTemplate(id string) (*EmailTemplate, *okta.Respo
 		return nil, nil, err
 	}
 	temp := &EmailTemplate{}
-	resp, err := m.RequestExecutor.Do(req, temp)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, temp)
 	return temp, resp, err
 }
 
@@ -83,6 +84,6 @@ func (m *ApiSupplement) DeleteEmailTemplate(id string) (*okta.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	resp, err := m.RequestExecutor.Do(req, nil)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, nil)
 	return resp, err
 }

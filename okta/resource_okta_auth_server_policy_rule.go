@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceAuthServerPolicyRule() *schema.Resource {
@@ -18,63 +18,63 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 		Importer: createNestedResourceImporter([]string{"auth_server_id", "policy_id", "id"}),
 
 		Schema: addPeopleAssignments(map[string]*schema.Schema{
-			"type": &schema.Schema{
+			"type": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "RESOURCE_ACCESS",
 				Description: "Auth server policy rule type, unlikely this will be anything other then the default",
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Auth server policy rule name",
 			},
-			"auth_server_id": &schema.Schema{
+			"auth_server_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Auth server ID",
 			},
-			"policy_id": &schema.Schema{
+			"policy_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Auth server policy ID",
 			},
 			"status": statusSchema,
-			"priority": &schema.Schema{
+			"priority": {
 				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "Priority of the auth server policy rule",
 			},
-			"grant_type_whitelist": &schema.Schema{
+			"grant_type_whitelist": {
 				Type:        schema.TypeSet,
 				Required:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "Accepted grant type values: authorization_code, implicit, password.",
 			},
-			"scope_whitelist": &schema.Schema{
+			"scope_whitelist": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			"access_token_lifetime_minutes": &schema.Schema{
+			"access_token_lifetime_minutes": {
 				Type:     schema.TypeInt,
 				Optional: true,
 				// 5 mins - 1 day
 				ValidateFunc: validation.IntBetween(5, 1440),
 				Default:      60,
 			},
-			"refresh_token_lifetime_minutes": &schema.Schema{
+			"refresh_token_lifetime_minutes": {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
-			"refresh_token_window_minutes": &schema.Schema{
+			"refresh_token_window_minutes": {
 				Type:     schema.TypeInt,
 				Optional: true,
 				// 10 mins - 5 years
 				ValidateFunc: validation.IntBetween(10, 2628000),
 				Default:      10080,
 			},
-			"inline_hook_id": &schema.Schema{
+			"inline_hook_id": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
@@ -98,7 +98,7 @@ func buildAuthServerPolicyRule(d *schema.ResourceData) *sdk.AuthorizationServerP
 		Status:   d.Get("status").(string),
 		Priority: d.Get("priority").(int),
 		Type:     d.Get("type").(string),
-		Actions: &sdk.PolicyRuleActions{
+		Actions: &sdk.AuthorizationServerPolicyRuleActions{
 			Token: &sdk.TokenActions{
 				AccessTokenLifetimeMinutes:  d.Get("access_token_lifetime_minutes").(int),
 				RefreshTokenLifetimeMinutes: d.Get("refresh_token_lifetime_minutes").(int),
@@ -106,7 +106,7 @@ func buildAuthServerPolicyRule(d *schema.ResourceData) *sdk.AuthorizationServerP
 				InlineHook:                  hook,
 			},
 		},
-		Conditions: &sdk.PolicyRuleConditions{
+		Conditions: &sdk.AuthorizationServerPolicyRuleConditions{
 			GrantTypes: &sdk.Whitelist{Include: convertInterfaceToStringSet(d.Get("grant_type_whitelist"))},
 			Scopes:     &sdk.Whitelist{Include: convertInterfaceToStringSet(d.Get("scope_whitelist"))},
 			People:     getPeopleConditions(d),
@@ -117,9 +117,9 @@ func buildAuthServerPolicyRule(d *schema.ResourceData) *sdk.AuthorizationServerP
 func resourceAuthServerPolicyRuleCreate(d *schema.ResourceData, m interface{}) error {
 	authServerPolicyRule := buildAuthServerPolicyRule(d)
 	c := getSupplementFromMetadata(m)
-	authServerId := d.Get("auth_server_id").(string)
-	policyId := d.Get("policy_id").(string)
-	responseAuthServerPolicyRule, _, err := c.CreateAuthorizationServerPolicyRule(authServerId, policyId, *authServerPolicyRule, nil)
+	authServerID := d.Get("auth_server_id").(string)
+	policyID := d.Get("policy_id").(string)
+	responseAuthServerPolicyRule, _, err := c.CreateAuthorizationServerPolicyRule(authServerID, policyID, *authServerPolicyRule, nil)
 	if err != nil {
 		return err
 	}
@@ -156,7 +156,7 @@ func resourceAuthServerPolicyRuleRead(d *schema.ResourceData, m interface{}) err
 	d.Set("refresh_token_window_minutes", authServerPolicyRule.Actions.Token.RefreshTokenWindowMinutes)
 
 	if authServerPolicyRule.Actions.Token.InlineHook != nil {
-		d.Set("inline_hook_id", authServerPolicyRule.Actions.Token.InlineHook.Id)
+		_ = d.Set("inline_hook_id", authServerPolicyRule.Actions.Token.InlineHook.Id)
 	}
 
 	err = setNonPrimitives(d, map[string]interface{}{
@@ -173,9 +173,9 @@ func resourceAuthServerPolicyRuleRead(d *schema.ResourceData, m interface{}) err
 func resourceAuthServerPolicyRuleUpdate(d *schema.ResourceData, m interface{}) error {
 	authServerPolicyRule := buildAuthServerPolicyRule(d)
 	c := getSupplementFromMetadata(m)
-	authServerId := d.Get("auth_server_id").(string)
-	policyId := d.Get("policy_id").(string)
-	_, _, err := c.UpdateAuthorizationServerPolicyRule(authServerId, policyId, d.Id(), *authServerPolicyRule, nil)
+	authServerID := d.Get("auth_server_id").(string)
+	policyID := d.Get("policy_id").(string)
+	_, _, err := c.UpdateAuthorizationServerPolicyRule(authServerID, policyID, d.Id(), *authServerPolicyRule, nil)
 	if err != nil {
 		return err
 	}
@@ -184,18 +184,18 @@ func resourceAuthServerPolicyRuleUpdate(d *schema.ResourceData, m interface{}) e
 }
 
 func resourceAuthServerPolicyRuleDelete(d *schema.ResourceData, m interface{}) error {
-	authServerId := d.Get("auth_server_id").(string)
-	policyId := d.Get("policy_id").(string)
-	_, err := getSupplementFromMetadata(m).DeleteAuthorizationServerPolicyRule(authServerId, policyId, d.Id())
+	authServerID := d.Get("auth_server_id").(string)
+	policyID := d.Get("policy_id").(string)
+	_, err := getSupplementFromMetadata(m).DeleteAuthorizationServerPolicyRule(authServerID, policyID, d.Id())
 
 	return err
 }
 
 func fetchAuthServerPolicyRule(d *schema.ResourceData, m interface{}) (*sdk.AuthorizationServerPolicyRule, error) {
 	c := getSupplementFromMetadata(m)
-	authServerId := d.Get("auth_server_id").(string)
-	policyId := d.Get("policy_id").(string)
-	auth, resp, err := c.GetAuthorizationServerPolicyRule(authServerId, policyId, d.Id(), sdk.AuthorizationServerPolicyRule{})
+	authServerID := d.Get("auth_server_id").(string)
+	policyID := d.Get("policy_id").(string)
+	auth, resp, err := c.GetAuthorizationServerPolicyRule(authServerID, policyID, d.Id(), sdk.AuthorizationServerPolicyRule{})
 
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil

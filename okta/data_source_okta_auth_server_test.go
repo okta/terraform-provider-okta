@@ -24,7 +24,7 @@ func TestAccOktaDataSourceAuthServer_read(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("okta_auth_server.test", "id"),
 					resource.TestCheckResourceAttr("data.okta_auth_server.test", "name", fmt.Sprintf("testAcc_%d", ri)),
-					resource.TestCheckResourceAttr("data.okta_auth_server.test", "status", "ACTIVE"),
+					resource.TestCheckResourceAttr("data.okta_auth_server.test", "status", statusActive),
 				),
 			},
 		},

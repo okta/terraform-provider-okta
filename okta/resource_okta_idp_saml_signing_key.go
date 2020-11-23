@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceIdpSigningKey() *schema.Resource {
@@ -17,35 +17,35 @@ func resourceIdpSigningKey() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 		Schema: map[string]*schema.Schema{
-			"x5c": &schema.Schema{
+			"x5c": {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Required:    true,
 				ForceNew:    true,
 				Description: "base64-encoded X.509 certificate chain with DER encoding",
 			},
-			"created": &schema.Schema{
+			"created": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"expires_at": &schema.Schema{
+			"expires_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
 			// Just an alias for id
-			"kid": &schema.Schema{
+			"kid": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"kty": &schema.Schema{
+			"kty": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"use": &schema.Schema{
+			"use": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"x5t_s256": &schema.Schema{
+			"x5t_s256": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -74,7 +74,7 @@ func resourceIdpSigningKeyExists(d *schema.ResourceData, m interface{}) (bool, e
 func resourceIdpSigningKeyRead(d *schema.ResourceData, m interface{}) error {
 	key, resp, err := getSupplementFromMetadata(m).GetIdentityProviderCertificate(d.Id())
 
-	if is404(resp.StatusCode) {
+	if resp != nil && is404(resp.StatusCode) {
 		d.SetId("")
 		return nil
 	}
@@ -83,12 +83,12 @@ func resourceIdpSigningKeyRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("created", key.Created)
-	d.Set("expires_at", key.ExpiresAt)
-	d.Set("kid", key.Kid)
-	d.Set("kty", key.Kty)
-	d.Set("use", key.Use)
-	d.Set("x5t_s256", key.X5T256)
+	_ = d.Set("created", key.Created)
+	_ = d.Set("expires_at", key.ExpiresAt)
+	_ = d.Set("kid", key.Kid)
+	_ = d.Set("kty", key.Kty)
+	_ = d.Set("use", key.Use)
+	_ = d.Set("x5t_s256", key.X5T256)
 
 	return setNonPrimitives(d, map[string]interface{}{
 		"x5c": convertStringSetToInterface(key.X5C),

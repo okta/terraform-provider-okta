@@ -5,13 +5,12 @@ import (
 )
 
 // data source to retrieve information on the Everyone Group
-
 func dataSourceEveryoneGroup() *schema.Resource {
 	return &schema.Resource{
 		Read: dataSourceEveryoneGroupRead,
 
 		Schema: map[string]*schema.Schema{
-			"include_users": &schema.Schema{
+			"include_users": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
@@ -22,5 +21,5 @@ func dataSourceEveryoneGroup() *schema.Resource {
 }
 
 func dataSourceEveryoneGroupRead(d *schema.ResourceData, m interface{}) error {
-	return findGroup("Everyone", d, m)
+	return findGroup(groupProfileEveryone, d, m)
 }

@@ -6,8 +6,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceAuthServer() *schema.Resource {
@@ -21,46 +21,46 @@ func resourceAuthServer() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 		Schema: map[string]*schema.Schema{
-			"audiences": &schema.Schema{
+			"audiences": {
 				Type:        schema.TypeSet,
 				Required:    true,
 				Description: "Currently Okta only supports a single value here",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"status": statusSchema,
-			"kid": &schema.Schema{
+			"kid": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"credentials_last_rotated": &schema.Schema{
+			"credentials_last_rotated": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"credentials_next_rotation": &schema.Schema{
+			"credentials_next_rotation": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"credentials_rotation_mode": &schema.Schema{
+			"credentials_rotation_mode": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"AUTO", "MANUAL"}, false),
 				Default:      "AUTO",
 				Description:  "Credential rotation mode, in many cases you cannot set this to MANUAL, the API will ignore the value and you will get a perpetual diff. This should rarely be used.",
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"issuer": &schema.Schema{
+			"issuer": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "EA Feature: allows you to use a custom issuer URL",
 			},
-			"issuer_mode": &schema.Schema{
+			"issuer_mode": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "EA Feature: allows you to use a custom issuer URL",
@@ -74,7 +74,7 @@ func resourceAuthServer() *schema.Resource {
 func handleAuthServerLifecycle(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
 
-	if d.Get("status").(string) == "ACTIVE" {
+	if d.Get("status").(string) == statusActive {
 		_, err := client.ActivateAuthorizationServer(d.Id())
 		return err
 	}
@@ -137,29 +137,29 @@ func resourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
-	d.Set("kid", authServer.Credentials.Signing.Kid)
+	_ = d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
+	_ = d.Set("kid", authServer.Credentials.Signing.Kid)
 
 	if authServer.Credentials != nil && authServer.Credentials.Signing != nil {
-		d.Set("credentials_rotation_mode", authServer.Credentials.Signing.RotationMode)
+		_ = d.Set("credentials_rotation_mode", authServer.Credentials.Signing.RotationMode)
 
 		if authServer.Credentials.Signing.NextRotation != nil {
-			d.Set("credentials_next_rotation", authServer.Credentials.Signing.NextRotation.String())
+			_ = d.Set("credentials_next_rotation", authServer.Credentials.Signing.NextRotation.String())
 		}
 
 		if authServer.Credentials.Signing.LastRotated != nil {
-			d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated.String())
+			_ = d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated.String())
 		}
 	}
 
-	d.Set("description", authServer.Description)
-	d.Set("name", authServer.Name)
-	d.Set("status", authServer.Status)
-	d.Set("issuer", authServer.Issuer)
+	_ = d.Set("description", authServer.Description)
+	_ = d.Set("name", authServer.Name)
+	_ = d.Set("status", authServer.Status)
+	_ = d.Set("issuer", authServer.Issuer)
 
 	// Do not sync these unless the issuer mode is specified since it is an EA feature and is computed in some cases
 	if authServer.IssuerMode != "" {
-		d.Set("issuer_mode", authServer.IssuerMode)
+		_ = d.Set("issuer_mode", authServer.IssuerMode)
 	}
 
 	return nil
@@ -168,7 +168,10 @@ func resourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 func resourceAuthServerUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getSupplementFromMetadata(m)
 	if d.HasChange("status") {
-		handleAuthServerLifecycle(d, m)
+		err := handleAuthServerLifecycle(d, m)
+		if err != nil {
+			return err
+		}
 	}
 
 	authServer := buildAuthServer(d)

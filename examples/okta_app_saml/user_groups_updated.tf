@@ -34,10 +34,10 @@ resource "okta_user" "user1" {
 resource "okta_app_saml" "test" {
   preconfigured_app = "amazon_aws"
   label             = "testAcc_replace_with_uuid"
-  groups            = ["${data.okta_group.all.id}"]
+  groups            = [data.okta_group.all.id]
 
   users {
-    id       = "${okta_user.user1.id}"
-    username = "${okta_user.user1.email}"
+    id       = okta_user.user1.id
+    username = okta_user.user1.email
   }
 }

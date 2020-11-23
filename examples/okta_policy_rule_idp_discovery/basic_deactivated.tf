@@ -5,7 +5,7 @@ data okta_policy test {
 
 resource okta_policy_rule_idp_discovery test {
   status               = "INACTIVE"
-  policyid             = "${data.okta_policy.test.id}"
+  policyid             = data.okta_policy.test.id
   priority             = 1
   name                 = "testAcc_replace_with_uuid"
   user_identifier_type = "IDENTIFIER"
