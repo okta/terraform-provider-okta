@@ -14,7 +14,7 @@ resource okta_app_saml test {
 }
 
 resource okta_idp_saml_key test {
-  x5c = ["${okta_app_saml.test.certificate}"]
+  x5c = [okta_app_saml.test.certificate]
 }
 
 resource okta_idp_saml test {
@@ -25,7 +25,7 @@ resource okta_idp_saml test {
   sso_destination          = "https://idp.example.com"
   sso_binding              = "HTTP-POST"
   username_template        = "idpuser.email"
-  kid                      = "${okta_idp_saml_key.test.id}"
+  kid                      = okta_idp_saml_key.test.id
   issuer                   = "https://idp.example.com"
   request_signature_scope  = "REQUEST"
   response_signature_scope = "ANY"

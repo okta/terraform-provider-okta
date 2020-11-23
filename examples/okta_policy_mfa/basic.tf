@@ -11,8 +11,8 @@ resource okta_policy_mfa test {
     enroll = "REQUIRED"
   }
 
-  groups_included = ["${data.okta_group.all.id}"]
-  depends_on      = ["okta_factor.google_otp"]
+  groups_included = [data.okta_group.all.id]
+  depends_on      = [okta_factor.google_otp]
 }
 
 resource okta_factor google_otp {

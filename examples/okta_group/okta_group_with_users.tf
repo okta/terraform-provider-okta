@@ -7,10 +7,10 @@ resource "okta_group" "test" {
   description = "testing, testing"
 
   users = [
-    "${okta_user.test.id}",
-    "${okta_user.test1.id}",
-    "${okta_user.test2.id}",
-    "${okta_user.test3.id}",
+    okta_user.test.id,
+    okta_user.test1.id,
+    okta_user.test2.id,
+    okta_user.test3.id,
   ]
 }
 

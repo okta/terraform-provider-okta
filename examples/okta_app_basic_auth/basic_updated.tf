@@ -16,9 +16,9 @@ resource "okta_app_basic_auth" "test" {
   auth_url = "https://example.com/auth.html"
 
   users {
-    id       = "${okta_user.user.id}"
-    username = "${okta_user.user.email}"
+    id       = okta_user.user.id
+    username = okta_user.user.email
   }
 
-  groups = ["${okta_group.group.id}"]
+  groups = [okta_group.group.id]
 }

@@ -9,13 +9,13 @@ resource "okta_app_oauth" "test" {
 }
 
 data "okta_app" "test" {
-  label = "${okta_app_oauth.test.label}"
+  label = okta_app_oauth.test.label
 }
 
 data "okta_app" "test2" {
-  id = "${okta_app_oauth.test.id}"
+  id = okta_app_oauth.test.id
 }
 
 data "okta_app" "test3" {
-  label_prefix = "${okta_app_oauth.test.label}"
+  label_prefix = okta_app_oauth.test.label
 }

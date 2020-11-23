@@ -4,7 +4,7 @@ resource okta_group test {
 }
 
 resource okta_group_roles test {
-  group_id    = "${okta_group.test.id}"
+  group_id    = okta_group.test.id
   admin_roles = ["SUPER_ADMIN"]
 }
 
@@ -13,5 +13,5 @@ resource okta_user test {
   last_name         = "Smith"
   login             = "test-acc-replace_with_uuid@example.com"
   email             = "test-acc-replace_with_uuid@example.com"
-  group_memberships = ["${okta_group.test.id}"]
+  group_memberships = [okta_group.test.id]
 }

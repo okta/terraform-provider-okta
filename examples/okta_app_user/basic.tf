@@ -19,7 +19,7 @@ resource okta_user test {
 }
 
 resource okta_app_user test {
-  app_id   = "${okta_app_oauth.test.id}"
-  user_id  = "${okta_user.test.id}"
-  username = "${okta_user.test.email}"
+  app_id   = okta_app_oauth.test.id
+  user_id  = okta_user.test.id
+  username = okta_user.test.email
 }

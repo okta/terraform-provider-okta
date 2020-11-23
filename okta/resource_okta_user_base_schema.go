@@ -1,6 +1,8 @@
 package okta
 
 import (
+	"strings"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
@@ -16,17 +18,30 @@ func resourceUserBaseSchema() *schema.Resource {
 		Exists: resourceUserBaseSchemaExists,
 		Importer: &schema.ResourceImporter{
 			State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-				_ = d.Set("index", d.Id())
+				resourceIndex := d.Id()
+				resourceUserType := "default"
+				if strings.Contains(d.Id(), ".") {
+					resourceUserType = strings.Split(d.Id(), ".")[0]
+					resourceIndex = strings.Split(d.Id(), ".")[1]
+				}
+
+				d.SetId(resourceIndex)
+				_ = d.Set("index", resourceIndex)
+				_ = d.Set("user_type", resourceUserType)
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-
 		Schema: userBaseSchemaSchema,
 	}
 }
 
 func resourceUserBaseSchemaCreate(d *schema.ResourceData, m interface{}) error {
-	if err := updateBaseSubschema(d, m); err != nil {
+	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+	if err != nil {
+		return err
+	}
+
+	if err := updateBaseSubschema(schemaUrl, d, m); err != nil {
 		return err
 	}
 	d.SetId(d.Get("index").(string))
@@ -35,13 +50,21 @@ func resourceUserBaseSchemaCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUserBaseSchemaExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	subschema, err := getBaseSubSchema(d, m)
+	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+	if err != nil {
+		return false, err
+	}
+	subschema, err := getBaseSubSchema(schemaUrl, d, m)
 
 	return subschema != nil, err
 }
 
 func resourceUserBaseSchemaRead(d *schema.ResourceData, m interface{}) error {
-	subschema, err := getBaseSubSchema(d, m)
+	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+	if err != nil {
+		return err
+	}
+	subschema, err := getBaseSubSchema(schemaUrl, d, m)
 	if err != nil {
 		return err
 	} else if subschema == nil {
@@ -54,8 +77,8 @@ func resourceUserBaseSchemaRead(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func getBaseSubSchema(d *schema.ResourceData, m interface{}) (*sdk.UserSubSchema, error) {
-	s, _, err := getSupplementFromMetadata(m).GetUserSchema()
+func getBaseSubSchema(schemaUrl string, d *schema.ResourceData, m interface{}) (*sdk.UserSubSchema, error) {
+	s, _, err := getSupplementFromMetadata(m).GetUserSchema(schemaUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -63,10 +86,13 @@ func getBaseSubSchema(d *schema.ResourceData, m interface{}) (*sdk.UserSubSchema
 }
 
 func resourceUserBaseSchemaUpdate(d *schema.ResourceData, m interface{}) error {
-	if err := updateBaseSubschema(d, m); err != nil {
+	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+	if err != nil {
 		return err
 	}
-
+	if err := updateBaseSubschema(schemaUrl, d, m); err != nil {
+		return err
+	}
 	return resourceUserBaseSchemaRead(d, m)
 }
 
@@ -76,7 +102,7 @@ func resourceUserBaseSchemaDelete(d *schema.ResourceData, m interface{}) error {
 }
 
 // create or modify a  subschema
-func updateBaseSubschema(d *schema.ResourceData, m interface{}) error {
+func updateBaseSubschema(schemaUrl string, d *schema.ResourceData, m interface{}) error {
 	subSchema := &sdk.UserSubSchema{
 		Master: getNullableMaster(d),
 		Title:  d.Get("title").(string),
@@ -90,7 +116,7 @@ func updateBaseSubschema(d *schema.ResourceData, m interface{}) error {
 		Required: boolPtr(d.Get("required").(bool)),
 	}
 
-	_, _, err := getSupplementFromMetadata(m).UpdateBaseUserSchemaProperty(d.Get("index").(string), subSchema)
+	_, _, err := getSupplementFromMetadata(m).UpdateBaseUserSchemaProperty(schemaUrl, d.Get("index").(string), subSchema)
 
 	return err
 }
