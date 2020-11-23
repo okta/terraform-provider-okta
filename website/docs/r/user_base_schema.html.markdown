@@ -20,6 +20,7 @@ resource "okta_user_base_schema" "example" {
   title       = "customPropertyName"
   type        = "string"
   master      = "OKTA"
+  user_type   = "${data.okta_user_type.example.id}"
 }
 ```
 
@@ -39,14 +40,22 @@ The following arguments are supported:
 
 * `master` - (Optional) Master priority for the user schema property. It can be set to `"PROFILE_MASTER"` or `"OKTA"`.
 
+* `user_type` - (Optional) User type ID
+
 ## Attributes Reference
 
 * `index` - ID of the user schema property.
 
 ## Import
 
-User base schema property can be imported via the property index.
+User schema property of default user type can be imported via the property index.
 
 ```
 $ terraform import okta_user_base_schema.example <property name>
+```
+
+User schema property of custom user type can be imported via user type id and property index
+
+```
+$ terraform import okta_user_base_schema.example <user type id>.<property name>
 ```

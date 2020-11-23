@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 // Ensure conditional require logic causes this plan to fail
@@ -31,9 +31,9 @@ func TestAccAppSaml_conditionalRequire(t *testing.T) {
 }
 
 // Ensure conditional require logic causes this plan to fail
-func TestAccAppSaml_invalidUrl(t *testing.T) {
+func TestAccAppSaml_invalidURL(t *testing.T) {
 	ri := acctest.RandInt()
-	config := buildTestSamlConfigInvalidUrl(ri)
+	config := buildTestSamlConfigInvalidURL(ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -92,7 +92,7 @@ func TestAccAppSaml_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "sso_url", "http://google.com"),
 					resource.TestCheckResourceAttr(resourceName, "recipient", "http://here.com"),
 					resource.TestCheckResourceAttr(resourceName, "destination", "http://its-about-the-journey.com"),
@@ -142,7 +142,7 @@ func TestAccAppSaml_userGroups(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "users.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "groups.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "key_years_valid", "3"),
@@ -153,7 +153,7 @@ func TestAccAppSaml_userGroups(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttrSet(resourceName, "key_id"),
 					resource.TestCheckResourceAttr(resourceName, "groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "users.#", "1"),
@@ -174,7 +174,7 @@ resource "%s" "%s" {
 `, appSaml, name, name)
 }
 
-func buildTestSamlConfigInvalidUrl(rInt int) string {
+func buildTestSamlConfigInvalidURL(rInt int) string {
 	name := buildResourceName(rInt)
 
 	return fmt.Sprintf(`

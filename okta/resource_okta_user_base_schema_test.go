@@ -3,22 +3,32 @@ package okta
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 )
 
 const baseTestProp = "firstName"
 
 func sweepUserBaseSchema(client *testClient) error {
-	_, _, err := client.artClient.Schemas.GetUserSchema()
+	var errorList []error
+	schemaUrl := "/api/v1/meta/schemas/user/default"
+
+	schema, _, err := client.apiSupplement.GetUserSchema(schemaUrl)
 	if err != nil {
 		return err
 	}
-	var errorList []error
+
+	for key := range schema.Definitions.Custom.Properties {
+		if strings.HasPrefix(key, testResourcePrefix) {
+			if _, err := client.apiSupplement.DeleteUserSchemaProperty(schemaUrl, key); err != nil {
+				errorList = append(errorList, err)
+			}
+		}
+	}
 
 	return condenseError(errorList)
 }
@@ -28,6 +38,7 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 	mgr := newFixtureManager(userBaseSchema)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updated := mgr.GetFixtures("updated.tf", ri, t)
+	nonDefault := mgr.GetFixtures("non_default_user_type.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.%s", userBaseSchema, baseTestProp)
 
 	resource.Test(t, resource.TestCase{
@@ -57,11 +68,21 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 				),
 			},
 			{
+				Config: nonDefault,
+				Check: resource.ComposeTestCheckFunc(
+					testOktaUserBaseSchemasExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "index", baseTestProp),
+					resource.TestCheckResourceAttr(resourceName, "title", "First name"),
+					resource.TestCheckResourceAttr(resourceName, "type", "string"),
+					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_ONLY"),
+				),
+			},
+			{
 				ResourceName: resourceName,
 				ImportState:  true,
 				ImportStateCheck: func(s []*terraform.InstanceState) error {
 					if len(s) != 1 {
-						return errors.New("Failed to import schema into state")
+						return errors.New("failed to import schema into state")
 					}
 
 					return nil
@@ -76,27 +97,19 @@ func testOktaUserBaseSchemasExists(name string) resource.TestCheckFunc {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("Not found: %s", name)
+			return fmt.Errorf("not found: %s", name)
 		}
-
-		if exists, _ := testUserBaseSchemaExists(rs.Primary.ID); !exists {
-			return fmt.Errorf("Failed to find %s", rs.Primary.ID)
+		var schemaUserType = "default"
+		if rs.Primary.Attributes["user_type"] != "" {
+			schemaUserType = rs.Primary.Attributes["user_type"]
+		}
+		exists, err := testSchemaPropertyExists(schemaUserType, rs.Primary.ID, baseSchema)
+		if err != nil {
+			return fmt.Errorf("failed to find: %v", err)
+		}
+		if !exists {
+			return fmt.Errorf("base property %s does not exist in a profile subschema", rs.Primary.ID)
 		}
 		return nil
 	}
-}
-
-func testUserBaseSchemaExists(index string) (bool, error) {
-	client := getClientFromMetadata(testAccProvider.Meta())
-	subschema, _, err := client.Schemas.GetUserSubSchemaIndex(baseSchema)
-	if err != nil {
-		return false, fmt.Errorf("Error Listing User Subschema in Okta: %v", err)
-	}
-	for _, key := range subschema {
-		if key == index {
-			return true, nil
-		}
-	}
-
-	return false, nil
 }

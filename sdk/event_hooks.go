@@ -1,9 +1,11 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 type (
@@ -51,7 +53,7 @@ func (m *ApiSupplement) ActivateEventHook(id string) (*okta.Response, error) {
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(context.Background(), req, nil)
 }
 
 func (m *ApiSupplement) DeactivateEventHook(id string) (*okta.Response, error) {
@@ -61,7 +63,7 @@ func (m *ApiSupplement) DeactivateEventHook(id string) (*okta.Response, error) {
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(context.Background(), req, nil)
 }
 
 func (m *ApiSupplement) DeleteEventHook(id string) (*okta.Response, error) {
@@ -71,7 +73,7 @@ func (m *ApiSupplement) DeleteEventHook(id string) (*okta.Response, error) {
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(context.Background(), req, nil)
 }
 
 func (m *ApiSupplement) ListEventHooks() ([]*EventHook, *okta.Response, error) {
@@ -81,7 +83,7 @@ func (m *ApiSupplement) ListEventHooks() ([]*EventHook, *okta.Response, error) {
 	}
 
 	var auth []*EventHook
-	resp, err := m.RequestExecutor.Do(req, &auth)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &auth)
 	return auth, resp, err
 }
 
@@ -96,7 +98,7 @@ func (m *ApiSupplement) CreateEventHook(body EventHook, qp *query.Params) (*Even
 	}
 
 	hook := body
-	resp, err := m.RequestExecutor.Do(req, &hook)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &hook)
 	return &hook, resp, err
 }
 
@@ -111,7 +113,7 @@ func (m *ApiSupplement) UpdateEventHook(id string, body EventHook, qp *query.Par
 	}
 
 	hook := body
-	resp, err := m.RequestExecutor.Do(req, &hook)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &hook)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -126,7 +128,7 @@ func (m *ApiSupplement) GetEventHook(id string) (*EventHook, *okta.Response, err
 	}
 
 	hook := &EventHook{}
-	resp, err := m.RequestExecutor.Do(req, &hook)
+	resp, err := m.RequestExecutor.Do(context.Background(), req, &hook)
 	if err != nil {
 		return nil, resp, err
 	}

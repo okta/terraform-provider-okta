@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 // data source to retrieve information on a Default Policy
@@ -16,8 +17,8 @@ func dataSourceDefaultPolicies() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"type": {
 				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{signOnPolicyType, passwordPolicyType, "MFA_ENROLL", "OAUTH_AUTHORIZATION_POLICY"}, false),
-				Description:  fmt.Sprintf("Policy type: %s, %s, MFA_ENROLL, or OAUTH_AUTHORIZATION_POLICY", signOnPolicyType, passwordPolicyType),
+				ValidateFunc: validation.StringInSlice([]string{sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.OauthAuthorizationPolicyType}, false),
+				Description:  fmt.Sprintf("Policy type: %s, %s, %s, or %s", sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.OauthAuthorizationPolicyType),
 				Required:     true,
 			},
 		},

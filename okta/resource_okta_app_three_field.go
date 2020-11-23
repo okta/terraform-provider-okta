@@ -1,9 +1,11 @@
 package okta
 
 import (
+	"context"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func resourceAppThreeField() *schema.Resource {
@@ -20,38 +22,38 @@ func resourceAppThreeField() *schema.Resource {
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
-			"button_selector": &schema.Schema{
+			"button_selector": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Login button field CSS selector",
 			},
-			"password_selector": &schema.Schema{
+			"password_selector": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Login password field CSS selector",
 			},
-			"username_selector": &schema.Schema{
+			"username_selector": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Login username field CSS selector",
 			},
-			"extra_field_selector": &schema.Schema{
+			"extra_field_selector": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Extra field CSS selector",
 			},
-			"extra_field_value": &schema.Schema{
+			"extra_field_value": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Value for extra form field",
 			},
-			"url": &schema.Schema{
+			"url": {
 				Type:         schema.TypeString,
 				Required:     true,
 				Description:  "Login URL",
 				ValidateFunc: validateIsURL,
 			},
-			"url_regex": &schema.Schema{
+			"url_regex": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "A regex that further restricts URL to the specified regex",
@@ -62,10 +64,10 @@ func resourceAppThreeField() *schema.Resource {
 
 func resourceAppThreeFieldCreate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppThreeField(d, m)
-	activate := d.Get("status").(string) == "ACTIVE"
+	app := buildAppThreeField(d)
+	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(app, params)
+	_, _, err := client.Application.CreateApplication(context.Background(), app, params)
 
 	if err != nil {
 		return err
@@ -89,15 +91,16 @@ func resourceAppThreeFieldRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.Set("button_selector", app.Settings.App.ButtonSelector)
-	d.Set("password_selector", app.Settings.App.PasswordSelector)
-	d.Set("username_selector", app.Settings.App.UserNameSelector)
-	d.Set("extra_field_selector", app.Settings.App.ExtraFieldSelector)
-	d.Set("extra_field_value", app.Settings.App.ExtraFieldValue)
-	d.Set("url", app.Settings.App.TargetURL)
-	d.Set("url_regex", app.Settings.App.LoginUrlRegex)
-	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
-	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("button_selector", app.Settings.App.ButtonSelector)
+	_ = d.Set("password_selector", app.Settings.App.PasswordSelector)
+	_ = d.Set("username_selector", app.Settings.App.UserNameSelector)
+	_ = d.Set("extra_field_selector", app.Settings.App.ExtraFieldSelector)
+	_ = d.Set("extra_field_value", app.Settings.App.ExtraFieldValue)
+	_ = d.Set("url", app.Settings.App.TargetURL)
+	_ = d.Set("url_regex", app.Settings.App.LoginUrlRegex)
+	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
+	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 
 	return nil
@@ -105,8 +108,8 @@ func resourceAppThreeFieldRead(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppThreeFieldUpdate(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppThreeField(d, m)
-	_, resp, err := client.Application.UpdateApplication(d.Id(), app)
+	app := buildAppThreeField(d)
+	_, resp, err := client.Application.UpdateApplication(context.Background(), d.Id(), app)
 
 	if err != nil {
 		return responseErr(resp, err)
@@ -124,15 +127,15 @@ func resourceAppThreeFieldUpdate(d *schema.ResourceData, m interface{}) error {
 
 func resourceAppThreeFieldDelete(d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	resp, err := client.Application.DeactivateApplication(d.Id())
+	resp, err := client.Application.DeactivateApplication(context.Background(), d.Id())
 	if err != nil {
 		return responseErr(resp, err)
 	}
 
-	return responseErr(client.Application.DeleteApplication(d.Id()))
+	return responseErr(client.Application.DeleteApplication(context.Background(), d.Id()))
 }
 
-func buildAppThreeField(d *schema.ResourceData, m interface{}) *okta.SwaThreeFieldApplication {
+func buildAppThreeField(d *schema.ResourceData) *okta.SwaThreeFieldApplication {
 	app := okta.NewSwaThreeFieldApplication()
 	app.Label = d.Get("label").(string)
 

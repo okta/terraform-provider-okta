@@ -1,12 +1,14 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"log"
 
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourcePolicySignonRule() *schema.Resource {
@@ -84,18 +86,14 @@ func resourcePolicySignonRuleCreate(d *schema.ResourceData, m interface{}) error
 	}
 
 	log.Printf("[INFO] Creating Policy Rule %v", d.Get("name").(string))
-	template, err := buildSignOnPolicyRule(d, m)
-	if err != nil {
-		return err
-	}
-
+	template := buildSignOnPolicyRule(d)
 	rule, err := createRule(d, m, template, policyRuleSignOn)
 	if err != nil {
 		return err
 	}
 
 	// We want to put this under Terraform's control even if priority is invalid.
-	d.SetId(rule.ID)
+	d.SetId(rule.Id)
 	err = validatePriority(template.Priority, rule.Priority)
 	if err != nil {
 		return err
@@ -120,17 +118,17 @@ func resourcePolicySignonRuleRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	// Update with upstream state to prevent stale state
-	d.Set("authtype", rule.Conditions.AuthContext.AuthType)
-	d.Set("access", rule.Actions.SignOn.Access)
-	d.Set("mfa_required", rule.Actions.SignOn.RequireFactor)
-	d.Set("mfa_remember_device", rule.Actions.SignOn.RememberDeviceByDefault)
-	d.Set("mfa_lifetime", rule.Actions.SignOn.FactorLifetime)
-	d.Set("session_idle", rule.Actions.SignOn.Session.MaxSessionIdleMinutes)
-	d.Set("session_lifetime", rule.Actions.SignOn.Session.MaxSessionLifetimeMinutes)
-	d.Set("session_persistent", rule.Actions.SignOn.Session.UsePersistentCookie)
+	_ = d.Set("authtype", rule.Conditions.AuthContext.AuthType)
+	_ = d.Set("access", rule.Actions.Signon.Access)
+	_ = d.Set("mfa_required", rule.Actions.Signon.RequireFactor)
+	_ = d.Set("mfa_remember_device", rule.Actions.Signon.RememberDeviceByDefault)
+	_ = d.Set("mfa_lifetime", rule.Actions.Signon.FactorLifetime)
+	_ = d.Set("session_idle", rule.Actions.Signon.Session.MaxSessionIdleMinutes)
+	_ = d.Set("session_lifetime", rule.Actions.Signon.Session.MaxSessionLifetimeMinutes)
+	_ = d.Set("session_persistent", rule.Actions.Signon.Session.UsePersistentCookie)
 
-	if rule.Actions.FactorPromptMode != "" {
-		d.Set("mfa_prompt", rule.Actions.FactorPromptMode)
+	if rule.Actions.Signon.FactorPromptMode != "" {
+		_ = d.Set("mfa_prompt", rule.Actions.Signon.FactorPromptMode)
 	}
 
 	return syncRuleFromUpstream(d, rule)
@@ -142,11 +140,7 @@ func resourcePolicySignonRuleUpdate(d *schema.ResourceData, m interface{}) error
 	}
 
 	log.Printf("[INFO] Update Policy Rule %v", d.Get("name").(string))
-	template, err := buildSignOnPolicyRule(d, m)
-	if err != nil {
-		return err
-	}
-
+	template := buildSignOnPolicyRule(d)
 	rule, err := updateRule(d, m, template)
 	if err != nil {
 		return err
@@ -166,7 +160,7 @@ func resourcePolicySignonRuleDelete(d *schema.ResourceData, m interface{}) error
 	}
 
 	log.Printf("[INFO] Delete Policy Rule %v", d.Get("name").(string))
-	client := m.(*Config).articulateOktaClient
+	client := getSupplementFromMetadata(m)
 
 	rule, err := getPolicyRule(d, m)
 
@@ -174,11 +168,11 @@ func resourcePolicySignonRuleDelete(d *schema.ResourceData, m interface{}) error
 		return err
 	}
 
-	if rule != nil && rule.ID != "" {
-		if rule.System == true {
+	if rule != nil && rule.Id != "" {
+		if rule.System != nil && *rule.System {
 			log.Printf("[INFO] Policy Rule %v is a System Policy, cannot delete from Okta", d.Get("name").(string))
 		} else {
-			_, err = client.Policies.DeletePolicyRule(d.Get("policyid").(string), rule.ID)
+			_, err = client.DeletePolicyRule(context.Background(), d.Get("policyid").(string), rule.Id)
 			if err != nil {
 				return fmt.Errorf("[ERROR] Error Deleting Policy Rule from Okta: %v", err)
 			}
@@ -193,31 +187,35 @@ func resourcePolicySignonRuleDelete(d *schema.ResourceData, m interface{}) error
 }
 
 // Build Policy Sign On Rule from resource data
-func buildSignOnPolicyRule(d *schema.ResourceData, m interface{}) (articulateOkta.SignOnRule, error) {
-	client := getClientFromMetadata(m)
-	template := client.Policies.SignOnRule()
+func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
+	template := sdk.SignOnPolicyRule()
 	template.Name = d.Get("name").(string)
 	template.Status = d.Get("status").(string)
 	if priority, ok := d.GetOk("priority"); ok {
-		template.Priority = priority.(int)
+		template.Priority = int64(priority.(int))
 	}
-
-	template.Conditions = &articulateOkta.PolicyConditions{
+	template.Conditions = &okta.PolicyRuleConditions{
 		Network: getNetwork(d),
-		AuthContext: &articulateOkta.AuthContext{
+		AuthContext: &okta.PolicyRuleAuthContextCondition{
 			AuthType: d.Get("authtype").(string),
 		},
 		People: getUsers(d),
 	}
-
-	template.Actions.SignOn.RequireFactor = d.Get("mfa_required").(bool)
-	template.Actions.SignOn.FactorPromptMode = d.Get("mfa_prompt").(string)
-	template.Actions.SignOn.RememberDeviceByDefault = d.Get("mfa_remember_device").(bool)
-	template.Actions.SignOn.FactorLifetime = d.Get("mfa_lifetime").(int)
-	template.Actions.SignOn.Session.MaxSessionIdleMinutes = d.Get("session_idle").(int)
-	template.Actions.SignOn.Session.MaxSessionLifetimeMinutes = d.Get("session_lifetime").(int)
-	template.Actions.SignOn.Session.UsePersistentCookie = d.Get("session_persistent").(bool)
-	template.Actions.SignOn.Access = d.Get("access").(string)
-
-	return template, nil
+	template.Actions = sdk.PolicyRuleActions{
+		OktaSignOnPolicyRuleActions: &okta.OktaSignOnPolicyRuleActions{
+			Signon: &okta.OktaSignOnPolicyRuleSignonActions{
+				Access:                  d.Get("access").(string),
+				FactorLifetime:          int64(d.Get("mfa_lifetime").(int)),
+				FactorPromptMode:        d.Get("mfa_prompt").(string),
+				RememberDeviceByDefault: boolPtr(d.Get("mfa_remember_device").(bool)),
+				RequireFactor:           boolPtr(d.Get("mfa_required").(bool)),
+				Session: &okta.OktaSignOnPolicyRuleSignonSessionActions{
+					MaxSessionIdleMinutes:     int64(d.Get("session_idle").(int)),
+					MaxSessionLifetimeMinutes: int64(d.Get("session_lifetime").(int)),
+					UsePersistentCookie:       boolPtr(d.Get("session_persistent").(bool)),
+				},
+			},
+		},
+	}
+	return template
 }
