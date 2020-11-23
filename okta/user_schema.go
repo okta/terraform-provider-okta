@@ -68,7 +68,7 @@ var (
 		"required": {
 			Type:        schema.TypeBool,
 			Optional:    true,
-			Description: "Whether the Subschema is required",
+			Description: "Whether the subschema is required",
 		},
 		"min_length": {
 			Type:         schema.TypeInt,
@@ -150,6 +150,12 @@ var (
 			ValidateFunc:  validation.StringInSlice([]string{"UNIQUE_VALIDATED", "NOT_UNIQUE"}, false),
 			ConflictsWith: []string{"one_of", "enum", "array_type"},
 		},
+		"user_type": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Custom subschema user type",
+			Default:     "default",
+		},
 	}
 
 	userBaseSchemaSchema = map[string]*schema.Schema{
@@ -188,7 +194,13 @@ var (
 		"required": {
 			Type:        schema.TypeBool,
 			Optional:    true,
-			Description: "Whether the Subschema is required",
+			Description: "Whether the subschema is required",
+		},
+		"user_type": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Custom subschema user type",
+			Default:     "default",
 		},
 	}
 )

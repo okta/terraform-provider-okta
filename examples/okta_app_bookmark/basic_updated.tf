@@ -15,9 +15,9 @@ resource "okta_app_bookmark" "test" {
   url   = "https://test.com"
 
   users {
-    id       = "${okta_user.user.id}"
-    username = "${okta_user.user.email}"
+    id       = okta_user.user.id
+    username = okta_user.user.email
   }
 
-  groups = ["${okta_group.group.id}"]
+  groups = [okta_group.group.id]
 }

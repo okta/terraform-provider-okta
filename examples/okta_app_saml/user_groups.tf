@@ -32,19 +32,19 @@ resource "okta_app_saml" "test" {
   label             = "testAcc_replace_with_uuid"
 
   users {
-    id       = "${okta_user.user.id}"
-    username = "${okta_user.user.email}"
+    id       = okta_user.user.id
+    username = okta_user.user.email
   }
 
   users {
-    id       = "${okta_user.user1.id}"
-    username = "${okta_user.user1.email}"
+    id       = okta_user.user1.id
+    username = okta_user.user1.email
   }
 
-  groups = ["${okta_group.group.id}", "${okta_group.group1.id}", "${okta_group.group2.id}"]
+  groups = [okta_group.group.id, okta_group.group1.id, okta_group.group2.id]
 
   key_years_valid = 3
-  key_name = "hello"
+  key_name        = "hello"
 
   app_settings_json = <<EOT
 {
