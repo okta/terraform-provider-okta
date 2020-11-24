@@ -11,7 +11,9 @@ resource okta_user test {
   email      = "john_replace_with_uuid@ledzeppelin.com"
 }
 
-data okta_group test {
+# Should fail to find the group since the type is the wrong type
+data okta_group test_type {
   include_users = true
   name          = okta_group.test.name
+  type          = "APP_GROUP"
 }

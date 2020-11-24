@@ -1,18 +1,18 @@
 package okta
 
 import (
-	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 func TestAccOktaDataSourceGroup_read(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(oktaGroup)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
+	configInvalid := mgr.GetFixtures("datasource_not_found.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -30,19 +30,9 @@ func TestAccOktaDataSourceGroup_read(t *testing.T) {
 				),
 			},
 			{
-				Config: config,
-				Check:  resource.ComposeTestCheckFunc(testDoesNotExist("okta_group.test_type")),
+				Config:      configInvalid,
+				ExpectError: regexp.MustCompile(`\bwas not found with type\b`),
 			},
 		},
 	})
-}
-
-func testDoesNotExist(name string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		_, ok := s.RootModule().Resources[name]
-		if ok {
-			return fmt.Errorf("Resource should not exist: %s", name)
-		}
-		return nil
-	}
 }
