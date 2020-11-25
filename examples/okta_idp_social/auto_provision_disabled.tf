@@ -1,4 +1,4 @@
-resource okta_idp_social google {
+resource "okta_idp_social" "google" {
   type                = "GOOGLE"
   protocol_type       = "OAUTH2"
   name                = "testAcc_google_replace_with_uuid"

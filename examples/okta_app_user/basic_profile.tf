@@ -1,4 +1,4 @@
-resource okta_app_saml test {
+resource "okta_app_saml" "test" {
   label             = "testAcc_replace_with_uuid"
   preconfigured_app = "google"
 
@@ -14,14 +14,14 @@ JSON
   }
 }
 
-resource okta_user test {
+resource "okta_user" "test" {
   first_name = "TestAcc"
   last_name  = "Smith"
   login      = "testAcc_replace_with_uuid@example.com"
   email      = "testAcc_replace_with_uuid@example.com"
 }
 
-resource okta_app_user_schema test {
+resource "okta_app_user_schema" "test" {
   app_id      = okta_app_saml.test.id
   index       = "testCustom"
   title       = "terraform acceptance test"
@@ -32,7 +32,7 @@ resource okta_app_user_schema test {
   scope       = "SELF"
 }
 
-resource okta_app_user test {
+resource "okta_app_user" "test" {
   app_id   = okta_app_saml.test.id
   user_id  = okta_user.test.id
   username = okta_user.test.email

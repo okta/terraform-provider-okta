@@ -1,4 +1,4 @@
-resource okta_app_auto_login test {
+resource "okta_app_auto_login" "test" {
   label                   = "testAcc_replace_with_uuid"
   status                  = "INACTIVE"
   sign_on_url             = "https://exampleupdate.com/login.html"
