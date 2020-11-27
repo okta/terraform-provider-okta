@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_auth_server_policy_rule"
-sidebar_current: "docs-okta-resource-auth-server-policy-rule"
+layout: 'okta'
+page_title: 'Okta: okta_auth_server_policy_rule'
+sidebar_current: 'docs-okta-resource-auth-server-policy-rule'
 description: |-
   Creates an Authorization Server Policy Rule.
 ---
@@ -30,45 +30,45 @@ resource "okta_auth_server_policy_rule" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required) Auth Server Policy Rule name.
+- `name` - (Required) Auth Server Policy Rule name.
 
-* `auth_server_id` - (Required) Auth Server ID.
+- `auth_server_id` - (Required) Auth Server ID.
 
-* `policy_id` - (Required) Auth Server Policy ID.
+- `policy_id` - (Required) Auth Server Policy ID.
 
-* `status` - (Optional) The status of the Auth Server Policy Rule.
+- `status` - (Optional) The status of the Auth Server Policy Rule.
 
-* `priority` - (Required) Priority of the auth server policy rule.
+- `priority` - (Required) Priority of the auth server policy rule.
 
-* `user_whitelist` - (Optional) Specifies a set of Users to be included
+- `user_whitelist` - (Optional) Specifies a set of Users to be included
 
-* `user_blacklist` - (Optional) Specifies a set of Users to be excluded
+- `user_blacklist` - (Optional) Specifies a set of Users to be excluded
 
-* `group_whitelist` - (Optional) Specifies a set of Groups whose Users are to be included
+- `group_whitelist` - (Optional) Specifies a set of Groups whose Users are to be included
 
-* `group_blacklist` - (Optional) Specifies a set of Groups whose Users are to be excluded
+- `group_blacklist` - (Optional) Specifies a set of Groups whose Users are to be excluded
 
-* `grant_type_whitelist` - (Required) Accepted grant type values, `"authorization_code"`, `"implicit"`, `"password"`
+- `grant_type_whitelist` - (Required) Accepted grant type values, `"authorization_code"`, `"implicit"`, `"password"`
 
-* `scope_whitelist` - (Required) Scopes allowed for this policy rule. They can be whitelisted by name or all can be whitelisted with `"*"`.
+- `scope_whitelist` - (Required) Scopes allowed for this policy rule. They can be whitelisted by name or all can be whitelisted with `"*"`.
 
-* `access_token_lifetime_minutes` - (Optional) Lifetime of access token. Can be set to a value between 5 and 1440.
+- `access_token_lifetime_minutes` - (Optional) Lifetime of access token. Can be set to a value between 5 and 1440.
 
-* `refresh_token_lifetime_minutes` - (Optional) Lifetime of refresh token.
+- `refresh_token_lifetime_minutes` - (Optional) Lifetime of refresh token.
 
-* `refresh_token_window_minutes` - (Optional) Window in which a refresh token can be used. It can be a value between 10 and 2628000 (5 years).
+- `refresh_token_window_minutes` - (Optional) Window in which a refresh token can be used. It can be a value between 10 and 2628000 (5 years).
 
-* `inline_hook_id` - (Optional) The ID of the inline token to trigger.
+- `inline_hook_id` - (Optional) The ID of the inline token to trigger.
 
 ## Attributes Reference
 
-* `id` - (Required) The ID of the Auth Server Policy Rule.
+- `id` - (Required) The ID of the Auth Server Policy Rule.
 
-* `policy_id` - (Required) The ID of the Auth Server Policy.
+- `policy_id` - (Required) The ID of the Auth Server Policy.
 
-* `auth_server_id` - (Required) The ID of the Auth Server.
+- `auth_server_id` - (Required) The ID of the Auth Server.
 
-* `type` - The type of the Auth Server Policy Rule.
+- `type` - The type of the Auth Server Policy Rule.
 
 ## Import
 

@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_everyone_group"
-sidebar_current: "docs-okta-datasource-everyone-group"
+layout: 'okta'
+page_title: 'Okta: okta_everyone_group'
+sidebar_current: 'docs-okta-datasource-everyone-group'
 description: |-
   Get the everyone group from Okta.
 ---
@@ -18,4 +18,4 @@ data "okta_everyone_group" "example" {}
 
 ## Attributes Reference
 
-* `id` - the id of the group.
+- `id` - the id of the group.

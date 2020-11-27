@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_template_sms"
-sidebar_current: "docs-okta-resource-template-sms"
+layout: 'okta'
+page_title: 'Okta: okta_template_sms'
+sidebar_current: 'docs-okta-resource-template-sms'
 description: |-
   Creates an Okta SMS Template.
 ---
@@ -34,16 +34,16 @@ resource "okta_template_sms" "example" {
 
 The following arguments are supported:
 
-* `type` - (Required) SMS template type
-* `template` - (Required) Default SMS message
+- `type` - (Required) SMS template type
+- `template` - (Required) Default SMS message
 
-* `translations` - (Required) Set of translations for particular template.
-  * `language` - (Required) The language to map the template to.
-  * `template` - (Required) The SMS message.
+- `translations` - (Required) Set of translations for particular template.
+  - `language` - (Required) The language to map the template to.
+  - `template` - (Required) The SMS message.
 
 ## Attributes Reference
 
-* `id` - ID of the SMS Template.
+- `id` - ID of the SMS Template.
 
 ## Import
 

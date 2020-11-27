@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_user_type"
-sidebar_current: "docs-okta-resource-user-type"
+layout: 'okta'
+page_title: 'Okta: okta_user_type'
+sidebar_current: 'docs-okta-resource-user-type'
 description: |-
   Creates a User Type.
 ---
@@ -26,15 +26,15 @@ resource "okta_user_type" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required) Name of the User Type.
+- `name` - (Required) Name of the User Type.
 
-* `display_name` - (Required) Display Name of the User Type.
+- `display_name` - (Required) Display Name of the User Type.
 
-* `description` - (Optional) Description of the User Type.
+- `description` - (Optional) Description of the User Type.
 
 ## Attributes Reference
 
-* `id` - The ID of the User Type.
+- `id` - The ID of the User Type.
 
 ## Import
 
