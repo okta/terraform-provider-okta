@@ -39,7 +39,7 @@ To compile the provider, run `make build`. This will build the provider and put 
 ```sh
 $ make build
 ...
-$ $GOPATH/bin/terraform-provider-aws
+$ $GOPATH/bin/terraform-provider-okta
 ...
 ```
 
@@ -53,7 +53,7 @@ $ make test
 
 In order to run the full suite of Acceptance tests, run `make testacc`.
 
-_Note:_ Acceptance tests create real resources, and often cost money to run.
+_Note:_ Acceptance tests create real resources, and often cost money to run. Please read [Running an Acceptance Test](https://github.com/oktadeveloper/terraform-provider-okta/blob/master/.github/CONTRIBUTING.md#running-an-acceptance-test) in the contribution guidelines for more information on usage.
 
 ```sh
 $ make testacc
