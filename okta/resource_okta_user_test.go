@@ -39,7 +39,7 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("remove_custom_attributes.tf", ri, t)
 	importConfig := mgr.GetFixtures("import.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", oktaUser)
-	email := fmt.Sprintf("test-acc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -107,7 +107,7 @@ func TestAccOktaUser_groupMembership(t *testing.T) {
 	config := mgr.GetFixtures("group_assigned.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("group_unassigned.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", oktaUser)
-	email := fmt.Sprintf("test-acc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -171,7 +171,7 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("all_attributes.tf", ri, t)
 	minimalConfig := mgr.GetFixtures("basic.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", oktaUser)
-	email := fmt.Sprintf("test-acc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -244,7 +244,7 @@ func TestAccOktaUser_updateCredentials(t *testing.T) {
 	config := mgr.GetFixtures("basic_with_credentials.tf", ri, t)
 	minimalConfigWithCredentials := mgr.GetFixtures("basic_with_credentials_updated.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", oktaUser)
-	email := fmt.Sprintf("test-acc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -283,7 +283,7 @@ func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
 	statusChanged := mgr.GetFixtures("deprovisioned.tf", ri, t)
 	config := mgr.GetFixtures("staged.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", oktaUser)
-	email := fmt.Sprintf("test-acc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -366,8 +366,8 @@ resource okta_user "test" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "%[1]s"
-  login       = "test-acc-%[1]s@example.com"
-  email       = "test-acc-%[1]s@example.com"
+  login       = "testAcc-%[1]s@example.com"
+  email       = "testAcc-%[1]s@example.com"
 
   custom_profile_attributes = <<JSON
   {
@@ -384,7 +384,7 @@ resource okta_user "test" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "%[1]s"
-  login       = "test-acc-%[1]s@example.com"
+  login       = "testAcc-%[1]s@example.com"
   status      = "DEPROVISIONED"
   email       = "hello@example.com"
 }
@@ -397,8 +397,8 @@ resource okta_user "test" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN", "GROUP_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "Smith"
-  login       = "test-acc-%[1]s@example.com"
-  email       = "test-acc-%[1]s@example.com"
+  login       = "testAcc-%[1]s@example.com"
+  email       = "testAcc-%[1]s@example.com"
 }
 `, r)
 }

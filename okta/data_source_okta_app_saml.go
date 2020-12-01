@@ -229,14 +229,14 @@ func dataSourceAppSaml() *schema.Resource {
 func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	filters, err := getAppFilters(d)
 	if err != nil {
-		return diag.Errorf("failed to read SAML app: error getting filters: %v", err)
+		return diag.Errorf("failed to list SAML apps: error getting filters: %v", err)
 	}
 	appList, err := listSamlApps(ctx, m.(*Config), filters)
 	if err != nil {
-		return diag.Errorf("failed to read SAML app: error getting SAML apps: %v", err)
+		return diag.Errorf("failed to list SAML apps: error getting SAML apps: %v", err)
 	}
 	if len(appList) < 1 {
-		return diag.Errorf("failed to read SAML app: no application found with provided filter: %+v", filters)
+		return diag.Errorf("no SAML applications found with provided filter: %+v", filters)
 	} else if len(appList) > 1 {
 		log.Printf("[INFO]found multiple applications with the criteria supplied, using the first one, sorted by creation date.")
 	}

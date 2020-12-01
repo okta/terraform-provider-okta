@@ -11,6 +11,7 @@ import (
 func TestAccOktaDataSourceGroup_read(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(oktaGroup)
+	groupCreate := mgr.GetFixtures("okta_group.tf", ri, t)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 	configInvalid := mgr.GetFixtures("datasource_not_found.tf", ri, t)
 
@@ -20,6 +21,9 @@ func TestAccOktaDataSourceGroup_read(t *testing.T) {
 		},
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
+			{
+				Config: groupCreate,
+			},
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
@@ -31,7 +35,7 @@ func TestAccOktaDataSourceGroup_read(t *testing.T) {
 			},
 			{
 				Config:      configInvalid,
-				ExpectError: regexp.MustCompile(`\bwas not found with type\b`),
+				ExpectError: regexp.MustCompile(`\bdoes not exist`),
 			},
 		},
 	})

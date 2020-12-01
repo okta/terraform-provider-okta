@@ -119,7 +119,7 @@ func Provider() *schema.Provider {
 			"log_level": {
 				Type:             schema.TypeInt,
 				Optional:         true,
-				Default:          int(hclog.Info),
+				Default:          int(hclog.Error),
 				ValidateDiagFunc: intBetween(1, 5),
 				Description:      "providers log level. Minimum is 1 (TRACE), and maximum is 5 (ERROR)",
 			},
