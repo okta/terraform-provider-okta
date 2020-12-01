@@ -264,14 +264,6 @@ func suppressErrorOn404(resp *okta.Response, err error) error {
 	return responseErr(resp, err)
 }
 
-// Safely get string value
-func getStringValue(d *schema.ResourceData, key string) string {
-	if v, ok := d.GetOk(key); ok {
-		return v.(string)
-	}
-	return ""
-}
-
 func getParallelismFromMetadata(meta interface{}) int {
 	return meta.(*Config).parallelism
 }

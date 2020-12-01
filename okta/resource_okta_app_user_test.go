@@ -20,9 +20,9 @@ func TestAccOktaAppUser_crud(t *testing.T) {
 	basicProfile := mgr.GetFixtures("basic_profile.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: checkAppUserDestroy,
+		CheckDestroy:      checkAppUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

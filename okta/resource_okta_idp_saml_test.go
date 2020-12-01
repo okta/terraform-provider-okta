@@ -17,9 +17,9 @@ func TestAccOktaIdpSaml_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", idpSaml)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createCheckResourceDestroy(idpSaml, createDoesIdpExist(&sdk.SAMLIdentityProvider{})),
+		CheckDestroy:      createCheckResourceDestroy(idpSaml, createDoesIdpExist(&sdk.SAMLIdentityProvider{})),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

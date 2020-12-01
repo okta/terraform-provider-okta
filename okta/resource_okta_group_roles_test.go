@@ -16,9 +16,9 @@ func TestAccOktaGroupAdminRoles_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("all_roles.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createCheckResourceDestroy(oktaGroup, doesGroupExist),
+		CheckDestroy:      createCheckResourceDestroy(oktaGroup, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

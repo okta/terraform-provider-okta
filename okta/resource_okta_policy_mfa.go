@@ -173,30 +173,10 @@ func getPolicyFactorSchema(key string) map[string]*schema.Schema {
 			Optional: true,
 			Type:     schema.TypeMap,
 			Elem: &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+				Type: schema.TypeString,
 			},
 			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-				/*
-					Schema: map[string]*schema.Schema{
-										"enroll": {
-											Type:         schema.TypeString,
-											Optional:     true,
-											Default:      "OPTIONAL",
-											ValidateFunc: validation.StringInSlice([]string{"NOT_ALLOWED", "OPTIONAL", "REQUIRED"}, false),
-											Description:  "Requirements for use-initiated enrollment.",
-										},
-										"consent_type": {
-											Type:         schema.TypeString,
-											Optional:     true,
-											Default:      "NONE",
-											ValidateFunc: validation.StringInSlice([]string{"NONE", "TERMS_OF_SERVICE"}, false),
-											Description:  "User consent type required before enrolling in the factor: NONE or TERMS_OF_SERVICE.",
-										},
-									},
-
-				*/
-				return strings.HasSuffix(k,".%") || new == ""
+				return strings.HasSuffix(k, ".%") || new == ""
 			},
 			ValidateDiagFunc: func(i interface{}, path cty.Path) diag.Diagnostics {
 				var errs diag.Diagnostics

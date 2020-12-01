@@ -18,9 +18,9 @@ func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.testAcc_%d", trustedOrigin, ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: testAccCheckTrustedOriginDestroy,
+		CheckDestroy:      testAccCheckTrustedOriginDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

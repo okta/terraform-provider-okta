@@ -138,10 +138,3 @@ func containsRole(roles []*okta.Role, roleName string) bool {
 func getGroupRoleID(groupID string) string {
 	return fmt.Sprintf("%s.roles", groupID)
 }
-
-func buildGroupRole(role string) *okta.Role {
-	return &okta.Role{
-		AssignmentType: "GROUP",
-		Type:           role,
-	}
-}

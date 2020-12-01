@@ -17,9 +17,9 @@ func TestAccOktaIdpOidc_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", idpResource)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createCheckResourceDestroy(idpResource, createDoesIdpExist(&sdk.OIDCIdentityProvider{})),
+		CheckDestroy:      createCheckResourceDestroy(idpResource, createDoesIdpExist(&sdk.OIDCIdentityProvider{})),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

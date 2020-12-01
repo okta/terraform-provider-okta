@@ -43,9 +43,9 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 	resourceName := buildResourceFQN(userSchema, ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy(),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -137,9 +137,9 @@ func TestAccOktaUserSchema_arrayString(t *testing.T) {
 	arrayEnum := mgr.GetFixtures("array_enum.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy(),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

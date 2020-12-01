@@ -67,10 +67,9 @@ func resourceInlineHook() *schema.Resource {
 				Type:     schema.TypeMap,
 				Optional: true,
 				Elem: &schema.Schema{
-					Type:     schema.TypeString,
-					Required: true,
+					Type: schema.TypeString,
 				},
-				DiffSuppressFunc:func(k, old, new string, d *schema.ResourceData) bool {
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					if k == "auth.type" && new == "" {
 						return true
 					}
@@ -98,10 +97,9 @@ func resourceInlineHook() *schema.Resource {
 				Type:     schema.TypeMap,
 				Required: true,
 				Elem: &schema.Schema{
-					Type:     schema.TypeString,
-					Required: true,
+					Type: schema.TypeString,
 				},
-				DiffSuppressFunc:func(k, old, new string, d *schema.ResourceData) bool {
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					if k == "channel.type" && new == "" {
 						return true
 					}

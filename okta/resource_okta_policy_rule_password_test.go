@@ -51,9 +51,9 @@ func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
 	resourceName := buildResourceFQN(policyRulePassword, ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createRuleCheckDestroy(policyRulePassword),
+		CheckDestroy:      createRuleCheckDestroy(policyRulePassword),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -84,9 +84,9 @@ func TestAccOktaPolicyRulePassword_priorityError(t *testing.T) {
 	config := testOktaPolicyRulePriorityError(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createRuleCheckDestroy(policyRulePassword),
+		CheckDestroy:      createRuleCheckDestroy(policyRulePassword),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -104,9 +104,9 @@ func TestAccOktaPolicyRulePassword_priority(t *testing.T) {
 	name := buildResourceName(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createRuleCheckDestroy(policyRulePassword),
+		CheckDestroy:      createRuleCheckDestroy(policyRulePassword),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

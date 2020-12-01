@@ -26,7 +26,7 @@ func TestAccOktaDataSourceAppSaml_read(t *testing.T) {
 					resource.TestCheckResourceAttr("data.okta_app_saml.test_label", "label", fmt.Sprintf("testAcc_%d", ri)),
 					resource.TestCheckResourceAttr("data.okta_app_saml.test", "status", statusActive),
 					resource.TestCheckResourceAttr("data.okta_app_saml.test_label", "status", statusActive),
-*/				),
+					*/),
 			},
 		},
 	})

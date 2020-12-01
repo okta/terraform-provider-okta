@@ -18,9 +18,9 @@ func TestAccAppSwaApplication_preconfig(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSwa)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createCheckResourceDestroy(appSwa, createDoesAppExist(okta.NewSwaApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(okta.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -51,9 +51,9 @@ func TestAccAppSwaApplication_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSwa)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createCheckResourceDestroy(appSwa, createDoesAppExist(okta.NewSwaApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(okta.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

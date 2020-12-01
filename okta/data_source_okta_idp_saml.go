@@ -97,10 +97,10 @@ func dataSourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 		return diag.Errorf("failed to get identity provider: %v", err)
 	}
 	if idp == nil && id != "" {
-		return diag.Errorf("identity provider id '%s' does not exist", id)
+		return diag.Errorf("identity provider with id '%s' does not exist", id)
 	}
 	if idp == nil && name != "" {
-		return diag.Errorf("identity provider '%s' does not exist", name)
+		return diag.Errorf("identity provider with name '%s' does not exist", name)
 	}
 
 	d.SetId(idp.ID)
@@ -126,21 +126,16 @@ func dataSourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 
 func getIdentityProviderByID(ctx context.Context, m interface{}, id string) (*sdk.SAMLIdentityProvider, error) {
 	var idp sdk.SAMLIdentityProvider
-	client := getSupplementFromMetadata(m)
-	_, resp, err := client.GetIdentityProvider(ctx, id, &idp)
-
+	_, resp, err := getSupplementFromMetadata(m).GetIdentityProvider(ctx, id, &idp)
 	return &idp, responseErr(resp, err)
 }
 
 func getIdpByName(ctx context.Context, m interface{}, label string) (*sdk.SAMLIdentityProvider, error) {
 	var idps []*sdk.SAMLIdentityProvider
 	queryParams := query.Params{Limit: 1, Q: label}
-	client := getSupplementFromMetadata(m)
-	_, resp, err := client.ListIdentityProviders(ctx, &idps, &queryParams)
-
+	_, resp, err := getSupplementFromMetadata(m).ListIdentityProviders(ctx, &idps, &queryParams)
 	if len(idps) > 0 {
 		return idps[0], nil
 	}
-
 	return nil, responseErr(resp, err)
 }

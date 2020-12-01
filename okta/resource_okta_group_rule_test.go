@@ -45,9 +45,9 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 	name2 := buildResourceName(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createCheckResourceDestroy(groupRule, doesGroupRuleExist),
+		CheckDestroy:      createCheckResourceDestroy(groupRule, doesGroupRuleExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

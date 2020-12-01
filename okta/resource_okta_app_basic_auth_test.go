@@ -17,9 +17,9 @@ func TestAccAppBasicAuthApplication_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appBasicAuth)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createCheckResourceDestroy(appBasicAuth, createDoesAppExist(okta.NewBasicAuthApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appBasicAuth, createDoesAppExist(okta.NewBasicAuthApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

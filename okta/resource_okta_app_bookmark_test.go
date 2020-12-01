@@ -17,9 +17,9 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appBookmark)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createCheckResourceDestroy(appBookmark, createDoesAppExist(okta.NewBookmarkApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(okta.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

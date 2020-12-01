@@ -49,8 +49,8 @@ var userProfileDataSchema = map[string]*schema.Schema{
 		Computed: true,
 	},
 	"custom_profile_attributes": {
-		Type:      schema.TypeString,
-		Computed:  true,
+		Type:     schema.TypeString,
+		Computed: true,
 	},
 	"department": {
 		Type:     schema.TypeString,

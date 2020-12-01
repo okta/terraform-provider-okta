@@ -19,9 +19,9 @@ func TestAccOktaPolicySignon_defaultError(t *testing.T) {
 	config := testOktaPolicySignOnDefaultErrors(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createPolicyCheckDestroy(policySignOn),
+		CheckDestroy:      createPolicyCheckDestroy(policySignOn),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -40,9 +40,9 @@ func TestAccOktaPolicySignon_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", policySignOn)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createPolicyCheckDestroy(policySignOn),
+		CheckDestroy:      createPolicyCheckDestroy(policySignOn),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

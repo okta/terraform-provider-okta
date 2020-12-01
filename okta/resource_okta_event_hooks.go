@@ -38,10 +38,9 @@ func resourceEventHook() *schema.Resource {
 				Type:     schema.TypeMap,
 				Optional: true,
 				Elem: &schema.Schema{
-					Type:     schema.TypeString,
-					Required: true,
+					Type: schema.TypeString,
 				},
-				DiffSuppressFunc:func(k, old, new string, d *schema.ResourceData) bool {
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					if k == "auth.type" && new == "" {
 						return true
 					}
@@ -71,10 +70,9 @@ func resourceEventHook() *schema.Resource {
 				Type:     schema.TypeMap,
 				Required: true,
 				Elem: &schema.Schema{
-					Type:     schema.TypeString,
-					Required: true,
+					Type: schema.TypeString,
 				},
-				DiffSuppressFunc:func(k, old, new string, d *schema.ResourceData) bool {
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					if k == "channel.type" && new == "" {
 						return true
 					}
@@ -227,8 +225,8 @@ func flattenEventHookAuth(d *schema.ResourceData, c *okta.EventHookChannel) map[
 	auth := map[string]interface{}{}
 	if c.Config.AuthScheme != nil {
 		auth = map[string]interface{}{
-			"key":  c.Config.AuthScheme.Key,
-			"type": c.Config.AuthScheme.Type,
+			"key":   c.Config.AuthScheme.Key,
+			"type":  c.Config.AuthScheme.Type,
 			"value": d.Get("auth").(map[string]interface{})["value"],
 		}
 	}

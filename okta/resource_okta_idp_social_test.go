@@ -19,9 +19,9 @@ func TestAccOktaIdpSocial_crud(t *testing.T) {
 	googleName := fmt.Sprintf("%s.google", idpSocial)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createCheckResourceDestroy(idpSocial, createDoesIdpExist(&sdk.SAMLIdentityProvider{})),
+		CheckDestroy:      createCheckResourceDestroy(idpSocial, createDoesIdpExist(&sdk.SAMLIdentityProvider{})),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

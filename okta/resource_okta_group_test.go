@@ -35,9 +35,9 @@ func TestAccOktaGroups_crud(t *testing.T) {
 	addUsersConfig := mgr.GetFixtures("okta_group_with_users.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createCheckResourceDestroy(oktaGroup, doesGroupExist),
+		CheckDestroy:      createCheckResourceDestroy(oktaGroup, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

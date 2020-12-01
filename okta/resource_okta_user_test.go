@@ -42,9 +42,9 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 	email := fmt.Sprintf("test-acc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: testAccCheckUserDestroy,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:  config,
@@ -110,9 +110,9 @@ func TestAccOktaUser_groupMembership(t *testing.T) {
 	email := fmt.Sprintf("test-acc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: testAccCheckUserDestroy,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -152,9 +152,9 @@ func TestAccOktaUser_invalidCustomProfileAttribute(t *testing.T) {
 	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: testAccCheckUserDestroy,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testOktaUserConfigInvalidCustomProfileAttribute(rName),
@@ -174,9 +174,9 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 	email := fmt.Sprintf("test-acc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: testAccCheckUserDestroy,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -247,9 +247,9 @@ func TestAccOktaUser_updateCredentials(t *testing.T) {
 	email := fmt.Sprintf("test-acc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: testAccCheckUserDestroy,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -286,9 +286,9 @@ func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
 	email := fmt.Sprintf("test-acc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: testAccCheckUserDestroy,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -313,9 +313,9 @@ func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
 	config := mgr.GetFixtures("deprovisioned.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: testAccCheckUserDestroy,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -332,9 +332,9 @@ func TestAccOktaUser_validRole(t *testing.T) {
 	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: testAccCheckUserDestroy,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testOktaUserConfigValidRole(rName),

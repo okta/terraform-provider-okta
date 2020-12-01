@@ -20,9 +20,9 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 	newUpdate := mgr.GetFixtures("force_new_update.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: testAccCheckUserDestroy,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

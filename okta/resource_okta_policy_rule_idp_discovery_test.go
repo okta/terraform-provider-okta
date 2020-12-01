@@ -25,9 +25,9 @@ func TestAccOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", policyRuleIdpDiscovery)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createRuleCheckDestroy(policyRuleIdpDiscovery),
+		CheckDestroy:      createRuleCheckDestroy(policyRuleIdpDiscovery),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
