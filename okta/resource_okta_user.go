@@ -354,6 +354,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 }
 
 func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	logger(m).Info("reading user", "id", d.Id())
 	client := getOktaClientFromMetadata(m)
 	user, resp, err := client.User.GetUser(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
@@ -386,7 +387,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 }
 
 func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("updating user", "login", d.Get("login").(string))
+	logger(m).Info("updating user", "id", d.Id())
 	status := d.Get("status").(string)
 	statusChange := d.HasChange("status")
 
@@ -491,6 +492,7 @@ func hasProfileChange(d *schema.ResourceData) bool {
 }
 
 func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	logger(m).Info("deleting user", "id", d.Id())
 	err := ensureUserDelete(ctx, d.Id(), d.Get("status").(string), getOktaClientFromMetadata(m))
 	if err != nil {
 		return diag.FromErr(err)
