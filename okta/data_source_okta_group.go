@@ -16,6 +16,12 @@ func dataSourceGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"type": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "Type of the group. When specified in the terraform resource, will act as a filter when searching for the group",
+				ValidateDiagFunc: stringInSlice([]string{"OKTA_GROUP", "APP_GROUP", "BUILT_IN"}),
+			},
 			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -42,16 +48,22 @@ func dataSourceGroupRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 func findGroup(ctx context.Context, name string, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-	groups, _, err := client.Group.ListGroups(ctx, &query.Params{Q: name})
+	searchParams := &query.Params{Q: name}
+	if d.Get("type") != nil && d.Get("type").(string) != "" {
+		searchParams.Filter = fmt.Sprintf("type eq \"%s\"", d.Get("type").(string))
+	}
+	groups, _, err := client.Group.ListGroups(ctx, searchParams)
 	if err != nil {
 		return diag.Errorf("failed to query for groups: %v", err)
 	} else if len(groups) < 1 {
+		if d.Get("type") != nil {
+			return diag.Errorf("group with name '%s' and type '%s' does not exist", name, d.Get("type").(string))
+		}
 		return diag.Errorf("group with name '%s' does not exist", name)
 	}
-
 	d.SetId(groups[0].Id)
 	_ = d.Set("description", groups[0].Profile.Description)
-
+	_ = d.Set("type", groups[0].Type)
 	if d.Get("include_users").(bool) {
 		userIDList, err := listGroupUserIDs(ctx, m, d.Id())
 		if err != nil {
