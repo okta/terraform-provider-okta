@@ -11,7 +11,7 @@ func deleteTestApps(client *testClient) error {
 	if err != nil {
 		return err
 	}
-	appList, err := listApps(c, &appFilters{LabelPrefix: testResourcePrefix})
+	appList, err := listApps(context.Background(), c, &appFilters{LabelPrefix: testResourcePrefix})
 
 	if err != nil {
 		return err
@@ -27,7 +27,7 @@ func deleteTestApps(client *testClient) error {
 
 		resp, err := client.oktaClient.Application.DeleteApplication(context.Background(), app.ID)
 
-		if err != nil && is404(resp.StatusCode) {
+		if is404(resp) {
 			warnings = append(warnings, warn)
 		}
 	}

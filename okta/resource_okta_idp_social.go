@@ -1,23 +1,23 @@
 package okta
 
 import (
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceIdpSocial() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceIdpSocialCreate,
-		Read:   resourceIdpSocialRead,
-		Update: resourceIdpSocialUpdate,
-		Delete: resourceIdpDelete,
-		Exists: getIdentityProviderExists(&sdk.SAMLIdentityProvider{}),
+		CreateContext: resourceIdpSocialCreate,
+		ReadContext:   resourceIdpSocialRead,
+		UpdateContext: resourceIdpSocialUpdate,
+		DeleteContext: resourceIdpDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-
 		// Note the base schema
 		Schema: buildIdpSchema(map[string]*schema.Schema{
 			"authorization_url":     optURLSchema,
@@ -25,12 +25,9 @@ func resourceIdpSocial() *schema.Resource {
 			"token_url":             optURLSchema,
 			"token_binding":         optBindingSchema,
 			"type": {
-				Type:     schema.TypeString,
-				Required: true,
-				ValidateFunc: validation.StringInSlice(
-					[]string{"FACEBOOK", "LINKEDIN", "MICROSOFT", "GOOGLE"},
-					false,
-				),
+				Type:             schema.TypeString,
+				Required:         true,
+				ValidateDiagFunc: stringInSlice([]string{"FACEBOOK", "LINKEDIN", "MICROSOFT", "GOOGLE"}),
 			},
 			"scopes": {
 				Type:     schema.TypeSet,
@@ -38,10 +35,10 @@ func resourceIdpSocial() *schema.Resource {
 				Required: true,
 			},
 			"protocol_type": {
-				Type:         schema.TypeString,
-				Default:      "OAUTH2",
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"OIDC", "OAUTH2"}, false),
+				Type:             schema.TypeString,
+				Default:          "OAUTH2",
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"OIDC", "OAUTH2"}),
 			},
 			"client_id": {
 				Type:     schema.TypeString,
@@ -67,42 +64,40 @@ func resourceIdpSocial() *schema.Resource {
 				Optional: true,
 			},
 			"issuer_mode": {
-				Type:         schema.TypeString,
-				Description:  "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
-				ValidateFunc: validation.StringInSlice([]string{"ORG_URL", "CUSTOM_URL"}, false),
-				Default:      "ORG_URL",
-				Optional:     true,
+				Type:             schema.TypeString,
+				Description:      "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
+				ValidateDiagFunc: stringInSlice([]string{"ORG_URL", "CUSTOM_URL"}),
+				Default:          "ORG_URL",
+				Optional:         true,
 			},
 		}),
 	}
 }
 
-func resourceIdpSocialCreate(d *schema.ResourceData, m interface{}) error {
+func resourceIdpSocialCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	idp := buildidpSocial(d)
-	if err := createIdp(m, idp); err != nil {
-		return err
+	_, _, err := getSupplementFromMetadata(m).CreateIdentityProvider(ctx, idp, nil)
+	if err != nil {
+		return diag.Errorf("failed to create social identity provider: %v", err)
 	}
 	d.SetId(idp.ID)
-
-	if err := setIdpStatus(idp.ID, idp.Status, d.Get("status").(string), m); err != nil {
-		return err
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(m), idp.Status)
+	if err != nil {
+		return diag.Errorf("failed to change social identity provider's status: %v", err)
 	}
-
-	return resourceIdpSocialRead(d, m)
+	return resourceIdpSocialRead(ctx, d, m)
 }
 
-func resourceIdpSocialRead(d *schema.ResourceData, m interface{}) error {
+func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	idp := &sdk.OIDCIdentityProvider{}
-
-	if err := fetchIdp(d.Id(), m, idp); err != nil {
-		return err
+	_, resp, err := getSupplementFromMetadata(m).GetIdentityProvider(ctx, d.Id(), idp)
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get SAML identity provider: %v", err)
 	}
-
-	if idp == nil {
+	if idp.ID == "" {
 		d.SetId("")
 		return nil
 	}
-
 	_ = d.Set("name", idp.Name)
 	_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkew)
 	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
@@ -115,8 +110,9 @@ func resourceIdpSocialRead(d *schema.ResourceData, m interface{}) error {
 	_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientID)
 	_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
 
-	if err := syncGroupActions(d, idp.Policy.Provisioning.Groups); err != nil {
-		return err
+	err = syncGroupActions(d, idp.Policy.Provisioning.Groups)
+	if err != nil {
+		return diag.Errorf("failed to set social identity provider properties: %v", err)
 	}
 
 	if idp.IssuerMode != "" {
@@ -134,22 +130,24 @@ func resourceIdpSocialRead(d *schema.ResourceData, m interface{}) error {
 			setMap["account_link_group_include"] = convertStringSetToInterface(idp.Policy.AccountLink.Filter.Groups.Include)
 		}
 	}
-
-	return setNonPrimitives(d, setMap)
+	err = setNonPrimitives(d, setMap)
+	if err != nil {
+		return diag.Errorf("failed to set social identity provider properties: %v", err)
+	}
+	return nil
 }
 
-func resourceIdpSocialUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceIdpSocialUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	idp := buildidpSocial(d)
-
-	if err := updateIdp(d.Id(), m, idp); err != nil {
-		return err
+	_, _, err := getSupplementFromMetadata(m).UpdateIdentityProvider(ctx, d.Id(), idp, nil)
+	if err != nil {
+		return diag.Errorf("failed to update social identity provider: %v", err)
 	}
-
-	if err := setIdpStatus(idp.ID, idp.Status, d.Get("status").(string), m); err != nil {
-		return err
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(m), idp.Status)
+	if err != nil {
+		return diag.Errorf("failed to update social identity provider's status: %v", err)
 	}
-
-	return resourceIdpSocialRead(d, m)
+	return resourceIdpSocialRead(ctx, d, m)
 }
 
 func buildidpSocial(d *schema.ResourceData) *sdk.OIDCIdentityProvider {

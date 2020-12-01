@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -17,38 +18,33 @@ func TestAccOktaProfileMapping_crud(t *testing.T) {
 	preventDelete := mgr.GetFixtures("prevent_delete.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(oktaProfileMapping, doesOktaProfileExist),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(oktaProfileMapping, doesOktaProfileExist),
 		Steps: []resource.TestStep{
 			{
 				Config: preventDelete,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "delete_when_absent", "false"),
 				),
-				ExpectNonEmptyPlan: true,
 			},
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "delete_when_absent", "true"),
 				),
-				ExpectNonEmptyPlan: true,
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "delete_when_absent", "true"),
 				),
-				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
 }
 
 func doesOktaProfileExist(id string) (bool, error) {
-	client := getSupplementFromMetadata(testAccProvider.Meta())
-	_, response, err := client.GetEmailTemplate(id)
-
+	_, response, err := getSupplementFromMetadata(testAccProvider.Meta()).GetEmailTemplate(context.Background(), id)
 	return doesResourceExist(response, err)
 }

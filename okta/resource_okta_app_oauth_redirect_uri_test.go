@@ -45,7 +45,7 @@ func TestAccAppOAuthApplication_redirectCrud(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{

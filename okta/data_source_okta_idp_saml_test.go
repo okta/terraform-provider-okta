@@ -9,7 +9,7 @@ import (
 
 func TestAccOktaDataSourceIdpSaml_read(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager("okta_idp_saml")
+	mgr := newFixtureManager(idpSaml)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("datasource_id.tf", ri, t)
 
@@ -17,7 +17,7 @@ func TestAccOktaDataSourceIdpSaml_read(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		Providers: testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

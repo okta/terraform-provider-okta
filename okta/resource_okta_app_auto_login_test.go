@@ -18,7 +18,7 @@ func TestAccAppAutoLoginApplication_crud(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: createCheckResourceDestroy(appAutoLogin, createDoesAppExist(okta.NewAutoLoginApplication())),
 		Steps: []resource.TestStep{
 			{

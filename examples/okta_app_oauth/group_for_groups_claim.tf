@@ -6,7 +6,7 @@
 // https://developer.okta.com/docs/guides/create-token-with-groups-claim/create-groups-claim/
 
 resource "okta_group" "whitelist_group" {
-  name = "Whitelist Group"
+  name = "testAcc_replace_with_uuid"
 }
 
 resource "okta_app_oauth" "test" {

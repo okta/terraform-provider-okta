@@ -1,21 +1,21 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceAppUserBaseSchema() *schema.Resource {
 	return &schema.Resource{
-		Create:   resourceAppUserBaseSchemaCreate,
-		Read:     resourceAppUserBaseSchemaRead,
-		Update:   resourceAppUserBaseSchemaUpdate,
-		Delete:   resourceAppUserBaseSchemaDelete,
-		Exists:   resourceAppUserBaseSchemaExists,
-		Importer: createNestedResourceImporter([]string{"app_id", "id"}),
-
+		CreateContext: resourceAppUserBaseSchemaCreate,
+		ReadContext:   resourceAppUserBaseSchemaRead,
+		UpdateContext: resourceAppUserBaseSchemaUpdate,
+		DeleteContext: resourceAppUserBaseSchemaDelete,
+		Importer:      createNestedResourceImporter([]string{"app_id", "id"}),
 		Schema: buildBaseUserSchema(map[string]*schema.Schema{
 			"app_id": {
 				Type:     schema.TypeString,
@@ -25,58 +25,42 @@ func resourceAppUserBaseSchema() *schema.Resource {
 	}
 }
 
-func resourceAppUserBaseSchemaCreate(d *schema.ResourceData, m interface{}) error {
-	if err := updateAppUserBaseSubschema(d, m); err != nil {
+func resourceAppUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if err := updateAppUserBaseSubschema(ctx, d, m); err != nil {
 		return err
 	}
 	d.SetId(fmt.Sprintf("%s/%s", d.Get("app_id").(string), d.Get("index").(string)))
-
-	return resourceAppUserBaseSchemaRead(d, m)
+	return resourceAppUserBaseSchemaRead(ctx, d, m)
 }
 
-func resourceAppUserBaseSchemaExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	subschema, err := getAppUserBaseSubSchema(d, m)
-
-	return subschema != nil, err
-}
-
-func resourceAppUserBaseSchemaRead(d *schema.ResourceData, m interface{}) error {
-	subschema, err := getAppUserBaseSubSchema(d, m)
+func resourceAppUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	us, _, err := getSupplementFromMetadata(m).GetAppUserSchema(ctx, d.Get("app_id").(string))
 	if err != nil {
-		return err
-	} else if subschema == nil {
+		return diag.Errorf("failed to get app user base schema: %v", err)
+	}
+	subschema := getBaseProperty(us, d.Get("index").(string))
+	if subschema == nil {
 		d.SetId("")
 		return nil
 	}
-
 	syncBaseUserSchema(d, subschema)
-
 	return nil
 }
 
-func getAppUserBaseSubSchema(d *schema.ResourceData, m interface{}) (*sdk.UserSubSchema, error) {
-	us, _, err := getSupplementFromMetadata(m).GetAppUserSchema(d.Get("app_id").(string))
-	if err != nil {
-		return nil, err
-	}
-	return getBaseProperty(us, d.Get("index").(string)), nil
-}
-
-func resourceAppUserBaseSchemaUpdate(d *schema.ResourceData, m interface{}) error {
-	if err := updateAppUserBaseSubschema(d, m); err != nil {
+func resourceAppUserBaseSchemaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if err := updateAppUserBaseSubschema(ctx, d, m); err != nil {
 		return err
 	}
-
-	return resourceAppUserBaseSchemaRead(d, m)
+	return resourceAppUserBaseSchemaRead(ctx, d, m)
 }
 
 // can't delete Base
-func resourceAppUserBaseSchemaDelete(d *schema.ResourceData, m interface{}) error {
+func resourceAppUserBaseSchemaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	return nil
 }
 
-// create or modify a  subschema
-func updateAppUserBaseSubschema(d *schema.ResourceData, m interface{}) error {
+// create or modify a subschema
+func updateAppUserBaseSubschema(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	subSchema := &sdk.UserSubSchema{
 		Master: getNullableMaster(d),
 		Title:  d.Get("title").(string),
@@ -89,12 +73,14 @@ func updateAppUserBaseSubschema(d *schema.ResourceData, m interface{}) error {
 		},
 		Required: boolPtr(d.Get("required").(bool)),
 	}
-
 	_, _, err := getSupplementFromMetadata(m).UpdateBaseAppUserSchemaProperty(
+		ctx,
 		d.Get("index").(string),
 		d.Get("app_id").(string),
 		subSchema,
 	)
-
-	return err
+	if err != nil {
+		return diag.Errorf("failed to update application user base schema: %v", err)
+	}
+	return nil
 }

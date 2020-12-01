@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -16,9 +17,9 @@ func TestAccOktaSmsTemplate_crud(t *testing.T) {
 	updated := mgr.GetFixtures("updated.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(templateSms, doesSmsTemplateExist),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(templateSms, doesSmsTemplateExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -39,8 +40,7 @@ func TestAccOktaSmsTemplate_crud(t *testing.T) {
 }
 
 func doesSmsTemplateExist(id string) (bool, error) {
-	client := getSupplementFromMetadata(testAccProvider.Meta())
-	_, response, err := client.GetSmsTemplate(id)
+	_, response, err := getOktaClientFromMetadata(testAccProvider.Meta()).SmsTemplate.GetSmsTemplate(context.Background(), id)
 
 	return doesResourceExist(response, err)
 }

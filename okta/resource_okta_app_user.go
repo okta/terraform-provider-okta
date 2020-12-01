@@ -6,19 +6,19 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceAppUser() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceAppUserCreate,
-		Exists: resourceAppUserExists,
-		Read:   resourceAppUserRead,
-		Update: resourceAppUserUpdate,
-		Delete: resourceAppUserDelete,
+		CreateContext: resourceAppUserCreate,
+		ReadContext:   resourceAppUserRead,
+		UpdateContext: resourceAppUserUpdate,
+		DeleteContext: resourceAppUserDelete,
 		Importer: &schema.ResourceImporter{
-			State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				parts := strings.Split(d.Id(), "/")
 				if len(parts) != 2 {
 					return nil, errors.New("invalid resource import specifier. Use: terraform import <app_id>/<user_id>")
@@ -28,7 +28,7 @@ func resourceAppUser() *schema.Resource {
 				_ = d.Set("user_id", parts[1])
 
 				assignment, _, err := getOktaClientFromMetadata(m).Application.
-					GetApplicationUser(context.Background(), parts[0], parts[1], nil)
+					GetApplicationUser(ctx, parts[0], parts[1], nil)
 
 				if err != nil {
 					return nil, err
@@ -61,91 +61,79 @@ func resourceAppUser() *schema.Resource {
 				Optional:  true,
 			},
 			"profile": {
-				Type:      schema.TypeString,
-				StateFunc: normalizeDataJSON,
-				Optional:  true,
-				Default:   "{}",
+				Type:             schema.TypeString,
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
+				Optional:         true,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
 			},
 		},
 	}
 }
 
-func resourceAppUserExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	client := getOktaClientFromMetadata(m)
-	g, _, err := client.Application.GetApplicationUser(
-		context.Background(),
-		d.Get("app_id").(string),
-		d.Get("user_id").(string),
-		nil,
-	)
-
-	return g != nil, err
-}
-
-func resourceAppUserCreate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	u, _, err := client.Application.AssignUserToApplication(
-		context.Background(),
+func resourceAppUserCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	u, _, err := getOktaClientFromMetadata(m).Application.AssignUserToApplication(
+		ctx,
 		d.Get("app_id").(string),
 		*getAppUser(d),
 	)
-
 	if err != nil {
-		return err
+		return diag.Errorf("failed to assign user to application: %v", err)
 	}
-
 	d.SetId(u.Id)
-
-	return resourceAppUserRead(d, m)
+	return resourceAppUserRead(ctx, d, m)
 }
 
-func resourceAppUserUpdate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	_, _, err := client.Application.UpdateApplicationUser(
-		context.Background(),
+func resourceAppUserUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	_, _, err := getOktaClientFromMetadata(m).Application.UpdateApplicationUser(
+		ctx,
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
 		*getAppUser(d),
 	)
-
 	if err != nil {
-		return err
+		return diag.Errorf("failed to update application's user: %v", err)
 	}
-
-	return resourceAppUserRead(d, m)
+	return resourceAppUserRead(ctx, d, m)
 }
 
-func resourceAppUserRead(d *schema.ResourceData, m interface{}) error {
+func resourceAppUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	u, resp, err := getOktaClientFromMetadata(m).Application.GetApplicationUser(
-		context.Background(),
+		ctx,
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
 		nil,
 	)
-
-	if resp != nil && is404(resp.StatusCode) {
+	if is404(resp) {
 		d.SetId("")
 		return nil
 	}
-
 	if err != nil {
-		return err
+		return diag.Errorf("failed to get application's user: %v", err)
 	}
-
-	_ = d.Set("profile", u.Profile)
+	var rawProfile string
+	if u.Profile != nil {
+		p, _ := json.Marshal(u.Profile)
+		rawProfile = string(p)
+	}
+	_ = d.Set("profile", rawProfile)
 	_ = d.Set("username", u.Credentials.UserName)
-
 	return nil
 }
 
-func resourceAppUserDelete(d *schema.ResourceData, m interface{}) error {
+func resourceAppUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	_, err := getOktaClientFromMetadata(m).Application.DeleteApplicationUser(
-		context.Background(),
+		ctx,
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
 		nil,
 	)
-	return err
+	if err != nil {
+		return diag.Errorf("failed to delete application's user: %v", err)
+	}
+	return nil
 }
 
 func getAppUser(d *schema.ResourceData) *okta.AppUser {

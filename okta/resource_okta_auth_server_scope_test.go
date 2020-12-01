@@ -17,7 +17,7 @@ func TestAccOktaAuthServerScope_crud(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: createCheckResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{

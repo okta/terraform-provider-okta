@@ -24,7 +24,7 @@ func sweepUsers(client *testClient) error {
 	}
 
 	for _, u := range users {
-		if err := ensureUserDelete(u.Id, u.Status, client.oktaClient); err != nil {
+		if err := ensureUserDelete(context.Background(), u.Id, u.Status, client.oktaClient); err != nil {
 			errorList = append(errorList, err)
 		}
 	}
@@ -43,7 +43,7 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -111,7 +111,7 @@ func TestAccOktaUser_groupMembership(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -153,7 +153,7 @@ func TestAccOktaUser_invalidCustomProfileAttribute(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -175,7 +175,7 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -248,7 +248,7 @@ func TestAccOktaUser_updateCredentials(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -287,7 +287,7 @@ func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -314,7 +314,7 @@ func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -333,19 +333,19 @@ func TestAccOktaUser_validRole(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testOktaUserConfigValidRole(rName),
-				ExpectError: regexp.MustCompile("GROUP_ADMIN is not a valid Okta role"),
+				ExpectError: regexp.MustCompile("'GROUP_ADMIN' is not a valid Okta role"),
 			},
 		},
 	})
 }
 
 func testAccCheckUserDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*Config).oktaClient
+	client := getOktaClientFromMetadata(testAccProvider.Meta())
 
 	for _, r := range s.RootModule().Resources {
 		if _, resp, err := client.User.GetUser(context.Background(), r.Primary.ID); err != nil {

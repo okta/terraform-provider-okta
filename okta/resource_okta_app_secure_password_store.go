@@ -3,19 +3,18 @@ package okta
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func resourceAppSecurePasswordStore() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceAppSecurePasswordStoreCreate,
-		Read:   resourceAppSecurePasswordStoreRead,
-		Update: resourceAppSecurePasswordStoreUpdate,
-		Delete: resourceAppSecurePasswordStoreDelete,
-		Exists: resourceAppExists,
+		CreateContext: resourceAppSecurePasswordStoreCreate,
+		ReadContext:   resourceAppSecurePasswordStoreRead,
+		UpdateContext: resourceAppSecurePasswordStoreUpdate,
+		DeleteContext: resourceAppSecurePasswordStoreDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -34,10 +33,10 @@ func resourceAppSecurePasswordStore() *schema.Resource {
 				Description: "Login username field",
 			},
 			"url": {
-				Type:         schema.TypeString,
-				Required:     true,
-				Description:  "Login URL",
-				ValidateFunc: validateIsURL,
+				Type:             schema.TypeString,
+				Required:         true,
+				Description:      "Login URL",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"optional_field1": {
 				Type:        schema.TypeString,
@@ -73,16 +72,14 @@ func resourceAppSecurePasswordStore() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "EDIT_USERNAME_AND_PASSWORD",
-				ValidateFunc: validation.StringInSlice(
+				ValidateDiagFunc: stringInSlice(
 					[]string{
 						"EDIT_USERNAME_AND_PASSWORD",
 						"ADMIN_SETS_CREDENTIALS",
 						"EDIT_PASSWORD_ONLY",
 						"EXTERNAL_PASSWORD_SYNC",
 						"SHARED_USERNAME_AND_PASSWORD",
-					},
-					false,
-				),
+					}),
 				Description: "Application credentials scheme",
 			},
 			"reveal_password": {
@@ -105,35 +102,28 @@ func resourceAppSecurePasswordStore() *schema.Resource {
 	}
 }
 
-func resourceAppSecurePasswordStoreCreate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
+func resourceAppSecurePasswordStoreCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	app := buildAppSecurePasswordStore(d)
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(context.Background(), app, params)
-
+	_, _, err := getOktaClientFromMetadata(m).Application.CreateApplication(ctx, app, params)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create secure password store application: %v", err)
 	}
-
 	d.SetId(app.Id)
-
-	return resourceAppSecurePasswordStoreRead(d, m)
+	return resourceAppSecurePasswordStoreRead(ctx, d, m)
 }
 
-func resourceAppSecurePasswordStoreRead(d *schema.ResourceData, m interface{}) error {
+func resourceAppSecurePasswordStoreRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	app := okta.NewSecurePasswordStoreApplication()
-	err := fetchApp(d, m, app)
-
-	if app == nil {
+	err := fetchApp(ctx, d, m, app)
+	if err != nil {
+		return diag.Errorf("failed to get secure password store application: %v", err)
+	}
+	if app.Id == "" {
 		d.SetId("")
 		return nil
 	}
-
-	if err != nil {
-		return err
-	}
-
 	_ = d.Set("password_field", app.Settings.App.PasswordField)
 	_ = d.Set("username_field", app.Settings.App.UsernameField)
 	_ = d.Set("url", app.Settings.App.Url)
@@ -150,39 +140,29 @@ func resourceAppSecurePasswordStoreRead(d *schema.ResourceData, m interface{}) e
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
-
 	return nil
 }
 
-func resourceAppSecurePasswordStoreUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceAppSecurePasswordStoreUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
 	app := buildAppSecurePasswordStore(d)
-	_, _, err := client.Application.UpdateApplication(context.Background(), d.Id(), app)
-
+	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to update secure password store application: %v", err)
 	}
-
-	desiredStatus := d.Get("status").(string)
-	err = setAppStatus(d, client, app.Status, desiredStatus)
-
+	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set secure password store application status: %v", err)
 	}
-
-	return resourceAppSecurePasswordStoreRead(d, m)
+	return resourceAppSecurePasswordStoreRead(ctx, d, m)
 }
 
-func resourceAppSecurePasswordStoreDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	_, err := client.Application.DeactivateApplication(context.Background(), d.Id())
+func resourceAppSecurePasswordStoreDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to delete secure password store application: %v", err)
 	}
-
-	_, err = client.Application.DeleteApplication(context.Background(), d.Id())
-
-	return err
+	return nil
 }
 
 func buildAppSecurePasswordStore(d *schema.ResourceData) *okta.SecurePasswordStoreApplication {

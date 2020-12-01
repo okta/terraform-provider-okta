@@ -51,12 +51,12 @@ The following arguments are supported:
 * `auth` - (Optional) Authentication required for event hook request.
   * `key` - (Required) Key to use for authentication, usually the header name, for example `"Authorization"`.
   * `value` - (Required) Authentication secret.
-  * `type` - (Required) Auth type. Currently only `"HEADER"` is supported.
+  * `type` - (Optional) Auth type. Currently, the only supported type is `"HEADER"`.
 
 * `channel` - (Required) Details of the endpoint the event hook will hit.
-  * `version` - (Required) The version of the channel. Currently only `"1.0.0"` is supported.
+  * `version` - (Required) The version of the channel. The currently-supported version is `"1.0.0"`.
   * `uri` - (Required) The URI the hook will hit.
-  * `type` - (Required) The type of hook to trigger. Currently only `"HTTP"` is supported.
+  * `type` - (Optional) The type of hook to trigger. Currently, the only supported type is `"HTTP"`.
 
 ## Attributes Reference
 

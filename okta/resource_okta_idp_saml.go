@@ -1,19 +1,20 @@
 package okta
 
 import (
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceIdpSaml() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceIdpSamlCreate,
-		Read:   resourceIdpSamlRead,
-		Update: resourceIdpSamlUpdate,
-		Delete: resourceIdpDelete,
-		Exists: getIdentityProviderExists(&sdk.SAMLIdentityProvider{}),
+		CreateContext: resourceIdpSamlCreate,
+		ReadContext:   resourceIdpSamlRead,
+		UpdateContext: resourceIdpSamlUpdate,
+		DeleteContext: resourceIdpDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -24,23 +25,20 @@ func resourceIdpSaml() *schema.Resource {
 			},
 			"acs_binding": bindingSchema,
 			"acs_type": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "INSTANCE",
-				ValidateFunc: validation.StringInSlice([]string{"INSTANCE", "ORG"}, false),
+				Type:             schema.TypeString,
+				Optional:         true,
+				Default:          "INSTANCE",
+				ValidateDiagFunc: stringInSlice([]string{"INSTANCE", "ORG"}),
 			},
 			"sso_url": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"sso_binding": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ValidateFunc: validation.StringInSlice(
-					[]string{postBindingAlias, redirectBindingAlias},
-					false,
-				),
-				Default: postBindingAlias,
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{postBindingAlias, redirectBindingAlias}),
+				Default:          postBindingAlias,
 			},
 			"sso_destination": {
 				Type:     schema.TypeString,
@@ -77,31 +75,30 @@ func resourceIdpSaml() *schema.Resource {
 	}
 }
 
-func resourceIdpSamlCreate(d *schema.ResourceData, m interface{}) error {
+func resourceIdpSamlCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	idp := buildidpSaml(d)
-	if err := createIdp(m, idp); err != nil {
-		return err
+	_, _, err := getSupplementFromMetadata(m).CreateIdentityProvider(ctx, idp, nil)
+	if err != nil {
+		return diag.Errorf("failed to create SAML identity provider: %v", err)
 	}
 	d.SetId(idp.ID)
-
-	if err := setIdpStatus(d.Id(), idp.Status, d.Get("status").(string), m); err != nil {
-		return err
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(m), idp.Status)
+	if err != nil {
+		return diag.Errorf("failed to change SAML identity provider's status: %v", err)
 	}
-
-	return resourceIdpSamlRead(d, m)
+	return resourceIdpSamlRead(ctx, d, m)
 }
 
-func resourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
+func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	idp := &sdk.SAMLIdentityProvider{}
-	if err := fetchIdp(d.Id(), m, idp); err != nil {
-		return err
+	_, resp, err := getSupplementFromMetadata(m).GetIdentityProvider(ctx, d.Id(), idp)
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get SAML identity provider: %v", err)
 	}
-
-	if idp == nil {
+	if idp.ID == "" {
 		d.SetId("")
 		return nil
 	}
-
 	_ = d.Set("name", idp.Name)
 	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
 	_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
@@ -115,41 +112,40 @@ func resourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
 	_ = d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
 	syncAlgo(d, idp.Protocol.Algorithms)
 
-	if err := syncGroupActions(d, idp.Policy.Provisioning.Groups); err != nil {
-		return err
+	err = syncGroupActions(d, idp.Policy.Provisioning.Groups)
+	if err != nil {
+		return diag.Errorf("failed to set SAML identity provider properties: %v", err)
 	}
-
 	if idp.IssuerMode != "" {
 		_ = d.Set("issuer_mode", idp.IssuerMode)
 	}
-
 	setMap := map[string]interface{}{
 		"subject_format": convertStringSetToInterface(idp.Policy.Subject.Format),
 	}
-
 	if idp.Policy.AccountLink != nil {
 		_ = d.Set("account_link_action", idp.Policy.AccountLink.Action)
-
 		if idp.Policy.AccountLink.Filter != nil {
 			setMap["account_link_group_include"] = convertStringSetToInterface(idp.Policy.AccountLink.Filter.Groups.Include)
 		}
 	}
-
-	return setNonPrimitives(d, setMap)
+	err = setNonPrimitives(d, setMap)
+	if err != nil {
+		return diag.Errorf("failed to set SAML identity provider properties: %v", err)
+	}
+	return nil
 }
 
-func resourceIdpSamlUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceIdpSamlUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	idp := buildidpSaml(d)
-
-	if err := updateIdp(d.Id(), m, idp); err != nil {
-		return err
+	_, _, err := getSupplementFromMetadata(m).UpdateIdentityProvider(ctx, d.Id(), idp, nil)
+	if err != nil {
+		return diag.Errorf("failed to update SAML identity provider: %v", err)
 	}
-
-	if err := setIdpStatus(idp.ID, idp.Status, d.Get("status").(string), m); err != nil {
-		return err
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(m), idp.Status)
+	if err != nil {
+		return diag.Errorf("failed to update SAML identity provider's status: %v", err)
 	}
-
-	return resourceIdpSamlRead(d, m)
+	return resourceIdpSamlRead(ctx, d, m)
 }
 
 func buildidpSaml(d *schema.ResourceData) *sdk.SAMLIdentityProvider {

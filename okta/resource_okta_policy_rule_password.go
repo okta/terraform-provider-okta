@@ -2,134 +2,88 @@ package okta
 
 import (
 	"context"
-	"fmt"
-	"log"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourcePolicyPasswordRule() *schema.Resource {
 	return &schema.Resource{
-		Exists:   resourcePolicyRuleExists,
-		Create:   resourcePolicyPasswordRuleCreate,
-		Read:     resourcePolicyPasswordRuleRead,
-		Update:   resourcePolicyPasswordRuleUpdate,
-		Delete:   resourcePolicyPasswordRuleDelete,
-		Importer: createPolicyRuleImporter(),
+		CreateContext: resourcePolicyPasswordRuleCreate,
+		ReadContext:   resourcePolicyPasswordRuleRead,
+		UpdateContext: resourcePolicyPasswordRuleUpdate,
+		DeleteContext: resourcePolicyPasswordRuleDelete,
+		Importer:      createPolicyRuleImporter(),
 
 		Schema: buildRuleSchema(map[string]*schema.Schema{
 			"password_change": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"ALLOW", "DENY"}, false),
-				Description:  "Allow or deny a user to change their password: ALLOW or DENY. Default = ALLOW",
-				Default:      "ALLOW",
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"ALLOW", "DENY"}),
+				Description:      "Allow or deny a user to change their password: ALLOW or DENY. Default = ALLOW",
+				Default:          "ALLOW",
 			},
 			"password_reset": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"ALLOW", "DENY"}, false),
-				Description:  "Allow or deny a user to reset their password: ALLOW or DENY. Default = ALLOW",
-				Default:      "ALLOW",
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"ALLOW", "DENY"}),
+				Description:      "Allow or deny a user to reset their password: ALLOW or DENY. Default = ALLOW",
+				Default:          "ALLOW",
 			},
 			"password_unlock": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"ALLOW", "DENY"}, false),
-				Description:  "Allow or deny a user to unlock. Default = DENY",
-				Default:      "DENY",
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"ALLOW", "DENY"}),
+				Description:      "Allow or deny a user to unlock. Default = DENY",
+				Default:          "DENY",
 			},
 		}),
 	}
 }
 
-func resourcePolicyPasswordRuleCreate(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultRule(d); err != nil {
-		return err
-	}
-
-	log.Printf("[INFO] Creating Policy Rule %v", d.Get("name").(string))
+func resourcePolicyPasswordRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	template := buildPolicyRulePassword(d)
-	rule, err := createRule(d, m, template, policyRulePassword)
+	err := createRule(ctx, d, m, template, policyRulePassword)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create password policy rule: %v", err)
 	}
-
-	// We want to put this under Terraform's control even if priority is invalid.
-	d.SetId(rule.Id)
-	err = validatePriority(template.Priority, rule.Priority)
-	if err != nil {
-		return err
-	}
-
-	return resourcePolicyPasswordRuleRead(d, m)
+	return resourcePolicyPasswordRuleRead(ctx, d, m)
 }
 
-func resourcePolicyPasswordRuleRead(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] List Policy Rule %v", d.Get("name").(string))
-
-	rule, err := getPolicyRule(d, m)
-
+func resourcePolicyPasswordRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	rule, err := getPolicyRule(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to get password policy rule: %v", err)
+	}
 	if rule == nil {
-		d.SetId("")
 		return nil
 	}
-
-	if err != nil {
-		return err
-	}
-
 	// Update with upstream state to prevent stale state
 	_ = d.Set("password_change", rule.Actions.PasswordChange.Access)
 	_ = d.Set("password_unlock", rule.Actions.SelfServiceUnlock.Access)
 	_ = d.Set("password_reset", rule.Actions.SelfServicePasswordReset.Access)
-
-	return syncRuleFromUpstream(d, rule)
+	err = syncRuleFromUpstream(d, rule)
+	if err != nil {
+		return diag.Errorf("failed to sync password policy rule: %v", err)
+	}
+	return nil
 }
 
-func resourcePolicyPasswordRuleUpdate(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultRule(d); err != nil {
-		return err
-	}
-
-	log.Printf("[INFO] Update Policy Rule %v", d.Get("name").(string))
+func resourcePolicyPasswordRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	template := buildPolicyRulePassword(d)
-
-	rule, err := updateRule(d, m, template)
+	err := updateRule(ctx, d, m, template)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to update password policy rule: %v", err)
 	}
-
-	err = validatePriority(template.Priority, rule.Priority)
-	if err != nil {
-		return err
-	}
-
-	return resourcePolicyPasswordRuleRead(d, m)
+	return resourcePolicyPasswordRuleRead(ctx, d, m)
 }
 
-func resourcePolicyPasswordRuleDelete(d *schema.ResourceData, m interface{}) error {
-	return deleteRule(d, m)
-}
-
-// activate or deactivate a policy rule according to the terraform schema status field
-func policyRuleActivate(d *schema.ResourceData, m interface{}) error {
-	client := getSupplementFromMetadata(m)
-
-	if d.Get("status").(string) == statusActive {
-		_, err := client.ActivatePolicyRule(context.Background(), d.Get("policyid").(string), d.Id())
-		if err != nil {
-			return fmt.Errorf("failed to activate policy rule: %v", err)
-		}
-	}
-	if d.Get("status").(string) == statusInactive {
-		_, err := client.DeactivatePolicyRule(context.Background(), d.Get("policyid").(string), d.Id())
-		if err != nil {
-			return fmt.Errorf("failed to deactivate policy rule: %v", err)
-		}
+func resourcePolicyPasswordRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := deleteRule(ctx, d, m, false)
+	if err != nil {
+		return diag.Errorf("failed to delete password policy rule: %v", err)
 	}
 	return nil
 }

@@ -19,7 +19,7 @@ func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: testAccCheckTrustedOriginDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -41,7 +41,7 @@ func testAccCheckTrustedOriginDestroy(s *terraform.State) error {
 
 	for _, r := range s.RootModule().Resources {
 		_, resp, err := client.TrustedOrigin.GetOrigin(context.Background(), r.Primary.ID)
-		if resp != nil && is404(resp.StatusCode) {
+		if is404(resp) {
 			continue
 		}
 		if err != nil {

@@ -44,7 +44,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: createPolicyCheckDestroy(policyPassword),
 		Steps: []resource.TestStep{
 			{

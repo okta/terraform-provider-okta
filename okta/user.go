@@ -11,7 +11,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 const (
@@ -50,9 +49,8 @@ var userProfileDataSchema = map[string]*schema.Schema{
 		Computed: true,
 	},
 	"custom_profile_attributes": {
-		Type: schema.TypeString,
-		// StateFunc: normalizeDataJSON,
-		Computed: true,
+		Type:      schema.TypeString,
+		Computed:  true,
 	},
 	"department": {
 		Type:     schema.TypeString,
@@ -177,36 +175,34 @@ var userProfileDataSchema = map[string]*schema.Schema{
 	},
 }
 
+var validAdminRoles = []string{"SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN", "HELP_DESK_ADMIN", "REPORT_ADMIN", "GROUP_MEMBERSHIP_ADMIN"}
+
 func buildUserDataSourceSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
 	return buildSchema(userProfileDataSchema, target)
 }
 
-func assignAdminRolesToUser(u string, r []string, c *okta.Client) error {
-	for _, role := range r {
-		if contains(sdk.ValidAdminRoles, role) {
+func assignAdminRolesToUser(ctx context.Context, userID string, roles []string, client *okta.Client) error {
+	for _, role := range roles {
+		if contains(validAdminRoles, role) {
 			roleStruct := okta.AssignRoleRequest{Type: role}
-			_, _, err := c.User.AssignRoleToUser(context.Background(), u, roleStruct, nil)
-
+			_, _, err := client.User.AssignRoleToUser(ctx, userID, roleStruct, nil)
 			if err != nil {
-				return fmt.Errorf("[ERROR] Error Assigning Admin Roles to User: %v", err)
+				return fmt.Errorf("failed to assign role '%s' to user '%s': %w", role, userID, err)
 			}
 		} else {
-			return fmt.Errorf("[ERROR] %v is not a valid Okta role", role)
+			return fmt.Errorf("'%s' is not a valid Okta role", role)
 		}
 	}
-
 	return nil
 }
 
-func assignGroupsToUser(u string, g []string, c *okta.Client) error {
-	for _, group := range g {
-		_, err := c.Group.AddUserToGroup(context.Background(), group, u)
-
+func assignGroupsToUser(ctx context.Context, userID string, groups []string, c *okta.Client) error {
+	for _, group := range groups {
+		_, err := c.Group.AddUserToGroup(ctx, group, userID)
 		if err != nil {
-			return fmt.Errorf("[ERROR] Error Assigning Group to User: %v", err)
+			return fmt.Errorf("failed to assign group '%s' to user '%s': %w", group, userID, err)
 		}
 	}
-
 	return nil
 }
 
@@ -251,8 +247,8 @@ func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 	return &profile
 }
 
-func listUserOnlyRoles(c *okta.Client, userID string) (userOnlyRoles []*okta.Role, resp *okta.Response, err error) {
-	roles, resp, err := c.User.ListAssignedRolesForUser(context.Background(), userID, nil)
+func listUserOnlyRoles(ctx context.Context, c *okta.Client, userID string) (userOnlyRoles []*okta.Role, resp *okta.Response, err error) {
+	roles, resp, err := c.User.ListAssignedRolesForUser(ctx, userID, nil)
 	if err != nil {
 		return
 	}
@@ -266,11 +262,11 @@ func listUserOnlyRoles(c *okta.Client, userID string) (userOnlyRoles []*okta.Rol
 	return
 }
 
-func setAdminRoles(d *schema.ResourceData, c *okta.Client) error {
+func setAdminRoles(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
 	roleTypes := make([]interface{}, 0)
 
 	// set all roles currently attached to user in state
-	roles, resp, err := listUserOnlyRoles(c, d.Id())
+	roles, resp, err := listUserOnlyRoles(ctx, c, d.Id())
 
 	if err != nil {
 		if resp != nil && resp.StatusCode == http.StatusForbidden {
@@ -290,11 +286,11 @@ func setAdminRoles(d *schema.ResourceData, c *okta.Client) error {
 	})
 }
 
-func setGroups(d *schema.ResourceData, c *okta.Client) error {
+func setGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
 	// set all groups currently attached to user in state
-	groups, _, err := c.User.ListUserGroups(context.Background(), d.Id())
+	groups, _, err := c.User.ListUserGroups(ctx, d.Id())
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to list user groups: %v", err)
 	}
 
 	groupIDs := make([]interface{}, 0)
@@ -316,7 +312,7 @@ func isCustomUserAttr(key string) bool {
 	return !contains(profileKeys, key)
 }
 
-func flattenUser(u *okta.User) (map[string]interface{}, error) {
+func flattenUser(u *okta.User) map[string]interface{} {
 	customAttributes := make(map[string]interface{})
 	attrs := map[string]interface{}{}
 
@@ -351,109 +347,93 @@ func flattenUser(u *okta.User) (map[string]interface{}, error) {
 
 	attrs["status"] = mapStatus(u.Status)
 
-	data, err := json.Marshal(customAttributes)
-	if err != nil {
-		return nil, fmt.Errorf("failed to load custom_attributes to JSON")
-	}
+	data, _ := json.Marshal(customAttributes)
 	attrs["custom_profile_attributes"] = string(data)
 
-	return attrs, nil
+	return attrs
 }
 
 // need to remove from all current admin roles and reassign based on terraform configs when a change is detected
-func updateAdminRolesOnUser(u string, r []string, c *okta.Client) error {
-	roles, _, err := listUserOnlyRoles(c, u)
-
+func updateAdminRolesOnUser(ctx context.Context, userID string, rolesToAssign []string, c *okta.Client) error {
+	roles, _, err := listUserOnlyRoles(ctx, c, userID)
 	if err != nil {
-		return fmt.Errorf("[ERROR] Error Updating Admin Roles On User: %v", err)
+		return fmt.Errorf("failed to list user's roles: %v", err)
 	}
-
 	for _, role := range roles {
-		_, err = c.User.RemoveRoleFromUser(context.Background(), u, role.Id)
-
+		_, err = c.User.RemoveRoleFromUser(ctx, userID, role.Id)
 		if err != nil {
-			return fmt.Errorf("[ERROR] Error Updating Admin Roles On User: %v", err)
+			return fmt.Errorf("failed to remove user's role: %v", err)
 		}
 	}
-
-	return assignAdminRolesToUser(u, r, c)
+	return assignAdminRolesToUser(ctx, userID, rolesToAssign, c)
 }
 
 // need to remove from all current groups and reassign based on terraform configs when a change is detected
-func updateGroupsOnUser(u string, g []string, c *okta.Client) error {
-	groups, _, err := c.User.ListUserGroups(context.Background(), u)
-
+func updateGroupsOnUser(ctx context.Context, u string, g []string, c *okta.Client) error {
+	groups, _, err := c.User.ListUserGroups(ctx, u)
 	if err != nil {
-		return fmt.Errorf("[ERROR] Error Updating Groups On User: %v", err)
+		return fmt.Errorf("failed to list user groups: %v", err)
 	}
-
 	for _, group := range groups {
 		if group.Profile.Name != groupProfileEveryone {
-			_, err = c.Group.RemoveUserFromGroup(context.Background(), group.Id, u)
+			_, err = c.Group.RemoveUserFromGroup(ctx, group.Id, u)
 			if err != nil {
-				return fmt.Errorf("[ERROR] Error Updating Groups On User: %v", err)
+				return fmt.Errorf("failed to remove user from group: %v", err)
 			}
 		}
 	}
-
-	return assignGroupsToUser(u, g, c)
+	return assignGroupsToUser(ctx, u, g, c)
 }
 
 // handle setting of user status based on what the current status is because okta
 // only allows transitions to certain statuses from other statuses - consult okta User API docs for more info
 // https://developer.okta.com/docs/api/resources/users#lifecycle-operations
-func updateUserStatus(uid, desiredStatus string, c *okta.Client) error {
-	user, _, err := c.User.GetUser(context.Background(), uid)
-
+func updateUserStatus(ctx context.Context, uid, desiredStatus string, c *okta.Client) error {
+	user, _, err := c.User.GetUser(ctx, uid)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get user: %v", err)
 	}
-
 	var statusErr error
 	switch desiredStatus {
 	case userStatusSuspended:
-		_, statusErr = c.User.SuspendUser(context.Background(), uid)
+		_, statusErr = c.User.SuspendUser(ctx, uid)
 	case userStatusDeprovisioned:
-		_, statusErr = c.User.DeactivateUser(context.Background(), uid, nil)
+		_, statusErr = c.User.DeactivateUser(ctx, uid, nil)
 	case statusActive:
 		switch user.Status {
 		case userStatusSuspended:
-			_, statusErr = c.User.UnsuspendUser(context.Background(), uid)
+			_, statusErr = c.User.UnsuspendUser(ctx, uid)
 		case userStatusPasswordExpired:
 			// Ignore password expired status. This status is already activated.
 			return nil
 		case userStatusLockedOut:
-			_, statusErr = c.User.UnlockUser(context.Background(), uid)
+			_, statusErr = c.User.UnlockUser(ctx, uid)
 		default:
-			_, _, statusErr = c.User.ActivateUser(context.Background(), uid, nil)
+			_, _, statusErr = c.User.ActivateUser(ctx, uid, nil)
 		}
 	}
-
 	if statusErr != nil {
 		return statusErr
 	}
-
-	return waitForStatusTransition(uid, c)
+	return waitForStatusTransition(ctx, uid, c)
 }
 
 // need to wait for user.TransitioningToStatus field to be empty before allowing Terraform to continue
 // so the proper current status gets set in the state during the Read operation after a Status update
-func waitForStatusTransition(u string, c *okta.Client) error {
-	user, _, err := c.User.GetUser(context.Background(), u)
-
+func waitForStatusTransition(ctx context.Context, u string, c *okta.Client) error {
+	user, _, err := c.User.GetUser(ctx, u)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get user: %v", err)
 	}
-
 	for {
 		if user.TransitioningToStatus == "" {
 			return nil
 		}
 		log.Printf("[INFO] Transitioning to status = %v; waiting for 5 more seconds...", user.TransitioningToStatus)
 		time.Sleep(5 * time.Second)
-		user, _, err = c.User.GetUser(context.Background(), u)
+		user, _, err = c.User.GetUser(ctx, u)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get user: %v", err)
 		}
 	}
 }

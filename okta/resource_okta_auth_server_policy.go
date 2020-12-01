@@ -1,21 +1,20 @@
 package okta
 
 import (
-	"net/http"
+	"context"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceAuthServerPolicy() *schema.Resource {
 	return &schema.Resource{
-		Create:   resourceAuthServerPolicyCreate,
-		Exists:   resourceAuthServerPolicyExists,
-		Read:     resourceAuthServerPolicyRead,
-		Update:   resourceAuthServerPolicyUpdate,
-		Delete:   resourceAuthServerPolicyDelete,
-		Importer: createNestedResourceImporter([]string{"auth_server_id", "id"}),
-
+		CreateContext: resourceAuthServerPolicyCreate,
+		ReadContext:   resourceAuthServerPolicyRead,
+		UpdateContext: resourceAuthServerPolicyUpdate,
+		DeleteContext: resourceAuthServerPolicyDelete,
+		Importer:      createNestedResourceImporter([]string{"auth_server_id", "id"}),
 		Schema: map[string]*schema.Schema{
 			"type": {
 				Type:        schema.TypeString,
@@ -51,6 +50,50 @@ func resourceAuthServerPolicy() *schema.Resource {
 	}
 }
 
+func resourceAuthServerPolicyCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	authServerPolicy := buildAuthServerPolicy(d)
+	responseAuthServerPolicy, _, err := getSupplementFromMetadata(m).CreateAuthorizationServerPolicy(ctx, d.Get("auth_server_id").(string), *authServerPolicy, nil)
+	if err != nil {
+		return diag.Errorf("failed to create authorization server policy: %v", err)
+	}
+	d.SetId(responseAuthServerPolicy.Id)
+	return resourceAuthServerPolicyRead(ctx, d, m)
+}
+
+func resourceAuthServerPolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	authServerPolicy, resp, err := getSupplementFromMetadata(m).GetAuthorizationServerPolicy(ctx, d.Get("auth_server_id").(string), d.Id(), sdk.AuthorizationServerPolicy{})
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get auth server policy: %v", err)
+	}
+	if authServerPolicy == nil {
+		d.SetId("")
+		return nil
+	}
+	_ = d.Set("name", authServerPolicy.Name)
+	_ = d.Set("description", authServerPolicy.Description)
+	_ = d.Set("status", authServerPolicy.Status)
+	_ = d.Set("priority", authServerPolicy.Priority)
+	_ = d.Set("client_whitelist", convertStringSetToInterface(authServerPolicy.Conditions.Clients.Include))
+	return nil
+}
+
+func resourceAuthServerPolicyUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	authServerPolicy := buildAuthServerPolicy(d)
+	_, _, err := getSupplementFromMetadata(m).UpdateAuthorizationServerPolicy(ctx, d.Get("auth_server_id").(string), d.Id(), *authServerPolicy, nil)
+	if err != nil {
+		return diag.Errorf("failed to update auth server policy: %v", err)
+	}
+	return resourceAuthServerPolicyRead(ctx, d, m)
+}
+
+func resourceAuthServerPolicyDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	_, err := getSupplementFromMetadata(m).DeleteAuthorizationServerPolicy(ctx, d.Get("auth_server_id").(string), d.Id())
+	if err != nil {
+		return diag.Errorf("failed to delete auth server policy: %v", err)
+	}
+	return nil
+}
+
 func buildAuthServerPolicy(d *schema.ResourceData) *sdk.AuthorizationServerPolicy {
 	return &sdk.AuthorizationServerPolicy{
 		Name:        d.Get("name").(string),
@@ -64,72 +107,4 @@ func buildAuthServerPolicy(d *schema.ResourceData) *sdk.AuthorizationServerPolic
 			},
 		},
 	}
-}
-
-func resourceAuthServerPolicyCreate(d *schema.ResourceData, m interface{}) error {
-	authServerPolicy := buildAuthServerPolicy(d)
-	c := getSupplementFromMetadata(m)
-	responseAuthServerPolicy, _, err := c.CreateAuthorizationServerPolicy(d.Get("auth_server_id").(string), *authServerPolicy, nil)
-	if err != nil {
-		return err
-	}
-
-	d.SetId(responseAuthServerPolicy.Id)
-
-	return resourceAuthServerPolicyRead(d, m)
-}
-
-func resourceAuthServerPolicyExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	g, err := fetchAuthServerPolicy(d, m)
-
-	return err == nil && g != nil, err
-}
-
-func resourceAuthServerPolicyRead(d *schema.ResourceData, m interface{}) error {
-	authServerPolicy, err := fetchAuthServerPolicy(d, m)
-
-	if authServerPolicy == nil {
-		d.SetId("")
-		return nil
-	}
-
-	if err != nil {
-		return err
-	}
-
-	_ = d.Set("name", authServerPolicy.Name)
-	_ = d.Set("description", authServerPolicy.Description)
-	_ = d.Set("status", authServerPolicy.Status)
-	_ = d.Set("priority", authServerPolicy.Priority)
-	_ = d.Set("client_whitelist", convertStringSetToInterface(authServerPolicy.Conditions.Clients.Include))
-
-	return nil
-}
-
-func resourceAuthServerPolicyUpdate(d *schema.ResourceData, m interface{}) error {
-	authServerPolicy := buildAuthServerPolicy(d)
-	c := getSupplementFromMetadata(m)
-	_, _, err := c.UpdateAuthorizationServerPolicy(d.Get("auth_server_id").(string), d.Id(), *authServerPolicy, nil)
-	if err != nil {
-		return err
-	}
-
-	return resourceAuthServerPolicyRead(d, m)
-}
-
-func resourceAuthServerPolicyDelete(d *schema.ResourceData, m interface{}) error {
-	_, err := getSupplementFromMetadata(m).DeleteAuthorizationServerPolicy(d.Get("auth_server_id").(string), d.Id())
-
-	return err
-}
-
-func fetchAuthServerPolicy(d *schema.ResourceData, m interface{}) (*sdk.AuthorizationServerPolicy, error) {
-	c := getSupplementFromMetadata(m)
-	auth, resp, err := c.GetAuthorizationServerPolicy(d.Get("auth_server_id").(string), d.Id(), sdk.AuthorizationServerPolicy{})
-
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, nil
-	}
-
-	return auth, err
 }

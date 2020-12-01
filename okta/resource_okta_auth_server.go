@@ -1,22 +1,20 @@
 package okta
 
 import (
-	"net/http"
+	"context"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceAuthServer() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceAuthServerCreate,
-		Exists: resourceAuthServerExists,
-		Read:   resourceAuthServerRead,
-		Update: resourceAuthServerUpdate,
-		Delete: resourceAuthServerDelete,
+		CreateContext: resourceAuthServerCreate,
+		ReadContext:   resourceAuthServerRead,
+		UpdateContext: resourceAuthServerUpdate,
+		DeleteContext: resourceAuthServerDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -41,11 +39,11 @@ func resourceAuthServer() *schema.Resource {
 				Computed: true,
 			},
 			"credentials_rotation_mode": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"AUTO", "MANUAL"}, false),
-				Default:      "AUTO",
-				Description:  "Credential rotation mode, in many cases you cannot set this to MANUAL, the API will ignore the value and you will get a perpetual diff. This should rarely be used.",
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"AUTO", "MANUAL"}),
+				Default:          "AUTO",
+				Description:      "Credential rotation mode, in many cases you cannot set this to MANUAL, the API will ignore the value and you will get a perpetual diff. This should rarely be used.",
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -61,80 +59,41 @@ func resourceAuthServer() *schema.Resource {
 				Description: "EA Feature: allows you to use a custom issuer URL",
 			},
 			"issuer_mode": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "EA Feature: allows you to use a custom issuer URL",
-				Default:      "ORG_URL",
-				ValidateFunc: validation.StringInSlice([]string{"CUSTOM_URL", "ORG_URL"}, false),
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "EA Feature: allows you to use a custom issuer URL",
+				Default:          "ORG_URL",
+				ValidateDiagFunc: stringInSlice([]string{"CUSTOM_URL", "ORG_URL"}),
 			},
 		},
 	}
 }
 
-func handleAuthServerLifecycle(d *schema.ResourceData, m interface{}) error {
-	client := getSupplementFromMetadata(m)
-
-	if d.Get("status").(string) == statusActive {
-		_, err := client.ActivateAuthorizationServer(d.Id())
-		return err
-	}
-
-	_, err := client.DeactivateAuthorizationServer(d.Id())
-	return err
-}
-
-func buildAuthServer(d *schema.ResourceData) *sdk.AuthorizationServer {
-	return &sdk.AuthorizationServer{
-		Audiences: convertInterfaceToStringSet(d.Get("audiences")),
-		Credentials: &sdk.AuthServerCredentials{
-			Signing: &okta.ApplicationCredentialsSigning{
-				RotationMode: d.Get("credentials_rotation_mode").(string),
-			},
-		},
-		Description: d.Get("description").(string),
-		Name:        d.Get("name").(string),
-		IssuerMode:  d.Get("issuer_mode").(string),
-	}
-}
-
-func resourceAuthServerCreate(d *schema.ResourceData, m interface{}) error {
+func resourceAuthServerCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	authServer := buildAuthServer(d)
-
-	responseAuthServer, _, err := getSupplementFromMetadata(m).CreateAuthorizationServer(*authServer, nil)
+	responseAuthServer, _, err := getSupplementFromMetadata(m).CreateAuthorizationServer(ctx, *authServer, nil)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create authorization server: %v", err)
 	}
-
 	d.SetId(responseAuthServer.Id)
-
 	if d.Get("credentials_rotation_mode").(string) == "MANUAL" {
 		// Auth servers can only be set to manual on update. No clue why.
-		err = resourceAuthServerUpdate(d, m)
-
-		if err != nil {
-			return err
+		dErr := resourceAuthServerUpdate(ctx, d, m)
+		if dErr != nil {
+			return dErr
 		}
 	}
-
-	return resourceAuthServerRead(d, m)
+	return resourceAuthServerRead(ctx, d, m)
 }
 
-func resourceAuthServerExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	g, err := fetchAuthServer(d, m)
-
-	return err == nil && g != nil, err
-}
-
-func resourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
-	authServer, err := fetchAuthServer(d, m)
-
+func resourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	authServer, resp, err := getSupplementFromMetadata(m).GetAuthorizationServer(ctx, d.Id())
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get authorization server: %v", err)
+	}
 	if authServer == nil {
 		d.SetId("")
 		return nil
-	}
-
-	if err != nil {
-		return err
 	}
 
 	_ = d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
@@ -165,40 +124,60 @@ func resourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceAuthServerUpdate(d *schema.ResourceData, m interface{}) error {
-	client := getSupplementFromMetadata(m)
+func resourceAuthServerUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	if d.HasChange("status") {
-		err := handleAuthServerLifecycle(d, m)
+		err := handleAuthServerLifecycle(ctx, d, m)
 		if err != nil {
 			return err
 		}
 	}
-
 	authServer := buildAuthServer(d)
-	_, _, err := client.UpdateAuthorizationServer(d.Id(), *authServer, nil)
+	_, _, err := getSupplementFromMetadata(m).UpdateAuthorizationServer(ctx, d.Id(), *authServer, nil)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to update authorization server: %v", err)
 	}
-
-	return resourceAuthServerRead(d, m)
+	return resourceAuthServerRead(ctx, d, m)
 }
 
-func resourceAuthServerDelete(d *schema.ResourceData, m interface{}) error {
+func handleAuthServerLifecycle(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getSupplementFromMetadata(m)
-	if _, err := client.DeactivateAuthorizationServer(d.Id()); err != nil {
-		return err
+	if d.Get("status").(string) == statusActive {
+		_, err := client.ActivateAuthorizationServer(ctx, d.Id())
+		if err != nil {
+			return diag.Errorf("failed to activate authorization server: %v", err)
+		}
+		return nil
 	}
-	_, err := client.DeleteAuthorizationServer(d.Id())
-
-	return err
+	_, err := client.DeactivateAuthorizationServer(ctx, d.Id())
+	if err != nil {
+		return diag.Errorf("failed to deactivate authorization server: %v", err)
+	}
+	return nil
 }
 
-func fetchAuthServer(d *schema.ResourceData, m interface{}) (*sdk.AuthorizationServer, error) {
-	auth, resp, err := getSupplementFromMetadata(m).GetAuthorizationServer(d.Id())
-
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, nil
+func resourceAuthServerDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	client := getSupplementFromMetadata(m)
+	_, err := client.DeactivateAuthorizationServer(ctx, d.Id())
+	if err != nil {
+		return diag.Errorf("failed to deactivate authorization server: %v", err)
 	}
+	_, err = client.DeleteAuthorizationServer(ctx, d.Id())
+	if err != nil {
+		return diag.Errorf("failed to delete authorization server: %v", err)
+	}
+	return nil
+}
 
-	return auth, err
+func buildAuthServer(d *schema.ResourceData) *sdk.AuthorizationServer {
+	return &sdk.AuthorizationServer{
+		Audiences: convertInterfaceToStringSet(d.Get("audiences")),
+		Credentials: &sdk.AuthServerCredentials{
+			Signing: &okta.ApplicationCredentialsSigning{
+				RotationMode: d.Get("credentials_rotation_mode").(string),
+			},
+		},
+		Description: d.Get("description").(string),
+		Name:        d.Get("name").(string),
+		IssuerMode:  d.Get("issuer_mode").(string),
+	}
 }

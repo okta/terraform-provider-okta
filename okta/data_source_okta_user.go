@@ -2,21 +2,18 @@ package okta
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func dataSourceUser() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceUserRead,
-
+		ReadContext: dataSourceUserRead,
 		Schema: buildUserDataSourceSchema(map[string]*schema.Schema{
 			"user_id": {
 				Type:        schema.TypeString,
@@ -39,10 +36,10 @@ func dataSourceUser() *schema.Resource {
 							Required: true,
 						},
 						"comparison": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							Default:      "eq",
-							ValidateFunc: validation.StringInSlice([]string{"eq", "lt", "gt", "sw"}, true),
+							Type:             schema.TypeString,
+							Optional:         true,
+							Default:          "eq",
+							ValidateDiagFunc: stringInSlice([]string{"eq", "lt", "gt", "sw"}),
 						},
 					},
 				},
@@ -51,46 +48,43 @@ func dataSourceUser() *schema.Resource {
 	}
 }
 
-func dataSourceUserRead(d *schema.ResourceData, m interface{}) error {
+func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-
 	var user *okta.User
 	var err error
-
 	userID, ok := d.GetOk("user_id")
 	_, searchCriteriaOk := d.GetOk("search")
-
 	if ok {
-		user, _, err = client.User.GetUser(context.Background(), userID.(string))
+		logger(m).Info("reading user by ID", "id", userID.(string))
+		user, _, err = client.User.GetUser(ctx, userID.(string))
 		if err != nil {
-			return err
+			return diag.Errorf("failed to get user: %v", err)
 		}
 	} else if searchCriteriaOk {
 		var users []*okta.User
-		users, _, err = client.User.ListUsers(context.Background(), &query.Params{Search: getSearchCriteria(d), Limit: 1})
-
+		sc := getSearchCriteria(d)
+		logger(m).Info("reading user using search", "search", sc)
+		users, _, err = client.User.ListUsers(ctx, &query.Params{Search: sc, Limit: 1})
 		if err != nil {
-			return err
+			return diag.Errorf("failed to list users: %v", err)
 		} else if len(users) < 1 {
-			return errors.New("failed to locate user with provided parameters")
+			return diag.Errorf("no users found using search criteria: %+v", sc)
 		}
-
 		user = users[0]
 	}
 
 	d.SetId(user.Id)
 
-	rawMap, err := flattenUser(user)
-	if err != nil {
-		return err
-	}
-
+	rawMap := flattenUser(user)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set user's properties: %v", err)
 	}
-
-	return setAdminRoles(d, client)
+	err = setAdminRoles(ctx, d, client)
+	if err != nil {
+		return diag.Errorf("failed to set user's admin roles: %v", err)
+	}
+	return nil
 }
 
 func getSearchCriteria(d *schema.ResourceData) string {
@@ -100,6 +94,5 @@ func getSearchCriteria(d *schema.ResourceData) string {
 		fmap := f.(map[string]interface{})
 		filterList[i] = fmt.Sprintf(`%s %s "%s"`, fmap["name"], fmap["comparison"], fmap["value"])
 	}
-
 	return strings.Join(filterList, " and ")
 }

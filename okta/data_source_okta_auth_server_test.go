@@ -10,14 +10,14 @@ import (
 
 func TestAccOktaDataSourceAuthServer_read(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager("okta_auth_server")
+	mgr := newFixtureManager(authServer)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		Providers: testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

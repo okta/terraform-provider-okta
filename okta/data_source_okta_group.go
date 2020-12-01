@@ -2,17 +2,15 @@ package okta
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
-
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func dataSourceGroup() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceGroupRead,
-
+		ReadContext: dataSourceGroupRead,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:     schema.TypeString,
@@ -38,31 +36,33 @@ func dataSourceGroup() *schema.Resource {
 	}
 }
 
-func dataSourceGroupRead(d *schema.ResourceData, m interface{}) error {
-	return findGroup(d.Get("name").(string), d, m)
+func dataSourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return findGroup(ctx, d.Get("name").(string), d, m)
 }
 
-func findGroup(name string, d *schema.ResourceData, m interface{}) error {
+func findGroup(ctx context.Context, name string, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-	groups, _, err := client.Group.ListGroups(context.Background(), &query.Params{Q: name})
+	groups, _, err := client.Group.ListGroups(ctx, &query.Params{Q: name})
 	if err != nil {
-		return fmt.Errorf("failed to query for groups: %v", err)
+		return diag.Errorf("failed to query for groups: %v", err)
 	} else if len(groups) < 1 {
-		return fmt.Errorf("group \"%s\" not found", name)
+		return diag.Errorf("group with name '%s' does not exist", name)
 	}
 
 	d.SetId(groups[0].Id)
 	_ = d.Set("description", groups[0].Profile.Description)
 
 	if d.Get("include_users").(bool) {
-		userIDList, err := listGroupUserIDs(m, d.Id())
+		userIDList, err := listGroupUserIDs(ctx, m, d.Id())
 		if err != nil {
-			return err
+			return diag.Errorf("failed to list group user IDs: %v", err)
 		}
-
 		// just user ids for now
-		return d.Set("users", convertStringSetToInterface(userIDList))
+		err = d.Set("users", convertStringSetToInterface(userIDList))
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		return nil
 	}
-
 	return nil
 }

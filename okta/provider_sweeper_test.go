@@ -37,6 +37,9 @@ func TestMain(m *testing.M) {
 	setupSweeper(oktaUser, sweepUsers)
 	setupSweeper(userSchema, sweepUserSchema)
 	setupSweeper(userBaseSchema, sweepUserBaseSchema)
+	setupSweeper(networkZone, sweepNetworkZones)
+
+	// add zones sweeper
 	resource.TestMain(m)
 }
 

@@ -1,8 +1,8 @@
 package okta
 
 import (
+	"context"
 	"fmt"
-	"net/http"
 	"strings"
 	"testing"
 
@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func TestAccOktaEventHook_crud(t *testing.T) {
@@ -22,9 +22,9 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 	activatedConfig := mgr.GetFixtures("basic_activated.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(eventHook, eventHookExists),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(eventHook, eventHookExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -40,7 +40,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(&sdk.EventHookEvents{
+						eventSet(&okta.EventSubscriptions{
 							Type:  "EVENT_TYPE",
 							Items: []string{"user.lifecycle.create", "user.lifecycle.delete.initiated"},
 						}),
@@ -61,7 +61,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"headers",
-						testMakeEventHookHeadersSet([]sdk.EventHookHeader{
+						testMakeEventHookHeadersSet([]*okta.EventHookChannelConfigHeader{
 							{
 								Key:   "x-test-header",
 								Value: "test stuff",
@@ -75,15 +75,14 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(
-							&sdk.EventHookEvents{
-								Type: "EVENT_TYPE",
-								Items: []string{
-									"user.lifecycle.create",
-									"user.lifecycle.delete.initiated",
-									"user.account.update_profile",
-								},
+						eventSet(&okta.EventSubscriptions{
+							Type: "EVENT_TYPE",
+							Items: []string{
+								"user.lifecycle.create",
+								"user.lifecycle.delete.initiated",
+								"user.account.update_profile",
 							},
+						},
 						),
 					),
 				),
@@ -102,7 +101,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(&sdk.EventHookEvents{
+						eventSet(&okta.EventSubscriptions{
 							Type:  "EVENT_TYPE",
 							Items: []string{"user.lifecycle.create", "user.lifecycle.delete.initiated"},
 						}),
@@ -114,14 +113,14 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 }
 
 func eventHookExists(id string) (bool, error) {
-	_, res, err := getSupplementFromMetadata(testAccProvider.Meta()).GetEventHook(id)
-	if err != nil && res.StatusCode != http.StatusNotFound {
+	eh, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).EventHook.GetEventHook(context.Background(), id)
+	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, err
 	}
-	return res.StatusCode != http.StatusNotFound, nil
+	return eh != nil, nil
 }
 
-func testMakeEventHookHeadersSet(headers []sdk.EventHookHeader) *schema.Set {
+func testMakeEventHookHeadersSet(headers []*okta.EventHookChannelConfigHeader) *schema.Set {
 	h := make([]interface{}, len(headers))
 	for i, header := range headers {
 		h[i] = map[string]interface{}{
@@ -129,7 +128,6 @@ func testMakeEventHookHeadersSet(headers []sdk.EventHookHeader) *schema.Set {
 			"value": header.Value,
 		}
 	}
-
 	return schema.NewSet(schema.HashResource(headerSchema), h)
 }
 
@@ -169,7 +167,9 @@ func testCheckResourceSetAttr(resourceName, attribute string, set *schema.Set) r
 		// ]
 		found := make(map[string]interface{})
 		for k, v := range is.Attributes {
-			if strings.HasPrefix(k, attribute) && !strings.HasSuffix(k, ".#") {
+			if strings.HasPrefix(k, attribute) &&
+				!strings.HasSuffix(k, ".#") &&
+				!strings.HasSuffix(k, ".%") {
 				// k will be "attribute.12345" or "attribute.12345.subAttribute"
 				// This will split the attribute key into either two or three peices.
 				// If this attribute is a set of strings, then it will be two elements:

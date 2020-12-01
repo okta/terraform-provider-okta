@@ -25,7 +25,7 @@ func TestAccAppOauth_basic(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
@@ -85,7 +85,7 @@ func TestAccAppOauth_serviceNative(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
@@ -117,7 +117,7 @@ func TestAccAppOauth_badGrantTypes(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
@@ -139,7 +139,7 @@ func TestAccAppOauth_customProfileAttributes(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
@@ -157,7 +157,7 @@ func TestAccAppOauth_customProfileAttributes(t *testing.T) {
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
-					resource.TestCheckResourceAttr(resourceName, "profile", "{\"groups\":{\"whitelist\":[\"Whitelist Group\"]}}"),
+					resource.TestCheckResourceAttr(resourceName, "profile", fmt.Sprintf("{\"groups\":{\"whitelist\":[\"%s_%d\"]}}", testResourcePrefix, ri)),
 				),
 			},
 			{
@@ -181,7 +181,7 @@ func TestAccAppOauth_customClientID(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
@@ -212,12 +212,12 @@ func TestAccAppOauth_customClientIDError(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config:      buildTestOAuthAppCustomClientIDBadConfig(ri),
-				ExpectError: regexp.MustCompile(`config is invalid: "custom_client_id": conflicts with client_id`),
+				ExpectError: regexp.MustCompile(`"custom_client_id": conflicts with client_id`),
 			},
 		},
 	})
@@ -232,7 +232,7 @@ func TestAccAppOauth_serviceWithJWKS(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{

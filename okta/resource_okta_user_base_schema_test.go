@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -17,14 +18,14 @@ func sweepUserBaseSchema(client *testClient) error {
 	var errorList []error
 	schemaUrl := "/api/v1/meta/schemas/user/default"
 
-	schema, _, err := client.apiSupplement.GetUserSchema(schemaUrl)
+	schema, _, err := client.apiSupplement.GetUserSchema(context.Background(), schemaUrl)
 	if err != nil {
 		return err
 	}
 
 	for key := range schema.Definitions.Custom.Properties {
 		if strings.HasPrefix(key, testResourcePrefix) {
-			if _, err := client.apiSupplement.DeleteUserSchemaProperty(schemaUrl, key); err != nil {
+			if _, err := client.apiSupplement.DeleteUserSchemaProperty(context.Background(), schemaUrl, key); err != nil {
 				errorList = append(errorList, err)
 			}
 		}
@@ -42,9 +43,9 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.%s", userBaseSchema, baseTestProp)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: nil, // can't delete base properties
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      nil, // can't delete base properties
 		Steps: []resource.TestStep{
 			{
 				Config: config,

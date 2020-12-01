@@ -1,18 +1,21 @@
 package okta
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
-	"regexp"
 	"strings"
 	"unicode"
 
+	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
+
+var defaultPaginationLimit int64 = 200
 
 func buildSchema(schemas ...map[string]*schema.Schema) map[string]*schema.Schema {
 	r := map[string]*schema.Schema{}
@@ -59,13 +62,13 @@ func conditionalRequire(d *schema.ResourceData, propList []string, reason string
 	var missing []string
 
 	for _, prop := range propList {
-		if _, ok := d.GetOkExists(prop); !ok { // nolint:staticcheck
+		if _, ok := d.GetOk(prop); !ok {
 			missing = append(missing, prop)
 		}
 	}
 
 	if len(missing) > 0 {
-		return fmt.Errorf("missing conditionally required fields, reason: %s, missing fields: %s", reason, strings.Join(missing, ", "))
+		return fmt.Errorf("missing conditionally required fields, reason: '%s', missing fields: %s", reason, strings.Join(missing, ", "))
 	}
 
 	return nil
@@ -166,7 +169,7 @@ func createNestedResourceImporter(fields []string) *schema.ResourceImporter {
 // Fields should be in order, for instance, []string{"auth_server_id", "policy_id", "id"}
 func createCustomNestedResourceImporter(fields []string, errMessage string) *schema.ResourceImporter {
 	return &schema.ResourceImporter{
-		State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 			parts := strings.Split(d.Id(), "/")
 			if len(parts) != len(fields) {
 				return nil, fmt.Errorf("invalid resource import specifier. %s", errMessage)
@@ -255,10 +258,9 @@ func getNullableInt(d *schema.ResourceData, key string) *int {
 // Useful shortcut for suppressing errors from Okta's SDK when a resource does not exist. Usually used during deletion
 // of nested resources.
 func suppressErrorOn404(resp *okta.Response, err error) error {
-	if resp.StatusCode == http.StatusNotFound {
+	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return nil
 	}
-
 	return responseErr(resp, err)
 }
 
@@ -286,18 +288,12 @@ func getRequestExecutor(m interface{}) *okta.RequestExecutor {
 	return getOktaClientFromMetadata(m).GetRequestExecutor()
 }
 
-func is404(status int) bool {
-	return status == http.StatusNotFound
+func is404(resp *okta.Response) bool {
+	return resp != nil && resp.StatusCode == http.StatusNotFound
 }
 
-var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-
-// regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
-func matchEmailRegexp(val interface{}, key string) (warnings []string, errs []error) {
-	if !emailRegex.MatchString(val.(string)) {
-		errs = append(errs, fmt.Errorf("%s field not a valid email address", key))
-	}
-	return warnings, errs
+func logger(meta interface{}) hclog.Logger {
+	return meta.(*Config).logger
 }
 
 func normalizeDataJSON(val interface{}) string {
@@ -322,6 +318,18 @@ func remove(arr []string, el string) []string {
 	return newArr
 }
 
+// The best practices states that aggregate types should have error handling (think non-primitive). This will not attempt to set nil values.
+func setNonPrimitives(data *schema.ResourceData, valueMap map[string]interface{}) error {
+	for k, v := range valueMap {
+		if v != nil {
+			if err := data.Set(k, v); err != nil {
+				return fmt.Errorf("error setting %s for resource %s: %s", k, data.Id(), err)
+			}
+		}
+	}
+	return nil
+}
+
 // Okta SDK will (not often) return just `Okta API has returned an error: ""`` when the error is not valid JSON.
 // The status should help with debugability. Potentially also could check for an empty error and omit
 // it when it occurs and build some more context.
@@ -334,40 +342,6 @@ func responseErr(resp *okta.Response, err error) error {
 		return errors.New(msg)
 	}
 	return nil
-}
-
-// The best practices states that aggregate types should have error handling (think non-primitive). This will not attempt to set nil values.
-func setNonPrimitives(data *schema.ResourceData, valueMap map[string]interface{}) error {
-	for k, v := range valueMap {
-		if v != nil {
-			if err := data.Set(k, v); err != nil {
-				return fmt.Errorf("error setting %s for resource %s: %s", k, data.Id(), err)
-			}
-		}
-	}
-
-	return nil
-}
-
-func validateDataJSON(val interface{}, k string) ([]string, []error) {
-	err := json.Unmarshal([]byte(val.(string)), &map[string]interface{}{})
-	if err != nil {
-		return nil, []error{err}
-	}
-	return nil, nil
-}
-
-// Matching level of validation done by Okta API
-func validateIsURL(val interface{}, b string) ([]string, []error) {
-	doesMatch, err := regexp.Match(`^(http|https):\/\/.*`, []byte(val.(string)))
-
-	if err != nil {
-		return nil, []error{err}
-	} else if !doesMatch {
-		return nil, []error{fmt.Errorf("failed to validate url, \"%s\"", val)}
-	}
-
-	return nil, nil
 }
 
 func validatePriority(in, out int64) error {

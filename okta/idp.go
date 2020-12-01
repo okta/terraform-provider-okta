@@ -1,13 +1,14 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
-
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 const (
@@ -34,18 +35,18 @@ var (
 			Optional: true,
 		},
 		"provisioning_action": {
-			Type:         schema.TypeString,
-			Optional:     true,
-			ValidateFunc: validation.StringInSlice([]string{"AUTO", "DISABLED", ""}, false),
-			Default:      "AUTO",
+			Type:             schema.TypeString,
+			Optional:         true,
+			ValidateDiagFunc: stringInSlice([]string{"AUTO", "DISABLED", ""}),
+			Default:          "AUTO",
 		},
 		"deprovisioned_action": actionSchema,
 		"suspended_action":     actionSchema,
 		"groups_action": {
-			Type:         schema.TypeString,
-			Optional:     true,
-			Default:      "NONE",
-			ValidateFunc: validation.StringInSlice([]string{"NONE", "SYNC", "APPEND", "ASSIGN"}, false),
+			Type:             schema.TypeString,
+			Optional:         true,
+			Default:          "NONE",
+			ValidateDiagFunc: stringInSlice([]string{"NONE", "SYNC", "APPEND", "ASSIGN"}),
 		},
 		"groups_attribute": {
 			Type:     schema.TypeString,
@@ -81,17 +82,17 @@ var (
 		},
 		"request_signature_algorithm": algorithmSchema,
 		"request_signature_scope": {
-			Type:         schema.TypeString,
-			Optional:     true,
-			Description:  "algorithm to use to sign response",
-			ValidateFunc: validation.StringInSlice([]string{"REQUEST", ""}, false),
+			Type:             schema.TypeString,
+			Optional:         true,
+			Description:      "algorithm to use to sign response",
+			ValidateDiagFunc: stringInSlice([]string{"REQUEST", ""}),
 		},
 		"response_signature_algorithm": algorithmSchema,
 		"response_signature_scope": {
-			Type:         schema.TypeString,
-			Optional:     true,
-			Description:  "algorithm to use to sign response",
-			ValidateFunc: validation.StringInSlice([]string{"RESPONSE", "ANY", ""}, false),
+			Type:             schema.TypeString,
+			Optional:         true,
+			Description:      "algorithm to use to sign response",
+			ValidateDiagFunc: stringInSlice([]string{"RESPONSE", "ANY", ""}),
 		},
 	}
 
@@ -102,11 +103,11 @@ var (
 	}
 
 	algorithmSchema = &schema.Schema{
-		Type:         schema.TypeString,
-		Optional:     true,
-		Description:  "algorithm to use to sign requests",
-		ValidateFunc: validation.StringInSlice([]string{"SHA-256", "SHA-1"}, false),
-		Default:      "SHA-256",
+		Type:             schema.TypeString,
+		Optional:         true,
+		Description:      "algorithm to use to sign requests",
+		ValidateDiagFunc: stringInSlice([]string{"SHA-256", "SHA-1"}),
+		Default:          "SHA-256",
 	}
 
 	optBindingSchema = &schema.Schema{
@@ -125,23 +126,23 @@ var (
 	}
 
 	bindingSchema = &schema.Schema{
-		Type:         schema.TypeString,
-		Required:     true,
-		ValidateFunc: validation.StringInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}, false),
+		Type:             schema.TypeString,
+		Required:         true,
+		ValidateDiagFunc: stringInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}),
 	}
 
 	optionalBindingSchema = &schema.Schema{
-		Type:         schema.TypeString,
-		Optional:     true,
-		ValidateFunc: validation.StringInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}, false),
+		Type:             schema.TypeString,
+		Optional:         true,
+		ValidateDiagFunc: stringInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}),
 	}
 
 	issuerMode = &schema.Schema{
-		Type:         schema.TypeString,
-		Description:  "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
-		ValidateFunc: validation.StringInSlice([]string{"ORG_URL", "CUSTOM_URL_DOMAIN"}, false),
-		Default:      "ORG_URL",
-		Optional:     true,
+		Type:             schema.TypeString,
+		Description:      "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
+		ValidateDiagFunc: stringInSlice([]string{"ORG_URL", "CUSTOM_URL_DOMAIN"}),
+		Default:          "ORG_URL",
+		Optional:         true,
 	}
 
 	urlSchema = &schema.Schema{
@@ -154,94 +155,53 @@ func buildIdpSchema(idpSchema map[string]*schema.Schema) map[string]*schema.Sche
 	return buildSchema(baseIdpSchema, idpSchema)
 }
 
-func resourceIdpDelete(d *schema.ResourceData, m interface{}) error {
-	return resourceDeleteAnyIdp(d, m, d.Get("status").(string) == statusActive)
+func resourceIdpDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return resourceDeleteAnyIdp(ctx, d, m, d.Get("status").(string) == statusActive)
 }
 
-func resourceDeleteAnyIdp(d *schema.ResourceData, m interface{}, active bool) error {
+func resourceDeleteAnyIdp(ctx context.Context, d *schema.ResourceData, m interface{}, active bool) diag.Diagnostics {
 	client := getSupplementFromMetadata(m)
 
 	if active {
-		if resp, err := client.DeactivateIdentityProvider(d.Id()); err != nil {
-			if resp.StatusCode != http.StatusNotFound {
-				return err
-			}
+		resp, err := client.DeactivateIdentityProvider(ctx, d.Id())
+		if err != nil {
+			return diag.Errorf("failed to deactivate identity provider: %v", err)
+		}
+		if resp != nil && resp.StatusCode == http.StatusNotFound {
+			return nil
 		}
 	}
-
-	if resp, err := client.DeleteIdentityProvider(d.Id()); err != nil {
-		return suppressErrorOn404(resp, err)
+	_, err := client.DeleteIdentityProvider(ctx, d.Id())
+	if err != nil {
+		return diag.Errorf("failed to delete identity provider: %v", err)
 	}
-
 	return nil
 }
 
-func fetchIdp(id string, m interface{}, idp sdk.IdentityProvider) error {
-	client := getSupplementFromMetadata(m)
-	_, response, err := client.GetIdentityProvider(id, idp)
-	if response != nil && response.StatusCode == http.StatusNotFound {
+func setIdpStatus(ctx context.Context, d *schema.ResourceData, client *okta.Client, status string) error {
+	desiredStatus := d.Get("status").(string)
+	if status == desiredStatus {
 		return nil
 	}
-
-	return responseErr(response, err)
-}
-
-func updateIdp(id string, m interface{}, idp sdk.IdentityProvider) error {
-	client := getSupplementFromMetadata(m)
-	_, response, err := client.UpdateIdentityProvider(id, idp, nil)
-	// We don't want to consider a 404 an error in some cases and thus the delineation
-	if response != nil && response.StatusCode == 404 {
-		return nil
+	var err error
+	if desiredStatus == statusInactive {
+		_, _, err = client.IdentityProvider.DeactivateIdentityProvider(ctx, d.Id())
+	} else {
+		_, _, err = client.IdentityProvider.ActivateIdentityProvider(ctx, d.Id())
 	}
-
-	return responseErr(response, err)
-}
-
-func createIdp(m interface{}, idp sdk.IdentityProvider) error {
-	client := getSupplementFromMetadata(m)
-	_, response, err := client.CreateIdentityProvider(idp, nil)
-	// We don't want to consider a 404 an error in some cases and thus the delineation
-	if response != nil && response.StatusCode == 404 {
-		return nil
-	}
-
-	return responseErr(response, err)
-}
-
-func setIdpStatus(id, status, desiredStatus string, m interface{}) error {
-	if status != desiredStatus {
-		c := getSupplementFromMetadata(m)
-
-		if desiredStatus == statusInactive {
-			return responseErr(c.DeactivateIdentityProvider(id))
-		} else if desiredStatus == statusActive {
-			return responseErr(c.ActivateIdentityProvider(id))
-		}
-	}
-
-	return nil
+	return err
 }
 
 func syncGroupActions(d *schema.ResourceData, groups *sdk.IDPGroupsAction) error {
-	if groups != nil {
-		_ = d.Set("groups_action", groups.Action)
-		_ = d.Set("groups_attribute", groups.SourceAttributeName)
-
-		return setNonPrimitives(d, map[string]interface{}{
-			"groups_assignment": groups.Assignments,
-			"groups_filter":     groups.Filter,
-		})
+	if groups == nil {
+		return nil
 	}
-
-	return nil
-}
-
-func getIdentityProviderExists(idp sdk.IdentityProvider) schema.ExistsFunc {
-	return func(d *schema.ResourceData, m interface{}) (bool, error) {
-		_, resp, err := getSupplementFromMetadata(m).GetIdentityProvider(d.Id(), idp)
-
-		return resp.StatusCode == 200, err
-	}
+	_ = d.Set("groups_action", groups.Action)
+	_ = d.Set("groups_attribute", groups.SourceAttributeName)
+	return setNonPrimitives(d, map[string]interface{}{
+		"groups_assignment": groups.Assignments,
+		"groups_filter":     groups.Filter,
+	})
 }
 
 func NewIdpProvisioning(d *schema.ResourceData) *sdk.IDPProvisioning {
@@ -328,15 +288,13 @@ func syncAlgo(d *schema.ResourceData, alg *sdk.Algorithms) {
 		if alg.Request != nil && alg.Request.Signature != nil {
 			reqSign := alg.Request.Signature
 
-			_ = d.Set("request_algorithm", reqSign.Algorithm)
-			_ = d.Set("request_scope", reqSign.Scope)
+			_ = d.Set("request_signature_algorithm", reqSign.Algorithm)
+			_ = d.Set("request_signature_scope", reqSign.Scope)
 		}
-
 		if alg.Response != nil && alg.Response.Signature != nil {
 			resSign := alg.Response.Signature
-
-			_ = d.Set("response_algorithm", resSign.Algorithm)
-			_ = d.Set("response_scope", resSign.Scope)
+			_ = d.Set("response_signature_algorithm", resSign.Algorithm)
+			_ = d.Set("response_signature_scope", resSign.Scope)
 		}
 	}
 }

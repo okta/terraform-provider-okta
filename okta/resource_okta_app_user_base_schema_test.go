@@ -19,7 +19,7 @@ func TestAccAppUserBaseSchema_change(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		// Just need to make sure the app gets cleaned up
 		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{

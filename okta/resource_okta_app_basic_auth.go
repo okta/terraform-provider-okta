@@ -3,6 +3,7 @@ package okta
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
@@ -10,15 +11,13 @@ import (
 
 func resourceAppBasicAuth() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceAppBasicAuthCreate,
-		Read:   resourceAppBasicAuthRead,
-		Update: resourceAppBasicAuthUpdate,
-		Delete: resourceAppBasicAuthDelete,
-		Exists: resourceAppExists,
+		CreateContext: resourceAppBasicAuthCreate,
+		ReadContext:   resourceAppBasicAuthRead,
+		UpdateContext: resourceAppBasicAuthUpdate,
+		DeleteContext: resourceAppBasicAuthDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-
 		Schema: buildAppSchemaWithVisibility(map[string]*schema.Schema{
 			"auth_url": {
 				Type:        schema.TypeString,
@@ -34,83 +33,73 @@ func resourceAppBasicAuth() *schema.Resource {
 	}
 }
 
-func resourceAppBasicAuthCreate(d *schema.ResourceData, m interface{}) error {
+func resourceAppBasicAuthCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
 	app := buildAppBasicAuth(d)
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(context.Background(), app, params)
-
+	_, _, err := client.Application.CreateApplication(ctx, app, params)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create basic auth application: %v", err)
 	}
-
 	d.SetId(app.Id)
-
-	err = handleAppGroupsAndUsers(app.Id, d, m)
-
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to handle groups and users for auto login application: %v", err)
 	}
-
-	return resourceAppBasicAuthRead(d, m)
+	return resourceAppBasicAuthRead(ctx, d, m)
 }
 
-func resourceAppBasicAuthRead(d *schema.ResourceData, m interface{}) error {
+func resourceAppBasicAuthRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	app := okta.NewBasicAuthApplication()
-	err := fetchApp(d, m, app)
-
-	if app == nil {
+	err := fetchApp(ctx, d, m, app)
+	if err != nil {
+		return diag.Errorf("failed to get basic auth application: %v", err)
+	}
+	if app.Id == "" {
 		d.SetId("")
 		return nil
 	}
-
-	if err != nil {
-		return err
-	}
-
 	_ = d.Set("url", app.Settings.App.Url)
 	_ = d.Set("auth_url", app.Settings.App.AuthURL)
-	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
-
-	return syncGroupsAndUsers(app.Id, d, m)
+	_ = d.Set("name", app.Name)
+	_ = d.Set("status", app.Status)
+	_ = d.Set("sign_on_mode", app.SignOnMode)
+	_ = d.Set("label", app.Label)
+	_ = d.Set("auto_submit_toolbar", app.Visibility.AutoSubmitToolbar)
+	_ = d.Set("hide_ios", app.Visibility.Hide.IOS)
+	_ = d.Set("hide_web", app.Visibility.Hide.Web)
+	err = syncGroupsAndUsers(ctx, app.Id, d, m)
+	if err != nil {
+		return diag.Errorf("failed to sync groups and users for basic auth application: %v", err)
+	}
+	return nil
 }
 
-func resourceAppBasicAuthUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceAppBasicAuthUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
 	app := buildAppBasicAuth(d)
-	_, _, err := client.Application.UpdateApplication(context.Background(), d.Id(), app)
-
+	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to update basic auth application: %v", err)
 	}
-
-	desiredStatus := d.Get("status").(string)
-	err = setAppStatus(d, client, app.Status, desiredStatus)
-
+	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set basic auth application status: %v", err)
 	}
-
-	err = handleAppGroupsAndUsers(app.Id, d, m)
-
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to handle groups and users for basic auth application: %v", err)
 	}
-
-	return resourceAppBasicAuthRead(d, m)
+	return resourceAppBasicAuthRead(ctx, d, m)
 }
 
-func resourceAppBasicAuthDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	_, err := client.Application.DeactivateApplication(context.Background(), d.Id())
+func resourceAppBasicAuthDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to delete basic auth application: %v", err)
 	}
-
-	_, err = client.Application.DeleteApplication(context.Background(), d.Id())
-
-	return err
+	return nil
 }
 
 func buildAppBasicAuth(d *schema.ResourceData) *okta.BasicAuthApplication {

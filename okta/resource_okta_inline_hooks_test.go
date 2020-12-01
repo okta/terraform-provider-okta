@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -19,9 +20,9 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 	passwordImport := mgr.GetFixtures("password_import.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(inlineHook, inlineHookExists),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(inlineHook, inlineHookExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -100,7 +101,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 }
 
 func inlineHookExists(id string) (bool, error) {
-	_, res, err := getSupplementFromMetadata(testAccProvider.Meta()).GetInlineHook(id)
+	_, res, err := getSupplementFromMetadata(testAccProvider.Meta()).GetInlineHook(context.Background(), id)
 	if err != nil && res.StatusCode != http.StatusNotFound {
 		return false, err
 	}
