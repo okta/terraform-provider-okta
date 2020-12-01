@@ -3,7 +3,6 @@ package okta
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -84,7 +83,7 @@ func appendRedirectURI(ctx context.Context, d *schema.ResourceData, m interface{
 		return fmt.Errorf("application with id %s does not exist", appID)
 	}
 	if contains(app.Settings.OauthClient.RedirectUris, d.Id()) {
-		log.Printf("[INFO] application with appID %s already has redirect URI %s", appID, d.Id())
+		logger(m).Info(fmt.Sprintf("application with appID %s already has redirect URI %s", appID, d.Id()))
 		return nil
 	}
 	uri := d.Get("uri").(string)

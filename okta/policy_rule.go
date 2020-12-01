@@ -3,7 +3,6 @@ package okta
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -80,14 +79,14 @@ func buildRuleSchema(target map[string]*schema.Schema) map[string]*schema.Schema
 	return buildSchema(buildSchema(baseRuleSchema, target), userExcludedSchema)
 }
 
-func createRule(ctx context.Context, d *schema.ResourceData, meta interface{}, template sdk.PolicyRule, ruleType string) error {
-	log.Printf("[INFO] Creating Policy Rule %v", d.Get("name").(string))
+func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.PolicyRule, ruleType string) error {
+	logger(m).Info("creating policy rule", "name", d.Get("name").(string))
 	err := ensureNotDefaultRule(d)
 	if err != nil {
 		return err
 	}
 	policyID := d.Get("policyid").(string)
-	client := getSupplementFromMetadata(meta)
+	client := getSupplementFromMetadata(m)
 	_, resp, err := client.GetPolicy(ctx, policyID)
 	if err != nil {
 		return fmt.Errorf("failed to get policy by ID: %v", err)
@@ -188,12 +187,12 @@ func syncRuleFromUpstream(d *schema.ResourceData, rule *sdk.PolicyRule) error {
 	})
 }
 
-func updateRule(ctx context.Context, d *schema.ResourceData, meta interface{}, template sdk.PolicyRule) error {
-	log.Printf("[INFO] Update Policy Rule %v", d.Get("name").(string))
+func updateRule(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.PolicyRule) error {
 	if err := ensureNotDefaultRule(d); err != nil {
 		return err
 	}
-	client := getSupplementFromMetadata(meta)
+	logger(m).Info("updating policy rule", "name", d.Get("name").(string))
+	client := getSupplementFromMetadata(m)
 	rule, _, err := client.UpdatePolicyRule(ctx, d.Get("policyid").(string), d.Id(), template)
 	if err != nil {
 		return err
@@ -202,7 +201,7 @@ func updateRule(ctx context.Context, d *schema.ResourceData, meta interface{}, t
 	if err != nil {
 		return err
 	}
-	return policyRuleActivate(ctx, d, meta)
+	return policyRuleActivate(ctx, d, m)
 }
 
 // activate or deactivate a policy rule according to the terraform schema status field
@@ -225,7 +224,7 @@ func policyRuleActivate(ctx context.Context, d *schema.ResourceData, m interface
 }
 
 func deleteRule(ctx context.Context, d *schema.ResourceData, m interface{}, checkIsSystemPolicy bool) error {
-	log.Printf("[INFO] Delete Policy Rule %v", d.Get("name").(string))
+	logger(m).Info("deleting policy rule", "name", d.Get("name").(string))
 	if err := ensureNotDefaultRule(d); err != nil {
 		return err
 	}
@@ -239,7 +238,7 @@ func deleteRule(ctx context.Context, d *schema.ResourceData, m interface{}, chec
 	shouldRemove := true
 	if checkIsSystemPolicy {
 		if rule.System != nil && *rule.System {
-			log.Printf("[INFO] Policy Rule %v is a System Policy, cannot delete from Okta", d.Get("name").(string))
+			logger(m).Info(fmt.Sprintf("Policy Rule '%s' is a System Policy, cannot delete from Okta", d.Get("name").(string)))
 			shouldRemove = false
 		}
 	}

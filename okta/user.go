@@ -262,15 +262,15 @@ func listUserOnlyRoles(ctx context.Context, c *okta.Client, userID string) (user
 	return
 }
 
-func setAdminRoles(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
+func setAdminRoles(ctx context.Context, d *schema.ResourceData, m interface{}) error {
 	roleTypes := make([]interface{}, 0)
 
 	// set all roles currently attached to user in state
-	roles, resp, err := listUserOnlyRoles(ctx, c, d.Id())
+	roles, resp, err := listUserOnlyRoles(ctx, getOktaClientFromMetadata(m), d.Id())
 
 	if err != nil {
 		if resp != nil && resp.StatusCode == http.StatusForbidden {
-			log.Printf("[INFO] Insufficient permissions to get Admin Roles, skipping.")
+			logger(m).Info("insufficient permissions to get Admin Roles, skipping.")
 		} else {
 			return err
 		}
@@ -429,6 +429,7 @@ func waitForStatusTransition(ctx context.Context, u string, c *okta.Client) erro
 		if user.TransitioningToStatus == "" {
 			return nil
 		}
+
 		log.Printf("[INFO] Transitioning to status = %v; waiting for 5 more seconds...", user.TransitioningToStatus)
 		time.Sleep(5 * time.Second)
 		user, _, err = c.User.GetUser(ctx, u)

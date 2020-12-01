@@ -372,7 +372,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	if err != nil {
 		return diag.Errorf("failed to set user's properties: %v", err)
 	}
-	err = setAdminRoles(ctx, d, client)
+	err = setAdminRoles(ctx, d, m)
 	if err != nil {
 		return diag.Errorf("failed to set user's roles: %v", err)
 	}

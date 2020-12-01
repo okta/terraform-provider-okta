@@ -2,7 +2,6 @@ package okta
 
 import (
 	"context"
-	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -238,7 +237,7 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 	if len(appList) < 1 {
 		return diag.Errorf("no SAML applications found with provided filter: %+v", filters)
 	} else if len(appList) > 1 {
-		log.Printf("[INFO]found multiple applications with the criteria supplied, using the first one, sorted by creation date.")
+		logger(m).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
 	}
 	app := appList[0]
 	d.SetId(app.Id)
