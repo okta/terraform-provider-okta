@@ -1,7 +1,7 @@
 ---
-layout: 'okta'
-page_title: 'Okta: okta_group'
-sidebar_current: 'docs-okta-datasource-group'
+layout: "okta"
+page_title: "Okta: okta_group"
+sidebar_current: "docs-okta-datasource-group"
 description: |-
   Get a group from Okta.
 ---
@@ -22,6 +22,8 @@ data "okta_group" "example" {
 
 - `name` - (Required) name of group to retrieve.
 
+- `type` - (Optional) type of the group to retrieve.
+
 - `include_users` - (Optional) whether or not to retrieve all member ids.
 
 ## Attributes Reference
@@ -29,6 +31,8 @@ data "okta_group" "example" {
 - `id` - id of group.
 
 - `name` - name of group.
+
+- `type` - type of group.
 
 - `description` - description of group.
 

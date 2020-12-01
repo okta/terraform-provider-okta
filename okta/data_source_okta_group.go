@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func dataSourceGroup() *schema.Resource {
@@ -17,6 +17,12 @@ func dataSourceGroup() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
+			},
+			"type": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "Type of the group. When specified in the terraform resource, will act as a filter when searching for the group",
+				ValidateFunc: validation.StringInSlice([]string{"OKTA_GROUP", "APP_GROUP", "BUILT_IN"}, false),
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -44,15 +50,26 @@ func dataSourceGroupRead(d *schema.ResourceData, m interface{}) error {
 
 func findGroup(name string, d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
-	groups, _, err := client.Group.ListGroups(context.Background(), &query.Params{Q: name})
+	searchParams := &query.Params{Q: name}
+	if d.Get("type") != nil && d.Get("type").(string) != "" {
+		searchParams.Filter = fmt.Sprintf("type eq \"%s\"", d.Get("type").(string))
+	}
+
+	groups, _, err := client.Group.ListGroups(context.Background(), searchParams)
 	if err != nil {
 		return fmt.Errorf("failed to query for groups: %v", err)
-	} else if len(groups) < 1 {
-		return fmt.Errorf("group \"%s\" not found", name)
+	}
+
+	if len(groups) < 1 {
+		if d.Get("type") != nil {
+			return fmt.Errorf("group \"%s\" was not found with type \"%s\"", name, d.Get("type").(string))
+		}
+		return fmt.Errorf("group \"%s\" was not found", name)
 	}
 
 	d.SetId(groups[0].Id)
 	_ = d.Set("description", groups[0].Profile.Description)
+	_ = d.Set("type", groups[0].Type)
 
 	if d.Get("include_users").(bool) {
 		userIDList, err := listGroupUserIDs(m, d.Id())

@@ -13,8 +13,8 @@ provider "okta" {
 }
 
 data "okta_group" "peeps" {
-  Name        = "Peeps"
-  Description = "For my peeps"
+  name        = "Peeps"
+  description = "For my peeps"
 }
 
 data "okta_user" "garth" {
