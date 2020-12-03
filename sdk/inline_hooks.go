@@ -90,3 +90,14 @@ func (m *ApiSupplement) GetInlineHook(ctx context.Context, id string) (*InlineHo
 	}
 	return hook, resp, nil
 }
+
+func (m *ApiSupplement) ListInlineHooks(ctx context.Context) ([]*InlineHook, *okta.Response, error) {
+	req, err := m.RequestExecutor.NewRequest("GET", "/api/v1/inlineHooks", nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var auth []*InlineHook
+	resp, err := m.RequestExecutor.Do(ctx, req, &auth)
+	return auth, resp, err
+}

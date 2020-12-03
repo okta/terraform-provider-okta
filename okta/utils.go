@@ -52,9 +52,10 @@ func condenseError(errorList []error) error {
 	}
 	msgList := make([]string, len(errorList))
 	for i, err := range errorList {
-		msgList[i] = err.Error()
+		if err != nil {
+			msgList[i] = err.Error()
+		}
 	}
-
 	return fmt.Errorf("series of errors occurred: %s", strings.Join(msgList, ", "))
 }
 

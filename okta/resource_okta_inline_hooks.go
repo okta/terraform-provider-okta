@@ -145,9 +145,8 @@ func resourceInlineHook() *schema.Resource {
 }
 
 func resourceInlineHookCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getSupplementFromMetadata(m)
 	hook := buildInlineHook(d)
-	newHook, _, err := client.CreateInlineHook(ctx, *hook, nil)
+	newHook, _, err := getSupplementFromMetadata(m).CreateInlineHook(ctx, *hook, nil)
 	if err != nil {
 		return diag.Errorf("failed to create inline hook: %v", err)
 	}

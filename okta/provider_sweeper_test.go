@@ -38,6 +38,7 @@ func TestMain(m *testing.M) {
 	setupSweeper(userSchema, sweepUserSchema)
 	setupSweeper(userBaseSchema, sweepUserBaseSchema)
 	setupSweeper(networkZone, sweepNetworkZones)
+	setupSweeper(inlineHook, sweepInlineHooks)
 
 	// add zones sweeper
 	resource.TestMain(m)
