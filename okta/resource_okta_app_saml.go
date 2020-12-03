@@ -269,6 +269,12 @@ func resourceAppSaml() *schema.Resource {
 					return new == ""
 				},
 			},
+			"acs_endpoints": {
+				Type:        schema.TypeSet,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Optional:    true,
+				Description: "List of ACS endpoints for this SAML application",
+			},
 			"attribute_statements": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -491,6 +497,25 @@ func buildApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 		ErrorRedirectUrl: d.Get("accessibility_error_redirect_url").(string),
 		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
 	}
+
+	//Assumes that sso url is already part of the acs endpoints as part of the desired state.
+	acsEndpoints := convertInterfaceToStringSet(d.Get("acs_endpoints"))
+
+	//If there are acs endpoints, implies this flag should be true.
+	allowMultipleAcsEndpoints := false
+	if len(acsEndpoints) > 0 {
+		acsEndpointsObj := make([]*okta.AcsEndpoint, len(acsEndpoints))
+		for i := range acsEndpoints {
+			acsEndpointsObj[i] = &okta.AcsEndpoint{
+				Index: int64(i),
+				Url:   acsEndpoints[i],
+			}
+		}
+		allowMultipleAcsEndpoints = true
+		app.Settings.SignOn.AcsEndpoints = acsEndpointsObj
+	}
+	app.Settings.SignOn.AllowMultipleAcsEndpoints = &allowMultipleAcsEndpoints
+
 	statements := d.Get("attribute_statements").([]interface{})
 	if len(statements) > 0 {
 		samlAttr := make([]*okta.SamlAttributeStatement, len(statements))
