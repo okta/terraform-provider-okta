@@ -459,7 +459,7 @@ func TestAccOktaGroups_crud(t *testing.T) {
 
 When executing the test, the following steps are taken for each `TestStep`:
 
-1. The Terraform configuration required for the test is applied. This is
+2. The Terraform configuration required for the test is applied. This is
    responsible for configuring the resource under test, and any dependencies it
    may have. For example, to test the `okta_group` resource, a valid configuration with the requisite fields is required. This results in configuration which looks like this:
 
@@ -470,7 +470,7 @@ When executing the test, the following steps are taken for each `TestStep`:
    }
    ```
 
-1. Assertions are run using the provider API. These use the provider API
+3. Assertions are run using the provider API. These use the provider API
    directly rather than asserting against the resource state. For example, to
    verify that the `okta_group` described above was created
    successfully, a test function like this is used:
