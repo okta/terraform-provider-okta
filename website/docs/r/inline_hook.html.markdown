@@ -1,7 +1,7 @@
 ---
-layout: 'okta'
-page_title: 'Okta: okta_inline_hook'
-sidebar_current: 'docs-okta-resource-inline-hook'
+layout: "okta"
+page_title: "Okta: okta_inline_hook"
+sidebar_current: "docs-okta-resource-inline-hook"
 description: |-
   Creates an inline hook.
 ---
@@ -46,19 +46,16 @@ The following arguments are supported:
 
 - `headers` - (Optional) Map of headers to send along in inline hook request.
 
-  - `key` - (Required) Header name.
-  - `value` - (Required) Header value.
-
 - `auth` - (Optional) Authentication required for inline hook request.
 
   - `key` - (Required) Key to use for authentication, usually the header name, for example `"Authorization"`.
   - `value` - (Required) Authentication secret.
-  - `type` - (Optional) Auth type, default is `"HEADER"`.
+  - `type` - (Optional) Auth type. Currently, the only supported type is `"HEADER"`.
 
-- `channel` - (Optional) Details of the endpoint the inline hook will hit.
-  - `version` - (Required) The version of the endpoint.
+- `channel` - (Required) Details of the endpoint the inline hook will hit.
+  - `version` - (Required) Version of the channel. The currently-supported version is `"1.0.0"`.
   - `uri` - (Required) The URI the hook will hit.
-  - `type` - (Optional) The type of hook to trigger. Currently only `"HTTP"` is supported.
+  - `type` - (Optional) The type of hook to trigger. Currently, the only supported type is `"HTTP"`.
   - `method` - (Optional) The request method to use. Default is `"POST"`.
 
 ## Attributes Reference

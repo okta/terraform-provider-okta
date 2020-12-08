@@ -1,8 +1,10 @@
 package okta
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
@@ -13,22 +15,21 @@ var translationSmsResource = &schema.Resource{
 			Required: true,
 		},
 		"template": {
-			Type:         schema.TypeString,
-			Required:     true,
-			ValidateFunc: validation.StringLenBetween(1, 161),
+			Type:             schema.TypeString,
+			Required:         true,
+			ValidateDiagFunc: stringLenBetween(1, 161),
 		},
 	},
 }
 
 func resourceTemplateSms() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceTemplateSmsCreate,
-		Exists: resourceTemplateSmsExists,
-		Read:   resourceTemplateSmsRead,
-		Update: resourceTemplateSmsUpdate,
-		Delete: resourceTemplateSmsDelete,
+		CreateContext: resourceTemplateSmsCreate,
+		ReadContext:   resourceTemplateSmsRead,
+		UpdateContext: resourceTemplateSmsUpdate,
+		DeleteContext: resourceTemplateSmsDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
 			"type": {
@@ -37,10 +38,10 @@ func resourceTemplateSms() *schema.Resource {
 				Description: "SMS template type",
 			},
 			"template": {
-				Type:         schema.TypeString,
-				Required:     true,
-				Description:  "SMS default template",
-				ValidateFunc: validation.StringLenBetween(1, 161),
+				Type:             schema.TypeString,
+				Required:         true,
+				Description:      "SMS default template",
+				ValidateDiagFunc: stringLenBetween(1, 161),
 			},
 			"translations": {
 				Type:     schema.TypeSet,
@@ -49,6 +50,46 @@ func resourceTemplateSms() *schema.Resource {
 			},
 		},
 	}
+}
+
+func resourceTemplateSmsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	temp := buildSmsTemplate(d)
+	response, _, err := getSupplementFromMetadata(m).CreateSmsTemplate(ctx, *temp, nil)
+	if err != nil {
+		return diag.Errorf("failed to create SMS template: %v", err)
+	}
+	d.SetId(response.Id)
+	return resourceTemplateSmsRead(ctx, d, m)
+}
+
+func resourceTemplateSmsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	temp, resp, err := getSupplementFromMetadata(m).GetSmsTemplate(ctx, d.Id())
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get SMS template: %v", err)
+	}
+	if temp == nil {
+		d.SetId("")
+		return nil
+	}
+	_ = d.Set("translations", flattenSmsTranslations(temp.Translations))
+	return nil
+}
+
+func resourceTemplateSmsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	temp := buildSmsTemplate(d)
+	_, _, err := getSupplementFromMetadata(m).UpdateSmsTemplate(ctx, d.Id(), *temp, nil)
+	if err != nil {
+		return diag.Errorf("failed to update SMS template: %v", err)
+	}
+	return resourceTemplateSmsRead(ctx, d, m)
+}
+
+func resourceTemplateSmsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	_, err := getOktaClientFromMetadata(m).SmsTemplate.DeleteSmsTemplate(ctx, d.Id())
+	if err != nil {
+		return diag.Errorf("failed to delete SMS template: %v", err)
+	}
+	return nil
 }
 
 func buildSmsTemplate(d *schema.ResourceData) *sdk.SmsTemplate {
@@ -68,66 +109,13 @@ func buildSmsTemplate(d *schema.ResourceData) *sdk.SmsTemplate {
 	}
 }
 
-func flattenSmsTranlations(temp map[string]string) *schema.Set {
-	rawSet := []interface{}{}
-
+func flattenSmsTranslations(temp map[string]string) *schema.Set {
+	var rawSet []interface{}
 	for key, val := range temp {
 		rawSet = append(rawSet, map[string]interface{}{
 			"language": key,
 			"template": val,
 		})
 	}
-
 	return schema.NewSet(schema.HashResource(translationSmsResource), rawSet)
-}
-
-func resourceTemplateSmsCreate(d *schema.ResourceData, m interface{}) error {
-	temp := buildSmsTemplate(d)
-	response, _, err := getSupplementFromMetadata(m).CreateSmsTemplate(*temp, nil)
-	if err != nil {
-		return err
-	}
-
-	d.SetId(response.Id)
-
-	return resourceTemplateSmsRead(d, m)
-}
-
-func resourceTemplateSmsExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	temp, resp, err := getSupplementFromMetadata(m).GetSmsTemplate(d.Id())
-
-	return temp != nil && !is404(resp.StatusCode), err
-}
-
-func resourceTemplateSmsRead(d *schema.ResourceData, m interface{}) error {
-	temp, resp, err := getSupplementFromMetadata(m).GetSmsTemplate(d.Id())
-
-	if resp != nil && is404(resp.StatusCode) {
-		d.SetId("")
-		return nil
-	}
-
-	if err != nil {
-		return err
-	}
-
-	_ = d.Set("translations", flattenSmsTranlations(temp.Translations))
-
-	return nil
-}
-
-func resourceTemplateSmsUpdate(d *schema.ResourceData, m interface{}) error {
-	temp := buildSmsTemplate(d)
-	_, _, err := getSupplementFromMetadata(m).UpdateSmsTemplate(d.Id(), *temp, nil)
-	if err != nil {
-		return err
-	}
-
-	return resourceTemplateSmsRead(d, m)
-}
-
-func resourceTemplateSmsDelete(d *schema.ResourceData, m interface{}) error {
-	_, err := getSupplementFromMetadata(m).DeleteSmsTemplate(d.Id())
-
-	return err
 }

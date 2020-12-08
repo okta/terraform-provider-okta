@@ -1,9 +1,12 @@
 package okta
 
 import (
+	"context"
+	"fmt"
 	"strings"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
@@ -11,13 +14,12 @@ const customSchema = "custom"
 
 func resourceUserSchema() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceUserSchemaCreate,
-		Read:   resourceUserSchemaRead,
-		Update: resourceUserSchemaUpdate,
-		Delete: resourceUserSchemaDelete,
-		Exists: resourceUserSchemaExists,
+		CreateContext: resourceUserSchemaCreate,
+		ReadContext:   resourceUserSchemaRead,
+		UpdateContext: resourceUserSchemaUpdate,
+		DeleteContext: resourceUserSchemaDelete,
 		Importer: &schema.ResourceImporter{
-			State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				resourceIndex := d.Id()
 				resourceUserType := "default"
 				if strings.Contains(d.Id(), ".") {
@@ -35,79 +37,67 @@ func resourceUserSchema() *schema.Resource {
 	}
 }
 
-func resourceUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
-	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+func resourceUserSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	schemaUrl, err := getUserTypeSchemaUrl(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create user custom schema: %v", err)
 	}
-
-	if err := updateSubschema(schemaUrl, d, m); err != nil {
-		return err
+	_, _, err = getSupplementFromMetadata(m).UpdateCustomUserSchemaProperty(ctx, schemaUrl, d.Get("index").(string), getUserSubSchema(d))
+	if err != nil {
+		return diag.Errorf("failed to create user custom schema: %v", err)
 	}
 	d.SetId(d.Get("index").(string))
-
-	return resourceUserSchemaRead(d, m)
+	return resourceUserSchemaRead(ctx, d, m)
 }
 
-func resourceUserSchemaExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+func resourceUserSchemaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	schemaUrl, err := getUserTypeSchemaUrl(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
 	if err != nil {
-		return false, err
+		return diag.Errorf("failed to get user custom schema: %v", err)
 	}
-	subschema, err := getSubSchema(schemaUrl, d, m)
-
-	return subschema != nil, err
-}
-
-func resourceUserSchemaRead(d *schema.ResourceData, m interface{}) error {
-	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+	subschema, err := getSubSchema(ctx, getSupplementFromMetadata(m), schemaUrl, d)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to get user custom schema: %v", err)
 	}
-
-	subschema, err := getSubSchema(schemaUrl, d, m)
-	if err != nil {
-		return err
-	} else if subschema == nil {
+	if subschema == nil {
 		d.SetId("")
 		return nil
 	}
-
-	return syncUserSchema(d, subschema)
+	err = syncUserSchema(d, subschema)
+	if err != nil {
+		return diag.Errorf("failed to set user custom schema properties: %v", err)
+	}
+	return nil
 }
 
-func getSubSchema(schemaUrl string, d *schema.ResourceData, m interface{}) (*sdk.UserSubSchema, error) {
-	s, _, err := getSupplementFromMetadata(m).GetUserSchema(schemaUrl)
+func getSubSchema(ctx context.Context, client *sdk.ApiSupplement, schemaUrl string, d *schema.ResourceData) (*sdk.UserSubSchema, error) {
+	s, _, err := client.GetUserSchema(ctx, schemaUrl)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get user custom schema: %v", err)
 	}
 	return getCustomProperty(s, d.Id()), err
 }
 
-func resourceUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
-	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+func resourceUserSchemaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	schemaUrl, err := getUserTypeSchemaUrl(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
 	if err != nil {
-		return err
+		return diag.Errorf("failed to update user custom schema: %v", err)
 	}
-	if err := updateSubschema(schemaUrl, d, m); err != nil {
-		return err
+	_, _, err = getSupplementFromMetadata(m).UpdateCustomUserSchemaProperty(ctx, schemaUrl, d.Get("index").(string), getUserSubSchema(d))
+	if err != nil {
+		return diag.Errorf("failed to update user custom schema: %v", err)
 	}
-	return resourceUserSchemaRead(d, m)
+	return resourceUserSchemaRead(ctx, d, m)
 }
 
-func resourceUserSchemaDelete(d *schema.ResourceData, m interface{}) error {
-	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+func resourceUserSchemaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	schemaUrl, err := getUserTypeSchemaUrl(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
 	if err != nil {
-		return err
+		return diag.Errorf("failed to delete user custom schema: %v", err)
 	}
-	_, err = getSupplementFromMetadata(m).DeleteUserSchemaProperty(schemaUrl, d.Id())
-	return err
-}
-
-// create or modify a custom subschema
-func updateSubschema(schemaUrl string, d *schema.ResourceData, m interface{}) error {
-	client := getSupplementFromMetadata(m)
-	_, _, err := client.UpdateCustomUserSchemaProperty(schemaUrl, d.Get("index").(string), getUserSubSchema(d))
-
-	return err
+	_, err = getSupplementFromMetadata(m).DeleteUserSchemaProperty(ctx, schemaUrl, d.Id())
+	if err != nil {
+		return diag.Errorf("failed to delete user custom schema: %v", err)
+	}
+	return nil
 }

@@ -1,5 +1,5 @@
 resource "okta_group" "test" {
-  name        = "testAcc_replace_with_uuid"
+  name        = "testAcc"
   description = "testing, testing"
   users       = [okta_user.test.id]
 }

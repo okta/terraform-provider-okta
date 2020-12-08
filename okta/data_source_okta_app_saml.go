@@ -1,16 +1,15 @@
 package okta
 
 import (
-	"fmt"
+	"context"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceAppSaml() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceAppSamlRead,
-
+		ReadContext: dataSourceAppSamlRead,
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
@@ -74,22 +73,22 @@ func dataSourceAppSaml() *schema.Resource {
 				Description: "Identifies a specific application resource in an IDP initiated SSO scenario.",
 			},
 			"sso_url": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Single Sign On URL",
-				ValidateFunc: validateIsURL,
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Single Sign On URL",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"recipient": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "The location where the app may present the SAML assertion",
-				ValidateFunc: validateIsURL,
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "The location where the app may present the SAML assertion",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"destination": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Identifies the location where the SAML response is intended to be sent inside of the SAML assertion",
-				ValidateFunc: validateIsURL,
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Identifies the location where the SAML response is intended to be sent inside of the SAML assertion",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"audience": {
 				Type:        schema.TypeString,
@@ -116,7 +115,7 @@ func dataSourceAppSaml() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Identifies the SAML processing rules.",
-				ValidateFunc: validation.StringInSlice(
+				ValidateDiagFunc: stringInSlice(
 					[]string{
 						"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
 						"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
@@ -124,7 +123,6 @@ func dataSourceAppSaml() *schema.Resource {
 						"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
 						"urn:oasis:names:tc:SAML:2.0:nameid-format:transient",
 					},
-					false,
 				),
 			},
 			"response_signed": {
@@ -143,16 +141,16 @@ func dataSourceAppSaml() *schema.Resource {
 				Description: "Determines whether the SAML assertion is digitally signed",
 			},
 			"signature_algorithm": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Signature algorithm used ot digitally sign the assertion and response",
-				ValidateFunc: validation.StringInSlice([]string{"RSA_SHA256", "RSA_SHA1"}, false),
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Signature algorithm used ot digitally sign the assertion and response",
+				ValidateDiagFunc: stringInSlice([]string{"RSA_SHA256", "RSA_SHA1"}),
 			},
 			"digest_algorithm": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Determines the digest algorithm used to digitally sign the SAML assertion and response",
-				ValidateFunc: validation.StringInSlice([]string{"SHA256", "SHA1"}, false),
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Determines the digest algorithm used to digitally sign the SAML assertion and response",
+				ValidateDiagFunc: stringInSlice([]string{"SHA256", "SHA1"}),
 			},
 			"honor_force_authn": {
 				Type:        schema.TypeBool,
@@ -171,16 +169,16 @@ func dataSourceAppSaml() *schema.Resource {
 				Description: "Enable self service",
 			},
 			"accessibility_error_redirect_url": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Custom error page URL",
-				ValidateFunc: validateIsURL,
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Custom error page URL",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"accessibility_login_redirect_url": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Custom login page URL",
-				ValidateFunc: validateIsURL,
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Custom login page URL",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"features": {
 				Type:        schema.TypeSet,
@@ -200,18 +198,18 @@ func dataSourceAppSaml() *schema.Resource {
 				Description: "Username template suffix",
 			},
 			"user_name_template_type": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "BUILT_IN",
-				Description:  "Username template type",
-				ValidateFunc: validation.StringInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}, false),
+				Type:             schema.TypeString,
+				Optional:         true,
+				Default:          "BUILT_IN",
+				Description:      "Username template type",
+				ValidateDiagFunc: stringInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
 			},
 			"app_settings_json": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Application settings in JSON format",
-				ValidateFunc: validateDataJSON,
-				StateFunc:    normalizeDataJSON,
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Application settings in JSON format",
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return new == ""
 				},
@@ -227,20 +225,19 @@ func dataSourceAppSaml() *schema.Resource {
 	}
 }
 
-func dataSourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
+func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	filters, err := getAppFilters(d)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to list SAML apps: error getting filters: %v", err)
 	}
-
-	appList, err := listSamlApps(m.(*Config), filters)
+	appList, err := listSamlApps(ctx, m.(*Config), filters)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to list SAML apps: error getting SAML apps: %v", err)
 	}
 	if len(appList) < 1 {
-		return fmt.Errorf("no application found with provided filter: %s", filters)
+		return diag.Errorf("no SAML applications found with provided filter: %+v", filters)
 	} else if len(appList) > 1 {
-		fmt.Println("Found multiple applications with the criteria supplied, using the first one, sorted by creation date.")
+		logger(m).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
 	}
 	app := appList[0]
 	d.SetId(app.Id)
@@ -248,18 +245,15 @@ func dataSourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 	_ = d.Set("name", app.Name)
 	_ = d.Set("status", app.Status)
 	_ = d.Set("key_id", app.Credentials.Signing.Kid)
-
 	if app.Settings != nil && app.Settings.SignOn != nil {
 		err = syncSamlSettings(d, app.Settings)
 		if err != nil {
-			return err
+			return diag.Errorf("failed to read SAML app: error setting SAML app settings: %v", err)
 		}
 	}
-
 	_ = d.Set("features", convertStringSetToInterface(app.Features))
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
-
 	return nil
 }

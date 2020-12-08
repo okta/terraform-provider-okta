@@ -1,79 +1,72 @@
 package okta
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourcePolicyMfaRule() *schema.Resource {
 	return &schema.Resource{
-		Exists:   resourcePolicyRuleExists,
-		Create:   resourcePolicyMfaRuleCreate,
-		Read:     resourcePolicyMfaRuleRead,
-		Update:   resourcePolicyMfaRuleUpdate,
-		Delete:   resourcePolicyMfaRuleDelete,
-		Importer: createPolicyRuleImporter(),
+		CreateContext: resourcePolicyMfaRuleCreate,
+		ReadContext:   resourcePolicyMfaRuleRead,
+		UpdateContext: resourcePolicyMfaRuleUpdate,
+		DeleteContext: resourcePolicyMfaRuleDelete,
+		Importer:      createPolicyRuleImporter(),
 		Schema: buildRuleSchema(map[string]*schema.Schema{
 			"enroll": {
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{"CHALLENGE", "LOGIN", "NEVER"}, false),
-				Default:      "CHALLENGE",
-				Optional:     true,
-				Description:  "Should the user be enrolled the first time they LOGIN, the next time they are CHALLENGEd, or NEVER?",
+				Type:             schema.TypeString,
+				ValidateDiagFunc: stringInSlice([]string{"CHALLENGE", "LOGIN", "NEVER"}),
+				Default:          "CHALLENGE",
+				Optional:         true,
+				Description:      "Should the user be enrolled the first time they LOGIN, the next time they are CHALLENGEd, or NEVER?",
 			},
 		}),
 	}
 }
 
-func resourcePolicyMfaRuleCreate(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultRule(d); err != nil {
-		return err
-	}
+func resourcePolicyMfaRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	template := buildMfaPolicyRule(d)
-	rule, err := createRule(d, m, template, policyRulePassword)
+	err := createRule(ctx, d, m, template, policyRulePassword)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create MFA policy rule: %v", err)
 	}
-	d.SetId(rule.Id)
-	err = validatePriority(template.Priority, rule.Priority)
-	if err != nil {
-		return err
-	}
-	return resourcePolicyMfaRuleRead(d, m)
+	return resourcePolicyMfaRuleRead(ctx, d, m)
 }
 
-func resourcePolicyMfaRuleRead(d *schema.ResourceData, m interface{}) error {
-	rule, err := getPolicyRule(d, m)
+func resourcePolicyMfaRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	rule, err := getPolicyRule(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to get MFA policy rule: %v", err)
+	}
 	if rule == nil {
-		d.SetId("")
 		return nil
 	}
+	err = syncRuleFromUpstream(d, rule)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to sync MFA policy rule: %v", err)
 	}
-	return syncRuleFromUpstream(d, rule)
+	return nil
 }
 
-func resourcePolicyMfaRuleUpdate(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultRule(d); err != nil {
-		return err
-	}
+func resourcePolicyMfaRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	template := buildMfaPolicyRule(d)
-	rule, err := updateRule(d, m, template)
+	err := updateRule(ctx, d, m, template)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to update MFA policy rule: %v", err)
 	}
-	err = validatePriority(template.Priority, rule.Priority)
-	if err != nil {
-		return err
-	}
-	return resourcePolicyMfaRuleRead(d, m)
+	return resourcePolicyMfaRuleRead(ctx, d, m)
 }
 
-func resourcePolicyMfaRuleDelete(d *schema.ResourceData, m interface{}) error {
-	return deleteRule(d, m)
+func resourcePolicyMfaRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := deleteRule(ctx, d, m, false)
+	if err != nil {
+		return diag.Errorf("failed to delete MFA policy rule: %v", err)
+	}
+	return nil
 }
 
 // build password policy rule from schema data
