@@ -28,9 +28,9 @@ The following arguments are supported:
 
 * `label` - (Required) The Application's display name.
 
-* `url` - (Optional) The URL of the sign-in page for this app.
+* `url` - (Required) The URL of the sign-in page for this app.
 
-* `auth_url` - (Optional) The URL of the authenticating site for this app.
+* `auth_url` - (Required) The URL of the authenticating site for this app.
 
 ## Attributes Reference
 

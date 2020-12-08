@@ -8,8 +8,8 @@ import (
 	"fmt"
 
 	"github.com/crewjam/saml"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
@@ -29,21 +29,19 @@ var customappSamlRequiredFields = []string{
 	"subject_name_id_format",
 	"signature_algorithm",
 	"digest_algorithm",
-	"honor_force_authn",
+	//"honor_force_authn",
 	"authn_context_class_ref",
 }
 
 func resourceAppSaml() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceAppSamlCreate,
-		Read:   resourceAppSamlRead,
-		Update: resourceAppSamlUpdate,
-		Delete: resourceAppSamlDelete,
-		Exists: resourceAppExists,
+		CreateContext: resourceAppSamlCreate,
+		ReadContext:   resourceAppSamlRead,
+		UpdateContext: resourceAppSamlUpdate,
+		DeleteContext: resourceAppSamlDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
-
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
 		Schema: buildAppSchema(map[string]*schema.Schema{
@@ -67,11 +65,11 @@ func resourceAppSaml() *schema.Resource {
 				Computed:    true,
 			},
 			"key_years_valid": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      2,
-				ValidateFunc: validation.IntBetween(2, 10),
-				Description:  "Number of years the certificate is valid.",
+				Type:             schema.TypeInt,
+				Optional:         true,
+				Default:          2,
+				ValidateDiagFunc: intBetween(2, 10),
+				Description:      "Number of years the certificate is valid.",
 			},
 			"metadata": {
 				Type:        schema.TypeString,
@@ -127,22 +125,22 @@ func resourceAppSaml() *schema.Resource {
 				Description: "Identifies a specific application resource in an IDP initiated SSO scenario.",
 			},
 			"sso_url": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Single Sign On URL",
-				ValidateFunc: validateIsURL,
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Single Sign On URL",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"recipient": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "The location where the app may present the SAML assertion",
-				ValidateFunc: validateIsURL,
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "The location where the app may present the SAML assertion",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"destination": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Identifies the location where the SAML response is intended to be sent inside of the SAML assertion",
-				ValidateFunc: validateIsURL,
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Identifies the location where the SAML response is intended to be sent inside of the SAML assertion",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"audience": {
 				Type:        schema.TypeString,
@@ -169,16 +167,13 @@ func resourceAppSaml() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Identifies the SAML processing rules.",
-				ValidateFunc: validation.StringInSlice(
-					[]string{
-						"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
-						"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
-						"urn:oasis:names:tc:SAML:1.1:nameid-format:x509SubjectName",
-						"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
-						"urn:oasis:names:tc:SAML:2.0:nameid-format:transient",
-					},
-					false,
-				),
+				ValidateDiagFunc: stringInSlice([]string{
+					"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+					"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+					"urn:oasis:names:tc:SAML:1.1:nameid-format:x509SubjectName",
+					"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
+					"urn:oasis:names:tc:SAML:2.0:nameid-format:transient",
+				}),
 			},
 			"response_signed": {
 				Type:        schema.TypeBool,
@@ -196,21 +191,22 @@ func resourceAppSaml() *schema.Resource {
 				Description: "Determines whether the SAML assertion is digitally signed",
 			},
 			"signature_algorithm": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Signature algorithm used ot digitally sign the assertion and response",
-				ValidateFunc: validation.StringInSlice([]string{"RSA_SHA256", "RSA_SHA1"}, false),
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Signature algorithm used ot digitally sign the assertion and response",
+				ValidateDiagFunc: stringInSlice([]string{"RSA_SHA256", "RSA_SHA1"}),
 			},
 			"digest_algorithm": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Determines the digest algorithm used to digitally sign the SAML assertion and response",
-				ValidateFunc: validation.StringInSlice([]string{"SHA256", "SHA1"}, false),
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Determines the digest algorithm used to digitally sign the SAML assertion and response",
+				ValidateDiagFunc: stringInSlice([]string{"SHA256", "SHA1"}),
 			},
 			"honor_force_authn": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "Prompt user to re-authenticate if SP asks for it",
+				Default:     false,
 			},
 			"authn_context_class_ref": {
 				Type:        schema.TypeString,
@@ -224,16 +220,16 @@ func resourceAppSaml() *schema.Resource {
 				Description: "Enable self service",
 			},
 			"accessibility_error_redirect_url": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Custom error page URL",
-				ValidateFunc: validateIsURL,
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Custom error page URL",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"accessibility_login_redirect_url": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Custom login page URL",
-				ValidateFunc: validateIsURL,
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Custom login page URL",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"features": {
 				Type:        schema.TypeSet,
@@ -253,18 +249,18 @@ func resourceAppSaml() *schema.Resource {
 				Description: "Username template suffix",
 			},
 			"user_name_template_type": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "BUILT_IN",
-				Description:  "Username template type",
-				ValidateFunc: validation.StringInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}, false),
+				Type:             schema.TypeString,
+				Optional:         true,
+				Default:          "BUILT_IN",
+				Description:      "Username template type",
+				ValidateDiagFunc: stringInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
 			},
 			"app_settings_json": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Application settings in JSON format",
-				ValidateFunc: validateDataJSON,
-				StateFunc:    normalizeDataJSON,
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Application settings in JSON format",
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return new == ""
 				},
@@ -280,58 +276,46 @@ func resourceAppSaml() *schema.Resource {
 	}
 }
 
-func resourceAppSamlCreate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
+func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	app, err := buildApp(d)
-
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create SAML application: %v", err)
 	}
-
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err = client.Application.CreateApplication(context.Background(), app, params)
-
+	_, _, err = getOktaClientFromMetadata(m).Application.CreateApplication(ctx, app, params)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create SAML application: %v", err)
 	}
-
 	// Make sure to track in terraform prior to the creation of cert in case there is an error.
 	d.SetId(app.Id)
-
-	err = tryCreateCertificate(d, m, app.Id)
+	err = tryCreateCertificate(ctx, d, m, app.Id)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create new certificate for SAML application: %v", err)
 	}
-	err = handleAppGroupsAndUsers(app.Id, d, m)
-
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to handle groups and users for SAML application: %v", err)
 	}
-
-	return resourceAppSamlRead(d, m)
+	return resourceAppSamlRead(ctx, d, m)
 }
 
-func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
+func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	app := okta.NewSamlApplication()
-	err := fetchApp(d, m, app)
-
-	if app == nil {
+	err := fetchApp(ctx, d, m, app)
+	if err != nil {
+		return diag.Errorf("failed to get SAML application: %v", err)
+	}
+	if app.Id == "" {
 		d.SetId("")
 		return nil
 	}
-
-	if err != nil {
-		return err
-	}
-
 	if app.Settings != nil && app.Settings.SignOn != nil {
 		err = syncSamlSettings(d, app.Settings)
 		if err != nil {
-			return err
+			return diag.Errorf("failed to sync SAML settings: %v", err)
 		}
 	}
-
 	_ = d.Set("features", convertStringSetToInterface(app.Features))
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
@@ -339,22 +323,21 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 	_ = d.Set("preconfigured_app", app.Name)
 	err = setAppSettings(d, app.Settings.App)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set SAML settings: %v", err)
 	}
-
 	if app.Credentials.Signing.Kid != "" && app.Status != statusInactive {
 		keyID := app.Credentials.Signing.Kid
 		_ = d.Set("key_id", keyID)
 		keyMetadata, err := getSupplementFromMetadata(m).GetSAMLMetdata(d.Id(), keyID)
 		if err != nil {
-			return err
+			return diag.Errorf("failed to set SAML metadata: %v", err)
 		}
 		_ = d.Set("metadata", string(keyMetadata))
 
 		metadataRoot := &saml.EntityDescriptor{}
 		err = xml.Unmarshal(keyMetadata, metadataRoot)
 		if err != nil {
-			return fmt.Errorf("could not parse SAML app metadata, error: %s", err)
+			return diag.Errorf("could not parse SAML app metadata: %v", err)
 		}
 		desc := metadataRoot.IDPSSODescriptors[0]
 		syncSamlEndpointBinding(d, desc.SingleSignOnServices)
@@ -364,58 +347,47 @@ func resourceAppSamlRead(d *schema.ResourceData, m interface{}) error {
 		_ = d.Set("entity_key", key)
 		_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
 	}
-
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
-
-	return syncGroupsAndUsers(app.Id, d, m)
+	err = syncGroupsAndUsers(ctx, app.Id, d, m)
+	if err != nil {
+		return diag.Errorf("failed to sync groups and users for SAML application: %v", err)
+	}
+	return nil
 }
 
-func resourceAppSamlUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
 	app, err := buildApp(d)
-
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create SAML application: %v", err)
 	}
-
-	_, _, err = client.Application.UpdateApplication(context.Background(), d.Id(), app)
-
+	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to update SAML application: %v", err)
 	}
-
-	desiredStatus := d.Get("status").(string)
-	err = setAppStatus(d, client, app.Status, desiredStatus)
-
+	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set SAML application status: %v", err)
 	}
-
 	if d.HasChange("key_name") {
-		err = tryCreateCertificate(d, m, app.Id)
+		err = tryCreateCertificate(ctx, d, m, app.Id)
 		if err != nil {
-			return err
+			return diag.Errorf("failed to create new certificate for SAML application: %v", err)
 		}
 	}
-	err = handleAppGroupsAndUsers(app.Id, d, m)
-
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to handle groups and users for SAML application: %v", err)
 	}
-
-	return resourceAppSamlRead(d, m)
+	return resourceAppSamlRead(ctx, d, m)
 }
 
-func resourceAppSamlDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	_, err := client.Application.DeactivateApplication(context.Background(), d.Id())
+func resourceAppSamlDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to delete SAML application: %v", err)
 	}
-
-	_, err = client.Application.DeleteApplication(context.Background(), d.Id())
-
-	return err
+	return nil
 }
 
 func buildApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
@@ -425,7 +397,7 @@ func buildApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	responseSigned := d.Get("response_signed").(bool)
 	assertionSigned := d.Get("assertion_signed").(bool)
 
-	preconfigName, isPreconfig := d.GetOkExists("preconfigured_app") // nolint:staticcheck
+	preconfigName, isPreconfig := d.GetOk("preconfigured_app") // nolint:staticcheck
 
 	if isPreconfig {
 		app.Name = preconfigName.(string)
@@ -519,7 +491,7 @@ func buildApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 }
 
 // Keep in mind that at the time of writing this the official SDK did not support generating certs.
-func generateCertificate(d *schema.ResourceData, m interface{}, appID string) (*okta.JsonWebKey, error) {
+func generateCertificate(ctx context.Context, d *schema.ResourceData, m interface{}, appID string) (*okta.JsonWebKey, error) {
 	requestExecutor := getRequestExecutor(m)
 	years := d.Get("key_years_valid").(int)
 	url := fmt.Sprintf("/api/v1/apps/%s/credentials/keys/generate?validityYears=%d", appID, years)
@@ -527,16 +499,15 @@ func generateCertificate(d *schema.ResourceData, m interface{}, appID string) (*
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
 	var key *okta.JsonWebKey
-
-	_, err = requestExecutor.Do(context.Background(), req, &key)
-
+	_, err = requestExecutor.Do(ctx, req, &key)
 	return key, err
 }
 
-func tryCreateCertificate(d *schema.ResourceData, m interface{}, appID string) error {
+func tryCreateCertificate(ctx context.Context, d *schema.ResourceData, m interface{}, appID string) error {
 	if _, ok := d.GetOk("key_name"); ok {
-		key, err := generateCertificate(d, m, appID)
+		key, err := generateCertificate(ctx, d, m, appID)
 		if err != nil {
 			return err
 		}

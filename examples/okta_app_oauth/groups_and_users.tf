@@ -6,8 +6,8 @@ resource "okta_user" "user" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "blah"
-  login       = "test-acc-replace_with_uuid@example.com"
-  email       = "test-acc-replace_with_uuid@example.com"
+  login       = "testAcc-replace_with_uuid@example.com"
+  email       = "testAcc-replace_with_uuid@example.com"
   status      = "ACTIVE"
 }
 

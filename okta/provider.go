@@ -2,12 +2,13 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/go-hclog"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 // Resource names, defined in place, used throughout the provider and tests
@@ -60,7 +61,7 @@ const (
 
 // Provider establishes a client connection to an okta site
 // determined by its schema string values
-func Provider() terraform.ResourceProvider {
+func Provider() *schema.Provider {
 	deprecatedPolicies := dataSourceDefaultPolicies()
 	deprecatedPolicies.DeprecationMessage = "This data source will be deprecated in favor of okta_default_policy or okta_policy data sources."
 
@@ -103,17 +104,24 @@ func Provider() terraform.ResourceProvider {
 				Description: "maximum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
 			},
 			"max_retries": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      5,
-				ValidateFunc: validation.IntAtMost(100), // Have to cut it off somewhere right?
-				Description:  "maximum number of retries to attempt before erroring out.",
+				Type:             schema.TypeInt,
+				Optional:         true,
+				Default:          5,
+				ValidateDiagFunc: intAtMost(100), // Have to cut it off somewhere right?
+				Description:      "maximum number of retries to attempt before erroring out.",
 			},
 			"parallelism": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     1,
 				Description: "Number of concurrent requests to make within a resource where bulk operations are not possible. Take note of https://developer.okta.com/docs/api/getting_started/rate-limits.",
+			},
+			"log_level": {
+				Type:             schema.TypeInt,
+				Optional:         true,
+				Default:          int(hclog.Error),
+				ValidateDiagFunc: intBetween(1, 5),
+				Description:      "providers log level. Minimum is 1 (TRACE), and maximum is 5 (ERROR)",
 			},
 		},
 
@@ -200,8 +208,7 @@ func Provider() terraform.ResourceProvider {
 			authServer:                         dataSourceAuthServer(),
 			userType:                           dataSourceUserType(),
 		},
-
-		ConfigureFunc: providerConfigure,
+		ConfigureContextFunc: providerConfigure,
 	}
 }
 
@@ -210,7 +217,7 @@ func deprecateIncorrectNaming(d *schema.Resource, newResource string) *schema.Re
 	return d
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	log.Printf("[INFO] Initializing Okta client")
 
 	config := Config{
@@ -221,9 +228,10 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		retryCount:  d.Get("max_retries").(int),
 		maxWait:     d.Get("max_wait_seconds").(int),
 		backoff:     d.Get("backoff").(bool),
+		logLevel:    d.Get("log_level").(int),
 	}
 	if err := config.loadAndValidate(); err != nil {
-		return nil, fmt.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)
+		return nil, diag.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)
 	}
 	return &config, nil
 }

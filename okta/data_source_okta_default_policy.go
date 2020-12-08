@@ -1,10 +1,11 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
@@ -12,19 +13,23 @@ import (
 
 func dataSourceDefaultPolicies() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceDefaultPolicyRead,
-
+		ReadContext: dataSourceDefaultPolicyRead,
 		Schema: map[string]*schema.Schema{
 			"type": {
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.OauthAuthorizationPolicyType}, false),
-				Description:  fmt.Sprintf("Policy type: %s, %s, %s, or %s", sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.OauthAuthorizationPolicyType),
-				Required:     true,
+				Type: schema.TypeString,
+				ValidateDiagFunc: stringInSlice([]string{
+					sdk.SignOnPolicyType,
+					sdk.PasswordPolicyType,
+					sdk.MfaPolicyType,
+					sdk.OauthAuthorizationPolicyType,
+				}),
+				Description: fmt.Sprintf("Policy type: %s, %s, %s, or %s", sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.OauthAuthorizationPolicyType),
+				Required:    true,
 			},
 		},
 	}
 }
 
-func dataSourceDefaultPolicyRead(d *schema.ResourceData, m interface{}) error {
-	return setPolicyByName(d, m, "Default Policy")
+func dataSourceDefaultPolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return setPolicyByName(ctx, d, m, "Default Policy")
 }

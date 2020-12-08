@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
@@ -35,9 +35,9 @@ func TestAccOktaGroups_crud(t *testing.T) {
 	addUsersConfig := mgr.GetFixtures("okta_group_with_users.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(oktaGroup, doesGroupExist),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(oktaGroup, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

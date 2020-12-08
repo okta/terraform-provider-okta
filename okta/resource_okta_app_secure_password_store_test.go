@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
@@ -17,9 +17,9 @@ func TestAccAppSecurePasswordStoreApplication_credsSchemes(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSecurePasswordStore)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(appSecurePasswordStore, createDoesAppExist(okta.NewSecurePasswordStoreApplication())),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appSecurePasswordStore, createDoesAppExist(okta.NewSecurePasswordStoreApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

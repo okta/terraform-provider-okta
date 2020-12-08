@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
@@ -76,15 +76,14 @@ var appGrantTypeMap = map[string]*applicationMap{
 
 func resourceAppOAuth() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceAppOAuthCreate,
-		Read:   resourceAppOAuthRead,
-		Update: resourceAppOAuthUpdate,
-		Delete: resourceAppOAuthDelete,
-		Exists: resourceAppOAuthExists,
+		CreateContext: resourceAppOAuthCreate,
+		ReadContext:   resourceAppOAuthRead,
+		UpdateContext: resourceAppOAuthUpdate,
+		DeleteContext: resourceAppOAuthDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
-		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
+		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
 			// Force new if omit_secret goes from true to false
 			if d.Id() != "" {
 				old, new := d.GetChange("omit_secret")
@@ -98,11 +97,11 @@ func resourceAppOAuth() *schema.Resource {
 		// the examples in the documentation
 		Schema: buildAppSchema(map[string]*schema.Schema{
 			"type": {
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{"web", "native", "browser", "service"}, false),
-				Required:     true,
-				ForceNew:     true,
-				Description:  "The type of client application.",
+				Type:             schema.TypeString,
+				ValidateDiagFunc: stringInSlice([]string{"web", "native", "browser", "service"}),
+				Required:         true,
+				ForceNew:         true,
+				Description:      "The type of client application.",
 			},
 			"client_id": {
 				Type: schema.TypeString,
@@ -142,14 +141,11 @@ func resourceAppOAuth() *schema.Resource {
 				Description: "OAuth client secret key, this can be set when token_endpoint_auth_method is client_secret_basic.",
 			},
 			"token_endpoint_auth_method": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ValidateFunc: validation.StringInSlice(
-					[]string{"none", "client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"},
-					false,
-				),
-				Default:     "client_secret_basic",
-				Description: "Requested authentication method for the token endpoint.",
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"none", "client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"}),
+				Default:          "client_secret_basic",
+				Description:      "Requested authentication method for the token endpoint.",
 			},
 			"auto_key_rotation": {
 				Type:        schema.TypeBool,
@@ -187,8 +183,8 @@ func resourceAppOAuth() *schema.Resource {
 			"response_types": {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
-					Type:         schema.TypeString,
-					ValidateFunc: validation.StringInSlice([]string{"code", "token", "id_token"}, false),
+					Type:             schema.TypeString,
+					ValidateDiagFunc: stringInSlice([]string{"code", "token", "id_token"}),
 				},
 				Optional:    true,
 				Description: "List of OAuth 2.0 response type strings.",
@@ -196,11 +192,8 @@ func resourceAppOAuth() *schema.Resource {
 			"grant_types": {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
-					Type: schema.TypeString,
-					ValidateFunc: validation.StringInSlice(
-						[]string{authorizationCode, implicit, password, refreshToken, clientCredentials},
-						false,
-					),
+					Type:             schema.TypeString,
+					ValidateDiagFunc: stringInSlice([]string{authorizationCode, implicit, password, refreshToken, clientCredentials}),
 				},
 				Optional:    true,
 				Description: "List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.",
@@ -217,18 +210,18 @@ func resourceAppOAuth() *schema.Resource {
 				Description: "*Early Access Property*. URI to web page providing client policy document.",
 			},
 			"consent_method": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "TRUSTED",
-				ValidateFunc: validation.StringInSlice([]string{"REQUIRED", "TRUSTED"}, false),
-				Description:  "*Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED",
+				Type:             schema.TypeString,
+				Optional:         true,
+				Default:          "TRUSTED",
+				ValidateDiagFunc: stringInSlice([]string{"REQUIRED", "TRUSTED"}),
+				Description:      "*Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED",
 			},
 			"issuer_mode": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"CUSTOM_URL", "ORG_URL"}, false),
-				Default:      "ORG_URL",
-				Description:  "*Early Access Property*. Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.",
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"CUSTOM_URL", "ORG_URL"}),
+				Default:          "ORG_URL",
+				Description:      "*Early Access Property*. Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.",
 			},
 			"auto_submit_toolbar": {
 				Type:        schema.TypeBool,
@@ -249,10 +242,11 @@ func resourceAppOAuth() *schema.Resource {
 				Description: "Do not display application icon to users",
 			},
 			"profile": {
-				Type:        schema.TypeString,
-				StateFunc:   normalizeDataJSON,
-				Optional:    true,
-				Description: "Custom JSON that represents an OAuth application's profile",
+				Type:             schema.TypeString,
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
+				Optional:         true,
+				Description:      "Custom JSON that represents an OAuth application's profile",
 			},
 			"jwks": {
 				Type:     schema.TypeList,
@@ -265,10 +259,10 @@ func resourceAppOAuth() *schema.Resource {
 							Description: "Key ID",
 						},
 						"kty": {
-							Type:         schema.TypeString,
-							Required:     true,
-							Description:  "Key type",
-							ValidateFunc: validation.StringInSlice([]string{"RSA"}, false),
+							Type:             schema.TypeString,
+							Required:         true,
+							Description:      "Key type",
+							ValidateDiagFunc: stringInSlice([]string{"RSA"}),
 						},
 						"e": {
 							Type:        schema.TypeString,
@@ -287,71 +281,50 @@ func resourceAppOAuth() *schema.Resource {
 	}
 }
 
-func resourceAppOAuthExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	app := okta.NewOpenIdConnectApplication()
-	err := fetchApp(d, m, app)
-
-	// Not sure if a non-nil app with an empty ID is possible but checking to avoid false positives.
-	return app != nil && app.Id != "", err
-}
-
-func validateGrantTypes(d *schema.ResourceData) error {
-	grantTypeList := convertInterfaceToStringSet(d.Get("grant_types"))
-	appType := d.Get("type").(string)
-	appMap := appGrantTypeMap[appType]
-
-	// There is some conditional validation around grant types depending on application type.
-	return conditionalValidator("grant_types", appType, appMap.RequiredGrantTypes, appMap.ValidGrantTypes, grantTypeList)
-}
-
-func resourceAppOAuthCreate(d *schema.ResourceData, m interface{}) error {
+func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
 	if err := validateGrantTypes(d); err != nil {
-		return err
+		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
-
 	app := buildAppOAuth(d)
-	desiredStatus := d.Get("status").(string)
-	activate := desiredStatus == statusActive
+	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(context.Background(), app, params)
-
+	_, _, err := client.Application.CreateApplication(ctx, app, params)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
-
 	d.SetId(app.Id)
 	if !d.Get("omit_secret").(bool) {
 		// Needs to be set immediately, not provided again after this
 		_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
 	}
-	err = handleAppGroupsAndUsers(app.Id, d, m)
-
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to handle groups and users for oauth application: %v", err)
 	}
-
-	return resourceAppOAuthRead(d, m)
+	return resourceAppOAuthRead(ctx, d, m)
 }
 
-func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
+func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	app := sdk.NewOpenIdConnectApplication()
-	err := fetchApp(d, m, app)
-
-	if app == nil {
+	err := fetchApp(ctx, d, m, app)
+	if err != nil {
+		return diag.Errorf("failed to get OAuth application: %v", err)
+	}
+	if app.Id == "" {
 		d.SetId("")
 		return nil
 	}
-
-	if err != nil {
-		return err
+	var rawProfile string
+	if app.Profile != nil {
+		p, _ := json.Marshal(app.Profile)
+		rawProfile = string(p)
 	}
-
 	_ = d.Set("name", app.Name)
 	_ = d.Set("status", app.Status)
 	_ = d.Set("sign_on_mode", app.SignOnMode)
 	_ = d.Set("label", app.Label)
-	_ = d.Set("profile", app.Profile)
+	_ = d.Set("profile", rawProfile)
 	_ = d.Set("type", app.Settings.OauthClient.ApplicationType)
 	// Not setting client_secret, it is only provided on create for auth methods that require it
 	_ = d.Set("client_id", app.Credentials.OauthClient.ClientId)
@@ -390,7 +363,7 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 		}
 		err = setNonPrimitives(d, map[string]interface{}{"jwks": arr})
 		if err != nil {
-			return err
+			return diag.Errorf("failed to set OAuth application properties: %v", err)
 		}
 	}
 
@@ -402,10 +375,9 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 	for i := range app.Settings.OauthClient.GrantTypes {
 		grantTypes[i] = string(*app.Settings.OauthClient.GrantTypes[i])
 	}
-
-	err = syncGroupsAndUsers(app.Id, d, m)
+	err = syncGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to sync groups and users for OAuth application: %v", err)
 	}
 	aggMap := map[string]interface{}{
 		"redirect_uris":             convertStringSetToInterface(app.Settings.OauthClient.RedirectUris),
@@ -413,45 +385,40 @@ func resourceAppOAuthRead(d *schema.ResourceData, m interface{}) error {
 		"grant_types":               convertStringSetToInterface(grantTypes),
 		"post_logout_redirect_uris": convertStringSetToInterface(app.Settings.OauthClient.PostLogoutRedirectUris),
 	}
-
-	return setNonPrimitives(d, aggMap)
+	err = setNonPrimitives(d, aggMap)
+	if err != nil {
+		return diag.Errorf("failed to set OAuth application properties: %v", err)
+	}
+	return nil
 }
 
-func resourceAppOAuthUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
 	if err := validateGrantTypes(d); err != nil {
-		return err
+		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
-
 	app := buildAppOAuth(d)
-	if _, _, err := client.Application.UpdateApplication(context.Background(), d.Id(), app); err != nil {
-		return err
+	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
+	if err != nil {
+		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
-
-	desiredStatus := d.Get("status").(string)
-	if err := setAppStatus(d, client, app.Status, desiredStatus); err != nil {
-		return err
+	err = setAppStatus(ctx, d, client, app.Status)
+	if err != nil {
+		return diag.Errorf("failed to set OAuth application status: %v", err)
 	}
-
-	if err := handleAppGroupsAndUsers(app.Id, d, m); err != nil {
-		return err
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
+	if err != nil {
+		return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
 	}
-
-	return resourceAppOAuthRead(d, m)
+	return resourceAppOAuthRead(ctx, d, m)
 }
 
-func resourceAppOAuthDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-
-	if d.Get("status").(string) == statusActive {
-		_, err := client.Application.DeactivateApplication(context.Background(), d.Id())
-		if err != nil {
-			return err
-		}
+func resourceAppOAuthDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to delete OAuth application: %v", err)
 	}
-
-	_, err := client.Application.DeleteApplication(context.Background(), d.Id())
-	return err
+	return nil
 }
 
 func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
@@ -555,9 +522,17 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 		var attrs map[string]interface{}
 		str := rawAttrs.(string)
 		_ = json.Unmarshal([]byte(str), &attrs)
-
 		app.Profile = attrs
 	}
 
 	return app
+}
+
+func validateGrantTypes(d *schema.ResourceData) error {
+	grantTypeList := convertInterfaceToStringSet(d.Get("grant_types"))
+	appType := d.Get("type").(string)
+	appMap := appGrantTypeMap[appType]
+
+	// There is some conditional validation around grant types depending on application type.
+	return conditionalValidator("grant_types", appType, appMap.RequiredGrantTypes, appMap.ValidGrantTypes, grantTypeList)
 }

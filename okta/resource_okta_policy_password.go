@@ -1,32 +1,30 @@
 package okta
 
 import (
-	"fmt"
-	"log"
+	"context"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourcePolicyPassword() *schema.Resource {
 	return &schema.Resource{
-		Exists: resourcePolicyExists,
-		Create: resourcePolicyPasswordCreate,
-		Read:   resourcePolicyPasswordRead,
-		Update: resourcePolicyPasswordUpdate,
-		Delete: resourcePolicyPasswordDelete,
+		CreateContext: resourcePolicyPasswordCreate,
+		ReadContext:   resourcePolicyPasswordRead,
+		UpdateContext: resourcePolicyPasswordUpdate,
+		DeleteContext: resourcePolicyPasswordDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: buildPolicySchema(map[string]*schema.Schema{
 			"auth_provider": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"OKTA", "ACTIVE_DIRECTORY"}, false),
-				Description:  "Authentication Provider: OKTA or ACTIVE_DIRECTORY.",
-				Default:      "OKTA",
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"OKTA", "ACTIVE_DIRECTORY"}),
+				Description:      "Authentication Provider: OKTA or ACTIVE_DIRECTORY.",
+				Default:          "OKTA",
 			},
 			"password_min_length": {
 				Type:        schema.TypeInt,
@@ -35,32 +33,32 @@ func resourcePolicyPassword() *schema.Resource {
 				Default:     8,
 			},
 			"password_min_lowercase": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ValidateFunc: validation.IntBetween(0, 1),
-				Description:  "If a password must contain at least one lower case letter: 0 = no, 1 = yes. Default = 1",
-				Default:      1,
+				Type:             schema.TypeInt,
+				Optional:         true,
+				ValidateDiagFunc: intBetween(0, 1),
+				Description:      "If a password must contain at least one lower case letter: 0 = no, 1 = yes. Default = 1",
+				Default:          1,
 			},
 			"password_min_uppercase": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ValidateFunc: validation.IntBetween(0, 1),
-				Description:  "If a password must contain at least one upper case letter: 0 = no, 1 = yes. Default = 1",
-				Default:      1,
+				Type:             schema.TypeInt,
+				Optional:         true,
+				ValidateDiagFunc: intBetween(0, 1),
+				Description:      "If a password must contain at least one upper case letter: 0 = no, 1 = yes. Default = 1",
+				Default:          1,
 			},
 			"password_min_number": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ValidateFunc: validation.IntBetween(0, 1),
-				Description:  "If a password must contain at least one number: 0 = no, 1 = yes. Default = 1",
-				Default:      1,
+				Type:             schema.TypeInt,
+				Optional:         true,
+				ValidateDiagFunc: intBetween(0, 1),
+				Description:      "If a password must contain at least one number: 0 = no, 1 = yes. Default = 1",
+				Default:          1,
 			},
 			"password_min_symbol": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ValidateFunc: validation.IntBetween(0, 1),
-				Description:  "If a password must contain at least one symbol (!@#$%^&*): 0 = no, 1 = yes. Default = 1",
-				Default:      0,
+				Type:             schema.TypeInt,
+				Optional:         true,
+				ValidateDiagFunc: intBetween(0, 1),
+				Description:      "If a password must contain at least one symbol (!@#$%^&*): 0 = no, 1 = yes. Default = 1",
+				Default:          0,
 			},
 			"password_exclude_username": {
 				Type:        schema.TypeBool,
@@ -139,11 +137,11 @@ func resourcePolicyPassword() *schema.Resource {
 				Default:     4,
 			},
 			"email_recovery": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{statusActive, statusInactive}, false),
-				Description:  "Enable or disable email password recovery: ACTIVE or INACTIVE.",
-				Default:      statusActive,
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{statusActive, statusInactive}),
+				Description:      "Enable or disable email password recovery: ACTIVE or INACTIVE.",
+				Default:          statusActive,
 			},
 			"recovery_email_token": {
 				Type:        schema.TypeInt,
@@ -152,18 +150,18 @@ func resourcePolicyPassword() *schema.Resource {
 				Default:     60,
 			},
 			"sms_recovery": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{statusActive, statusInactive}, false),
-				Description:  "Enable or disable SMS password recovery: ACTIVE or INACTIVE.",
-				Default:      statusInactive,
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{statusActive, statusInactive}),
+				Description:      "Enable or disable SMS password recovery: ACTIVE or INACTIVE.",
+				Default:          statusInactive,
 			},
 			"question_recovery": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{statusActive, statusInactive}, false),
-				Description:  "Enable or disable security question password recovery: ACTIVE or INACTIVE.",
-				Default:      statusActive,
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{statusActive, statusInactive}),
+				Description:      "Enable or disable security question password recovery: ACTIVE or INACTIVE.",
+				Default:          statusActive,
 			},
 			"skip_unlock": {
 				Type:        schema.TypeBool,
@@ -175,32 +173,22 @@ func resourcePolicyPassword() *schema.Resource {
 	}
 }
 
-func resourcePolicyPasswordCreate(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultPolicy(d); err != nil {
-		return err
-	}
-	log.Printf("[INFO] Creating Policy %v", d.Get("name").(string))
+func resourcePolicyPasswordCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	template := buildPasswordPolicy(d)
-	err := createPolicy(d, m, template)
+	err := createPolicy(ctx, d, m, template)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create password policy: %v", err)
 	}
-
-	return resourcePolicyPasswordRead(d, m)
+	return resourcePolicyPasswordRead(ctx, d, m)
 }
 
-func resourcePolicyPasswordRead(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] List Policy %v", d.Get("name").(string))
-
-	policy, err := getPolicy(d, m)
-
-	if policy == nil {
-		d.SetId("")
-		return nil
-	}
-
+func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	policy, err := getPolicy(ctx, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to get password policy: %v", err)
+	}
+	if policy == nil {
+		return nil
 	}
 
 	// Update with upstream state when it is manually updated from Okta UI or API directly.
@@ -212,7 +200,7 @@ func resourcePolicyPasswordRead(d *schema.ResourceData, m interface{}) error {
 	if policy.Settings != nil {
 		err = d.Set("password_lockout_notification_channels", convertStringSetToInterface(policy.Settings.Password.Lockout.UserLockoutNotificationChannels))
 		if err != nil {
-			return fmt.Errorf("error setting notification channels for resource %s: %s", d.Id(), err)
+			return diag.Errorf("error setting notification channels for resource %s: %v", d.Id(), err)
 		}
 		_ = d.Set("password_min_length", policy.Settings.Password.Complexity.MinLength)
 		_ = d.Set("password_min_lowercase", policy.Settings.Password.Complexity.MinLowerCase)
@@ -235,47 +223,40 @@ func resourcePolicyPasswordRead(d *schema.ResourceData, m interface{}) error {
 		_ = d.Set("question_recovery", policy.Settings.Recovery.Factors.RecoveryQuestion.Status)
 		_ = d.Set("skip_unlock", policy.Settings.Delegation.Options.SkipUnlock)
 
-		valueMap := map[string]interface{}{}
-
 		excludedAttrs := policy.Settings.Password.Complexity.ExcludeAttributes
 		if len(excludedAttrs) > 0 {
 			for _, v := range excludedAttrs {
 				switch v {
 				case "firstName":
-					_ = d.Set("password_excluded_first_name", true)
+					_ = d.Set("password_exclude_first_name", true)
 				case "lastName":
-					_ = d.Set("password_excluded_last_name", true)
+					_ = d.Set("password_exclude_last_name", true)
 				}
 			}
 		}
-		err = setNonPrimitives(d, valueMap)
-
-		if err != nil {
-			return err
-		}
 	}
-
-	return syncPolicyFromUpstream(d, policy)
-}
-
-func resourcePolicyPasswordUpdate(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultPolicy(d); err != nil {
-		return err
-	}
-
-	log.Printf("[INFO] Update Policy %v", d.Get("name").(string))
-
-	template := buildPasswordPolicy(d)
-	err := updatePolicy(d, m, template)
+	err = syncPolicyFromUpstream(d, policy)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set password policy: %v", err)
 	}
-
-	return resourcePolicyPasswordRead(d, m)
+	return nil
 }
 
-func resourcePolicyPasswordDelete(d *schema.ResourceData, m interface{}) error {
-	return deletePolicy(d, m)
+func resourcePolicyPasswordUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	template := buildPasswordPolicy(d)
+	err := updatePolicy(ctx, d, m, template)
+	if err != nil {
+		return diag.Errorf("failed to update password policy: %v", err)
+	}
+	return resourcePolicyPasswordRead(ctx, d, m)
+}
+
+func resourcePolicyPasswordDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := deletePolicy(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to delete password policy: %v", err)
+	}
+	return nil
 }
 
 // create or update a password policy
