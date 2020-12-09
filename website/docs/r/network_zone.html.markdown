@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_network_zone"
-sidebar_current: "docs-okta-resource-network-zone"
+layout: 'okta'
+page_title: 'Okta: okta_network_zone'
+sidebar_current: 'docs-okta-resource-network-zone'
 description: |-
   Creates an Okta Network Zone.
 ---
@@ -27,19 +27,19 @@ resource "okta_network_zone" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required) Name of the Network Zone Resource.
+- `name` - (Required) Name of the Network Zone Resource.
 
-* `type` - (Required) Type of the Network Zone - can either be IP or DYNAMIC only.
+- `type` - (Required) Type of the Network Zone - can either be IP or DYNAMIC only.
 
-* `dynamic_locations` - (Optional) Array of locations ISO-3166-1(2). Format code: countryCode OR countryCode-regionCode.
+- `dynamic_locations` - (Optional) Array of locations ISO-3166-1(2). Format code: countryCode OR countryCode-regionCode.
 
-* `gateways` - (Optional) Array of values in CIDR/range form.
+- `gateways` - (Optional) Array of values in CIDR/range form.
 
-* `proxies` - (Optional) Array of values in CIDR/range form.
+- `proxies` - (Optional) Array of values in CIDR/range form.
 
 ## Attributes Reference
 
-* `id` - Network Zone ID.
+- `id` - Network Zone ID.
 
 ## Import
 

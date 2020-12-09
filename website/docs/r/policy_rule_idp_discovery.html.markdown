@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_policy_rule_idp_discovery"
-sidebar_current: "docs-okta-resource-policy-rule-idp-discovery"
+layout: 'okta'
+page_title: 'Okta: okta_policy_rule_idp_discovery'
+sidebar_current: 'docs-okta-resource-policy-rule-idp-discovery'
 description: |-
   Creates an IdP Discovery Policy Rule.
 ---
@@ -35,25 +35,25 @@ resource "okta_policy_rule_idp_discovery" "example" {
 
 The following arguments are supported:
 
-* `policyid` - (Required) Policy ID.
+- `policyid` - (Required) Policy ID.
 
-* `name` - (Required) Policy Rule Name.
+- `name` - (Required) Policy Rule Name.
 
-* `priority` - (Optional) Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last/lowest if not there.
+- `priority` - (Optional) Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last/lowest if not there.
 
-* `status` - (Optional) Policy Rule Status: `"ACTIVE"` or `"INACTIVE"`.
+- `status` - (Optional) Policy Rule Status: `"ACTIVE"` or `"INACTIVE"`.
 
-* `network_connection` - (Optional) Network selection mode: `"ANYWHERE"`, `"ZONE"`, `"ON_NETWORK"`, or `"OFF_NETWORK"`.
+- `network_connection` - (Optional) Network selection mode: `"ANYWHERE"`, `"ZONE"`, `"ON_NETWORK"`, or `"OFF_NETWORK"`.
 
-* `network_includes` - (Optional) The network zones to include. Conflicts with `network_excludes`.
+- `network_includes` - (Optional) The network zones to include. Conflicts with `network_excludes`.
 
-* `network_excludes` - (Optional) The network zones to exclude. Conflicts with `network_includes`.
+- `network_excludes` - (Optional) The network zones to exclude. Conflicts with `network_includes`.
 
 ## Attributes Reference
 
-* `id` - ID of the Rule.
+- `id` - ID of the Rule.
 
-* `policyid` - Policy ID.
+- `policyid` - Policy ID.
 
 ## Import
 

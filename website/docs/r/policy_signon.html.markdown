@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_policy_signon"
-sidebar_current: "docs-okta-resource-policy-signon"
+layout: 'okta'
+page_title: 'Okta: okta_policy_signon'
+sidebar_current: 'docs-okta-resource-policy-signon'
 description: |-
   Creates a Sign On Policy.
 ---
@@ -27,19 +27,19 @@ resource "okta_policy_signon" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required) Policy Name.
+- `name` - (Required) Policy Name.
 
-* `description` - (Optional) Policy Description.
+- `description` - (Optional) Policy Description.
 
-* `priority` - (Optional) Priority of the policy.
+- `priority` - (Optional) Priority of the policy.
 
-* `status` - (Optional) Policy Status: `"ACTIVE"` or `"INACTIVE"`.
+- `status` - (Optional) Policy Status: `"ACTIVE"` or `"INACTIVE"`.
 
-* `groups_included` - List of Group IDs to Include.
+- `groups_included` - List of Group IDs to Include.
 
 ## Attributes Reference
 
-* `id` - ID of the Policy.
+- `id` - ID of the Policy.
 
 ## Import
 
