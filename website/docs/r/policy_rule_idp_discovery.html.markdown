@@ -61,7 +61,7 @@ resource "okta_policy_rule_idp_discovery" "example" {
 ## Argument Reference
 
 The following arguments are supported:
-* `policy_id` - (Required) Policy ID.
+* `policyid` - (Required) Policy ID.
 
 * `name` - (Required) Policy rule name.
 
