@@ -192,7 +192,7 @@ func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, m i
 	}
 
 	// Update with upstream state when it is manually updated from Okta UI or API directly.
-	// See https://github.com/terraform-providers/terraform-provider-okta/issues/61
+	// See https://github.com/oktadeveloper/terraform-provider-okta/issues/61
 	if policy.Conditions.AuthProvider != nil && policy.Conditions.AuthProvider.Provider != "" {
 		_ = d.Set("auth_provider", policy.Conditions.AuthProvider.Provider)
 	}

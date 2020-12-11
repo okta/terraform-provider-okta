@@ -1,4 +1,4 @@
-resource "okta_template_sms" test {
+resource "okta_template_sms" "test" {
   type     = "SMS_VERIFY_CODE"
   template = "Your $${org.name} code is: $${code}"
 

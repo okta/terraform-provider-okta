@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_policy_rule_idp_discovery"
-sidebar_current: "docs-okta-resource-policy-rule-idp-discovery"
+layout: 'okta'
+page_title: 'Okta: okta_policy_rule_idp_discovery'
+sidebar_current: 'docs-okta-resource-policy-rule-idp-discovery'
 description: |-
   Creates an IdP Discovery Policy Rule.
 ---
@@ -61,6 +61,7 @@ resource "okta_policy_rule_idp_discovery" "example" {
 ## Argument Reference
 
 The following arguments are supported:
+
 * `policyid` - (Required) Policy ID.
 
 * `name` - (Required) Policy rule name.
@@ -129,9 +130,9 @@ user_identifier_patterns {
 
 ## Attributes Reference
 
-* `id` - ID of the Rule.
+- `id` - ID of the Rule.
 
-* `policyid` - Policy ID.
+- `policyid` - Policy ID.
 
 ## Import
 

@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_auth_server_policy"
-sidebar_current: "docs-okta-resource-auth-server-policy"
+layout: 'okta'
+page_title: 'Okta: okta_auth_server_policy'
+sidebar_current: 'docs-okta-resource-auth-server-policy'
 description: |-
   Creates an Authorization Server Policy.
 ---
@@ -29,25 +29,25 @@ resource "okta_auth_server_policy" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required) The name of the Auth Server Policy.
+- `name` - (Required) The name of the Auth Server Policy.
 
-* `auth_server_id` - (Required) The ID of the Auth Server.
+- `auth_server_id` - (Required) The ID of the Auth Server.
 
-* `status` - (Optional) The status of the Auth Server Policy.
+- `status` - (Optional) The status of the Auth Server Policy.
 
-* `priority` - (Required) The priority of the Auth Server Policy.
+- `priority` - (Required) The priority of the Auth Server Policy.
 
-* `description` - (Optional) The description of the Auth Server Policy.
+- `description` - (Optional) The description of the Auth Server Policy.
 
-* `client_whitelist` - (Required) The clients to whitelist the policy for. `["ALL_CLIENTS"]` is a special value that can be used to whitelist for all clients. Otherwise it is a list of client ids.
+- `client_whitelist` - (Required) The clients to whitelist the policy for. `["ALL_CLIENTS"]` is a special value that can be used to whitelist for all clients. Otherwise it is a list of client ids.
 
 ## Attributes Reference
 
-* `id` - (Required) The ID of the authorization server policy.
+- `id` - (Required) The ID of the authorization server policy.
 
-* `auth_server_id` - (Required) The ID of the Auth Server.
+- `auth_server_id` - (Required) The ID of the Auth Server.
 
-* `type` - The type of the Auth Server Policy.
+- `type` - The type of the Auth Server Policy.
 
 ## Import
 

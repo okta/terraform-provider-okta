@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_auth_server"
-sidebar_current: "docs-okta-resource-auth-server"
+layout: 'okta'
+page_title: 'Okta: okta_auth_server'
+sidebar_current: 'docs-okta-resource-auth-server'
 description: |-
   Creates an Authorization Server.
 ---
@@ -28,29 +28,29 @@ resource "okta_auth_server" "example" {
 
 The following arguments are supported:
 
-* `audiences` - (Required) The recipients that the tokens are intended for. This becomes the `aud` claim in an access token.
+- `audiences` - (Required) The recipients that the tokens are intended for. This becomes the `aud` claim in an access token.
 
-* `status` - (Optional) The status of the auth server. It defaults to `"ACTIVE"`
+- `status` - (Optional) The status of the auth server. It defaults to `"ACTIVE"`
 
-* `credentials_rotation_mode` - (Optional) The key rotation mode for the authorization server. Can be `"AUTO"` or `"MANUAL"`.
+- `credentials_rotation_mode` - (Optional) The key rotation mode for the authorization server. Can be `"AUTO"` or `"MANUAL"`.
 
-* `description` - (Optional) The description of the authorization server.
+- `description` - (Optional) The description of the authorization server.
 
-* `name` - (Required) The name of the authorization server.
+- `name` - (Required) The name of the authorization server.
 
-* `issuer_mode` - (Optional) Allows you to use a custom issuer URL. It can be set to `"CUSTOM_URL"` or `"ORG_URL"`
+- `issuer_mode` - (Optional) Allows you to use a custom issuer URL. It can be set to `"CUSTOM_URL"` or `"ORG_URL"`
 
 ## Attributes Reference
 
-* `id` - ID of the authorization server.
+- `id` - ID of the authorization server.
 
-* `kid` - The ID of the JSON Web Key used for signing tokens issued by the authorization server.
+- `kid` - The ID of the JSON Web Key used for signing tokens issued by the authorization server.
 
-* `issuer` - The complete URL for a Custom Authorization Server. This becomes the `iss` claim in an access token.
+- `issuer` - The complete URL for a Custom Authorization Server. This becomes the `iss` claim in an access token.
 
-* `credentials_last_rotated` - The timestamp when the authorization server started to use the `kid` for signing tokens.
+- `credentials_last_rotated` - The timestamp when the authorization server started to use the `kid` for signing tokens.
 
-* `credentials_next_rotation` - The timestamp when the authorization server changes the key for signing tokens. Only returned when `credentials_rotation_mode` is `"AUTO"`.
+- `credentials_next_rotation` - The timestamp when the authorization server changes the key for signing tokens. Only returned when `credentials_rotation_mode` is `"AUTO"`.
 
 ## Import
 

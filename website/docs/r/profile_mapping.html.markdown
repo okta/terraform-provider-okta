@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_profile_mapping"
-sidebar_current: "docs-okta-resource-profile-mapping"
+layout: 'okta'
+page_title: 'Okta: okta_profile_mapping'
+sidebar_current: 'docs-okta-resource-profile-mapping'
 description: |-
   Manages a profile mapping.
 ---
@@ -48,30 +48,30 @@ resource "okta_profile_mapping" "example" {
 
 The following arguments are supported:
 
-* `source_id` - (Required) Source id of the profile mapping.
+- `source_id` - (Required) Source id of the profile mapping.
 
-* `delete_when_absent` - (Optional) Tells the provider whether to attempt to delete missing mappings under profile mapping.
+- `delete_when_absent` - (Optional) Tells the provider whether to attempt to delete missing mappings under profile mapping.
 
-* `mappings` - (Optional) Priority of the policy.
-  * `id` - (Required) Key of mapping.
-  * `expression` - (Required) Combination or single source properties that will be mapped to the target property.
-  * `push_status` - (Optional) Whether to update target properties on user create & update or just on create.
+- `mappings` - (Optional) Priority of the policy.
+  - `id` - (Required) Key of mapping.
+  - `expression` - (Required) Combination or single source properties that will be mapped to the target property.
+  - `push_status` - (Optional) Whether to update target properties on user create & update or just on create.
 
 ## Attributes Reference
 
-* `id` - ID of the mappings.
+- `id` - ID of the mappings.
 
-* `target_id` - ID of the mapping target.
+- `target_id` - ID of the mapping target.
 
-* `target_name` - Name of the mapping target.
+- `target_name` - Name of the mapping target.
 
-* `target_type` - ID of the mapping target.
+- `target_type` - ID of the mapping target.
 
-* `source_id` - ID of the mapping source.
+- `source_id` - ID of the mapping source.
 
-* `source_name` - Name of the mapping source.
+- `source_name` - Name of the mapping source.
 
-* `source_type` - ID of the mapping source.
+- `source_type` - ID of the mapping source.
 
 ## Import
 
