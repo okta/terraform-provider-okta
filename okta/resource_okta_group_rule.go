@@ -65,6 +65,11 @@ func resourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, m interf
 		d.SetId("")
 		return nil
 	}
+	if g.Status == "INVALID" {
+		_, err = getOktaClientFromMetadata(m).Group.DeleteGroupRule(ctx, g.Id)
+		d.SetId("")
+		return nil
+	}
 	_ = d.Set("name", g.Name)
 	// _ = d.Set("type", g.Type)
 	_ = d.Set("status", g.Status)
