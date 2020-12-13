@@ -83,6 +83,11 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 	})
 }
 
+func TestAccOktaGroupRule_invalidHandle(t *testing.T) {
+	ri := acctest.RandInt()
+	resourceName := fmt.Sprintf("%s.test", groupRule)
+}
+
 func doesGroupRuleExist(id string) (bool, error) {
 	client := getOktaClientFromMetadata(testAccProvider.Meta())
 	_, response, err := client.Group.GetGroupRule(context.Background(), id, nil)

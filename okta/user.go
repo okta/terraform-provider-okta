@@ -16,6 +16,7 @@ import (
 const (
 	statusActive   = "ACTIVE"
 	statusInactive = "INACTIVE"
+	statusInvalid  = "INVALID"
 
 	userStatusPasswordExpired = "PASSWORD_EXPIRED"
 	userStatusProvisioned     = "PROVISIONED"

@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -40,6 +41,9 @@ func resourceGroupRule() *schema.Resource {
 			},
 			"status": statusSchema,
 		},
+		CustomizeDiff: customdiff.ForceNewIf("status", func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
+			return d.Get("status").(string) == statusInvalid
+		}),
 	}
 }
 
@@ -65,11 +69,7 @@ func resourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, m interf
 		d.SetId("")
 		return nil
 	}
-	if g.Status == "INVALID" {
-		_, err = getOktaClientFromMetadata(m).Group.DeleteGroupRule(ctx, g.Id)
-		d.SetId("")
-		return nil
-	}
+
 	_ = d.Set("name", g.Name)
 	// _ = d.Set("type", g.Type)
 	_ = d.Set("status", g.Status)
@@ -170,6 +170,8 @@ func handleGroupRuleLifecycle(ctx context.Context, d *schema.ResourceData, m int
 	if d.Get("status").(string) == statusActive {
 		_, err := client.Group.ActivateGroupRule(ctx, d.Id())
 		return err
+	} else if d.Get("status").(string) == statusInvalid {
+		return nil
 	}
 	_, err := client.Group.DeactivateGroupRule(ctx, d.Id())
 	return err
