@@ -1,8 +1,8 @@
-resource okta_group test {
+resource "okta_group" "test" {
   name = "testAcc_replace_with_uuid"
 }
 
-resource okta_policy_signon test {
+resource "okta_policy_signon" "test" {
   name            = "testAcc_replace_with_uuid"
   status          = "INACTIVE"
   description     = "Terraform Acceptance Test SignOn Policy Updated"

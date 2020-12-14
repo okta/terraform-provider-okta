@@ -1,4 +1,4 @@
-resource okta_inline_hook test {
+resource "okta_inline_hook" "test" {
   name    = "testAcc_replace_with_uuid"
   status  = "INACTIVE"
   type    = "com.okta.import.transform"

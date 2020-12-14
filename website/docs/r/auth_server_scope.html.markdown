@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_auth_server_scope"
-sidebar_current: "docs-okta-resource-auth-server-scope"
+layout: 'okta'
+page_title: 'Okta: okta_auth_server_scope'
+sidebar_current: 'docs-okta-resource-auth-server-scope'
 description: |-
   Creates an Authorization Server Scope.
 ---
@@ -27,23 +27,23 @@ resource "okta_auth_server_scope" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required) Auth Server scope name.
+- `name` - (Required) Auth Server scope name.
 
-* `auth_server_id` - (Required) Auth Server ID.
+- `auth_server_id` - (Required) Auth Server ID.
 
-* `description` - (Optional) Description of the Auth Server Scope.
+- `description` - (Optional) Description of the Auth Server Scope.
 
-* `consent` - (Optional) Indicates whether a consent dialog is needed for the scope. It can be set to `"REQUIRED"` or `"IMPLICIT"`.
+- `consent` - (Optional) Indicates whether a consent dialog is needed for the scope. It can be set to `"REQUIRED"` or `"IMPLICIT"`.
 
-* `metadata_publish` - (Optional) Whether to publish metadata or not. It can be set to `"ALL_CLIENTS"` or `"NO_CLIENTS"`.
+- `metadata_publish` - (Optional) Whether to publish metadata or not. It can be set to `"ALL_CLIENTS"` or `"NO_CLIENTS"`.
 
-* `default` - (Optional) A default scope will be returned in an access token when the client omits the scope parameter in a token request, provided this scope is allowed as part of the access policy rule.
+- `default` - (Optional) A default scope will be returned in an access token when the client omits the scope parameter in a token request, provided this scope is allowed as part of the access policy rule.
 
 ## Attributes Reference
 
-* `id` - ID of the Auth Server Scope.
+- `id` - ID of the Auth Server Scope.
 
-* `auth_server_id` - The ID of the Auth Server.
+- `auth_server_id` - The ID of the Auth Server.
 
 ## Import
 

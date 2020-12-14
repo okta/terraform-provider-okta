@@ -1,4 +1,4 @@
-resource okta_app_saml test {
+resource "okta_app_saml" "test" {
   label                    = "testAcc_replace_with_uuid"
   sso_url                  = "http://google.com"
   recipient                = "http://here.com"

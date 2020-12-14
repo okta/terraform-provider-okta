@@ -1,4 +1,4 @@
-resource okta_event_hook test {
+resource "okta_event_hook" "test" {
   name   = "testAcc_replace_with_uuid"
   status = "INACTIVE"
   events = [

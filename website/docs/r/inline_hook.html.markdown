@@ -38,30 +38,29 @@ resource "okta_inline_hook" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required) The inline hook display name.
+- `name` - (Required) The inline hook display name.
 
-* `version` - (Required) The version of the hook. The currently-supported version is `"1.0.0"`.
+- `version` - (Required) The version of the hook. The currently-supported version is `"1.0.0"`.
 
-* `type` - (Required) The type of hook to create. [See here for supported types](https://developer.okta.com/docs/reference/api/inline-hooks/#supported-inline-hook-types).
+- `type` - (Required) The type of hook to create. [See here for supported types](https://developer.okta.com/docs/reference/api/inline-hooks/#supported-inline-hook-types).
 
-* `headers` - (Optional) Map of headers to send along in inline hook request.
-  * `key` - (Required) Header name.
-  * `value` - (Required) Header value.
+- `headers` - (Optional) Map of headers to send along in inline hook request.
 
-* `auth` - (Optional) Authentication required for inline hook request.
-  * `key` - (Required) Key to use for authentication, usually the header name, for example `"Authorization"`.
-  * `value` - (Required) Authentication secret.
-  * `type` - (Optional) Auth type, default is `"HEADER"`.
+- `auth` - (Optional) Authentication required for inline hook request.
 
-* `channel` - (Optional) Details of the endpoint the inline hook will hit.
-  * `version` - (Required) The version of the endpoint.
-  * `uri` - (Required) The URI the hook will hit.
-  * `type` - (Optional) The type of hook to trigger. Currently only `"HTTP"` is supported.
-  * `method` - (Optional) The request method to use. Default is `"POST"`.
+  - `key` - (Required) Key to use for authentication, usually the header name, for example `"Authorization"`.
+  - `value` - (Required) Authentication secret.
+  - `type` - (Optional) Auth type. Currently, the only supported type is `"HEADER"`.
+
+- `channel` - (Required) Details of the endpoint the inline hook will hit.
+  - `version` - (Required) Version of the channel. The currently-supported version is `"1.0.0"`.
+  - `uri` - (Required) The URI the hook will hit.
+  - `type` - (Optional) The type of hook to trigger. Currently, the only supported type is `"HTTP"`.
+  - `method` - (Optional) The request method to use. Default is `"POST"`.
 
 ## Attributes Reference
 
-* `id` - The ID of the inline hooks.
+- `id` - The ID of the inline hooks.
 
 ## Import
 

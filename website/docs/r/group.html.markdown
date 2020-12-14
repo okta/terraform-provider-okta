@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_group"
-sidebar_current: "docs-okta-resource-group"
+layout: 'okta'
+page_title: 'Okta: okta_group'
+sidebar_current: 'docs-okta-resource-group'
 description: |-
   Creates an Okta Group.
 ---
@@ -25,15 +25,15 @@ resource "okta_group" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required) The name of the Okta Group.
+- `name` - (Required) The name of the Okta Group.
 
-* `description` - (Optional) The description of the Okta Group.
+- `description` - (Optional) The description of the Okta Group.
 
-* `users` - (Optional) The users associated with the group. This can also be done per user.
+- `users` - (Optional) The users associated with the group. This can also be done per user.
 
 ## Attributes Reference
 
-* `id` - The ID of the Okta Group.
+- `id` - The ID of the Okta Group.
 
 ## Import
 

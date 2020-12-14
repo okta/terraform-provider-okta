@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
@@ -37,6 +37,10 @@ func TestMain(m *testing.M) {
 	setupSweeper(oktaUser, sweepUsers)
 	setupSweeper(userSchema, sweepUserSchema)
 	setupSweeper(userBaseSchema, sweepUserBaseSchema)
+	setupSweeper(networkZone, sweepNetworkZones)
+	setupSweeper(inlineHook, sweepInlineHooks)
+
+	// add zones sweeper
 	resource.TestMain(m)
 }
 

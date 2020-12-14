@@ -1,68 +1,66 @@
 package okta
 
 import (
-	"log"
+	"context"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourcePolicySignOn() *schema.Resource {
 	return &schema.Resource{
-		Exists: resourcePolicyExists,
-		Create: resourcePolicySignOnCreate,
-		Read:   resourcePolicySignOnRead,
-		Update: resourcePolicySignOnUpdate,
-		Delete: resourcePolicySignOnDelete,
+		CreateContext: resourcePolicySignOnCreate,
+		ReadContext:   resourcePolicySignOnRead,
+		UpdateContext: resourcePolicySignOnUpdate,
+		DeleteContext: resourcePolicySignOnDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: basePolicySchema,
 	}
 }
 
-func resourcePolicySignOnCreate(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultPolicy(d); err != nil {
-		return err
-	}
-	log.Printf("[INFO] Creating Policy %v", d.Get("name").(string))
+func resourcePolicySignOnCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	template := buildSignOnPolicy(d)
-	err := createPolicy(d, m, template)
+	err := createPolicy(ctx, d, m, template)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create sign-on policy: %v", err)
 	}
-	return resourcePolicySignOnRead(d, m)
+	return resourcePolicySignOnRead(ctx, d, m)
 }
 
-func resourcePolicySignOnRead(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] List Policy %v", d.Get("name").(string))
-	policy, err := getPolicy(d, m)
+func resourcePolicySignOnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	policy, err := getPolicy(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to get sign-on policy: %v", err)
+	}
 	if policy == nil {
-		d.SetId("")
 		return nil
 	}
+	err = syncPolicyFromUpstream(d, policy)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set sign-on policy: %v", err)
 	}
-	return syncPolicyFromUpstream(d, policy)
+	return nil
 }
 
-func resourcePolicySignOnUpdate(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultPolicy(d); err != nil {
-		return err
-	}
-	log.Printf("[INFO] Update Policy %v", d.Get("name").(string))
+func resourcePolicySignOnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	template := buildSignOnPolicy(d)
-	err := updatePolicy(d, m, template)
+	err := updatePolicy(ctx, d, m, template)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to update sign-on policy: %v", err)
 	}
-	return resourcePolicySignOnRead(d, m)
+	return resourcePolicySignOnRead(ctx, d, m)
 }
 
-func resourcePolicySignOnDelete(d *schema.ResourceData, m interface{}) error {
-	return deletePolicy(d, m)
+func resourcePolicySignOnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := deletePolicy(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to delete sign-on policy: %v", err)
+	}
+	return nil
 }
 
 // create or update a sign on policy

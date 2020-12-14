@@ -1,17 +1,18 @@
 package okta
 
 import (
+	"context"
 	"encoding/xml"
 	"fmt"
 
 	"github.com/crewjam/saml"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceIdpMetadataSaml() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceIdpSamlMetadataRead,
-
+		ReadContext: dataSourceIdpSamlMetadataRead,
 		Schema: map[string]*schema.Schema{
 			"idp_id": {
 				Type:     schema.TypeString,
@@ -56,20 +57,19 @@ func dataSourceIdpMetadataSaml() *schema.Resource {
 	}
 }
 
-func dataSourceIdpSamlMetadataRead(d *schema.ResourceData, m interface{}) error {
+func dataSourceIdpSamlMetadataRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	id := d.Get("idp_id").(string)
 	d.SetId(fmt.Sprintf("%s_metadata", id))
-	client := getSupplementFromMetadata(m)
-	metadata, err := client.GetSAMLIdpMetdata(id)
+	metadata, err := getSupplementFromMetadata(m).GetSAMLIdpMetdata(id)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to get SAML idp metadata: %v", err)
 	}
 
 	_ = d.Set("metadata", string(metadata))
 	metadataRoot := &saml.EntityDescriptor{}
 	err = xml.Unmarshal(metadata, metadataRoot)
 	if err != nil {
-		return fmt.Errorf("could not parse SAML app metadata, error: %s", err)
+		return diag.Errorf("could not parse SAML app metadata, %v", err)
 	}
 
 	desc := metadataRoot.SPSSODescriptors[0]

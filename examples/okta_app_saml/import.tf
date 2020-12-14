@@ -1,4 +1,4 @@
-resource okta_app_saml test {
+resource "okta_app_saml" "test" {
   preconfigured_app = "pagerduty"
   label             = "testAcc_replace_with_uuid"
 

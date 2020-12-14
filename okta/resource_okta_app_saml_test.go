@@ -6,9 +6,9 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
@@ -18,13 +18,13 @@ func TestAccAppSaml_conditionalRequire(t *testing.T) {
 	config := buildTestSamlConfigMissingFields(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
-				ExpectError: regexp.MustCompile("missing conditionally required fields, reason: Custom SAML applications must contain these fields*"),
+				ExpectError: regexp.MustCompile("missing conditionally required fields, reason: 'Custom SAML applications must contain these fields'*"),
 			},
 		},
 	})
@@ -36,13 +36,13 @@ func TestAccAppSaml_invalidURL(t *testing.T) {
 	config := buildTestSamlConfigInvalidURL(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
-				ExpectError: regexp.MustCompile("config is invalid: failed to validate url, \"123\""),
+				ExpectError: regexp.MustCompile("invalid URL: expected 'sso_url' to have a host"),
 			},
 		},
 	})
@@ -57,9 +57,9 @@ func TestAccAppSaml_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: allFields,
@@ -112,7 +112,7 @@ func TestAccAppSaml_crud(t *testing.T) {
 				ImportState:  true,
 				ImportStateCheck: func(s []*terraform.InstanceState) error {
 					if len(s) != 1 {
-						return errors.New("failed to import into resource into state")
+						return errors.New("failed to import resource into state")
 					}
 					if s[0].Attributes["preconfigured_app"] != "pagerduty" {
 						return errors.New("failed to set required properties when import existing infrastructure")
@@ -133,9 +133,9 @@ func TestAccAppSaml_userGroups(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

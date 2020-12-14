@@ -1,16 +1,16 @@
 package okta
 
 import (
-	"fmt"
+	"context"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func dataSourceAuthServer() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceAuthServerRead,
-
+		ReadContext: dataSourceAuthServerRead,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:     schema.TypeString,
@@ -49,14 +49,14 @@ func dataSourceAuthServer() *schema.Resource {
 	}
 }
 
-func dataSourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
+func dataSourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	name := d.Get("name").(string)
-	authServer, err := getSupplementFromMetadata(m).FindAuthServer(name, &query.Params{})
+	authServer, err := getSupplementFromMetadata(m).FindAuthServer(ctx, name, &query.Params{})
 	if err != nil {
-		return err
+		return diag.Errorf("failed to find auth server: %v", err)
 	}
 	if authServer == nil {
-		return fmt.Errorf("no authorization server found with provided name %s", name)
+		return diag.Errorf("authorization server with name '%s' does not exist", name)
 	}
 	d.SetId(authServer.Id)
 	_ = d.Set("name", authServer.Name)

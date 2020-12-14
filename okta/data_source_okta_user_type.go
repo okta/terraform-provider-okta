@@ -2,17 +2,16 @@ package okta
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func dataSourceUserType() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceUserTypeRead,
-
+		ReadContext: dataSourceUserTypeRead,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:     schema.TypeString,
@@ -26,27 +25,29 @@ func dataSourceUserType() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
 
-func dataSourceUserTypeRead(d *schema.ResourceData, m interface{}) error {
-	name := d.Get("name").(string)
-	userTypes, _, err := getOktaClientFromMetadata(m).UserType.ListUserTypes(context.Background())
+func dataSourceUserTypeRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	userTypes, _, err := getOktaClientFromMetadata(m).UserType.ListUserTypes(ctx)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to list user types: %v", err)
 	}
+	name := d.Get("name").(string)
 	var userType *okta.UserType
 	for _, ut := range userTypes {
 		if strings.EqualFold(name, ut.Name) {
 			userType = ut
 		}
 	}
-
 	if userType == nil {
-		return fmt.Errorf("no user type found with provided name %s", name)
+		return diag.Errorf("user type '%s' does not exist", name)
 	}
-
 	d.SetId(userType.Id)
 	_ = d.Set("name", userType.Name)
 	_ = d.Set("display_name", userType.DisplayName)
