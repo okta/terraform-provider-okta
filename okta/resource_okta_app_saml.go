@@ -266,10 +266,11 @@ func resourceAppSaml() *schema.Resource {
 				},
 			},
 			"acs_endpoints": {
-				Type:        schema.TypeSet,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Optional:    true,
-				Description: "List of ACS endpoints for this SAML application",
+				Type:             schema.TypeSet,
+				Elem:             &schema.Schema{Type: schema.TypeString},
+				Optional:         true,
+				Description:      "List of ACS endpoints for this SAML application",
+				ValidateDiagFunc: intAtMost(100),
 			},
 			"attribute_statements": {
 				Type:     schema.TypeList,
@@ -289,10 +290,11 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interf
 	}
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err = getOktaClientFromMetadata(m).Application.CreateApplication(ctx, app, params)
+	crApp, _, err := getOktaClientFromMetadata(m).Application.CreateApplication(ctx, app, params)
 	if err != nil {
 		return diag.Errorf("failed to create SAML application: %v", err)
 	}
+	_ = crApp
 	// Make sure to track in terraform prior to the creation of cert in case there is an error.
 	d.SetId(app.Id)
 	err = tryCreateCertificate(ctx, d, m, app.Id)
@@ -470,10 +472,10 @@ func buildApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
 	}
 
-	//Assumes that sso url is already part of the acs endpoints as part of the desired state.
+	// Assumes that sso url is already part of the acs endpoints as part of the desired state.
 	acsEndpoints := convertInterfaceToStringSet(d.Get("acs_endpoints"))
 
-	//If there are acs endpoints, implies this flag should be true.
+	// If there are acs endpoints, implies this flag should be true.
 	allowMultipleAcsEndpoints := false
 	if len(acsEndpoints) > 0 {
 		acsEndpointsObj := make([]*okta.AcsEndpoint, len(acsEndpoints))
