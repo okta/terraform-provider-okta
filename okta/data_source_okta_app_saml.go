@@ -215,10 +215,11 @@ func dataSourceAppSaml() *schema.Resource {
 				},
 			},
 			"acs_endpoints": {
-				Type:        schema.TypeSet,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Optional:    true,
-				Description: "List of ACS endpoints for this SAML application",
+				Type:             schema.TypeSet,
+				Elem:             &schema.Schema{Type: schema.TypeString},
+				Optional:         true,
+				Description:      "List of ACS endpoints for this SAML application",
+				ValidateDiagFunc: intAtMost(100),
 			},
 			"attribute_statements": {
 				Type:     schema.TypeList,

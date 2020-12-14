@@ -290,11 +290,10 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interf
 	}
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	crApp, _, err := getOktaClientFromMetadata(m).Application.CreateApplication(ctx, app, params)
+	_, _, err = getOktaClientFromMetadata(m).Application.CreateApplication(ctx, app, params)
 	if err != nil {
 		return diag.Errorf("failed to create SAML application: %v", err)
 	}
-	_ = crApp
 	// Make sure to track in terraform prior to the creation of cert in case there is an error.
 	d.SetId(app.Id)
 	err = tryCreateCertificate(ctx, d, m, app.Id)
