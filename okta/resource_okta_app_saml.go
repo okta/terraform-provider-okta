@@ -440,7 +440,7 @@ func buildApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 		settings := okta.ApplicationSettingsApplication(payload)
 		app.Settings.App = &settings
 	} else {
-		// we should provide empty app, even if there no values
+		// we should provide empty app, even if there are no values
 		// see https://github.com/oktadeveloper/terraform-provider-okta/pull/226#issuecomment-744545051
 		settings := okta.ApplicationSettingsApplication(map[string]interface{}{})
 		app.Settings.App = &settings

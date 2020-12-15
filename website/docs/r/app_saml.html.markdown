@@ -104,6 +104,8 @@ The following arguments are supported:
 
 - `app_settings_json` - (Optional) Application settings in JSON format.
 
+- `acs_endpoints` - An array of ACS endpoints. You can configure a maximum of 100 endpoints.
+
 - `attribute_statements` - (Optional) List of SAML Attribute statements.
   - `name` - (Required) The name of the attribute statement.
   - `filter_type` - (Optional) Type of group attribute filter.
