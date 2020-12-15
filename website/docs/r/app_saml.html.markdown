@@ -124,6 +124,8 @@ The following arguments are supported:
 
 - `key_id` - Certificate key ID.
 
+- `key_name` - Certificate name. This modulates the rotation of keys. New name == new key.
+
 - `certificate` - The raw signing certificate.
 
 - `metadata` - The raw SAML metadata in XML.
