@@ -480,6 +480,21 @@ func syncSamlSettings(d *schema.ResourceData, set *okta.SamlApplicationSettings)
 	_ = d.Set("honor_force_authn", set.SignOn.HonorForceAuthn)
 	_ = d.Set("authn_context_class_ref", set.SignOn.AuthnContextClassRef)
 
+	if set.SignOn.AllowMultipleAcsEndpoints != nil {
+		if *set.SignOn.AllowMultipleAcsEndpoints {
+			acsEndpointsObj := set.SignOn.AcsEndpoints
+			if len(acsEndpointsObj) > 0 {
+				acsEndpoints := make([]string, len(acsEndpointsObj))
+				for i := range acsEndpointsObj {
+					acsEndpoints[i] = acsEndpointsObj[i].Url
+				}
+				_ = d.Set("acs_endpoints", convertStringSetToInterface(acsEndpoints))
+			}
+		} else {
+			_ = d.Set("acs_endpoints", nil)
+		}
+	}
+
 	attrStatements := set.SignOn.AttributeStatements
 	arr := make([]map[string]interface{}, len(attrStatements))
 

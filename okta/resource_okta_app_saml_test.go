@@ -85,6 +85,8 @@ func TestAccAppSaml_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "attribute_statements.1.type", "GROUP"),
 					resource.TestCheckResourceAttr(resourceName, "attribute_statements.1.filter_type", "STARTS_WITH"),
 					resource.TestCheckResourceAttr(resourceName, "attribute_statements.1.filter_value", "test"),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.0", "https://example.com"),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.1", "https://okta.com"),
 				),
 			},
 			{
@@ -102,6 +104,7 @@ func TestAccAppSaml_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "attribute_statements.0.type", "GROUP"),
 					resource.TestCheckResourceAttr(resourceName, "attribute_statements.0.filter_type", "REGEX"),
 					resource.TestCheckResourceAttr(resourceName, "attribute_statements.0.filter_value", ".*"),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.#", "0"),
 				),
 			},
 			{

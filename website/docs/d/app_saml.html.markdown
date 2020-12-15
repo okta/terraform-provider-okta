@@ -96,4 +96,12 @@ data "okta_app_saml" "example" {
 
 - `app_settings_json` - Application settings in JSON format.
 
-- `attribute_statements` - SAML Attribute statements.
+- `acs_endpoints` - An array of ACS endpoints. You can configure a maximum of 100 endpoints.
+
+- `attribute_statements` - (Optional) List of SAML Attribute statements.
+  - `name` - (Required) The name of the attribute statement.
+  - `filter_type` - (Optional) Type of group attribute filter.
+  - `filter_value` - (Optional) Filter value to use.
+  - `namespace` - (Optional) The attribute namespace. It can be set to `"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"`, `"urn:oasis:names:tc:SAML:2.0:attrname-format:uri"`, or `"urn:oasis:names:tc:SAML:2.0:attrname-format:basic"`.
+  - `type` - (Optional) The type of attribute statement value. Can be `"EXPRESSION"` or `"GROUP"`.
+  - `values` - (Optional) Array of values to use.
