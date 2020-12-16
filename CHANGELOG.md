@@ -1,3 +1,13 @@
+## 3.7.1 (December 16, 2020)
+
+ENHANCEMENTS:
+
+* Add validation for user type [#242](https://github.com/oktadeveloper/terraform-provider-okta/pull/242).
+
+BUGS:
+
+* Fix state refresh for `okta_user_base_schema` and `okta_user_schema` [#242](https://github.com/oktadeveloper/terraform-provider-okta/pull/242).
+
 ## 3.7.0 (December 15, 2020)
 
 ENHANCEMENTS:
