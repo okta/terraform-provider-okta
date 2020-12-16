@@ -32,5 +32,9 @@ func dataSourceDefaultPolicies() *schema.Resource {
 }
 
 func dataSourceDefaultPolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	policyType := d.Get("type").(string)
+	if policyType == sdk.IdpDiscoveryType {
+		return setPolicyByName(ctx, d, m, "Idp Discovery Policy")
+	}
 	return setPolicyByName(ctx, d, m, "Default Policy")
 }
