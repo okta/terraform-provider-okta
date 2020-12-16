@@ -22,7 +22,27 @@ func resourceAppUserBaseSchema() *schema.Resource {
 				Required: true,
 			},
 		}),
+		SchemaVersion: 1,
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type: resourceAppUserBaseSchemaResourceV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: func(ctx context.Context, rawState map[string]interface{}, meta interface{}) (map[string]interface{}, error) {
+					rawState["user_type"] = "default"
+					return rawState, nil
+				},
+				Version: 0,
+			},
+		},
 	}
+}
+
+func resourceAppUserBaseSchemaResourceV0() *schema.Resource {
+	return &schema.Resource{Schema: buildSchema(map[string]*schema.Schema{
+		"app_id": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+	}, userBaseSchemaSchema)}
 }
 
 func resourceAppUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

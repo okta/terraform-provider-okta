@@ -114,7 +114,7 @@ func stringLenBetween(min, max int) schema.SchemaValidateDiagFunc {
 			return diag.Errorf("expected type of %s to be string", k)
 		}
 		if len(v) < min || len(v) > max {
-			return diag.Errorf("expected length of %s to be in the range (%d - %d), got %s", k, min, max, v)
+			return diag.Errorf("expected length of %s to be in the range (%d - %d), got %d", k, min, max, len(v))
 		}
 		return nil
 	}

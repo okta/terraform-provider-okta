@@ -33,8 +33,23 @@ func resourceUserSchema() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-		Schema: userSchemaSchema,
+		Schema:        buildBaseUserSchema(userSchemaSchema),
+		SchemaVersion: 1,
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type: resourceUserSchemaResourceV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: func(ctx context.Context, rawState map[string]interface{}, meta interface{}) (map[string]interface{}, error) {
+					rawState["user_type"] = "default"
+					return rawState, nil
+				},
+				Version: 0,
+			},
+		},
 	}
+}
+
+func resourceUserSchemaResourceV0() *schema.Resource {
+	return &schema.Resource{Schema: buildSchema(userBaseSchemaSchema, userSchemaSchema)}
 }
 
 func resourceUserSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
