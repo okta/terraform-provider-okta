@@ -120,6 +120,19 @@ func stringLenBetween(min, max int) schema.SchemaValidateDiagFunc {
 	}
 }
 
+func stringAtLeast(min int) schema.SchemaValidateDiagFunc {
+	return func(i interface{}, k cty.Path) diag.Diagnostics {
+		v, ok := i.(string)
+		if !ok {
+			return diag.Errorf("expected type of %s to be string", k)
+		}
+		if len(strings.TrimSpace(v)) < min {
+			return diag.Errorf("expected minimum length of %s to be %d, got %d", k, min, len(v))
+		}
+		return nil
+	}
+}
+
 // regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 

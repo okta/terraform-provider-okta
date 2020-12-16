@@ -156,10 +156,11 @@ var (
 
 	userTypeSchema = map[string]*schema.Schema{
 		"user_type": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Description: "Custom subschema user type",
-			Default:     "default",
+			Type:             schema.TypeString,
+			Optional:         true,
+			Description:      "Custom subschema user type",
+			Default:          "default",
+			ValidateDiagFunc: stringAtLeast(7),
 		},
 	}
 )
