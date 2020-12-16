@@ -1,9 +1,11 @@
 package okta
 
 import (
-	"github.com/articulate/oktasdk-go/okta"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 // Predefined second authentication factors. They must be activated in order to use them in MFA policies.
@@ -13,36 +15,31 @@ import (
 // is an account level resource.
 func resourceFactor() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceFactorPut,
-		Read:   resourceFactorRead,
-		Update: resourceFactorPut,
-		Exists: resourceFactorExists,
-		Delete: resourceFactorDelete,
+		CreateContext: resourceFactorPut,
+		ReadContext:   resourceFactorRead,
+		UpdateContext: resourceFactorPut,
+		DeleteContext: resourceFactorDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
-
 		Schema: map[string]*schema.Schema{
-			"provider_id": &schema.Schema{
+			"provider_id": {
 				Type:     schema.TypeString,
 				Required: true,
-				ValidateFunc: validation.StringInSlice(
-					[]string{
-						okta.DuoFactor,
-						okta.FidoU2fFactor,
-						okta.FidoWebauthnFactor,
-						okta.GoogleOtpFactor,
-						okta.OktaCallFactor,
-						okta.OktaOtpFactor,
-						okta.OktaPushFactor,
-						okta.OktaQuestionFactor,
-						okta.OktaSmsFactor,
-						okta.RsaTokenFactor,
-						okta.SymantecVipFactor,
-						okta.YubikeyTokenFactor,
-					},
-					false,
-				),
+				ValidateDiagFunc: stringInSlice([]string{
+					sdk.DuoFactor,
+					sdk.FidoU2fFactor,
+					sdk.FidoWebauthnFactor,
+					sdk.GoogleOtpFactor,
+					sdk.OktaCallFactor,
+					sdk.OktaOtpFactor,
+					sdk.OktaPushFactor,
+					sdk.OktaQuestionFactor,
+					sdk.OktaSmsFactor,
+					sdk.RsaTokenFactor,
+					sdk.SymantecVipFactor,
+					sdk.YubikeyTokenFactor,
+				}),
 				Description: "Factor provider ID",
 				ForceNew:    true,
 			},
@@ -56,99 +53,79 @@ func resourceFactor() *schema.Resource {
 	}
 }
 
-func resourceFactorExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	factor, err := findFactor(d, m)
-
-	return err == nil && factor != nil, err
-}
-
-func resourceFactorDelete(d *schema.ResourceData, m interface{}) error {
-	var err error
-	client := getClientFromMetadata(m)
-
-	if d.Get("active").(bool) {
-		_, _, err = client.Org.DeactivateFactor(d.Id())
+func resourceFactorPut(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	factor, err := findFactor(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to find factor: %v", err)
 	}
-
-	return err
+	// To avoid API errors we check downstream status
+	if statusMismatch(d, factor) {
+		err := activateFactor(ctx, d, m)
+		if err != nil {
+			return diag.Errorf("failed to activate factor: %v", err)
+		}
+	}
+	d.SetId(d.Get("provider_id").(string))
+	return resourceFactorRead(ctx, d, m)
 }
 
-func resourceFactorRead(d *schema.ResourceData, m interface{}) error {
-	factor, err := findFactor(d, m)
-
+func resourceFactorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	factor, err := findFactor(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to find factor: %v", err)
+	}
 	if factor == nil {
 		d.SetId("")
 		return nil
 	}
-
-	if err != nil {
-		return err
-	}
-
-	d.Set("active", factor.Status == "ACTIVE")
-	d.Set("provider_id", factor.Id)
-
+	_ = d.Set("active", factor.Status == statusActive)
+	_ = d.Set("provider_id", factor.Id)
 	return nil
 }
 
-func resourceFactorPut(d *schema.ResourceData, m interface{}) error {
-	factor, err := findFactor(d, m)
+func resourceFactorDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if !d.Get("active").(bool) {
+		return nil
+	}
+	_, _, err := getSupplementFromMetadata(m).DeactivateFactor(ctx, d.Id())
 	if err != nil {
-		return err
+		return diag.Errorf("failed to deactivate factor: %v", err)
 	}
-
-	// To avoid API errors we check downstream status
-	if statusMismatch(d, factor) {
-		err := activateFactor(d, m)
-		if err != nil {
-			return err
-		}
-	}
-	d.SetId(d.Get("provider_id").(string))
-
-	return resourceFactorRead(d, m)
+	return nil
 }
 
-func activateFactor(d *schema.ResourceData, m interface{}) error {
+func activateFactor(ctx context.Context, d *schema.ResourceData, m interface{}) error {
 	var err error
-	client := getClientFromMetadata(m)
 	id := d.Get("provider_id").(string)
-
 	if d.Get("active").(bool) {
-		_, _, err = client.Org.ActivateFactor(id)
+		_, _, err = getSupplementFromMetadata(m).ActivateFactor(ctx, id)
 	} else {
-		_, _, err = client.Org.DeactivateFactor(id)
+		_, _, err = getSupplementFromMetadata(m).DeactivateFactor(ctx, id)
 	}
-
 	return err
 }
 
 // This API is in Beta hence the inability to do a single get. I must list then find.
 // Fear is clearly not a factor for me.
-func findFactor(d *schema.ResourceData, m interface{}) (*okta.Factor, error) {
-	client := getClientFromMetadata(m)
-	factorList, _, err := client.Org.ListFactors()
-
+func findFactor(ctx context.Context, d *schema.ResourceData, m interface{}) (*sdk.Factor, error) {
+	factorList, _, err := getSupplementFromMetadata(m).ListFactors(ctx)
 	if err != nil {
 		return nil, err
 	}
-
 	id := d.Get("provider_id").(string)
-
 	for _, f := range factorList {
 		if f.Id == id {
-			return f, nil
+			return &f, nil
 		}
 	}
-
 	return nil, nil
 }
 
-func statusMismatch(d *schema.ResourceData, factor *okta.Factor) bool {
+func statusMismatch(d *schema.ResourceData, factor *sdk.Factor) bool {
 	status := d.Get("active").(bool)
 
 	// I miss ternary operators
-	if factor != nil && factor.Status == "ACTIVE" {
+	if factor != nil && factor.Status == statusActive {
 		return !status
 	}
 

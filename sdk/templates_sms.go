@@ -1,10 +1,12 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
-	"github.com/okta/okta-sdk-golang/okta/query"
 
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
+
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 type (
@@ -19,19 +21,7 @@ type (
 	}
 )
 
-func (m *ApiSupplement) ListSmsTemplates() ([]*SmsTemplate, *okta.Response, error) {
-	url := "/api/v1/templates/sms"
-	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var temp []*SmsTemplate
-	resp, err := m.RequestExecutor.Do(req, &temp)
-	return temp, resp, err
-}
-
-func (m *ApiSupplement) GetSmsTemplate(id string) (*SmsTemplate, *okta.Response, error) {
+func (m *ApiSupplement) GetSmsTemplate(ctx context.Context, id string) (*SmsTemplate, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/templates/sms/%s", id)
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
@@ -39,12 +29,12 @@ func (m *ApiSupplement) GetSmsTemplate(id string) (*SmsTemplate, *okta.Response,
 	}
 
 	temp := &SmsTemplate{}
-	resp, err := m.RequestExecutor.Do(req, temp)
+	resp, err := m.RequestExecutor.Do(ctx, req, temp)
 
 	return temp, resp, err
 }
 
-func (m *ApiSupplement) CreateSmsTemplate(body SmsTemplate, qp *query.Params) (*SmsTemplate, *okta.Response, error) {
+func (m *ApiSupplement) CreateSmsTemplate(ctx context.Context, body SmsTemplate, qp *query.Params) (*SmsTemplate, *okta.Response, error) {
 	url := "/api/v1/templates/sms"
 	if qp != nil {
 		url += qp.String()
@@ -55,11 +45,11 @@ func (m *ApiSupplement) CreateSmsTemplate(body SmsTemplate, qp *query.Params) (*
 		return nil, nil, err
 	}
 	temp := &SmsTemplate{}
-	resp, err := m.RequestExecutor.Do(req, temp)
+	resp, err := m.RequestExecutor.Do(ctx, req, temp)
 	return temp, resp, err
 }
 
-func (m *ApiSupplement) UpdateSmsTemplate(id string, body SmsTemplate, qp *query.Params) (*SmsTemplate, *okta.Response, error) {
+func (m *ApiSupplement) UpdateSmsTemplate(ctx context.Context, id string, body SmsTemplate, qp *query.Params) (*SmsTemplate, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/templates/sms/%s", id)
 	if qp != nil {
 		url += qp.String()
@@ -69,16 +59,6 @@ func (m *ApiSupplement) UpdateSmsTemplate(id string, body SmsTemplate, qp *query
 		return nil, nil, err
 	}
 	temp := &SmsTemplate{}
-	resp, err := m.RequestExecutor.Do(req, temp)
+	resp, err := m.RequestExecutor.Do(ctx, req, temp)
 	return temp, resp, err
-}
-
-func (m *ApiSupplement) DeleteSmsTemplate(id string) (*okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/templates/sms/%s", id)
-	req, err := m.RequestExecutor.NewRequest("DELETE", url, nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := m.RequestExecutor.Do(req, nil)
-	return resp, err
 }

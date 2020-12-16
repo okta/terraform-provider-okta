@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func TestAccOktaIdpSocial_crud(t *testing.T) {
@@ -19,9 +19,9 @@ func TestAccOktaIdpSocial_crud(t *testing.T) {
 	googleName := fmt.Sprintf("%s.google", idpSocial)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(idpSocial, createDoesIdpExist(&sdk.SAMLIdentityProvider{})),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(idpSocial, createDoesIdpExist(&sdk.SAMLIdentityProvider{})),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

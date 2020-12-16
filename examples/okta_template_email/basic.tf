@@ -1,4 +1,4 @@
-resource okta_template_email test {
+resource "okta_template_email" "test" {
   type = "email.forgotPassword"
 
   translations {

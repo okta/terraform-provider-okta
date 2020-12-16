@@ -1,14 +1,15 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 type (
@@ -21,7 +22,7 @@ type (
 	}
 
 	appFilters struct {
-		ApiFilter         string
+		APIFilter         string
 		ID                string
 		Label             string
 		LabelPrefix       string
@@ -35,25 +36,25 @@ type (
 	}
 )
 
-func (a *appFilters) String() string {
-	return fmt.Sprintf(`id: "%s", label: "%s", label_prefix: "%s"`, a.ID, a.Label, a.LabelPrefix)
+func (f *appFilters) String() string {
+	return fmt.Sprintf(`id: "%s", label: "%s", label_prefix: "%s"`, f.ID, f.Label, f.LabelPrefix)
 }
 
-func listApps(m interface{}, filters *appFilters) ([]*appID, error) {
+func listApps(ctx context.Context, m interface{}, filters *appFilters) ([]*appID, error) {
 	result := &searchResults{Apps: []*appID{}}
-	qp := &query.Params{Limit: 200, Filter: filters.ApiFilter, Q: filters.getQ()}
+	qp := &query.Params{Limit: defaultPaginationLimit, Filter: filters.APIFilter, Q: filters.getQ()}
 
-	return result.Apps, collectApps(getSupplementFromMetadata(m).RequestExecutor, filters, result, qp)
+	return result.Apps, collectApps(ctx, getSupplementFromMetadata(m).RequestExecutor, filters, result, qp)
 }
 
 // Recursively list apps until no next links are returned
-func collectApps(reqExe *okta.RequestExecutor, filters *appFilters, results *searchResults, qp *query.Params) error {
+func collectApps(ctx context.Context, reqExe *okta.RequestExecutor, filters *appFilters, results *searchResults, qp *query.Params) error {
 	req, err := reqExe.NewRequest("GET", fmt.Sprintf("/api/v1/apps%s", qp.String()), nil)
 	if err != nil {
 		return err
 	}
 	var appList []*appID
-	res, err := reqExe.Do(req, &appList)
+	res, err := reqExe.Do(ctx, req, &appList)
 	if err != nil {
 		return err
 	}
@@ -63,7 +64,7 @@ func collectApps(reqExe *okta.RequestExecutor, filters *appFilters, results *sea
 	// Never attempt to request more if the same "after" link is returned
 	if after := sdk.GetAfterParam(res); after != "" && !filters.shouldShortCircuit(results.Apps) && after != qp.After {
 		qp.After = after
-		return collectApps(reqExe, filters, results, qp)
+		return collectApps(ctx, reqExe, filters, results, qp)
 	}
 
 	return nil
@@ -75,16 +76,14 @@ func filterApp(appList []*appID, filter *appFilters) []*appID {
 		return appList
 	}
 
-	filteredList := []*appID{}
+	var filteredList []*appID
 	for _, app := range appList {
 		if (filter.ID != "" && filter.ID == app.ID) || (filter.Label != "" && filter.Label == app.Label) {
 			filteredList = append(filteredList, app)
 		}
-
 		if filter.LabelPrefix != "" && strings.HasPrefix(app.Label, filter.LabelPrefix) {
 			filteredList = append(filteredList, app)
 		}
-
 	}
 	return filteredList
 }
@@ -94,7 +93,6 @@ func (f *appFilters) getQ() string {
 	if f.Label != "" {
 		return f.Label
 	}
-
 	return ""
 }
 
@@ -116,20 +114,20 @@ func (f *appFilters) shouldShortCircuit(appList []*appID) bool {
 
 // Basically a copy paste of listApps, considering adding some code generation but at this point, the juice is
 // not worth the squeeze.
-func listSamlApps(m interface{}, filters *appFilters) ([]*okta.SamlApplication, error) {
+func listSamlApps(ctx context.Context, m interface{}, filters *appFilters) ([]*okta.SamlApplication, error) {
 	result := &searchResults{SamlApps: []*okta.SamlApplication{}}
-	qp := &query.Params{Limit: 200, Filter: filters.ApiFilter}
-	return result.SamlApps, collectSamlApps(getSupplementFromMetadata(m).RequestExecutor, filters, result, qp)
+	qp := &query.Params{Limit: defaultPaginationLimit, Filter: filters.APIFilter, Q: filters.getQ()}
+	return result.SamlApps, collectSamlApps(ctx, getSupplementFromMetadata(m).RequestExecutor, filters, result, qp)
 }
 
 // Recursively list apps until no next links are returned
-func collectSamlApps(reqExe *okta.RequestExecutor, filters *appFilters, results *searchResults, qp *query.Params) error {
+func collectSamlApps(ctx context.Context, reqExe *okta.RequestExecutor, filters *appFilters, results *searchResults, qp *query.Params) error {
 	req, err := reqExe.NewRequest("GET", fmt.Sprintf("/api/v1/apps?%s", qp.String()), nil)
 	if err != nil {
 		return err
 	}
 	var appList []*okta.SamlApplication
-	res, err := reqExe.Do(req, &appList)
+	res, err := reqExe.Do(ctx, req, &appList)
 	if err != nil {
 		return err
 	}
@@ -138,7 +136,7 @@ func collectSamlApps(reqExe *okta.RequestExecutor, filters *appFilters, results 
 
 	if after := sdk.GetAfterParam(res); after != "" && !filters.shouldShortCircuit(results.Apps) {
 		qp.After = after
-		return collectApps(reqExe, filters, results, qp)
+		return collectApps(ctx, reqExe, filters, results, qp)
 	}
 
 	return nil
@@ -150,7 +148,7 @@ func filterSamlApp(appList []*okta.SamlApplication, filter *appFilters) []*okta.
 		return appList
 	}
 
-	filteredList := []*okta.SamlApplication{}
+	var filteredList []*okta.SamlApplication
 	for _, app := range appList {
 		if (filter.ID != "" && filter.ID == app.Id) || (filter.Label != "" && filter.Label == app.Label) {
 			filteredList = append(filteredList, app)
@@ -159,25 +157,8 @@ func filterSamlApp(appList []*okta.SamlApplication, filter *appFilters) []*okta.
 		if filter.LabelPrefix != "" && strings.HasPrefix(app.Label, filter.LabelPrefix) {
 			filteredList = append(filteredList, app)
 		}
-
 	}
 	return filteredList
-}
-
-func (f *appFilters) shouldSamlShortCircuit(appList []*appID) bool {
-	if f.LabelPrefix != "" {
-		return false
-	}
-
-	if f.ID != "" && f.Label != "" {
-		return len(appList) > 1
-	}
-
-	if f.ID != "" || f.Label != "" {
-		return len(appList) > 0
-	}
-
-	return false
 }
 
 func getAppFilters(d *schema.ResourceData) (*appFilters, error) {
@@ -187,11 +168,11 @@ func getAppFilters(d *schema.ResourceData) (*appFilters, error) {
 	filters := &appFilters{ID: id, Label: label, LabelPrefix: labelPrefix}
 
 	if d.Get("active_only").(bool) {
-		filters.ApiFilter = `status eq "ACTIVE"`
+		filters.APIFilter = fmt.Sprintf(`status eq "%s"`, statusActive)
 	}
 
 	if id == "" && label == "" && labelPrefix == "" {
-		return nil, errors.New("you must provide either an label_prefix, id, or label to search with")
+		return nil, errors.New("you must provide either a label_prefix, id, or label for application search")
 	}
 
 	return filters, nil

@@ -1,47 +1,47 @@
 package okta
 
 import (
-	"fmt"
+	"context"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func dataSourceAuthServer() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceAuthServerRead,
-
+		ReadContext: dataSourceAuthServerRead,
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"audiences": &schema.Schema{
+			"audiences": {
 				Type:     schema.TypeSet,
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			"kid": &schema.Schema{
+			"kid": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"credentials_last_rotated": &schema.Schema{
+			"credentials_last_rotated": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"credentials_next_rotation": &schema.Schema{
+			"credentials_next_rotation": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"credentials_rotation_mode": &schema.Schema{
+			"credentials_rotation_mode": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"status": &schema.Schema{
+			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -49,24 +49,24 @@ func dataSourceAuthServer() *schema.Resource {
 	}
 }
 
-func dataSourceAuthServerRead(d *schema.ResourceData, m interface{}) error {
+func dataSourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	name := d.Get("name").(string)
-	authServer, err := getSupplementFromMetadata(m).FindAuthServer(name, &query.Params{})
+	authServer, err := getSupplementFromMetadata(m).FindAuthServer(ctx, name, &query.Params{})
 	if err != nil {
-		return err
+		return diag.Errorf("failed to find auth server: %v", err)
 	}
 	if authServer == nil {
-		return fmt.Errorf("No authorization server found with provided name %s", name)
+		return diag.Errorf("authorization server with name '%s' does not exist", name)
 	}
 	d.SetId(authServer.Id)
-	d.Set("name", authServer.Name)
-	d.Set("description", authServer.Description)
-	d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
-	d.Set("credentials_rotation_mode", authServer.Credentials.Signing.RotationMode)
-	d.Set("kid", authServer.Credentials.Signing.Kid)
-	d.Set("credentials_next_rotation", authServer.Credentials.Signing.NextRotation.String())
-	d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated.String())
-	d.Set("status", authServer.Status)
+	_ = d.Set("name", authServer.Name)
+	_ = d.Set("description", authServer.Description)
+	_ = d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
+	_ = d.Set("credentials_rotation_mode", authServer.Credentials.Signing.RotationMode)
+	_ = d.Set("kid", authServer.Credentials.Signing.Kid)
+	_ = d.Set("credentials_next_rotation", authServer.Credentials.Signing.NextRotation.String())
+	_ = d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated.String())
+	_ = d.Set("status", authServer.Status)
 
 	return nil
 }

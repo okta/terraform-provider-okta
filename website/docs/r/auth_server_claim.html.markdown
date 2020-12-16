@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_auth_server_claim"
-sidebar_current: "docs-okta-resource-auth-server-claim"
+layout: 'okta'
+page_title: 'Okta: okta_auth_server_claim'
+sidebar_current: 'docs-okta-resource-auth-server-claim'
 description: |-
   Creates an Authorization Server Claim.
 ---
@@ -28,29 +28,29 @@ resource "okta_auth_server_claim" "example" {
 
 The following arguments are supported:
 
-* `auth_server_id` - (Required) The Application's display name.
+- `auth_server_id` - (Required) The Application's display name.
 
-* `name` - (Required) The name of the claim.
+- `name` - (Required) The name of the claim.
 
-* `value` - (Required) The value of the claim.
+- `value` - (Required) The value of the claim.
 
-* `scopes` - (Optional) The list of scopes the auth server claim is tied to.
+- `scopes` - (Optional) The list of scopes the auth server claim is tied to.
 
-* `status` - (Optional) The status of the application. It defaults to `"ACTIVE"`.
+- `status` - (Optional) The status of the application. It defaults to `"ACTIVE"`.
 
-* `value_type` - (Optional) The type of value of the claim. It can be set to `"EXPRESSION"` or `"GROUPS"`. It defaults to `"EXPRESSION"`.
+- `value_type` - (Optional) The type of value of the claim. It can be set to `"EXPRESSION"` or `"GROUPS"`. It defaults to `"EXPRESSION"`.
 
-* `claim_type` - (Required) Specifies whether the claim is for an access token `"RESOURCE"` or ID token `"IDENTITY"`.
+- `claim_type` - (Required) Specifies whether the claim is for an access token `"RESOURCE"` or ID token `"IDENTITY"`.
 
-* `always_include_in_token` - (Optional) Specifies whether to include claims in token, by default is is set to `true`.
+- `always_include_in_token` - (Optional) Specifies whether to include claims in token, by default is is set to `true`.
 
-* `group_filter_type` - (Optional) Specifies the type of group filter if `value_type` is `"GROUPS"`. Can be set to one of the following `"STARTS_WITH"`, `"EQUALS"`, `"CONTAINS"`, `"REGEX"`.
+- `group_filter_type` - (Optional) Specifies the type of group filter if `value_type` is `"GROUPS"`. Can be set to one of the following `"STARTS_WITH"`, `"EQUALS"`, `"CONTAINS"`, `"REGEX"`.
 
 ## Attributes Reference
 
-* `id` - The ID for the auth server claim.
+- `id` - The ID for the auth server claim.
 
-* `name` - The name of the claim.
+- `name` - The name of the claim.
 
 ## Import
 

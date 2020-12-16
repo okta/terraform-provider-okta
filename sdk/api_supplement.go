@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/peterhellberg/link"
 )
 
@@ -18,36 +18,28 @@ type ApiSupplement struct {
 	RequestExecutor *okta.RequestExecutor
 }
 
-func (m *ApiSupplement) GetSAMLMetdata(id, keyID string) ([]byte, *http.Response, error) {
-	url := fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata?kid=%s", m.BaseURL, id, keyID)
-	return m.GetXml(url)
+func (m *ApiSupplement) GetSAMLMetdata(id, keyID string) ([]byte, error) {
+	return m.GetXml(fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata?kid=%s", m.BaseURL, id, keyID))
 }
 
-func (m *ApiSupplement) GetSAMLIdpMetdata(id string) ([]byte, *http.Response, error) {
-	url := fmt.Sprintf("%s/api/v1/idps/%s/metadata.xml", m.BaseURL, id)
-	return m.GetXml(url)
+func (m *ApiSupplement) GetSAMLIdpMetdata(id string) ([]byte, error) {
+	return m.GetXml(fmt.Sprintf("%s/api/v1/idps/%s/metadata.xml", m.BaseURL, id))
 }
 
-func (m *ApiSupplement) GetXml(url string) ([]byte, *http.Response, error) {
-	req, err := http.NewRequest("GET", url, nil)
+func (m *ApiSupplement) GetXml(url string) ([]byte, error) {
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	req.Header.Add("Authorization", fmt.Sprintf("SSWS %s", m.Token))
 	req.Header.Add("User-Agent", "Terraform Okta Provider")
 	req.Header.Add("Accept", "application/xml")
-	res, err := m.RequestExecutor.DoWithRetries(okta.NewRequest(req), 0)
+	resp, err := m.Client.Do(req)
 	if err != nil {
-		return nil, res, err
-	} else if res.StatusCode == http.StatusNotFound {
-		return nil, res, nil
-	} else if res.StatusCode != http.StatusOK {
-		return nil, res, fmt.Errorf("failed to get metadata for url: %s, status: %s", url, res.Status)
+		return nil, err
 	}
-	defer res.Body.Close()
-	data, err := ioutil.ReadAll(res.Body)
-
-	return data, res, err
+	defer resp.Body.Close()
+	return ioutil.ReadAll(resp.Body)
 }
 
 // GetAfterParam grabs after link from link headers if it exists

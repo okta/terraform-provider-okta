@@ -6,15 +6,13 @@ import (
 	"strconv"
 	"testing"
 
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/okta/okta-sdk-golang/okta"
-	sdk "github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 type testClient struct {
 	oktaClient    *okta.Client
-	artClient     *articulateOkta.Client
 	apiSupplement *sdk.ApiSupplement
 }
 
@@ -29,7 +27,7 @@ func TestMain(m *testing.M) {
 	setupSweeper(policyRuleIdpDiscovery, deletePolicyRuleIdpDiscovery)
 	setupSweeper(policyMfa, deleteMfaPolicies)
 	setupSweeper(policyRuleSignOn, deleteSignOnPolicyRules)
-	setupSweeper(policyRulePassword, deletepolicyRulePasswords)
+	setupSweeper(policyRulePassword, deletePolicyRulePasswords)
 	setupSweeper("okta_*_app", deleteTestApps)
 	setupSweeper("okta_*_idp", deleteTestIdps)
 	setupSweeper(policyRuleMfa, deleteMfaPolicyRules)
@@ -39,6 +37,11 @@ func TestMain(m *testing.M) {
 	setupSweeper(oktaUser, sweepUsers)
 	setupSweeper(userSchema, sweepUserSchema)
 	setupSweeper(userBaseSchema, sweepUserBaseSchema)
+	setupSweeper(networkZone, sweepNetworkZones)
+	setupSweeper(inlineHook, sweepInlineHooks)
+	setupSweeper(userType, sweepUserTypes)
+
+	// add zones sweeper
 	resource.TestMain(m)
 }
 
@@ -46,14 +49,14 @@ func TestMain(m *testing.M) {
 func setupSweeper(resourceType string, del func(*testClient) error) {
 	resource.AddTestSweepers(resourceType, &resource.Sweeper{
 		Name: resourceType,
-		F: func(region string) error {
-			articulateOktaClient, client, apiSupplement, err := sharedClient(region)
+		F: func(_ string) error {
+			client, apiSupplement, err := sharedClient()
 
 			if err != nil {
 				return err
 			}
 
-			return del(&testClient{client, articulateOktaClient, apiSupplement})
+			return del(&testClient{oktaClient: client, apiSupplement: apiSupplement})
 		},
 	})
 }
@@ -68,36 +71,27 @@ func buildResourceName(testID int) string {
 }
 
 // sharedClient returns a common Okta Client for sweepers, which currently requires the original SDK and the official beta SDK
-func sharedClient(region string) (*articulateOkta.Client, *okta.Client, *sdk.ApiSupplement, error) {
+func sharedClient() (*okta.Client, *sdk.ApiSupplement, error) {
 	err := accPreCheck()
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, err
 	}
-
 	c, err := oktaConfig()
 	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	articulateClient, err := articulateOkta.NewClientWithDomain(nil, c.orgName, c.domain, c.apiToken)
-
-	if err != nil {
-		return nil, nil, nil, fmt.Errorf("[ERROR] Error creating Articulate Okta client: %v", err)
+		return nil, nil, err
 	}
 
 	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
-
-	client, err := okta.NewClient(
+	_, client, err := okta.NewClient(
 		context.Background(),
 		okta.WithOrgUrl(orgURL),
 		okta.WithToken(c.apiToken),
-		okta.WithBackoff(true),
-		okta.WithRetries(20),
+		okta.WithRateLimitMaxRetries(20),
 	)
 	if err != nil {
-		return articulateClient, client, nil, err
+		return client, nil, err
 	}
 	api := &sdk.ApiSupplement{RequestExecutor: client.GetRequestExecutor()}
 
-	return articulateClient, client, api, nil
+	return client, api, nil
 }

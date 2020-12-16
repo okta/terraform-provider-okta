@@ -1,22 +1,19 @@
 package okta
 
 import (
-	"errors"
-	"fmt"
+	"context"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta/query"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
-const (
-	saml2Idp = "SAML2"
-)
+const saml2Idp = "SAML2"
 
 func dataSourceIdpSaml() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceIdpSamlRead,
-
+		ReadContext: dataSourceIdpSamlRead,
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
@@ -28,52 +25,52 @@ func dataSourceIdpSaml() *schema.Resource {
 				Optional:      true,
 				ConflictsWith: []string{"id"},
 			},
-			"type": &schema.Schema{
+			"type": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"acs_binding": &schema.Schema{
+			"acs_binding": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"acs_type": &schema.Schema{
+			"acs_type": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"sso_url": &schema.Schema{
+			"sso_url": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"sso_binding": &schema.Schema{
+			"sso_binding": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"sso_destination": &schema.Schema{
+			"sso_destination": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"subject_format": &schema.Schema{
+			"subject_format": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Computed: true,
 			},
-			"subject_filter": &schema.Schema{
+			"subject_filter": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"issuer": &schema.Schema{
+			"issuer": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"issuer_mode": &schema.Schema{
+			"issuer_mode": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"audience": &schema.Schema{
+			"audience": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"kid": &schema.Schema{
+			"kid": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -81,67 +78,64 @@ func dataSourceIdpSaml() *schema.Resource {
 	}
 }
 
-func dataSourceIdpSamlRead(d *schema.ResourceData, m interface{}) error {
+func dataSourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	id := d.Get("id").(string)
+	name := d.Get("name").(string)
+	if id == "" && name == "" {
+		return diag.Errorf("config must provide either 'id' or 'name' to retrieve the IdP")
+	}
 	var (
 		err error
 		idp *sdk.SAMLIdentityProvider
 	)
-
-	id := d.Get("id").(string)
-	name := d.Get("name").(string)
-
-	if id == "" && name == "" {
-		return errors.New("Config must provide an id or name to retrieve the IdP")
-	}
-
 	if id != "" {
-		idp, err = getIdpById(m, id)
+		idp, err = getIdentityProviderByID(ctx, m, id)
 	} else {
-		idp, err = getIdpByName(m, name)
+		idp, err = getIdpByName(ctx, m, name)
 	}
-
 	if err != nil {
-		return err
-	} else if idp == nil {
-		return fmt.Errorf("Failed to find IdP via filter, id %s, name %s", id, name)
+		return diag.Errorf("failed to get identity provider: %v", err)
+	}
+	if idp == nil && id != "" {
+		return diag.Errorf("identity provider with id '%s' does not exist", id)
+	}
+	if idp == nil && name != "" {
+		return diag.Errorf("identity provider with name '%s' does not exist", name)
 	}
 
 	d.SetId(idp.ID)
-	d.Set("name", idp.Name)
-	d.Set("type", idp.Type)
-	d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
-	d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
-	d.Set("sso_url", idp.Protocol.Endpoints.Sso.URL)
-	d.Set("sso_binding", idp.Protocol.Endpoints.Sso.Binding)
-	d.Set("sso_destination", idp.Protocol.Endpoints.Sso.Destination)
-	d.Set("subject_filter", idp.Policy.Subject.Filter)
-	d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
-	d.Set("issuer", idp.Protocol.Credentials.Trust.Issuer)
-	d.Set("audience", idp.Protocol.Credentials.Trust.Audience)
-
-	return setNonPrimitives(d, map[string]interface{}{
+	_ = d.Set("name", idp.Name)
+	_ = d.Set("type", idp.Type)
+	_ = d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
+	_ = d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
+	_ = d.Set("sso_url", idp.Protocol.Endpoints.Sso.URL)
+	_ = d.Set("sso_binding", idp.Protocol.Endpoints.Sso.Binding)
+	_ = d.Set("sso_destination", idp.Protocol.Endpoints.Sso.Destination)
+	_ = d.Set("subject_filter", idp.Policy.Subject.Filter)
+	_ = d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
+	_ = d.Set("issuer", idp.Protocol.Credentials.Trust.Issuer)
+	_ = d.Set("audience", idp.Protocol.Credentials.Trust.Audience)
+	err = setNonPrimitives(d, map[string]interface{}{
 		"subject_format": convertStringSetToInterface(idp.Policy.Subject.Format),
 	})
+	if err != nil {
+		return diag.Errorf("failed to set SAML identity provider properties: %v", err)
+	}
+	return nil
 }
 
-func getIdpById(m interface{}, id string) (*sdk.SAMLIdentityProvider, error) {
+func getIdentityProviderByID(ctx context.Context, m interface{}, id string) (*sdk.SAMLIdentityProvider, error) {
 	var idp sdk.SAMLIdentityProvider
-	client := getSupplementFromMetadata(m)
-	_, resp, err := client.GetIdentityProvider(id, &idp)
-
+	_, resp, err := getSupplementFromMetadata(m).GetIdentityProvider(ctx, id, &idp)
 	return &idp, responseErr(resp, err)
-
 }
 
-func getIdpByName(m interface{}, label string) (*sdk.SAMLIdentityProvider, error) {
+func getIdpByName(ctx context.Context, m interface{}, label string) (*sdk.SAMLIdentityProvider, error) {
 	var idps []*sdk.SAMLIdentityProvider
 	queryParams := query.Params{Limit: 1, Q: label}
-	client := getSupplementFromMetadata(m)
-	_, resp, err := client.ListIdentityProviders(&idps, &queryParams)
-
+	_, resp, err := getSupplementFromMetadata(m).ListIdentityProviders(ctx, &idps, &queryParams)
 	if len(idps) > 0 {
 		return idps[0], nil
 	}
-
 	return nil, responseErr(resp, err)
 }

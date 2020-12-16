@@ -1,10 +1,11 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 type (
@@ -27,17 +28,7 @@ type (
 	}
 )
 
-func (m *ApiSupplement) RemovePropertyMapping(mappingId, id string) (*okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/mappings/%s/", mappingId)
-	req, err := m.RequestExecutor.NewRequest("POST", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return m.RequestExecutor.Do(req, nil)
-}
-
-func (m *ApiSupplement) GetProfileMappingBySourceId(sourceId, targetId string) (*Mapping, *okta.Response, error) {
+func (m *ApiSupplement) GetProfileMappingBySourceId(ctx context.Context, sourceId, targetId string) (*Mapping, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/mappings?sourceId=%s&targetId=%s", sourceId, targetId)
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 
@@ -46,18 +37,21 @@ func (m *ApiSupplement) GetProfileMappingBySourceId(sourceId, targetId string) (
 	}
 
 	var mappings []*Mapping
-	resp, err := m.RequestExecutor.Do(req, &mappings)
+	resp, err := m.RequestExecutor.Do(ctx, req, &mappings)
+	if err != nil {
+		return nil, resp, err
+	}
 
 	for _, mapping := range mappings {
 		if mapping.Source.ID == sourceId {
-			return m.GetProfileMapping(mapping.ID)
+			return m.GetProfileMapping(ctx, mapping.ID)
 		}
 	}
 
 	return nil, resp, err
 }
 
-func (m *ApiSupplement) GetProfileMapping(mappingId string) (*Mapping, *okta.Response, error) {
+func (m *ApiSupplement) GetProfileMapping(ctx context.Context, mappingId string) (*Mapping, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/mappings/%s", mappingId)
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
@@ -65,11 +59,11 @@ func (m *ApiSupplement) GetProfileMapping(mappingId string) (*Mapping, *okta.Res
 	}
 
 	mapping := &Mapping{}
-	resp, err := m.RequestExecutor.Do(req, mapping)
+	resp, err := m.RequestExecutor.Do(ctx, req, mapping)
 	return mapping, resp, err
 }
 
-func (m *ApiSupplement) AddPropertyMapping(mappingId string, body Mapping, qp *query.Params) (*Mapping, *okta.Response, error) {
+func (m *ApiSupplement) UpdateMapping(ctx context.Context, mappingId string, body Mapping, qp *query.Params) (*Mapping, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/mappings/%s", mappingId)
 	if qp != nil {
 		url = url + qp.String()
@@ -80,22 +74,7 @@ func (m *ApiSupplement) AddPropertyMapping(mappingId string, body Mapping, qp *q
 	}
 
 	mapping := body
-	resp, err := m.RequestExecutor.Do(req, &mapping)
-	return &mapping, resp, err
-}
-
-func (m *ApiSupplement) UpdateMapping(mappingId string, body Mapping, qp *query.Params) (*Mapping, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/mappings/%s", mappingId)
-	if qp != nil {
-		url = url + qp.String()
-	}
-	req, err := m.RequestExecutor.NewRequest("POST", url, body)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	mapping := body
-	resp, err := m.RequestExecutor.Do(req, &mapping)
+	resp, err := m.RequestExecutor.Do(ctx, req, &mapping)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -103,7 +82,7 @@ func (m *ApiSupplement) UpdateMapping(mappingId string, body Mapping, qp *query.
 }
 
 // FindProfileMappingSource retrieves profile mapping source/target via name
-func (m *ApiSupplement) FindProfileMappingSource(name, typ string, qp *query.Params) (*MappingSource, *okta.Response, error) {
+func (m *ApiSupplement) FindProfileMappingSource(ctx context.Context, name, typ string, qp *query.Params) (*MappingSource, *okta.Response, error) {
 	uri := "/api/v1/mappings"
 
 	if qp != nil {
@@ -116,8 +95,11 @@ func (m *ApiSupplement) FindProfileMappingSource(name, typ string, qp *query.Par
 		return nil, nil, err
 	}
 
-	mappings := []*Mapping{}
-	res, err := m.RequestExecutor.Do(req, &mappings)
+	var mappings []*Mapping
+	res, err := m.RequestExecutor.Do(ctx, req, &mappings)
+	if err != nil {
+		return nil, res, err
+	}
 
 	for _, m := range mappings {
 		if m.Target.Name == name && m.Target.Type == typ {
@@ -128,10 +110,13 @@ func (m *ApiSupplement) FindProfileMappingSource(name, typ string, qp *query.Par
 	}
 
 	if after := GetAfterParam(res); after != "" {
+		if qp == nil {
+			qp = &query.Params{}
+		}
 		qp.After = after
 
-		return m.FindProfileMappingSource(name, typ, qp)
+		return m.FindProfileMappingSource(ctx, name, typ, qp)
 	}
 
-	return nil, res, fmt.Errorf("could not locate profile mapping source with name %s", name)
+	return nil, res, fmt.Errorf("could not locate profile mapping source with name '%s'", name)
 }

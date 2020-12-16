@@ -1,59 +1,46 @@
 package sdk
 
 import (
-	"github.com/okta/okta-sdk-golang/okta"
+	"context"
+
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
-var (
-	schemaUrl = "/api/v1/meta/schemas/user/default"
-)
-
-func (m *ApiSupplement) DeleteUserSchemaProperty(id string) (*okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("POST", schemaUrl, getCustomUserSchema(id, nil))
+func (m *ApiSupplement) DeleteUserSchemaProperty(ctx context.Context, schemaURL string, id string) (*okta.Response, error) {
+	req, err := m.RequestExecutor.NewRequest("POST", schemaURL, getCustomUserSchema(id, nil))
 	if err != nil {
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(ctx, req, nil)
 }
 
-func (m *ApiSupplement) AddCustomUserSchemaProperty(schema *UserSubSchema) (*UserSchema, *okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("POST", schemaUrl, schema)
+func (m *ApiSupplement) UpdateCustomUserSchemaProperty(ctx context.Context, schemaURL string, id string, schema *UserSubSchema) (*UserSchema, *okta.Response, error) {
+	return m.UpdateUserSchemaProperty(ctx, schemaURL, getCustomUserSchema(id, schema))
+}
+
+func (m *ApiSupplement) UpdateBaseUserSchemaProperty(ctx context.Context, schemaURL string, id string, schema *UserSubSchema) (*UserSchema, *okta.Response, error) {
+	return m.UpdateUserSchemaProperty(ctx, schemaURL, getBaseUserSchema(id, schema))
+}
+
+func (m *ApiSupplement) UpdateUserSchemaProperty(ctx context.Context, schemaURL string, schema *UserSchema) (*UserSchema, *okta.Response, error) {
+	req, err := m.RequestExecutor.NewRequest("POST", schemaURL, schema)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	fullSchema := &UserSchema{}
-	resp, err := m.RequestExecutor.Do(req, fullSchema)
+	resp, err := m.RequestExecutor.Do(ctx, req, fullSchema)
 	return fullSchema, resp, err
 }
 
-func (m *ApiSupplement) UpdateCustomUserSchemaProperty(id string, schema *UserSubSchema) (*UserSchema, *okta.Response, error) {
-	return m.UpdateUserSchemaProperty(getCustomUserSchema(id, schema))
-}
-
-func (m *ApiSupplement) UpdateBaseUserSchemaProperty(id string, schema *UserSubSchema) (*UserSchema, *okta.Response, error) {
-	return m.UpdateUserSchemaProperty(getBaseUserSchema(id, schema))
-}
-
-func (m *ApiSupplement) UpdateUserSchemaProperty(schema *UserSchema) (*UserSchema, *okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("POST", schemaUrl, schema)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	fullSchema := &UserSchema{}
-	resp, err := m.RequestExecutor.Do(req, fullSchema)
-	return fullSchema, resp, err
-}
-
-func (m *ApiSupplement) GetUserSchema() (*UserSchema, *okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("GET", schemaUrl, nil)
+func (m *ApiSupplement) GetUserSchema(ctx context.Context, schemaURL string) (*UserSchema, *okta.Response, error) {
+	req, err := m.RequestExecutor.NewRequest("GET", schemaURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	schema := &UserSchema{}
-	resp, err := m.RequestExecutor.Do(req, schema)
+	resp, err := m.RequestExecutor.Do(ctx, req, schema)
 	return schema, resp, err
 }
 

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaDataSourceApp_read(t *testing.T) {
@@ -17,7 +17,7 @@ func TestAccOktaDataSourceApp_read(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		Providers: testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -26,9 +26,9 @@ func TestAccOktaDataSourceApp_read(t *testing.T) {
 					resource.TestCheckResourceAttr("data.okta_app.test", "label", fmt.Sprintf("testAcc_%d", ri)),
 					resource.TestCheckResourceAttr("data.okta_app.test2", "label", fmt.Sprintf("testAcc_%d", ri)),
 					resource.TestCheckResourceAttr("data.okta_app.test3", "label", fmt.Sprintf("testAcc_%d", ri)),
-					resource.TestCheckResourceAttr("data.okta_app.test", "status", "ACTIVE"),
-					resource.TestCheckResourceAttr("data.okta_app.test2", "status", "ACTIVE"),
-					resource.TestCheckResourceAttr("data.okta_app.test3", "status", "ACTIVE"),
+					resource.TestCheckResourceAttr("data.okta_app.test", "status", statusActive),
+					resource.TestCheckResourceAttr("data.okta_app.test2", "status", statusActive),
+					resource.TestCheckResourceAttr("data.okta_app.test3", "status", statusActive),
 				),
 			},
 		},

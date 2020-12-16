@@ -2,12 +2,13 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/go-hclog"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 // Resource names, defined in place, used throughout the provider and tests
@@ -18,7 +19,7 @@ const (
 	appGroupAssignment     = "okta_app_group_assignment"
 	appUser                = "okta_app_user"
 	appOAuth               = "okta_app_oauth"
-	appOAuthRedirectUri    = "okta_app_oauth_redirect_uri"
+	appOAuthRedirectURI    = "okta_app_oauth_redirect_uri"
 	appSaml                = "okta_app_saml"
 	appSecurePasswordStore = "okta_app_secure_password_store"
 	appSwa                 = "okta_app_swa"
@@ -30,10 +31,10 @@ const (
 	authServerPolicy       = "okta_auth_server_policy"
 	authServerPolicyRule   = "okta_auth_server_policy_rule"
 	authServerScope        = "okta_auth_server_scope"
+	eventHook              = "okta_event_hook"
 	factor                 = "okta_factor"
 	groupRoles             = "okta_group_roles"
 	groupRule              = "okta_group_rule"
-	identityProvider       = "okta_identity_provider"
 	idpResource            = "okta_idp_oidc"
 	idpSaml                = "okta_idp_saml"
 	idpSamlKey             = "okta_idp_saml_key"
@@ -55,11 +56,12 @@ const (
 	trustedOrigin          = "okta_trusted_origin"
 	userBaseSchema         = "okta_user_base_schema"
 	userSchema             = "okta_user_schema"
+	userType               = "okta_user_type"
 )
 
 // Provider establishes a client connection to an okta site
 // determined by its schema string values
-func Provider() terraform.ResourceProvider {
+func Provider() *schema.Provider {
 	deprecatedPolicies := dataSourceDefaultPolicies()
 	deprecatedPolicies.DeprecationMessage = "This data source will be deprecated in favor of okta_default_policy or okta_policy data sources."
 
@@ -67,13 +69,13 @@ func Provider() terraform.ResourceProvider {
 		Schema: map[string]*schema.Schema{
 			"org_name": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OKTA_ORG_NAME", nil),
 				Description: "The organization to manage in Okta.",
 			},
 			"api_token": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OKTA_API_TOKEN", nil),
 				Description: "API Token granting privileges to Okta API.",
 			},
@@ -102,17 +104,24 @@ func Provider() terraform.ResourceProvider {
 				Description: "maximum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
 			},
 			"max_retries": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      5,
-				ValidateFunc: validation.IntAtMost(100), // Have to cut it off somewhere right?
-				Description:  "maximum number of retries to attempt before erroring out.",
+				Type:             schema.TypeInt,
+				Optional:         true,
+				Default:          5,
+				ValidateDiagFunc: intAtMost(100), // Have to cut it off somewhere right?
+				Description:      "maximum number of retries to attempt before erroring out.",
 			},
 			"parallelism": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     1,
 				Description: "Number of concurrent requests to make within a resource where bulk operations are not possible. Take note of https://developer.okta.com/docs/api/getting_started/rate-limits.",
+			},
+			"log_level": {
+				Type:             schema.TypeInt,
+				Optional:         true,
+				Default:          int(hclog.Error),
+				ValidateDiagFunc: intBetween(1, 5),
+				Description:      "providers log level. Minimum is 1 (TRACE), and maximum is 5 (ERROR)",
 			},
 		},
 
@@ -123,7 +132,7 @@ func Provider() terraform.ResourceProvider {
 			appGroupAssignment:     resourceAppGroupAssignment(),
 			appUser:                resourceAppUser(),
 			appOAuth:               resourceAppOAuth(),
-			appOAuthRedirectUri:    resourceAppOAuthRedirectUri(),
+			appOAuthRedirectURI:    resourceAppOAuthRedirectURI(),
 			appSaml:                resourceAppSaml(),
 			appSecurePasswordStore: resourceAppSecurePasswordStore(),
 			appSwa:                 resourceAppSwa(),
@@ -135,6 +144,7 @@ func Provider() terraform.ResourceProvider {
 			authServerPolicy:       resourceAuthServerPolicy(),
 			authServerPolicyRule:   resourceAuthServerPolicyRule(),
 			authServerScope:        resourceAuthServerScope(),
+			eventHook:              resourceEventHook(),
 			factor:                 resourceFactor(),
 			groupRoles:             resourceGroupRoles(),
 			groupRule:              resourceGroupRule(),
@@ -149,16 +159,17 @@ func Provider() terraform.ResourceProvider {
 			oktaUser:               resourceUser(),
 			policyMfa:              resourcePolicyMfa(),
 			policyPassword:         resourcePolicyPassword(),
+			policySignOn:           resourcePolicySignOn(),
 			policyRuleIdpDiscovery: resourcePolicyRuleIdpDiscovery(),
 			policyRuleMfa:          resourcePolicyMfaRule(),
 			policyRulePassword:     resourcePolicyPasswordRule(),
 			policyRuleSignOn:       resourcePolicySignonRule(),
-			policySignOn:           resourcePolicySignon(),
 			templateEmail:          resourceTemplateEmail(),
 			templateSms:            resourceTemplateSms(),
 			trustedOrigin:          resourceTrustedOrigin(),
 			userSchema:             resourceUserSchema(),
 			userBaseSchema:         resourceUserBaseSchema(),
+			userType:               resourceUserType(),
 
 			// The day I realized I was naming stuff wrong :'-(
 			"okta_idp":                       deprecateIncorrectNaming(resourceIdpOidc(), idpResource),
@@ -168,13 +179,13 @@ func Provider() terraform.ResourceProvider {
 			"okta_bookmark_app":              deprecateIncorrectNaming(resourceAppBookmark(), appBookmark),
 			"okta_saml_app":                  deprecateIncorrectNaming(resourceAppSaml(), appSaml),
 			"okta_oauth_app":                 deprecateIncorrectNaming(resourceAppOAuth(), appOAuth),
-			"okta_oauth_app_redirect_uri":    deprecateIncorrectNaming(resourceAppOAuthRedirectUri(), appOAuthRedirectUri),
+			"okta_oauth_app_redirect_uri":    deprecateIncorrectNaming(resourceAppOAuthRedirectURI(), appOAuthRedirectURI),
 			"okta_auto_login_app":            deprecateIncorrectNaming(resourceAppAutoLogin(), appAutoLogin),
 			"okta_secure_password_store_app": deprecateIncorrectNaming(resourceAppSecurePasswordStore(), appSecurePasswordStore),
 			"okta_three_field_app":           deprecateIncorrectNaming(resourceAppThreeField(), appThreeField),
 			"okta_swa_app":                   deprecateIncorrectNaming(resourceAppSwa(), appSwa),
 			"okta_password_policy":           deprecateIncorrectNaming(resourcePolicyPassword(), policyPassword),
-			"okta_signon_policy":             deprecateIncorrectNaming(resourcePolicySignon(), policySignOn),
+			"okta_signon_policy":             deprecateIncorrectNaming(resourcePolicySignOn(), policySignOn),
 			"okta_signon_policy_rule":        deprecateIncorrectNaming(resourcePolicySignonRule(), policyRuleSignOn),
 			"okta_password_policy_rule":      deprecateIncorrectNaming(resourcePolicyPasswordRule(), policyRulePassword),
 			"okta_mfa_policy":                deprecateIncorrectNaming(resourcePolicyMfa(), policyMfa),
@@ -195,9 +206,9 @@ func Provider() terraform.ResourceProvider {
 			"okta_user":                        dataSourceUser(),
 			"okta_users":                       dataSourceUsers(),
 			authServer:                         dataSourceAuthServer(),
+			userType:                           dataSourceUserType(),
 		},
-
-		ConfigureFunc: providerConfigure,
+		ConfigureContextFunc: providerConfigure,
 	}
 }
 
@@ -206,7 +217,7 @@ func deprecateIncorrectNaming(d *schema.Resource, newResource string) *schema.Re
 	return d
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	log.Printf("[INFO] Initializing Okta client")
 
 	config := Config{
@@ -216,11 +227,11 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		parallelism: d.Get("parallelism").(int),
 		retryCount:  d.Get("max_retries").(int),
 		maxWait:     d.Get("max_wait_seconds").(int),
-		minWait:     d.Get("min_wait_seconds").(int),
 		backoff:     d.Get("backoff").(bool),
+		logLevel:    d.Get("log_level").(int),
 	}
 	if err := config.loadAndValidate(); err != nil {
-		return nil, fmt.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)
+		return nil, diag.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)
 	}
 	return &config, nil
 }

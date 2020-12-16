@@ -11,11 +11,9 @@ import (
 	"testing"
 )
 
-type (
-	fixtureManager struct {
-		Path string
-	}
-)
+type fixtureManager struct {
+	Path string
+}
 
 const uuidPattern = "replace_with_uuid"
 
@@ -42,5 +40,5 @@ func (manager *fixtureManager) GetFixtures(fixtureName string, rInt int, t *test
 		return tfConfig
 	}
 
-	return strings.Replace(tfConfig, uuidPattern, fmt.Sprintf("%d", rInt), -1)
+	return strings.ReplaceAll(tfConfig, uuidPattern, fmt.Sprintf("%d", rInt))
 }
