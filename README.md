@@ -80,4 +80,5 @@ Terraform is the work of thousands of contributors. We appreciate your help!
 
 To contribute, please read the contribution guidelines: [Contributing to Terraform - Okta Provider](.github/CONTRIBUTING.md)
 
-Issues on GitHub are intended to be related to bugs or feature requests with provider codebase. See https://www.terraform.io/docs/extend/community/index.html for a list of community resources to ask questions about Terraform.
+Issues on GitHub are intended to be related to bugs or feature requests with provider codebase. 
+See [Plugin SDK Community](https://www.terraform.io/docs/extend/community/index.html) for a list of community resources to ask questions about Terraform.
