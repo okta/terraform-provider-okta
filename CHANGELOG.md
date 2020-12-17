@@ -1,3 +1,18 @@
+# Changelog
+
+## 3.7.2 (December 18, 2020)
+
+ENHANCEMENTS:
+
+* Add logs to group data source for different cases [#150](https://github.com/oktadeveloper/terraform-provider-okta/pull/150). Thanks [@nathanbartlett](https://github.com/nathanbartlett)!
+* Added missing documentation [#245](https://github.com/oktadeveloper/terraform-provider-okta/pull/245). Thanks [@me](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+
+* Fix default name for idp_discovery [#244](https://github.com/oktadeveloper/terraform-provider-okta/pull/244). Thanks [@nickerzb](https://github.com/nickerzb)!
+* Fix okta auth server policy rule resource causing panic [#245](https://github.com/oktadeveloper/terraform-provider-okta/pull/245). Thanks [@SBerda](https://github.com/SBerda) for submitting the [issue](https://github.com/oktadeveloper/terraform-provider-okta/issues/202) and [@me](https://github.com/bogdanprodan-okta) for fixing it!
+* Fix `key_years_valid` defaulting to `2` during resource import [#245](https://github.com/oktadeveloper/terraform-provider-okta/pull/245). Thanks [@btsteve](https://github.com/btsteve) for submitting the [issue](https://github.com/oktadeveloper/terraform-provider-okta/issues/201) and [@me](https://github.com/bogdanprodan-okta) for fixing it!
+
 ## 3.7.1 (December 16, 2020)
 
 ENHANCEMENTS:
@@ -20,27 +35,32 @@ ENHANCEMENTS:
 * General documentation updates [#224](https://github.com/oktadeveloper/terraform-provider-okta/pull/224). Thanks, [@bryantbiggs](https://github.com/bryantbiggs)!
 
 BUGS:
+
 * Changed `okta_app_basic_auth` optional fields to required [issue 223](https://github.com/oktadeveloper/terraform-provider-okta/issues/223). Thanks, [@bryantbiggs](https://github.com/bryantbiggs)!
 * Add idp discovery to allowed list of default policies [#233](https://github.com/oktadeveloper/terraform-provider-okta/pull/233). Thanks, [@nickerzb](https://github.com/nickerzb)!
 
 ## 3.6.1 (November 14, 2020)
 
 ENHANCEMENTS:
+
 * Remove 3rd party Okta SDK [#215](https://github.com/oktadeveloper/terraform-provider-okta/pull/215). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)
 * Enhance `okta_app_auto_login` resource [#164](https://github.com/oktadeveloper/terraform-provider-okta/pull/164). Thanks, [@isometry](https://github.com/isometry)!
 * Add group name to the error for group data call [#156](https://github.com/oktadeveloper/terraform-provider-okta/pull/156). Thanks, [@ymylei](https://github.com/ymylei)!
 
 BUGS:
+
 * Fix population of the user 'status' attribute [#206](https://github.com/oktadeveloper/terraform-provider-okta/pull/206). Thanks, [@isometry](https://github.com/isometry)!
 
 ## 3.6.0 (October 12, 2020)
 
 ENHANCEMENTS:
+
 * Upgrade to Okta SDK 2.0.0 [#203](https://github.com/oktadeveloper/terraform-provider-okta/pull/203). Thanks a ton! [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)
 * Fix validation false positive when api_token is set via environment variable. [#147](https://github.com/oktadeveloper/terraform-provider-okta/pull/147). Thanks, [@jgeurts](https://github.com/jgeurts)
 * Update required to optional and more [#208](https://github.com/oktadeveloper/terraform-provider-okta/pull/208), Thanks, me! :smile:
 
 BUGS:
+
 * Update config.go [#207](https://github.com/oktadeveloper/terraform-provider-okta/pull/207), Thanks, me! :smile:
 
 ## 3.5.1 (October 9, 2020)
@@ -66,7 +86,6 @@ BUGS:
 
 * Fix inline hook example code to match version that is supported. [#175](https://github.com/oktadeveloper/terraform-provider-okta/pull/175), Thanks, [@noinarisak](https://github.com/noinarisak) me again! :smiley:
 * Update app_group_assignment.html.markdown. [#165](https://github.com/oktadeveloper/terraform-provider-okta/pull/165), Thanks, [snolan-amount](https://github.com/snolan-amount)!
-
 
 ## 3.4.1 (July 31, 2020)
 
@@ -104,6 +123,7 @@ BUG FIXES:
 ENHANCEMENTS:
 
 * Improve app filtering and update Terraform SDK. [#97](https://github.com/terraform-providers/terraform-provider-okta/pull/97) Thanks, [quantumew](https://github.com/quantumew)! :tada:
+
 ## 3.1.1 (March 18, 2020)
 
 ENHANCEMENTS:
@@ -206,8 +226,8 @@ FEATURES:
 
 BUG FIXES:
 
-* Fix occasional panic when creating a user schema see https://github.com/terraform-providers/terraform-provider-okta/issues/144
-* Users in LOCKED_OUT state are unlocked when config is ACTIVE https://github.com/terraform-providers/terraform-provider-okta/issues/225
+* Fix occasional panic when creating a user schema see [issue 144](https://github.com/terraform-providers/terraform-provider-okta/issues/144)
+* Users in LOCKED_OUT state are unlocked when config is ACTIVE [issue 225](https://github.com/terraform-providers/terraform-provider-okta/issues/225)
 
 ## 3.0.12
 
@@ -241,8 +261,8 @@ ENHANCEMENTS:
 ## 3.0.16
 
 * Fix issues around `okta_policy_rule_idp_discovery`
-    * `app_include` and `app_exlcude` were missing required properties
-    * `user_identifier_type` was being added even when not defined, causing API errors
+  * `app_include` and `app_exlcude` were missing required properties
+  * `user_identifier_type` was being added even when not defined, causing API errors
 * Fix integer array type
 
 ## 3.0.17

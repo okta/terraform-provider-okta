@@ -61,7 +61,7 @@ func stringInSlice(valid []string) schema.SchemaValidateDiagFunc {
 				return nil
 			}
 		}
-		return diag.Errorf("expected %v to be one of %v, got %s", k, valid, v)
+		return diag.Errorf("expected %v to be one of %v, got %s", k, strings.Join(valid, ","), v)
 	}
 }
 

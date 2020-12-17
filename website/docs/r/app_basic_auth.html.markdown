@@ -28,9 +28,21 @@ The following arguments are supported:
 
 - `label` - (Required) The Application's display name.
 
-* `url` - (Required) The URL of the sign-in page for this app.
+- `url` - (Required) The URL of the sign-in page for this app.
 
-* `auth_url` - (Required) The URL of the authenticating site for this app.
+- `auth_url` - (Required) The URL of the authenticating site for this app.
+
+- `users` - (Optional) Users associated with the application.
+
+- `groups` - (Optional) Groups associated with the application.
+
+- `status` - (Optional) Status of application. (`"ACTIVE"` or `"INACTIVE"`).
+
+- `hide_web` - (Optional) Do not display application icon to users.
+
+- `hide_ios` - (Optional) Do not display application icon on mobile app.
+
+- `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
 ## Attributes Reference
 
