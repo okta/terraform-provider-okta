@@ -77,7 +77,7 @@ The following arguments are supported:
 
 - `response_types` - (Optional) List of OAuth 2.0 response type strings.
 
-- `grant_types` - (Optional) List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.
+- `grant_types` - (Optional) List of OAuth 2.0 grant types. Conditional validation params found [here](https://developer.okta.com/docs/api/resources/apps#credentials-settings-details). Defaults to minimum requirements per app type.
 
 - `tos_uri` - (Optional) URI to web page providing client tos (terms of service).
 

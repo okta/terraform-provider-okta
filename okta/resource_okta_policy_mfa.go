@@ -20,10 +20,7 @@ func resourcePolicyMfa() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Schema: buildPolicySchema(
-			// List of factor provider above, they all follow the same schema
-			buildFactorProviders(map[string]*schema.Schema{}),
-		),
+		Schema: buildPolicySchema(buildFactorProviders()),
 	}
 }
 
@@ -156,14 +153,16 @@ var factorProviders = []string{
 	"yubikey_token",
 }
 
-func buildFactorProviders(target map[string]*schema.Schema) map[string]*schema.Schema {
+// List of factor provider above, they all follow the same schema
+func buildFactorProviders() map[string]*schema.Schema {
+	res := make(map[string]*schema.Schema)
 	for _, key := range factorProviders {
 		sMap := getPolicyFactorSchema(key)
 		for nestedKey, nestedVal := range sMap {
-			target[nestedKey] = nestedVal
+			res[nestedKey] = nestedVal
 		}
 	}
-	return target
+	return res
 }
 
 func getPolicyFactorSchema(key string) map[string]*schema.Schema {

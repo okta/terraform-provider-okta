@@ -2,9 +2,11 @@ package okta
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
@@ -15,7 +17,22 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 		UpdateContext: resourceAuthServerPolicyRuleUpdate,
 		DeleteContext: resourceAuthServerPolicyRuleDelete,
 		Importer:      createNestedResourceImporter([]string{"auth_server_id", "policy_id", "id"}),
-		Schema: addPeopleAssignments(map[string]*schema.Schema{
+		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
+			if w, ok := d.GetOk("grant_type_whitelist"); ok {
+				for _, v := range convertInterfaceToStringSet(w) {
+					if v != implicit {
+						continue
+					}
+					_, okUsers := d.GetOk("user_whitelist")
+					_, okGroups := d.GetOk("group_whitelist")
+					if !okUsers && !okGroups {
+						return fmt.Errorf(`at least "user_whitelist" or "group_whitelist" should be provided when using '%s' in "grant_type_whitelist"`, implicit)
+					}
+				}
+			}
+			return nil
+		},
+		Schema: map[string]*schema.Schema{
 			"type": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -44,10 +61,13 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 				Description: "Priority of the auth server policy rule",
 			},
 			"grant_type_whitelist": {
-				Type:        schema.TypeSet,
-				Required:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "Accepted grant type values: authorization_code, implicit, password.",
+				Type:     schema.TypeSet,
+				Required: true,
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateDiagFunc: stringInSlice([]string{authorizationCode, implicit, password, clientCredentials}),
+				},
+				Description: "Accepted grant type values: authorization_code, implicit, password, client_credentials",
 			},
 			"scope_whitelist": {
 				Type:     schema.TypeSet,
@@ -76,7 +96,27 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-		}),
+			"user_whitelist": {
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
+			},
+			"user_blacklist": {
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
+			},
+			"group_whitelist": {
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
+			},
+			"group_blacklist": {
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
+			},
+		},
 	}
 }
 
@@ -189,4 +229,25 @@ func buildAuthServerPolicyRule(d *schema.ResourceData) *sdk.AuthorizationServerP
 			People:     getPeopleConditions(d),
 		},
 	}
+}
+
+func setPeopleAssignments(d *schema.ResourceData, c *okta.GroupRulePeopleCondition) error {
+	if c.Groups != nil {
+		err := setNonPrimitives(d, map[string]interface{}{
+			"group_whitelist": convertStringSetToInterface(c.Groups.Include),
+			"group_blacklist": convertStringSetToInterface(c.Groups.Exclude),
+		})
+		if err != nil {
+			return err
+		}
+	} else {
+		_ = setNonPrimitives(d, map[string]interface{}{
+			"group_whitelist": convertStringSetToInterface([]string{}),
+			"group_blacklist": convertStringSetToInterface([]string{}),
+		})
+	}
+	return setNonPrimitives(d, map[string]interface{}{
+		"user_whitelist": convertStringSetToInterface(c.Users.Include),
+		"user_blacklist": convertStringSetToInterface(c.Users.Exclude),
+	})
 }

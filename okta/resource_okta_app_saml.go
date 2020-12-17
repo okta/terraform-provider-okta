@@ -55,9 +55,10 @@ func resourceAppSaml() *schema.Resource {
 				},
 			},
 			"key_name": {
-				Type:        schema.TypeString,
-				Description: "Certificate name. This modulates the rotation of keys. New name == new key.",
-				Optional:    true,
+				Type:         schema.TypeString,
+				Description:  "Certificate name. This modulates the rotation of keys. New name == new key.",
+				Optional:     true,
+				RequiredWith: []string{"key_years_valid"},
 			},
 			"key_id": {
 				Type:        schema.TypeString,
@@ -67,7 +68,6 @@ func resourceAppSaml() *schema.Resource {
 			"key_years_valid": {
 				Type:             schema.TypeInt,
 				Optional:         true,
-				Default:          2,
 				ValidateDiagFunc: intBetween(2, 10),
 				Description:      "Number of years the certificate is valid.",
 			},

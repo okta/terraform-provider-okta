@@ -47,30 +47,6 @@ var (
 		},
 	}
 
-	// Pattern used in a few spots, whitelisting/blacklisting users and groups
-	peopleSchema = map[string]*schema.Schema{
-		"user_whitelist": {
-			Type:     schema.TypeSet,
-			Elem:     &schema.Schema{Type: schema.TypeString},
-			Optional: true,
-		},
-		"user_blacklist": {
-			Type:     schema.TypeSet,
-			Elem:     &schema.Schema{Type: schema.TypeString},
-			Optional: true,
-		},
-		"group_whitelist": {
-			Type:     schema.TypeSet,
-			Elem:     &schema.Schema{Type: schema.TypeString},
-			Optional: true,
-		},
-		"group_blacklist": {
-			Type:     schema.TypeSet,
-			Elem:     &schema.Schema{Type: schema.TypeString},
-			Optional: true,
-		},
-	}
-
 	statusSchema = &schema.Schema{
 		Type:             schema.TypeString,
 		Optional:         true,
@@ -78,20 +54,6 @@ var (
 		ValidateDiagFunc: stringInSlice([]string{statusActive, statusInactive}),
 	}
 )
-
-func addPeopleAssignments(target map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(peopleSchema, target)
-}
-
-func setPeopleAssignments(d *schema.ResourceData, c *okta.GroupRulePeopleCondition) error {
-	// Don't think the API omits these when they are empty thus the unguarded accessing
-	return setNonPrimitives(d, map[string]interface{}{
-		"group_whitelist": convertStringSetToInterface(c.Groups.Include),
-		"group_blacklist": convertStringSetToInterface(c.Groups.Exclude),
-		"user_whitelist":  convertStringSetToInterface(c.Users.Include),
-		"user_blacklist":  convertStringSetToInterface(c.Users.Exclude),
-	})
-}
 
 func getPeopleConditions(d *schema.ResourceData) *okta.GroupRulePeopleCondition {
 	return &okta.GroupRulePeopleCondition{

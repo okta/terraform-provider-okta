@@ -21,10 +21,6 @@ func resourceAppBookmark() *schema.Resource {
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
 		Schema: buildAppSchemaWithVisibility(map[string]*schema.Schema{
-			"label": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
 			"url": {
 				Type:     schema.TypeString,
 				Required: true,
