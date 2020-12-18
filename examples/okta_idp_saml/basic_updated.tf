@@ -13,11 +13,11 @@ resource "okta_app_saml" "test" {
   authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
 }
 
-resource okta_idp_saml_key test {
+resource "okta_idp_saml_key" "test" {
   x5c = [okta_app_saml.test.certificate]
 }
 
-resource okta_idp_saml test {
+resource "okta_idp_saml" "test" {
   name                     = "testAcc_replace_with_uuid"
   acs_binding              = "HTTP-POST"
   acs_type                 = "INSTANCE"

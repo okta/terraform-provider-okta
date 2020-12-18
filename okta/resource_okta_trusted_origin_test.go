@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccOktaTrustedOrigin_crud(t *testing.T) {
@@ -18,9 +18,9 @@ func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.testAcc_%d", trustedOrigin, ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckTrustedOriginDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckTrustedOriginDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -41,7 +41,7 @@ func testAccCheckTrustedOriginDestroy(s *terraform.State) error {
 
 	for _, r := range s.RootModule().Resources {
 		_, resp, err := client.TrustedOrigin.GetOrigin(context.Background(), r.Primary.ID)
-		if resp != nil && is404(resp.StatusCode) {
+		if is404(resp) {
 			continue
 		}
 		if err != nil {

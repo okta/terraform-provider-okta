@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_trusted_origin"
-sidebar_current: "docs-okta-resource-trusted-origin"
+layout: 'okta'
+page_title: 'Okta: okta_trusted_origin'
+sidebar_current: 'docs-okta-resource-trusted-origin'
 description: |-
   Creates a Trusted Origin.
 ---
@@ -26,17 +26,17 @@ resource "okta_trusted_origin" "example" {
 
 The following arguments are supported:
 
-* `active` - (Optional) Whether the Trusted Origin is active or not - can only be issued post-creation. By default it is 'true'.
+- `active` - (Optional) Whether the Trusted Origin is active or not - can only be issued post-creation. By default it is 'true'.
 
-* `name` - (Required) Unique name for this trusted origin.
+- `name` - (Required) Unique name for this trusted origin.
 
-* `origin` - (Required) Unique origin URL for this trusted origin.
+- `origin` - (Required) Unique origin URL for this trusted origin.
 
-* `scopes` - (Required) Scopes of the Trusted Origin - can be `"CORS"` and/or `"REDIRECT"`.
+- `scopes` - (Required) Scopes of the Trusted Origin - can be `"CORS"` and/or `"REDIRECT"`.
 
 ## Attributes Reference
 
-* `id` - The ID of the Trusted Origin.
+- `id` - The ID of the Trusted Origin.
 
 ## Import
 

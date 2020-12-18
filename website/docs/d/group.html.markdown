@@ -20,16 +20,20 @@ data "okta_group" "example" {
 
 ## Arguments Reference
 
-* `name` - (Required) name of group to retrieve.
+- `name` - (Required) name of group to retrieve.
 
-* `include_users` - (Optional) whether or not to retrieve all member ids.
+- `type` - (Optional) type of the group to retrieve.
+
+- `include_users` - (Optional) whether or not to retrieve all member ids.
 
 ## Attributes Reference
 
-* `id` - id of group.
+- `id` - id of group.
 
-* `name` - name of group.
+- `name` - name of group.
 
-* `description` - description of group.
+- `type` - type of group.
 
-* `users` - user ids that are members of this group, only included if `include_users` is set to `true`.
+- `description` - description of group.
+
+- `users` - user ids that are members of this group, only included if `include_users` is set to `true`.

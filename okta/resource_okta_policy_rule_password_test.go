@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
@@ -51,9 +51,9 @@ func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
 	resourceName := buildResourceFQN(policyRulePassword, ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createRuleCheckDestroy(policyRulePassword),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createRuleCheckDestroy(policyRulePassword),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -84,9 +84,9 @@ func TestAccOktaPolicyRulePassword_priorityError(t *testing.T) {
 	config := testOktaPolicyRulePriorityError(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createRuleCheckDestroy(policyRulePassword),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createRuleCheckDestroy(policyRulePassword),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -104,9 +104,9 @@ func TestAccOktaPolicyRulePassword_priority(t *testing.T) {
 	name := buildResourceName(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createRuleCheckDestroy(policyRulePassword),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createRuleCheckDestroy(policyRulePassword),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

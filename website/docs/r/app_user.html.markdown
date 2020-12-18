@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_app_user"
-sidebar_current: "docs-okta-resource-app-user"
+layout: 'okta'
+page_title: 'Okta: okta_app_user'
+sidebar_current: 'docs-okta-resource-app-user'
 description: |-
   Creates an Application User.
 ---
@@ -12,7 +12,7 @@ Creates an Application User.
 
 This resource allows you to create and configure an Application User.
 
-__When using this resource, make sure to add the following `lifefycle` argument to the application resource you are assigning to:__
+**When using this resource, make sure to add the following `lifefycle` argument to the application resource you are assigning to:**
 
 ```hcl
 lifecycle {
@@ -34,19 +34,19 @@ resource "okta_app_user" "example" {
 
 The following arguments are supported:
 
-* `app_id` - (Required) App to associate user with.
+- `app_id` - (Required) App to associate user with.
 
-* `user_id` - (Required) User to associate the application with.
+- `user_id` - (Required) User to associate the application with.
 
-* `username` - (Required) The username to use for the app user.
+- `username` - (Required) The username to use for the app user.
 
-* `password` - (Optional) The password to use.
+- `password` - (Optional) The password to use.
 
-* `profile` - (Optional) The JSON profile of the App User.
+- `profile` - (Optional) The JSON profile of the App User.
 
 ## Attributes Reference
 
-* `id` - The ID of the app user.
+- `id` - The ID of the app user.
 
 ## Import
 

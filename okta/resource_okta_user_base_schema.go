@@ -1,9 +1,12 @@
 package okta
 
 import (
+	"context"
+	"fmt"
 	"strings"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
@@ -11,98 +14,98 @@ const baseSchema = "base"
 
 func resourceUserBaseSchema() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceUserBaseSchemaCreate,
-		Read:   resourceUserBaseSchemaRead,
-		Update: resourceUserBaseSchemaUpdate,
-		Delete: resourceUserBaseSchemaDelete,
-		Exists: resourceUserBaseSchemaExists,
+		CreateContext: resourceUserBaseSchemaCreate,
+		ReadContext:   resourceUserBaseSchemaRead,
+		UpdateContext: resourceUserBaseSchemaUpdate,
+		DeleteContext: resourceUserBaseSchemaDelete,
 		Importer: &schema.ResourceImporter{
-			State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				resourceIndex := d.Id()
 				resourceUserType := "default"
 				if strings.Contains(d.Id(), ".") {
 					resourceUserType = strings.Split(d.Id(), ".")[0]
 					resourceIndex = strings.Split(d.Id(), ".")[1]
 				}
-
 				d.SetId(resourceIndex)
 				_ = d.Set("index", resourceIndex)
 				_ = d.Set("user_type", resourceUserType)
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-		Schema: userBaseSchemaSchema,
+		SchemaVersion: 1,
+		Schema:        buildSchema(userBaseSchemaSchema, userTypeSchema),
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type: resourceUserBaseSchemaResourceV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: func(ctx context.Context, rawState map[string]interface{}, meta interface{}) (map[string]interface{}, error) {
+					rawState["user_type"] = "default"
+					return rawState, nil
+				},
+				Version: 0,
+			},
+		},
 	}
 }
 
-func resourceUserBaseSchemaCreate(d *schema.ResourceData, m interface{}) error {
-	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
-	if err != nil {
-		return err
-	}
+func resourceUserBaseSchemaResourceV0() *schema.Resource {
+	return &schema.Resource{Schema: userBaseSchemaSchema}
+}
 
-	if err := updateBaseSubschema(schemaUrl, d, m); err != nil {
-		return err
+func resourceUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	schemaUrl, err := getUserTypeSchemaUrl(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
+	if err != nil {
+		return diag.Errorf("failed to create user base schema: %v", err)
+	}
+	if err := updateBaseSubschema(ctx, getSupplementFromMetadata(m), schemaUrl, d); err != nil {
+		return diag.Errorf("failed to create user base schema: %v", err)
 	}
 	d.SetId(d.Get("index").(string))
-
-	return resourceUserBaseSchemaRead(d, m)
+	return resourceUserBaseSchemaRead(ctx, d, m)
 }
 
-func resourceUserBaseSchemaExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+func resourceUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	schemaUrl, err := getUserTypeSchemaUrl(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
 	if err != nil {
-		return false, err
+		return diag.Errorf("failed to get user base schema: %v", err)
 	}
-	subschema, err := getBaseSubSchema(schemaUrl, d, m)
-
-	return subschema != nil, err
-}
-
-func resourceUserBaseSchemaRead(d *schema.ResourceData, m interface{}) error {
-	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+	subschema, err := getBaseSubSchema(ctx, getSupplementFromMetadata(m), schemaUrl, d)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to get user base schema: %v", err)
 	}
-	subschema, err := getBaseSubSchema(schemaUrl, d, m)
-	if err != nil {
-		return err
-	} else if subschema == nil {
+	if subschema == nil {
 		d.SetId("")
 		return nil
 	}
-
 	syncBaseUserSchema(d, subschema)
-
 	return nil
 }
 
-func getBaseSubSchema(schemaUrl string, d *schema.ResourceData, m interface{}) (*sdk.UserSubSchema, error) {
-	s, _, err := getSupplementFromMetadata(m).GetUserSchema(schemaUrl)
+func getBaseSubSchema(ctx context.Context, client *sdk.ApiSupplement, schemaUrl string, d *schema.ResourceData) (*sdk.UserSubSchema, error) {
+	s, _, err := client.GetUserSchema(ctx, schemaUrl)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get user schema: %v", err)
 	}
 	return getBaseProperty(s, d.Id()), err
 }
 
-func resourceUserBaseSchemaUpdate(d *schema.ResourceData, m interface{}) error {
-	schemaUrl, err := getUserTypeSchemaUrl(m, d.Get("user_type").(string))
+func resourceUserBaseSchemaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	schemaUrl, err := getUserTypeSchemaUrl(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
 	if err != nil {
-		return err
+		return diag.Errorf("failed to update user base schema: %v", err)
 	}
-	if err := updateBaseSubschema(schemaUrl, d, m); err != nil {
-		return err
+	if err := updateBaseSubschema(ctx, getSupplementFromMetadata(m), schemaUrl, d); err != nil {
+		return diag.Errorf("failed to update user base schema: %v", err)
 	}
-	return resourceUserBaseSchemaRead(d, m)
+	return resourceUserBaseSchemaRead(ctx, d, m)
 }
 
-// can't delete Base
-func resourceUserBaseSchemaDelete(d *schema.ResourceData, m interface{}) error {
+// can't delete Base schema
+func resourceUserBaseSchemaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	return nil
 }
 
-// create or modify a  subschema
-func updateBaseSubschema(schemaUrl string, d *schema.ResourceData, m interface{}) error {
+// create or modify a subschema
+func updateBaseSubschema(ctx context.Context, client *sdk.ApiSupplement, schemaUrl string, d *schema.ResourceData) error {
 	subSchema := &sdk.UserSubSchema{
 		Master: getNullableMaster(d),
 		Title:  d.Get("title").(string),
@@ -115,8 +118,9 @@ func updateBaseSubschema(schemaUrl string, d *schema.ResourceData, m interface{}
 		},
 		Required: boolPtr(d.Get("required").(bool)),
 	}
-
-	_, _, err := getSupplementFromMetadata(m).UpdateBaseUserSchemaProperty(schemaUrl, d.Get("index").(string), subSchema)
-
-	return err
+	_, _, err := client.UpdateBaseUserSchemaProperty(ctx, schemaUrl, d.Get("index").(string), subSchema)
+	if err != nil {
+		return fmt.Errorf("failed to update base user schema property: %v", err)
+	}
+	return nil
 }

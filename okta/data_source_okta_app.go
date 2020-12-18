@@ -1,15 +1,16 @@
 package okta
 
 import (
-	"fmt"
+	"context"
+	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceApp() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceAppRead,
-
+		ReadContext: dataSourceAppRead,
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
@@ -48,19 +49,19 @@ func dataSourceApp() *schema.Resource {
 	}
 }
 
-func dataSourceAppRead(d *schema.ResourceData, m interface{}) error {
+func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	filters, err := getAppFilters(d)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to get filters: %v", err)
 	}
-	appList, err := listApps(m.(*Config), filters)
+	appList, err := listApps(ctx, m.(*Config), filters)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to list apps: %v", err)
 	}
 	if len(appList) < 1 {
-		return fmt.Errorf("no application found with provided filter: %s", filters)
+		return diag.Errorf("no application found with provided filter: %+v", filters)
 	} else if len(appList) > 1 {
-		fmt.Println("found multiple applications with the criteria supplied, using the first one, sorted by creation date.")
+		log.Print("found multiple applications with the criteria supplied, using the first one, sorted by creation date.\n")
 	}
 	app := appList[0]
 	d.SetId(app.ID)

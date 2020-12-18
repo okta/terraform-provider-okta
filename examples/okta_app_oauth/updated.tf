@@ -8,5 +8,4 @@ resource "okta_app_oauth" "test" {
   hide_ios            = true
   hide_web            = true
   auto_submit_toolbar = false
-  consent_method      = null
 }

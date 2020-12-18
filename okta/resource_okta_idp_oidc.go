@@ -1,23 +1,23 @@
 package okta
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceIdpOidc() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceIdpCreate,
-		Read:   resourceIdpRead,
-		Update: resourceIdpUpdate,
-		Delete: resourceIdpDelete,
-		Exists: getIdentityProviderExists(&sdk.OIDCIdentityProvider{}),
+		CreateContext: resourceIdpCreate,
+		ReadContext:   resourceIdpRead,
+		UpdateContext: resourceIdpUpdate,
+		DeleteContext: resourceIdpDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
-
 		// Note the base schema
 		Schema: buildIdpSchema(map[string]*schema.Schema{
 			"type": {
@@ -45,10 +45,10 @@ func resourceIdpOidc() *schema.Resource {
 				Required: true,
 			},
 			"protocol_type": {
-				Type:         schema.TypeString,
-				Default:      "OIDC",
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"OIDC", "OAUTH2"}, false),
+				Type:             schema.TypeString,
+				Default:          "OIDC",
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"OIDC", "OAUTH2"}),
 			},
 			"client_id": {
 				Type:     schema.TypeString,
@@ -64,11 +64,11 @@ func resourceIdpOidc() *schema.Resource {
 				Required: true,
 			},
 			"issuer_mode": {
-				Type:         schema.TypeString,
-				Description:  "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
-				ValidateFunc: validation.StringInSlice([]string{"ORG_URL", "CUSTOM_URL"}, false),
-				Default:      "ORG_URL",
-				Optional:     true,
+				Type:             schema.TypeString,
+				Description:      "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
+				ValidateDiagFunc: stringInSlice([]string{"ORG_URL", "CUSTOM_URL"}),
+				Default:          "ORG_URL",
+				Optional:         true,
 			},
 			"max_clock_skew": {
 				Type:     schema.TypeInt,
@@ -78,27 +78,30 @@ func resourceIdpOidc() *schema.Resource {
 	}
 }
 
-func resourceIdpCreate(d *schema.ResourceData, m interface{}) error {
+func resourceIdpCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	idp := buildOidcIdp(d)
-	if err := createIdp(m, idp); err != nil {
-		return err
+	_, _, err := getSupplementFromMetadata(m).CreateIdentityProvider(ctx, idp, nil)
+	if err != nil {
+		return diag.Errorf("failed to create OIDC identity provider: %v", err)
 	}
 	d.SetId(idp.ID)
-
-	if err := setIdpStatus(idp.ID, idp.Status, d.Get("status").(string), m); err != nil {
-		return err
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(m), idp.Status)
+	if err != nil {
+		return diag.Errorf("failed to change OIDC identity provider's status: %v", err)
 	}
-
-	return resourceIdpRead(d, m)
+	return resourceIdpRead(ctx, d, m)
 }
 
-func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
+func resourceIdpRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	idp := &sdk.OIDCIdentityProvider{}
-
-	if err := fetchIdp(d.Id(), m, idp); err != nil {
-		return err
+	_, resp, err := getSupplementFromMetadata(m).GetIdentityProvider(ctx, d.Id(), idp)
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get OIDC identity provider: %v", err)
 	}
-
+	if idp.ID == "" {
+		d.SetId("")
+		return nil
+	}
 	_ = d.Set("name", idp.Name)
 	_ = d.Set("type", idp.Type)
 	_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkew)
@@ -117,32 +120,31 @@ func resourceIdpRead(d *schema.ResourceData, m interface{}) error {
 	syncEndpoint("jwks", idp.Protocol.Endpoints.Jwks, d)
 	syncAlgo(d, idp.Protocol.Algorithms)
 
-	if err := syncGroupActions(d, idp.Policy.Provisioning.Groups); err != nil {
-		return err
+	err = syncGroupActions(d, idp.Policy.Provisioning.Groups)
+	if err != nil {
+		return diag.Errorf("failed to set OIDC identity provider properties: %v", err)
 	}
-
 	if idp.Protocol.Endpoints.Acs != nil {
 		_ = d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
 		_ = d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
 	}
-
 	if idp.IssuerMode != "" {
 		_ = d.Set("issuer_mode", idp.IssuerMode)
 	}
-
 	setMap := map[string]interface{}{
 		"scopes": convertStringSetToInterface(idp.Protocol.Scopes),
 	}
-
 	if idp.Policy.AccountLink != nil {
 		_ = d.Set("account_link_action", idp.Policy.AccountLink.Action)
-
 		if idp.Policy.AccountLink.Filter != nil {
 			setMap["account_link_group_include"] = convertStringSetToInterface(idp.Policy.AccountLink.Filter.Groups.Include)
 		}
 	}
-
-	return setNonPrimitives(d, setMap)
+	err = setNonPrimitives(d, setMap)
+	if err != nil {
+		return diag.Errorf("failed to set OIDC identity provider properties: %v", err)
+	}
+	return nil
 }
 
 func syncEndpoint(key string, e *sdk.Endpoint, d *schema.ResourceData) {
@@ -152,18 +154,17 @@ func syncEndpoint(key string, e *sdk.Endpoint, d *schema.ResourceData) {
 	}
 }
 
-func resourceIdpUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceIdpUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	idp := buildOidcIdp(d)
-
-	if err := updateIdp(d.Id(), m, idp); err != nil {
-		return err
+	_, _, err := getSupplementFromMetadata(m).UpdateIdentityProvider(ctx, d.Id(), idp, nil)
+	if err != nil {
+		return diag.Errorf("failed to update OIDC identity provider: %v", err)
 	}
-
-	if err := setIdpStatus(idp.ID, idp.Status, d.Get("status").(string), m); err != nil {
-		return err
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(m), idp.Status)
+	if err != nil {
+		return diag.Errorf("failed to update OIDC identity provider's status: %v", err)
 	}
-
-	return resourceIdpRead(d, m)
+	return resourceIdpRead(ctx, d, m)
 }
 
 func buildOidcIdp(d *schema.ResourceData) *sdk.OIDCIdentityProvider {

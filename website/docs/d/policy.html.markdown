@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_policy"
-sidebar_current: "docs-okta-datasource-policy"
+layout: 'okta'
+page_title: 'Okta: okta_policy'
+sidebar_current: 'docs-okta-datasource-policy'
 description: |-
   Get a policy from Okta.
 ---
@@ -21,14 +21,14 @@ data "okta_policy" "example" {
 
 ## Arguments Reference
 
-* `name` - (Required) name of policy to retrieve.
+- `name` - (Required) name of policy to retrieve.
 
-* `type` - (Required) type of policy to retrieve.
+- `type` - (Required) type of policy to retrieve.
 
 ## Attributes Reference
 
-* `id` - id of policy.
+- `id` - id of policy.
 
-* `name` - name of policy.
+- `name` - name of policy.
 
-* `type` - type of policy.
+- `type` - type of policy.

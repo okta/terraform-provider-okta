@@ -1,4 +1,4 @@
-resource okta_idp_social facebook {
+resource "okta_idp_social" "facebook" {
   type          = "FACEBOOK"
   protocol_type = "OAUTH2"
   name          = "testAcc_facebook_replace_with_uuid"
@@ -25,7 +25,7 @@ resource "okta_user_schema" "schema_custom" {
   master      = "PROFILE_MASTER"
 }
 
-resource okta_idp_social google {
+resource "okta_idp_social" "google" {
   type          = "GOOGLE"
   protocol_type = "OAUTH2"
   name          = "testAcc_google_replace_with_uuid"

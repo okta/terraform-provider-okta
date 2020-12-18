@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_idp_saml_signing_key"
-sidebar_current: "docs-okta-resource-saml-signing-key"
+layout: 'okta'
+page_title: 'Okta: okta_idp_saml_signing_key'
+sidebar_current: 'docs-okta-resource-saml-signing-key'
 description: |-
   Creates a SAML Identity Provider Signing Key.
 ---
@@ -24,23 +24,23 @@ resource "okta_idp_saml_key" "example" {
 
 The following arguments are supported:
 
-* `x5c` - (Required) base64-encoded X.509 certificate chain with DER encoding.
+- `x5c` - (Required) base64-encoded X.509 certificate chain with DER encoding.
 
 ## Attributes Reference
 
-* `id` - Key ID.
+- `id` - Key ID.
 
-* `kid` - Key ID.
+- `kid` - Key ID.
 
-* `created` - Date created.
+- `created` - Date created.
 
-* `expires_at` - Date the cert expires.
+- `expires_at` - Date the cert expires.
 
-* `kty` - Identifies the cryptographic algorithm family used with the key.
+- `kty` - Identifies the cryptographic algorithm family used with the key.
 
-* `use` - Intended use of the public key.
+- `use` - Intended use of the public key.
 
-* `x5t_s256` - base64url-encoded SHA-256 thumbprint of the DER encoding of an X.509 certificate.
+- `x5t_s256` - base64url-encoded SHA-256 thumbprint of the DER encoding of an X.509 certificate.
 
 ## Import
 

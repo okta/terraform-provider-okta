@@ -2,12 +2,10 @@ package okta
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
@@ -55,16 +53,15 @@ var profileKeys = []string{
 
 func resourceUser() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceUserCreate,
-		Read:   resourceUserRead,
-		Update: resourceUserUpdate,
-		Delete: resourceUserDelete,
-		Exists: resourceUserExists,
+		CreateContext: resourceUserCreate,
+		ReadContext:   resourceUserRead,
+		UpdateContext: resourceUserUpdate,
+		DeleteContext: resourceUserDelete,
 		Importer: &schema.ResourceImporter{
-			State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				// Supporting id and email based imports
-				client := getOktaClientFromMetadata(meta)
-				user, _, err := client.User.GetUser(context.Background(), d.Id())
+				client := getOktaClientFromMetadata(m)
+				user, _, err := client.User.GetUser(ctx, d.Id())
 				if err != nil {
 					return nil, err
 				}
@@ -73,7 +70,6 @@ func resourceUser() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-
 		Schema: map[string]*schema.Schema{
 			"admin_roles": {
 				Type:        schema.TypeSet,
@@ -97,12 +93,14 @@ func resourceUser() *schema.Resource {
 				Description: "User country code",
 			},
 			"custom_profile_attributes": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validateDataJSON,
-				StateFunc:    normalizeDataJSON,
-				Default:      "{}",
-				Description:  "JSON formatted custom attributes for a user. It must be JSON due to various types Okta allows.",
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
+				Description:      "JSON formatted custom attributes for a user. It must be JSON due to various types Okta allows.",
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
 			},
 			"department": {
 				Type:        schema.TypeString,
@@ -120,10 +118,10 @@ func resourceUser() *schema.Resource {
 				Description: "User division",
 			},
 			"email": {
-				Type:         schema.TypeString,
-				Required:     true,
-				Description:  "User primary email address",
-				ValidateFunc: matchEmailRegexp,
+				Type:             schema.TypeString,
+				Required:         true,
+				Description:      "User primary email address",
+				ValidateDiagFunc: stringIsEmail,
 			},
 			"employee_number": {
 				Type:        schema.TypeString,
@@ -228,11 +226,11 @@ func resourceUser() *schema.Resource {
 				Description: "User state or region",
 			},
 			"status": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "The status of the User in Okta - remove to set user back to active/provisioned",
-				Default:      statusActive,
-				ValidateFunc: validation.StringInSlice([]string{statusActive, userStatusStaged, userStatusDeprovisioned, userStatusSuspended}, false),
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "The status of the User in Okta - remove to set user back to active/provisioned",
+				Default:          statusActive,
+				ValidateDiagFunc: stringInSlice([]string{statusActive, userStatusStaged, userStatusDeprovisioned, userStatusSuspended}),
 				// ignore diff changing to ACTIVE if state is set to PROVISIONED or PASSWORD_EXPIRED
 				// since this is a similar status in Okta terms
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
@@ -281,31 +279,19 @@ func resourceUser() *schema.Resource {
 				Description: "User Password Recovery Question",
 			},
 			"recovery_answer": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Sensitive:    true,
-				ValidateFunc: validation.StringLenBetween(4, 1000),
-				Description:  "User Password Recovery Answer",
+				Type:             schema.TypeString,
+				Optional:         true,
+				Sensitive:        true,
+				ValidateDiagFunc: stringLenBetween(4, 1000),
+				Description:      "User Password Recovery Answer",
 			},
 		},
 	}
 }
 
-func mapStatus(currentStatus string) string {
-	// PASSWORD_EXPIRED is effectively ACTIVE for our purposes
-	if currentStatus == userStatusPasswordExpired || currentStatus == userStatusRecovery {
-		return statusActive
-	}
-
-	return currentStatus
-}
-
-func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] Create User for %v", d.Get("login").(string))
-
-	client := m.(*Config).oktaClient
+func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	logger(m).Info("creating user", "login", d.Get("login").(string))
 	profile := populateUserProfile(d)
-
 	qp := query.NewQueryParams()
 
 	// setting activate to false on user creation will leave the user with a status of STAGED
@@ -313,16 +299,13 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		qp = query.NewQueryParams(query.WithActivate(false))
 	}
 
-	password := d.Get("password").(string)
-	recoveryQuestion := d.Get("recovery_question").(string)
-	recoveryAnswer := d.Get("recovery_answer").(string)
-
 	uc := &okta.UserCredentials{
 		Password: &okta.PasswordCredential{
-			Value: password,
+			Value: d.Get("password").(string),
 		},
 	}
-
+	recoveryQuestion := d.Get("recovery_question").(string)
+	recoveryAnswer := d.Get("recovery_answer").(string)
 	if recoveryQuestion != "" {
 		uc.RecoveryQuestion = &okta.RecoveryQuestionCredential{
 			Question: recoveryQuestion,
@@ -334,95 +317,85 @@ func resourceUserCreate(d *schema.ResourceData, m interface{}) error {
 		Profile:     profile,
 		Credentials: uc,
 	}
-	user, _, err := client.User.CreateUser(context.Background(), userBody, qp)
-
+	client := getOktaClientFromMetadata(m)
+	user, _, err := client.User.CreateUser(ctx, userBody, qp)
 	if err != nil {
-		return fmt.Errorf("[ERROR] Error Creating User from Okta: %v", err)
+		return diag.Errorf("failed to create user: %v", err)
 	}
-
 	// set the user id into state before setting roles and status in case they fail
 	d.SetId(user.Id)
 
 	// role assigning can only happen after the user is created so order matters here
 	roles := convertInterfaceToStringSetNullable(d.Get("admin_roles"))
 	if roles != nil {
-		err = assignAdminRolesToUser(user.Id, roles, client)
+		err = assignAdminRolesToUser(ctx, user.Id, roles, client)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	// Only sync when there is opt in, consumers can chose which route they want to take
-	if _, exists := d.GetOkExists("group_memberships"); exists { // nolint:staticcheck
+	if _, exists := d.GetOk("group_memberships"); exists {
 		groups := convertInterfaceToStringSetNullable(d.Get("group_memberships"))
-		err = assignGroupsToUser(user.Id, groups, client)
+		err = assignGroupsToUser(ctx, user.Id, groups, client)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	// status changing can only happen after user is created as well
 	if d.Get("status").(string) == userStatusSuspended || d.Get("status").(string) == userStatusDeprovisioned {
-		err := updateUserStatus(user.Id, d.Get("status").(string), client)
-
+		err := updateUserStatus(ctx, user.Id, d.Get("status").(string), client)
 		if err != nil {
-			return fmt.Errorf("[ERROR] Error Updating Status for User: %v", err)
+			return diag.Errorf("failed to update user status: %v", err)
 		}
 	}
-
-	return resourceUserRead(d, m)
+	return resourceUserRead(ctx, d, m)
 }
 
-func resourceUserRead(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] List User %v", d.Get("login").(string))
+func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	logger(m).Info("reading user", "id", d.Id())
 	client := getOktaClientFromMetadata(m)
-
-	user, resp, err := client.User.GetUser(context.Background(), d.Id())
-
-	if resp != nil && is404(resp.StatusCode) {
+	user, resp, err := client.User.GetUser(ctx, d.Id())
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get user: %v", err)
+	}
+	if user == nil {
 		d.SetId("")
 		return nil
 	}
-
-	if err != nil {
-		return fmt.Errorf("[ERROR] Error Getting User from Okta: %v", err)
-	}
-
 	_ = d.Set("status", mapStatus(user.Status))
 	_ = d.Set("raw_status", user.Status)
 
-	rawMap, err := flattenUser(user)
-	if err != nil {
-		return err
-	}
+	rawMap := flattenUser(user)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set user's properties: %v", err)
 	}
-	err = setAdminRoles(d, client)
+	err = setAdminRoles(ctx, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set user's roles: %v", err)
 	}
-
 	// Only sync when it is outlined, an empty list will remove all membership
-	if _, exists := d.GetOkExists("group_memberships"); exists { // nolint:staticcheck
-		return setGroups(d, client)
+	if _, exists := d.GetOk("group_memberships"); exists {
+		err = setGroups(ctx, d, client)
+		if err != nil {
+			return diag.Errorf("failed to set user's groups: %v", err)
+		}
 	}
 	return nil
 }
 
-func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] Update User %v", d.Get("login").(string))
+func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	logger(m).Info("updating user", "id", d.Id())
 	status := d.Get("status").(string)
 	statusChange := d.HasChange("status")
 
 	if status == userStatusStaged && statusChange {
-		return fmt.Errorf("[ERROR] Okta will not allow a user to be updated to STAGED. Can set to STAGED on user creation only")
+		return diag.Errorf("Okta will not allow a user to be updated to STAGED. Can set to STAGED on user creation only")
 	}
 
-	client := getOktaClientFromMetadata(m)
 	// There are a few requests here so just making sure the state gets updated per successful downstream change
-
 	roleChange := d.HasChange("admin_roles")
 	groupChange := d.HasChange("group_memberships")
 	userChange := hasProfileChange(d)
@@ -432,47 +405,46 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 
 	// run the update status func first so a user that was previously deprovisioned
 	// can be updated further if it's status changed in it's terraform configs
+	client := getOktaClientFromMetadata(m)
 	if statusChange {
-		err := updateUserStatus(d.Id(), status, client)
+		err := updateUserStatus(ctx, d.Id(), status, client)
 		if err != nil {
-			return fmt.Errorf("[ERROR] Error Updating Status for User: %v", err)
+			return diag.Errorf("failed to update user status: %v", err)
 		}
-		d.SetPartial("status") // nolint:staticcheck
+		_ = d.Set("status", status)
 	}
 
 	if status == userStatusDeprovisioned && userChange {
-		return errors.New("[ERROR] Only the status of a DEPROVISIONED user can be updated, we detected other change")
+		return diag.Errorf("Only the status of a DEPROVISIONED user can be updated, we detected other change")
 	}
 
 	if userChange {
 		profile := populateUserProfile(d)
 		userBody := okta.User{Profile: profile}
-
-		_, _, err := client.User.UpdateUser(context.Background(), d.Id(), userBody, nil)
+		_, _, err := client.User.UpdateUser(ctx, d.Id(), userBody, nil)
 		if err != nil {
-			return fmt.Errorf("[ERROR] Error Updating User in Okta: %v", err)
+			return diag.Errorf("failed to update user: %v", err)
 		}
 	}
 
 	if roleChange {
 		roles := convertInterfaceToStringSet(d.Get("admin_roles"))
-		if err := updateAdminRolesOnUser(d.Id(), roles, client); err != nil {
-			return err
+		if err := updateAdminRolesOnUser(ctx, d.Id(), roles, client); err != nil {
+			return diag.Errorf("failed to update user: %v", err)
 		}
-		d.SetPartial("admin_roles") //nolint:staticcheck
+		_ = d.Set("admin_roles", roles)
 	}
 
 	if groupChange {
 		groups := convertInterfaceToStringSet(d.Get("group_memberships"))
-		if err := updateGroupsOnUser(d.Id(), groups, client); err != nil {
-			return err
+		if err := updateGroupsOnUser(ctx, d.Id(), groups, client); err != nil {
+			return diag.Errorf("failed to update user: %v", err)
 		}
-		d.SetPartial("group_memberships") //nolint:staticcheck
+		_ = d.Set("group_memberships", groups)
 	}
 
 	if passwordChange {
 		oldPassword, newPassword := d.GetChange("password")
-
 		op := &okta.PasswordCredential{
 			Value: oldPassword.(string),
 		}
@@ -483,36 +455,28 @@ func resourceUserUpdate(d *schema.ResourceData, m interface{}) error {
 			OldPassword: op,
 			NewPassword: np,
 		}
-
-		_, _, err := client.User.ChangePassword(context.Background(), d.Id(), *npr, nil)
+		_, _, err := client.User.ChangePassword(ctx, d.Id(), *npr, nil)
 		if err != nil {
-			return fmt.Errorf("[ERROR] Error Updating User password in Okta: %v", err)
+			return diag.Errorf("failed to update user's password: %v", err)
 		}
 	}
 
 	if recoveryQuestionChange || recoveryAnswerChange {
-		p := &okta.PasswordCredential{
-			Value: d.Get("password").(string),
-		}
-
-		rq := &okta.RecoveryQuestionCredential{
-			Question: d.Get("recovery_question").(string),
-			Answer:   d.Get("recovery_answer").(string),
-		}
-
 		nuc := &okta.UserCredentials{
-			Password:         p,
-			RecoveryQuestion: rq,
+			Password: &okta.PasswordCredential{
+				Value: d.Get("password").(string),
+			},
+			RecoveryQuestion: &okta.RecoveryQuestionCredential{
+				Question: d.Get("recovery_question").(string),
+				Answer:   d.Get("recovery_answer").(string),
+			},
 		}
-
-		_, _, err := client.User.ChangeRecoveryQuestion(context.Background(), d.Id(), *nuc)
-
+		_, _, err := client.User.ChangeRecoveryQuestion(ctx, d.Id(), *nuc)
 		if err != nil {
-			return fmt.Errorf("[ERROR] Error Updating User password recovery credentials in Okta: %v", err)
+			return diag.Errorf("failed to change user's password recovery question: %v", err)
 		}
 	}
-
-	return resourceUserRead(d, m)
+	return resourceUserRead(ctx, d, m)
 }
 
 // Checks whether any profile keys have changed, this is necessary since the profile is not nested. Also, necessary
@@ -527,21 +491,24 @@ func hasProfileChange(d *schema.ResourceData) bool {
 	return false
 }
 
-func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
-	return ensureUserDelete(d.Id(), d.Get("status").(string), getOktaClientFromMetadata(m))
+func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	logger(m).Info("deleting user", "id", d.Id())
+	err := ensureUserDelete(ctx, d.Id(), d.Get("status").(string), getOktaClientFromMetadata(m))
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	return nil
 }
 
-func ensureUserDelete(id, status string, client *okta.Client) error {
+func ensureUserDelete(ctx context.Context, id, status string, client *okta.Client) error {
 	// only deprovisioned users can be deleted fully from okta
 	// make two passes on the user if they aren't deprovisioned already to deprovision them first
 	passes := 2
-
 	if status == userStatusDeprovisioned {
 		passes = 1
 	}
-
 	for i := 0; i < passes; i++ {
-		_, err := client.User.DeactivateOrDeleteUser(context.Background(), id, nil)
+		_, err := client.User.DeactivateOrDeleteUser(ctx, id, nil)
 		if err != nil {
 			return fmt.Errorf("failed to deprovision or delete user from Okta: %v", err)
 		}
@@ -549,15 +516,10 @@ func ensureUserDelete(id, status string, client *okta.Client) error {
 	return nil
 }
 
-func resourceUserExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	log.Printf("[INFO] Checking Exists for User %v", d.Get("login").(string))
-	client := m.(*Config).oktaClient
-
-	_, resp, err := client.User.GetUser(context.Background(), d.Id())
-
-	if resp != nil && is404(resp.StatusCode) {
-		return false, nil
+func mapStatus(currentStatus string) string {
+	// PASSWORD_EXPIRED and RECOVERY are effectively ACTIVE for our purposes
+	if currentStatus == userStatusPasswordExpired || currentStatus == userStatusRecovery {
+		return statusActive
 	}
-
-	return err == nil, err
+	return currentStatus
 }

@@ -1,13 +1,14 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
@@ -17,16 +18,16 @@ func findTestAuthServer(name string) bool {
 }
 
 func deleteAuthServers(client *testClient) error {
-	servers, err := client.apiSupplement.FilterAuthServers(&query.Params{}, []*sdk.AuthorizationServer{}, findTestAuthServer)
+	servers, err := client.apiSupplement.FilterAuthServers(context.Background(), &query.Params{}, []*sdk.AuthorizationServer{}, findTestAuthServer)
 	if err != nil {
 		return err
 	}
 
 	for _, s := range servers {
-		if _, err := client.apiSupplement.DeactivateAuthorizationServer(s.Id); err != nil {
+		if _, err := client.apiSupplement.DeactivateAuthorizationServer(context.Background(), s.Id); err != nil {
 			return err
 		}
-		if _, err := client.apiSupplement.DeleteAuthorizationServer(s.Id); err != nil {
+		if _, err := client.apiSupplement.DeleteAuthorizationServer(context.Background(), s.Id); err != nil {
 			return err
 		}
 	}
@@ -35,7 +36,7 @@ func deleteAuthServers(client *testClient) error {
 
 func authServerExists(id string) (bool, error) {
 	client := getSupplementFromMetadata(testAccProvider.Meta())
-	server, resp, err := client.GetAuthorizationServer(id)
+	server, resp, err := client.GetAuthorizationServer(context.Background(), id)
 	if resp.StatusCode == http.StatusNotFound {
 		return false, nil
 	}
@@ -51,9 +52,9 @@ func TestAccOktaAuthServer_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(authServer, authServerExists),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -92,9 +93,9 @@ func TestAccOktaAuthServer_fullStack(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("full_stack_with_client.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(authServer, authServerExists),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -140,9 +141,9 @@ func TestAccOktaAuthServer_gh299(t *testing.T) {
 	config := mgr.GetFixtures("dependency.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(authServer, authServerExists),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

@@ -6,7 +6,8 @@ import (
 	"net/http"
 
 	"github.com/hashicorp/go-cleanhttp"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/logging"
+	hclog "github.com/hashicorp/go-hclog"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
@@ -31,9 +32,11 @@ type (
 		parallelism      int
 		backoff          bool
 		maxWait          int
+		logLevel         int
 		oktaClient       *okta.Client
 		supplementClient *sdk.ApiSupplement
 		ctx              context.Context
+		logger           hclog.Logger
 	}
 )
 
@@ -50,7 +53,7 @@ func (c *Config) loadAndValidate() error {
 		okta.WithHttpClient(*httpClient),
 		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
-		okta.WithUserAgentExtra("okta-terraform/3.6.0"),
+		okta.WithUserAgentExtra("okta-terraform/3.7.1"),
 	)
 	if err != nil {
 		return err
@@ -61,7 +64,10 @@ func (c *Config) loadAndValidate() error {
 		Token:           c.apiToken,
 		RequestExecutor: client.GetRequestExecutor(),
 	}
-
+	c.logger = hclog.New(&hclog.LoggerOptions{
+		Level:      hclog.Level(c.logLevel),
+		TimeFormat: "2006/01/02 03:04:05",
+	})
 	// add the Okta SDK client object to Config
 	c.oktaClient = client
 	c.ctx = ctx
