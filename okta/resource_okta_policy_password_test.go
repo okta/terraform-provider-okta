@@ -82,6 +82,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "question_min_length", "10"),
 					resource.TestCheckResourceAttr(resourceName, "recovery_email_token", "20160"),
 					resource.TestCheckResourceAttr(resourceName, "sms_recovery", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "call_recovery", statusActive),
 				),
 			},
 		},
