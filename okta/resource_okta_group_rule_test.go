@@ -117,11 +117,6 @@ func TestAccOktaGroupRule_invalidHandle(t *testing.T) {
 				Check:  resource.TestCheckResourceAttr(ruleResource, "status", statusActive),
 			},
 			{
-				Config:   testRun,
-				PlanOnly: true,
-				Check:    resource.TestCheckResourceAttr(ruleResource, "status", statusInvalid),
-			},
-			{
 				Config: testUpdate,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(groupResource, "name", testName),
