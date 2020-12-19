@@ -9,6 +9,8 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
+const statusInvalid = "INVALID"
+
 func resourceGroupRule() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceGroupRuleCreate,
