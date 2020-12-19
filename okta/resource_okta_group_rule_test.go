@@ -85,7 +85,52 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 
 func TestAccOktaGroupRule_invalidHandle(t *testing.T) {
 	ri := acctest.RandInt()
-	resourceName := fmt.Sprintf("%s.test", groupRule)
+	groupResource := fmt.Sprintf("%s.test", oktaGroup)
+	ruleResource := fmt.Sprintf("%s.inval", groupRule)
+	testName := buildResourceName(ri)
+	mgr := newFixtureManager(groupRule)
+	testSetup := mgr.GetFixtures("inval_setup.tf", ri, t)
+	testBuild := mgr.GetFixtures("inval_build.tf", ri, t)
+	testRun := mgr.GetFixtures("inval_test.tf", ri, t)
+	testUpdate := mgr.GetFixtures("inval_update.tf", ri, t)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(groupRule, doesGroupRuleExist),
+		Steps: []resource.TestStep{
+			{
+				Config: testSetup,
+				Check:  resource.TestCheckResourceAttr(groupResource, "name", testName),
+			},
+			{
+				Config: testBuild,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(ruleResource, "name", testName),
+					resource.TestCheckResourceAttr(ruleResource, "status", statusActive),
+				),
+			},
+			{
+				Config: testRun,
+				Check:  resource.TestCheckResourceAttr(ruleResource, "status", statusActive),
+			},
+			{
+				Config:   testRun,
+				PlanOnly: true,
+				Check:    resource.TestCheckResourceAttr(ruleResource, "status", statusInvalid),
+			},
+			{
+				Config: testUpdate,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(groupResource, "name", testName),
+					resource.TestCheckResourceAttr(ruleResource, "name", testName),
+					resource.TestCheckResourceAttr(ruleResource, "status", statusActive),
+				),
+			},
+		},
+	})
 }
 
 func doesGroupRuleExist(id string) (bool, error) {
