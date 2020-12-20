@@ -11,26 +11,26 @@ import (
 
 func resourceGroupMembership() *schema.Resource {
 	return &schema.Resource{
-		CreateContext:      resourceGroupMembershipCreate,
-		ReadContext:        resourceGroupMembershipRead,
-		UpdateContext:      nil,
-		DeleteContext:      resourceGroupMembershipDelete,
-		Importer:           &schema.ResourceImporter{
+		CreateContext: resourceGroupMembershipCreate,
+		ReadContext:   resourceGroupMembershipRead,
+		UpdateContext: nil,
+		DeleteContext: resourceGroupMembershipDelete,
+		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description:        "",
-		Schema:             map[string]*schema.Schema{
+		Description: "",
+		Schema: map[string]*schema.Schema{
 			"group_id": {
-				Type: schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
 				Description: "ID of a Okta Group",
-				ForceNew: true,
+				ForceNew:    true,
 			},
 			"user_id": {
-				Type: schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
 				Description: "ID of a Okta User",
-				ForceNew: true,
+				ForceNew:    true,
 			},
 		},
 	}
