@@ -46,7 +46,7 @@ func resourceGroupMembershipCreate(ctx context.Context, d *schema.ResourceData, 
 		return diag.Errorf("failed to add user to group: %v", err)
 	}
 	d.SetId(fmt.Sprintf("%s+%s", groupId, userId))
-	return resourceGroupRead(ctx, d, m)
+	return resourceGroupMembershipRead(ctx, d, m)
 }
 
 func resourceGroupMembershipRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
