@@ -80,17 +80,21 @@ func resourceGroupMembershipDelete(ctx context.Context, d *schema.ResourceData, 
 }
 
 func checkIfUserInGroup(ctx context.Context, client *okta.Client, groupId string, userId string) (bool, error) {
+	users, resp, err := client.Group.ListGroupUsers(ctx, groupId, &query.Params{})
+	if err != nil {
+		return false, err
+	}
 	for {
-		users, resp, err := client.Group.ListGroupUsers(ctx, groupId, &query.Params{})
-		if err != nil {
-			return false, err
-		}
 		for _, user := range users {
 			if userId == user.Id {
 				return true, nil
 			}
 		}
 		if resp.HasNextPage() {
+			resp, err = resp.Next(ctx, &users)
+			if err != nil {
+				return false, err
+			}
 			continue
 		} else {
 			break
