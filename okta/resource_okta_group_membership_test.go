@@ -35,5 +35,11 @@ func checkMembershipState(id string) (bool, error) {
 	groupId := ids[0]
 	userId := ids[1]
 	client := getOktaClientFromMetadata(testAccProvider.Meta())
-	return checkIfUserInGroup(context.Background(), client, groupId, userId)
+	state, err := checkIfUserInGroup(context.Background(), client, groupId, userId)
+	if err != nil {
+		if strings.Contains(err.Error(), "Not Found") {
+			return state, nil
+		}
+	}
+	return state, err
 }
