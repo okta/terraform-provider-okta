@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"strings"
 )
 
 func resourceGroupMembership() *schema.Resource {
@@ -50,15 +51,18 @@ func resourceGroupMembershipCreate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceGroupMembershipRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	groupId := d.Get("group_id").(string)
-	userId := d.Get("user_id").(string)
+	ids := strings.Split(d.Id(), "+")
+	groupId := ids[0]
+	userId := ids[1]
 	logger(m).Info("checking for membership in group", "group", groupId, "user", userId)
 	client := getOktaClientFromMetadata(m)
-	inGroup, err := checkIfUserInGroup(ctx, client, groupId, userId)
+	inGroup, group, user, err := checkIfUserInGroup(ctx, client, groupId, userId)
 	if err != nil {
 		return diag.Errorf("unable to complete group check for user: %v", err)
 	}
 	if inGroup {
+		_ = d.Set("group_id", group.Id)
+		_ = d.Set("user_id", user.Id)
 		return nil
 	} else {
 		d.SetId("")
@@ -79,15 +83,19 @@ func resourceGroupMembershipDelete(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func checkIfUserInGroup(ctx context.Context, client *okta.Client, groupId string, userId string) (bool, error) {
+func checkIfUserInGroup(ctx context.Context, client *okta.Client, groupId string, userId string) (bool, *okta.Group, *okta.User, error) {
+	group, _, err := client.Group.GetGroup(ctx, groupId)
+	if err != nil {
+		return false, nil, nil, err
+	}
 	for {
-		users, resp, err := client.Group.ListGroupUsers(ctx, groupId, &query.Params{})
+		users, resp, err := client.Group.ListGroupUsers(ctx, group.Id, &query.Params{})
 		if err != nil {
-			return false, err
+			return false, nil, nil, err
 		}
 		for _, user := range users {
 			if userId == user.Id {
-				return true, nil
+				return true, group, user, nil
 			}
 		}
 		if resp.HasNextPage() {
@@ -96,5 +104,5 @@ func checkIfUserInGroup(ctx context.Context, client *okta.Client, groupId string
 			break
 		}
 	}
-	return false, nil
+	return false, nil, nil, nil
 }
