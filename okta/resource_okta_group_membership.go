@@ -70,7 +70,7 @@ func resourceGroupMembershipRead(ctx context.Context, d *schema.ResourceData, m 
 func resourceGroupMembershipDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	groupId := d.Get("group_id").(string)
 	userId := d.Get("user_id").(string)
-	logger(m).Info("removing user to group", "group", groupId, "user", userId)
+	logger(m).Info("removing user from group", "group", groupId, "user", userId)
 	client := getOktaClientFromMetadata(m)
 	_, err := client.Group.RemoveUserFromGroup(ctx, groupId, userId)
 	if err != nil {
