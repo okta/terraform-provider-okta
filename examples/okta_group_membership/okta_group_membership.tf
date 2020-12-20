@@ -8,6 +8,10 @@ resource "okta_user" "test" {
   last_name  = "Jones"
   login      = "john_replace_with_uuid@ledzeppelin.com"
   email      = "john_replace_with_uuid@ledzeppelin.com"
+
+  lifecycle {
+    ignore_changes = [group_memberships]
+  }
 }
 
 resource "okta_group_membership" "test" {
