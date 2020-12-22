@@ -146,6 +146,7 @@ var (
 			// Accepting an empty value to allow for zero value (when provisioning is off)
 			ValidateDiagFunc: stringInSlice([]string{"PROFILE_MASTER", "OKTA", ""}),
 			Description:      "SubSchema profile manager, if not set it will inherit its setting.",
+			Default:          "PROFILE_MASTER",
 		},
 		"required": {
 			Type:        schema.TypeBool,
@@ -163,40 +164,29 @@ var (
 			ValidateDiagFunc: stringAtLeast(7),
 		},
 	}
+
+	userPatternSchema = map[string]*schema.Schema{
+		"pattern": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "The validation pattern to use for the subschema. Must be in form of '.+', or '[<pattern>]+' if present.'",
+			ForceNew:    false,
+		},
+	}
 )
 
-func buildBaseUserSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(userBaseSchemaSchema, userTypeSchema, target)
-}
-
-func buildCustomUserSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(userSchemaSchema, userBaseSchemaSchema, userTypeSchema, target)
-}
-
 func syncUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) error {
-	_ = d.Set("title", subschema.Title)
-	_ = d.Set("type", subschema.Type)
+	syncBaseUserSchema(d, subschema)
 	_ = d.Set("description", subschema.Description)
-	_ = d.Set("required", subschema.Required)
 	_ = d.Set("min_length", subschema.MinLength)
 	_ = d.Set("max_length", subschema.MaxLength)
 	_ = d.Set("scope", subschema.Scope)
 	_ = d.Set("external_name", subschema.ExternalName)
 	_ = d.Set("external_namespace", subschema.ExternalNamespace)
 	_ = d.Set("unique", subschema.Unique)
-
 	if subschema.Items != nil {
 		_ = d.Set("array_type", subschema.Items.Type)
 	}
-
-	if subschema.Master != nil {
-		_ = d.Set("master", subschema.Master.Type)
-	}
-
-	if len(subschema.Permissions) > 0 {
-		_ = d.Set("permissions", subschema.Permissions[0].Action)
-	}
-
 	return setNonPrimitives(d, map[string]interface{}{
 		"enum":   subschema.Enum,
 		"one_of": flattenOneOf(subschema.OneOf),
@@ -212,6 +202,13 @@ func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) {
 	}
 	if len(subschema.Permissions) > 0 {
 		_ = d.Set("permissions", subschema.Permissions[0].Action)
+	}
+	if d.Get("index").(string) == "login" {
+		if subschema.Pattern != nil {
+			_ = d.Set("pattern", &subschema.Pattern)
+		} else {
+			_ = d.Set("pattern", "")
+		}
 	}
 }
 

@@ -42,6 +42,8 @@ The following arguments are supported:
 
 - `master` - (Optional) Master priority for the user schema property. It can be set to `"PROFILE_MASTER"` or `"OKTA"`.
 
+- `pattern` - (Optional) The validation pattern to use for the subschema, only available for `login` property. Must be in form of `.+`, or `[<pattern>]+`.
+
 ## Attributes Reference
 
 - `app_id` - ID of the application the user property is associated with.

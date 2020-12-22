@@ -15,12 +15,16 @@ func resourceAppUserSchema() *schema.Resource {
 		UpdateContext: resourceAppUserSchemaUpdate,
 		DeleteContext: resourceAppUserSchemaDelete,
 		Importer:      createNestedResourceImporter([]string{"app_id", "id"}),
-		Schema: buildCustomUserSchema(map[string]*schema.Schema{
-			"app_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-		}),
+		Schema: buildSchema(
+			userSchemaSchema,
+			userBaseSchemaSchema,
+			userTypeSchema,
+			map[string]*schema.Schema{
+				"app_id": {
+					Type:     schema.TypeString,
+					Required: true,
+				},
+			}),
 		SchemaVersion: 1,
 		StateUpgraders: []schema.StateUpgrader{
 			{
