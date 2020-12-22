@@ -1,113 +1,81 @@
 package okta
 
 import (
-	"fmt"
-	"log"
+	"context"
 
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
-func resourcePolicySignon() *schema.Resource {
+func resourcePolicySignOn() *schema.Resource {
 	return &schema.Resource{
-		Exists: resourcePolicyExists,
-		Create: resourcePolicySignonCreate,
-		Read:   resourcePolicySignonRead,
-		Update: resourcePolicySignonUpdate,
-		Delete: resourcePolicySignonDelete,
+		CreateContext: resourcePolicySignOnCreate,
+		ReadContext:   resourcePolicySignOnRead,
+		UpdateContext: resourcePolicySignOnUpdate,
+		DeleteContext: resourcePolicySignOnDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
-
 		Schema: basePolicySchema,
 	}
 }
 
-func resourcePolicySignonCreate(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultPolicy(d); err != nil {
-		return err
-	}
-
-	log.Printf("[INFO] Creating Policy %v", d.Get("name").(string))
-
-	template := buildSignOnPolicy(d, m)
-	err := createPolicy(d, m, template)
+func resourcePolicySignOnCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	template := buildSignOnPolicy(d)
+	err := createPolicy(ctx, d, m, template)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create sign-on policy: %v", err)
 	}
-
-	return resourcePolicySignonRead(d, m)
+	return resourcePolicySignOnRead(ctx, d, m)
 }
 
-func resourcePolicySignonRead(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] List Policy %v", d.Get("name").(string))
-
-	policy, err := getPolicy(d, m)
-
+func resourcePolicySignOnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	policy, err := getPolicy(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to get sign-on policy: %v", err)
+	}
 	if policy == nil {
-		d.SetId("")
 		return nil
 	}
-
+	err = syncPolicyFromUpstream(d, policy)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set sign-on policy: %v", err)
 	}
-
-	return syncPolicyFromUpstream(d, policy)
-}
-
-func resourcePolicySignonUpdate(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultPolicy(d); err != nil {
-		return err
-	}
-
-	log.Printf("[INFO] Update Policy %v", d.Get("name").(string))
-	d.Partial(true)
-	template := buildSignOnPolicy(d, m)
-	err := updatePolicy(d, m, template)
-	if err != nil {
-		return err
-	}
-	d.Partial(false)
-
-	return resourcePolicySignonRead(d, m)
-}
-
-func resourcePolicySignonDelete(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultPolicy(d); err != nil {
-		return err
-	}
-
-	log.Printf("[INFO] Delete Policy %v", d.Get("name").(string))
-	client := m.(*Config).articulateOktaClient
-	_, err := client.Policies.DeletePolicy(d.Id())
-	if err != nil {
-		return fmt.Errorf("[ERROR] Error Deleting Policy from Okta: %v", err)
-	}
-	// remove the policy resource from terraform
-	d.SetId("")
-
 	return nil
 }
 
-// create or update a signon policy
-func buildSignOnPolicy(d *schema.ResourceData, m interface{}) *articulateOkta.Policy {
-	client := m.(*Config).articulateOktaClient
+func resourcePolicySignOnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	template := buildSignOnPolicy(d)
+	err := updatePolicy(ctx, d, m, template)
+	if err != nil {
+		return diag.Errorf("failed to update sign-on policy: %v", err)
+	}
+	return resourcePolicySignOnRead(ctx, d, m)
+}
 
-	template := client.Policies.SignOnPolicy()
+func resourcePolicySignOnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := deletePolicy(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to delete sign-on policy: %v", err)
+	}
+	return nil
+}
+
+// create or update a sign on policy
+func buildSignOnPolicy(d *schema.ResourceData) sdk.Policy {
+	template := sdk.SignOnPolicy()
 	template.Name = d.Get("name").(string)
 	template.Status = d.Get("status").(string)
-	template.Type = signOnPolicyType
 	if description, ok := d.GetOk("description"); ok {
 		template.Description = description.(string)
 	}
 	if priority, ok := d.GetOk("priority"); ok {
-		template.Priority = priority.(int)
+		template.Priority = int64(priority.(int))
 	}
-
-	template.Conditions = &articulateOkta.PolicyConditions{
+	template.Conditions = &okta.PolicyRuleConditions{
 		People: getGroups(d),
 	}
-
-	return &template
+	return template
 }

@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_template_email"
-sidebar_current: "docs-okta-resource-template-email"
+layout: 'okta'
+page_title: 'Okta: okta_template_email'
+sidebar_current: 'docs-okta-resource-template-email'
 description: |-
   Creates an Okta Email Template.
 ---
@@ -36,18 +36,19 @@ resource "okta_template_email" "example" {
 
 The following arguments are supported:
 
-* `type` - (Required) Email template type
+- `type` - (Required) Email template type
 
-* `translations` - (Required) Set of translations for particular template.
-  * `language` - (Required) The language to map tthe template to.
-  * `subject` - (Required) The email subject line.
-  * `template` - (Required) The email body.
+- `translations` - (Required) Set of translations for particular template.
 
-* `default_language` - (Optional) The default language, by default is set to `"en"`.
+  - `language` - (Required) The language to map tthe template to.
+  - `subject` - (Required) The email subject line.
+  - `template` - (Required) The email body.
+
+- `default_language` - (Optional) The default language, by default is set to `"en"`.
 
 ## Attributes Reference
 
-* `id` - ID of the Email Template.
+- `id` - ID of the Email Template.
 
 ## Import
 

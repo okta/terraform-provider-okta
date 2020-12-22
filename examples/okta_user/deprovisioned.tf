@@ -1,7 +1,7 @@
 resource "okta_user" "test" {
-  first_name  = "TestAcc"
-  last_name   = "Smith"
-  login       = "test-acc-replace_with_uuid@example.com"
-  email       = "test-acc-replace_with_uuid@example.com"
-  status      = "DEPROVISIONED"
+  first_name = "TestAcc"
+  last_name  = "Smith"
+  login      = "testAcc-replace_with_uuid@example.com"
+  email      = "testAcc-replace_with_uuid@example.com"
+  status     = "DEPROVISIONED"
 }

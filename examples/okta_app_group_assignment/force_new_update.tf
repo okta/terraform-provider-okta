@@ -1,4 +1,4 @@
-resource okta_app_oauth test {
+resource "okta_app_oauth" "test" {
   label          = "testAcc_replace_with_uuid"
   type           = "web"
   grant_types    = ["implicit", "authorization_code"]
@@ -11,12 +11,12 @@ resource okta_app_oauth test {
   }
 }
 
-resource okta_group test2 {
+resource "okta_group" "test2" {
   name = "testAcc_replace_with_uuid-2"
 }
 
-resource okta_app_group_assignment test {
-  app_id   = "${okta_app_oauth.test.id}"
-  group_id = "${okta_group.test2.id}"
+resource "okta_app_group_assignment" "test" {
+  app_id   = okta_app_oauth.test.id
+  group_id = okta_group.test2.id
   priority = 1
 }

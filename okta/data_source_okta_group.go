@@ -1,34 +1,39 @@
 package okta
 
 import (
-	"errors"
+	"context"
 	"fmt"
 
-	"github.com/okta/okta-sdk-golang/okta/query"
-
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func dataSourceGroup() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceGroupRead,
-
+		ReadContext: dataSourceGroupRead,
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"description": &schema.Schema{
+			"type": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Type of the group. When specified in the terraform resource, will act as a filter when searching for the group",
+				ValidateDiagFunc: stringInSlice([]string{"OKTA_GROUP", "APP_GROUP", "BUILT_IN"}),
+			},
+			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"include_users": &schema.Schema{
+			"include_users": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
 				Description: "Fetch group users, having default off cuts down on API calls.",
 			},
-			"users": &schema.Schema{
+			"users": {
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -38,31 +43,47 @@ func dataSourceGroup() *schema.Resource {
 	}
 }
 
-func dataSourceGroupRead(d *schema.ResourceData, m interface{}) error {
-	return findGroup(d.Get("name").(string), d, m)
+func dataSourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return findGroup(ctx, d.Get("name").(string), d, m, false)
 }
 
-func findGroup(name string, d *schema.ResourceData, m interface{}) error {
+func findGroup(ctx context.Context, name string, d *schema.ResourceData, m interface{}, isEveryone bool) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-	groups, _, err := client.Group.ListGroups(&query.Params{Q: name})
+	searchParams := &query.Params{Q: name}
+	t, okType := d.GetOk("type")
+	if okType {
+		searchParams.Filter = fmt.Sprintf("type eq \"%s\"", t.(string))
+	}
+	logger(m).Info("looking for data source group", "query", searchParams.String())
+	groups, _, err := client.Group.ListGroups(ctx, searchParams)
 	if err != nil {
-		return fmt.Errorf("failed to query for groups: %v", err)
+		return diag.Errorf("failed to query for groups: %v", err)
 	} else if len(groups) < 1 {
-		return errors.New("Group not found")
-	}
-
-	d.SetId(groups[0].Id)
-	d.Set("description", groups[0].Profile.Description)
-
-	if d.Get("include_users").(bool) {
-		userIdList, err := listGroupUserIds(m, d.Id())
-		if err != nil {
-			return err
+		if okType {
+			return diag.Errorf("group with name '%s' and type '%s' does not exist", name, d.Get("type").(string))
 		}
-
-		// just user ids for now
-		return d.Set("users", convertStringSetToInterface(userIdList))
+		return diag.Errorf("group with name '%s' does not exist", name)
+	} else if len(groups) > 1 {
+		logger(m).Warn("Found multiple groups with the supplied parameters: using the first one which may only be a partial match", "name", groups[0].Profile.Name)
+	} else if len(groups[0].Profile.Name) != len(name) {
+		logger(m).Warn("The group with an exact match to the supplied name was not found: using partial match which contains name as a substring", "name", groups[0].Profile.Name)
 	}
-
+	d.SetId(groups[0].Id)
+	_ = d.Set("description", groups[0].Profile.Description)
+	if !isEveryone {
+		_ = d.Set("type", groups[0].Type)
+	}
+	if d.Get("include_users").(bool) {
+		userIDList, err := listGroupUserIDs(ctx, m, d.Id())
+		if err != nil {
+			return diag.Errorf("failed to list group user IDs: %v", err)
+		}
+		// just user ids for now
+		err = d.Set("users", convertStringSetToInterface(userIDList))
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		return nil
+	}
 	return nil
 }

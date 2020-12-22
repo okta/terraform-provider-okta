@@ -6,28 +6,29 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-var testAccProviders map[string]terraform.ResourceProvider
+var testAccProvidersFactories map[string]func() (*schema.Provider, error)
 var testAccProvider *schema.Provider
 
 func init() {
-	testAccProvider = Provider().(*schema.Provider)
-	testAccProviders = map[string]terraform.ResourceProvider{
-		"okta": testAccProvider,
+	testAccProvider = Provider()
+	testAccProvidersFactories = map[string]func() (*schema.Provider, error){
+		"okta": func() (*schema.Provider, error) {
+			return testAccProvider, nil
+		},
 	}
 }
 
 func TestProvider(t *testing.T) {
-	if err := Provider().(*schema.Provider).InternalValidate(); err != nil {
+	if err := Provider().InternalValidate(); err != nil {
 		t.Fatalf("err: %s", err)
 	}
 }
 
-func TestProviderImpl(t *testing.T) {
-	var _ terraform.ResourceProvider = Provider()
+func TestProvider_impl(t *testing.T) {
+	var _ *schema.Provider = Provider()
 }
 
 func accPreCheck() error {
@@ -48,12 +49,11 @@ func oktaConfig() (*Config, error) {
 		domain:      os.Getenv("OKTA_BASE_URL"),
 		parallelism: 1,
 		retryCount:  10,
-		minWait:     30,
-		maxWait:     600,
+		maxWait:     30,
 	}
 
 	if err := config.loadAndValidate(); err != nil {
-		return config, fmt.Errorf("Error initializing Okta client: %v", err)
+		return config, fmt.Errorf("error initializing Okta client: %v", err)
 	}
 
 	return config, nil

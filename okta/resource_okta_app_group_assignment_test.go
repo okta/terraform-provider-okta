@@ -1,13 +1,14 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccAppGroupAssignment_crud(t *testing.T) {
@@ -19,9 +20,9 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 	newUpdate := mgr.GetFixtures("force_new_update.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckUserDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -60,14 +61,14 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 						return "", fmt.Errorf("failed to find %s", resourceName)
 					}
 
-					appId := rs.Primary.Attributes["app_id"]
-					groupId := rs.Primary.Attributes["group_id"]
+					appID := rs.Primary.Attributes["app_id"]
+					groupID := rs.Primary.Attributes["group_id"]
 
-					return fmt.Sprintf("%s/%s", appId, groupId), nil
+					return fmt.Sprintf("%s/%s", appID, groupID), nil
 				},
 				ImportStateCheck: func(s []*terraform.InstanceState) error {
 					if len(s) != 1 {
-						return errors.New("Failed to import schema into state")
+						return errors.New("failed to import schema into state")
 					}
 
 					return nil
@@ -85,11 +86,11 @@ func ensureAppGroupAssignmentExists(name string) resource.TestCheckFunc {
 			return missingErr
 		}
 
-		appId := rs.Primary.Attributes["app_id"]
-		groupId := rs.Primary.Attributes["group_id"]
+		appID := rs.Primary.Attributes["app_id"]
+		groupID := rs.Primary.Attributes["group_id"]
 		client := getOktaClientFromMetadata(testAccProvider.Meta())
 
-		g, _, err := client.Application.GetApplicationGroupAssignment(appId, groupId, nil)
+		g, _, err := client.Application.GetApplicationGroupAssignment(context.Background(), appID, groupID, nil)
 		if err != nil {
 			return err
 		} else if g == nil {

@@ -1,53 +1,54 @@
 package okta
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func resourceAppSwa() *schema.Resource {
 	return &schema.Resource{
-		CustomizeDiff: func(d *schema.ResourceDiff, v interface{}) error {
+		CustomizeDiff: func(_ context.Context, diff *schema.ResourceDiff, v interface{}) error {
 			return nil
 		},
-		Create: resourceAppSwaCreate,
-		Read:   resourceAppSwaRead,
-		Update: resourceAppSwaUpdate,
-		Delete: resourceAppSwaDelete,
-		Exists: resourceAppExists,
+		CreateContext: resourceAppSwaCreate,
+		ReadContext:   resourceAppSwaRead,
+		UpdateContext: resourceAppSwaUpdate,
+		DeleteContext: resourceAppSwaDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
-
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
-			"preconfigured_app": &schema.Schema{
+			"preconfigured_app": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Preconfigured app name",
 			},
-			"button_field": &schema.Schema{
+			"button_field": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Login button field",
 			},
-			"password_field": &schema.Schema{
+			"password_field": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Login password field",
 			},
-			"username_field": &schema.Schema{
+			"username_field": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Login username field",
 			},
-			"url": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Login URL",
-				ValidateFunc: validateIsURL,
+			"url": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Login URL",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
-			"url_regex": &schema.Schema{
+			"url_regex": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "A regex that further restricts URL to the specified regex",
@@ -56,91 +57,76 @@ func resourceAppSwa() *schema.Resource {
 	}
 }
 
-func resourceAppSwaCreate(d *schema.ResourceData, m interface{}) error {
+func resourceAppSwaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppSwa(d, m)
-	activate := d.Get("status").(string) == "ACTIVE"
+	app := buildAppSwa(d)
+	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(app, params)
-
+	_, _, err := client.Application.CreateApplication(ctx, app, params)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create SWA application: %v", err)
 	}
-
 	d.SetId(app.Id)
-
-	err = handleAppGroupsAndUsers(app.Id, d, m)
-
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to handle groups and users for SWA application: %v", err)
 	}
-
-	return resourceAppSwaRead(d, m)
+	return resourceAppSwaRead(ctx, d, m)
 }
 
-func resourceAppSwaRead(d *schema.ResourceData, m interface{}) error {
+func resourceAppSwaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	app := okta.NewSwaApplication()
-	err := fetchApp(d, m, app)
-
-	if app == nil {
+	err := fetchApp(ctx, d, m, app)
+	if err != nil {
+		return diag.Errorf("failed to get SWA application: %v", err)
+	}
+	if app.Id == "" {
 		d.SetId("")
 		return nil
 	}
-
-	if err != nil {
-		return err
-	}
-
-	d.Set("button_field", app.Settings.App.ButtonField)
-	d.Set("password_field", app.Settings.App.PasswordField)
-	d.Set("username_field", app.Settings.App.UsernameField)
-	d.Set("url", app.Settings.App.Url)
-	d.Set("url_regex", app.Settings.App.LoginUrlRegex)
-	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
-	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("button_field", app.Settings.App.ButtonField)
+	_ = d.Set("password_field", app.Settings.App.PasswordField)
+	_ = d.Set("username_field", app.Settings.App.UsernameField)
+	_ = d.Set("url", app.Settings.App.Url)
+	_ = d.Set("url_regex", app.Settings.App.LoginUrlRegex)
+	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
+	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
-
-	return syncGroupsAndUsers(app.Id, d, m)
+	err = syncGroupsAndUsers(ctx, app.Id, d, m)
+	if err != nil {
+		return diag.Errorf("failed to sync groups and users for SWA application: %v", err)
+	}
+	return nil
 }
 
-func resourceAppSwaUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceAppSwaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppSwa(d, m)
-	_, _, err := client.Application.UpdateApplication(d.Id(), app)
-
+	app := buildAppSwa(d)
+	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to update SWA application: %v", err)
 	}
-
-	desiredStatus := d.Get("status").(string)
-	err = setAppStatus(d, client, app.Status, desiredStatus)
-
+	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set SWA application status: %v", err)
 	}
-
-	err = handleAppGroupsAndUsers(app.Id, d, m)
-
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to handle groups and users for SWA application: %v", err)
 	}
-
-	return resourceAppSwaRead(d, m)
+	return resourceAppSwaRead(ctx, d, m)
 }
 
-func resourceAppSwaDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	_, err := client.Application.DeactivateApplication(d.Id())
+func resourceAppSwaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to delete SWA application: %v", err)
 	}
-
-	_, err = client.Application.DeleteApplication(d.Id())
-
-	return err
+	return nil
 }
 
-func buildAppSwa(d *schema.ResourceData, m interface{}) *okta.SwaApplication {
+func buildAppSwa(d *schema.ResourceData) *okta.SwaApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewSwaApplication()
 	app.Label = d.Get("label").(string)

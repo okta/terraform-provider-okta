@@ -1,51 +1,49 @@
 package okta
 
 import (
-	"net/http"
+	"context"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceAuthServerScope() *schema.Resource {
 	return &schema.Resource{
-		Create:   resourceAuthServerScopeCreate,
-		Exists:   resourceAuthServerScopeExists,
-		Read:     resourceAuthServerScopeRead,
-		Update:   resourceAuthServerScopeUpdate,
-		Delete:   resourceAuthServerScopeDelete,
-		Importer: createNestedResourceImporter([]string{"auth_server_id", "id"}),
-
+		CreateContext: resourceAuthServerScopeCreate,
+		ReadContext:   resourceAuthServerScopeRead,
+		UpdateContext: resourceAuthServerScopeUpdate,
+		DeleteContext: resourceAuthServerScopeDelete,
+		Importer:      createNestedResourceImporter([]string{"auth_server_id", "id"}),
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Auth server scope name",
 			},
-			"auth_server_id": &schema.Schema{
+			"auth_server_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Auth server ID",
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"consent": &schema.Schema{
+			"consent": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "IMPLICIT",
 				Description: "EA Feature and thus it is simply ignored if the feature is off",
 			},
-			"metadata_publish": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "ALL_CLIENTS",
-				Description:  "Whether to publish metadata or not, matching API type despite the fact it could just be a boolean",
-				ValidateFunc: validation.StringInSlice([]string{"ALL_CLIENTS", "NO_CLIENTS"}, false),
+			"metadata_publish": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Default:          "ALL_CLIENTS",
+				Description:      "Whether to publish metadata or not, matching API type despite the fact it could just be a boolean",
+				ValidateDiagFunc: stringInSlice([]string{"ALL_CLIENTS", "NO_CLIENTS"}),
 			},
-			"default": &schema.Schema{
+			"default": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
@@ -53,6 +51,71 @@ func resourceAuthServerScope() *schema.Resource {
 			},
 		},
 	}
+}
+
+func resourceAuthServerScopeCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	authServerScope := buildAuthServerScope(d)
+	responseAuthServerScope, _, err := getSupplementFromMetadata(m).CreateAuthorizationServerScope(
+		ctx,
+		d.Get("auth_server_id").(string),
+		*authServerScope,
+		nil,
+	)
+	if err != nil {
+		return diag.Errorf("failed to create auth server scope: %v", err)
+	}
+	d.SetId(responseAuthServerScope.Id)
+	return resourceAuthServerScopeRead(ctx, d, m)
+}
+
+func resourceAuthServerScopeRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	authServerScope, resp, err := getSupplementFromMetadata(m).GetAuthorizationServerScope(
+		ctx,
+		d.Get("auth_server_id").(string),
+		d.Id(),
+		sdk.AuthorizationServerScope{},
+	)
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get auth server scope: %v", err)
+	}
+	if authServerScope == nil {
+		d.SetId("")
+		return nil
+	}
+	_ = d.Set("name", authServerScope.Name)
+	_ = d.Set("description", authServerScope.Description)
+	_ = d.Set("metadata_publish", authServerScope.MetadataPublish)
+	_ = d.Set("default", authServerScope.Default)
+	if authServerScope.Consent != "" {
+		_ = d.Set("consent", authServerScope.Consent)
+	}
+	return nil
+}
+
+func resourceAuthServerScopeUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	authServerScope := buildAuthServerScope(d)
+	_, _, err := getSupplementFromMetadata(m).UpdateAuthorizationServerScope(
+		ctx, d.Get("auth_server_id").(string),
+		d.Id(),
+		*authServerScope,
+		nil,
+	)
+	if err != nil {
+		return diag.Errorf("failed to update auth server scope: %v", err)
+	}
+	return resourceAuthServerScopeRead(ctx, d, m)
+}
+
+func resourceAuthServerScopeDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	_, err := getSupplementFromMetadata(m).DeleteAuthorizationServerScope(
+		ctx,
+		d.Get("auth_server_id").(string),
+		d.Id(),
+	)
+	if err != nil {
+		return diag.Errorf("failed to delete auth server scope: %v", err)
+	}
+	return nil
 }
 
 func buildAuthServerScope(d *schema.ResourceData) *sdk.AuthorizationServerScope {
@@ -63,75 +126,4 @@ func buildAuthServerScope(d *schema.ResourceData) *sdk.AuthorizationServerScope 
 		Name:            d.Get("name").(string),
 		Default:         d.Get("default").(bool),
 	}
-}
-
-func resourceAuthServerScopeCreate(d *schema.ResourceData, m interface{}) error {
-	authServerScope := buildAuthServerScope(d)
-	c := getSupplementFromMetadata(m)
-	responseAuthServerScope, _, err := c.CreateAuthorizationServerScope(d.Get("auth_server_id").(string), *authServerScope, nil)
-	if err != nil {
-		return err
-	}
-
-	d.SetId(responseAuthServerScope.Id)
-
-	return resourceAuthServerScopeRead(d, m)
-}
-
-func resourceAuthServerScopeExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	g, err := fetchAuthServerScope(d, m)
-
-	return err == nil && g != nil, err
-}
-
-func resourceAuthServerScopeRead(d *schema.ResourceData, m interface{}) error {
-	authServerScope, err := fetchAuthServerScope(d, m)
-
-	if authServerScope == nil {
-		d.SetId("")
-		return nil
-	}
-
-	if err != nil {
-		return err
-	}
-
-	d.Set("name", authServerScope.Name)
-	d.Set("description", authServerScope.Description)
-	d.Set("metadata_publish", authServerScope.MetadataPublish)
-	d.Set("default", authServerScope.Default)
-
-	if authServerScope.Consent != "" {
-		d.Set("consent", authServerScope.Consent)
-	}
-
-	return nil
-}
-
-func resourceAuthServerScopeUpdate(d *schema.ResourceData, m interface{}) error {
-	authServerScope := buildAuthServerScope(d)
-	c := getSupplementFromMetadata(m)
-	_, _, err := c.UpdateAuthorizationServerScope(d.Get("auth_server_id").(string), d.Id(), *authServerScope, nil)
-	if err != nil {
-		return err
-	}
-
-	return resourceAuthServerScopeRead(d, m)
-}
-
-func resourceAuthServerScopeDelete(d *schema.ResourceData, m interface{}) error {
-	_, err := getSupplementFromMetadata(m).DeleteAuthorizationServerScope(d.Get("auth_server_id").(string), d.Id())
-
-	return err
-}
-
-func fetchAuthServerScope(d *schema.ResourceData, m interface{}) (*sdk.AuthorizationServerScope, error) {
-	c := getSupplementFromMetadata(m)
-	auth, resp, err := c.GetAuthorizationServerScope(d.Get("auth_server_id").(string), d.Id(), sdk.AuthorizationServerScope{})
-
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, nil
-	}
-
-	return auth, err
 }

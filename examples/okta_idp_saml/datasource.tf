@@ -1,4 +1,4 @@
-resource okta_app_saml test {
+resource "okta_app_saml" "test" {
   label                    = "testAcc_replace_with_uuid"
   sso_url                  = "http://google.com"
   recipient                = "http://here.com"
@@ -13,11 +13,11 @@ resource okta_app_saml test {
   authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
 }
 
-resource okta_idp_saml_key test {
-  x5c = ["${okta_app_saml.test.certificate}"]
+resource "okta_idp_saml_key" "test" {
+  x5c = [okta_app_saml.test.certificate]
 }
 
-resource okta_idp_saml test {
+resource "okta_idp_saml" "test" {
   name                     = "testAcc_replace_with_uuid"
   acs_binding              = "HTTP-POST"
   acs_type                 = "INSTANCE"
@@ -25,12 +25,12 @@ resource okta_idp_saml test {
   sso_destination          = "https://idp.example.com"
   sso_binding              = "HTTP-POST"
   username_template        = "idpuser.email"
-  kid                      = "${okta_idp_saml_key.test.id}"
+  kid                      = okta_idp_saml_key.test.id
   issuer                   = "https://idp.example.com"
   request_signature_scope  = "REQUEST"
   response_signature_scope = "ANY"
 }
 
-data okta_idp_saml test {
-  name = "${okta_idp_saml.test.name}"
+data "okta_idp_saml" "test" {
+  name = okta_idp_saml.test.name
 }

@@ -1,16 +1,17 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
-func createRedirectUriExists(name string) resource.TestCheckFunc {
+func createRedirectURIExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		missingErr := fmt.Errorf("resource not found: %s", name)
 		rs, ok := s.RootModule().Resources[name]
@@ -19,10 +20,10 @@ func createRedirectUriExists(name string) resource.TestCheckFunc {
 		}
 
 		uri := rs.Primary.ID
-		appId := rs.Primary.Attributes["app_id"]
+		appID := rs.Primary.Attributes["app_id"]
 		client := getOktaClientFromMetadata(testAccProvider.Meta())
 		app := okta.NewOpenIdConnectApplication()
-		_, response, err := client.Application.GetApplication(appId, app, nil)
+		_, response, err := client.Application.GetApplication(context.Background(), appID, app, nil)
 
 		// We don't want to consider a 404 an error in some cases and thus the delineation
 		if response.StatusCode == 404 {
@@ -37,20 +38,20 @@ func createRedirectUriExists(name string) resource.TestCheckFunc {
 
 func TestAccAppOAuthApplication_redirectCrud(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuthRedirectUri)
+	mgr := newFixtureManager(appOAuthRedirectURI)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.test", appOAuthRedirectUri)
+	resourceName := fmt.Sprintf("%s.test", appOAuthRedirectURI)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					createRedirectUriExists(resourceName),
+					createRedirectURIExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "id", "http://google.com"),
 					resource.TestCheckResourceAttr(resourceName, "uri", "http://google.com"),
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
@@ -59,7 +60,7 @@ func TestAccAppOAuthApplication_redirectCrud(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					createRedirectUriExists(resourceName),
+					createRedirectURIExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "id", "http://google-updated.com"),
 					resource.TestCheckResourceAttr(resourceName, "uri", "http://google-updated.com"),
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),

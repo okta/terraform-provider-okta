@@ -1,42 +1,40 @@
 package okta
 
 import (
-	"fmt"
-	"log"
+	"context"
 
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceTrustedOrigin() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceTrustedOriginCreate,
-		Read:   resourceTrustedOriginRead,
-		Update: resourceTrustedOriginUpdate,
-		Delete: resourceTrustedOriginDelete,
-		Exists: trustedOriginExists,
+		CreateContext: resourceTrustedOriginCreate,
+		ReadContext:   resourceTrustedOriginRead,
+		UpdateContext: resourceTrustedOriginUpdate,
+		DeleteContext: resourceTrustedOriginDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
-
 		Schema: map[string]*schema.Schema{
-			"active": &schema.Schema{
+			"active": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     true,
 				Description: "Whether the Trusted Origin is active or not - can only be issued post-creation",
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Name of the Trusted Origin Resource",
+				Description: "Unique name for this trusted origin",
 			},
-			"origin": &schema.Schema{
+			"origin": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The origin to trust",
+				Description: "Unique origin URL for this trusted origin",
 			},
-			"scopes": &schema.Schema{
+			"scopes": {
 				Type:        schema.TypeList,
 				Required:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -46,161 +44,100 @@ func resourceTrustedOrigin() *schema.Resource {
 	}
 }
 
-func assembleTrustedOrigin() *articulateOkta.TrustedOrigin {
-	deactivate := &articulateOkta.TrustedOriginDeactive{
-		Hints: &articulateOkta.TrustedOriginHints{},
-	}
-
-	self := &articulateOkta.TrustedOriginSelf{
-		Hints: &articulateOkta.TrustedOriginHints{},
-	}
-
-	links := &articulateOkta.TrustedOriginLinks{
-		Self:       self,
-		Deactivate: deactivate,
-	}
-
-	trustedOrigin := &articulateOkta.TrustedOrigin{
-		Links: links,
-	}
-
-	return trustedOrigin
-}
-
-// Populates the Trusted Origin struct (used by the Okta SDK for API operaations) with the data resource provided by TF
-func populateTrustedOrigin(trustedOrigin *articulateOkta.TrustedOrigin, d *schema.ResourceData) *articulateOkta.TrustedOrigin {
-	trustedOrigin.Name = d.Get("name").(string)
-	trustedOrigin.Origin = d.Get("origin").(string)
-
-	var scopes []map[string]string
-
-	for _, vals := range d.Get("scopes").([]interface{}) {
-		scopes = append(scopes, map[string]string{"type": vals.(string)})
-	}
-
-	trustedOrigin.Scopes = scopes
-
-	return trustedOrigin
-}
-
-func resourceTrustedOriginCreate(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] Create Trusted Origin %v", d.Get("name").(string))
-
+func resourceTrustedOriginCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	if !d.Get("active").(bool) {
-		return fmt.Errorf("[ERROR] Okta will not allow a Trusted Origin to be created as INACTIVE. Can set to false for existing Trusted Origins only.")
+		return diag.Errorf("can not create inactive trusted origin, only existing trusted origins can be deactivated")
 	}
-
-	client := m.(*Config).articulateOktaClient
-	trustedOrigin := assembleTrustedOrigin()
-	populateTrustedOrigin(trustedOrigin, d)
-
-	returnedTrustedOrigin, _, err := client.TrustedOrigins.CreateTrustedOrigin(trustedOrigin)
-
+	trustedOrigin, _, err := getOktaClientFromMetadata(m).TrustedOrigin.CreateOrigin(ctx, buildTrustedOrigin(d))
 	if err != nil {
-		return fmt.Errorf("[ERROR] %v.", err)
+		return diag.Errorf("failed to create trusted origin: %v", err)
 	}
-
-	d.SetId(returnedTrustedOrigin.ID)
-
-	return resourceTrustedOriginRead(d, m)
-}
-
-func resourceTrustedOriginRead(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] Read Trusted Origin %v", d.Get("name").(string))
-
-	var trustedOrigin *articulateOkta.TrustedOrigin
-
-	client := m.(*Config).articulateOktaClient
-
-	exists, err := trustedOriginExists(d, m)
+	d.SetId(trustedOrigin.Id)
+	err = setTrustedOrigin(d, trustedOrigin)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set trusted origin's properties: %v", err)
 	}
-
-	if exists == true {
-		trustedOrigin, _, err = client.TrustedOrigins.GetTrustedOrigin(d.Id())
-	} else {
-		d.SetId("")
-		return nil
-	}
-
-	scopes := make([]string, 0)
-	for _, scope := range trustedOrigin.Scopes {
-		scopes = append(scopes, scope["type"])
-	}
-
-	d.Set("active", trustedOrigin.Status == "ACTIVE")
-	d.Set("origin", trustedOrigin.Origin)
-	d.Set("name", trustedOrigin.Name)
-
-	return setNonPrimitives(d, map[string]interface{}{
-		"scopes": scopes,
-	})
-}
-
-func resourceTrustedOriginUpdate(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] Update Trusted Origin %v", d.Get("name").(string))
-
-	var trustedOrigin = assembleTrustedOrigin()
-	populateTrustedOrigin(trustedOrigin, d)
-
-	client := m.(*Config).articulateOktaClient
-
-	exists, err := trustedOriginExists(d, m)
-	if err != nil {
-		return err
-	}
-
-	if exists == true {
-		if d.HasChange("active") {
-			_, err = client.TrustedOrigins.ActivateTrustedOrigin(d.Id(), d.Get("active").(bool))
-			if err != nil {
-				return fmt.Errorf("[ERROR] Error Updating Trusted Origin with Okta: %v", err)
-			}
-		}
-
-		_, _, err = client.TrustedOrigins.UpdateTrustedOrigin(d.Id(), trustedOrigin)
-
-		if err != nil {
-			return fmt.Errorf("[ERROR] Error Updating Trusted Origin with Okta: %v", err)
-		}
-	} else {
-		d.SetId("")
-		return nil
-	}
-
-	return resourceTrustedOriginRead(d, m)
-}
-
-func resourceTrustedOriginDelete(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] Delete Trusted Origin %v", d.Get("name").(string))
-
-	client := m.(*Config).articulateOktaClient
-
-	exists, err := trustedOriginExists(d, m)
-	if err != nil {
-		return err
-	}
-	if exists == true {
-		_, err = client.TrustedOrigins.DeleteTrustedOrigin(d.Id())
-		if err != nil {
-			return fmt.Errorf("[ERROR] Error Deleting Trusted Origin from Okta: %v", err)
-		}
-	}
-
 	return nil
 }
 
-// check if Trusted Origin exists in Okta
-func trustedOriginExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	client := m.(*Config).articulateOktaClient
-	_, _, err := client.TrustedOrigins.GetTrustedOrigin(d.Id())
-
-	if client.OktaErrorCode == "E0000007" {
-		return false, nil
+func resourceTrustedOriginRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	trustedOrigin, resp, err := getOktaClientFromMetadata(m).TrustedOrigin.GetOrigin(ctx, d.Id())
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get trusted origin: %v", err)
 	}
+	if trustedOrigin == nil {
+		d.SetId("")
+		return nil
+	}
+	err = setTrustedOrigin(d, trustedOrigin)
 	if err != nil {
-		return false, fmt.Errorf("[ERROR] Error Getting Trusted Origin in Okta: %v", err)
+		return diag.Errorf("failed to set trusted origin's properties: %v", err)
 	}
-	return true, nil
+	return nil
+}
+
+func resourceTrustedOriginUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(m)
+	if d.HasChange("active") {
+		var err error
+		if d.Get("active").(bool) {
+			_, _, err = client.TrustedOrigin.ActivateOrigin(ctx, d.Id())
+		} else {
+			_, _, err = client.TrustedOrigin.DeactivateOrigin(ctx, d.Id())
+		}
+		if err != nil {
+			return diag.Errorf("failed to change trusted origin's status: %v", err)
+		}
+	}
+	trustedOrigin, _, err := client.TrustedOrigin.UpdateOrigin(ctx, d.Id(), buildTrustedOrigin(d))
+	if err != nil {
+		return diag.Errorf("failed to update trusted origin: %v", err)
+	}
+	err = setTrustedOrigin(d, trustedOrigin)
+	if err != nil {
+		return diag.Errorf("failed to set trusted origin's properties: %v", err)
+	}
+	return nil
+}
+
+func resourceTrustedOriginDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	_, err := getOktaClientFromMetadata(m).TrustedOrigin.DeleteOrigin(ctx, d.Id())
+	if err != nil {
+		return diag.Errorf("failed to delete trusted origin: %v", err)
+	}
+	return nil
+}
+
+// Creates Trusted Origin struct with the data resource provided by TF
+func buildTrustedOrigin(d *schema.ResourceData) okta.TrustedOrigin {
+	trustedOrigin := okta.TrustedOrigin{
+		Name:   d.Get("name").(string),
+		Origin: d.Get("origin").(string),
+	}
+	if d.Get("active").(bool) {
+		trustedOrigin.Status = statusActive
+	} else {
+		trustedOrigin.Status = statusInactive
+	}
+	resScopes := d.Get("scopes").([]interface{})
+	trustedOrigin.Scopes = make([]*okta.Scope, len(resScopes))
+	for i, vals := range resScopes {
+		trustedOrigin.Scopes[i] = &okta.Scope{
+			Type: vals.(string),
+		}
+	}
+	return trustedOrigin
+}
+
+func setTrustedOrigin(d *schema.ResourceData, to *okta.TrustedOrigin) error {
+	scopes := make([]string, len(to.Scopes))
+	for i, scope := range to.Scopes {
+		scopes[i] = scope.Type
+	}
+	_ = d.Set("active", to.Status == statusActive)
+	_ = d.Set("origin", to.Origin)
+	_ = d.Set("name", to.Name)
+	return setNonPrimitives(d, map[string]interface{}{
+		"scopes": scopes,
+	})
 }
