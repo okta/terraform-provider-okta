@@ -12,7 +12,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-const baseTestProp = "firstName"
+const (
+	firstNameTestProp = "firstName"
+	loginTestProp     = "login"
+)
 
 func sweepUserBaseSchema(client *testClient) error {
 	var errorList []error
@@ -40,7 +43,7 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updated := mgr.GetFixtures("updated.tf", ri, t)
 	nonDefault := mgr.GetFixtures("non_default_user_type.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.%s", userBaseSchema, baseTestProp)
+	resourceName := fmt.Sprintf("%s.%s", userBaseSchema, firstNameTestProp)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -51,7 +54,7 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserBaseSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", baseTestProp),
+					resource.TestCheckResourceAttr(resourceName, "index", firstNameTestProp),
 					resource.TestCheckResourceAttr(resourceName, "title", "First name"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_ONLY"),
@@ -61,10 +64,9 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 				Config: updated,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserBaseSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", baseTestProp),
+					resource.TestCheckResourceAttr(resourceName, "index", firstNameTestProp),
 					resource.TestCheckResourceAttr(resourceName, "title", "First name"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
-					resource.TestCheckResourceAttr(resourceName, "pattern", "[a-z]+"),
 					resource.TestCheckResourceAttr(resourceName, "required", "true"),
 					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_WRITE"),
 				),
@@ -73,7 +75,7 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 				Config: nonDefault,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserBaseSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", baseTestProp),
+					resource.TestCheckResourceAttr(resourceName, "index", firstNameTestProp),
 					resource.TestCheckResourceAttr(resourceName, "title", "First name"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_ONLY"),
@@ -87,6 +89,54 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 						return errors.New("failed to import schema into state")
 					}
 
+					return nil
+				},
+			},
+		},
+	})
+}
+
+func TestAccOktaUserBaseSchemaLogin_crud(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(userBaseSchema)
+	config := mgr.GetFixtures("basic_login.tf", ri, t)
+	updated := mgr.GetFixtures("login_updated.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.%s", userBaseSchema, loginTestProp)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      nil, // can't delete base properties
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					testOktaUserBaseSchemasExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "index", loginTestProp),
+					resource.TestCheckResourceAttr(resourceName, "title", "Username"),
+					resource.TestCheckResourceAttr(resourceName, "type", "string"),
+					resource.TestCheckResourceAttr(resourceName, "required", "true"),
+					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_ONLY"),
+				),
+			},
+			{
+				Config: updated,
+				Check: resource.ComposeTestCheckFunc(
+					testOktaUserBaseSchemasExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "index", loginTestProp),
+					resource.TestCheckResourceAttr(resourceName, "title", "Username"),
+					resource.TestCheckResourceAttr(resourceName, "type", "string"),
+					resource.TestCheckResourceAttr(resourceName, "required", "true"),
+					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_WRITE"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import schema into state")
+					}
 					return nil
 				},
 			},

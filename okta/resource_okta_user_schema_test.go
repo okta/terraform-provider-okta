@@ -78,7 +78,6 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "required", "true"),
 					resource.TestCheckResourceAttr(resourceName, "min_length", "1"),
 					resource.TestCheckResourceAttr(resourceName, "max_length", "70"),
-					resource.TestCheckResourceAttr(resourceName, "pattern", "[a-z]+"),
 					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_WRITE"),
 					resource.TestCheckResourceAttr(resourceName, "master", "OKTA"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "S"),

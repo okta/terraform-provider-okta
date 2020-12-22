@@ -18,6 +18,19 @@ func resourceUserBaseSchema() *schema.Resource {
 		ReadContext:   resourceUserBaseSchemaRead,
 		UpdateContext: resourceUserBaseSchemaUpdate,
 		DeleteContext: resourceUserBaseSchemaDelete,
+		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
+			_, ok := d.GetOk("pattern")
+			if d.Get("index").(string) != "login" {
+				if ok {
+					return fmt.Errorf("'pattern' property is only allowed to be set for 'login'")
+				}
+				return nil
+			}
+			if !d.Get("required").(bool) {
+				return fmt.Errorf("'login' base schema is always required attribute")
+			}
+			return nil
+		},
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				resourceIndex := d.Id()
@@ -33,7 +46,7 @@ func resourceUserBaseSchema() *schema.Resource {
 			},
 		},
 		SchemaVersion: 1,
-		Schema:        buildSchema(userBaseSchemaSchema, userTypeSchema),
+		Schema:        buildSchema(userBaseSchemaSchema, userTypeSchema, userPatternSchema),
 		StateUpgraders: []schema.StateUpgrader{
 			{
 				Type: resourceUserBaseSchemaResourceV0().CoreConfigSchema().ImpliedType(),
@@ -110,8 +123,6 @@ func updateBaseSubschema(ctx context.Context, client *sdk.ApiSupplement, schemaU
 		Master: getNullableMaster(d),
 		Title:  d.Get("title").(string),
 		Type:   d.Get("type").(string),
-
-		Pattern: d.Get("pattern").(string),
 		Permissions: []*sdk.UserSchemaPermission{
 			{
 				Action:    d.Get("permissions").(string),
@@ -119,6 +130,9 @@ func updateBaseSubschema(ctx context.Context, client *sdk.ApiSupplement, schemaU
 			},
 		},
 		Required: boolPtr(d.Get("required").(bool)),
+	}
+	if d.Get("index").(string) == "login" {
+		subSchema.Pattern = d.Get("pattern").(string)
 	}
 	_, _, err := client.UpdateBaseUserSchemaProperty(ctx, schemaUrl, d.Get("index").(string), subSchema)
 	if err != nil {
