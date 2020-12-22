@@ -132,7 +132,11 @@ func updateBaseSubschema(ctx context.Context, client *sdk.ApiSupplement, schemaU
 		Required: boolPtr(d.Get("required").(bool)),
 	}
 	if d.Get("index").(string) == "login" {
-		subSchema.Pattern = d.Get("pattern").(string)
+		// Okta requires pattern to be set 'null' explicitly to use default Email Format
+		p := d.Get("pattern").(string)
+		if p != "" {
+			subSchema.Pattern = stringPtr(p)
+		}
 	}
 	_, _, err := client.UpdateBaseUserSchemaProperty(ctx, schemaUrl, d.Get("index").(string), subSchema)
 	if err != nil {

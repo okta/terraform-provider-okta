@@ -52,7 +52,7 @@ type (
 		MinLength         *int                    `json:"minLength,omitempty"`
 		Mutability        string                  `json:"mutability,omitempty"`
 		OneOf             []*UserSchemaEnum       `json:"oneOf,omitempty"`
-		Pattern           string                  `json:"pattern"`
+		Pattern           *string                 `json:"pattern"`
 		Permissions       []*UserSchemaPermission `json:"permissions,omitempty"`
 		Required          *bool                   `json:"required,omitempty"`
 		Scope             string                  `json:"scope,omitempty"`

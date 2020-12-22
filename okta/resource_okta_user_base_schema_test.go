@@ -117,6 +117,7 @@ func TestAccOktaUserBaseSchemaLogin_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "required", "true"),
 					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_ONLY"),
+					resource.TestCheckResourceAttr(resourceName, "pattern", "[a-z]+"),
 				),
 			},
 			{
@@ -127,7 +128,7 @@ func TestAccOktaUserBaseSchemaLogin_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "title", "Username"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "required", "true"),
-					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_WRITE"),
+					resource.TestCheckResourceAttr(resourceName, "pattern", ""),
 				),
 			},
 			{
