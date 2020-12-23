@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/hashicorp/go-cleanhttp"
 	hclog "github.com/hashicorp/go-hclog"
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
@@ -35,41 +35,39 @@ type (
 		logLevel         int
 		oktaClient       *okta.Client
 		supplementClient *sdk.ApiSupplement
-		ctx              context.Context
 		logger           hclog.Logger
 	}
 )
 
 func (c *Config) loadAndValidate() error {
-	httpClient := cleanhttp.DefaultClient()
-	httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
-
-	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
-	ctx, client, err := okta.NewClient(
-		context.Background(),
-		okta.WithOrgUrl(orgURL),
-		okta.WithToken(c.apiToken),
-		okta.WithCache(false),
-		okta.WithHttpClient(*httpClient),
-		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
-		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
-		okta.WithUserAgentExtra("okta-terraform/3.7.1"),
-	)
-	if err != nil {
-		return err
-	}
-	c.supplementClient = &sdk.ApiSupplement{
-		BaseURL:         fmt.Sprintf("https://%s.%s", c.orgName, c.domain),
-		Client:          httpClient,
-		Token:           c.apiToken,
-		RequestExecutor: client.GetRequestExecutor(),
-	}
 	c.logger = hclog.New(&hclog.LoggerOptions{
 		Level:      hclog.Level(c.logLevel),
 		TimeFormat: "2006/01/02 03:04:05",
 	})
-	// add the Okta SDK client object to Config
+
+	httpClient := retryablehttp.NewClient()
+	httpClient.Logger = c.logger
+	httpClient.HTTPClient.Transport = logging.NewTransport("Okta", httpClient.HTTPClient.Transport)
+
+	_, client, err := okta.NewClient(
+		context.Background(),
+		okta.WithOrgUrl(fmt.Sprintf("https://%v.%v", c.orgName, c.domain)),
+		okta.WithToken(c.apiToken),
+		okta.WithCache(false),
+		okta.WithHttpClient(*httpClient.StandardClient()),
+		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
+		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
+		okta.WithUserAgentExtra("okta-terraform/3.7.3"),
+	)
+	if err != nil {
+		return err
+	}
 	c.oktaClient = client
-	c.ctx = ctx
+	c.supplementClient = &sdk.ApiSupplement{
+		BaseURL:         fmt.Sprintf("https://%s.%s", c.orgName, c.domain),
+		Client:          httpClient.StandardClient(),
+		Token:           c.apiToken,
+		RequestExecutor: client.GetRequestExecutor(),
+	}
 	return nil
 }
