@@ -7,9 +7,7 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
-var (
-	appUserSchemaURL = "/api/v1/meta/schemas/apps/%s/default"
-)
+var appUserSchemaURL = "/api/v1/meta/schemas/apps/%s/default"
 
 func (m *ApiSupplement) UpdateAppUserSchema(ctx context.Context, appID string, schema *UserSchema) (*UserSchema, *okta.Response, error) {
 	req, err := m.RequestExecutor.NewRequest("POST", fmt.Sprintf(appUserSchemaURL, appID), schema)

@@ -33,7 +33,12 @@ func resourceUserSchema() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-		Schema:        buildSchema(userBaseSchemaSchema, userSchemaSchema, userTypeSchema),
+		Schema: buildSchema(
+			userBaseSchemaSchema,
+			userSchemaSchema,
+			userTypeSchema,
+			userPatternSchema,
+		),
 		SchemaVersion: 1,
 		StateUpgraders: []schema.StateUpgrader{
 			{
@@ -57,7 +62,7 @@ func resourceUserSchemaCreate(ctx context.Context, d *schema.ResourceData, m int
 	if err != nil {
 		return diag.Errorf("failed to create user custom schema: %v", err)
 	}
-	_, _, err = getSupplementFromMetadata(m).UpdateCustomUserSchemaProperty(ctx, schemaUrl, d.Get("index").(string), getUserSubSchema(d))
+	_, _, err = getSupplementFromMetadata(m).UpdateCustomUserSchemaProperty(ctx, schemaUrl, d.Get("index").(string), userSubSchema(d))
 	if err != nil {
 		return diag.Errorf("failed to create user custom schema: %v", err)
 	}
@@ -98,7 +103,7 @@ func resourceUserSchemaUpdate(ctx context.Context, d *schema.ResourceData, m int
 	if err != nil {
 		return diag.Errorf("failed to update user custom schema: %v", err)
 	}
-	_, _, err = getSupplementFromMetadata(m).UpdateCustomUserSchemaProperty(ctx, schemaUrl, d.Get("index").(string), getUserSubSchema(d))
+	_, _, err = getSupplementFromMetadata(m).UpdateCustomUserSchemaProperty(ctx, schemaUrl, d.Get("index").(string), userSubSchema(d))
 	if err != nil {
 		return diag.Errorf("failed to update user custom schema: %v", err)
 	}

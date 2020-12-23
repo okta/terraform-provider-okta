@@ -203,12 +203,10 @@ func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) {
 	if len(subschema.Permissions) > 0 {
 		_ = d.Set("permissions", subschema.Permissions[0].Action)
 	}
-	if d.Get("index").(string) == "login" {
-		if subschema.Pattern != nil {
-			_ = d.Set("pattern", &subschema.Pattern)
-		} else {
-			_ = d.Set("pattern", "")
-		}
+	if subschema.Pattern != nil {
+		_ = d.Set("pattern", &subschema.Pattern)
+	} else {
+		_ = d.Set("pattern", "")
 	}
 }
 
@@ -283,8 +281,8 @@ func flattenOneOf(oneOf []*sdk.UserSchemaEnum) []interface{} {
 	return result
 }
 
-func getUserSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
-	return &sdk.UserSubSchema{
+func userSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
+	subschema := &sdk.UserSubSchema{
 		Title:       d.Get("title").(string),
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
@@ -306,4 +304,32 @@ func getUserSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
 		ExternalNamespace: d.Get("external_namespace").(string),
 		Unique:            d.Get("unique").(string),
 	}
+	p, ok := d.GetOk("pattern")
+	if ok {
+		subschema.Pattern = stringPtr(p.(string))
+	}
+	return subschema
+}
+
+func userBasedSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
+	subSchema := &sdk.UserSubSchema{
+		Master: getNullableMaster(d),
+		Title:  d.Get("title").(string),
+		Type:   d.Get("type").(string),
+		Permissions: []*sdk.UserSchemaPermission{
+			{
+				Action:    d.Get("permissions").(string),
+				Principal: "SELF",
+			},
+		},
+		Required: boolPtr(d.Get("required").(bool)),
+	}
+	if d.Get("index").(string) == "login" {
+		subSchema.IsLogin = true
+		p := d.Get("pattern").(string)
+		if p != "" {
+			subSchema.Pattern = stringPtr(p)
+		}
+	}
+	return subSchema
 }

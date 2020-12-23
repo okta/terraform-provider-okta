@@ -119,26 +119,12 @@ func resourceUserBaseSchemaDelete(ctx context.Context, d *schema.ResourceData, m
 
 // create or modify a subschema
 func updateBaseSubschema(ctx context.Context, client *sdk.ApiSupplement, schemaUrl string, d *schema.ResourceData) error {
-	subSchema := &sdk.UserSubSchema{
-		Master: getNullableMaster(d),
-		Title:  d.Get("title").(string),
-		Type:   d.Get("type").(string),
-		Permissions: []*sdk.UserSchemaPermission{
-			{
-				Action:    d.Get("permissions").(string),
-				Principal: "SELF",
-			},
-		},
-		Required: boolPtr(d.Get("required").(bool)),
-	}
-	if d.Get("index").(string) == "login" {
-		// Okta requires pattern to be set 'null' explicitly to use default Email Format
-		p := d.Get("pattern").(string)
-		if p != "" {
-			subSchema.Pattern = stringPtr(p)
-		}
-	}
-	_, _, err := client.UpdateBaseUserSchemaProperty(ctx, schemaUrl, d.Get("index").(string), subSchema)
+	_, _, err := client.UpdateBaseUserSchemaProperty(
+		ctx,
+		schemaUrl,
+		d.Get("index").(string),
+		userBasedSubSchema(d),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to update base user schema property: %v", err)
 	}

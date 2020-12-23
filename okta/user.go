@@ -360,8 +360,8 @@ func updateAdminRolesOnUser(ctx context.Context, userID string, rolesToAssign []
 		return fmt.Errorf("failed to list user's roles: %v", err)
 	}
 	for _, role := range roles {
-		_, err = c.User.RemoveRoleFromUser(ctx, userID, role.Id)
-		if err != nil {
+		resp, err := c.User.RemoveRoleFromUser(ctx, userID, role.Id)
+		if err := suppressErrorOn404(resp, err); err != nil {
 			return fmt.Errorf("failed to remove user's role: %v", err)
 		}
 	}
