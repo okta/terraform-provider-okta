@@ -33,7 +33,12 @@ func resourceUserSchema() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-		Schema:        buildSchema(userBaseSchemaSchema, userSchemaSchema, userTypeSchema),
+		Schema: buildSchema(
+			userBaseSchemaSchema,
+			userSchemaSchema,
+			userTypeSchema,
+			userPatternSchema,
+		),
 		SchemaVersion: 1,
 		StateUpgraders: []schema.StateUpgrader{
 			{

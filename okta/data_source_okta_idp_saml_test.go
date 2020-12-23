@@ -12,6 +12,7 @@ func TestAccOktaDataSourceIdpSaml_read(t *testing.T) {
 	mgr := newFixtureManager(idpSaml)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("datasource_id.tf", ri, t)
+	idpSaml := mgr.GetFixtures("basic.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -19,6 +20,9 @@ func TestAccOktaDataSourceIdpSaml_read(t *testing.T) {
 		},
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
+			{
+				Config: idpSaml,
+			},
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(

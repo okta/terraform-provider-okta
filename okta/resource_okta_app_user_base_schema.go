@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceAppUserBaseSchema() *schema.Resource {
@@ -97,30 +96,11 @@ func resourceAppUserBaseSchemaDelete(ctx context.Context, d *schema.ResourceData
 
 // create or modify a subschema
 func updateAppUserBaseSubschema(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	subSchema := &sdk.UserSubSchema{
-		Master: getNullableMaster(d),
-		Title:  d.Get("title").(string),
-		Type:   d.Get("type").(string),
-		Permissions: []*sdk.UserSchemaPermission{
-			{
-				Action:    d.Get("permissions").(string),
-				Principal: "SELF",
-			},
-		},
-		Required: boolPtr(d.Get("required").(bool)),
-	}
-	if d.Get("index").(string) == "login" {
-		// Okta requires pattern to be set 'null' explicitly to use default Email Format
-		p := d.Get("pattern").(string)
-		if p != "" {
-			subSchema.Pattern = stringPtr(p)
-		}
-	}
 	_, _, err := getSupplementFromMetadata(m).UpdateBaseAppUserSchemaProperty(
 		ctx,
 		d.Get("index").(string),
 		d.Get("app_id").(string),
-		subSchema,
+		userBasedSubSchema(d),
 	)
 	if err != nil {
 		return diag.Errorf("failed to update application user base schema: %v", err)

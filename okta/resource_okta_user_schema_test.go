@@ -65,6 +65,7 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enum.2", "L"),
 					resource.TestCheckResourceAttr(resourceName, "enum.3", "XL"),
 					resource.TestCheckResourceAttr(resourceName, "one_of.#", "4"),
+					resource.TestCheckResourceAttr(resourceName, "pattern", ""),
 				),
 			},
 			{
@@ -85,6 +86,7 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enum.2", "L"),
 					resource.TestCheckResourceAttr(resourceName, "enum.3", "XXL"),
 					resource.TestCheckResourceAttr(resourceName, "one_of.#", "4"),
+					resource.TestCheckResourceAttr(resourceName, "pattern", ".+"),
 				),
 			},
 			{
@@ -101,6 +103,7 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_WRITE"),
 					resource.TestCheckResourceAttr(resourceName, "master", "OKTA"),
 					resource.TestCheckResourceAttr(resourceName, "unique", "UNIQUE_VALIDATED"),
+					resource.TestCheckResourceAttr(resourceName, "pattern", ""),
 				),
 			},
 			{

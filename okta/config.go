@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
-	hclog "github.com/hashicorp/go-hclog"
+	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -46,8 +47,10 @@ func (c *Config) loadAndValidate() error {
 	})
 
 	httpClient := retryablehttp.NewClient()
+	httpClient.RetryWaitMin = time.Second * 5
 	httpClient.Logger = c.logger
 	httpClient.HTTPClient.Transport = logging.NewTransport("Okta", httpClient.HTTPClient.Transport)
+	httpClient.ErrorHandler = errHandler
 
 	_, client, err := okta.NewClient(
 		context.Background(),
@@ -70,4 +73,21 @@ func (c *Config) loadAndValidate() error {
 		RequestExecutor: client.GetRequestExecutor(),
 	}
 	return nil
+}
+
+func errHandler(resp *http.Response, err error, numTries int) (*http.Response, error) {
+	defer resp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+	err = okta.CheckResponseForError(resp)
+	if err != nil {
+		oe, ok := err.(*okta.Error)
+		if ok {
+			oe.ErrorSummary = fmt.Sprintf("%s. Giving up after %d attempt(s)", oe.ErrorSummary, numTries)
+			return resp, oe
+		}
+		return resp, err
+	}
+	return resp, nil
 }
