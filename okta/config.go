@@ -82,10 +82,10 @@ func errHandler(resp *http.Response, err error, numTries int) (*http.Response, e
 	}
 	err = okta.CheckResponseForError(resp)
 	if err != nil {
-		oe, ok := err.(*okta.Error)
+		oErr, ok := err.(*okta.Error)
 		if ok {
-			oe.ErrorSummary = fmt.Sprintf("%s. Giving up after %d attempt(s)", oe.ErrorSummary, numTries)
-			return resp, oe
+			oErr.ErrorSummary = fmt.Sprintf("%s. Giving up after %d attempt(s)", oErr.ErrorSummary, numTries)
+			return resp, oErr
 		}
 		return resp, err
 	}

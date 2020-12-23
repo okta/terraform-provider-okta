@@ -208,13 +208,6 @@ func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) {
 	} else {
 		_ = d.Set("pattern", "")
 	}
-	/*if d.Get("index").(string) == "login" {
-		if subschema.Pattern != nil {
-			_ = d.Set("pattern", &subschema.Pattern)
-		} else {
-			_ = d.Set("pattern", "")
-		}
-	}*/
 }
 
 func getBaseProperty(us *sdk.UserSchema, id string) *sdk.UserSubSchema {
@@ -288,7 +281,7 @@ func flattenOneOf(oneOf []*sdk.UserSchemaEnum) []interface{} {
 	return result
 }
 
-func getUserSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
+func userSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
 	subschema := &sdk.UserSubSchema{
 		Title:       d.Get("title").(string),
 		Type:        d.Get("type").(string),

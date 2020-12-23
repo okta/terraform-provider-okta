@@ -94,7 +94,7 @@ func updateAppUserSubschema(ctx context.Context, d *schema.ResourceData, m inter
 		ctx,
 		d.Get("index").(string),
 		d.Get("app_id").(string),
-		getUserSubSchema(d),
+		userSubSchema(d),
 	)
 	if err != nil {
 		return diag.Errorf("failed to update custom app user schema property: %v", err)
