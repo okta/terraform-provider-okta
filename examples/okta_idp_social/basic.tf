@@ -41,7 +41,7 @@ resource "okta_idp_social" "google" {
   username_template = "idpuser.email"
 }
 
-resource okta_idp_social microsoft {
+resource "okta_idp_social" "microsoft" {
   type          = "MICROSOFT"
   protocol_type = "OIDC"
   name          = "testAcc_microsoft_replace_with_uuid"

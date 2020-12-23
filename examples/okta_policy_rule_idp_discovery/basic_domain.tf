@@ -21,7 +21,7 @@ resource "okta_policy_rule_idp_discovery" "test" {
   }
 }
 
-resource okta_idp_saml test {
+resource "okta_idp_saml" "test" {
   name                     = "testAcc_replace_with_uuid"
   acs_binding              = "HTTP-POST"
   acs_type                 = "INSTANCE"
@@ -35,11 +35,11 @@ resource okta_idp_saml test {
   kid                      = okta_idp_saml_key.test.id
 }
 
-resource okta_idp_saml_key test {
+resource "okta_idp_saml_key" "test" {
   x5c = [okta_app_saml.test.certificate]
 }
 
-resource okta_app_saml test {
+resource "okta_app_saml" "test" {
   label                    = "testAcc_replace_with_uuid"
   sso_url                  = "http://google.com"
   recipient                = "http://here.com"

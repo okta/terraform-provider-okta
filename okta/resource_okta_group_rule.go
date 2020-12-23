@@ -2,11 +2,15 @@ package okta
 
 import (
 	"context"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
+
+const statusInvalid = "INVALID"
 
 func resourceGroupRule() *schema.Resource {
 	return &schema.Resource{
@@ -40,6 +44,14 @@ func resourceGroupRule() *schema.Resource {
 			},
 			"status": statusSchema,
 		},
+		CustomizeDiff: customdiff.ForceNewIf("status", func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
+			g, _, _ := getOktaClientFromMetadata(meta).Group.GetGroupRule(ctx, d.Id(), nil)
+			if g == nil {
+				return false
+			}
+			_ = d.SetNew("status", g.Status)
+			return d.Get("status").(string) == statusInvalid
+		}),
 	}
 }
 
@@ -65,6 +77,7 @@ func resourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, m interf
 		d.SetId("")
 		return nil
 	}
+
 	_ = d.Set("name", g.Name)
 	// _ = d.Set("type", g.Type)
 	_ = d.Set("status", g.Status)
@@ -92,8 +105,8 @@ func resourceGroupRuleUpdate(ctx context.Context, d *schema.ResourceData, m inte
 		}
 		_ = d.Set("status", desiredStatus)
 	}
-
-	if hasGroupRuleChange(d) {
+	// invalid group rules can not be updated
+	if hasGroupRuleChange(d) && desiredStatus != statusInvalid {
 		client := getOktaClientFromMetadata(m)
 		rule := buildGroupRule(d)
 		if desiredStatus == statusActive {
@@ -131,8 +144,9 @@ func resourceGroupRuleDelete(ctx context.Context, d *schema.ResourceData, m inte
 	client := getOktaClientFromMetadata(m)
 	if d.Get("status").(string) == statusActive {
 		_, err := client.Group.DeactivateGroupRule(ctx, d.Id())
-		if err != nil {
-			return diag.Errorf("failed to deactivate group rule: %v", err)
+		// suppress error for INACTIVE group rules
+		if err != nil && !strings.Contains(err.Error(), "Cannot activate or deactivate a Group Rule with the status INVALID") {
+			return diag.Errorf("failed to deactivate group rule before removing: %v", err)
 		}
 	}
 	_, err := client.Group.DeleteGroupRule(ctx, d.Id())
@@ -165,6 +179,8 @@ func handleGroupRuleLifecycle(ctx context.Context, d *schema.ResourceData, m int
 	if d.Get("status").(string) == statusActive {
 		_, err := client.Group.ActivateGroupRule(ctx, d.Id())
 		return err
+	} else if d.Get("status").(string) == statusInvalid {
+		return nil
 	}
 	_, err := client.Group.DeactivateGroupRule(ctx, d.Id())
 	return err

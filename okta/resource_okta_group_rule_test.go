@@ -3,6 +3,7 @@ package okta
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
@@ -81,6 +82,111 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccOktaGroupRule_invalidHandle(t *testing.T) {
+	ri := acctest.RandInt()
+	groupResource := fmt.Sprintf("%s.test", oktaGroup)
+	ruleResource := fmt.Sprintf("%s.inval", groupRule)
+	testName := buildResourceName(ri)
+	testSetup := buildInvalidSetup(testName)
+	testBuild := buildInvalidBuild(testName)
+	testRun := buildInvalidTest(testName)
+	testUpdate := buildInvalidUpdate(testName)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(groupRule, doesGroupRuleExist),
+		Steps: []resource.TestStep{
+			{
+				Config: testSetup,
+				Check:  resource.TestCheckResourceAttr(groupResource, "name", testName),
+			},
+			{
+				Config: testBuild,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(ruleResource, "name", testName),
+					resource.TestCheckResourceAttr(ruleResource, "status", statusActive),
+				),
+			},
+			{
+				Config:      testRun,
+				Check:       resource.TestCheckResourceAttr(ruleResource, "status", statusActive),
+				ExpectError: regexp.MustCompile(`group with name .+ does not exist`),
+			},
+			{
+				Config: testUpdate,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(groupResource, "name", testName),
+					resource.TestCheckResourceAttr(ruleResource, "name", testName),
+					resource.TestCheckResourceAttr(ruleResource, "status", statusActive),
+				),
+			},
+		},
+	})
+}
+
+func buildInvalidBuild(n string) string {
+	return fmt.Sprintf(`
+resource "okta_group" "test" {
+  name = "%s"
+}
+
+data "okta_group" "test" {
+  name = "%s"
+}
+
+resource "okta_group_rule" "inval" {
+  name              = "%s"
+  status            = "ACTIVE"
+  group_assignments = [data.okta_group.test.id]
+  expression_type   = "urn:okta:expression:1.0"
+  expression_value  = "String.startsWith(user.firstName,String.toLowerCase(\"bob\"))"
+}
+`, n, n, n)
+}
+
+func buildInvalidSetup(n string) string {
+	return fmt.Sprintf(`
+resource "okta_group" "test" {
+  name = "%s"
+}
+`, n)
+}
+
+func buildInvalidTest(n string) string {
+	return fmt.Sprintf(`
+data "okta_group" "test" {
+  name = "%s"
+}
+
+resource "okta_group_rule" "inval" {
+  name              = "%s"
+  status            = "ACTIVE"
+  group_assignments = [data.okta_group.test.id]
+  expression_type   = "urn:okta:expression:1.0"
+  expression_value  = "String.startsWith(user.firstName,String.toLowerCase(\"bob\"))"
+}
+`, n, n)
+}
+
+func buildInvalidUpdate(n string) string {
+	return fmt.Sprintf(`
+resource "okta_group" "test" {
+  name = "%s"
+}
+
+resource "okta_group_rule" "inval" {
+  name              = "%s"
+  status            = "ACTIVE"
+  group_assignments = [okta_group.test.id]
+  expression_type   = "urn:okta:expression:1.0"
+  expression_value  = "String.startsWith(user.firstName,String.toLowerCase(\"bob\"))"
+}
+`, n, n)
 }
 
 func doesGroupRuleExist(id string) (bool, error) {
