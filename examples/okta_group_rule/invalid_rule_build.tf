@@ -6,7 +6,7 @@ data "okta_group" "test" {
   name = "testAcc_replace_with_uuid"
 }
 
-resource "okta_group_rule" "test" {
+resource "okta_group_rule" "inval" {
   name              = "testAcc_replace_with_uuid"
   status            = "ACTIVE"
   group_assignments = [data.okta_group.test.id]

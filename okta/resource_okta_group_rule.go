@@ -2,9 +2,10 @@ package okta
 
 import (
 	"context"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
@@ -44,6 +45,11 @@ func resourceGroupRule() *schema.Resource {
 			"status": statusSchema,
 		},
 		CustomizeDiff: customdiff.ForceNewIf("status", func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
+			g, _, _ := getOktaClientFromMetadata(meta).Group.GetGroupRule(ctx, d.Id(), nil)
+			if g == nil {
+				return false
+			}
+			_ = d.SetNew("status", g.Status)
 			return d.Get("status").(string) == statusInvalid
 		}),
 	}
@@ -99,8 +105,8 @@ func resourceGroupRuleUpdate(ctx context.Context, d *schema.ResourceData, m inte
 		}
 		_ = d.Set("status", desiredStatus)
 	}
-
-	if hasGroupRuleChange(d) {
+	// invalid group rules can not be updated
+	if hasGroupRuleChange(d) && desiredStatus != statusInvalid {
 		client := getOktaClientFromMetadata(m)
 		rule := buildGroupRule(d)
 		if desiredStatus == statusActive {
@@ -138,8 +144,9 @@ func resourceGroupRuleDelete(ctx context.Context, d *schema.ResourceData, m inte
 	client := getOktaClientFromMetadata(m)
 	if d.Get("status").(string) == statusActive {
 		_, err := client.Group.DeactivateGroupRule(ctx, d.Id())
-		if err != nil {
-			return diag.Errorf("failed to deactivate group rule: %v", err)
+		// suppress error for INACTIVE group rules
+		if err != nil && !strings.Contains(err.Error(), "Cannot activate or deactivate a Group Rule with the status INVALID") {
+			return diag.Errorf("failed to deactivate group rule before removing: %v", err)
 		}
 	}
 	_, err := client.Group.DeleteGroupRule(ctx, d.Id())

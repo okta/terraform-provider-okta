@@ -3,6 +3,7 @@ package okta
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
@@ -89,10 +90,10 @@ func TestAccOktaGroupRule_invalidHandle(t *testing.T) {
 	ruleResource := fmt.Sprintf("%s.inval", groupRule)
 	testName := buildResourceName(ri)
 	mgr := newFixtureManager(groupRule)
-	testSetup := mgr.GetFixtures("inval_setup.tf", ri, t)
-	testBuild := mgr.GetFixtures("inval_build.tf", ri, t)
-	testRun := mgr.GetFixtures("inval_test.tf", ri, t)
-	testUpdate := mgr.GetFixtures("inval_update.tf", ri, t)
+	testSetup := mgr.GetFixtures("invalid_rule_setup.tf", ri, t)
+	testBuild := mgr.GetFixtures("invalid_rule_build.tf", ri, t)
+	testRun := mgr.GetFixtures("invalid_rule_test.tf", ri, t)
+	testUpdate := mgr.GetFixtures("invalid_rule_update.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -113,8 +114,9 @@ func TestAccOktaGroupRule_invalidHandle(t *testing.T) {
 				),
 			},
 			{
-				Config: testRun,
-				Check:  resource.TestCheckResourceAttr(ruleResource, "status", statusActive),
+				Config:      testRun,
+				Check:       resource.TestCheckResourceAttr(ruleResource, "status", statusActive),
+				ExpectError: regexp.MustCompile(`group with name .+ does not exist`),
 			},
 			{
 				Config: testUpdate,
