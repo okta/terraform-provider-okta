@@ -42,6 +42,8 @@ The following arguments are supported:
 
 - `user_type` - (Optional) User type ID
 
+- `pattern` - (Optional) The validation pattern to use for the subschema, only available for `login` property. Must be in form of `.+`, or `[<pattern>]+`.
+
 ## Attributes Reference
 
 - `index` - ID of the user schema property.

@@ -104,6 +104,8 @@ The following arguments are supported:
 
 - `app_settings_json` - (Optional) Application settings in JSON format.
 
+- `acs_endpoints` - An array of ACS endpoints. You can configure a maximum of 100 endpoints.
+
 - `attribute_statements` - (Optional) List of SAML Attribute statements.
   - `name` - (Required) The name of the attribute statement.
   - `filter_type` - (Optional) Type of group attribute filter.
@@ -122,6 +124,8 @@ The following arguments are supported:
 
 - `key_id` - Certificate key ID.
 
+- `key_name` - Certificate name. This modulates the rotation of keys. New name == new key.
+
 - `certificate` - The raw signing certificate.
 
 - `metadata` - The raw SAML metadata in XML.
@@ -132,7 +136,7 @@ The following arguments are supported:
 
 - `entity_key` - Entity ID, the ID portion of the `entity_url`.
 
-- `entity_url` - Entity URL for instance http://www.okta.com/exk1fcia6d6EMsf331d8.
+- `entity_url` - Entity URL for instance [http://www.okta.com/exk1fcia6d6EMsf331d8](http://www.okta.com/exk1fcia6d6EMsf331d8).
 
 ## Import
 

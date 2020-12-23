@@ -97,15 +97,13 @@ func resourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m inter
 	}
 
 	_ = d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
-	_ = d.Set("kid", authServer.Credentials.Signing.Kid)
 
 	if authServer.Credentials != nil && authServer.Credentials.Signing != nil {
+		_ = d.Set("kid", authServer.Credentials.Signing.Kid)
 		_ = d.Set("credentials_rotation_mode", authServer.Credentials.Signing.RotationMode)
-
 		if authServer.Credentials.Signing.NextRotation != nil {
 			_ = d.Set("credentials_next_rotation", authServer.Credentials.Signing.NextRotation.String())
 		}
-
 		if authServer.Credentials.Signing.LastRotated != nil {
 			_ = d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated.String())
 		}
@@ -120,7 +118,6 @@ func resourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m inter
 	if authServer.IssuerMode != "" {
 		_ = d.Set("issuer_mode", authServer.IssuerMode)
 	}
-
 	return nil
 }
 
@@ -157,12 +154,12 @@ func handleAuthServerLifecycle(ctx context.Context, d *schema.ResourceData, m in
 
 func resourceAuthServerDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getSupplementFromMetadata(m)
-	_, err := client.DeactivateAuthorizationServer(ctx, d.Id())
-	if err != nil {
+	resp, err := client.DeactivateAuthorizationServer(ctx, d.Id())
+	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to deactivate authorization server: %v", err)
 	}
-	_, err = client.DeleteAuthorizationServer(ctx, d.Id())
-	if err != nil {
+	resp, err = client.DeleteAuthorizationServer(ctx, d.Id())
+	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete authorization server: %v", err)
 	}
 	return nil

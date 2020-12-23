@@ -16,13 +16,49 @@ func resourceAppUserBaseSchema() *schema.Resource {
 		UpdateContext: resourceAppUserBaseSchemaUpdate,
 		DeleteContext: resourceAppUserBaseSchemaDelete,
 		Importer:      createNestedResourceImporter([]string{"app_id", "id"}),
-		Schema: buildBaseUserSchema(map[string]*schema.Schema{
-			"app_id": {
-				Type:     schema.TypeString,
-				Required: true,
+		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
+			_, ok := d.GetOk("pattern")
+			if d.Get("index").(string) != "login" {
+				if ok {
+					return fmt.Errorf("'pattern' property is only allowed to be set for 'login'")
+				}
+				return nil
+			}
+			if !d.Get("required").(bool) {
+				return fmt.Errorf("'login' base schema is always required attribute")
+			}
+			return nil
+		},
+		Schema: buildSchema(
+			userBaseSchemaSchema,
+			userTypeSchema,
+			userPatternSchema,
+			map[string]*schema.Schema{
+				"app_id": {
+					Type:     schema.TypeString,
+					Required: true,
+				}}),
+		SchemaVersion: 1,
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type: resourceAppUserBaseSchemaResourceV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: func(ctx context.Context, rawState map[string]interface{}, meta interface{}) (map[string]interface{}, error) {
+					rawState["user_type"] = "default"
+					return rawState, nil
+				},
+				Version: 0,
 			},
-		}),
+		},
 	}
+}
+
+func resourceAppUserBaseSchemaResourceV0() *schema.Resource {
+	return &schema.Resource{Schema: buildSchema(map[string]*schema.Schema{
+		"app_id": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+	}, userBaseSchemaSchema)}
 }
 
 func resourceAppUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -72,6 +108,13 @@ func updateAppUserBaseSubschema(ctx context.Context, d *schema.ResourceData, m i
 			},
 		},
 		Required: boolPtr(d.Get("required").(bool)),
+	}
+	if d.Get("index").(string) == "login" {
+		// Okta requires pattern to be set 'null' explicitly to use default Email Format
+		p := d.Get("pattern").(string)
+		if p != "" {
+			subSchema.Pattern = stringPtr(p)
+		}
 	}
 	_, _, err := getSupplementFromMetadata(m).UpdateBaseAppUserSchemaProperty(
 		ctx,

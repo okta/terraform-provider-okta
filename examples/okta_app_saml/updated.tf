@@ -25,4 +25,6 @@ resource "okta_app_saml" "test" {
     filter_type  = "STARTS_WITH"
     filter_value = "test"
   }
+
+  acs_endpoints = ["https://example.com", "https://okta.com"]
 }

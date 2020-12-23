@@ -61,7 +61,7 @@ func stringInSlice(valid []string) schema.SchemaValidateDiagFunc {
 				return nil
 			}
 		}
-		return diag.Errorf("expected %v to be one of %v, got %s", k, valid, v)
+		return diag.Errorf("expected %v to be one of %v, got %s", k, strings.Join(valid, ","), v)
 	}
 }
 
@@ -114,7 +114,20 @@ func stringLenBetween(min, max int) schema.SchemaValidateDiagFunc {
 			return diag.Errorf("expected type of %s to be string", k)
 		}
 		if len(v) < min || len(v) > max {
-			return diag.Errorf("expected length of %s to be in the range (%d - %d), got %s", k, min, max, v)
+			return diag.Errorf("expected length of %s to be in the range (%d - %d), got %d", k, min, max, len(v))
+		}
+		return nil
+	}
+}
+
+func stringAtLeast(min int) schema.SchemaValidateDiagFunc {
+	return func(i interface{}, k cty.Path) diag.Diagnostics {
+		v, ok := i.(string)
+		if !ok {
+			return diag.Errorf("expected type of %s to be string", k)
+		}
+		if len(strings.TrimSpace(v)) < min {
+			return diag.Errorf("expected minimum length of %s to be %d, got %d", k, min, len(v))
 		}
 		return nil
 	}

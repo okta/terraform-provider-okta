@@ -2,8 +2,7 @@
 layout: "okta"
 page_title: "Okta: okta_group"
 sidebar_current: "docs-okta-datasource-group"
-description: |-
-  Get a group from Okta.
+description: |- Get a group from Okta.
 ---
 
 # okta_group
@@ -22,7 +21,8 @@ data "okta_group" "example" {
 
 - `name` - (Required) name of group to retrieve.
 
-- `type` - (Optional) type of the group to retrieve.
+- `type` - (Optional) type of the group to retrieve. Can only be one of `OKTA_GROUP` (Native Okta Groups), `APP_GROUP`
+  (Imported App Groups), or `BUILT_IN` (Okta System Groups).
 
 - `include_users` - (Optional) whether or not to retrieve all member ids.
 

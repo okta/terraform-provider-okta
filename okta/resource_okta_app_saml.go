@@ -55,9 +55,10 @@ func resourceAppSaml() *schema.Resource {
 				},
 			},
 			"key_name": {
-				Type:        schema.TypeString,
-				Description: "Certificate name. This modulates the rotation of keys. New name == new key.",
-				Optional:    true,
+				Type:         schema.TypeString,
+				Description:  "Certificate name. This modulates the rotation of keys. New name == new key.",
+				Optional:     true,
+				RequiredWith: []string{"key_years_valid"},
 			},
 			"key_id": {
 				Type:        schema.TypeString,
@@ -67,7 +68,6 @@ func resourceAppSaml() *schema.Resource {
 			"key_years_valid": {
 				Type:             schema.TypeInt,
 				Optional:         true,
-				Default:          2,
 				ValidateDiagFunc: intBetween(2, 10),
 				Description:      "Number of years the certificate is valid.",
 			},
@@ -265,6 +265,12 @@ func resourceAppSaml() *schema.Resource {
 					return new == ""
 				},
 			},
+			"acs_endpoints": {
+				Type:        schema.TypeSet,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Optional:    true,
+				Description: "List of ACS endpoints for this SAML application",
+			},
 			"attribute_statements": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -433,6 +439,11 @@ func buildApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 		_ = json.Unmarshal([]byte(appSettings.(string)), &payload)
 		settings := okta.ApplicationSettingsApplication(payload)
 		app.Settings.App = &settings
+	} else {
+		// we should provide empty app, even if there are no values
+		// see https://github.com/oktadeveloper/terraform-provider-okta/pull/226#issuecomment-744545051
+		settings := okta.ApplicationSettingsApplication(map[string]interface{}{})
+		app.Settings.App = &settings
 	}
 	app.Features = convertInterfaceToStringSet(d.Get("features"))
 	app.Settings.SignOn = &okta.SamlApplicationSettingsSignOn{
@@ -463,6 +474,25 @@ func buildApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 		ErrorRedirectUrl: d.Get("accessibility_error_redirect_url").(string),
 		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
 	}
+
+	// Assumes that sso url is already part of the acs endpoints as part of the desired state.
+	acsEndpoints := convertInterfaceToStringSet(d.Get("acs_endpoints"))
+
+	// If there are acs endpoints, implies this flag should be true.
+	allowMultipleAcsEndpoints := false
+	if len(acsEndpoints) > 0 {
+		acsEndpointsObj := make([]*okta.AcsEndpoint, len(acsEndpoints))
+		for i := range acsEndpoints {
+			acsEndpointsObj[i] = &okta.AcsEndpoint{
+				Index: int64(i),
+				Url:   acsEndpoints[i],
+			}
+		}
+		allowMultipleAcsEndpoints = true
+		app.Settings.SignOn.AcsEndpoints = acsEndpointsObj
+	}
+	app.Settings.SignOn.AllowMultipleAcsEndpoints = &allowMultipleAcsEndpoints
+
 	statements := d.Get("attribute_statements").([]interface{})
 	if len(statements) > 0 {
 		samlAttr := make([]*okta.SamlAttributeStatement, len(statements))

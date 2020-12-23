@@ -82,6 +82,8 @@ The following arguments are supported:
 
 - `sms_recovery` - (Optional) Enable or disable SMS password recovery: ACTIVE or INACTIVE.
 
+- `call_recovery` - (Optional) Enable or disable voice call password recovery: ACTIVE or INACTIVE. 
+
 - `question_recovery` - (Optional) Enable or disable security question password recovery: ACTIVE or INACTIVE.
 
 - `skip_unlock` - (Optional) When an Active Directory user is locked out of Okta, the Okta unlock operation should also attempt to unlock the user's Windows account.

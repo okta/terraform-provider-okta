@@ -1,5 +1,12 @@
+[![Build Status](https://img.shields.io/travis/oktadeveloper/terraform-provider-okta.svg?logo=travis)](https://travis-ci.com/github/oktadeveloper/terraform-provider-okta)
+<br/><br/>
+
 <a href="https://terraform.io">
-    <img src="https://cdn.rawgit.com/hashicorp/terraform-website/master/content/source/assets/images/logo-hashicorp.svg" alt="Terraform logo" title="Terraform" align="right" height="50" />
+    <img src="https://cdn.rawgit.com/hashicorp/terraform-website/master/content/source/assets/images/logo-hashicorp.svg" alt="Terraform logo" title="Terraform" height="50" />
+</a>
+
+<a href="https://www.okta.com/">
+    <img src="https://www.okta.com/sites/default/files/Dev_Logo-03_Large.png" alt="OKTA logo" title="OKTA" height="50" />
 </a>
 
 # Terraform Provider for Okta
@@ -73,4 +80,5 @@ Terraform is the work of thousands of contributors. We appreciate your help!
 
 To contribute, please read the contribution guidelines: [Contributing to Terraform - Okta Provider](.github/CONTRIBUTING.md)
 
-Issues on GitHub are intended to be related to bugs or feature requests with provider codebase. See https://www.terraform.io/docs/extend/community/index.html for a list of community resources to ask questions about Terraform.
+Issues on GitHub are intended to be related to bugs or feature requests with provider codebase. 
+See [Plugin SDK Community](https://www.terraform.io/docs/extend/community/index.html) for a list of community resources to ask questions about Terraform.

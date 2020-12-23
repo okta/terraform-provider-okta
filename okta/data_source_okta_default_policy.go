@@ -22,8 +22,9 @@ func dataSourceDefaultPolicies() *schema.Resource {
 					sdk.PasswordPolicyType,
 					sdk.MfaPolicyType,
 					sdk.OauthAuthorizationPolicyType,
+					sdk.IdpDiscoveryType,
 				}),
-				Description: fmt.Sprintf("Policy type: %s, %s, %s, or %s", sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.OauthAuthorizationPolicyType),
+				Description: fmt.Sprintf("Policy type: %s, %s, %s, %s, or %s", sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.OauthAuthorizationPolicyType, sdk.IdpDiscoveryType),
 				Required:    true,
 			},
 		},
@@ -31,5 +32,9 @@ func dataSourceDefaultPolicies() *schema.Resource {
 }
 
 func dataSourceDefaultPolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	policyType := d.Get("type").(string)
+	if policyType == sdk.IdpDiscoveryType {
+		return setPolicyByName(ctx, d, m, "Idp Discovery Policy")
+	}
 	return setPolicyByName(ctx, d, m, "Default Policy")
 }
