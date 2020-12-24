@@ -101,9 +101,6 @@ func resourceGroupRoleRead(ctx context.Context, d *schema.ResourceData, m interf
 				if err != nil {
 					return diag.Errorf("unable to get admin assignment %s for group %s: %v", role.Id, groupID, err)
 				}
-				if len(currentTargets) > 0 {
-					return diag.Errorf("group targets already found attached to role, you should not use this resource unless it is the sole manager of target groups")
-				}
 				groupIDs := getGroupIds(currentTargets)
 				_ = d.Set("group_target_list", groupIDs)
 			}
