@@ -55,7 +55,6 @@ func resourceGroupRole() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "List of groups ids for the targets of the admin role.",
 				Optional:    true,
-				Default:     nil,
 			},
 		},
 	}
