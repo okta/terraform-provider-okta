@@ -37,7 +37,6 @@ const (
 	factor                 = "okta_factor"
 	groupRole              = "okta_group_role"
 	groupRoles             = "okta_group_roles"
-	groupRoleGroupTargets  = "okta_group_role_group_targets"
 	groupRule              = "okta_group_rule"
 	idpOidc                = "okta_idp_oidc"
 	idpSaml                = "okta_idp_saml"
@@ -181,7 +180,6 @@ func Provider() *schema.Provider {
 			factor:                 resourceFactor(),
 			groupRole:              resourceGroupRole(),
 			groupRoles:             resourceGroupRoles(),
-			groupRoleGroupTargets:  resourceGroupRoleGroupTargets(),
 			groupRule:              resourceGroupRule(),
 			idpOidc:                resourceIdpOidc(),
 			idpSaml:                resourceIdpSaml(),
