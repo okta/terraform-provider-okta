@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceGroupRoleGroupTargets() *schema.Resource {
@@ -116,30 +115,3 @@ func resourceGroupRoleGroupTargetsDelete(ctx context.Context, d *schema.Resource
 	return nil
 }
 
-func getGroupIds(groups []*okta.Group) []string {
-	var groupIds []string
-	for _, group := range groups {
-		groupIds = append(groupIds, group.Id)
-	}
-	return groupIds
-}
-
-func addGroupTargetsToRole(ctx context.Context, client *okta.Client, groupID string, roleID string, groupTargets []string) error {
-	for _, target := range groupTargets {
-		_, err := client.Group.AddGroupTargetToGroupAdministratorRoleForGroup(ctx, groupID, roleID, target)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func removeGroupTargetsFromRole(ctx context.Context, client *okta.Client, groupID string, roleID string, groupTargets []string) error {
-	for _, target := range groupTargets {
-		_, err := client.Group.RemoveGroupTargetFromGroupAdministratorRoleGivenToGroup(ctx, groupID, roleID, target)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
