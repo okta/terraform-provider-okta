@@ -2,9 +2,11 @@ package okta
 
 import (
 	"context"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
+	"strings"
 )
 
 func resourceGroupRole() *schema.Resource {
@@ -13,7 +15,7 @@ func resourceGroupRole() *schema.Resource {
 		ReadContext:   resourceGroupRoleRead,
 		UpdateContext: nil,
 		DeleteContext: resourceGroupRoleDelete,
-		Importer:      nil,
+		Importer:      &schema.ResourceImporter{StateContext: resourceGroupRoleImporter},
 		Schema: map[string]*schema.Schema{
 			"group_id": {
 				Type:        schema.TypeString,
@@ -83,4 +85,28 @@ func resourceGroupRoleDelete(ctx context.Context, d *schema.ResourceData, m inte
 		return diag.Errorf("failed to remove role %s assigned to group %s: %v", roleType, groupID, err)
 	}
 	return nil
+}
+
+func resourceGroupRoleImporter(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	importID := strings.Split(d.Id(), "/")
+	if len(importID) != 2 {
+		err := fmt.Errorf("invalid format used for import ID, format must be group_id/role_assignment_id")
+		return nil, err
+	}
+	groupID := importID[0]
+	roleID := importID[1]
+	rolesAssigned, _, err := getOktaClientFromMetadata(m).Group.ListGroupAssignedRoles(ctx, groupID, nil)
+	if err != nil {
+		return nil, err
+	}
+	for _, role := range rolesAssigned {
+		if role.Id == roleID {
+			d.SetId(roleID)
+			_ = d.Set("group_id", groupID)
+			_ = d.Set("role_type", role.Type)
+			return []*schema.ResourceData{d}, nil
+		}
+	}
+	err = fmt.Errorf("unable to find the role ID %s assigned to the group %s", roleID, groupID)
+	return nil, err
 }

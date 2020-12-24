@@ -35,4 +35,8 @@ The following arguments are supported:
 
 ## Import
 
-TBD
+Individual admin role assignment can be imported by passing the group and role assignment IDs as follows:
+
+```
+$ terraform import okta_group_role.example <group id>/<role id>
+```
