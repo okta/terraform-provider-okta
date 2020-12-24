@@ -32,6 +32,7 @@ type (
 		retryCount       int
 		parallelism      int
 		backoff          bool
+		minWait          int
 		maxWait          int
 		logLevel         int
 		oktaClient       *okta.Client
@@ -47,7 +48,9 @@ func (c *Config) loadAndValidate() error {
 	})
 
 	httpClient := retryablehttp.NewClient()
-	httpClient.RetryWaitMin = time.Second * 5
+	httpClient.RetryWaitMin = time.Second * time.Duration(c.minWait)
+	httpClient.RetryWaitMax = time.Second * time.Duration(c.maxWait)
+	httpClient.RetryMax = c.retryCount
 	httpClient.Logger = c.logger
 	httpClient.HTTPClient.Transport = logging.NewTransport("Okta", httpClient.HTTPClient.Transport)
 	httpClient.ErrorHandler = errHandler
@@ -84,10 +87,10 @@ func errHandler(resp *http.Response, err error, numTries int) (*http.Response, e
 	if err != nil {
 		oErr, ok := err.(*okta.Error)
 		if ok {
-			oErr.ErrorSummary = fmt.Sprintf("%s. Giving up after %d attempt(s)", oErr.ErrorSummary, numTries)
+			oErr.ErrorSummary = fmt.Sprintf("%s, giving up after %d attempt(s)", oErr.ErrorSummary, numTries)
 			return resp, oErr
 		}
-		return resp, err
+		return resp, fmt.Errorf("%v: giving up after %d attempt(s)", err, numTries)
 	}
 	return resp, nil
 }
