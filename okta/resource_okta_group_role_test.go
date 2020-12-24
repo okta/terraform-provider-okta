@@ -28,11 +28,11 @@ func TestAccOktaGroupAdminRole_crud(t *testing.T) {
 			},
 			{
 				Config: groupTarget,
-				Check:  resource.TestCheckResourceAttrSet(resourceName, "target_group_list"),
+				Check:  resource.TestCheckResourceAttr(resourceName, "role_type", "HELP_DESK_ADMIN"),
 			},
 			{
 				Config: groupTargetsUpdated,
-				Check:  resource.TestCheckResourceAttrSet(resourceName, "target_group_list"),
+				Check:  resource.TestCheckResourceAttr(resourceName, "role_type", "HELP_DESK_ADMIN"),
 			},
 			{
 				Config: groupTargetsRemoved,
