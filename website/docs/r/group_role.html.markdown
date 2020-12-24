@@ -36,7 +36,3 @@ The following arguments are supported:
 ## Import
 
 TBD
-
-```
-$ terraform import okta_group_roles.example <group id>
-```
