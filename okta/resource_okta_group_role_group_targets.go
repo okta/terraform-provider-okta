@@ -111,7 +111,7 @@ func resourceGroupRoleGroupTargetsDelete(ctx context.Context, d *schema.Resource
 	targetIds := convertInterfaceToStringSet(d.Get("group_target_list"))
 	err := removeGroupTargetsFromRole(ctx, client, groupID, roleID, targetIds)
 	if err != nil {
-		return diag.Errorf("unable to add group target to role assignment %s for group %s: %v", roleID, groupID, err)
+		return diag.Errorf("unable to remove group target to role assignment %s for group %s: %v", roleID, groupID, err)
 	}
 	return nil
 }
