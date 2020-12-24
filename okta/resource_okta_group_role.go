@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"strings"
@@ -16,6 +17,14 @@ func resourceGroupRole() *schema.Resource {
 		UpdateContext: resourceGroupRoleUpdate,
 		DeleteContext: resourceGroupRoleDelete,
 		Importer:      &schema.ResourceImporter{StateContext: resourceGroupRoleImporter},
+		CustomizeDiff: customdiff.ForceNewIf("group_target_list", func(_ context.Context, d *schema.ResourceDiff, m interface{}) bool {
+			if d.HasChange("group_target_list") {
+				if len(convertInterfaceToStringSet(d.Get("group_target_list"))) == 0 {
+					return true
+				}
+			}
+			return false
+		}),
 		Schema: map[string]*schema.Schema{
 			"group_id": {
 				Type:        schema.TypeString,
