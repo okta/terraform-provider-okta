@@ -20,7 +20,7 @@ resource "okta_user" "test" {
 //Usage of role & target groups
 resource "okta_group_role" "test" {
   group_id  = okta_group.test.id
-  role_type = "GROUP_MEMBERSHIP_ADMIN"
+  role_type = "USER_ADMIN"
 }
 
 resource "okta_group_role_group_targets" "test" {
