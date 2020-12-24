@@ -10,7 +10,7 @@ resource "okta_user" "test" {
   login      = "testAcc-replace_with_uuid@example.com"
   email      = "testAcc-replace_with_uuid@example.com"
   group_memberships = [
-    okta_group.test.id]
+  okta_group.test.id]
 }
 
 //Usage of role

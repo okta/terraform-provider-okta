@@ -10,7 +10,7 @@ resource "okta_user" "test" {
   login      = "testAcc-replace_with_uuid@example.com"
   email      = "testAcc-replace_with_uuid@example.com"
   group_memberships = [
-    okta_group.test.id]
+  okta_group.test.id]
 }
 
 // Test Target Groups
@@ -21,7 +21,7 @@ resource "okta_group" "test_target1" {
 
 //Usage of role
 resource "okta_group_role" "test" {
-  group_id  = okta_group.test.id
-  role_type = "HELP_DESK_ADMIN"
+  group_id          = okta_group.test.id
+  role_type         = "HELP_DESK_ADMIN"
   group_target_list = [okta_group.test_target1.id]
 }
