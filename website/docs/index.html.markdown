@@ -91,3 +91,5 @@ In addition to [generic `provider` arguments](https://www.terraform.io/docs/conf
 - `max_wait_seconds` - (Optional) Maximum seconds to wait when rate limit is hit, the default is `300`.
 
 - `max_retries` - (Optional) Maximum number of retries to attempt before returning an error, the default is `5`.
+
+- `request_timeout` - (Optional) Timeout for single request (in seconds) which is made to Okta, the default is `0` (means no limit is set). The maximum value can be `100`.
