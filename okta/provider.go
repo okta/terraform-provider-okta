@@ -123,6 +123,13 @@ func Provider() *schema.Provider {
 				ValidateDiagFunc: intBetween(1, 5),
 				Description:      "providers log level. Minimum is 1 (TRACE), and maximum is 5 (ERROR)",
 			},
+			"request_timeout": {
+				Type:             schema.TypeInt,
+				Optional:         true,
+				Default:          0,
+				ValidateDiagFunc: intBetween(0, 100),
+				Description:      "Timeout for single request (in seconds) which is made to Okta, the default is `0` (means no limit is set). The maximum value can be `100`.",
+			},
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -221,14 +228,16 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 	log.Printf("[INFO] Initializing Okta client")
 
 	config := Config{
-		orgName:     d.Get("org_name").(string),
-		domain:      d.Get("base_url").(string),
-		apiToken:    d.Get("api_token").(string),
-		parallelism: d.Get("parallelism").(int),
-		retryCount:  d.Get("max_retries").(int),
-		maxWait:     d.Get("max_wait_seconds").(int),
-		backoff:     d.Get("backoff").(bool),
-		logLevel:    d.Get("log_level").(int),
+		orgName:        d.Get("org_name").(string),
+		domain:         d.Get("base_url").(string),
+		apiToken:       d.Get("api_token").(string),
+		parallelism:    d.Get("parallelism").(int),
+		retryCount:     d.Get("max_retries").(int),
+		minWait:        d.Get("min_wait_seconds").(int),
+		maxWait:        d.Get("max_wait_seconds").(int),
+		backoff:        d.Get("backoff").(bool),
+		logLevel:       d.Get("log_level").(int),
+		requestTimeout: d.Get("request_timeout").(int),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, diag.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)

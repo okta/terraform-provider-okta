@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
@@ -32,8 +33,10 @@ type (
 		retryCount       int
 		parallelism      int
 		backoff          bool
+		minWait          int
 		maxWait          int
 		logLevel         int
+		requestTimeout   int
 		oktaClient       *okta.Client
 		supplementClient *sdk.ApiSupplement
 		logger           hclog.Logger
@@ -45,20 +48,29 @@ func (c *Config) loadAndValidate() error {
 		Level:      hclog.Level(c.logLevel),
 		TimeFormat: "2006/01/02 03:04:05",
 	})
-
-	httpClient := retryablehttp.NewClient()
-	httpClient.RetryWaitMin = time.Second * 5
-	httpClient.Logger = c.logger
-	httpClient.HTTPClient.Transport = logging.NewTransport("Okta", httpClient.HTTPClient.Transport)
-	httpClient.ErrorHandler = errHandler
+	var httpClient *http.Client
+	if c.backoff {
+		retryableClient := retryablehttp.NewClient()
+		retryableClient.RetryWaitMin = time.Second * time.Duration(c.minWait)
+		retryableClient.RetryWaitMax = time.Second * time.Duration(c.maxWait)
+		retryableClient.RetryMax = c.retryCount
+		retryableClient.Logger = c.logger
+		retryableClient.HTTPClient.Transport = logging.NewTransport("Okta", retryableClient.HTTPClient.Transport)
+		retryableClient.ErrorHandler = errHandler
+		httpClient = retryableClient.StandardClient()
+	} else {
+		httpClient = cleanhttp.DefaultClient()
+		httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
+	}
 
 	_, client, err := okta.NewClient(
 		context.Background(),
 		okta.WithOrgUrl(fmt.Sprintf("https://%v.%v", c.orgName, c.domain)),
 		okta.WithToken(c.apiToken),
 		okta.WithCache(false),
-		okta.WithHttpClient(*httpClient.StandardClient()),
+		okta.WithHttpClient(*httpClient),
 		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
+		okta.WithRequestTimeout(int64(c.requestTimeout)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
 		okta.WithUserAgentExtra("okta-terraform/3.7.3"),
 	)
@@ -68,7 +80,7 @@ func (c *Config) loadAndValidate() error {
 	c.oktaClient = client
 	c.supplementClient = &sdk.ApiSupplement{
 		BaseURL:         fmt.Sprintf("https://%s.%s", c.orgName, c.domain),
-		Client:          httpClient.StandardClient(),
+		Client:          httpClient,
 		Token:           c.apiToken,
 		RequestExecutor: client.GetRequestExecutor(),
 	}
@@ -84,10 +96,10 @@ func errHandler(resp *http.Response, err error, numTries int) (*http.Response, e
 	if err != nil {
 		oErr, ok := err.(*okta.Error)
 		if ok {
-			oErr.ErrorSummary = fmt.Sprintf("%s. Giving up after %d attempt(s)", oErr.ErrorSummary, numTries)
+			oErr.ErrorSummary = fmt.Sprintf("%s, giving up after %d attempt(s)", oErr.ErrorSummary, numTries)
 			return resp, oErr
 		}
-		return resp, err
+		return resp, fmt.Errorf("%v: giving up after %d attempt(s)", err, numTries)
 	}
 	return resp, nil
 }
