@@ -26,5 +26,5 @@ resource "okta_group_role" "test" {
 resource "okta_group_role_target_groups" "test" {
   group_id = okta_group_role.test.group_id
   role_id = okta_group_role.test.id
-  target_groups = [okta_group.test_target.id]
+  group_target_list = [okta_group.test_target.id]
 }
