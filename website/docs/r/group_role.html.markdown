@@ -3,7 +3,7 @@ layout: 'okta' page_title: 'Okta: okta_group_role' sidebar_current: 'docs-okta-r
 Assigns Admin roles to Okta Groups.
 ---
 
-# okta_group_roles
+# okta_group_role
 
 Assigns Admin roles to Okta Groups.
 
