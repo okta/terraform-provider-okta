@@ -28,5 +28,5 @@ resource "okta_group" "test_target2" {
 resource "okta_group_role" "test" {
   group_id          = okta_group.test.id
   role_type         = "HELP_DESK_ADMIN"
-  group_target_list = [okta_group.test_target1.id, okta_group.test_target2.id]
+  target_group_list = [okta_group.test_target1.id, okta_group.test_target2.id]
 }

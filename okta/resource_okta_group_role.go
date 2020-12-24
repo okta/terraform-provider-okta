@@ -17,9 +17,9 @@ func resourceGroupRole() *schema.Resource {
 		UpdateContext: resourceGroupRoleUpdate,
 		DeleteContext: resourceGroupRoleDelete,
 		Importer:      &schema.ResourceImporter{StateContext: resourceGroupRoleImporter},
-		CustomizeDiff: customdiff.ForceNewIf("group_target_list", func(_ context.Context, d *schema.ResourceDiff, m interface{}) bool {
-			if d.HasChange("group_target_list") {
-				if len(convertInterfaceToStringSet(d.Get("group_target_list"))) == 0 {
+		CustomizeDiff: customdiff.ForceNewIf("target_group_list", func(_ context.Context, d *schema.ResourceDiff, m interface{}) bool {
+			if d.HasChange("target_group_list") {
+				if len(convertInterfaceToStringSet(d.Get("target_group_list"))) == 0 {
 					return true
 				}
 			}
@@ -50,7 +50,7 @@ func resourceGroupRole() *schema.Resource {
 					"USER_ADMIN",
 				}),
 			},
-			"group_target_list": {
+			"target_group_list": {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "List of groups ids for the targets of the admin role.",
@@ -72,9 +72,9 @@ func resourceGroupRoleCreate(ctx context.Context, d *schema.ResourceData, m inte
 		return diag.Errorf("failed to assign role %s to group %s: %v", roleType, groupID, err)
 	}
 
-	groupTargets := convertInterfaceToStringSet(d.Get("group_target_list"))
+	groupTargets := convertInterfaceToStringSet(d.Get("target_group_list"))
 	if len(groupTargets) > 0 && supportsGroupTargets(roleType) {
-		logger(m).Info("scoping admin role assignment to list of groups", "group_id", groupID, "role_id", role.Id, "group_target_list", groupTargets)
+		logger(m).Info("scoping admin role assignment to list of groups", "group_id", groupID, "role_id", role.Id, "target_group_list", groupTargets)
 		err = addGroupTargetsToRole(ctx, client, groupID, role.Id, groupTargets)
 		if err != nil {
 			return diag.Errorf("unable to add group target to role assignment %s for group %s: %v", role.Id, groupID, err)
@@ -101,7 +101,7 @@ func resourceGroupRoleRead(ctx context.Context, d *schema.ResourceData, m interf
 					return diag.Errorf("unable to get admin assignment %s for group %s: %v", role.Id, groupID, err)
 				}
 				groupIDs := getGroupIds(currentTargets)
-				_ = d.Set("group_target_list", groupIDs)
+				_ = d.Set("target_group_list", groupIDs)
 			}
 
 			_ = d.Set("role_type", role.Type)
@@ -118,7 +118,7 @@ func resourceGroupRoleUpdate(ctx context.Context, d *schema.ResourceData, m inte
 	roleID := d.Id()
 	roleType := d.Get("role_type").(string)
 	client := getOktaClientFromMetadata(m)
-	if d.HasChange("group_target_list") && supportsGroupTargets(roleType) {
+	if d.HasChange("target_group_list") && supportsGroupTargets(roleType) {
 		currentTargets, _, err := client.Group.ListGroupTargetsForGroupRole(ctx, groupID, roleID, nil)
 		if err != nil {
 			return diag.Errorf("unable to get admin assignment %s for group %s: %v", roleID, groupID, err)
@@ -128,12 +128,12 @@ func resourceGroupRoleUpdate(ctx context.Context, d *schema.ResourceData, m inte
 		if err != nil {
 			return diag.Errorf("unable to remove group target from admin role assignment %s of group %s: %v", roleID, groupID, err)
 		}
-		newTargetIds := convertInterfaceToStringSet(d.Get("group_target_list"))
+		newTargetIds := convertInterfaceToStringSet(d.Get("target_group_list"))
 		err = addGroupTargetsToRole(ctx, client, groupID, roleID, newTargetIds)
 		if err != nil {
 			return diag.Errorf("unable to add group target to role assignment %s for group %s: %v", roleID, groupID, err)
 		}
-		_ = d.Set("group_target_list", newTargetIds)
+		_ = d.Set("target_group_list", newTargetIds)
 	}
 	return resourceGroupRoleRead(ctx, d, m)
 }
@@ -174,7 +174,7 @@ func resourceGroupRoleImporter(ctx context.Context, d *schema.ResourceData, m in
 					return nil, fmt.Errorf("unable to get admin assignment %s for group %s: %v", role.Id, groupID, err)
 				}
 				groupIDs := getGroupIds(currentTargets)
-				_ = d.Set("group_target_list", groupIDs)
+				_ = d.Set("target_group_list", groupIDs)
 			}
 			return []*schema.ResourceData{d}, nil
 		}
