@@ -23,7 +23,7 @@ resource "okta_group_role" "test" {
   role_type = "GROUP_MEMBERSHIP_ADMIN"
 }
 
-resource "okta_group_role_target_groups" "test" {
+resource "okta_group_role_group_targets" "test" {
   group_id          = okta_group_role.test.group_id
   role_id           = okta_group_role.test.id
   group_target_list = [okta_group.test_target.id]
