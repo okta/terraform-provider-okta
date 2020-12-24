@@ -10,10 +10,10 @@ resource "okta_group" "test_target" {
 }
 
 resource "okta_user" "test" {
-  first_name = "TestAcc"
-  last_name  = "Smith"
-  login      = "testAcc-replace_with_uuid@example.com"
-  email      = "testAcc-replace_with_uuid@example.com"
+  first_name        = "TestAcc"
+  last_name         = "Smith"
+  login             = "testAcc-replace_with_uuid@example.com"
+  email             = "testAcc-replace_with_uuid@example.com"
   group_memberships = [okta_group.test.id]
 }
 
@@ -24,7 +24,7 @@ resource "okta_group_role" "test" {
 }
 
 resource "okta_group_role_target_groups" "test" {
-  group_id = okta_group_role.test.group_id
-  role_id = okta_group_role.test.id
+  group_id          = okta_group_role.test.group_id
+  role_id           = okta_group_role.test.id
   group_target_list = [okta_group.test_target.id]
 }
