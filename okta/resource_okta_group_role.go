@@ -161,7 +161,8 @@ func resourceGroupRoleImporter(ctx context.Context, d *schema.ResourceData, m in
 	}
 	groupID := importID[0]
 	roleID := importID[1]
-	rolesAssigned, _, err := getOktaClientFromMetadata(m).Group.ListGroupAssignedRoles(ctx, groupID, nil)
+	client := getOktaClientFromMetadata(m)
+	rolesAssigned, _, err := client.Group.ListGroupAssignedRoles(ctx, groupID, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -170,6 +171,15 @@ func resourceGroupRoleImporter(ctx context.Context, d *schema.ResourceData, m in
 			d.SetId(roleID)
 			_ = d.Set("group_id", groupID)
 			_ = d.Set("role_type", role.Type)
+
+			if supportsGroupTargets(role.Type) {
+				currentTargets, _, err := client.Group.ListGroupTargetsForGroupRole(ctx, groupID, role.Id, nil)
+				if err != nil {
+					return nil, fmt.Errorf("unable to get admin assignment %s for group %s: %v", role.Id, groupID, err)
+				}
+				groupIDs := getGroupIds(currentTargets)
+				_ = d.Set("group_target_list", groupIDs)
+			}
 			return []*schema.ResourceData{d}, nil
 		}
 	}
