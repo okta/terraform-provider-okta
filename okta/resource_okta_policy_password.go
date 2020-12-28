@@ -215,7 +215,9 @@ func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, m i
 		_ = d.Set("password_min_number", policy.Settings.Password.Complexity.MinNumber)
 		_ = d.Set("password_min_symbol", policy.Settings.Password.Complexity.MinSymbol)
 		_ = d.Set("password_exclude_username", policy.Settings.Password.Complexity.ExcludeUsername)
-		_ = d.Set("password_dictionary_lookup", policy.Settings.Password.Complexity.Dictionary.Common.Exclude)
+		if policy.Settings.Password.Complexity.Dictionary != nil && policy.Settings.Password.Complexity.Dictionary.Common != nil {
+			_ = d.Set("password_dictionary_lookup", policy.Settings.Password.Complexity.Dictionary.Common.Exclude)
+		}
 		_ = d.Set("password_max_age_days", policy.Settings.Password.Age.MaxAgeDays)
 		_ = d.Set("password_expire_warn_days", policy.Settings.Password.Age.ExpireWarnDays)
 		_ = d.Set("password_min_age_minutes", policy.Settings.Password.Age.MinAgeMinutes)

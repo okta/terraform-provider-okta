@@ -210,28 +210,18 @@ func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) {
 	}
 }
 
-func getBaseProperty(us *sdk.UserSchema, id string) *sdk.UserSubSchema {
-	if us == nil {
+func getBaseProperty(s *sdk.UserSchema, id string) *sdk.UserSubSchema {
+	if s == nil {
 		return nil
 	}
-	for key, part := range us.Definitions.Base.Properties {
-		if key == id {
-			return part
-		}
-	}
-	return nil
+	return s.Definitions.Base.Properties[id]
 }
 
 func getCustomProperty(s *sdk.UserSchema, id string) *sdk.UserSubSchema {
 	if s == nil {
 		return nil
 	}
-	for key, part := range s.Definitions.Custom.Properties {
-		if key == id {
-			return part
-		}
-	}
-	return nil
+	return s.Definitions.Custom.Properties[id]
 }
 
 func getNullableOneOf(d *schema.ResourceData, key string) (oneOf []*sdk.UserSchemaEnum) {
