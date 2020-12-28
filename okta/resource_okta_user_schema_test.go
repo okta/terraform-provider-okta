@@ -255,19 +255,12 @@ func testSchemaPropertyExists(schemaUserType, index, resolutionScope string) (bo
 	}
 	switch resolutionScope {
 	case baseSchema:
-		for key := range s.Definitions.Base.Properties {
-			if key == index {
-				return true, nil
-			}
-		}
+		_, ok := s.Definitions.Base.Properties[index]
+		return ok, nil
 	case customSchema:
-		for key := range s.Definitions.Custom.Properties {
-			if key == index {
-				return true, nil
-			}
-		}
+		_, ok := s.Definitions.Custom.Properties[index]
+		return ok, nil
 	default:
-		return false, fmt.Errorf("resolution scope can be 'base' or 'custom'")
+		return false, fmt.Errorf("resolution scope can be only 'base' or 'custom'")
 	}
-	return false, nil
 }
