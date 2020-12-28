@@ -26,7 +26,7 @@ type (
 		AccountLink  *AccountLink     `json:"accountLink,omitempty"`
 		Provisioning *IDPProvisioning `json:"provisioning,omitempty"`
 		Subject      *SAMLSubject     `json:"subject,omitempty"`
-		Type         string           `json:"type,omitempty"`
+		MaxClockSkew int64            `json:"maxClockSkew"`
 	}
 
 	SAMLEndpoints struct {

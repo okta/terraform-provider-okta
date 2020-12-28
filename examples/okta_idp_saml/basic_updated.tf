@@ -29,4 +29,5 @@ resource "okta_idp_saml" "test" {
   issuer                   = "https://idp.example.com/issuer"
   response_signature_scope = "RESPONSE"
   request_signature_scope  = "REQUEST"
+  max_clock_skew           = 60
 }
