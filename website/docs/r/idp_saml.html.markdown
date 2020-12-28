@@ -58,6 +58,8 @@ The following arguments are supported:
 
 - `issuer_mode` - (Optional) Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL. It can be `"ORG_URL"` or `"CUSTOM_URL"`.
 
+- `max_clock_skew` - (Optional) Maximum allowable clock-skew when processing messages from the IdP.
+
 - `status` - (Optional) Status of the IdP.
 
 - `account_link_action` - (Optional) Specifies the account linking action for an IdP user.

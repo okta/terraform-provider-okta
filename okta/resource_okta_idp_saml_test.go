@@ -44,6 +44,7 @@ func TestAccOktaIdpSaml_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "max_clock_skew", "60"),
 					resource.TestCheckResourceAttr(resourceName, "acs_binding", "HTTP-POST"),
 					resource.TestCheckResourceAttr(resourceName, "acs_type", "INSTANCE"),
 					resource.TestCheckResourceAttrSet(resourceName, "audience"),
