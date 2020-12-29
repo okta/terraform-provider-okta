@@ -24,7 +24,7 @@ data "okta_users" "example" {
 
 ## Arguments Reference
 
-- `search` - (Required) Map of search criteria to use to find users. It supports the following properties.
+- `search` - (Required) Map of search criteria to find users. It supports the following properties.
   - `name` - (Required) Name of property to search against.
   - `comparison` - (Required) Comparison to use.
   - `value` - (Required) Value to compare with.

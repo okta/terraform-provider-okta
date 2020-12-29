@@ -86,8 +86,8 @@ func resourceAppOAuth() *schema.Resource {
 		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
 			// Force new if omit_secret goes from true to false
 			if d.Id() != "" {
-				old, new := d.GetChange("omit_secret")
-				if old.(bool) && !new.(bool) {
+				oldValue, newValue := d.GetChange("omit_secret")
+				if oldValue.(bool) && !newValue.(bool) {
 					return d.ForceNew("omit_secret")
 				}
 			}
@@ -295,7 +295,6 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	}
 	d.SetId(app.Id)
 	if !d.Get("omit_secret").(bool) {
-		// Needs to be set immediately, not provided again after this
 		_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
 	}
 	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
@@ -326,7 +325,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	_ = d.Set("label", app.Label)
 	_ = d.Set("profile", rawProfile)
 	_ = d.Set("type", app.Settings.OauthClient.ApplicationType)
-	// Not setting client_secret, it is only provided on create for auth methods that require it
+	// Not setting client_secret, it is only provided on create and update for auth methods that require it
 	_ = d.Set("client_id", app.Credentials.OauthClient.ClientId)
 	_ = d.Set("token_endpoint_auth_method", app.Credentials.OauthClient.TokenEndpointAuthMethod)
 	_ = d.Set("auto_key_rotation", app.Credentials.OauthClient.AutoKeyRotation)
@@ -401,6 +400,9 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
 		return diag.Errorf("failed to update OAuth application: %v", err)
+	}
+	if !d.Get("omit_secret").(bool) {
+		_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
 	}
 	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {

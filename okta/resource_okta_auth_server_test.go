@@ -37,10 +37,10 @@ func deleteAuthServers(client *testClient) error {
 func authServerExists(id string) (bool, error) {
 	client := getSupplementFromMetadata(testAccProvider.Meta())
 	server, resp, err := client.GetAuthorizationServer(context.Background(), id)
-	if resp.StatusCode == http.StatusNotFound {
+	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return false, nil
 	}
-	return server.Id != "" && err == nil, err
+	return server != nil && server.Id != "" && err == nil, err
 }
 
 func TestAccOktaAuthServer_crud(t *testing.T) {

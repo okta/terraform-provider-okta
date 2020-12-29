@@ -60,9 +60,9 @@ The following arguments are supported:
 
 - `groups` - (Optional) Groups associated with the application. See `okta_app_group_assignment` for a more flexible approach.
 
-- `status` - (Optional) Status of application. By default it is `"ACTIVE"`.
+- `status` - (Optional) Status of application. By default, it is `"ACTIVE"`.
 
-- `accessibility_self_service` - (Optional) Enable self service. By default it is `false`.
+- `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
 
 - `accessibility_error_redirect_url` - (Optional) Custom error page URL.
 
@@ -76,7 +76,7 @@ The following arguments are supported:
 
 - `name` - Name assigned to the application by Okta.
 
-- `sign_on_mode` - Sign on mode of application.
+- `sign_on_mode` - Sign-on mode of application.
 
 - `user_name_template` - The default username assigned to each user.
 

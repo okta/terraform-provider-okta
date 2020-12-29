@@ -8,7 +8,7 @@ description: |-
 
 # okta_app_basic_auth
 
-Creates a Bsaic Auth Application.
+Creates a Basic Auth Application.
 
 This resource allows you to create and configure a Basic Auth Application.
 

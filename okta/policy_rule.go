@@ -37,7 +37,7 @@ var baseRuleSchema = map[string]*schema.Schema{
 	"priority": {
 		Type:        schema.TypeInt,
 		Optional:    true,
-		Description: "Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last/lowest if not there.",
+		Description: "Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last (lowest) if not there.",
 		// Suppress diff if config is empty.
 		DiffSuppressFunc: createValueDiffSuppression("0"),
 	},

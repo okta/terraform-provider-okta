@@ -35,9 +35,10 @@ resource "okta_template_sms" "example" {
 The following arguments are supported:
 
 - `type` - (Required) SMS template type
+
 - `template` - (Required) Default SMS message
 
-- `translations` - (Required) Set of translations for particular template.
+- `translations` - (Required) Set of translations for a particular template.
   - `language` - (Required) The language to map the template to.
   - `template` - (Required) The SMS message.
 

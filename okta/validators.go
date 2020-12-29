@@ -84,12 +84,12 @@ func stringIsURL(schemes ...string) schema.SchemaValidateDiagFunc {
 		if u.Host == "" {
 			return diag.Errorf("invalid URL: expected '%s' to have a host", val)
 		}
-		for _, s := range validURLSchemes {
+		for _, s := range schemes {
 			if u.Scheme == s {
 				return nil
 			}
 		}
-		return diag.Errorf("invalid URL: expected %s to have a url with schema of: %q, got %v", val, strings.Join(validURLSchemes, ","), v)
+		return diag.Errorf("invalid URL: expected %s to have a url with schema of: %q, got %v", val, strings.Join(schemes, ","), v)
 	}
 }
 

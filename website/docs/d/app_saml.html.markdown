@@ -50,11 +50,11 @@ data "okta_app_saml" "example" {
 
 - `default_relay_state` - Identifies a specific application resource in an IDP initiated SSO scenario.
 
-- `sso_url` - Single Sign on Url.
+- `sso_url` - Single Sign-on Url.
 
 - `recipient` - The location where the app may present the SAML assertion.
 
-- `destination` - Identifies the location where the SAML response is intended to be sent inside of the SAML assertion.
+- `destination` - Identifies the location where the SAML response is intended to be sent inside the SAML assertion.
 
 - `audience` - Audience restriction.
 
@@ -80,7 +80,7 @@ data "okta_app_saml" "example" {
 
 - `authn_context_class_ref` - Identifies the SAML authentication context class for the assertion’s authentication statement.
 
-- `accessibility_self_service` - Enable self service.
+- `accessibility_self_service` - Enable self-service.
 
 - `accessibility_error_redirect_url` - Custom error page URL.
 

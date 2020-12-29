@@ -24,7 +24,7 @@ data "okta_group" "example" {
 - `type` - (Optional) type of the group to retrieve. Can only be one of `OKTA_GROUP` (Native Okta Groups), `APP_GROUP`
   (Imported App Groups), or `BUILT_IN` (Okta System Groups).
 
-- `include_users` - (Optional) whether or not to retrieve all member ids.
+- `include_users` - (Optional) whether to retrieve all member ids.
 
 ## Attributes Reference
 

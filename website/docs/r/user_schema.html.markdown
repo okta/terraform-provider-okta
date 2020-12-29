@@ -3,7 +3,7 @@ layout: 'okta'
 page_title: 'Okta: okta_user_schema'
 sidebar_current: 'docs-okta-resource-user-schema'
 description: |-
-  Creates an User Schema property.
+  Creates a User Schema property.
 ---
 
 # okta_user_schema

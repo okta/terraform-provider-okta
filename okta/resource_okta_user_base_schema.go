@@ -113,7 +113,7 @@ func resourceUserBaseSchemaUpdate(ctx context.Context, d *schema.ResourceData, m
 }
 
 // can't delete Base schema
-func resourceUserBaseSchemaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserBaseSchemaDelete(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
 	return nil
 }
 

@@ -37,8 +37,8 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 - [okta_network_zone](./okta_network_zone) Supports the management of Okta Network Zones for whitelisting IPs or countries dynamically.
 - [okta_policy_mfa](./okta_policy_mfa) Supports the management of MFA policies.
 - [okta_policy_password](./okta_policy_password) Supports the management of password policies.
-- [okta_policy_rule_signon](./okta_policy_rule_signon) Supports the management of sign on policy rules.
-- [okta_policy_signon](./okta_policy_signon) Supports the management of sign on policies.
+- [okta_policy_rule_signon](./okta_policy_rule_signon) Supports the management of sign-on policy rules.
+- [okta_policy_signon](./okta_policy_signon) Supports the management of sign-on policies.
 - [okta_template_email](./okta_template_email) Supports the management of custom email templates.
 - [okta_trusted_origin](./okta_trusted_origin) Supports the management of Okta Trusted Sources and Origins.
 - [okta_user_base_schema](./okta_user_base_schema) Supports the management of Okta User Profile Attribute Schemas.

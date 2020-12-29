@@ -76,9 +76,9 @@ The following arguments are supported:
 
 - `network_excludes` - Required if `network_connection` = `"ZONE"`. Indicates the network zones to exclude.
 
-- `priority` - (Optional) Idp rule priority. This attribute can be set to a valid priority. To avoid an endless diff situation an error is thrown if an invalid property is provided. The Okta API defaults to the last/lowest if not provided.
+- `priority` - (Optional) Idp rule priority. This attribute can be set to a valid priority. To avoid an endless diff situation an error is thrown if an invalid property is provided. The Okta API defaults to the last (lowest) if not provided.
 
-- `status` - (Optional) Idp rule status: `"ACTIVE"` or `"INACTIVE"`. By default it is `"ACTIVE"`.
+- `status` - (Optional) Idp rule status: `"ACTIVE"` or `"INACTIVE"`. By default, it is `"ACTIVE"`.
 
 - `user_identifier_type` - (Optional) One of: `"IDENTIFIER"`, `"ATTRIBUTE"`
 
@@ -86,7 +86,7 @@ The following arguments are supported:
 
 - `app_include` - (Optional) Applications to include in discovery rule.
 
-  - `id` - (Optional) Use if `type` is `"APP"` to indicate the application Id to include.
+  - `id` - (Optional) Use if `type` is `"APP"` to indicate the application id to include.
 
   - `name` - (Optional) Use if the `type` is `"APP_TYPE"` to indicate the type of application(s) to include in instances where an entire group (i.e. `yahoo_mail`) of applications should be included.
 
@@ -126,7 +126,7 @@ app_exclude {
 }
 ```
 
-- `user_identifier_patterns` - (Optional) Specifies a User Identifier pattern condition to match against. If `match_type` of `"EXPRESSION"` is used, only a *single* element can be set. Otherwise multiple elements of matching patterns may be provided.
+- `user_identifier_patterns` - (Optional) Specifies a User Identifier pattern condition to match against. If `match_type` of `"EXPRESSION"` is used, only a *single* element can be set, otherwise multiple elements of matching patterns may be provided.
 
   - `match_type` - (Optional) The kind of pattern. For regex, use `"EXPRESSION"`. For simple string matches, use one of the following: `"SUFFIX"`, `"EQUALS"`, `"STARTS_WITH"`, `"CONTAINS"`
 

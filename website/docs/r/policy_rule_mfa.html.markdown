@@ -20,7 +20,7 @@ The following arguments are supported:
 
 - `name` - (Required) Policy Rule Name.
 
-- `priority` - (Optional) Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last/lowest if not there.
+- `priority` - (Optional) Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last (lowest) if not there.
 
 - `status` - (Optional) Policy Rule Status: `"ACTIVE"` or `"INACTIVE"`.
 

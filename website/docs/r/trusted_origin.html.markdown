@@ -26,7 +26,7 @@ resource "okta_trusted_origin" "example" {
 
 The following arguments are supported:
 
-- `active` - (Optional) Whether the Trusted Origin is active or not - can only be issued post-creation. By default it is 'true'.
+- `active` - (Optional) Whether the Trusted Origin is active or not - can only be issued post-creation. By default, it is 'true'.
 
 - `name` - (Required) Unique name for this trusted origin.
 

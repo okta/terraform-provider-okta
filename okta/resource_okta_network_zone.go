@@ -136,8 +136,7 @@ func buildNetworkZone(d *schema.ResourceData) *sdk.NetworkZone {
 
 func buildAddressObjList(values *schema.Set) []*sdk.AddressObj {
 	var addressType string
-	addressObjList := []*sdk.AddressObj{}
-
+	var addressObjList []*sdk.AddressObj
 	for _, value := range values.List() {
 		if strings.Contains(value.(string), "/") {
 			addressType = "CIDR"

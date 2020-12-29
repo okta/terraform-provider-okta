@@ -145,7 +145,7 @@ func resourceProfileMappingUpdate(ctx context.Context, d *schema.ResourceData, m
 	return resourceProfileMappingRead(ctx, d, m)
 }
 
-func resourceProfileMappingDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceProfileMappingDelete(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
 	return nil
 }
 
