@@ -57,7 +57,7 @@ explained below:
 
 ### Environment variables
 
-You can provide your credentials via the `OKTA_ORG_NAME`, `OKTA_BASE_URL` and `OKTA_API_TOKEN`, environment variables, representing your Okta Organization Name, Okta Base URL (ie. `"okta.com"` or `"oktapreview.com"`) and Okta API Token, respectively.
+You can provide your credentials via the `OKTA_ORG_NAME`, `OKTA_BASE_URL` and `OKTA_API_TOKEN`, environment variables, representing your Okta Organization Name, Okta Base URL (i.e. `"okta.com"` or `"oktapreview.com"`) and Okta API Token, respectively.
 
 ```hcl
 provider "okta" {}
@@ -80,9 +80,9 @@ In addition to [generic `provider` arguments](https://www.terraform.io/docs/conf
 
 - `org_name` - (Optional) This is the org name of your Okta account, for example `dev-123456.oktapreview.com` would have an org name of `dev-123456`. It must be provided, but it can also be sourced from the `OKTA_ORG_NAME` environment variable.
 
-- `base_url` - (Optional) This is the domain of your Okta account, for example `dev-123456.oktapreview.com` would have a base url of `oktapreview.com`. It must be provided but it can also be sourced from the `OKTA_BASE_URL` environment variable.
+- `base_url` - (Optional) This is the domain of your Okta account, for example `dev-123456.oktapreview.com` would have a base url of `oktapreview.com`. It must be provided, but it can also be sourced from the `OKTA_BASE_URL` environment variable.
 
-- `api_token` - (Optional) This is the API token to interact with your Okta org. It must be provided but it can also be sourced from the `OKTA_API_TOKEN` environment variable.
+- `api_token` - (Optional) This is the API token to interact with your Okta org. It must be provided, but it can also be sourced from the `OKTA_API_TOKEN` environment variable.
 
 - `backoff` - (Optional) Whether to use exponential back off strategy for rate limits, the default is `true`.
 

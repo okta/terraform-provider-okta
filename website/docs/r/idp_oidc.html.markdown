@@ -51,7 +51,7 @@ The following arguments are supported:
 
 - `token_binding` - (Required) The method of making a token request. It can be set to `"HTTP-POST"` or `"HTTP-REDIRECT"`.
 
-- `jwks_url` - (Required) Endpoint where the signer of the keys publishes its keys in a JWK Set.
+- `jwks_url` - (Required) Endpoint where the keys signer publishes its keys in a JWK Set.
 
 - `jwks_binding` - (Required) The method of making a request for the OIDC JWKS. It can be set to `"HTTP-POST"` or `"HTTP-REDIRECT"`.
 
@@ -97,7 +97,7 @@ The following arguments are supported:
 
 - `username_template` - (Optional) Okta EL Expression to generate or transform a unique username for the IdP user.
 
-- `subject_match_type` - (Optional) Determines the Okta user profile attribute match conditions for account linking and authentication of the transformed IdP username. By default it is set to `"USERNAME"`. It can be set to `"USERNAME"`, `"EMAIL"`, `"USERNAME_OR_EMAIL"` or `"CUSTOM_ATTRIBUTE"`.
+- `subject_match_type` - (Optional) Determines the Okta user profile attribute match conditions for account linking and authentication of the transformed IdP username. By default, it is set to `"USERNAME"`. It can be set to `"USERNAME"`, `"EMAIL"`, `"USERNAME_OR_EMAIL"` or `"CUSTOM_ATTRIBUTE"`.
 
 - `subject_match_attribute` - (Optional) Okta user profile attribute for matching transformed IdP username. Only for matchType `"CUSTOM_ATTRIBUTE"`.
 

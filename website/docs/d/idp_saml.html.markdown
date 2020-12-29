@@ -36,9 +36,9 @@ data "okta_idp_saml" "example" {
 
 - `acs_type` - Determines whether to publish an instance-specific (trust) or organization (shared) ACS endpoint in the SAML metadata.
 
-- `sso_url` - single sign on url.
+- `sso_url` - single sign-on url.
 
-- `sso_binding` - single sign on binding.
+- `sso_binding` - single sign-on binding.
 
 - `sso_destination` - SSO request binding, HTTP-POST or HTTP-REDIRECT.
 

@@ -18,7 +18,7 @@ The following arguments are supported:
 
 - `name` - (Required) Policy Rule Name.
 
-- `priority` - (Optional) Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last/lowest if not there.
+- `priority` - (Optional) Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last (lowest) if not there.
 
 - `status` - (Optional) Policy Rule Status: `"ACTIVE"` or `"INACTIVE"`.
 
@@ -28,13 +28,13 @@ The following arguments are supported:
 
 - `mfa_required` - (Optional) Require MFA. By default is `false`.
 
-- `mfa_prompt` - (Optional) Prompt for MFA based on the device used, a factor session lifetime, or every sign on attempt: `"DEVICE"`, `"SESSION"` or `"ALWAYS"`.
+- `mfa_prompt` - (Optional) Prompt for MFA based on the device used, a factor session lifetime, or every sign-on attempt: `"DEVICE"`, `"SESSION"` or `"ALWAYS"`.
 
 - `mfa_remember_device` - (Optional) Remember MFA device. The default `false`.
 
 - `mfa_lifetime` - (Optional) Elapsed time before the next MFA challenge.
 
-- `session_idle` - (Optional) Max minutes a session can be idle.",
+- `session_idle` - (Optional) Max minutes a session can be idle.,
 
 - `session_lifetime` - (Optional) Max minutes a session is active: Disable = 0.
 

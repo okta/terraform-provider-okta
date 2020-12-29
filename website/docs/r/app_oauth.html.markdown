@@ -47,7 +47,7 @@ The following arguments are supported:
 
 - `label` - (Required) The Application's display name.
 
-- `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
+- `status` - (Optional) The status of the application, by default, it is `"ACTIVE"`.
 
 - `type` - (Required) The type of OAuth application.
 
@@ -57,7 +57,7 @@ The following arguments are supported:
 
 - `client_id` - (Optional) OAuth client ID. If set during creation, app is created with this id.
 
-- `omit_secret` - (Optional) This tells the provider not to persist the application's secret to state. If this is ever changes from true => false your app will be recreated.
+- `omit_secret` - (Optional) This tells the provider not to persist the application's secret to state. Your app will be recreated if this ever changes from true => false.
 
 - `client_basic_secret` - (Optional) OAuth client secret key, this can be set when token_endpoint_auth_method is client_secret_basic.
 
@@ -101,7 +101,7 @@ The following arguments are supported:
 
 - `name` - Name assigned to the application by Okta.
 
-- `sign_on_mode` - Sign on mode of application.
+- `sign_on_mode` - Sign-on mode of application.
 
 - `client_id` - The client ID of the application.
 

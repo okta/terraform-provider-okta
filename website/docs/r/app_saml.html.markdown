@@ -58,11 +58,11 @@ The following arguments are supported:
 
 - `default_relay_state` - (Optional) Identifies a specific application resource in an IDP initiated SSO scenario.
 
-- `sso_url` - (Optional) Single Sign on Url.
+- `sso_url` - (Optional) Single Sign-on Url.
 
 - `recipient` - (Optional) The location where the app may present the SAML assertion.
 
-- `destination` - (Optional) Identifies the location where the SAML response is intended to be sent inside of the SAML assertion.
+- `destination` - (Optional) Identifies the location where the SAML response is intended to be sent inside the SAML assertion.
 
 - `audience` - (Optional) Audience restriction.
 
@@ -88,7 +88,7 @@ The following arguments are supported:
 
 - `authn_context_class_ref` - (Optional) Identifies the SAML authentication context class for the assertion’s authentication statement.
 
-- `accessibility_self_service` - (Optional) Enable self service.
+- `accessibility_self_service` - (Optional) Enable self-service.
 
 - `accessibility_error_redirect_url` - (Optional) Custom error page URL.
 
@@ -120,7 +120,7 @@ The following arguments are supported:
 
 - `name` - Name assigned to the application by Okta.
 
-- `sign_on_mode` - Sign on mode of application.
+- `sign_on_mode` - Sign-on mode of application.
 
 - `key_id` - Certificate key ID.
 

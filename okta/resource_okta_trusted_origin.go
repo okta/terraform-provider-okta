@@ -121,9 +121,9 @@ func buildTrustedOrigin(d *schema.ResourceData) okta.TrustedOrigin {
 	}
 	resScopes := d.Get("scopes").([]interface{})
 	trustedOrigin.Scopes = make([]*okta.Scope, len(resScopes))
-	for i, vals := range resScopes {
+	for i := range resScopes {
 		trustedOrigin.Scopes[i] = &okta.Scope{
-			Type: vals.(string),
+			Type: resScopes[i].(string),
 		}
 	}
 	return trustedOrigin

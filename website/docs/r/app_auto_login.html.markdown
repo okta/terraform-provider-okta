@@ -30,7 +30,7 @@ The following arguments are supported:
 
 - `label` - (Required) The Application's display name.
 
-- `status` - (Optional) The status of the application, by default it is `"ACTIVE"`.
+- `status` - (Optional) The status of the application, by default, it is `"ACTIVE"`.
 
 - `preconfigured_app` - (Optional) Tells Okta to use an existing application in their application catalog, as opposed to a custom application.
 
@@ -56,7 +56,7 @@ The following arguments are supported:
 
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
-- `accessibility_self_service` - (Optional) Enable self service. By default it is `false`.
+- `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
 
 - `accessibility_error_redirect_url` - (Optional) Custom error page URL.
 
@@ -67,7 +67,7 @@ The following arguments are supported:
 ## Attributes Reference
 
 - `name` - Name assigned to the application by Okta.
-- `sign_on_mode` - Sign on mode of application.
+- `sign_on_mode` - Sign-on mode of the application.
 
 ## Import
 

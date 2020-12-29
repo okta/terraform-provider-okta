@@ -171,7 +171,7 @@ func testCheckResourceSetAttr(resourceName, attribute string, set *schema.Set) r
 				!strings.HasSuffix(k, ".#") &&
 				!strings.HasSuffix(k, ".%") {
 				// k will be "attribute.12345" or "attribute.12345.subAttribute"
-				// This will split the attribute key into either two or three peices.
+				// This will split the attribute key into either two or three pieces.
 				// If this attribute is a set of strings, then it will be two elements:
 				//    { attributeName, hash }
 				// If this attribute is a set of maps, then it will be three elements:

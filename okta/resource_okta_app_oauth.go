@@ -86,8 +86,8 @@ func resourceAppOAuth() *schema.Resource {
 		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
 			// Force new if omit_secret goes from true to false
 			if d.Id() != "" {
-				old, new := d.GetChange("omit_secret")
-				if old.(bool) && !new.(bool) {
+				oldValue, newValue := d.GetChange("omit_secret")
+				if oldValue.(bool) && !newValue.(bool) {
 					return d.ForceNew("omit_secret")
 				}
 			}

@@ -39,7 +39,7 @@ The following arguments are supported:
 
 - `description` - (Optional) The description of the Auth Server Policy.
 
-- `client_whitelist` - (Required) The clients to whitelist the policy for. `["ALL_CLIENTS"]` is a special value that can be used to whitelist for all clients. Otherwise it is a list of client ids.
+- `client_whitelist` - (Required) The clients to whitelist the policy for. `["ALL_CLIENTS"]` is a special value that can be used to whitelist all clients, otherwise it is a list of client ids.
 
 ## Attributes Reference
 
