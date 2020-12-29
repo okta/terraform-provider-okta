@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -89,9 +90,13 @@ func resourceFactorDelete(ctx context.Context, d *schema.ResourceData, m interfa
 	if !d.Get("active").(bool) {
 		return nil
 	}
-	_, _, err := getSupplementFromMetadata(m).DeactivateFactor(ctx, d.Id())
+	_, resp, err := getSupplementFromMetadata(m).DeactivateFactor(ctx, d.Id())
+	// http.StatusBadRequest means that factor can not be deactivated
+	if resp != nil && resp.StatusCode == http.StatusBadRequest {
+		return nil
+	}
 	if err != nil {
-		return diag.Errorf("failed to deactivate factor: %v", err)
+		return diag.Errorf("failed to deactivate '%s' factor: %v", d.Id(), err)
 	}
 	return nil
 }

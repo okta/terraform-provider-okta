@@ -45,7 +45,6 @@ func TestAccOktaMfaPolicy_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy Updated"),
 					resource.TestCheckResourceAttr(resourceName, "google_otp.enroll", "OPTIONAL"),
 					resource.TestCheckResourceAttr(resourceName, "okta_sms.enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "google_otp.enroll", "OPTIONAL"),
 					resource.TestCheckResourceAttr(resourceName, "okta_email.enroll", "OPTIONAL"),
 				),
 			},
