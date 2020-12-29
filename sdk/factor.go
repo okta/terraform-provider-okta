@@ -22,26 +22,29 @@ const (
 	GoogleOtpFactor    = "google_otp"
 	OktaCallFactor     = "okta_call"
 	OktaOtpFactor      = "okta_otp"
+	OktaPasswordFactor = "okta_password"
 	OktaPushFactor     = "okta_push"
 	OktaQuestionFactor = "okta_question"
 	OktaSmsFactor      = "okta_sms"
+	OktaEmailFactor    = "okta_email"
 	RsaTokenFactor     = "rsa_token"
 	SymantecVipFactor  = "symantec_vip"
 	YubikeyTokenFactor = "yubikey_token"
 )
 
-// ListFactors lists factors in your organization
-func (m *ApiSupplement) ListFactors(ctx context.Context) ([]Factor, *okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("GET", "/api/v1/org/factors", nil)
+// GetFactor gets a factor by ID.
+func (m *ApiSupplement) GetFactor(ctx context.Context, id string) (*Factor, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/org/factors/%s", id)
+	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
-	var factors []Factor
-	resp, err := m.RequestExecutor.Do(ctx, req, &factors)
+	var factor Factor
+	resp, err := m.RequestExecutor.Do(ctx, req, &factor)
 	if err != nil {
 		return nil, resp, err
 	}
-	return factors, resp, nil
+	return &factor, resp, nil
 }
 
 // ActivateFactor allows multifactor authentication to use provided factor type
