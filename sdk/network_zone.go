@@ -27,6 +27,7 @@ type (
 		Proxies   []*AddressObj `json:"proxies,omitempty"`
 		System    bool          `json:"system,omitempty"`
 		Type      string        `json:"type,omitempty"`
+		Usage     string        `json:"usage,omitempty"`
 	}
 )
 
