@@ -26,9 +26,13 @@ func newRateLimitThrottle(endpointsRegexes []string, maxRequests int) *rateLimit
 	for i, endpointRegex := range endpointsRegexes {
 		endpointsPatterns[i] = regexp.MustCompile(endpointRegex)
 	}
+	// According to "Management rate limits" docs the smallest rate limit for any endpoint across all
+	// pricing plans is 20. Use that until we get the first response with X-Rate-Limit-Limit header set.
+	const smallestManagementRateLimit = 20
 	return &rateLimitThrottle{
 		endpointsPatterns: endpointsPatterns,
 		maxRequests:       maxRequests,
+		rateLimit:         smallestManagementRateLimit,
 	}
 }
 
@@ -49,7 +53,7 @@ func (t *rateLimitThrottle) preRequestHook(ctx context.Context, path string) err
 	defer t.throttlingMx.Unlock()
 	t.variablesMx.Lock()
 	t.noOfRequestsMade++
-	if t.rateLimit != 0 && float64(t.noOfRequestsMade) > math.Max(float64(t.rateLimit*t.maxRequests)/100.0, 1) {
+	if float64(t.noOfRequestsMade) > math.Max(float64(t.rateLimit*t.maxRequests)/100.0, 1) {
 		t.noOfRequestsMade = 1
 		timeToSleep := time.Minute
 		if !t.rateLimitResetTime.IsZero() {
