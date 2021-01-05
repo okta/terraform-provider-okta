@@ -8,23 +8,23 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func sweepUserSchema(client *testClient) error {
 	userTypeList, _, _ := client.oktaClient.UserType.ListUserTypes(context.Background())
 	var errorList []error
 	for _, ut := range userTypeList {
-		schemaURL := userTypeURL(ut)
-		schema, _, err := client.apiSupplement.GetUserSchema(schemaURL)
+		schemaUrl := userTypeURL(ut)
+		schema, _, err := client.apiSupplement.GetUserSchema(context.Background(), schemaUrl)
 		if err != nil {
 			return err
 		}
 		for key := range schema.Definitions.Custom.Properties {
 			if strings.HasPrefix(key, testResourcePrefix) {
-				if _, err := client.apiSupplement.DeleteUserSchemaProperty(schemaURL, key); err != nil {
+				if _, err := client.apiSupplement.DeleteUserSchemaProperty(context.Background(), schemaUrl, key); err != nil {
 					errorList = append(errorList, err)
 				}
 			}
@@ -43,9 +43,9 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 	resourceName := buildResourceFQN(userSchema, ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: checkOktaUserSchemasDestroy(),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkOktaUserSchemasDestroy(),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -65,6 +65,7 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enum.2", "L"),
 					resource.TestCheckResourceAttr(resourceName, "enum.3", "XL"),
 					resource.TestCheckResourceAttr(resourceName, "one_of.#", "4"),
+					resource.TestCheckResourceAttr(resourceName, "pattern", ""),
 				),
 			},
 			{
@@ -85,6 +86,7 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enum.2", "L"),
 					resource.TestCheckResourceAttr(resourceName, "enum.3", "XXL"),
 					resource.TestCheckResourceAttr(resourceName, "one_of.#", "4"),
+					resource.TestCheckResourceAttr(resourceName, "pattern", ".+"),
 				),
 			},
 			{
@@ -101,6 +103,7 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_WRITE"),
 					resource.TestCheckResourceAttr(resourceName, "master", "OKTA"),
 					resource.TestCheckResourceAttr(resourceName, "unique", "UNIQUE_VALIDATED"),
+					resource.TestCheckResourceAttr(resourceName, "pattern", ""),
 				),
 			},
 			{
@@ -137,9 +140,9 @@ func TestAccOktaUserSchema_arrayString(t *testing.T) {
 	arrayEnum := mgr.GetFixtures("array_enum.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: checkOktaUserSchemasDestroy(),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkOktaUserSchemasDestroy(),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -242,29 +245,22 @@ func testOktaUserSchemasExists(name string) resource.TestCheckFunc {
 }
 
 func testSchemaPropertyExists(schemaUserType, index, resolutionScope string) (bool, error) {
-	schemaURL, err := getUserTypeSchemaURL(testAccProvider.Meta(), schemaUserType)
+	schemaUrl, err := getUserTypeSchemaUrl(context.Background(), getOktaClientFromMetadata(testAccProvider.Meta()), schemaUserType)
 	if err != nil {
 		return false, err
 	}
-	s, _, err := getSupplementFromMetadata(testAccProvider.Meta()).GetUserSchema(schemaURL)
+	s, _, err := getSupplementFromMetadata(testAccProvider.Meta()).GetUserSchema(context.Background(), schemaUrl)
 	if err != nil {
 		return false, fmt.Errorf("failed to get user schema: %v", err)
 	}
 	switch resolutionScope {
 	case baseSchema:
-		for key := range s.Definitions.Base.Properties {
-			if key == index {
-				return true, nil
-			}
-		}
+		_, ok := s.Definitions.Base.Properties[index]
+		return ok, nil
 	case customSchema:
-		for key := range s.Definitions.Custom.Properties {
-			if key == index {
-				return true, nil
-			}
-		}
+		_, ok := s.Definitions.Custom.Properties[index]
+		return ok, nil
 	default:
-		return false, fmt.Errorf("resolution scope can be 'base' or 'custom'")
+		return false, fmt.Errorf("resolution scope can be only 'base' or 'custom'")
 	}
-	return false, nil
 }

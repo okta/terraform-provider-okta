@@ -2,38 +2,35 @@ package okta
 
 import (
 	"context"
-	"fmt"
-	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourcePolicySignonRule() *schema.Resource {
 	return &schema.Resource{
-		Exists:   resourcePolicyRuleExists,
-		Create:   resourcePolicySignonRuleCreate,
-		Read:     resourcePolicySignonRuleRead,
-		Update:   resourcePolicySignonRuleUpdate,
-		Delete:   resourcePolicySignonRuleDelete,
-		Importer: createPolicyRuleImporter(),
+		CreateContext: resourcePolicySignOnRuleCreate,
+		ReadContext:   resourcePolicySignOnRuleRead,
+		UpdateContext: resourcePolicySignOnRuleUpdate,
+		DeleteContext: resourcePolicySignOnRuleDelete,
+		Importer:      createPolicyRuleImporter(),
 
 		Schema: buildRuleSchema(map[string]*schema.Schema{
 			"authtype": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"ANY", "RADIUS"}, false),
-				Description:  "Authentication entrypoint: ANY or RADIUS.",
-				Default:      "ANY",
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"ANY", "RADIUS"}),
+				Description:      "Authentication entrypoint: ANY or RADIUS.",
+				Default:          "ANY",
 			},
 			"access": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"ALLOW", "DENY"}, false),
-				Description:  "Allow or deny access based on the rule conditions: ALLOW or DENY.",
-				Default:      "ALLOW",
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"ALLOW", "DENY"}),
+				Description:      "Allow or deny access based on the rule conditions: ALLOW or DENY.",
+				Default:          "ALLOW",
 			},
 			"mfa_required": {
 				Type:        schema.TypeBool,
@@ -42,10 +39,10 @@ func resourcePolicySignonRule() *schema.Resource {
 				Default:     false,
 			},
 			"mfa_prompt": { // mfa_require must be true
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"DEVICE", "SESSION", "ALWAYS"}, false),
-				Description:  "Prompt for MFA based on the device used, a factor session lifetime, or every sign on attempt: DEVICE, SESSION or ALWAYS",
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"DEVICE", "SESSION", "ALWAYS"}),
+				Description:      "Prompt for MFA based on the device used, a factor session lifetime, or every sign-on attempt: DEVICE, SESSION or ALWAYS",
 			},
 			"mfa_remember_device": {
 				Type:        schema.TypeBool,
@@ -80,41 +77,22 @@ func resourcePolicySignonRule() *schema.Resource {
 	}
 }
 
-func resourcePolicySignonRuleCreate(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultRule(d); err != nil {
-		return err
-	}
-
-	log.Printf("[INFO] Creating Policy Rule %v", d.Get("name").(string))
+func resourcePolicySignOnRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	template := buildSignOnPolicyRule(d)
-	rule, err := createRule(d, m, template, policyRuleSignOn)
+	err := createRule(ctx, d, m, template, policyRuleSignOn)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create sign-on policy rule: %v", err)
 	}
-
-	// We want to put this under Terraform's control even if priority is invalid.
-	d.SetId(rule.Id)
-	err = validatePriority(template.Priority, rule.Priority)
-	if err != nil {
-		return err
-	}
-
-	return resourcePolicySignonRuleRead(d, m)
+	return resourcePolicySignOnRuleRead(ctx, d, m)
 }
 
-func resourcePolicySignonRuleRead(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] List Policy Rule %v", d.Get("name").(string))
-
-	rule, err := getPolicyRule(d, m)
-
-	if rule == nil {
-		// if the policy rule does not exist in okta, delete from terraform state
-		d.SetId("")
-		return nil
-	}
-
+func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	rule, err := getPolicyRule(ctx, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to get sign-on policy rule: %v", err)
+	}
+	if rule == nil {
+		return nil
 	}
 
 	// Update with upstream state to prevent stale state
@@ -130,59 +108,27 @@ func resourcePolicySignonRuleRead(d *schema.ResourceData, m interface{}) error {
 	if rule.Actions.Signon.FactorPromptMode != "" {
 		_ = d.Set("mfa_prompt", rule.Actions.Signon.FactorPromptMode)
 	}
-
-	return syncRuleFromUpstream(d, rule)
+	err = syncRuleFromUpstream(d, rule)
+	if err != nil {
+		return diag.Errorf("failed to sync sign-on policy rule: %v", err)
+	}
+	return nil
 }
 
-func resourcePolicySignonRuleUpdate(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultRule(d); err != nil {
-		return err
-	}
-
-	log.Printf("[INFO] Update Policy Rule %v", d.Get("name").(string))
+func resourcePolicySignOnRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	template := buildSignOnPolicyRule(d)
-	rule, err := updateRule(d, m, template)
+	err := updateRule(ctx, d, m, template)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to update sign-on policy rule: %v", err)
 	}
-
-	err = validatePriority(template.Priority, rule.Priority)
-	if err != nil {
-		return err
-	}
-
-	return resourcePolicySignonRuleRead(d, m)
+	return resourcePolicySignOnRuleRead(ctx, d, m)
 }
 
-func resourcePolicySignonRuleDelete(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultRule(d); err != nil {
-		return err
-	}
-
-	log.Printf("[INFO] Delete Policy Rule %v", d.Get("name").(string))
-	client := getSupplementFromMetadata(m)
-
-	rule, err := getPolicyRule(d, m)
-
+func resourcePolicySignOnRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := deleteRule(ctx, d, m, true)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to delete MFA policy rule: %v", err)
 	}
-
-	if rule != nil && rule.Id != "" {
-		if rule.System != nil && *rule.System {
-			log.Printf("[INFO] Policy Rule %v is a System Policy, cannot delete from Okta", d.Get("name").(string))
-		} else {
-			_, err = client.DeletePolicyRule(context.Background(), d.Get("policyid").(string), rule.Id)
-			if err != nil {
-				return fmt.Errorf("[ERROR] Error Deleting Policy Rule from Okta: %v", err)
-			}
-		}
-	} else {
-		log.Printf("[INFO] Policy Rule not found in Okta, removing from terraform")
-	}
-	// remove the policy rule resource from terraform
-	d.SetId("")
-
 	return nil
 }
 

@@ -1,4 +1,4 @@
-resource okta_idp_oidc test {
+resource "okta_idp_oidc" "test" {
   name                  = "testAcc_replace_with_uuid"
   acs_type              = "INSTANCE"
   acs_binding           = "HTTP-POST"

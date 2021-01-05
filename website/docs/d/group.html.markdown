@@ -2,8 +2,7 @@
 layout: "okta"
 page_title: "Okta: okta_group"
 sidebar_current: "docs-okta-datasource-group"
-description: |-
-  Get a group from Okta.
+description: |- Get a group from Okta.
 ---
 
 # okta_group
@@ -20,20 +19,21 @@ data "okta_group" "example" {
 
 ## Arguments Reference
 
-* `name` - (Required) name of group to retrieve.
+- `name` - (Required) name of group to retrieve.
 
-* `type` - (Optional) type of the group to retrieve.
+- `type` - (Optional) type of the group to retrieve. Can only be one of `OKTA_GROUP` (Native Okta Groups), `APP_GROUP`
+  (Imported App Groups), or `BUILT_IN` (Okta System Groups).
 
-* `include_users` - (Optional) whether or not to retrieve all member ids.
+- `include_users` - (Optional) whether to retrieve all member ids.
 
 ## Attributes Reference
 
-* `id` - id of group.
+- `id` - id of group.
 
-* `name` - name of group.
+- `name` - name of group.
 
-* `type` - type of group.
+- `type` - type of group.
 
-* `description` - description of group.
+- `description` - description of group.
 
-* `users` - user ids that are members of this group, only included if `include_users` is set to `true`.
+- `users` - user ids that are members of this group, only included if `include_users` is set to `true`.

@@ -1,37 +1,18 @@
 package okta
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 var (
 	userSchemaSchema = map[string]*schema.Schema{
-		"index": {
-			Type:        schema.TypeString,
-			Required:    true,
-			Description: "Subschema unique string identifier",
-			ForceNew:    true,
-		},
-		"title": {
-			Type:        schema.TypeString,
-			Required:    true,
-			Description: "Subschema title (display name)",
-		},
-		"type": {
-			Type:         schema.TypeString,
-			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{"string", "boolean", "number", "integer", "array", "object"}, false),
-			Description:  "Subschema type: string, boolean, number, integer, array, or object",
-			ForceNew:     true,
-		},
 		"array_type": {
-			Type:         schema.TypeString,
-			Optional:     true,
-			ValidateFunc: validation.StringInSlice([]string{"string", "number", "integer", "reference"}, false),
-			Description:  "Subschema array type: string, number, integer, reference. Type field must be an array.",
-			ForceNew:     true,
+			Type:             schema.TypeString,
+			Optional:         true,
+			ValidateDiagFunc: stringInSlice([]string{"string", "number", "integer", "reference"}),
+			Description:      "Subschema array type: string, number, integer, reference. Type field must be an array.",
+			ForceNew:         true,
 		},
 		"array_enum": {
 			Type:        schema.TypeList,
@@ -65,22 +46,17 @@ var (
 			Optional:    true,
 			Description: "Custom Subschema description",
 		},
-		"required": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Description: "Whether the subschema is required",
-		},
 		"min_length": {
-			Type:         schema.TypeInt,
-			Optional:     true,
-			Description:  "Subschema of type string minimum length",
-			ValidateFunc: validation.IntAtLeast(1),
+			Type:             schema.TypeInt,
+			Optional:         true,
+			Description:      "Subschema of type string minimum length",
+			ValidateDiagFunc: intAtLeast(1),
 		},
 		"max_length": {
-			Type:         schema.TypeInt,
-			Optional:     true,
-			Description:  "Subschema of type string maximum length",
-			ValidateFunc: validation.IntAtLeast(1),
+			Type:             schema.TypeInt,
+			Optional:         true,
+			Description:      "Subschema of type string maximum length",
+			ValidateDiagFunc: intAtLeast(1),
 		},
 		"enum": {
 			Type:          schema.TypeList,
@@ -91,10 +67,10 @@ var (
 			Elem:          &schema.Schema{Type: schema.TypeString},
 		},
 		"scope": {
-			Type:         schema.TypeString,
-			Optional:     true,
-			Default:      "NONE",
-			ValidateFunc: validation.StringInSlice([]string{"SELF", "NONE", ""}, false),
+			Type:             schema.TypeString,
+			Optional:         true,
+			Default:          "NONE",
+			ValidateDiagFunc: stringInSlice([]string{"SELF", "NONE", ""}),
 		},
 		"one_of": {
 			Type:          schema.TypeList,
@@ -117,20 +93,6 @@ var (
 				},
 			},
 		},
-		"permissions": {
-			Type:         schema.TypeString,
-			Optional:     true,
-			ValidateFunc: validation.StringInSlice([]string{"HIDE", "READ_ONLY", "READ_WRITE"}, false),
-			Description:  "SubSchema permissions: HIDE, READ_ONLY, or READ_WRITE.",
-			Default:      "READ_ONLY",
-		},
-		"master": {
-			Type:     schema.TypeString,
-			Optional: true,
-			// Accepting an empty value to allow for zero value (when provisioning is off)
-			ValidateFunc: validation.StringInSlice([]string{"PROFILE_MASTER", "OKTA", ""}, false),
-			Description:  "SubSchema profile manager, if not set it will inherit its setting.",
-		},
 		"external_name": {
 			Type:        schema.TypeString,
 			Optional:    true,
@@ -144,17 +106,11 @@ var (
 			ForceNew:    true,
 		},
 		"unique": {
-			Type:          schema.TypeString,
-			Optional:      true,
-			Description:   "Subschema unique restriction",
-			ValidateFunc:  validation.StringInSlice([]string{"UNIQUE_VALIDATED", "NOT_UNIQUE"}, false),
-			ConflictsWith: []string{"one_of", "enum", "array_type"},
-		},
-		"user_type": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Description: "Custom subschema user type",
-			Default:     "default",
+			Type:             schema.TypeString,
+			Optional:         true,
+			Description:      "Subschema unique restriction",
+			ValidateDiagFunc: stringInSlice([]string{"UNIQUE_VALIDATED", "NOT_UNIQUE"}),
+			ConflictsWith:    []string{"one_of", "enum", "array_type"},
 		},
 	}
 
@@ -171,72 +127,66 @@ var (
 			Description: "Subschema title (display name)",
 		},
 		"type": {
-			Type:         schema.TypeString,
-			Required:     true,
-			ValidateFunc: validation.StringInSlice([]string{"string", "boolean", "number", "integer", "array", "object"}, false),
-			Description:  "Subschema type: string, boolean, number, integer, array, or object",
-			ForceNew:     true,
+			Type:             schema.TypeString,
+			Required:         true,
+			ValidateDiagFunc: stringInSlice([]string{"string", "boolean", "number", "integer", "array", "object"}),
+			Description:      "Subschema type: string, boolean, number, integer, array, or object",
+			ForceNew:         true,
 		},
 		"permissions": {
-			Type:         schema.TypeString,
-			Optional:     true,
-			ValidateFunc: validation.StringInSlice([]string{"HIDE", "READ_ONLY", "READ_WRITE"}, false),
-			Description:  "SubSchema permissions: HIDE, READ_ONLY, or READ_WRITE.",
-			Default:      "READ_ONLY",
+			Type:             schema.TypeString,
+			Optional:         true,
+			ValidateDiagFunc: stringInSlice([]string{"HIDE", "READ_ONLY", "READ_WRITE"}),
+			Description:      "SubSchema permissions: HIDE, READ_ONLY, or READ_WRITE.",
+			Default:          "READ_ONLY",
 		},
 		"master": {
 			Type:     schema.TypeString,
 			Optional: true,
 			// Accepting an empty value to allow for zero value (when provisioning is off)
-			ValidateFunc: validation.StringInSlice([]string{"PROFILE_MASTER", "OKTA", ""}, false),
-			Description:  "SubSchema profile manager, if not set it will inherit its setting.",
+			ValidateDiagFunc: stringInSlice([]string{"PROFILE_MASTER", "OKTA", ""}),
+			Description:      "SubSchema profile manager, if not set it will inherit its setting.",
+			Default:          "PROFILE_MASTER",
 		},
 		"required": {
 			Type:        schema.TypeBool,
 			Optional:    true,
 			Description: "Whether the subschema is required",
 		},
+	}
+
+	userTypeSchema = map[string]*schema.Schema{
 		"user_type": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			Description:      "Custom subschema user type",
+			Default:          "default",
+			ValidateDiagFunc: stringAtLeast(7),
+		},
+	}
+
+	userPatternSchema = map[string]*schema.Schema{
+		"pattern": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "Custom subschema user type",
-			Default:     "default",
+			Description: "The validation pattern to use for the subschema. Must be in form of '.+', or '[<pattern>]+' if present.'",
+			ForceNew:    false,
 		},
 	}
 )
 
-func buildBaseUserSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(userBaseSchemaSchema, target)
-}
-
-func buildCustomUserSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(userSchemaSchema, target)
-}
-
 func syncUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) error {
-	_ = d.Set("title", subschema.Title)
-	_ = d.Set("type", subschema.Type)
+	syncBaseUserSchema(d, subschema)
 	_ = d.Set("description", subschema.Description)
-	_ = d.Set("required", subschema.Required)
 	_ = d.Set("min_length", subschema.MinLength)
 	_ = d.Set("max_length", subschema.MaxLength)
 	_ = d.Set("scope", subschema.Scope)
 	_ = d.Set("external_name", subschema.ExternalName)
 	_ = d.Set("external_namespace", subschema.ExternalNamespace)
 	_ = d.Set("unique", subschema.Unique)
-
 	if subschema.Items != nil {
 		_ = d.Set("array_type", subschema.Items.Type)
 	}
-
-	if subschema.Master != nil {
-		_ = d.Set("master", subschema.Master.Type)
-	}
-
-	if len(subschema.Permissions) > 0 {
-		_ = d.Set("permissions", subschema.Permissions[0].Action)
-	}
-
 	return setNonPrimitives(d, map[string]interface{}{
 		"enum":   subschema.Enum,
 		"one_of": flattenOneOf(subschema.OneOf),
@@ -247,33 +197,31 @@ func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) {
 	_ = d.Set("title", subschema.Title)
 	_ = d.Set("type", subschema.Type)
 	_ = d.Set("required", subschema.Required)
-
 	if subschema.Master != nil {
 		_ = d.Set("master", subschema.Master.Type)
 	}
-
 	if len(subschema.Permissions) > 0 {
 		_ = d.Set("permissions", subschema.Permissions[0].Action)
 	}
+	if subschema.Pattern != nil {
+		_ = d.Set("pattern", &subschema.Pattern)
+	} else {
+		_ = d.Set("pattern", "")
+	}
 }
 
-func getBaseProperty(us *sdk.UserSchema, id string) *sdk.UserSubSchema {
-	for key, part := range us.Definitions.Base.Properties {
-		if key == id {
-			return part
-		}
+func getBaseProperty(s *sdk.UserSchema, id string) *sdk.UserSubSchema {
+	if s == nil {
+		return nil
 	}
-	return nil
+	return s.Definitions.Base.Properties[id]
 }
 
 func getCustomProperty(s *sdk.UserSchema, id string) *sdk.UserSubSchema {
-	for key, part := range s.Definitions.Custom.Properties {
-		if key == id {
-			return part
-		}
+	if s == nil {
+		return nil
 	}
-
-	return nil
+	return s.Definitions.Custom.Properties[id]
 }
 
 func getNullableOneOf(d *schema.ResourceData, key string) (oneOf []*sdk.UserSchemaEnum) {
@@ -323,8 +271,8 @@ func flattenOneOf(oneOf []*sdk.UserSchemaEnum) []interface{} {
 	return result
 }
 
-func getUserSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
-	return &sdk.UserSubSchema{
+func userSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
+	subschema := &sdk.UserSubSchema{
 		Title:       d.Get("title").(string),
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
@@ -346,4 +294,32 @@ func getUserSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
 		ExternalNamespace: d.Get("external_namespace").(string),
 		Unique:            d.Get("unique").(string),
 	}
+	p, ok := d.GetOk("pattern")
+	if ok {
+		subschema.Pattern = stringPtr(p.(string))
+	}
+	return subschema
+}
+
+func userBasedSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
+	subSchema := &sdk.UserSubSchema{
+		Master: getNullableMaster(d),
+		Title:  d.Get("title").(string),
+		Type:   d.Get("type").(string),
+		Permissions: []*sdk.UserSchemaPermission{
+			{
+				Action:    d.Get("permissions").(string),
+				Principal: "SELF",
+			},
+		},
+		Required: boolPtr(d.Get("required").(bool)),
+	}
+	if d.Get("index").(string) == "login" {
+		subSchema.IsLogin = true
+		p := d.Get("pattern").(string)
+		if p != "" {
+			subSchema.Pattern = stringPtr(p)
+		}
+	}
+	return subSchema
 }

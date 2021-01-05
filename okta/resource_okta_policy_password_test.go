@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
@@ -43,9 +43,9 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", policyPassword)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createPolicyCheckDestroy(policyPassword),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createPolicyCheckDestroy(policyPassword),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -82,6 +82,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "question_min_length", "10"),
 					resource.TestCheckResourceAttr(resourceName, "recovery_email_token", "20160"),
 					resource.TestCheckResourceAttr(resourceName, "sms_recovery", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "call_recovery", statusActive),
 				),
 			},
 		},

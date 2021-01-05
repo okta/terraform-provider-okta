@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
@@ -18,9 +18,9 @@ func TestAccAppSwaApplication_preconfig(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSwa)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(appSwa, createDoesAppExist(okta.NewSwaApplication())),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(okta.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -51,9 +51,9 @@ func TestAccAppSwaApplication_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSwa)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(appSwa, createDoesAppExist(okta.NewSwaApplication())),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(okta.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

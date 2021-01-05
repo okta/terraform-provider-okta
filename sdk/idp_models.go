@@ -3,7 +3,7 @@ package sdk
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
@@ -26,7 +26,7 @@ type (
 		AccountLink  *AccountLink     `json:"accountLink,omitempty"`
 		Provisioning *IDPProvisioning `json:"provisioning,omitempty"`
 		Subject      *SAMLSubject     `json:"subject,omitempty"`
-		Type         string           `json:"type,omitempty"`
+		MaxClockSkew int64            `json:"maxClockSkew"`
 	}
 
 	SAMLEndpoints struct {

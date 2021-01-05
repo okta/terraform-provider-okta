@@ -1,4 +1,4 @@
-resource "okta_user_type" non_default_user_type {
+resource "okta_user_type" "non_default_user_type" {
   name         = "testAcc_replace_with_uuid"
   display_name = "testAcc_replace_with_uuid"
   description  = "Terraform Acceptance Test Schema User Type"

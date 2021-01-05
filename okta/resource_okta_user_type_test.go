@@ -4,12 +4,26 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
+
+func sweepUserTypes(client *testClient) error {
+	userTypeList, _, _ := client.oktaClient.UserType.ListUserTypes(context.Background())
+	var errorList []error
+	for _, ut := range userTypeList {
+		if strings.HasPrefix(ut.Name, testResourcePrefix) {
+			if _, err := client.oktaClient.UserType.DeleteUserType(context.Background(), ut.Id); err != nil {
+				errorList = append(errorList, err)
+			}
+		}
+	}
+	return condenseError(errorList)
+}
 
 func TestAccOktaUserType_crud(t *testing.T) {
 	ri := acctest.RandInt()
@@ -19,9 +33,9 @@ func TestAccOktaUserType_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("okta_user_type_updated.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(userType, doesUserTypeExist),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(userType, doesUserTypeExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

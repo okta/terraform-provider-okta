@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
@@ -26,7 +26,7 @@ func createRedirectURIExists(name string) resource.TestCheckFunc {
 		_, response, err := client.Application.GetApplication(context.Background(), appID, app, nil)
 
 		// We don't want to consider a 404 an error in some cases and thus the delineation
-		if response.StatusCode == 404 {
+		if response != nil && response.StatusCode == 404 {
 			return missingErr
 		} else if err != nil && contains(app.Settings.OauthClient.RedirectUris, uri) {
 			return nil
@@ -44,9 +44,9 @@ func TestAccAppOAuthApplication_redirectCrud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appOAuthRedirectURI)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -18,16 +19,16 @@ type ApiSupplement struct {
 	RequestExecutor *okta.RequestExecutor
 }
 
-func (m *ApiSupplement) GetSAMLMetdata(id, keyID string) ([]byte, error) {
-	return m.GetXml(fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata?kid=%s", m.BaseURL, id, keyID))
+func (m *ApiSupplement) GetSAMLMetadata(ctx context.Context, id, keyID string) ([]byte, error) {
+	return m.GetXml(ctx, fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata?kid=%s", m.BaseURL, id, keyID))
 }
 
-func (m *ApiSupplement) GetSAMLIdpMetdata(id string) ([]byte, error) {
-	return m.GetXml(fmt.Sprintf("%s/api/v1/idps/%s/metadata.xml", m.BaseURL, id))
+func (m *ApiSupplement) GetSAMLIdpMetadata(ctx context.Context, id string) ([]byte, error) {
+	return m.GetXml(ctx, fmt.Sprintf("%s/api/v1/idps/%s/metadata.xml", m.BaseURL, id))
 }
 
-func (m *ApiSupplement) GetXml(url string) ([]byte, error) {
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+func (m *ApiSupplement) GetXml(ctx context.Context, url string) ([]byte, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}

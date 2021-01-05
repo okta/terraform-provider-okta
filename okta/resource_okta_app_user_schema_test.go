@@ -1,14 +1,15 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccAppUserSchemas_crud(t *testing.T) {
@@ -19,9 +20,9 @@ func TestAccAppUserSchemas_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appUserSchema)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(appUserSchema, testAppUserSchemaExists),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appUserSchema, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -78,9 +79,9 @@ func testAppUserSchemasExists(name string) resource.TestCheckFunc {
 func testAppUserSchemaExists(index string) (bool, error) {
 	ids := strings.Split(index, "/")
 	client := getSupplementFromMetadata(testAccProvider.Meta())
-	schema, resp, err := client.GetAppUserSchema(ids[0])
+	schema, resp, err := client.GetAppUserSchema(context.Background(), ids[0])
 	if err != nil {
-		if resp.StatusCode == 404 {
+		if resp != nil && resp.StatusCode == 404 {
 			return false, nil
 		}
 		return false, fmt.Errorf("error Listing App User Schema in Okta: %v", err)

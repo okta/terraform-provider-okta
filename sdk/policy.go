@@ -136,6 +136,7 @@ type PolicyFactorsSettings struct {
 	OktaPush     *PolicyFactor `json:"okta_push,omitempty"`
 	OktaQuestion *PolicyFactor `json:"okta_question,omitempty"`
 	OktaSms      *PolicyFactor `json:"okta_sms,omitempty"`
+	OktaEmail    *PolicyFactor `json:"okta_email,omitempty"`
 	RsaToken     *PolicyFactor `json:"rsa_token,omitempty"`
 	SymantecVip  *PolicyFactor `json:"symantec_vip,omitempty"`
 	YubikeyToken *PolicyFactor `json:"yubikey_token,omitempty"`
@@ -177,7 +178,7 @@ func (m *ApiSupplement) GetPolicy(ctx context.Context, policyID string) (*Policy
 
 // Gets all policies with the specified type.
 func (m *ApiSupplement) ListPolicies(ctx context.Context, qp *query.Params) ([]Policy, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/policies")
+	url := "/api/v1/policies"
 	if qp != nil {
 		url = url + qp.String()
 	}
@@ -210,7 +211,7 @@ func (m *ApiSupplement) UpdatePolicy(ctx context.Context, policyID string, body 
 
 // Creates a policy.
 func (m *ApiSupplement) CreatePolicy(ctx context.Context, body Policy) (*Policy, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/policies")
+	url := "/api/v1/policies"
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest("POST", url, body)
 	if err != nil {
 		return nil, nil, err

@@ -2,8 +2,8 @@
 
 This resource represents an Okta SWA Application in various configuration states. For more information see the [API docs](https://developer.okta.com/docs/api/resources/apps#add-custom-swa-application)
 
-* Example of a custom SWA app [can be found here](./custom.tf)
-* Example of a preconfigured SWA app [can be found here](./preconfig.tf)
+- Example of a custom SWA app [can be found here](./custom.tf)
+- Example of a preconfigured SWA app [can be found here](./preconfig.tf)
 
 ## Preconfigured Applications
 
