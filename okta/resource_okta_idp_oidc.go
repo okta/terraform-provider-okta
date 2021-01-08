@@ -33,11 +33,11 @@ func resourceIdpOidc() *schema.Resource {
 			"jwks_url":              urlSchema,
 			"jwks_binding":          bindingSchema,
 			"acs_binding":           optionalBindingSchema,
-			"acs_type": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "INSTANCE",
-				ValidateFunc: validation.StringInSlice([]string{"INSTANCE"}, false),
+			"acs_type": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Default:          "INSTANCE",
+				ValidateDiagFunc: stringInSlice([]string{"INSTANCE"}),
 			},
 			"scopes": {
 				Type:     schema.TypeSet,
