@@ -26,7 +26,7 @@ func createRedirectURIExists(name string) resource.TestCheckFunc {
 		_, response, err := client.Application.GetApplication(context.Background(), appID, app, nil)
 
 		// We don't want to consider a 404 an error in some cases and thus the delineation
-		if response.StatusCode == 404 {
+		if response != nil && response.StatusCode == 404 {
 			return missingErr
 		} else if err != nil && contains(app.Settings.OauthClient.RedirectUris, uri) {
 			return nil

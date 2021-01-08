@@ -136,6 +136,7 @@ type PolicyFactorsSettings struct {
 	OktaPush     *PolicyFactor `json:"okta_push,omitempty"`
 	OktaQuestion *PolicyFactor `json:"okta_question,omitempty"`
 	OktaSms      *PolicyFactor `json:"okta_sms,omitempty"`
+	OktaEmail    *PolicyFactor `json:"okta_email,omitempty"`
 	RsaToken     *PolicyFactor `json:"rsa_token,omitempty"`
 	SymantecVip  *PolicyFactor `json:"symantec_vip,omitempty"`
 	YubikeyToken *PolicyFactor `json:"yubikey_token,omitempty"`

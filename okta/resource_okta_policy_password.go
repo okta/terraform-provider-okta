@@ -163,6 +163,13 @@ func resourcePolicyPassword() *schema.Resource {
 				Description:      "Enable or disable security question password recovery: ACTIVE or INACTIVE.",
 				Default:          statusActive,
 			},
+			"call_recovery": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{statusActive, statusInactive}),
+				Description:      "Enable or disable voice call recovery: ACTIVE or INACTIVE.",
+				Default:          statusInactive,
+			},
 			"skip_unlock": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -208,7 +215,9 @@ func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, m i
 		_ = d.Set("password_min_number", policy.Settings.Password.Complexity.MinNumber)
 		_ = d.Set("password_min_symbol", policy.Settings.Password.Complexity.MinSymbol)
 		_ = d.Set("password_exclude_username", policy.Settings.Password.Complexity.ExcludeUsername)
-		_ = d.Set("password_dictionary_lookup", policy.Settings.Password.Complexity.Dictionary.Common.Exclude)
+		if policy.Settings.Password.Complexity.Dictionary != nil && policy.Settings.Password.Complexity.Dictionary.Common != nil {
+			_ = d.Set("password_dictionary_lookup", policy.Settings.Password.Complexity.Dictionary.Common.Exclude)
+		}
 		_ = d.Set("password_max_age_days", policy.Settings.Password.Age.MaxAgeDays)
 		_ = d.Set("password_expire_warn_days", policy.Settings.Password.Age.ExpireWarnDays)
 		_ = d.Set("password_min_age_minutes", policy.Settings.Password.Age.MinAgeMinutes)
@@ -221,6 +230,7 @@ func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, m i
 		_ = d.Set("sms_recovery", policy.Settings.Recovery.Factors.OktaSms.Status)
 		_ = d.Set("email_recovery", policy.Settings.Recovery.Factors.OktaEmail.Status)
 		_ = d.Set("question_recovery", policy.Settings.Recovery.Factors.RecoveryQuestion.Status)
+		_ = d.Set("call_recovery", policy.Settings.Recovery.Factors.OktaCall.Status)
 		_ = d.Set("skip_unlock", policy.Settings.Delegation.Options.SkipUnlock)
 
 		excludedAttrs := policy.Settings.Password.Complexity.ExcludeAttributes
@@ -309,6 +319,12 @@ func buildPasswordPolicy(d *schema.ResourceData) sdk.Policy {
 		},
 		Recovery: &sdk.PasswordPolicyRecoverySettings{
 			Factors: &sdk.PasswordPolicyRecoveryFactors{
+				OktaCall: &okta.PasswordPolicyRecoveryFactorSettings{
+					Status: d.Get("call_recovery").(string),
+				},
+				OktaSms: &okta.PasswordPolicyRecoveryFactorSettings{
+					Status: d.Get("sms_recovery").(string),
+				},
 				OktaEmail: &sdk.PasswordPolicyRecoveryEmail{
 					Properties: &sdk.PasswordPolicyRecoveryEmailProperties{
 						RecoveryToken: &sdk.PasswordPolicyRecoveryEmailRecoveryToken{
@@ -316,9 +332,6 @@ func buildPasswordPolicy(d *schema.ResourceData) sdk.Policy {
 						},
 					},
 					Status: d.Get("email_recovery").(string),
-				},
-				OktaSms: &okta.PasswordPolicyRecoveryFactorSettings{
-					Status: d.Get("sms_recovery").(string),
 				},
 				RecoveryQuestion: &sdk.PasswordPolicyRecoveryQuestion{
 					Properties: &sdk.PasswordPolicyRecoveryQuestionProperties{

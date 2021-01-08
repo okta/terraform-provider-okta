@@ -8,9 +8,9 @@ description: |-
 
 # okta_idp_social
 
-Creates an Social Identity Provider.
+Creates a Social Identity Provider.
 
-This resource allows you to create and configure an Social Identity Provider.
+This resource allows you to create and configure a Social Identity Provider.
 
 ## Example Usage
 
@@ -83,7 +83,7 @@ The following arguments are supported:
 
 - `username_template` - (Optional) Okta EL Expression to generate or transform a unique username for the IdP user.
 
-- `subject_match_type` - (Optional) Determines the Okta user profile attribute match conditions for account linking and authentication of the transformed IdP username. By default it is set to `"USERNAME"`. It can be set to `"USERNAME"`, `"EMAIL"`, `"USERNAME_OR_EMAIL"` or `"CUSTOM_ATTRIBUTE"`.
+- `subject_match_type` - (Optional) Determines the Okta user profile attribute match conditions for account linking and authentication of the transformed IdP username. By default, it is set to `"USERNAME"`. It can be set to `"USERNAME"`, `"EMAIL"`, `"USERNAME_OR_EMAIL"` or `"CUSTOM_ATTRIBUTE"`.
 
 - `subject_match_attribute` - (Optional) Okta user profile attribute for matching transformed IdP username. Only for matchType `"CUSTOM_ATTRIBUTE"`.
 
@@ -91,7 +91,7 @@ The following arguments are supported:
 
 - `request_signature_algorithm` - (Optional) The XML digital signature algorithm used when signing an AuthnRequest message.
 
-- `request_signature_scope` - (Optional) Specifies whether or not to digitally sign an AuthnRequest messages to the IdP. It can be `"REQUEST"` or `"NONE"`.
+- `request_signature_scope` - (Optional) Specifies whether to digitally sign an AuthnRequest messages to the IdP. It can be `"REQUEST"` or `"NONE"`.
 
 - `response_signature_algorithm` - (Optional) The minimum XML digital signature algorithm allowed when verifying a SAMLResponse message or Assertion element.
 

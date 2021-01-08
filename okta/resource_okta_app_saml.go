@@ -334,7 +334,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	if app.Credentials.Signing.Kid != "" && app.Status != statusInactive {
 		keyID := app.Credentials.Signing.Kid
 		_ = d.Set("key_id", keyID)
-		keyMetadata, err := getSupplementFromMetadata(m).GetSAMLMetdata(d.Id(), keyID)
+		keyMetadata, err := getSupplementFromMetadata(m).GetSAMLMetadata(ctx, d.Id(), keyID)
 		if err != nil {
 			return diag.Errorf("failed to set SAML metadata: %v", err)
 		}

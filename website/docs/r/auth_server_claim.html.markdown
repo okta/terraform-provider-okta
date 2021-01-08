@@ -42,7 +42,7 @@ The following arguments are supported:
 
 - `claim_type` - (Required) Specifies whether the claim is for an access token `"RESOURCE"` or ID token `"IDENTITY"`.
 
-- `always_include_in_token` - (Optional) Specifies whether to include claims in token, by default is is set to `true`.
+- `always_include_in_token` - (Optional) Specifies whether to include claims in token, by default it is set to `true`.
 
 - `group_filter_type` - (Optional) Specifies the type of group filter if `value_type` is `"GROUPS"`. Can be set to one of the following `"STARTS_WITH"`, `"EQUALS"`, `"CONTAINS"`, `"REGEX"`.
 

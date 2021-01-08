@@ -75,7 +75,7 @@ func resourceIdpSocial() *schema.Resource {
 }
 
 func resourceIdpSocialCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	idp := buildidpSocial(d)
+	idp := buildIdPSocial(d)
 	_, _, err := getSupplementFromMetadata(m).CreateIdentityProvider(ctx, idp, nil)
 	if err != nil {
 		return diag.Errorf("failed to create social identity provider: %v", err)
@@ -138,7 +138,7 @@ func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m interf
 }
 
 func resourceIdpSocialUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	idp := buildidpSocial(d)
+	idp := buildIdPSocial(d)
 	_, _, err := getSupplementFromMetadata(m).UpdateIdentityProvider(ctx, d.Id(), idp, nil)
 	if err != nil {
 		return diag.Errorf("failed to update social identity provider: %v", err)
@@ -150,7 +150,7 @@ func resourceIdpSocialUpdate(ctx context.Context, d *schema.ResourceData, m inte
 	return resourceIdpSocialRead(ctx, d, m)
 }
 
-func buildidpSocial(d *schema.ResourceData) *sdk.OIDCIdentityProvider {
+func buildIdPSocial(d *schema.ResourceData) *sdk.OIDCIdentityProvider {
 	return &sdk.OIDCIdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       d.Get("type").(string),

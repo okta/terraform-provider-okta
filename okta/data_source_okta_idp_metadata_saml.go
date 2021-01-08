@@ -60,7 +60,7 @@ func dataSourceIdpMetadataSaml() *schema.Resource {
 func dataSourceIdpSamlMetadataRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	id := d.Get("idp_id").(string)
 	d.SetId(fmt.Sprintf("%s_metadata", id))
-	metadata, err := getSupplementFromMetadata(m).GetSAMLIdpMetdata(id)
+	metadata, err := getSupplementFromMetadata(m).GetSAMLIdpMetadata(ctx, id)
 	if err != nil {
 		return diag.Errorf("failed to get SAML idp metadata: %v", err)
 	}

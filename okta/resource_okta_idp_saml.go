@@ -71,12 +71,16 @@ func resourceIdpSaml() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"max_clock_skew": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
 		}),
 	}
 }
 
 func resourceIdpSamlCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	idp := buildidpSaml(d)
+	idp := buildIdPSaml(d)
 	_, _, err := getSupplementFromMetadata(m).CreateIdentityProvider(ctx, idp, nil)
 	if err != nil {
 		return diag.Errorf("failed to create SAML identity provider: %v", err)
@@ -100,6 +104,7 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		return nil
 	}
 	_ = d.Set("name", idp.Name)
+	_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkew)
 	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
 	_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
 	_ = d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
@@ -136,7 +141,7 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 func resourceIdpSamlUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	idp := buildidpSaml(d)
+	idp := buildIdPSaml(d)
 	_, _, err := getSupplementFromMetadata(m).UpdateIdentityProvider(ctx, d.Id(), idp, nil)
 	if err != nil {
 		return diag.Errorf("failed to update SAML identity provider: %v", err)
@@ -148,7 +153,7 @@ func resourceIdpSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	return resourceIdpSamlRead(ctx, d, m)
 }
 
-func buildidpSaml(d *schema.ResourceData) *sdk.SAMLIdentityProvider {
+func buildIdPSaml(d *schema.ResourceData) *sdk.SAMLIdentityProvider {
 	return &sdk.SAMLIdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       "SAML2",
@@ -164,6 +169,7 @@ func buildidpSaml(d *schema.ResourceData) *sdk.SAMLIdentityProvider {
 					Template: d.Get("username_template").(string),
 				},
 			},
+			MaxClockSkew: int64(d.Get("max_clock_skew").(int)),
 		},
 		Protocol: &sdk.SAMLProtocol{
 			Algorithms: NewAlgorithms(d),

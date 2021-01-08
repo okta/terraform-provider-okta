@@ -46,7 +46,7 @@ func TestAccOktaNetworkZone_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "IP"),
 					resource.TestCheckResourceAttr(resourceName, "proxies.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "gateways.#", "2"),
-
+					resource.TestCheckResourceAttr(resourceName, "usage", "POLICY"),
 					resource.TestCheckResourceAttr(dynamicResourceName, "name", fmt.Sprintf("testAcc_%d Dynamic", ri)),
 					resource.TestCheckResourceAttr(dynamicResourceName, "type", "DYNAMIC"),
 					resource.TestCheckResourceAttr(dynamicResourceName, "dynamic_locations.#", "2"),
@@ -57,12 +57,12 @@ func TestAccOktaNetworkZone_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d Updated", ri)),
 					resource.TestCheckResourceAttr(resourceName, "type", "IP"),
-					resource.TestCheckResourceAttr(resourceName, "proxies.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "proxies.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "gateways.#", "2"),
-
+					resource.TestCheckResourceAttr(resourceName, "usage", "BLOCKLIST"),
 					resource.TestCheckResourceAttr(dynamicResourceName, "name", fmt.Sprintf("testAcc_%d Dynamic Updated", ri)),
 					resource.TestCheckResourceAttr(dynamicResourceName, "type", "DYNAMIC"),
-					resource.TestCheckResourceAttr(dynamicResourceName, "dynamic_locations.#", "2"),
+					resource.TestCheckResourceAttr(dynamicResourceName, "dynamic_locations.#", "3"),
 				),
 			},
 		},
@@ -70,8 +70,6 @@ func TestAccOktaNetworkZone_crud(t *testing.T) {
 }
 
 func doesNetworkZoneExist(id string) (bool, error) {
-	client := getSupplementFromMetadata(testAccProvider.Meta())
-	_, response, err := client.GetNetworkZone(context.Background(), id)
-
+	_, response, err := getSupplementFromMetadata(testAccProvider.Meta()).GetNetworkZone(context.Background(), id)
 	return doesResourceExist(response, err)
 }

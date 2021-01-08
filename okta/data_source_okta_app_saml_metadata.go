@@ -56,7 +56,7 @@ func dataSourceAppMetadataSaml() *schema.Resource {
 func dataSourceAppMetadataSamlRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	id := d.Get("app_id").(string)
 	kid := d.Get("key_id").(string)
-	metadata, err := getSupplementFromMetadata(m).GetSAMLMetdata(id, kid)
+	metadata, err := getSupplementFromMetadata(m).GetSAMLMetadata(ctx, id, kid)
 	if err != nil {
 		return diag.Errorf("failed to get SAML metadata: %v", err)
 	}

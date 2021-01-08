@@ -61,6 +61,8 @@ The following arguments are supported:
 - `okta_question` - (Optional) Okta Question [MFA policy settings](#mfa-settings).
 
 - `okta_sms` - (Optional) Okta SMS [MFA policy settings](#mfa-settings).
+  
+- `okta_email` - (Optional) Okta Email [MFA policy settings](#mfa-settings).
 
 - `rsa_token` - (Optional) RSA Token [MFA policy settings](#mfa-settings).
 
@@ -72,9 +74,9 @@ The following arguments are supported:
 
 All MFA settings above have the following structure.
 
-- `enroll` - (Optional) Requirements for user initiated enrollment. Can be `"NOT_ALLOWED"`, `"OPTIONAL"`, or `"REQUIRED"`. By default it is `"OPTIONAL"`.
+- `enroll` - (Optional) Requirements for user initiated enrollment. Can be `"NOT_ALLOWED"`, `"OPTIONAL"`, or `"REQUIRED"`. By default, it is `"OPTIONAL"`.
 
-- `consent_type` - (Optional) User consent type required before enrolling in the factor: `"NONE"` or `"TERMS_OF_SERVICE"`. By default it is `"NONE"`.
+- `consent_type` - (Optional) User consent type required before enrolling in the factor: `"NONE"` or `"TERMS_OF_SERVICE"`. By default, it is `"NONE"`.
 
 ## Attributes Reference
 

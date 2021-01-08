@@ -41,19 +41,20 @@ func resourcePolicyMfaRead(ctx context.Context, d *schema.ResourceData, m interf
 	if policy == nil {
 		return nil
 	}
-	syncFactor(d, "duo", policy.Settings.Factors.Duo)
-	syncFactor(d, "fido_u2f", policy.Settings.Factors.FidoU2f)
-	syncFactor(d, "fido_webauthn", policy.Settings.Factors.FidoWebauthn)
-	syncFactor(d, "google_otp", policy.Settings.Factors.GoogleOtp)
-	syncFactor(d, "okta_call", policy.Settings.Factors.OktaCall)
-	syncFactor(d, "okta_otp", policy.Settings.Factors.OktaOtp)           //
-	syncFactor(d, "okta_password", policy.Settings.Factors.OktaPassword) //
-	syncFactor(d, "okta_push", policy.Settings.Factors.OktaPush)         //
-	syncFactor(d, "okta_question", policy.Settings.Factors.OktaQuestion)
-	syncFactor(d, "okta_sms", policy.Settings.Factors.OktaSms)
-	syncFactor(d, "rsa_token", policy.Settings.Factors.RsaToken)
-	syncFactor(d, "symantec_vip", policy.Settings.Factors.SymantecVip)
-	syncFactor(d, "yubikey_token", policy.Settings.Factors.YubikeyToken)
+	syncFactor(d, sdk.DuoFactor, policy.Settings.Factors.Duo)
+	syncFactor(d, sdk.FidoU2fFactor, policy.Settings.Factors.FidoU2f)
+	syncFactor(d, sdk.FidoWebauthnFactor, policy.Settings.Factors.FidoWebauthn)
+	syncFactor(d, sdk.GoogleOtpFactor, policy.Settings.Factors.GoogleOtp)
+	syncFactor(d, sdk.OktaCallFactor, policy.Settings.Factors.OktaCall)
+	syncFactor(d, sdk.OktaOtpFactor, policy.Settings.Factors.OktaOtp)
+	syncFactor(d, sdk.OktaPasswordFactor, policy.Settings.Factors.OktaPassword)
+	syncFactor(d, sdk.OktaPushFactor, policy.Settings.Factors.OktaPush)
+	syncFactor(d, sdk.OktaQuestionFactor, policy.Settings.Factors.OktaQuestion)
+	syncFactor(d, sdk.OktaSmsFactor, policy.Settings.Factors.OktaSms)
+	syncFactor(d, sdk.OktaEmailFactor, policy.Settings.Factors.OktaSms)
+	syncFactor(d, sdk.RsaTokenFactor, policy.Settings.Factors.RsaToken)
+	syncFactor(d, sdk.SymantecVipFactor, policy.Settings.Factors.SymantecVip)
+	syncFactor(d, sdk.YubikeyTokenFactor, policy.Settings.Factors.YubikeyToken)
 	err = syncPolicyFromUpstream(d, policy)
 	if err != nil {
 		return diag.Errorf("failed to sync policy: %v", err)
@@ -106,19 +107,20 @@ func buildMfaPolicy(d *schema.ResourceData) sdk.Policy {
 	}
 	policy.Settings = &sdk.PolicySettings{
 		Factors: &sdk.PolicyFactorsSettings{
-			Duo:          buildFactorProvider(d, "duo"),
-			FidoU2f:      buildFactorProvider(d, "fido_u2f"),
-			FidoWebauthn: buildFactorProvider(d, "fido_webauthn"),
-			GoogleOtp:    buildFactorProvider(d, "google_otp"),
-			OktaCall:     buildFactorProvider(d, "okta_call"),
-			OktaOtp:      buildFactorProvider(d, "okta_otp"),
-			OktaPassword: buildFactorProvider(d, "okta_password"),
-			OktaPush:     buildFactorProvider(d, "okta_push"),
-			OktaQuestion: buildFactorProvider(d, "okta_question"),
-			OktaSms:      buildFactorProvider(d, "okta_sms"),
-			RsaToken:     buildFactorProvider(d, "rsa_token"),
-			SymantecVip:  buildFactorProvider(d, "symantec_vip"),
-			YubikeyToken: buildFactorProvider(d, "yubikey_token"),
+			Duo:          buildFactorProvider(d, sdk.DuoFactor),
+			FidoU2f:      buildFactorProvider(d, sdk.FidoU2fFactor),
+			FidoWebauthn: buildFactorProvider(d, sdk.FidoWebauthnFactor),
+			GoogleOtp:    buildFactorProvider(d, sdk.GoogleOtpFactor),
+			OktaCall:     buildFactorProvider(d, sdk.OktaCallFactor),
+			OktaOtp:      buildFactorProvider(d, sdk.OktaOtpFactor),
+			OktaPassword: buildFactorProvider(d, sdk.OktaPasswordFactor),
+			OktaPush:     buildFactorProvider(d, sdk.OktaPushFactor),
+			OktaQuestion: buildFactorProvider(d, sdk.OktaQuestionFactor),
+			OktaSms:      buildFactorProvider(d, sdk.OktaSmsFactor),
+			OktaEmail:    buildFactorProvider(d, sdk.OktaEmailFactor),
+			RsaToken:     buildFactorProvider(d, sdk.RsaTokenFactor),
+			SymantecVip:  buildFactorProvider(d, sdk.SymantecVipFactor),
+			YubikeyToken: buildFactorProvider(d, sdk.YubikeyTokenFactor),
 		},
 	}
 	policy.Conditions = &okta.PolicyRuleConditions{
@@ -138,19 +140,20 @@ func syncFactor(d *schema.ResourceData, k string, f *sdk.PolicyFactor) {
 }
 
 var factorProviders = []string{
-	"duo",
-	"fido_u2f",
-	"fido_webauthn",
-	"google_otp",
-	"okta_call",
-	"okta_otp",
-	"okta_password",
-	"okta_push",
-	"okta_question",
-	"okta_sms",
-	"rsa_token",
-	"symantec_vip",
-	"yubikey_token",
+	sdk.DuoFactor,
+	sdk.FidoU2fFactor,
+	sdk.FidoWebauthnFactor,
+	sdk.GoogleOtpFactor,
+	sdk.OktaCallFactor,
+	sdk.OktaOtpFactor,
+	sdk.OktaPasswordFactor,
+	sdk.OktaPushFactor,
+	sdk.OktaQuestionFactor,
+	sdk.OktaSmsFactor,
+	sdk.OktaEmailFactor,
+	sdk.RsaTokenFactor,
+	sdk.SymantecVipFactor,
+	sdk.YubikeyTokenFactor,
 }
 
 // List of factor provider above, they all follow the same schema

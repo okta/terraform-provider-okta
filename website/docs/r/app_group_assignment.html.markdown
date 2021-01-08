@@ -31,7 +31,7 @@ JSON
 
 ```hcl
 resource "okta_app_oauth" "app" {
-  ...
+  //...
   lifecycle {
      ignore_changes = [groups]
   }

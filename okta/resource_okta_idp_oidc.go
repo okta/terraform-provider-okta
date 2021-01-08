@@ -79,7 +79,7 @@ func resourceIdpOidc() *schema.Resource {
 }
 
 func resourceIdpCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	idp := buildOidcIdp(d)
+	idp := buildIdPOidc(d)
 	_, _, err := getSupplementFromMetadata(m).CreateIdentityProvider(ctx, idp, nil)
 	if err != nil {
 		return diag.Errorf("failed to create OIDC identity provider: %v", err)
@@ -155,7 +155,7 @@ func syncEndpoint(key string, e *sdk.Endpoint, d *schema.ResourceData) {
 }
 
 func resourceIdpUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	idp := buildOidcIdp(d)
+	idp := buildIdPOidc(d)
 	_, _, err := getSupplementFromMetadata(m).UpdateIdentityProvider(ctx, d.Id(), idp, nil)
 	if err != nil {
 		return diag.Errorf("failed to update OIDC identity provider: %v", err)
@@ -167,7 +167,7 @@ func resourceIdpUpdate(ctx context.Context, d *schema.ResourceData, m interface{
 	return resourceIdpRead(ctx, d, m)
 }
 
-func buildOidcIdp(d *schema.ResourceData) *sdk.OIDCIdentityProvider {
+func buildIdPOidc(d *schema.ResourceData) *sdk.OIDCIdentityProvider {
 	return &sdk.OIDCIdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       "OIDC",

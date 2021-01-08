@@ -18,6 +18,19 @@ func resourceUserBaseSchema() *schema.Resource {
 		ReadContext:   resourceUserBaseSchemaRead,
 		UpdateContext: resourceUserBaseSchemaUpdate,
 		DeleteContext: resourceUserBaseSchemaDelete,
+		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
+			_, ok := d.GetOk("pattern")
+			if d.Get("index").(string) != "login" {
+				if ok {
+					return fmt.Errorf("'pattern' property is only allowed to be set for 'login'")
+				}
+				return nil
+			}
+			if !d.Get("required").(bool) {
+				return fmt.Errorf("'login' base schema is always required attribute")
+			}
+			return nil
+		},
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				resourceIndex := d.Id()
@@ -33,7 +46,7 @@ func resourceUserBaseSchema() *schema.Resource {
 			},
 		},
 		SchemaVersion: 1,
-		Schema:        buildSchema(userBaseSchemaSchema, userTypeSchema),
+		Schema:        buildSchema(userBaseSchemaSchema, userTypeSchema, userPatternSchema),
 		StateUpgraders: []schema.StateUpgrader{
 			{
 				Type: resourceUserBaseSchemaResourceV0().CoreConfigSchema().ImpliedType(),
@@ -100,25 +113,18 @@ func resourceUserBaseSchemaUpdate(ctx context.Context, d *schema.ResourceData, m
 }
 
 // can't delete Base schema
-func resourceUserBaseSchemaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserBaseSchemaDelete(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
 	return nil
 }
 
 // create or modify a subschema
 func updateBaseSubschema(ctx context.Context, client *sdk.ApiSupplement, schemaUrl string, d *schema.ResourceData) error {
-	subSchema := &sdk.UserSubSchema{
-		Master: getNullableMaster(d),
-		Title:  d.Get("title").(string),
-		Type:   d.Get("type").(string),
-		Permissions: []*sdk.UserSchemaPermission{
-			{
-				Action:    d.Get("permissions").(string),
-				Principal: "SELF",
-			},
-		},
-		Required: boolPtr(d.Get("required").(bool)),
-	}
-	_, _, err := client.UpdateBaseUserSchemaProperty(ctx, schemaUrl, d.Get("index").(string), subSchema)
+	_, _, err := client.UpdateBaseUserSchemaProperty(
+		ctx,
+		schemaUrl,
+		d.Get("index").(string),
+		userBasedSubSchema(d),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to update base user schema property: %v", err)
 	}

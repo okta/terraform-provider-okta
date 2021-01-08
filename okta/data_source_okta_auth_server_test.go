@@ -12,6 +12,7 @@ func TestAccOktaDataSourceAuthServer_read(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(authServer)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
+	authServer := buildTestAuthServer(ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -19,6 +20,9 @@ func TestAccOktaDataSourceAuthServer_read(t *testing.T) {
 		},
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
+			{
+				Config: authServer,
+			},
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
@@ -29,4 +33,13 @@ func TestAccOktaDataSourceAuthServer_read(t *testing.T) {
 			},
 		},
 	})
+}
+
+func buildTestAuthServer(i int) string {
+	return fmt.Sprintf(`
+resource "okta_auth_server" "test" {
+  audiences   = ["whatever.rise.zone"]
+  description = "test"
+  name        = "testAcc_%d"
+}`, i)
 }

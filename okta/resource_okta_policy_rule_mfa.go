@@ -22,7 +22,7 @@ func resourcePolicyMfaRule() *schema.Resource {
 				ValidateDiagFunc: stringInSlice([]string{"CHALLENGE", "LOGIN", "NEVER"}),
 				Default:          "CHALLENGE",
 				Optional:         true,
-				Description:      "Should the user be enrolled the first time they LOGIN, the next time they are CHALLENGEd, or NEVER?",
+				Description:      "Should the user be enrolled the first time they LOGIN, the next time they are CHALLENGED, or NEVER?",
 			},
 		}),
 	}

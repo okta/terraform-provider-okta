@@ -38,9 +38,9 @@ The following arguments are supported:
 
 - `type` - (Required) Email template type
 
-- `translations` - (Required) Set of translations for particular template.
+- `translations` - (Required) Set of translations for a particular template.
 
-  - `language` - (Required) The language to map tthe template to.
+  - `language` - (Required) The language to map the template to.
   - `subject` - (Required) The email subject line.
   - `template` - (Required) The email body.
 

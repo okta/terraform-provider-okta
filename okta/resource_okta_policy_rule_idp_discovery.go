@@ -217,7 +217,6 @@ var userIDPatternResource = &schema.Resource{
 	},
 }
 
-//https://developer.okta.com/docs/reference/api/policy/#application-and-app-instance-condition-object
 var appResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"type": {
@@ -262,11 +261,9 @@ func buildPlatformInclude(d *schema.ResourceData) *sdk.IdpDiscoveryRulePlatform 
 }
 
 func buildAppConditions(d *schema.ResourceData) *sdk.IdpDiscoveryRuleApp {
-	includeList := []*sdk.IdpDiscoveryRuleAppObj{}
-
+	var includeList []*sdk.IdpDiscoveryRuleAppObj
 	if v, ok := d.GetOk("app_include"); ok {
 		valueList := v.(*schema.Set).List()
-
 		for _, item := range valueList {
 			if value, ok := item.(map[string]interface{}); ok {
 				includeList = append(includeList, &sdk.IdpDiscoveryRuleAppObj{
@@ -278,11 +275,9 @@ func buildAppConditions(d *schema.ResourceData) *sdk.IdpDiscoveryRuleApp {
 		}
 	}
 
-	excludeList := []*sdk.IdpDiscoveryRuleAppObj{}
-
+	var excludeList []*sdk.IdpDiscoveryRuleAppObj
 	if v, ok := d.GetOk("app_exclude"); ok {
 		valueList := v.(*schema.Set).List()
-
 		for _, item := range valueList {
 			if value, ok := item.(map[string]interface{}); ok {
 				excludeList = append(excludeList, &sdk.IdpDiscoveryRuleAppObj{

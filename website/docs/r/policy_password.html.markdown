@@ -42,15 +42,15 @@ The following arguments are supported:
 
 - `password_min_length` - (Optional) Minimum password length. Default is 8.
 
-- `password_min_lowercase` - (Optional) Minimum number of lower case characters in password.
+- `password_min_lowercase` - (Optional) Minimum number of lower case characters in a password.
 
-- `password_min_uppercase` - (Optional) Minimum number of upper case characters in password.
+- `password_min_uppercase` - (Optional) Minimum number of upper case characters in a password.
 
-- `password_min_number` - (Optional) Minimum number of numbers in password.
+- `password_min_number` - (Optional) Minimum number of numbers in a password.
 
-- `password_min_symbol` - (Optional) Minimum number of symbols in password.
+- `password_min_symbol` - (Optional) Minimum number of symbols in a password.
 
-- `password_exclude_username` - (Optional) If the user name must be excluded from the password.
+- `password_exclude_username` - (Optional) If the username must be excluded from the password.
 
 - `password_exclude_first_name` - (Optional) User firstName attribute must be excluded from the password.
 
@@ -58,7 +58,7 @@ The following arguments are supported:
 
 - `password_dictionary_lookup` - (Optional) Check Passwords Against Common Password Dictionary.
 
-- `password_max_age_days` - (Optional) Length in days a password is valid before expiry: 0 = no limit.",
+- `password_max_age_days` - (Optional) Length in days a password is valid before expiry: 0 = no limit.,
 
 - `password_expire_warn_days` - (Optional) Length in days a user will be warned before password expiry: 0 = no warning.
 
@@ -81,6 +81,8 @@ The following arguments are supported:
 - `recovery_email_token` - (Optional) Lifetime in minutes of the recovery email token.
 
 - `sms_recovery` - (Optional) Enable or disable SMS password recovery: ACTIVE or INACTIVE.
+
+- `call_recovery` - (Optional) Enable or disable voice call password recovery: ACTIVE or INACTIVE. 
 
 - `question_recovery` - (Optional) Enable or disable security question password recovery: ACTIVE or INACTIVE.
 

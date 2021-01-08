@@ -11,7 +11,6 @@ func TestAccOktaDataSourceUser_read(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(oktaUser)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
-	// Avoiding race conditions
 	createUser := mgr.GetFixtures("datasource_create_user.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{

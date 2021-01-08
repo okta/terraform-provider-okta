@@ -126,9 +126,9 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 }
 
 func inlineHookExists(id string) (bool, error) {
-	_, res, err := getSupplementFromMetadata(testAccProvider.Meta()).GetInlineHook(context.Background(), id)
-	if err != nil && res.StatusCode != http.StatusNotFound {
+	_, resp, err := getSupplementFromMetadata(testAccProvider.Meta()).GetInlineHook(context.Background(), id)
+	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, err
 	}
-	return res.StatusCode != http.StatusNotFound, nil
+	return resp.StatusCode != http.StatusNotFound, nil
 }

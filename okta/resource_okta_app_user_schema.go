@@ -15,12 +15,17 @@ func resourceAppUserSchema() *schema.Resource {
 		UpdateContext: resourceAppUserSchemaUpdate,
 		DeleteContext: resourceAppUserSchemaDelete,
 		Importer:      createNestedResourceImporter([]string{"app_id", "id"}),
-		Schema: buildCustomUserSchema(map[string]*schema.Schema{
-			"app_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-		}),
+		Schema: buildSchema(
+			userSchemaSchema,
+			userBaseSchemaSchema,
+			userTypeSchema,
+			userPatternSchema,
+			map[string]*schema.Schema{
+				"app_id": {
+					Type:     schema.TypeString,
+					Required: true,
+				},
+			}),
 		SchemaVersion: 1,
 		StateUpgraders: []schema.StateUpgrader{
 			{
@@ -89,7 +94,7 @@ func updateAppUserSubschema(ctx context.Context, d *schema.ResourceData, m inter
 		ctx,
 		d.Get("index").(string),
 		d.Get("app_id").(string),
-		getUserSubSchema(d),
+		userSubSchema(d),
 	)
 	if err != nil {
 		return diag.Errorf("failed to update custom app user schema property: %v", err)
