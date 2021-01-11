@@ -298,7 +298,7 @@ func setGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) erro
 	// ignore saving the Everyone group into state so we don't end up with perpetual diffs
 	for _, group := range groups {
 		if group.Type != "BUILT_IN" && group.Type != "APP_GROUP" {
-			groupIds = append(groupIds, group.Id)
+			groupIDs = append(groupIDs, group.Id)
 		}
 	}
 
