@@ -1,14 +1,14 @@
-data okta_policy test {
+data "okta_policy" "test" {
   name = "Idp Discovery Policy"
   type = "IDP_DISCOVERY"
 }
 
-resource okta_policy_rule_idp_discovery test {
-  policyid             = "${data.okta_policy.test.id}"
+resource "okta_policy_rule_idp_discovery" "test" {
+  policyid             = data.okta_policy.test.id
   priority             = 1
   name                 = "testAcc_replace_with_uuid"
   idp_type             = "SAML2"
-  idp_id               = "${okta_idp_saml.test.id}"
+  idp_id               = okta_idp_saml.test.id
   user_identifier_type = "ATTRIBUTE"
 
   // Don't have a company schema in this account, just chosing something always there
@@ -20,7 +20,7 @@ resource okta_policy_rule_idp_discovery test {
   }
 }
 
-resource okta_idp_saml test {
+resource "okta_idp_saml" "test" {
   name                     = "testAcc_replace_with_uuid"
   acs_binding              = "HTTP-POST"
   acs_type                 = "INSTANCE"
@@ -31,14 +31,14 @@ resource okta_idp_saml test {
   issuer                   = "https://idp.example.com"
   request_signature_scope  = "REQUEST"
   response_signature_scope = "ANY"
-  kid                      = "${okta_idp_saml_key.test.id}"
+  kid                      = okta_idp_saml_key.test.id
 }
 
-resource okta_idp_saml_key test {
-  x5c = ["${okta_app_saml.test.certificate}"]
+resource "okta_idp_saml_key" "test" {
+  x5c = [okta_app_saml.test.certificate]
 }
 
-resource okta_app_saml test {
+resource "okta_app_saml" "test" {
   label                    = "testAcc_replace_with_uuid"
   sso_url                  = "http://google.com"
   recipient                = "http://here.com"

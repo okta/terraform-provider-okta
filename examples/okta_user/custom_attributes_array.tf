@@ -11,7 +11,7 @@ resource "okta_user_schema" "test_array" {
   type       = "array"
   array_type = "string"
   master     = "PROFILE_MASTER"
-  depends_on = ["okta_user_schema.test_number", "okta_user_schema.test"]
+  depends_on = [okta_user_schema.test_number, okta_user_schema.test]
 }
 
 resource "okta_user_schema" "test_number" {
@@ -19,15 +19,15 @@ resource "okta_user_schema" "test_number" {
   title      = "terraform acceptance test"
   type       = "number"
   master     = "PROFILE_MASTER"
-  depends_on = ["okta_user_schema.test"]
+  depends_on = [okta_user_schema.test]
 }
 
 resource "okta_user" "test" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "Smith"
-  login       = "test-acc-replace_with_uuid@example.com"
-  email       = "test-acc-replace_with_uuid@example.com"
+  login       = "testAcc-replace_with_uuid@example.com"
+  email       = "testAcc-replace_with_uuid@example.com"
 
   custom_profile_attributes = <<JSON
   {
@@ -36,5 +36,5 @@ resource "okta_user" "test" {
   }
 JSON
 
-  depends_on = ["okta_user_schema.test_array", "okta_user_schema.test_number"]
+  depends_on = [okta_user_schema.test_array, okta_user_schema.test_number]
 }

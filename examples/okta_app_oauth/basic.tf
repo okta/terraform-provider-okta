@@ -7,4 +7,5 @@ resource "okta_app_oauth" "test" {
   client_basic_secret        = "something_from_somewhere"
   client_id                  = "something_from_somewhere"
   token_endpoint_auth_method = "client_secret_basic"
+  consent_method             = "TRUSTED"
 }

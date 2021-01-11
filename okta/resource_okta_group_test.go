@@ -1,27 +1,27 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func sweepGroups(client *testClient) error {
 	var errorList []error
 	// Should never need to deal with pagination, limit is 10,000 by default
-	groups, _, err := client.oktaClient.Group.ListGroups(&query.Params{Q: testResourcePrefix})
+	groups, _, err := client.oktaClient.Group.ListGroups(context.Background(), &query.Params{Q: testResourcePrefix})
 	if err != nil {
 		return err
 	}
 
 	for _, s := range groups {
-		if _, err := client.oktaClient.Group.DeleteGroup(s.Id); err != nil {
+		if _, err := client.oktaClient.Group.DeleteGroup(context.Background(), s.Id); err != nil {
 			errorList = append(errorList, err)
 		}
-
 	}
 	return condenseError(errorList)
 }
@@ -35,9 +35,9 @@ func TestAccOktaGroups_crud(t *testing.T) {
 	addUsersConfig := mgr.GetFixtures("okta_group_with_users.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(oktaGroup, doesGroupExist),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(oktaGroup, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -62,7 +62,7 @@ func TestAccOktaGroups_crud(t *testing.T) {
 
 func doesGroupExist(id string) (bool, error) {
 	client := getOktaClientFromMetadata(testAccProvider.Meta())
-	_, response, err := client.Group.GetGroup(id, nil)
+	_, response, err := client.Group.GetGroup(context.Background(), id)
 
 	return doesResourceExist(response, err)
 }

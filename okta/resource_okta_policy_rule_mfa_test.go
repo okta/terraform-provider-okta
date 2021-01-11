@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func deleteMfaPolicyRules(client *testClient) error {
-	return deletePolicyRulesByType(mfaPolicyType, client)
+	return deletePolicyRulesByType(sdk.MfaPolicyType, client)
 }
 
 func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
@@ -19,16 +20,16 @@ func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
 	resourceName := buildResourceFQN(policyRuleMfa, ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createRuleCheckDestroy(policyRuleMfa),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createRuleCheckDestroy(policyRuleMfa),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 				),
 			},
 			{
@@ -36,7 +37,7 @@ func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 				),
 			},
 		},
@@ -48,7 +49,7 @@ func testOktaMfaPolicyRule(rInt int) string {
 
 	return fmt.Sprintf(`
 data "okta_default_policy" "default-%d" {
-	type = "MFA_ENROLL"
+	type = "%s"
 }
 
 resource "%s" "%s" {
@@ -56,7 +57,7 @@ resource "%s" "%s" {
 	name     = "%s"
 	status   = "ACTIVE"
 }
-`, rInt, policyRuleMfa, name, rInt, name)
+`, rInt, sdk.MfaPolicyType, policyRuleMfa, name, rInt, name)
 }
 
 func testOktaMfaPolicyRuleUpdated(rInt int) string {
@@ -64,7 +65,7 @@ func testOktaMfaPolicyRuleUpdated(rInt int) string {
 
 	return fmt.Sprintf(`
 data "okta_default_policy" "default-%d" {
-	type = "MFA_ENROLL"
+	type = "%s"
 }
 
 resource "%s" "%s" {
@@ -73,5 +74,5 @@ resource "%s" "%s" {
 	status   = "INACTIVE"
 	enroll	 = "LOGIN"
 }
-`, rInt, policyRuleMfa, name, rInt, name)
+`, rInt, sdk.MfaPolicyType, policyRuleMfa, name, rInt, name)
 }

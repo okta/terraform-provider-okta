@@ -1,4 +1,4 @@
-resource okta_app_oauth test {
+resource "okta_app_oauth" "test" {
   label          = "testAcc_replace_with_uuid"
   type           = "native"
   grant_types    = ["authorization_code"]
@@ -6,8 +6,8 @@ resource okta_app_oauth test {
   response_types = ["code"]
 }
 
-resource okta_app_user_schema test {
-  app_id      = "${okta_app_oauth.test.id}"
+resource "okta_app_user_schema" "test" {
+  app_id      = okta_app_oauth.test.id
   index       = "testAcc_replace_with_uuid"
   title       = "terraform acceptance test"
   type        = "string"

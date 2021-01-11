@@ -1,10 +1,11 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 type AuthorizationServerScope struct {
@@ -16,32 +17,20 @@ type AuthorizationServerScope struct {
 	Default         bool   `json:"default"`
 }
 
-func (m *ApiSupplement) DeleteAuthorizationServerScope(authServerId, id string) (*okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes/%s", authServerId, id)
+func (m *ApiSupplement) DeleteAuthorizationServerScope(ctx context.Context, authServerID, id string) (*okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes/%s", authServerID, id)
 	req, err := m.RequestExecutor.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(ctx, req, nil)
 }
 
-func (m *ApiSupplement) ListAuthorizationServerScopes(authServerId string) ([]*AuthorizationServerScope, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes", authServerId)
-	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var auth []*AuthorizationServerScope
-	resp, err := m.RequestExecutor.Do(req, &auth)
-	return auth, resp, err
-}
-
-func (m *ApiSupplement) CreateAuthorizationServerScope(authServerId string, body AuthorizationServerScope, qp *query.Params) (*AuthorizationServerScope, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes", authServerId)
+func (m *ApiSupplement) CreateAuthorizationServerScope(ctx context.Context, authServerID string, body AuthorizationServerScope, qp *query.Params) (*AuthorizationServerScope, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes", authServerID)
 	if qp != nil {
-		url = url + qp.String()
+		url += qp.String()
 	}
 	req, err := m.RequestExecutor.NewRequest("POST", url, body)
 	if err != nil {
@@ -49,14 +38,14 @@ func (m *ApiSupplement) CreateAuthorizationServerScope(authServerId string, body
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(ctx, req, &authorizationServer)
 	return &authorizationServer, resp, err
 }
 
-func (m *ApiSupplement) UpdateAuthorizationServerScope(authServerId, id string, body AuthorizationServerScope, qp *query.Params) (*AuthorizationServerScope, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes/%s", authServerId, id)
+func (m *ApiSupplement) UpdateAuthorizationServerScope(ctx context.Context, authServerID, id string, body AuthorizationServerScope, qp *query.Params) (*AuthorizationServerScope, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes/%s", authServerID, id)
 	if qp != nil {
-		url = url + qp.String()
+		url += qp.String()
 	}
 	req, err := m.RequestExecutor.NewRequest("PUT", url, body)
 	if err != nil {
@@ -64,22 +53,22 @@ func (m *ApiSupplement) UpdateAuthorizationServerScope(authServerId, id string, 
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(ctx, req, &authorizationServer)
 	if err != nil {
 		return nil, resp, err
 	}
 	return &authorizationServer, resp, nil
 }
 
-func (m *ApiSupplement) GetAuthorizationServerScope(authServerId, id string, authorizationServerInstance AuthorizationServerScope) (*AuthorizationServerScope, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes/%s", authServerId, id)
+func (m *ApiSupplement) GetAuthorizationServerScope(ctx context.Context, authServerID, id string, authorizationServerInstance AuthorizationServerScope) (*AuthorizationServerScope, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/scopes/%s", authServerID, id)
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	authorizationServer := authorizationServerInstance
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(ctx, req, &authorizationServer)
 	if err != nil {
 		return nil, resp, err
 	}

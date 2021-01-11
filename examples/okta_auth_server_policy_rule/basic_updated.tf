@@ -3,12 +3,12 @@ data "okta_group" "all" {
 }
 
 resource "okta_auth_server_policy_rule" "test" {
-  auth_server_id       = "${okta_auth_server.test.id}"
-  policy_id            = "${okta_auth_server_policy.test.id}"
+  auth_server_id       = okta_auth_server.test.id
+  policy_id            = okta_auth_server_policy.test.id
   status               = "ACTIVE"
   name                 = "test_updated"
   priority             = 1
-  group_whitelist      = ["${data.okta_group.all.id}"]
+  group_whitelist      = [data.okta_group.all.id]
   grant_type_whitelist = ["password"]
 }
 
@@ -23,5 +23,5 @@ resource "okta_auth_server_policy" "test" {
   description      = "test updated"
   priority         = 1
   client_whitelist = ["ALL_CLIENTS"]
-  auth_server_id   = "${okta_auth_server.test.id}"
+  auth_server_id   = okta_auth_server.test.id
 }

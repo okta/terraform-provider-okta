@@ -1,36 +1,34 @@
 package okta
 
 import (
-	"net/http"
+	"context"
 
-	"github.com/okta/okta-sdk-golang/okta"
-
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceGroup() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceGroupCreate,
-		Exists: resourceGroupExists,
-		Read:   resourceGroupRead,
-		Update: resourceGroupUpdate,
-		Delete: resourceGroupDelete,
+		CreateContext: resourceGroupCreate,
+		ReadContext:   resourceGroupRead,
+		UpdateContext: resourceGroupUpdate,
+		DeleteContext: resourceGroupDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Group name",
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Group description",
 			},
-			"users": &schema.Schema{
+			"users": {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -40,123 +38,98 @@ func resourceGroup() *schema.Resource {
 	}
 }
 
-func buildGroup(d *schema.ResourceData) *okta.Group {
-	return &okta.Group{
-		Profile: &okta.GroupProfile{
-			Name:        d.Get("name").(string),
-			Description: d.Get("description").(string),
-		},
-	}
-}
-
-func resourceGroupCreate(d *schema.ResourceData, m interface{}) error {
+func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	logger(m).Info("creating group", "name", d.Get("name").(string))
 	group := buildGroup(d)
-	responseGroup, _, err := getOktaClientFromMetadata(m).Group.CreateGroup(*group)
+	responseGroup, _, err := getOktaClientFromMetadata(m).Group.CreateGroup(ctx, *group)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create group: %v", err)
 	}
-
 	d.SetId(responseGroup.Id)
-	if err := updateGroupUsers(d, m); err != nil {
-		return err
+	err = updateGroupUsers(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to update group users: %v", err)
 	}
-
-	return resourceGroupRead(d, m)
+	return resourceGroupRead(ctx, d, m)
 }
 
-func resourceGroupExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	g, err := fetchGroup(d, m)
-
-	return err == nil && g != nil, err
-}
-
-func resourceGroupRead(d *schema.ResourceData, m interface{}) error {
-	g, err := fetchGroup(d, m)
-
+func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	logger(m).Info("reading group", "id", d.Id(), "name", d.Get("name").(string))
+	g, resp, err := getOktaClientFromMetadata(m).Group.GetGroup(ctx, d.Id())
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get group: %v", err)
+	}
 	if g == nil {
 		d.SetId("")
 		return nil
 	}
-
+	_ = d.Set("name", g.Profile.Name)
+	_ = d.Set("description", g.Profile.Description)
+	err = syncGroupUsers(ctx, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to get group users: %v", err)
 	}
-
-	d.Set("name", g.Profile.Name)
-	d.Set("description", g.Profile.Description)
-	if err := syncGroupUsers(d, m); err != nil {
-		return err
-	}
-
 	return nil
 }
 
-func resourceGroupUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	logger(m).Info("updating group", "id", d.Id(), "name", d.Get("name").(string))
 	group := buildGroup(d)
-	_, _, err := getOktaClientFromMetadata(m).Group.UpdateGroup(d.Id(), *group)
+	_, _, err := getOktaClientFromMetadata(m).Group.UpdateGroup(ctx, d.Id(), *group)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to update group: %v", err)
 	}
-
-	if err := updateGroupUsers(d, m); err != nil {
-		return err
+	err = updateGroupUsers(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to update group users: %v", err)
 	}
-
-	return resourceGroupRead(d, m)
+	return resourceGroupRead(ctx, d, m)
 }
 
-func resourceGroupDelete(d *schema.ResourceData, m interface{}) error {
-	_, err := getOktaClientFromMetadata(m).Group.DeleteGroup(d.Id())
-
-	return err
-}
-
-func fetchGroup(d *schema.ResourceData, m interface{}) (*okta.Group, error) {
-	g, resp, err := getOktaClientFromMetadata(m).Group.GetGroup(d.Id(), &query.Params{})
-
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, nil
+func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	logger(m).Info("deleting group", "id", d.Id(), "name", d.Get("name").(string))
+	_, err := getOktaClientFromMetadata(m).Group.DeleteGroup(ctx, d.Id())
+	if err != nil {
+		return diag.Errorf("failed to delete group: %v", err)
 	}
-
-	return g, err
+	return nil
 }
 
-func syncGroupUsers(d *schema.ResourceData, m interface{}) error {
+func syncGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}) error {
 	// Only sync when the user opts in by outlining users in the group config
-	if _, exists := d.GetOkExists("users"); !exists {
+	if _, exists := d.GetOk("users"); !exists {
 		return nil
 	}
-	userIdList, err := listGroupUserIds(m, d.Id())
+	userIDList, err := listGroupUserIDs(ctx, m, d.Id())
 	if err != nil {
 		return err
 	}
-
-	return d.Set("users", convertStringSetToInterface(userIdList))
+	return d.Set("users", convertStringSetToInterface(userIDList))
 }
 
-func updateGroupUsers(d *schema.ResourceData, m interface{}) error {
+func updateGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}) error {
 	// Only sync when the user opts in by outlining users in the group config
 	// To remove all users, define an empty set
-	arr, exists := d.GetOkExists("users")
+	arr, exists := d.GetOk("users")
 	if !exists {
 		return nil
 	}
 
 	client := getOktaClientFromMetadata(m)
-	existingUserList, _, err := client.Group.ListGroupUsers(d.Id(), nil)
+	existingUserList, _, err := client.Group.ListGroupUsers(ctx, d.Id(), nil)
 	if err != nil {
 		return err
 	}
 
 	rawArr := arr.(*schema.Set).List()
-	userIdList := make([]string, len(rawArr))
+	userIDList := make([]string, len(rawArr))
 
-	for i, ifaceId := range rawArr {
-		userId := ifaceId.(string)
-		userIdList[i] = userId
+	for i, ifaceID := range rawArr {
+		userID := ifaceID.(string)
+		userIDList[i] = userID
 
-		if !containsUser(existingUserList, userId) {
-			resp, err := client.Group.AddUserToGroup(d.Id(), userId)
+		if !containsUser(existingUserList, userID) {
+			resp, err := client.Group.AddUserToGroup(ctx, d.Id(), userID)
 			if err != nil {
 				return responseErr(resp, err)
 			}
@@ -164,8 +137,8 @@ func updateGroupUsers(d *schema.ResourceData, m interface{}) error {
 	}
 
 	for _, user := range existingUserList {
-		if !contains(userIdList, user.Id) {
-			err := suppressErrorOn404(client.Group.RemoveGroupUser(d.Id(), user.Id))
+		if !contains(userIDList, user.Id) {
+			err := suppressErrorOn404(client.Group.RemoveUserFromGroup(ctx, d.Id(), user.Id))
 			if err != nil {
 				return err
 			}
@@ -182,4 +155,13 @@ func containsUser(users []*okta.User, id string) bool {
 		}
 	}
 	return false
+}
+
+func buildGroup(d *schema.ResourceData) *okta.Group {
+	return &okta.Group{
+		Profile: &okta.GroupProfile{
+			Name:        d.Get("name").(string),
+			Description: d.Get("description").(string),
+		},
+	}
 }

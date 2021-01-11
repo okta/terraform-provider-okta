@@ -1,4 +1,4 @@
-resource okta_app_saml test {
+resource "okta_app_saml" "test" {
   label                    = "testAcc_replace_with_uuid"
   sso_url                  = "http://google.com"
   recipient                = "http://here.com"
@@ -13,10 +13,10 @@ resource okta_app_saml test {
   authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
 }
 
-data okta_app_saml test {
-  id = "${okta_app_saml.test.id}"
+data "okta_app_saml" "test" {
+  id = okta_app_saml.test.id
 }
 
-data okta_app_saml test_label {
-  label = "${okta_app_saml.test.label}"
+data "okta_app_saml" "test_label" {
+  label = okta_app_saml.test.label
 }

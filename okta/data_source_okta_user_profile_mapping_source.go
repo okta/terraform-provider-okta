@@ -1,17 +1,21 @@
 package okta
 
 import (
-	"fmt"
+	"context"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceUserProfileMappingSource() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceUserProfileMappingSourceRead,
-
+		ReadContext: dataSourceUserProfileMappingSourceRead,
 		Schema: map[string]*schema.Schema{
+			"id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "ID of the source",
+			},
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -24,17 +28,15 @@ func dataSourceUserProfileMappingSource() *schema.Resource {
 	}
 }
 
-func dataSourceUserProfileMappingSourceRead(d *schema.ResourceData, m interface{}) error {
-	client := getSupplementFromMetadata(m)
-
-	mapping, _, err := client.FindProfileMappingSource("user", "user", &query.Params{})
+func dataSourceUserProfileMappingSourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	mapping, _, err := getSupplementFromMetadata(m).FindProfileMappingSource(ctx, "user", "user", nil)
 	if err != nil {
-		return fmt.Errorf("Error Listing User Profile Mapping Source in Okta: %v", err)
+		return diag.Errorf("failed to find profile mapping source: %v", err)
 	}
 
 	d.SetId(mapping.ID)
-	d.Set("type", mapping.Type)
-	d.Set("name", mapping.Name)
+	_ = d.Set("type", mapping.Type)
+	_ = d.Set("name", mapping.Name)
 
 	return nil
 }

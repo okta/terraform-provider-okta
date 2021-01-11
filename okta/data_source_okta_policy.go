@@ -1,16 +1,18 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func dataSourcePolicy() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourcePolicyRead,
-
+		ReadContext: dataSourcePolicyRead,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
@@ -18,34 +20,36 @@ func dataSourcePolicy() *schema.Resource {
 				Required:    true,
 			},
 			"type": {
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{signOnPolicyType, passwordPolicyType, "MFA_ENROLL", "OAUTH_AUTHORIZATION_POLICY", "IDP_DISCOVERY"}, false),
-				Description:  fmt.Sprintf("Policy type: %s, %s, MFA_ENROLL, IDP_DISCOVERY, or OAUTH_AUTHORIZATION_POLICY", signOnPolicyType, passwordPolicyType),
-				Required:     true,
+				Type: schema.TypeString,
+				ValidateDiagFunc: stringInSlice([]string{
+					sdk.SignOnPolicyType,
+					sdk.PasswordPolicyType,
+					sdk.MfaPolicyType,
+					sdk.IdpDiscoveryType,
+					sdk.OauthAuthorizationPolicyType,
+				}),
+				Description: fmt.Sprintf("Policy type: %s, %s, %s, %s, or %s", sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.IdpDiscoveryType, sdk.OauthAuthorizationPolicyType),
+				Required:    true,
 			},
 		},
 	}
 }
 
-func dataSourcePolicyRead(d *schema.ResourceData, m interface{}) error {
-	return setPolicyByName(d, m, d.Get("name").(string))
+func dataSourcePolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return setPolicyByName(ctx, d, m, d.Get("name").(string))
 }
 
-func setPolicyByName(d *schema.ResourceData, m interface{}, name string) error {
-	client := getClientFromMetadata(m)
-	ptype := d.Get("type").(string)
-
-	currentPolicies, _, err := client.Policies.GetPoliciesByType(ptype)
+func setPolicyByName(ctx context.Context, d *schema.ResourceData, m interface{}, name string) diag.Diagnostics {
+	policyType := d.Get("type").(string)
+	policies, _, err := getOktaClientFromMetadata(m).Policy.ListPolicies(ctx, &query.Params{Type: policyType})
 	if err != nil {
-		return fmt.Errorf("Error Listing Policies in Okta: %v", err)
+		return diag.Errorf("failed to list policies: %v", err)
 	}
-	if currentPolicies != nil {
-		for _, policy := range currentPolicies.Policies {
-			if policy.Name == name {
-				d.SetId(policy.ID)
-				return nil
-			}
+	for _, policy := range policies {
+		if policy.Name == name {
+			d.SetId(policy.Id)
+			return nil
 		}
 	}
-	return fmt.Errorf("No policies retrieved for policy type %v, name %s", ptype, name)
+	return diag.Errorf("no policies retrieved for policy type %s, name %s", policyType, name)
 }

@@ -2,4 +2,4 @@
 
 Represents an Authorization Server Scope. [See Okta documentation for more details](https://developer.okta.com/docs/api/resources/authorization-servers#scope-object).
 
-* Example of a simple auth server scope [can be found here](./basic.tf)
+- Example of a simple auth server scope [can be found here](./basic.tf)
