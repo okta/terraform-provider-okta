@@ -297,7 +297,7 @@ func setGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) erro
 
 	// ignore saving the Everyone group into state so we don't end up with perpetual diffs
 	for _, group := range groups {
-		if group.Profile.Name != groupProfileEveryone {
+		if group.Type != "BUILT_IN" && group.Type != "APP_GROUP" {
 			groupIDs = append(groupIDs, group.Id)
 		}
 	}
@@ -375,7 +375,7 @@ func updateGroupsOnUser(ctx context.Context, u string, g []string, c *okta.Clien
 		return fmt.Errorf("failed to list user groups: %v", err)
 	}
 	for _, group := range groups {
-		if group.Profile.Name != groupProfileEveryone {
+		if group.Type != "BUILT_IN" && group.Type != "APP_GROUP" {
 			_, err = c.Group.RemoveUserFromGroup(ctx, group.Id, u)
 			if err != nil {
 				return fmt.Errorf("failed to remove user from group: %v", err)
