@@ -46,8 +46,6 @@ The following arguments are supported:
 
 - `preconfigured_app` - (Optional) name of application from the Okta Integration Network, if not included a custom app will be created.
 
-- `description` - (Optional) description of application.
-
 - `status` - (Optional) status of application.
 
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.

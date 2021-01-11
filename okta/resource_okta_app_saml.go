@@ -316,10 +316,16 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		d.SetId("")
 		return nil
 	}
-	if app.Settings != nil && app.Settings.SignOn != nil {
-		err = syncSamlSettings(d, app.Settings)
+	if app.Settings != nil {
+		if app.Settings.SignOn != nil {
+			err = setSamlSettings(d, app.Settings.SignOn)
+			if err != nil {
+				return diag.Errorf("failed to set SAML sign-on settings: %v", err)
+			}
+		}
+		err = setAppSettings(d, app.Settings.App)
 		if err != nil {
-			return diag.Errorf("failed to sync SAML settings: %v", err)
+			return diag.Errorf("failed to set SAML app settings: %v", err)
 		}
 	}
 	_ = d.Set("features", convertStringSetToInterface(app.Features))
@@ -327,10 +333,6 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	_ = d.Set("preconfigured_app", app.Name)
-	err = setAppSettings(d, app.Settings.App)
-	if err != nil {
-		return diag.Errorf("failed to set SAML settings: %v", err)
-	}
 	if app.Credentials.Signing.Kid != "" && app.Status != statusInactive {
 		keyID := app.Credentials.Signing.Kid
 		_ = d.Set("key_id", keyID)
