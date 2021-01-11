@@ -32,10 +32,6 @@ func dataSourceAppSaml() *schema.Resource {
 				Default:     true,
 				Description: "Search only ACTIVE applications.",
 			},
-			"description": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -251,10 +247,16 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 	_ = d.Set("name", app.Name)
 	_ = d.Set("status", app.Status)
 	_ = d.Set("key_id", app.Credentials.Signing.Kid)
-	if app.Settings != nil && app.Settings.SignOn != nil {
-		err = syncSamlSettings(d, app.Settings)
+	if app.Settings != nil {
+		if app.Settings.SignOn != nil {
+			err = setSamlSettings(d, app.Settings.SignOn)
+			if err != nil {
+				return diag.Errorf("failed to read SAML app: error setting SAML sign-on settings: %v", err)
+			}
+		}
+		err = setAppSettings(d, app.Settings.App)
 		if err != nil {
-			return diag.Errorf("failed to read SAML app: error setting SAML app settings: %v", err)
+			return diag.Errorf("failed to read SAML app: failed to set SAML app settings: %v", err)
 		}
 	}
 	_ = d.Set("features", convertStringSetToInterface(app.Features))

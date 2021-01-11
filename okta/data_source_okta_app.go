@@ -33,10 +33,6 @@ func dataSourceApp() *schema.Resource {
 				Default:     true,
 				Description: "Search only ACTIVE applications.",
 			},
-			"description": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -66,7 +62,6 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 	app := appList[0]
 	d.SetId(app.ID)
 	_ = d.Set("label", app.Label)
-	_ = d.Set("description", app.Description)
 	_ = d.Set("name", app.Name)
 	_ = d.Set("status", app.Status)
 

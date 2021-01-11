@@ -18,7 +18,6 @@ type (
 		Label       string `json:"label"`
 		Name        string `json:"name"`
 		Status      string `json:"status"`
-		Description string `json:"description"`
 	}
 
 	appFilters struct {

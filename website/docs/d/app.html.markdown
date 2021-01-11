@@ -34,8 +34,6 @@ data "okta_app" "example" {
 
 - `label` - `label` of application.
 
-- `description` - `description` of application.
-
 - `name` - `name` of application.
 
 - `status` - `status` of application.

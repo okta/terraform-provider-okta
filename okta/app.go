@@ -464,25 +464,24 @@ func setAppSettings(d *schema.ResourceData, settings *okta.ApplicationSettingsAp
 	return d.Set("app_settings_json", string(payload))
 }
 
-func syncSamlSettings(d *schema.ResourceData, set *okta.SamlApplicationSettings) error {
-	_ = d.Set("default_relay_state", set.SignOn.DefaultRelayState)
-	_ = d.Set("sso_url", set.SignOn.SsoAcsUrl)
-	_ = d.Set("recipient", set.SignOn.Recipient)
-	_ = d.Set("destination", set.SignOn.Destination)
-	_ = d.Set("audience", set.SignOn.Audience)
-	_ = d.Set("idp_issuer", set.SignOn.IdpIssuer)
-	_ = d.Set("subject_name_id_template", set.SignOn.SubjectNameIdTemplate)
-	_ = d.Set("subject_name_id_format", set.SignOn.SubjectNameIdFormat)
-	_ = d.Set("response_signed", set.SignOn.ResponseSigned)
-	_ = d.Set("assertion_signed", set.SignOn.AssertionSigned)
-	_ = d.Set("signature_algorithm", set.SignOn.SignatureAlgorithm)
-	_ = d.Set("digest_algorithm", set.SignOn.DigestAlgorithm)
-	_ = d.Set("honor_force_authn", set.SignOn.HonorForceAuthn)
-	_ = d.Set("authn_context_class_ref", set.SignOn.AuthnContextClassRef)
-
-	if set.SignOn.AllowMultipleAcsEndpoints != nil {
-		if *set.SignOn.AllowMultipleAcsEndpoints {
-			acsEndpointsObj := set.SignOn.AcsEndpoints
+func setSamlSettings(d *schema.ResourceData, signOn *okta.SamlApplicationSettingsSignOn) error {
+	_ = d.Set("default_relay_state", signOn.DefaultRelayState)
+	_ = d.Set("sso_url", signOn.SsoAcsUrl)
+	_ = d.Set("recipient", signOn.Recipient)
+	_ = d.Set("destination", signOn.Destination)
+	_ = d.Set("audience", signOn.Audience)
+	_ = d.Set("idp_issuer", signOn.IdpIssuer)
+	_ = d.Set("subject_name_id_template", signOn.SubjectNameIdTemplate)
+	_ = d.Set("subject_name_id_format", signOn.SubjectNameIdFormat)
+	_ = d.Set("response_signed", signOn.ResponseSigned)
+	_ = d.Set("assertion_signed", signOn.AssertionSigned)
+	_ = d.Set("signature_algorithm", signOn.SignatureAlgorithm)
+	_ = d.Set("digest_algorithm", signOn.DigestAlgorithm)
+	_ = d.Set("honor_force_authn", signOn.HonorForceAuthn)
+	_ = d.Set("authn_context_class_ref", signOn.AuthnContextClassRef)
+	if signOn.AllowMultipleAcsEndpoints != nil {
+		if *signOn.AllowMultipleAcsEndpoints {
+			acsEndpointsObj := signOn.AcsEndpoints
 			if len(acsEndpointsObj) > 0 {
 				acsEndpoints := make([]string, len(acsEndpointsObj))
 				for i := range acsEndpointsObj {
@@ -495,7 +494,7 @@ func syncSamlSettings(d *schema.ResourceData, set *okta.SamlApplicationSettings)
 		}
 	}
 
-	attrStatements := set.SignOn.AttributeStatements
+	attrStatements := signOn.AttributeStatements
 	arr := make([]map[string]interface{}, len(attrStatements))
 
 	for i, st := range attrStatements {
