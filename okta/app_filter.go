@@ -14,10 +14,10 @@ import (
 
 type (
 	appID struct {
-		ID          string `json:"id"`
-		Label       string `json:"label"`
-		Name        string `json:"name"`
-		Status      string `json:"status"`
+		ID     string `json:"id"`
+		Label  string `json:"label"`
+		Name   string `json:"name"`
+		Status string `json:"status"`
 	}
 
 	appFilters struct {
