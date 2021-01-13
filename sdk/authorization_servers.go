@@ -3,11 +3,12 @@ package sdk
 // Not all APIs are supported by okta-sdk-golang, this is one
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/peterhellberg/link"
 )
 
@@ -26,28 +27,29 @@ type AuthServerCredentials struct {
 	Signing *okta.ApplicationCredentialsSigning `json:"signing,omitempty"`
 }
 
-func (m *ApiSupplement) DeleteAuthorizationServer(id string) (*okta.Response, error) {
+func (m *ApiSupplement) DeleteAuthorizationServer(ctx context.Context, id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%s", id)
 	req, err := m.RequestExecutor.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(ctx, req, nil)
 }
-func (m *ApiSupplement) ListAuthorizationServers() ([]*AuthorizationServer, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers")
-	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
+
+func (m *ApiSupplement) ListAuthorizationServers(ctx context.Context) ([]*AuthorizationServer, *okta.Response, error) {
+	req, err := m.RequestExecutor.NewRequest("GET", "/api/v1/authorizationServers", nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var auth []*AuthorizationServer
-	resp, err := m.RequestExecutor.Do(req, &auth)
+	resp, err := m.RequestExecutor.Do(ctx, req, &auth)
 	return auth, resp, err
 }
-func (m *ApiSupplement) CreateAuthorizationServer(body AuthorizationServer, qp *query.Params) (*AuthorizationServer, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers")
+
+func (m *ApiSupplement) CreateAuthorizationServer(ctx context.Context, body AuthorizationServer, qp *query.Params) (*AuthorizationServer, *okta.Response, error) {
+	url := "/api/v1/authorizationServers"
 	if qp != nil {
 		url += qp.String()
 	}
@@ -57,11 +59,11 @@ func (m *ApiSupplement) CreateAuthorizationServer(body AuthorizationServer, qp *
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(ctx, req, &authorizationServer)
 	return &authorizationServer, resp, err
 }
 
-func (m *ApiSupplement) UpdateAuthorizationServer(id string, body AuthorizationServer, qp *query.Params) (*AuthorizationServer, *okta.Response, error) {
+func (m *ApiSupplement) UpdateAuthorizationServer(ctx context.Context, id string, body AuthorizationServer, qp *query.Params) (*AuthorizationServer, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%s", id)
 	if qp != nil {
 		url += qp.String()
@@ -72,41 +74,43 @@ func (m *ApiSupplement) UpdateAuthorizationServer(id string, body AuthorizationS
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(ctx, req, &authorizationServer)
 	return &authorizationServer, resp, err
 }
 
-func (m *ApiSupplement) GetAuthorizationServer(id string) (*AuthorizationServer, *okta.Response, error) {
+func (m *ApiSupplement) GetAuthorizationServer(ctx context.Context, id string) (*AuthorizationServer, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%s", id)
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	authorizationServer := &AuthorizationServer{}
-	resp, err := m.RequestExecutor.Do(req, authorizationServer)
+	resp, err := m.RequestExecutor.Do(ctx, req, authorizationServer)
 	return authorizationServer, resp, err
 }
-func (m *ApiSupplement) ActivateAuthorizationServer(id string) (*okta.Response, error) {
+
+func (m *ApiSupplement) ActivateAuthorizationServer(ctx context.Context, id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%s/lifecycle/activate", id)
 	req, err := m.RequestExecutor.NewRequest("POST", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(ctx, req, nil)
 }
-func (m *ApiSupplement) DeactivateAuthorizationServer(id string) (*okta.Response, error) {
+
+func (m *ApiSupplement) DeactivateAuthorizationServer(ctx context.Context, id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%s/lifecycle/deactivate", id)
 	req, err := m.RequestExecutor.NewRequest("POST", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(ctx, req, nil)
 }
 
-func (c *ApiSupplement) FindAuthServer(name string, qp *query.Params) (*AuthorizationServer, error) {
-	authServerList, res, err := c.ListAuthorizationServers()
+func (m *ApiSupplement) FindAuthServer(ctx context.Context, name string, qp *query.Params) (*AuthorizationServer, error) {
+	authServerList, res, err := m.ListAuthorizationServers(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -119,13 +123,13 @@ func (c *ApiSupplement) FindAuthServer(name string, qp *query.Params) (*Authoriz
 
 	if after := getNextLinkOffset(res); after != "" {
 		qp.After = after
-		return c.FindAuthServer(name, qp)
+		return m.FindAuthServer(ctx, name, qp)
 	}
 	return nil, nil
 }
 
-func (c *ApiSupplement) FilterAuthServers(qp *query.Params, arr []*AuthorizationServer, compare func(string) bool) ([]*AuthorizationServer, error) {
-	authServerList, res, err := c.ListAuthorizationServers()
+func (m *ApiSupplement) FilterAuthServers(ctx context.Context, qp *query.Params, arr []*AuthorizationServer, compare func(string) bool) ([]*AuthorizationServer, error) {
+	authServerList, res, err := m.ListAuthorizationServers(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +142,7 @@ func (c *ApiSupplement) FilterAuthServers(qp *query.Params, arr []*Authorization
 
 	if after := getNextLinkOffset(res); after != "" {
 		qp.After = after
-		return c.FilterAuthServers(qp, arr, compare)
+		return m.FilterAuthServers(ctx, qp, arr, compare)
 	}
 
 	return arr, nil

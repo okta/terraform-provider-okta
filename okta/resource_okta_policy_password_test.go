@@ -1,33 +1,37 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func deletePasswordPolicies(client *testClient) error {
-	return deletePolicyByType(passwordPolicyType, client)
+	return deletePolicyByType(sdk.PasswordPolicyType, client)
 }
 
 func deletePolicyByType(t string, client *testClient) error {
-	col, _, err := client.artClient.Policies.GetPoliciesByType(t)
-
+	ctx := context.Background()
+	policies, _, err := client.oktaClient.Policy.ListPolicies(ctx, &query.Params{Type: t})
 	if err != nil {
-		return fmt.Errorf("Failed to retrieve policies in order to properly destroy. Error: %s", err)
+		return fmt.Errorf("failed to list policies in order to properly destroy: %v", err)
 	}
-
-	for _, policy := range col.Policies {
+	for _, policy := range policies {
 		if strings.HasPrefix(policy.Name, testResourcePrefix) {
-			_, err = client.artClient.Policies.DeletePolicy(policy.ID)
+			_, err = client.oktaClient.Policy.DeletePolicy(ctx, policy.Id)
+			if err != nil {
+				return err
+			}
 		}
 	}
-
 	return nil
 }
 
@@ -39,16 +43,16 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", policyPassword)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createPolicyCheckDestroy(policyPassword),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createPolicyCheckDestroy(policyPassword),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test Password Policy"),
 				),
 			},
@@ -57,7 +61,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test Password Policy Updated"),
 					resource.TestCheckResourceAttr(resourceName, "password_min_length", "12"),
 					resource.TestCheckResourceAttr(resourceName, "password_min_lowercase", "0"),
@@ -77,7 +81,8 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "password_lockout_notification_channels.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "question_min_length", "10"),
 					resource.TestCheckResourceAttr(resourceName, "recovery_email_token", "20160"),
-					resource.TestCheckResourceAttr(resourceName, "sms_recovery", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "sms_recovery", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "call_recovery", statusActive),
 				),
 			},
 		},
@@ -125,15 +130,12 @@ func createPolicyCheckDestroy(policyType string) func(*terraform.State) error {
 	}
 }
 
-func doesPolicyExistsUpstream(ID string) (bool, error) {
-	client := getClientFromMetadata(testAccProvider.Meta())
-
-	policy, resp, err := client.Policies.GetPolicy(ID)
-	if resp.StatusCode == http.StatusNotFound {
+func doesPolicyExistsUpstream(id string) (bool, error) {
+	policy, resp, err := getSupplementFromMetadata(testAccProvider.Meta()).GetPolicy(context.Background(), id)
+	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return false, nil
 	} else if err != nil {
 		return false, err
 	}
-
-	return policy.ID != "", nil
+	return policy.Id != "", nil
 }

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaAuthServerClaim_create(t *testing.T) {
@@ -16,14 +16,14 @@ func TestAccOktaAuthServerClaim_create(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(authServer, authServerExists),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "name", "test"),
 					resource.TestCheckResourceAttr(resourceName, "value_type", "EXPRESSION"),
 					resource.TestCheckResourceAttr(resourceName, "value", "cool"),
@@ -33,7 +33,7 @@ func TestAccOktaAuthServerClaim_create(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "name", "test_updated"),
 					resource.TestCheckResourceAttr(resourceName, "value_type", "EXPRESSION"),
 					resource.TestCheckResourceAttr(resourceName, "value", "cool_updated"),
@@ -52,21 +52,21 @@ func TestAccOktaAuthServerClaim_groupType(t *testing.T) {
 	config := mgr.GetFixtures("basic_group.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(authServer, authServerExists),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "name", "test"),
 					resource.TestCheckResourceAttr(resourceName, "group_filter_type", "EQUALS"),
 					resource.TestCheckResourceAttr(resourceName, "value_type", "GROUPS"),
-					resource.TestCheckResourceAttr(resourceName, "value", "Everyone"),
+					resource.TestCheckResourceAttr(resourceName, "value", groupProfileEveryone),
 					resource.TestCheckResourceAttr(resourceName, "claim_type", "RESOURCE"),
 
-					resource.TestCheckResourceAttr(swResourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(swResourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(swResourceName, "name", "test_sw"),
 					resource.TestCheckResourceAttr(swResourceName, "group_filter_type", "STARTS_WITH"),
 					resource.TestCheckResourceAttr(swResourceName, "value_type", "GROUPS"),

@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_idp_saml"
-sidebar_current: "docs-okta-resource-idp-saml"
+layout: 'okta'
+page_title: 'Okta: okta_idp_saml'
+sidebar_current: 'docs-okta-resource-idp-saml'
 description: |-
   Creates a SAML Identity Provider.
 ---
@@ -34,73 +34,75 @@ resource "okta_idp_saml" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required) The Application's display name.
+- `name` - (Required) The Application's display name.
 
-* `kid` - (Required) The ID of the signing key.
+- `kid` - (Required) The ID of the signing key.
 
-* `acs_binding` - (Required) The method of making an ACS request. It can be set to `"HTTP-POST"` or `"HTTP-REDIRECT"`.
+- `acs_binding` - (Required) The method of making an ACS request. It can be set to `"HTTP-POST"` or `"HTTP-REDIRECT"`.
 
-* `sso_url` - (Required) URL of binding-specific endpoint to send an AuthnRequest message to IdP.
+- `sso_url` - (Required) URL of binding-specific endpoint to send an AuthnRequest message to IdP.
 
-* `issuer` - (Required) URI that identifies the issuer.
+- `issuer` - (Required) URI that identifies the issuer.
 
-* `acs_type` - (Optional) The type of ACS. It can be `"INSTANCE"` or `"ORG"`.
+- `acs_type` - (Optional) The type of ACS. It can be `"INSTANCE"` or `"ORG"`.
 
-* `sso_binding` - (Optional) The method of making an SSO request. It can be set to `"HTTP-POST"` or `"HTTP-REDIRECT"`.
+- `sso_binding` - (Optional) The method of making an SSO request. It can be set to `"HTTP-POST"` or `"HTTP-REDIRECT"`.
 
-* `sso_destination` - (Optional) URI reference indicating the address to which the AuthnRequest message is sent.
+- `sso_destination` - (Optional) URI reference indicating the address to which the AuthnRequest message is sent.
 
-* `name_format` - (Optional) The name identifier format to use. By default `"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"`.
+- `name_format` - (Optional) The name identifier format to use. By default `"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"`.
 
-* `subject_format` - (Optional) The name formate. By default `"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"`.
+- `subject_format` - (Optional) The name format. By default `"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"`.
 
-* `subject_filter` - (Optional) Optional regular expression pattern used to filter untrusted IdP usernames.
+- `subject_filter` - (Optional) Optional regular expression pattern used to filter untrusted IdP usernames.
 
-* `issuer_mode` - (Optional) Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL. It can be `"ORG_URL"` or `"CUSTOM_URL"`.
+- `issuer_mode` - (Optional) Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL. It can be `"ORG_URL"` or `"CUSTOM_URL"`.
 
-* `status` - (Optional) Status of the IdP.
+- `max_clock_skew` - (Optional) Maximum allowable clock-skew when processing messages from the IdP.
 
-* `account_link_action` - (Optional) Specifies the account linking action for an IdP user.
+- `status` - (Optional) Status of the IdP.
 
-* `account_link_group_include` - (Optional)	Group memberships to determine link candidates.
+- `account_link_action` - (Optional) Specifies the account linking action for an IdP user.
 
-* `provisioning_action` - (Optional) Provisioning action for an IdP user during authentication.
+- `account_link_group_include` - (Optional) Group memberships to determine link candidates.
 
-* `deprovisioned_action` - (Optional) Action for a previously deprovisioned IdP user during authentication. Can be `"NONE"` or `"REACTIVATE"`.
+- `provisioning_action` - (Optional) Provisioning action for an IdP user during authentication.
 
-* `suspended_action` - (Optional) Action for a previously suspended IdP user during authentication. Can be set to `"NONE"` or `"UNSUSPEND"`
+- `deprovisioned_action` - (Optional) Action for a previously deprovisioned IdP user during authentication. Can be `"NONE"` or `"REACTIVATE"`.
 
-* `groups_action` - (Optional) Provisioning action for IdP user's group memberships. It can be `"NONE"`, `"SYNC"`, `"APPEND"`, or `"ASSIGN"`.
+- `suspended_action` - (Optional) Action for a previously suspended IdP user during authentication. Can be set to `"NONE"` or `"UNSUSPEND"`
 
-* `groups_attribute` - (Optional) IdP user profile attribute name (case-insensitive) for an array value that contains group memberships.
+- `groups_action` - (Optional) Provisioning action for IdP user's group memberships. It can be `"NONE"`, `"SYNC"`, `"APPEND"`, or `"ASSIGN"`.
 
-* `groups_assignment` - (Optional) List of Okta Group IDs to add an IdP user as a member with the `"ASSIGN"` `groups_action`.
+- `groups_attribute` - (Optional) IdP user profile attribute name (case-insensitive) for an array value that contains group memberships.
 
-* `groups_filter` - (Optional) Whitelist of Okta Group identifiers that are allowed for the `"APPEND"` or `"SYNC"` `groups_action`.
+- `groups_assignment` - (Optional) List of Okta Group IDs to add an IdP user as a member with the `"ASSIGN"` `groups_action`.
 
-* `username_template` - (Optional) Okta EL Expression to generate or transform a unique username for the IdP user.
+- `groups_filter` - (Optional) Whitelist of Okta Group identifiers that are allowed for the `"APPEND"` or `"SYNC"` `groups_action`.
 
-* `subject_match_type` - (Optional) Determines the Okta user profile attribute match conditions for account linking and authentication of the transformed IdP username. By default it is set to `"USERNAME"`. It can be set to `"USERNAME"`, `"EMAIL"`, `"USERNAME_OR_EMAIL"` or `"CUSTOM_ATTRIBUTE"`.
+- `username_template` - (Optional) Okta EL Expression to generate or transform a unique username for the IdP user.
 
-* `subject_match_attribute` - (Optional) Okta user profile attribute for matching transformed IdP username. Only for matchType `"CUSTOM_ATTRIBUTE"`.
+- `subject_match_type` - (Optional) Determines the Okta user profile attribute match conditions for account linking and authentication of the transformed IdP username. By default, it is set to `"USERNAME"`. It can be set to `"USERNAME"`, `"EMAIL"`, `"USERNAME_OR_EMAIL"` or `"CUSTOM_ATTRIBUTE"`.
 
-* `profile_master` - (Optional) Determines if the IdP should act as a source of truth for user profile attributes.
+- `subject_match_attribute` - (Optional) Okta user profile attribute for matching transformed IdP username. Only for matchType `"CUSTOM_ATTRIBUTE"`.
 
-* `request_signature_algorithm` - (Optional) The XML digital signature algorithm used when signing an AuthnRequest message.
+- `profile_master` - (Optional) Determines if the IdP should act as a source of truth for user profile attributes.
 
-* `request_signature_scope` - (Optional) Specifies whether or not to digitally sign an AuthnRequest messages to the IdP. It can be `"REQUEST"` or `"NONE"`.
+- `request_signature_algorithm` - (Optional) The XML digital signature algorithm used when signing an AuthnRequest message.
 
-* `response_signature_algorithm` - (Optional) The minimum XML digital signature algorithm allowed when verifying a SAMLResponse message or Assertion element.
+- `request_signature_scope` - (Optional) Specifies whether to digitally sign an AuthnRequest messages to the IdP. It can be `"REQUEST"` or `"NONE"`.
 
-* `response_signature_scope` - (Optional) Specifies whether to verify a SAMLResponse message or Assertion element XML digital signature. It can be `"RESPONSE"`, `"ASSERTION"`, or `"ANY"`.
+- `response_signature_algorithm` - (Optional) The minimum XML digital signature algorithm allowed when verifying a SAMLResponse message or Assertion element.
+
+- `response_signature_scope` - (Optional) Specifies whether to verify a SAMLResponse message or Assertion element XML digital signature. It can be `"RESPONSE"`, `"ASSERTION"`, or `"ANY"`.
 
 ## Attributes Reference
 
-* `id` - ID of the IdP.
+- `id` - ID of the IdP.
 
-* `type` - Type of the IdP.
+- `type` - Type of the IdP.
 
-* `audience` - The audience restriction for the IdP.
+- `audience` - The audience restriction for the IdP.
 
 ## Import
 

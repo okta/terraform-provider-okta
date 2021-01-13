@@ -1,5 +1,7 @@
 package sdk
 
+import "encoding/json"
+
 type (
 	UserSchema struct {
 		Schema      string                 `json:"$schema,omitempty"`
@@ -43,23 +45,26 @@ type (
 	}
 
 	UserSubSchema struct {
-		Description  string                  `json:"description,omitempty"`
-		Enum         []string                `json:"enum,omitempty"`
-		Format       string                  `json:"format,omitempty"`
-		Items        *UserSchemaItem         `json:"items,omitempty"`
-		Master       *UserSchemaMaster       `json:"master,omitempty"`
-		MaxLength    *int                    `json:"maxLength,omitempty"`
-		MinLength    *int                    `json:"minLength,omitempty"`
-		Mutability   string                  `json:"mutability,omitempty"`
-		OneOf        []*UserSchemaEnum       `json:"oneOf,omitempty"`
-		Permissions  []*UserSchemaPermission `json:"permissions,omitempty"`
-		Required     *bool                   `json:"required,omitempty"`
-		Scope        string                  `json:"scope,omitempty"`
-		Title        string                  `json:"title,omitempty"`
-		Type         string                  `json:"type,omitempty"`
-		Union        string                  `json:"union,omitempty"`
-		Unique       string                  `json:"unique,omitempty"`
-		ExternalName string                  `json:"externalName,omitempty"`
+		Description       string                  `json:"description,omitempty"`
+		Enum              []string                `json:"enum,omitempty"`
+		Format            string                  `json:"format,omitempty"`
+		Items             *UserSchemaItem         `json:"items,omitempty"`
+		Master            *UserSchemaMaster       `json:"master,omitempty"`
+		MaxLength         *int                    `json:"maxLength,omitempty"`
+		MinLength         *int                    `json:"minLength,omitempty"`
+		Mutability        string                  `json:"mutability,omitempty"`
+		OneOf             []*UserSchemaEnum       `json:"oneOf,omitempty"`
+		Pattern           *string                 `json:"pattern,omitempty"`
+		Permissions       []*UserSchemaPermission `json:"permissions,omitempty"`
+		Required          *bool                   `json:"required,omitempty"`
+		Scope             string                  `json:"scope,omitempty"`
+		Title             string                  `json:"title,omitempty"`
+		Type              string                  `json:"type,omitempty"`
+		Union             string                  `json:"union,omitempty"`
+		Unique            string                  `json:"unique,omitempty"`
+		ExternalName      string                  `json:"externalName,omitempty"`
+		ExternalNamespace string                  `json:"externalNamespace,omitempty"`
+		IsLogin           bool                    `json:"-"`
 	}
 
 	UserSubSchemaProperties struct {
@@ -77,3 +82,25 @@ type (
 		Ref string `json:"$ref,omitempty"`
 	}
 )
+
+// This is workaround for issue, when we should set 'pattern' to 'null' explicitly to use default Email Format for login
+// but for other cases `null` causes 500 error
+func (u *UserSubSchema) MarshalJSON() ([]byte, error) {
+	type localIDX UserSubSchema
+	m, err := json.Marshal((*localIDX)(u))
+	if !u.IsLogin {
+		return m, err
+	}
+	if err != nil {
+		return nil, err
+	}
+	var a interface{}
+	_ = json.Unmarshal(m, &a)
+	b := a.(map[string]interface{})
+	p := b["pattern"]
+	if p == nil || p.(string) == "" {
+		b["pattern"] = nil
+	}
+	ret, err := json.Marshal(b)
+	return ret, err
+}

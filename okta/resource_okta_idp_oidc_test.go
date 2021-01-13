@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func TestAccOktaIdpOidc_crud(t *testing.T) {
@@ -17,9 +17,9 @@ func TestAccOktaIdpOidc_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", idpResource)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(idpResource, createDoesIdpExist(&sdk.OIDCIdentityProvider{})),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(idpResource, createDoesIdpExist(&sdk.OIDCIdentityProvider{})),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

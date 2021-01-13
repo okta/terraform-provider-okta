@@ -5,7 +5,7 @@ resource "okta_auth_server" "test" {
 }
 
 resource "okta_auth_server_claim" "test" {
-  auth_server_id = "${okta_auth_server.test.id}"
+  auth_server_id = okta_auth_server.test.id
   name           = "test"
   status         = "ACTIVE"
   claim_type     = "RESOURCE"
@@ -14,19 +14,19 @@ resource "okta_auth_server_claim" "test" {
 }
 
 resource "okta_auth_server_scope" "test" {
-  auth_server_id = "${okta_auth_server.test.id}"
+  auth_server_id = okta_auth_server.test.id
   consent        = "REQUIRED"
   description    = "This is a scope"
   name           = "test:something"
 }
 
 resource "okta_auth_server_policy" "test" {
-  auth_server_id   = "${okta_auth_server.test.id}"
+  auth_server_id   = okta_auth_server.test.id
   status           = "ACTIVE"
   name             = "test"
   description      = "update"
   priority         = 1
-  client_whitelist = ["${okta_app_oauth.test.id}"]
+  client_whitelist = [okta_app_oauth.test.id]
 }
 
 data "okta_group" "all" {
@@ -34,12 +34,12 @@ data "okta_group" "all" {
 }
 
 resource "okta_auth_server_policy_rule" "test" {
-  auth_server_id       = "${okta_auth_server.test.id}"
-  policy_id            = "${okta_auth_server_policy.test.id}"
+  auth_server_id       = okta_auth_server.test.id
+  policy_id            = okta_auth_server_policy.test.id
   status               = "ACTIVE"
   name                 = "test"
   priority             = 1
-  group_whitelist      = ["${data.okta_group.all.id}"]
+  group_whitelist      = [data.okta_group.all.id]
   grant_type_whitelist = ["password", "implicit"]
 }
 

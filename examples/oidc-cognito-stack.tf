@@ -13,8 +13,8 @@ provider "okta" {
 }
 
 data "okta_group" "peeps" {
-  Name        = "Peeps"
-  Description = "For my peeps"
+  name        = "Peeps"
+  description = "For my peeps"
 }
 
 data "okta_user" "garth" {
@@ -22,22 +22,22 @@ data "okta_user" "garth" {
   last_name         = "B"
   login             = "garth@something.com"
   email             = "garth@something.com"
-  group_memberships = ["${okta_group.peeps.id}"]
+  group_memberships = [okta_group.peeps.id]
 }
 
 resource "okta_app_oauth" "app" {
   label          = "G Studios"
   type           = "browser"
-  client_uri     = "${local.uri}"
-  redirect_uris  = ["${local.uri}"]
-  groups         = ["${okta_group.peeps.id}"]
+  client_uri     = local.uri
+  redirect_uris  = [local.uri]
+  groups         = [okta_group.peeps.id]
   response_types = ["token", "id_token"]
   grant_types    = ["implicit"]
 }
 
 resource "okta_trusted_origin" "app" {
   name   = "Something"
-  origin = "${local.uri}"
+  origin = local.uri
   scopes = ["CORS", "REDIRECT"]
 }
 
@@ -46,18 +46,18 @@ resource "aws_cognito_identity_pool" "slick_idpool" {
   identity_pool_name               = "Cool Stuff Neat Stuff Slick stuff"
   allow_unauthenticated_identities = false
 
-  openid_connect_provider_arns = ["${aws_iam_openid_connect_provider.openid.arn}"]
+  openid_connect_provider_arns = [aws_iam_openid_connect_provider.openid.arn]
 }
 
 resource "aws_iam_openid_connect_provider" "openid" {
   url = "https://articulate.okta.com"
 
   client_id_list = [
-    "${okta_app_oauth.app.id}",
+    okta_app_oauth.app.id,
   ]
 
   thumbprint_list = [
-    "${local.jwk_thumbprint}",
+    local.jwk_thumbprint,
   ]
 }
 
@@ -90,7 +90,7 @@ EOF
 
 resource "aws_iam_role_policy" "authenticated" {
   name = "auth"
-  role = "${aws_iam_role.authenticated.id}"
+  role = aws_iam_role.authenticated.id
 
   policy = <<EOF
 {
@@ -121,31 +121,31 @@ EOF
 }
 
 resource "aws_cognito_identity_pool_roles_attachment" "role_attachment" {
-  identity_pool_id = "${aws_cognito_identity_pool.slick_idpool.id}"
+  identity_pool_id = aws_cognito_identity_pool.slick_idpool.id
 
   role_mapping {
-    identity_provider         = "${aws_iam_openid_connect_provider.openid.arn}"
+    identity_provider         = aws_iam_openid_connect_provider.openid.arn
     ambiguous_role_resolution = "AuthenticatedRole"
     type                      = "Rules"
 
     mapping_rule {
       claim      = "staff"
       match_type = "Equals"
-      role_arn   = "${aws_iam_role.authenticated.arn}"
+      role_arn   = aws_iam_role.authenticated.arn
       value      = "true"
     }
 
     mapping_rule {
       claim      = "aud"
       match_type = "Equals"
-      role_arn   = "${aws_iam_role.authenticated.arn}"
+      role_arn   = aws_iam_role.authenticated.arn
 
       // Need to add data source for apps to Okta provider, oauth app only created in stage so hardcoding for now
-      value = "${okta_app_oauth.app.id}"
+      value = okta_app_oauth.app.id
     }
   }
 
   roles {
-    "authenticated" = "${aws_iam_role.authenticated.arn}"
+    authenticated = aws_iam_role.authenticated.arn
   }
 }

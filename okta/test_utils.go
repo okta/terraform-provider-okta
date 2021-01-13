@@ -2,18 +2,12 @@ package okta
 
 import (
 	"fmt"
-	"strconv"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-type (
-	CheckUpstream func(string) (bool, error)
-	mapIndexFunc  func(int, string) int
-)
+type CheckUpstream func(string) (bool, error)
 
 func ensureResourceExists(name string, checkUpstream CheckUpstream) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
@@ -54,31 +48,4 @@ func createCheckResourceDestroy(typeName string, checkUpstream CheckUpstream) re
 		}
 		return nil
 	}
-}
-
-// Composes a TestCheckFunc for a slice of strings.
-func testCheckResourceSliceAttr(name string, field string, value []string) resource.TestCheckFunc {
-	return composeSliceCheck(name, field, value, func(i int, field string) int {
-		return i
-	})
-}
-
-// Composes a TestCheckFunc for a slice of strings for TypeSet.
-func testCheckResourceSliceAttrForSet(name string, field string, value []string) resource.TestCheckFunc {
-	return composeSliceCheck(name, field, value, func(i int, val string) int {
-		return schema.HashString(val)
-	})
-}
-
-func composeSliceCheck(name string, field string, value []string, mapIndex mapIndexFunc) resource.TestCheckFunc {
-	args := []resource.TestCheckFunc{
-		resource.TestCheckResourceAttr(name, fmt.Sprintf("%s.#", field), strconv.Itoa(len(value))),
-	}
-
-	for i, val := range value {
-		fieldName := fmt.Sprintf("%s.%d", field, mapIndex(i, val))
-		args = append(args, resource.TestCheckResourceAttr(name, fieldName, val))
-	}
-
-	return resource.ComposeTestCheckFunc(args...)
 }

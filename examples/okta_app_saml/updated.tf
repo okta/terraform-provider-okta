@@ -1,4 +1,4 @@
-resource okta_app_saml test {
+resource "okta_app_saml" "test" {
   label                    = "testAcc_replace_with_uuid"
   sso_url                  = "http://google.com"
   recipient                = "http://here.com"
@@ -25,4 +25,6 @@ resource okta_app_saml test {
     filter_type  = "STARTS_WITH"
     filter_value = "test"
   }
+
+  acs_endpoints = ["https://example.com", "https://okta.com"]
 }

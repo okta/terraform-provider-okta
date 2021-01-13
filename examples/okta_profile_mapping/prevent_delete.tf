@@ -1,6 +1,6 @@
-resource okta_profile_mapping test {
-  source_id          = "${okta_idp_social.google.id}"
-  target_id          = "${data.okta_user_profile_mapping_source.user.id}"
+resource "okta_profile_mapping" "test" {
+  source_id          = okta_idp_social.google.id
+  target_id          = data.okta_user_profile_mapping_source.user.id
   delete_when_absent = false
 
   mappings {
@@ -49,7 +49,7 @@ resource okta_profile_mapping test {
   }
 }
 
-resource okta_idp_social google {
+resource "okta_idp_social" "google" {
   type          = "GOOGLE"
   protocol_type = "OAUTH2"
   name          = "testAcc_google_replace_with_uuid"
@@ -65,4 +65,7 @@ resource okta_idp_social google {
   username_template = "idpuser.email"
 }
 
-data okta_user_profile_mapping_source user {}
+data "okta_user_profile_mapping_source" "user" {
+  depends_on = [okta_idp_social.google]
+}
+

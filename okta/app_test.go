@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"strings"
 )
@@ -10,7 +11,7 @@ func deleteTestApps(client *testClient) error {
 	if err != nil {
 		return err
 	}
-	appList, err := listApps(c, &appFilters{LabelPrefix: testResourcePrefix})
+	appList, err := listApps(context.Background(), c, &appFilters{LabelPrefix: testResourcePrefix})
 
 	if err != nil {
 		return err
@@ -19,15 +20,16 @@ func deleteTestApps(client *testClient) error {
 	var warnings []string
 	for _, app := range appList {
 		warn := fmt.Sprintf("failed to sweep an application, there may be dangling resources. ID %s, label %s", app.ID, app.Label)
-		_, err := client.oktaClient.Application.DeactivateApplication(app.ID)
+		_, err := client.oktaClient.Application.DeactivateApplication(context.Background(), app.ID)
 		if err != nil {
 			warnings = append(warnings, warn)
 		}
 
-		resp, err := client.oktaClient.Application.DeleteApplication(app.ID)
-
-		if err != nil && is404(resp.StatusCode) {
+		resp, err := client.oktaClient.Application.DeleteApplication(context.Background(), app.ID)
+		if is404(resp) {
 			warnings = append(warnings, warn)
+		} else if err != nil {
+			return err
 		}
 	}
 

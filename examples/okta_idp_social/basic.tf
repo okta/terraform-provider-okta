@@ -1,4 +1,4 @@
-resource okta_idp_social facebook {
+resource "okta_idp_social" "facebook" {
   type          = "FACEBOOK"
   protocol_type = "OAUTH2"
   name          = "testAcc_facebook_replace_with_uuid"
@@ -25,7 +25,7 @@ resource "okta_user_schema" "schema_custom" {
   master      = "PROFILE_MASTER"
 }
 
-resource okta_idp_social google {
+resource "okta_idp_social" "google" {
   type          = "GOOGLE"
   protocol_type = "OAUTH2"
   name          = "testAcc_google_replace_with_uuid"
@@ -41,7 +41,7 @@ resource okta_idp_social google {
   username_template = "idpuser.email"
 }
 
-resource okta_idp_social microsoft {
+resource "okta_idp_social" "microsoft" {
   type          = "MICROSOFT"
   protocol_type = "OIDC"
   name          = "testAcc_microsoft_replace_with_uuid"
@@ -57,7 +57,7 @@ resource okta_idp_social microsoft {
   client_secret     = "abcd123"
   username_template = "idpuser.userPrincipalName"
   groups_action     = "ASSIGN"
-  groups_assignment = ["${okta_group.test.id}"]
+  groups_assignment = [okta_group.test.id]
 }
 
 resource "okta_group" "test" {

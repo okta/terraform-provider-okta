@@ -1,89 +1,103 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceAppUserSchema() *schema.Resource {
 	return &schema.Resource{
-		Create:   resourceAppUserSchemaCreate,
-		Read:     resourceAppUserSchemaRead,
-		Update:   resourceAppUserSchemaUpdate,
-		Delete:   resourceAppUserSchemaDelete,
-		Exists:   resourceAppUserSchemaExists,
-		Importer: createNestedResourceImporter([]string{"app_id", "id"}),
-
-		Schema: buildCustomUserSchema(map[string]*schema.Schema{
-			"app_id": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+		CreateContext: resourceAppUserSchemaCreate,
+		ReadContext:   resourceAppUserSchemaRead,
+		UpdateContext: resourceAppUserSchemaUpdate,
+		DeleteContext: resourceAppUserSchemaDelete,
+		Importer:      createNestedResourceImporter([]string{"app_id", "id"}),
+		Schema: buildSchema(
+			userSchemaSchema,
+			userBaseSchemaSchema,
+			userTypeSchema,
+			userPatternSchema,
+			map[string]*schema.Schema{
+				"app_id": {
+					Type:     schema.TypeString,
+					Required: true,
+				},
+			}),
+		SchemaVersion: 1,
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type: resourceAppUserSchemaResourceV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: func(ctx context.Context, rawState map[string]interface{}, meta interface{}) (map[string]interface{}, error) {
+					rawState["user_type"] = "default"
+					return rawState, nil
+				},
+				Version: 0,
 			},
-		}),
+		},
 	}
 }
 
-func resourceAppUserSchemaCreate(d *schema.ResourceData, m interface{}) error {
-	if err := updateAppUserSubschema(d, m); err != nil {
+func resourceAppUserSchemaResourceV0() *schema.Resource {
+	return &schema.Resource{Schema: buildSchema(map[string]*schema.Schema{
+		"app_id": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+	}, userSchemaSchema, userBaseSchemaSchema)}
+}
+
+func resourceAppUserSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if err := updateAppUserSubschema(ctx, d, m); err != nil {
 		return err
 	}
 	d.SetId(fmt.Sprintf("%s/%s", d.Get("app_id").(string), d.Get("index").(string)))
-
-	return resourceAppUserSchemaRead(d, m)
+	return resourceAppUserSchemaRead(ctx, d, m)
 }
 
-func resourceAppUserSchemaExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	subschema, err := getAppUserSubSchema(d, m)
-
-	return subschema != nil, err
-}
-
-func resourceAppUserSchemaRead(d *schema.ResourceData, m interface{}) error {
-	subschema, err := getAppUserSubSchema(d, m)
-	if err != nil {
-		return err
-	} else if subschema == nil {
+func resourceAppUserSchemaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	us, resp, err := getSupplementFromMetadata(m).GetAppUserSchema(ctx, d.Get("app_id").(string))
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get app user schema: %v", err)
+	}
+	subschema := getCustomProperty(us, d.Get("index").(string))
+	if subschema == nil {
 		d.SetId("")
 		return nil
 	}
-
-	return syncUserSchema(d, subschema)
+	err = syncUserSchema(d, subschema)
+	if err != nil {
+		return diag.Errorf("failed to set user schema properties: %v", err)
+	}
+	return nil
 }
 
-func resourceAppUserSchemaUpdate(d *schema.ResourceData, m interface{}) error {
-	if err := updateAppUserSubschema(d, m); err != nil {
+func resourceAppUserSchemaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if err := updateAppUserSubschema(ctx, d, m); err != nil {
 		return err
 	}
-
-	return resourceAppUserSchemaRead(d, m)
+	return resourceAppUserSchemaRead(ctx, d, m)
 }
 
-func resourceAppUserSchemaDelete(d *schema.ResourceData, m interface{}) error {
-	_, err := getSupplementFromMetadata(m).DeleteAppUserSchemaProperty(d.Get("index").(string), d.Get("app_id").(string))
-
-	return err
-}
-
-func getAppUserSubSchema(d *schema.ResourceData, m interface{}) (subschema *sdk.UserSubSchema, err error) {
-	var schema *sdk.UserSchema
-
-	schema, _, err = getSupplementFromMetadata(m).GetAppUserSchema(d.Get("app_id").(string))
+func resourceAppUserSchemaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	_, err := getSupplementFromMetadata(m).DeleteAppUserSchemaProperty(ctx, d.Get("index").(string), d.Get("app_id").(string))
 	if err != nil {
-		return
+		return diag.Errorf("failed to delete user schema property")
 	}
-
-	subschema = getCustomProperty(schema, d.Get("index").(string))
-	return
+	return nil
 }
 
-func updateAppUserSubschema(d *schema.ResourceData, m interface{}) error {
+func updateAppUserSubschema(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	_, _, err := getSupplementFromMetadata(m).UpdateCustomAppUserSchemaProperty(
+		ctx,
 		d.Get("index").(string),
 		d.Get("app_id").(string),
-		getUserSubSchema(d),
+		userSubSchema(d),
 	)
-
-	return err
+	if err != nil {
+		return diag.Errorf("failed to update custom app user schema property: %v", err)
+	}
+	return nil
 }
