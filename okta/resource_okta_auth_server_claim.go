@@ -105,6 +105,11 @@ func resourceAuthServerClaimUpdate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceAuthServerClaimDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	// 'valueType' of 'SYSTEM' implies a default claim and cannot be deleted.
+	// System claims can be excluded from id tokens by changing the value of 'alwaysIncludeInToken'.
+	if d.Get("value_type").(string) == "SYSTEM" && d.Get("always_include_in_token").(bool) {
+		return nil
+	}
 	_, err := getSupplementFromMetadata(m).DeleteAuthorizationServerClaim(ctx, d.Get("auth_server_id").(string), d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete auth server claim: %v", err)
