@@ -40,7 +40,7 @@ func resourceAuthServerClaim() *schema.Resource {
 			"value_type": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"EXPRESSION", "GROUPS", "SYSTEM"}),
+				ValidateDiagFunc: stringInSlice([]string{"EXPRESSION", "GROUPS"}),
 				Default:          "EXPRESSION",
 			},
 			"claim_type": {
