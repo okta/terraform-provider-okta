@@ -135,7 +135,7 @@ func collectSamlApps(ctx context.Context, reqExe *okta.RequestExecutor, filters 
 
 	if after := sdk.GetAfterParam(res); after != "" && !filters.shouldShortCircuit(results.Apps) {
 		qp.After = after
-		return collectApps(ctx, reqExe, filters, results, qp)
+		return collectSamlApps(ctx, reqExe, filters, results, qp)
 	}
 
 	return nil

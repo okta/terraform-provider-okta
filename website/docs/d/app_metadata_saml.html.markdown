@@ -23,7 +23,7 @@ data "okta_app_metadata_saml" "example" {
 
 - `app_id` - (Required) The application ID.
 
-- `key_id` - (Required) Certificate Key ID.
+- `key_id` - (Optional) Certificate Key ID.
 
 ## Attributes Reference
 

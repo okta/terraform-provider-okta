@@ -20,7 +20,11 @@ type ApiSupplement struct {
 }
 
 func (m *ApiSupplement) GetSAMLMetadata(ctx context.Context, id, keyID string) ([]byte, error) {
-	return m.GetXml(ctx, fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata?kid=%s", m.BaseURL, id, keyID))
+	var query string
+	if keyID != "" {
+		query = fmt.Sprintf("?kid=%s", keyID)
+	}
+	return m.GetXml(ctx, fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata%s", m.BaseURL, id, query))
 }
 
 func (m *ApiSupplement) GetSAMLIdpMetadata(ctx context.Context, id string) ([]byte, error) {
