@@ -286,23 +286,35 @@ func setAdminRoles(ctx context.Context, d *schema.ResourceData, m interface{}) e
 	})
 }
 
-func setGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
-	// set all groups currently attached to user in state
+// set all groups currently attached to the user
+func setAllGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
 	groups, _, err := c.User.ListUserGroups(ctx, d.Id())
 	if err != nil {
 		return fmt.Errorf("failed to list user groups: %v", err)
 	}
+	groupIDs := make([]interface{}, len(groups))
+	for i := range groups {
+		groupIDs[i] = groups[i].Id
+	}
+	return setNonPrimitives(d, map[string]interface{}{
+		"group_memberships": schema.NewSet(schema.HashString, groupIDs),
+	})
+}
 
+// set groups attached to the user that can be changed
+func setGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
+	groups, _, err := c.User.ListUserGroups(ctx, d.Id())
+	if err != nil {
+		return fmt.Errorf("failed to list user groups: %v", err)
+	}
 	groupIDs := make([]interface{}, 0)
-
-	// ignore saving the Everyone group into state so we don't end up with perpetual diffs
+	// ignore saving build-in or app groups into state so we don't end up with perpetual diffs,
+	// because it's impossible to remove user from build-in or app group via API
 	for _, group := range groups {
 		if group.Type != "BUILT_IN" && group.Type != "APP_GROUP" {
 			groupIDs = append(groupIDs, group.Id)
 		}
 	}
-
-	// set the custom_profile_attributes values
 	return setNonPrimitives(d, map[string]interface{}{
 		"group_memberships": schema.NewSet(schema.HashString, groupIDs),
 	})

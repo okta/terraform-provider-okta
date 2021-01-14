@@ -72,9 +72,7 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 		}
 		user = users[0]
 	}
-
 	d.SetId(user.Id)
-
 	rawMap := flattenUser(user)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {
@@ -83,6 +81,10 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 	err = setAdminRoles(ctx, d, m)
 	if err != nil {
 		return diag.Errorf("failed to set user's admin roles: %v", err)
+	}
+	err = setAllGroups(ctx, d, client)
+	if err != nil {
+		return diag.Errorf("failed to set user's groups: %v", err)
 	}
 	return nil
 }
