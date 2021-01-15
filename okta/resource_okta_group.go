@@ -48,7 +48,7 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interfac
 	d.SetId(responseGroup.Id)
 	err = updateGroupUsers(ctx, d, m)
 	if err != nil {
-		return diag.Errorf("failed to update group users: %v", err)
+		return diag.Errorf("failed to update group users on group create: %v", err)
 	}
 	return resourceGroupRead(ctx, d, m)
 }
@@ -81,7 +81,7 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 	}
 	err = updateGroupUsers(ctx, d, m)
 	if err != nil {
-		return diag.Errorf("failed to update group users: %v", err)
+		return diag.Errorf("failed to update group users on group update: %v", err)
 	}
 	return resourceGroupRead(ctx, d, m)
 }
@@ -114,7 +114,7 @@ func updateGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}
 	if !exists {
 		return nil
 	}
-
+	ctx = context.WithValue(ctx, retryOnNotFoundKey, true)
 	client := getOktaClientFromMetadata(m)
 	existingUserList, _, err := client.Group.ListGroupUsers(ctx, d.Id(), nil)
 	if err != nil {

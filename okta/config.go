@@ -105,7 +105,9 @@ func errHandler(resp *http.Response, err error, numTries int) (*http.Response, e
 	return resp, nil
 }
 
-const retryOnNotFoundKey = "retryOnNotFound"
+type contextKey string
+
+const retryOnNotFoundKey contextKey = "retryOnNotFound"
 
 // Used to make http client retry on 404 response status code
 //
