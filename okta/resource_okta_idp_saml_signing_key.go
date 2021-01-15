@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceIdpSigningKey() *schema.Resource {
@@ -54,10 +54,10 @@ func resourceIdpSigningKey() *schema.Resource {
 }
 
 func resourceIdpSigningKeyCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	cert := &sdk.Certificate{
-		X5C: convertInterfaceToStringSet(d.Get("x5c")),
+	cert := okta.JsonWebKey{
+		X5c: convertInterfaceToStringSet(d.Get("x5c")),
 	}
-	key, _, err := getSupplementFromMetadata(m).AddIdentityProviderCertificate(ctx, cert)
+	key, _, err := getOktaClientFromMetadata(m).IdentityProvider.CreateIdentityProviderKey(ctx, cert)
 	if err != nil {
 		return diag.Errorf("failed to create identity provider signing key: %v", err)
 	}
@@ -66,7 +66,7 @@ func resourceIdpSigningKeyCreate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceIdpSigningKeyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	key, resp, err := getSupplementFromMetadata(m).GetIdentityProviderCertificate(ctx, d.Id())
+	key, resp, err := getOktaClientFromMetadata(m).IdentityProvider.GetIdentityProviderKey(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get identity provider signing key: %v", err)
 	}
@@ -74,14 +74,14 @@ func resourceIdpSigningKeyRead(ctx context.Context, d *schema.ResourceData, m in
 		d.SetId("")
 		return nil
 	}
-	_ = d.Set("created", key.Created)
-	_ = d.Set("expires_at", key.ExpiresAt)
+	_ = d.Set("created", key.Created.UTC().String())
+	_ = d.Set("expires_at", key.ExpiresAt.UTC().String())
 	_ = d.Set("kid", key.Kid)
 	_ = d.Set("kty", key.Kty)
 	_ = d.Set("use", key.Use)
-	_ = d.Set("x5t_s256", key.X5T256)
+	_ = d.Set("x5t_s256", key.X5tS256)
 	err = setNonPrimitives(d, map[string]interface{}{
-		"x5c": convertStringSetToInterface(key.X5C),
+		"x5c": convertStringSetToInterface(key.X5c),
 	})
 	if err != nil {
 		return diag.Errorf("failed to set identity provider signing key properties: %v", err)
@@ -90,7 +90,7 @@ func resourceIdpSigningKeyRead(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceIdpSigningKeyDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, err := getSupplementFromMetadata(m).DeleteIdentityProviderCertificate(ctx, d.Id())
+	_, err := getOktaClientFromMetadata(m).IdentityProvider.DeleteIdentityProviderKey(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete identity provider signing key: %v", err)
 	}

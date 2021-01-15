@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func TestAccOktaIdpSaml_crud(t *testing.T) {
@@ -19,13 +18,12 @@ func TestAccOktaIdpSaml_crud(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpSaml, createDoesIdpExist(&sdk.SAMLIdentityProvider{})),
+		CheckDestroy:      createCheckResourceDestroy(idpSaml, createDoesIdpExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
-					resource.TestCheckResourceAttr(resourceName, "acs_binding", "HTTP-POST"),
 					resource.TestCheckResourceAttr(resourceName, "acs_type", "INSTANCE"),
 					resource.TestCheckResourceAttrSet(resourceName, "audience"),
 					resource.TestCheckResourceAttr(resourceName, "sso_url", "https://idp.example.com"),
@@ -45,7 +43,6 @@ func TestAccOktaIdpSaml_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
 					resource.TestCheckResourceAttr(resourceName, "max_clock_skew", "60"),
-					resource.TestCheckResourceAttr(resourceName, "acs_binding", "HTTP-POST"),
 					resource.TestCheckResourceAttr(resourceName, "acs_type", "INSTANCE"),
 					resource.TestCheckResourceAttrSet(resourceName, "audience"),
 					resource.TestCheckResourceAttr(resourceName, "sso_url", "https://idp.example.com/test"),

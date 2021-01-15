@@ -1,7 +1,5 @@
 resource "okta_idp_oidc" "test" {
   name                  = "testAcc_replace_with_uuid"
-  acs_type              = "INSTANCE"
-  acs_binding           = "HTTP-POST"
   authorization_url     = "https://idp.example.com/authorize2"
   authorization_binding = "HTTP-REDIRECT"
   token_url             = "https://idp.example.com/token2"

@@ -6,7 +6,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceIdpOidc() *schema.Resource {
@@ -32,13 +31,6 @@ func resourceIdpOidc() *schema.Resource {
 			"user_info_binding":     optionalBindingSchema,
 			"jwks_url":              urlSchema,
 			"jwks_binding":          bindingSchema,
-			"acs_binding":           bindingSchema,
-			"acs_type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Default:          "INSTANCE",
-				ValidateDiagFunc: stringInSlice([]string{"INSTANCE"}),
-			},
 			"scopes": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
@@ -80,11 +72,11 @@ func resourceIdpOidc() *schema.Resource {
 
 func resourceIdpCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	idp := buildIdPOidc(d)
-	_, _, err := getSupplementFromMetadata(m).CreateIdentityProvider(ctx, idp, nil)
+	respIdp, _, err := getOktaClientFromMetadata(m).IdentityProvider.CreateIdentityProvider(ctx, idp)
 	if err != nil {
 		return diag.Errorf("failed to create OIDC identity provider: %v", err)
 	}
-	d.SetId(idp.ID)
+	d.SetId(respIdp.Id)
 	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(m), idp.Status)
 	if err != nil {
 		return diag.Errorf("failed to change OIDC identity provider's status: %v", err)
@@ -93,12 +85,11 @@ func resourceIdpCreate(ctx context.Context, d *schema.ResourceData, m interface{
 }
 
 func resourceIdpRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	idp := &sdk.OIDCIdentityProvider{}
-	_, resp, err := getSupplementFromMetadata(m).GetIdentityProvider(ctx, d.Id(), idp)
+	idp, resp, err := getOktaClientFromMetadata(m).IdentityProvider.GetIdentityProvider(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get OIDC identity provider: %v", err)
 	}
-	if idp.ID == "" {
+	if idp == nil {
 		d.SetId("")
 		return nil
 	}
@@ -111,22 +102,17 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, m interface{})
 	_ = d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
 	_ = d.Set("subject_match_type", idp.Policy.Subject.MatchType)
 	_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
-	_ = d.Set("issuer_url", idp.Protocol.Issuer.URL)
+	_ = d.Set("issuer_url", idp.Protocol.Issuer.Url)
 	_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
-	_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientID)
+	_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientId)
 	syncEndpoint("authorization", idp.Protocol.Endpoints.Authorization, d)
 	syncEndpoint("token", idp.Protocol.Endpoints.Token, d)
 	syncEndpoint("user_info", idp.Protocol.Endpoints.UserInfo, d)
 	syncEndpoint("jwks", idp.Protocol.Endpoints.Jwks, d)
 	syncAlgo(d, idp.Protocol.Algorithms)
-
 	err = syncGroupActions(d, idp.Policy.Provisioning.Groups)
 	if err != nil {
 		return diag.Errorf("failed to set OIDC identity provider properties: %v", err)
-	}
-	if idp.Protocol.Endpoints.Acs != nil {
-		_ = d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
-		_ = d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
 	}
 	if idp.IssuerMode != "" {
 		_ = d.Set("issuer_mode", idp.IssuerMode)
@@ -147,16 +133,9 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, m interface{})
 	return nil
 }
 
-func syncEndpoint(key string, e *sdk.Endpoint, d *schema.ResourceData) {
-	if e != nil {
-		_ = d.Set(key+"_binding", e.Binding)
-		_ = d.Set(key+"_url", e.URL)
-	}
-}
-
 func resourceIdpUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	idp := buildIdPOidc(d)
-	_, _, err := getSupplementFromMetadata(m).UpdateIdentityProvider(ctx, d.Id(), idp, nil)
+	_, _, err := getOktaClientFromMetadata(m).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
 	if err != nil {
 		return diag.Errorf("failed to update OIDC identity provider: %v", err)
 	}
@@ -167,35 +146,35 @@ func resourceIdpUpdate(ctx context.Context, d *schema.ResourceData, m interface{
 	return resourceIdpRead(ctx, d, m)
 }
 
-func buildIdPOidc(d *schema.ResourceData) *sdk.OIDCIdentityProvider {
-	return &sdk.OIDCIdentityProvider{
+func buildIdPOidc(d *schema.ResourceData) okta.IdentityProvider {
+	return okta.IdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       "OIDC",
 		IssuerMode: d.Get("issuer_mode").(string),
-		Policy: &sdk.OIDCPolicy{
-			AccountLink:  NewAccountLink(d),
+		Policy: &okta.IdentityProviderPolicy{
+			AccountLink:  buildPolicyAccountLink(d),
 			MaxClockSkew: int64(d.Get("max_clock_skew").(int)),
-			Provisioning: NewIdpProvisioning(d),
-			Subject: &sdk.OIDCSubject{
+			Provisioning: buildIdPProvisioning(d),
+			Subject: &okta.PolicySubject{
 				MatchType: d.Get("subject_match_type").(string),
-				UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
+				UserNameTemplate: &okta.PolicyUserNameTemplate{
 					Template: d.Get("username_template").(string),
 				},
 			},
 		},
-		Protocol: &sdk.OIDCProtocol{
-			Algorithms: NewAlgorithms(d),
-			Endpoints:  NewEndpoints(d),
+		Protocol: &okta.Protocol{
+			Algorithms: buildAlgorithms(d),
+			Endpoints:  buildProtocolEndpoints(d),
 			Scopes:     convertInterfaceToStringSet(d.Get("scopes")),
 			Type:       d.Get("protocol_type").(string),
-			Credentials: &sdk.OIDCCredentials{
-				Client: &sdk.OIDCClient{
-					ClientID:     d.Get("client_id").(string),
+			Credentials: &okta.IdentityProviderCredentials{
+				Client: &okta.IdentityProviderCredentialsClient{
+					ClientId:     d.Get("client_id").(string),
 					ClientSecret: d.Get("client_secret").(string),
 				},
 			},
-			Issuer: &sdk.Issuer{
-				URL: d.Get("issuer_url").(string),
+			Issuer: &okta.ProtocolEndpoint{
+				Url: d.Get("issuer_url").(string),
 			},
 		},
 	}
