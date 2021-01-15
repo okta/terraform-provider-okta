@@ -4,30 +4,23 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
-func findTestAuthServer(name string) bool {
-	return strings.HasPrefix(name, testResourcePrefix)
-}
-
 func deleteAuthServers(client *testClient) error {
-	servers, err := client.apiSupplement.FilterAuthServers(context.Background(), &query.Params{}, []*sdk.AuthorizationServer{}, findTestAuthServer)
+	servers, _, err := client.oktaClient.AuthorizationServer.ListAuthorizationServers(context.Background(), &query.Params{Q: testResourcePrefix})
 	if err != nil {
 		return err
 	}
-
 	for _, s := range servers {
-		if _, err := client.apiSupplement.DeactivateAuthorizationServer(context.Background(), s.Id); err != nil {
+		if _, err := client.oktaClient.AuthorizationServer.DeactivateAuthorizationServer(context.Background(), s.Id); err != nil {
 			return err
 		}
-		if _, err := client.apiSupplement.DeleteAuthorizationServer(context.Background(), s.Id); err != nil {
+		if _, err := client.oktaClient.AuthorizationServer.DeleteAuthorizationServer(context.Background(), s.Id); err != nil {
 			return err
 		}
 	}
@@ -35,8 +28,7 @@ func deleteAuthServers(client *testClient) error {
 }
 
 func authServerExists(id string) (bool, error) {
-	client := getSupplementFromMetadata(testAccProvider.Meta())
-	server, resp, err := client.GetAuthorizationServer(context.Background(), id)
+	server, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).AuthorizationServer.GetAuthorizationServer(context.Background(), id)
 	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return false, nil
 	}

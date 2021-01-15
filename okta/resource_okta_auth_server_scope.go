@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceAuthServerScope() *schema.Resource {
@@ -54,52 +54,37 @@ func resourceAuthServerScope() *schema.Resource {
 }
 
 func resourceAuthServerScopeCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	authServerScope := buildAuthServerScope(d)
-	responseAuthServerScope, _, err := getSupplementFromMetadata(m).CreateAuthorizationServerScope(
-		ctx,
-		d.Get("auth_server_id").(string),
-		*authServerScope,
-		nil,
-	)
+	scope := buildAuthServerScope(d)
+	respScope, _, err := getOktaClientFromMetadata(m).AuthorizationServer.CreateOAuth2Scope(ctx, d.Get("auth_server_id").(string), scope)
 	if err != nil {
 		return diag.Errorf("failed to create auth server scope: %v", err)
 	}
-	d.SetId(responseAuthServerScope.Id)
+	d.SetId(respScope.Id)
 	return resourceAuthServerScopeRead(ctx, d, m)
 }
 
 func resourceAuthServerScopeRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	authServerScope, resp, err := getSupplementFromMetadata(m).GetAuthorizationServerScope(
-		ctx,
-		d.Get("auth_server_id").(string),
-		d.Id(),
-		sdk.AuthorizationServerScope{},
-	)
+	scope, resp, err := getOktaClientFromMetadata(m).AuthorizationServer.GetOAuth2Scope(ctx, d.Get("auth_server_id").(string), d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get auth server scope: %v", err)
 	}
-	if authServerScope == nil {
+	if scope == nil {
 		d.SetId("")
 		return nil
 	}
-	_ = d.Set("name", authServerScope.Name)
-	_ = d.Set("description", authServerScope.Description)
-	_ = d.Set("metadata_publish", authServerScope.MetadataPublish)
-	_ = d.Set("default", authServerScope.Default)
-	if authServerScope.Consent != "" {
-		_ = d.Set("consent", authServerScope.Consent)
+	_ = d.Set("name", scope.Name)
+	_ = d.Set("description", scope.Description)
+	_ = d.Set("metadata_publish", scope.MetadataPublish)
+	_ = d.Set("default", scope.Default)
+	if scope.Consent != "" {
+		_ = d.Set("consent", scope.Consent)
 	}
 	return nil
 }
 
 func resourceAuthServerScopeUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	authServerScope := buildAuthServerScope(d)
-	_, _, err := getSupplementFromMetadata(m).UpdateAuthorizationServerScope(
-		ctx, d.Get("auth_server_id").(string),
-		d.Id(),
-		*authServerScope,
-		nil,
-	)
+	scope := buildAuthServerScope(d)
+	_, _, err := getOktaClientFromMetadata(m).AuthorizationServer.UpdateOAuth2Scope(ctx, d.Get("auth_server_id").(string), d.Id(), scope)
 	if err != nil {
 		return diag.Errorf("failed to update auth server scope: %v", err)
 	}
@@ -107,23 +92,19 @@ func resourceAuthServerScopeUpdate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceAuthServerScopeDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, err := getSupplementFromMetadata(m).DeleteAuthorizationServerScope(
-		ctx,
-		d.Get("auth_server_id").(string),
-		d.Id(),
-	)
-	if err != nil {
+	resp, err := getOktaClientFromMetadata(m).AuthorizationServer.DeleteOAuth2Scope(ctx, d.Get("auth_server_id").(string), d.Id())
+	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete auth server scope: %v", err)
 	}
 	return nil
 }
 
-func buildAuthServerScope(d *schema.ResourceData) *sdk.AuthorizationServerScope {
-	return &sdk.AuthorizationServerScope{
+func buildAuthServerScope(d *schema.ResourceData) okta.OAuth2Scope {
+	return okta.OAuth2Scope{
 		Consent:         d.Get("consent").(string),
 		Description:     d.Get("description").(string),
 		MetadataPublish: d.Get("metadata_publish").(string),
 		Name:            d.Get("name").(string),
-		Default:         d.Get("default").(bool),
+		Default:         boolPtr(d.Get("default").(bool)),
 	}
 }

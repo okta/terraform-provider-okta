@@ -28,9 +28,13 @@ type (
 	}
 
 	AuthorizationServerPolicyRuleConditions struct {
-		GrantTypes *Whitelist                     `json:"grantTypes,omitempty"`
+		GrantTypes *Conditions                    `json:"grantTypes,omitempty"`
 		People     *okta.GroupRulePeopleCondition `json:"people,omitempty"`
-		Scopes     *Whitelist                     `json:"scopes,omitempty"`
+		Scopes     *Conditions                    `json:"scopes,omitempty"`
+	}
+
+	Conditions struct {
+		Include []string `json:"include,omitempty"`
 	}
 
 	TokenActions struct {

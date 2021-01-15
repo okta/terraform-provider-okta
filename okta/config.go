@@ -57,6 +57,7 @@ func (c *Config) loadAndValidate() error {
 		retryableClient.Logger = c.logger
 		retryableClient.HTTPClient.Transport = logging.NewTransport("Okta", retryableClient.HTTPClient.Transport)
 		retryableClient.ErrorHandler = errHandler
+		retryableClient.CheckRetry = checkRetry
 		httpClient = retryableClient.StandardClient()
 	} else {
 		httpClient = cleanhttp.DefaultClient()
@@ -102,4 +103,25 @@ func errHandler(resp *http.Response, err error, numTries int) (*http.Response, e
 		return resp, fmt.Errorf("%v: giving up after %d attempt(s)", err, numTries)
 	}
 	return resp, nil
+}
+
+type contextKey string
+
+const retryOnNotFoundKey contextKey = "retryOnNotFound"
+
+// Used to make http client retry on 404 response status code
+//
+// To enable this check, inject `retryOnNotFoundKey` key into the context with value == 'true'
+// 		ctx = context.WithValue(ctx, retryOnNotFoundKey, true)
+//
+func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, error) {
+	// do not retry on context.Canceled or context.DeadlineExceeded
+	if ctx.Err() != nil {
+		return false, ctx.Err()
+	}
+	retry, ok := ctx.Value(retryOnNotFoundKey).(bool)
+	if ok && retry && resp != nil && resp.StatusCode == http.StatusNotFound {
+		return true, nil
+	}
+	return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
 }
