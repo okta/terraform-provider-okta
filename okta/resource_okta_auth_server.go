@@ -6,7 +6,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceAuthServer() *schema.Resource {
@@ -71,7 +70,7 @@ func resourceAuthServer() *schema.Resource {
 
 func resourceAuthServerCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	authServer := buildAuthServer(d)
-	responseAuthServer, _, err := getSupplementFromMetadata(m).CreateAuthorizationServer(ctx, *authServer, nil)
+	responseAuthServer, _, err := getOktaClientFromMetadata(m).AuthorizationServer.CreateAuthorizationServer(ctx, *authServer)
 	if err != nil {
 		return diag.Errorf("failed to create authorization server: %v", err)
 	}
@@ -87,7 +86,7 @@ func resourceAuthServerCreate(ctx context.Context, d *schema.ResourceData, m int
 }
 
 func resourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	authServer, resp, err := getSupplementFromMetadata(m).GetAuthorizationServer(ctx, d.Id())
+	authServer, resp, err := getOktaClientFromMetadata(m).AuthorizationServer.GetAuthorizationServer(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get authorization server: %v", err)
 	}
@@ -129,7 +128,7 @@ func resourceAuthServerUpdate(ctx context.Context, d *schema.ResourceData, m int
 		}
 	}
 	authServer := buildAuthServer(d)
-	_, _, err := getSupplementFromMetadata(m).UpdateAuthorizationServer(ctx, d.Id(), *authServer, nil)
+	_, _, err := getOktaClientFromMetadata(m).AuthorizationServer.UpdateAuthorizationServer(ctx, d.Id(), *authServer)
 	if err != nil {
 		return diag.Errorf("failed to update authorization server: %v", err)
 	}
@@ -137,15 +136,15 @@ func resourceAuthServerUpdate(ctx context.Context, d *schema.ResourceData, m int
 }
 
 func handleAuthServerLifecycle(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getSupplementFromMetadata(m)
+	client := getOktaClientFromMetadata(m)
 	if d.Get("status").(string) == statusActive {
-		_, err := client.ActivateAuthorizationServer(ctx, d.Id())
+		_, err := client.AuthorizationServer.ActivateAuthorizationServer(ctx, d.Id())
 		if err != nil {
 			return diag.Errorf("failed to activate authorization server: %v", err)
 		}
 		return nil
 	}
-	_, err := client.DeactivateAuthorizationServer(ctx, d.Id())
+	_, err := client.AuthorizationServer.DeactivateAuthorizationServer(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to deactivate authorization server: %v", err)
 	}
@@ -153,23 +152,23 @@ func handleAuthServerLifecycle(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceAuthServerDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getSupplementFromMetadata(m)
-	resp, err := client.DeactivateAuthorizationServer(ctx, d.Id())
+	client := getOktaClientFromMetadata(m)
+	resp, err := client.AuthorizationServer.DeactivateAuthorizationServer(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to deactivate authorization server: %v", err)
 	}
-	resp, err = client.DeleteAuthorizationServer(ctx, d.Id())
+	resp, err = client.AuthorizationServer.DeleteAuthorizationServer(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete authorization server: %v", err)
 	}
 	return nil
 }
 
-func buildAuthServer(d *schema.ResourceData) *sdk.AuthorizationServer {
-	return &sdk.AuthorizationServer{
+func buildAuthServer(d *schema.ResourceData) *okta.AuthorizationServer {
+	return &okta.AuthorizationServer{
 		Audiences: convertInterfaceToStringSet(d.Get("audiences")),
-		Credentials: &sdk.AuthServerCredentials{
-			Signing: &okta.ApplicationCredentialsSigning{
+		Credentials: &okta.AuthorizationServerCredentials{
+			Signing: &okta.AuthorizationServerCredentialsSigningConfig{
 				RotationMode: d.Get("credentials_rotation_mode").(string),
 			},
 		},

@@ -224,8 +224,8 @@ func buildAuthServerPolicyRule(d *schema.ResourceData) *sdk.AuthorizationServerP
 			},
 		},
 		Conditions: &sdk.AuthorizationServerPolicyRuleConditions{
-			GrantTypes: &sdk.Whitelist{Include: convertInterfaceToStringSet(d.Get("grant_type_whitelist"))},
-			Scopes:     &sdk.Whitelist{Include: convertInterfaceToStringSet(d.Get("scope_whitelist"))},
+			GrantTypes: &sdk.Conditions{Include: convertInterfaceToStringSet(d.Get("grant_type_whitelist"))},
+			Scopes:     &sdk.Conditions{Include: convertInterfaceToStringSet(d.Get("scope_whitelist"))},
 			People:     getPeopleConditions(d),
 		},
 	}
