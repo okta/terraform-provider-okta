@@ -5,7 +5,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
@@ -52,25 +51,14 @@ func dataSourceAuthServer() *schema.Resource {
 
 func dataSourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	name := d.Get("name").(string)
-	servers, _, err := getOktaClientFromMetadata(m).AuthorizationServer.ListAuthorizationServers(context.Background(), &query.Params{Q: name})
+	servers, _, err := getOktaClientFromMetadata(m).AuthorizationServer.ListAuthorizationServers(context.Background(), &query.Params{Q: name, Limit: 1})
 	if err != nil {
 		return diag.Errorf("failed to find auth server '%s': %v", name, err)
 	}
-	if len(servers) < 1 {
+	if len(servers) < 1 || servers[0].Name != name {
 		diag.Errorf("authorization server with name '%s' does not exist", name)
 	}
-	var authServer *okta.AuthorizationServer
-	if len(servers) > 1 {
-		for _, server := range servers {
-			if server.Name == name {
-				authServer = server
-				break
-			}
-		}
-	}
-	if authServer == nil {
-		return diag.Errorf("authorization server with name '%s' does not exist", name)
-	}
+	authServer := servers[0]
 	d.SetId(authServer.Id)
 	_ = d.Set("name", authServer.Name)
 	_ = d.Set("description", authServer.Description)

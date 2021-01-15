@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func TestAccOktaIdpSocial_crud(t *testing.T) {
@@ -21,7 +20,7 @@ func TestAccOktaIdpSocial_crud(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpSocial, createDoesIdpExist(&sdk.SAMLIdentityProvider{})),
+		CheckDestroy:      createCheckResourceDestroy(idpSocial, createDoesIdpExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

@@ -5,8 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 const saml2Idp = "SAML2"
@@ -86,35 +85,31 @@ func dataSourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 	}
 	var (
 		err error
-		idp *sdk.SAMLIdentityProvider
+		idp *okta.IdentityProvider
 	)
 	if id != "" {
-		idp, err = getIdentityProviderByID(ctx, m, id)
+		idp, err = getIdentityProviderByID(ctx, m, id, saml2Idp)
 	} else {
-		idp, err = getIdpByName(ctx, m, name)
+		idp, err = getIdpByNameAndType(ctx, m, name, saml2Idp)
 	}
 	if err != nil {
-		return diag.Errorf("failed to get identity provider: %v", err)
+		return diag.FromErr(err)
 	}
-	if idp == nil && id != "" {
-		return diag.Errorf("identity provider with id '%s' does not exist", id)
-	}
-	if idp == nil && name != "" {
-		return diag.Errorf("identity provider with name '%s' does not exist", name)
-	}
-
-	d.SetId(idp.ID)
+	d.SetId(idp.Id)
 	_ = d.Set("name", idp.Name)
 	_ = d.Set("type", idp.Type)
 	_ = d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
 	_ = d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
-	_ = d.Set("sso_url", idp.Protocol.Endpoints.Sso.URL)
+	_ = d.Set("sso_url", idp.Protocol.Endpoints.Sso.Url)
 	_ = d.Set("sso_binding", idp.Protocol.Endpoints.Sso.Binding)
 	_ = d.Set("sso_destination", idp.Protocol.Endpoints.Sso.Destination)
 	_ = d.Set("subject_filter", idp.Policy.Subject.Filter)
 	_ = d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
 	_ = d.Set("issuer", idp.Protocol.Credentials.Trust.Issuer)
 	_ = d.Set("audience", idp.Protocol.Credentials.Trust.Audience)
+	if idp.IssuerMode != "" {
+		_ = d.Set("issuer_mode", idp.IssuerMode)
+	}
 	err = setNonPrimitives(d, map[string]interface{}{
 		"subject_format": convertStringSetToInterface(idp.Policy.Subject.Format),
 	})
@@ -122,20 +117,4 @@ func dataSourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 		return diag.Errorf("failed to set SAML identity provider properties: %v", err)
 	}
 	return nil
-}
-
-func getIdentityProviderByID(ctx context.Context, m interface{}, id string) (*sdk.SAMLIdentityProvider, error) {
-	var idp sdk.SAMLIdentityProvider
-	_, resp, err := getSupplementFromMetadata(m).GetIdentityProvider(ctx, id, &idp)
-	return &idp, responseErr(resp, err)
-}
-
-func getIdpByName(ctx context.Context, m interface{}, label string) (*sdk.SAMLIdentityProvider, error) {
-	var idps []*sdk.SAMLIdentityProvider
-	queryParams := query.Params{Limit: 1, Q: label}
-	_, resp, err := getSupplementFromMetadata(m).ListIdentityProviders(ctx, &idps, &queryParams)
-	if len(idps) > 0 {
-		return idps[0], nil
-	}
-	return nil, responseErr(resp, err)
 }

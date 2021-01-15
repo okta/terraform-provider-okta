@@ -35,7 +35,7 @@ const (
 	factor                 = "okta_factor"
 	groupRoles             = "okta_group_roles"
 	groupRule              = "okta_group_rule"
-	idpResource            = "okta_idp_oidc"
+	idpOidc                = "okta_idp_oidc"
 	idpSaml                = "okta_idp_saml"
 	idpSamlKey             = "okta_idp_saml_key"
 	idpSocial              = "okta_idp_social"
@@ -155,7 +155,7 @@ func Provider() *schema.Provider {
 			factor:                 resourceFactor(),
 			groupRoles:             resourceGroupRoles(),
 			groupRule:              resourceGroupRule(),
-			idpResource:            resourceIdpOidc(),
+			idpOidc:                resourceIdpOidc(),
 			idpSaml:                resourceIdpSaml(),
 			idpSamlKey:             resourceIdpSigningKey(),
 			idpSocial:              resourceIdpSocial(),
@@ -179,7 +179,7 @@ func Provider() *schema.Provider {
 			userType:               resourceUserType(),
 
 			// The day I realized I was naming stuff wrong :'-(
-			"okta_idp":                       deprecateIncorrectNaming(resourceIdpOidc(), idpResource),
+			"okta_idp":                       deprecateIncorrectNaming(resourceIdpOidc(), idpOidc),
 			"okta_saml_idp":                  deprecateIncorrectNaming(resourceIdpSaml(), idpSaml),
 			"okta_saml_idp_signing_key":      deprecateIncorrectNaming(resourceIdpSigningKey(), idpSamlKey),
 			"okta_social_idp":                deprecateIncorrectNaming(resourceIdpSocial(), idpSocial),
@@ -208,6 +208,7 @@ func Provider() *schema.Provider {
 			"okta_group":                       dataSourceGroup(),
 			"okta_idp_metadata_saml":           dataSourceIdpMetadataSaml(),
 			"okta_idp_saml":                    dataSourceIdpSaml(),
+			idpOidc:                            dataSourceIdpOidc(),
 			"okta_policy":                      dataSourcePolicy(),
 			"okta_user_profile_mapping_source": dataSourceUserProfileMappingSource(),
 			"okta_user":                        dataSourceUser(),

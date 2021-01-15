@@ -17,7 +17,6 @@ This resource allows you to create and configure a SAML Identity Provider.
 ```hcl
 resource "okta_idp_saml" "example" {
   name                     = "testAcc_replace_with_uuid"
-  acs_binding              = "HTTP-POST"
   acs_type                 = "INSTANCE"
   sso_url                  = "https://idp.example.com"
   sso_destination          = "https://idp.example.com"
@@ -37,8 +36,6 @@ The following arguments are supported:
 - `name` - (Required) The Application's display name.
 
 - `kid` - (Required) The ID of the signing key.
-
-- `acs_binding` - (Required) The method of making an ACS request. It can be set to `"HTTP-POST"` or `"HTTP-REDIRECT"`.
 
 - `sso_url` - (Required) URL of binding-specific endpoint to send an AuthnRequest message to IdP.
 

@@ -14,7 +14,7 @@ Use this data source to retrieve a SAML IdP from Okta.
 
 ```hcl
 data "okta_idp_saml" "example" {
-  label = "Example App"
+  name = "Example App"
 }
 ```
 
@@ -32,7 +32,7 @@ data "okta_idp_saml" "example" {
 
 - `type` - type of idp.
 
-- `acs_binding` - HTTP binding used to receive a SAMLResponse message from the IdP.
+- `acs_binding` - HTTP binding used to receive a SAMLResponse message from the IdP (always equals to `"HTTP-POST"`).
 
 - `acs_type` - Determines whether to publish an instance-specific (trust) or organization (shared) ACS endpoint in the SAML metadata.
 

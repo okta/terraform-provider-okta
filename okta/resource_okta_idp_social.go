@@ -6,7 +6,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func resourceIdpSocial() *schema.Resource {
@@ -76,11 +75,11 @@ func resourceIdpSocial() *schema.Resource {
 
 func resourceIdpSocialCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	idp := buildIdPSocial(d)
-	_, _, err := getSupplementFromMetadata(m).CreateIdentityProvider(ctx, idp, nil)
+	respIdp, _, err := getOktaClientFromMetadata(m).IdentityProvider.CreateIdentityProvider(ctx, idp)
 	if err != nil {
 		return diag.Errorf("failed to create social identity provider: %v", err)
 	}
-	d.SetId(idp.ID)
+	d.SetId(respIdp.Id)
 	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(m), idp.Status)
 	if err != nil {
 		return diag.Errorf("failed to change social identity provider's status: %v", err)
@@ -89,12 +88,11 @@ func resourceIdpSocialCreate(ctx context.Context, d *schema.ResourceData, m inte
 }
 
 func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	idp := &sdk.OIDCIdentityProvider{}
-	_, resp, err := getSupplementFromMetadata(m).GetIdentityProvider(ctx, d.Id(), idp)
+	idp, resp, err := getOktaClientFromMetadata(m).IdentityProvider.GetIdentityProvider(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get SAML identity provider: %v", err)
 	}
-	if idp.ID == "" {
+	if idp == nil {
 		d.SetId("")
 		return nil
 	}
@@ -107,7 +105,7 @@ func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m interf
 	_ = d.Set("subject_match_type", idp.Policy.Subject.MatchType)
 	_ = d.Set("subject_match_attribute", idp.Policy.Subject.MatchAttribute)
 	_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
-	_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientID)
+	_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientId)
 	_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
 
 	err = syncGroupActions(d, idp.Policy.Provisioning.Groups)
@@ -139,7 +137,7 @@ func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m interf
 
 func resourceIdpSocialUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	idp := buildIdPSocial(d)
-	_, _, err := getSupplementFromMetadata(m).UpdateIdentityProvider(ctx, d.Id(), idp, nil)
+	_, _, err := getOktaClientFromMetadata(m).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
 	if err != nil {
 		return diag.Errorf("failed to update social identity provider: %v", err)
 	}
@@ -150,29 +148,29 @@ func resourceIdpSocialUpdate(ctx context.Context, d *schema.ResourceData, m inte
 	return resourceIdpSocialRead(ctx, d, m)
 }
 
-func buildIdPSocial(d *schema.ResourceData) *sdk.OIDCIdentityProvider {
-	return &sdk.OIDCIdentityProvider{
+func buildIdPSocial(d *schema.ResourceData) okta.IdentityProvider {
+	return okta.IdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       d.Get("type").(string),
 		IssuerMode: d.Get("issuer_mode").(string),
-		Policy: &sdk.OIDCPolicy{
-			AccountLink:  NewAccountLink(d),
+		Policy: &okta.IdentityProviderPolicy{
+			AccountLink:  buildPolicyAccountLink(d),
 			MaxClockSkew: int64(d.Get("max_clock_skew").(int)),
-			Provisioning: NewIdpProvisioning(d),
-			Subject: &sdk.OIDCSubject{
+			Provisioning: buildIdPProvisioning(d),
+			Subject: &okta.PolicySubject{
 				MatchType:      d.Get("subject_match_type").(string),
 				MatchAttribute: d.Get("subject_match_attribute").(string),
-				UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
+				UserNameTemplate: &okta.PolicyUserNameTemplate{
 					Template: d.Get("username_template").(string),
 				},
 			},
 		},
-		Protocol: &sdk.OIDCProtocol{
+		Protocol: &okta.Protocol{
 			Scopes: convertInterfaceToStringSet(d.Get("scopes")),
 			Type:   d.Get("protocol_type").(string),
-			Credentials: &sdk.OIDCCredentials{
-				Client: &sdk.OIDCClient{
-					ClientID:     d.Get("client_id").(string),
+			Credentials: &okta.IdentityProviderCredentials{
+				Client: &okta.IdentityProviderCredentialsClient{
+					ClientId:     d.Get("client_id").(string),
 					ClientSecret: d.Get("client_secret").(string),
 				},
 			},

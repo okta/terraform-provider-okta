@@ -19,7 +19,6 @@ resource "okta_idp_saml_key" "test" {
 
 resource "okta_idp_saml" "test" {
   name                     = "testAcc_replace_with_uuid"
-  acs_binding              = "HTTP-POST"
   acs_type                 = "INSTANCE"
   sso_url                  = "https://idp.example.com"
   sso_destination          = "https://idp.example.com"
