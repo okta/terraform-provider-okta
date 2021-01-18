@@ -1,12 +1,12 @@
 ---
 layout: 'okta'
-page_title: 'Okta: okta_idp_saml_signing_key'
-sidebar_current: 'docs-okta-resource-saml-signing-key'
+page_title: 'Okta: okta_idp_saml_key'
+sidebar_current: 'docs-okta-resource-saml-key'
 description: |-
   Creates a SAML Identity Provider Signing Key.
 ---
 
-# okta_idp_saml_signing_key
+# okta_idp_saml_key
 
 Creates a SAML Identity Provider Signing Key.
 
@@ -47,5 +47,5 @@ The following arguments are supported:
 A SAML IdP Signing Key can be imported via the key id.
 
 ```
-$ terraform import okta_idp_saml_signing_key.example <key id>
+$ terraform import okta_idp_saml_key.example <key id>
 ```

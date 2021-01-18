@@ -44,7 +44,13 @@ func dataSourceUsers() *schema.Resource {
 				Type:     schema.TypeList,
 				Optional: true,
 				Elem: &schema.Resource{
-					Schema: userProfileDataSchema,
+					Schema: buildSchema(userProfileDataSchema,
+						map[string]*schema.Schema{
+							"id": {
+								Type:     schema.TypeString,
+								Computed: true,
+							},
+						}),
 				},
 			},
 		},
@@ -65,6 +71,7 @@ func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 	for i, user := range results.Users {
 		rawMap := flattenUser(user)
+		rawMap["id"] = user.Id
 		arr[i] = rawMap
 	}
 	_ = d.Set("users", arr)

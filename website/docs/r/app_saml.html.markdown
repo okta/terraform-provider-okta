@@ -104,6 +104,10 @@ The following arguments are supported:
 
 - `acs_endpoints` - An array of ACS endpoints. You can configure a maximum of 100 endpoints.
 
+- `users` - (Optional) Users associated with the application.
+
+- `groups` - (Optional) Groups associated with the application.
+
 - `attribute_statements` - (Optional) List of SAML Attribute statements.
   - `name` - (Required) The name of the attribute statement.
   - `filter_type` - (Optional) Type of group attribute filter.
