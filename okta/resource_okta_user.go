@@ -364,9 +364,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 		d.SetId("")
 		return nil
 	}
-	_ = d.Set("status", mapStatus(user.Status))
 	_ = d.Set("raw_status", user.Status)
-
 	rawMap := flattenUser(user)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {

@@ -198,12 +198,12 @@ func resourceInlineHookUpdate(ctx context.Context, d *schema.ResourceData, m int
 
 func resourceInlineHookDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-	_, _, err := client.InlineHook.DeactivateInlineHook(ctx, d.Id())
-	if err != nil {
+	_, resp, err := client.InlineHook.DeactivateInlineHook(ctx, d.Id())
+	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to deactivate inline hook: %v", err)
 	}
-	_, err = client.InlineHook.DeleteInlineHook(ctx, d.Id())
-	if err != nil {
+	resp, err = client.InlineHook.DeleteInlineHook(ctx, d.Id())
+	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete inline hook: %v", err)
 	}
 	return nil
