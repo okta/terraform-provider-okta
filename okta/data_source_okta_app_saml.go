@@ -237,12 +237,9 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 	}
 	var app *okta.SamlApplication
 	if filters.ID != "" {
-		respApp, resp, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, filters.ID, okta.NewSamlApplication(), nil)
-		if err := suppressErrorOn404(resp, err); err != nil {
+		respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, filters.ID, okta.NewSamlApplication(), nil)
+		if err != nil {
 			return diag.Errorf("failed get app by ID: %v", err)
-		}
-		if respApp == nil || respApp.(*okta.SamlApplication).Id == "" || respApp.(*okta.SamlApplication).SignOnMode != "SAML_2_0" {
-			return diag.Errorf("no SAML application found with provided ID: %s", filters.ID)
 		}
 		app = respApp.(*okta.SamlApplication)
 	} else {
