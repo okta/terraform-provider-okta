@@ -2,10 +2,8 @@ package okta
 
 import (
 	"context"
-	"encoding/xml"
 	"fmt"
 
-	"github.com/crewjam/saml"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -60,18 +58,11 @@ func dataSourceIdpMetadataSaml() *schema.Resource {
 func dataSourceIdpSamlMetadataRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	id := d.Get("idp_id").(string)
 	d.SetId(fmt.Sprintf("%s_metadata", id))
-	metadata, err := getSupplementFromMetadata(m).GetSAMLIdpMetadata(ctx, id)
+	metadata, metadataRoot, err := getSupplementFromMetadata(m).GetSAMLIdpMetadata(ctx, id)
 	if err != nil {
-		return diag.Errorf("failed to get SAML idp metadata: %v", err)
+		return diag.Errorf("failed to get SAML IdP metadata: %v", err)
 	}
-
 	_ = d.Set("metadata", string(metadata))
-	metadataRoot := &saml.EntityDescriptor{}
-	err = xml.Unmarshal(metadata, metadataRoot)
-	if err != nil {
-		return diag.Errorf("could not parse SAML app metadata, %v", err)
-	}
-
 	desc := metadataRoot.SPSSODescriptors[0]
 	syncSamlIndexEndpointBinding(d, desc.AssertionConsumerServices)
 	_ = d.Set("entity_id", metadataRoot.EntityID)

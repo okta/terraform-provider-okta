@@ -3,11 +3,9 @@ package okta
 import (
 	"context"
 	"encoding/json"
-	"encoding/xml"
 	"errors"
 	"fmt"
 
-	"github.com/crewjam/saml"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -336,17 +334,11 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	if app.Credentials.Signing.Kid != "" && app.Status != statusInactive {
 		keyID := app.Credentials.Signing.Kid
 		_ = d.Set("key_id", keyID)
-		keyMetadata, err := getSupplementFromMetadata(m).GetSAMLMetadata(ctx, d.Id(), keyID)
+		keyMetadata, metadataRoot, err := getSupplementFromMetadata(m).GetSAMLMetadata(ctx, d.Id(), keyID)
 		if err != nil {
-			return diag.Errorf("failed to set SAML metadata: %v", err)
+			return diag.Errorf("failed to get app's SAML metadata: %v", err)
 		}
 		_ = d.Set("metadata", string(keyMetadata))
-
-		metadataRoot := &saml.EntityDescriptor{}
-		err = xml.Unmarshal(keyMetadata, metadataRoot)
-		if err != nil {
-			return diag.Errorf("could not parse SAML app metadata: %v", err)
-		}
 		desc := metadataRoot.IDPSSODescriptors[0]
 		syncSamlEndpointBinding(d, desc.SingleSignOnServices)
 		uri := metadataRoot.EntityID
