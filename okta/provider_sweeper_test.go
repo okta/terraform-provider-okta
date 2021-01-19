@@ -80,7 +80,6 @@ func sharedClient() (*okta.Client, *sdk.ApiSupplement, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-
 	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
 	_, client, err := okta.NewClient(
 		context.Background(),

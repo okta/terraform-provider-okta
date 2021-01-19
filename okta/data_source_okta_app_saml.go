@@ -2,9 +2,12 @@ package okta
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func dataSourceAppSaml() *schema.Resource {
@@ -230,18 +233,40 @@ func dataSourceAppSaml() *schema.Resource {
 func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	filters, err := getAppFilters(d)
 	if err != nil {
-		return diag.Errorf("failed to list SAML apps: error getting filters: %v", err)
+		return diag.Errorf("invalid SAML app filters: %v", err)
 	}
-	appList, err := listSamlApps(ctx, m.(*Config), filters)
-	if err != nil {
-		return diag.Errorf("failed to list SAML apps: error getting SAML apps: %v", err)
+	var app *okta.SamlApplication
+	if filters.ID != "" {
+		respApp, resp, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, filters.ID, okta.NewSamlApplication(), nil)
+		if err := suppressErrorOn404(resp, err); err != nil {
+			return diag.Errorf("failed get app by ID: %v", err)
+		}
+		if respApp == nil || respApp.(*okta.SamlApplication).Id == "" || respApp.(*okta.SamlApplication).SignOnMode != "SAML_2_0" {
+			return diag.Errorf("no SAML application found with provided ID: %s", filters.ID)
+		}
+		app = respApp.(*okta.SamlApplication)
+	} else {
+		re := getOktaClientFromMetadata(m).GetRequestExecutor()
+		qp := &query.Params{Limit: 1, Filter: filters.Status, Q: filters.getQ()}
+		req, err := re.NewRequest("GET", fmt.Sprintf("/api/v1/apps%s", qp.String()), nil)
+		if err != nil {
+			return diag.Errorf("failed to list SAML apps: %v", err)
+		}
+		var appList []*okta.SamlApplication
+		_, err = re.Do(ctx, req, &appList)
+		if err != nil {
+			return diag.Errorf("failed to list SAML apps: %v", err)
+		}
+		if len(appList) < 1 {
+			return diag.Errorf("no SAML application found with provided filter: %s", filters)
+		}
+		if filters.Label != "" && appList[0].Label != filters.Label {
+			return diag.Errorf("no SAML application found with the provided label: %s", filters.Label)
+		} else {
+			logger(m).Info("found multiple SAML applications with the criteria supplied, using the first one, sorted by creation date")
+			app = appList[0]
+		}
 	}
-	if len(appList) < 1 {
-		return diag.Errorf("no SAML applications found with provided filter: %+v", filters)
-	} else if len(appList) > 1 {
-		logger(m).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
-	}
-	app := appList[0]
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
 	_ = d.Set("name", app.Name)

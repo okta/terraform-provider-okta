@@ -30,6 +30,9 @@ type (
 		orgName          string
 		domain           string
 		apiToken         string
+		clientID         string
+		privateKey       string
+		scopes           []string
 		retryCount       int
 		parallelism      int
 		backoff          bool
@@ -63,26 +66,31 @@ func (c *Config) loadAndValidate() error {
 		httpClient = cleanhttp.DefaultClient()
 		httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
 	}
-
-	_, client, err := okta.NewClient(
-		context.Background(),
+	setters := []okta.ConfigSetter{
 		okta.WithOrgUrl(fmt.Sprintf("https://%v.%v", c.orgName, c.domain)),
 		okta.WithToken(c.apiToken),
+		okta.WithClientId(c.clientID),
+		okta.WithPrivateKey(c.privateKey),
+		okta.WithScopes(c.scopes),
 		okta.WithCache(false),
 		okta.WithHttpClient(*httpClient),
 		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
 		okta.WithRequestTimeout(int64(c.requestTimeout)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
 		okta.WithUserAgentExtra("okta-terraform/3.7.4"),
+	}
+	if c.apiToken == "" {
+		setters = append(setters, okta.WithAuthorizationMode("PrivateKey"))
+	}
+	_, client, err := okta.NewClient(
+		context.Background(),
+		setters...,
 	)
 	if err != nil {
 		return err
 	}
 	c.oktaClient = client
 	c.supplementClient = &sdk.ApiSupplement{
-		BaseURL:         fmt.Sprintf("https://%s.%s", c.orgName, c.domain),
-		Client:          httpClient,
-		Token:           c.apiToken,
 		RequestExecutor: client.GetRequestExecutor(),
 	}
 	return nil

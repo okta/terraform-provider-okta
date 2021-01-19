@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func dataSourceUsers() *schema.Resource {
@@ -58,40 +57,36 @@ func dataSourceUsers() *schema.Resource {
 }
 
 func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
-	results := &searchResults{Users: []*okta.User{}}
 	params := &query.Params{Search: getSearchCriteria(d), Limit: defaultPaginationLimit, SortOrder: "0"}
-	err := collectUsers(ctx, client, results, params)
+	users, err := collectUsers(ctx, getOktaClientFromMetadata(m), params)
 	if err != nil {
 		return diag.Errorf("failed to list users: %v", err)
 	}
-
 	d.SetId(fmt.Sprintf("%d", crc32.ChecksumIEEE([]byte(params.String()))))
-	arr := make([]map[string]interface{}, len(results.Users))
-
-	for i, user := range results.Users {
+	arr := make([]map[string]interface{}, len(users))
+	for i, user := range users {
 		rawMap := flattenUser(user)
 		rawMap["id"] = user.Id
 		arr[i] = rawMap
 	}
 	_ = d.Set("users", arr)
-
 	return nil
 }
 
-// Recursively list apps until no next links are returned
-func collectUsers(ctx context.Context, client *okta.Client, results *searchResults, qp *query.Params) error {
-	users, res, err := client.User.ListUsers(ctx, qp)
+func collectUsers(ctx context.Context, client *okta.Client, qp *query.Params) ([]*okta.User, error) {
+	users, resp, err := client.User.ListUsers(ctx, qp)
 	if err != nil {
-		return err
+		return nil, err
 	}
-
-	results.Users = append(results.Users, users...)
-
-	if after := sdk.GetAfterParam(res); after != "" {
-		qp.After = after
-		return collectUsers(ctx, client, results, qp)
+	for resp.HasNextPage() {
+		var nextUsers []*okta.User
+		resp, err = resp.Next(ctx, &nextUsers)
+		if err != nil {
+			return nil, err
+		}
+		for i := range nextUsers {
+			users = append(users, nextUsers[i])
+		}
 	}
-
-	return nil
+	return users, nil
 }

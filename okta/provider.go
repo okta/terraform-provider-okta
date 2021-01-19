@@ -5,6 +5,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
+	"strings"
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -64,7 +66,6 @@ const (
 func Provider() *schema.Provider {
 	deprecatedPolicies := dataSourceDefaultPolicies()
 	deprecatedPolicies.DeprecationMessage = "This data source will be deprecated in favor of okta_default_policy or okta_policy data sources."
-
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"org_name": {
@@ -74,10 +75,33 @@ func Provider() *schema.Provider {
 				Description: "The organization to manage in Okta.",
 			},
 			"api_token": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("OKTA_API_TOKEN", nil),
-				Description: "API Token granting privileges to Okta API.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_TOKEN", nil),
+				Description:   "API Token granting privileges to Okta API.",
+				ConflictsWith: []string{"client_id", "scopes", "private_key"},
+			},
+			"client_id": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_CLIENT_ID", nil),
+				Description:   "API Token granting privileges to Okta API.",
+				ConflictsWith: []string{"api_token"},
+			},
+			"scopes": {
+				Type:          schema.TypeSet,
+				Optional:      true,
+				Elem:          &schema.Schema{Type: schema.TypeString},
+				DefaultFunc:   envDefaultSetFunc("OKTA_API_SCOPES", nil),
+				Description:   "API Token granting privileges to Okta API.",
+				ConflictsWith: []string{"api_token"},
+			},
+			"private_key": {
+				Optional:      true,
+				Type:          schema.TypeString,
+				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_PRIVATE_KEY", nil),
+				Description:   "API Token granting privileges to Okta API.",
+				ConflictsWith: []string{"api_token"},
 			},
 			"base_url": {
 				Type:        schema.TypeString,
@@ -131,7 +155,6 @@ func Provider() *schema.Provider {
 				Description:      "Timeout for single request (in seconds) which is made to Okta, the default is `0` (means no limit is set). The maximum value can be `100`.",
 			},
 		},
-
 		ResourcesMap: map[string]*schema.Resource{
 			appAutoLogin:           resourceAppAutoLogin(),
 			appBookmark:            resourceAppBookmark(),
@@ -227,12 +250,14 @@ func deprecateIncorrectNaming(d *schema.Resource, newResource string) *schema.Re
 
 func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	log.Printf("[INFO] Initializing Okta client")
-
 	config := Config{
 		orgName:        d.Get("org_name").(string),
 		domain:         d.Get("base_url").(string),
 		apiToken:       d.Get("api_token").(string),
 		parallelism:    d.Get("parallelism").(int),
+		clientID:       d.Get("client_id").(string),
+		privateKey:     d.Get("private_key").(string),
+		scopes:         convertInterfaceToStringSet(d.Get("scopes")),
 		retryCount:     d.Get("max_retries").(int),
 		minWait:        d.Get("min_wait_seconds").(int),
 		maxWait:        d.Get("max_wait_seconds").(int),
@@ -244,4 +269,13 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 		return nil, diag.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)
 	}
 	return &config, nil
+}
+
+func envDefaultSetFunc(k string, dv interface{}) schema.SchemaDefaultFunc {
+	return func() (interface{}, error) {
+		if v := os.Getenv(k); v != "" {
+			return convertStringSetToInterface(strings.Split(v, ",")), nil
+		}
+		return dv, nil
+	}
 }
