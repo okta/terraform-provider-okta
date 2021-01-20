@@ -72,6 +72,8 @@ The following arguments are supported:
 
 - `external_namespace` - (Optional) External namespace of the user schema property.
 
+- `union` - (Optional) Used to assign attribute group priority. Can not be set to 'true' if `scope` is set to Individual level.
+
 ## Attributes Reference
 
 - `app_id` - ID of the application the user property is associated with.

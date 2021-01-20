@@ -14,7 +14,7 @@ func resourceAppUserBaseSchema() *schema.Resource {
 		ReadContext:   resourceAppUserBaseSchemaRead,
 		UpdateContext: resourceAppUserBaseSchemaUpdate,
 		DeleteContext: resourceAppUserBaseSchemaDelete,
-		Importer:      createNestedResourceImporter([]string{"app_id", "id"}),
+		Importer:      createNestedResourceImporter([]string{"app_id", "index"}),
 		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
 			_, ok := d.GetOk("pattern")
 			if d.Get("index").(string) != "login" {
