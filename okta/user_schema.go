@@ -186,6 +186,8 @@ func syncUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) error 
 	_ = d.Set("unique", subschema.Unique)
 	if subschema.Items != nil {
 		_ = d.Set("array_type", subschema.Items.Type)
+		_ = d.Set("array_one_of", flattenOneOf(subschema.Items.OneOf))
+		_ = d.Set("array_enum", convertStringArrToInterface(subschema.Items.Enum))
 	}
 	return setNonPrimitives(d, map[string]interface{}{
 		"enum":   subschema.Enum,
