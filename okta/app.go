@@ -429,9 +429,13 @@ func syncGroupsAndUsers(ctx context.Context, id string, d *schema.ResourceData, 
 
 	for _, user := range userList {
 		if user.Scope == userScope {
+			var un string
+			if user.Credentials != nil {
+				un = user.Credentials.UserName
+			}
 			flattenedUserList = append(flattenedUserList, map[string]interface{}{
 				"id":       user.Id,
-				"username": user.Credentials.UserName,
+				"username": un,
 			})
 		}
 	}
