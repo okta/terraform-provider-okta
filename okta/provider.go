@@ -224,6 +224,7 @@ func Provider() *schema.Provider {
 		DataSourcesMap: map[string]*schema.Resource{
 			"okta_app":                         dataSourceApp(),
 			"okta_app_saml":                    dataSourceAppSaml(),
+			appOAuth:                           dataSourceAppOauth(),
 			"okta_app_metadata_saml":           dataSourceAppMetadataSaml(),
 			"okta_default_policies":            deprecatedPolicies,
 			"okta_default_policy":              dataSourceDefaultPolicies(),
