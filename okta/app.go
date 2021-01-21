@@ -326,6 +326,18 @@ func containsAppUser(userList []*okta.AppUser, id string) bool {
 	return false
 }
 
+func shouldUpdateUser(userList []*okta.AppUser, id, username string) bool {
+	for _, user := range userList {
+		if user.Id == id &&
+			user.Scope == userScope &&
+			user.Credentials != nil &&
+			user.Credentials.UserName != username {
+			return true
+		}
+	}
+	return false
+}
+
 // Handles the assigning of groups and users to Applications. Does so asynchronously.
 func handleAppGroupsAndUsers(ctx context.Context, id string, d *schema.ResourceData, m interface{}) error {
 	var wg sync.WaitGroup
@@ -353,17 +365,14 @@ func handleAppUsers(ctx context.Context, id string, d *schema.ResourceData, clie
 	if set, ok := d.GetOk("users"); ok {
 		users = set.(*schema.Set).List()
 		userIDList = make([]string, len(users))
-
 		for i, user := range users {
 			userProfile := user.(map[string]interface{})
 			uID := userProfile["id"].(string)
+			username := userProfile["username"].(string)
 			userIDList[i] = uID
-
+			// Not required
+			password, _ := userProfile["password"].(string)
 			if !containsAppUser(existingUsers, uID) {
-				username := userProfile["username"].(string)
-				// Not required
-				password, _ := userProfile["password"].(string)
-
 				asyncActionList = append(asyncActionList, func() error {
 					_, _, err := client.Application.AssignUserToApplication(ctx, id, okta.AppUser{
 						Id: uID,
@@ -374,7 +383,19 @@ func handleAppUsers(ctx context.Context, id string, d *schema.ResourceData, clie
 							},
 						},
 					})
-
+					return err
+				})
+			} else if shouldUpdateUser(existingUsers, uID, username) {
+				asyncActionList = append(asyncActionList, func() error {
+					_, _, err := client.Application.UpdateApplicationUser(ctx, id, uID, okta.AppUser{
+						Id: uID,
+						Credentials: &okta.AppUserCredentials{
+							UserName: username,
+							Password: &okta.AppUserPasswordCredential{
+								Value: password,
+							},
+						},
+					})
 					return err
 				})
 			}
@@ -429,13 +450,18 @@ func syncGroupsAndUsers(ctx context.Context, id string, d *schema.ResourceData, 
 
 	for _, user := range userList {
 		if user.Scope == userScope {
-			var un string
+			var un, up string
 			if user.Credentials != nil {
 				un = user.Credentials.UserName
+				if user.Credentials.Password != nil {
+					up = user.Credentials.Password.Value
+				}
 			}
 			flattenedUserList = append(flattenedUserList, map[string]interface{}{
 				"id":       user.Id,
 				"username": un,
+				"scope":    user.Scope,
+				"password": up,
 			})
 		}
 	}
