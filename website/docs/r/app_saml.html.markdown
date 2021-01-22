@@ -116,6 +116,10 @@ The following arguments are supported:
   - `type` - (Optional) The type of attribute statement value. Can be `"EXPRESSION"` or `"GROUP"`.
   - `values` - (Optional) Array of values to use.
 
+- `key_years_valid` - (Optional) Number of years the certificate is valid (2 - 10 years).
+
+- `key_name` - (Optional) Certificate name. This modulates the rotation of keys. New name == new key. Required to be set with `key_years_valid`.
+
 ## Attributes Reference
 
 - `id` - id of application.
