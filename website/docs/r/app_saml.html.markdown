@@ -92,7 +92,7 @@ The following arguments are supported:
 
 - `accessibility_login_redirect_url` - (Optional) Custom login page URL.
 
-- `features` - (Optional) features enabled.
+- `features` - (Optional) features enabled. Notice: you can't currently configure provisioning features via the API.
 
 - `user_name_template` - (Optional) Username template.
 
