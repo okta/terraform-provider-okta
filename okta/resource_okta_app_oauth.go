@@ -376,14 +376,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 			return diag.Errorf("failed to set OAuth application properties: %v", err)
 		}
 	}
-	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-	// So Skip setting assignments while this is on
-	assigmentOn, ok := d.GetOk("implicit_assignment")
-	if !ok || !assigmentOn.(bool) {
-		if err = syncGroupsAndUsers(app.Id, d, m); err != nil {
-			return err
-		}
-	}
+
 	respTypes := make([]string, len(app.Settings.OauthClient.ResponseTypes))
 	for i := range app.Settings.OauthClient.ResponseTypes {
 		respTypes[i] = string(*app.Settings.OauthClient.ResponseTypes[i])
@@ -391,6 +384,14 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	grantTypes := make([]string, len(app.Settings.OauthClient.GrantTypes))
 	for i := range app.Settings.OauthClient.GrantTypes {
 		grantTypes[i] = string(*app.Settings.OauthClient.GrantTypes[i])
+	}
+	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
+	// So Skip setting assignments while this is on
+	assigmentOn, ok := d.GetOk("implicit_assignment")
+	if !ok || !assigmentOn.(bool) {
+		if err = syncGroupsAndUsers(ctx, app.Id, d, m); err != nil {
+			return diag.Errorf("failed to sync groups and users for OAuth application: %v", err)
+		}
 	}
 	aggMap := map[string]interface{}{
 		"redirect_uris":             convertStringSetToInterface(app.Settings.OauthClient.RedirectUris),
@@ -428,7 +429,7 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	if !ok || !assigmentOn.(bool) {
 		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
 		if err != nil {
-			return diag.Errorf("failed to handle groups and users for oauth application: %v", err)
+			return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
 		}
 	}
 	return resourceAppOAuthRead(ctx, d, m)
