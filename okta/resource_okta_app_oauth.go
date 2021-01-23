@@ -277,6 +277,12 @@ func resourceAppOAuth() *schema.Resource {
 					},
 				},
 			},
+			"implicit_assignment": {
+				Type:          schema.TypeBool,
+				Optional:      true,
+				Description:   "*Early Access Property*. Enable Federation Broker Mode.",
+				ConflictsWith: []string{"groups", "users"},
+			},
 		}),
 	}
 }
@@ -297,9 +303,13 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if !d.Get("omit_secret").(bool) {
 		_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
 	}
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for oauth application: %v", err)
+	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
+	// So Skip setting assignments while this is on
+	if !d.Get("implicit_assignment").(bool) {
+		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
+		if err != nil {
+			return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
+		}
 	}
 	return resourceAppOAuthRead(ctx, d, m)
 }
@@ -337,6 +347,9 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	_ = d.Set("auto_submit_toolbar", app.Visibility.AutoSubmitToolbar)
 	_ = d.Set("hide_ios", app.Visibility.Hide.IOS)
 	_ = d.Set("hide_web", app.Visibility.Hide.Web)
+	if app.Settings.ImplicitAssignment != nil {
+		_ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
+	}
 	if app.Settings.OauthClient.ConsentMethod != "" { // Early Access Property, might be empty
 		_ = d.Set("consent_method", app.Settings.OauthClient.ConsentMethod)
 	}
@@ -374,9 +387,12 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	for i := range app.Settings.OauthClient.GrantTypes {
 		grantTypes[i] = string(*app.Settings.OauthClient.GrantTypes[i])
 	}
-	err = syncGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to sync groups and users for OAuth application: %v", err)
+	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
+	// So Skip setting assignments while this is on
+	if !d.Get("implicit_assignment").(bool) {
+		if err = syncGroupsAndUsers(ctx, app.Id, d, m); err != nil {
+			return diag.Errorf("failed to sync groups and users for OAuth application: %v", err)
+		}
 	}
 	aggMap := map[string]interface{}{
 		"redirect_uris":             convertStringSetToInterface(app.Settings.OauthClient.RedirectUris),
@@ -408,9 +424,13 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.Errorf("failed to set OAuth application status: %v", err)
 	}
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
+	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
+	// So Skip setting assignments while this is on
+	if !d.Get("implicit_assignment").(bool) {
+		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
+		if err != nil {
+			return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
+		}
 	}
 	return resourceAppOAuthRead(ctx, d, m)
 }
@@ -485,8 +505,8 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 		gt := okta.OAuthGrantType(grantTypes[i])
 		oktaGrantTypes[i] = &gt
 	}
-
 	app.Settings = &sdk.OpenIdConnectApplicationSettings{
+		ImplicitAssignment: boolPtr(d.Get("implicit_assignment").(bool)),
 		OauthClient: &sdk.OpenIdConnectApplicationSettingsClient{
 			OpenIdConnectApplicationSettingsClient: okta.OpenIdConnectApplicationSettingsClient{
 				ApplicationType:        appType,

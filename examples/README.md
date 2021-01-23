@@ -8,7 +8,7 @@ Here lies the examples that will aid you on your Okta Terraform journey. PLEASE 
 
 ## Test Fixture Examples
 
-Anything that lies underneath a resource directory is config we use as fixtures to our tests. We use the special trigger `replace_with_uuid` to trigger the fixture manager to insert a unique id. Eventually we will stand up a wiki for the provider but we don't quite have the manpower yet to do so.
+Anything that lies underneath a resource directory is config we use as fixtures to our tests. We use the special trigger `replace_with_uuid` to trigger the fixture manager to insert a unique id. Eventually we will stand up a wiki for the provider, but we don't quite have the manpower yet to do so.
 
 ## Resources & Data Sources
 
@@ -45,7 +45,7 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 - [okta_user_schema](./okta_user_schema) Supports the management of Okta defined User Profile Attribute Schemas.
 - [okta_user](./okta_user) Supports the management of Okta Users.
 - [okta_users](./okta_users) Data source to retrieve a group of users.
-- [okta_app_oauth_redirect_uri](./okta_app_oauth_redirect_uri) Supports decentralizing redirect uri config. Due to Okta's API not allowing this field to be null, you must set a redirect uri in your app, and ignore changes to this attribute. We follow TF best practices and detect config drift. The best case scenario is Okta makes this field nullable and we can not detect config drift when this attr is not present.
+- [okta_app_oauth_redirect_uri](./okta_app_oauth_redirect_uri) Supports decentralizing redirect uri config. Due to Okta's API not allowing this field to be null, you must set a redirect uri in your app, and ignore changes to this attribute. We follow TF best practices and detect config drift. The best case scenario is Okta makes this field nullable, and we can not detect config drift when this attr is not present.
 
 ## Deprecated Resources
 
@@ -54,4 +54,4 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 
 ## Notes
 
-As resource fixtures are added, please be sure to only put VALID config in each resource sub directory. Intentionally invalid config for testing should stay in the test file.
+As resource fixtures are added, please be sure to only put a VALID config in each resource sub-directory. Intentionally invalid config for testing should stay in the test file.

@@ -25,7 +25,7 @@ This provider is maintained internally by the Okta development team.
 
 If you wish to work on the provider, you'll first need [Go](http://www.golang.org) installed on your machine (please check the [requirements](#requirements) before proceeding).
 
-_Note:_ This project uses [Go Modules](https://blog.golang.org/using-go-modules) making it safe to work with it outside of your existing [GOPATH](http://golang.org/doc/code.html#GOPATH). The instructions that follow assume a directory in your home directory outside of the standard GOPATH (i.e `$HOME/development/terraform-providers/`).
+_Note:_ This project uses [Go Modules](https://blog.golang.org/using-go-modules) making it safe to work with it outside your existing [GOPATH](http://golang.org/doc/code.html#GOPATH). The instructions that follow assume a directory in your home directory outside the standard GOPATH (i.e `$HOME/development/terraform-providers/`).
 
 Clone repository to: `$HOME/development/terraform-providers/`
 
@@ -80,5 +80,5 @@ Terraform is the work of thousands of contributors. We appreciate your help!
 
 To contribute, please read the contribution guidelines: [Contributing to Terraform - Okta Provider](.github/CONTRIBUTING.md)
 
-Issues on GitHub are intended to be related to bugs or feature requests with provider codebase. 
+Issues on GitHub are intended to be related to the bugs or feature requests with provider codebase. 
 See [Plugin SDK Community](https://www.terraform.io/docs/extend/community/index.html) for a list of community resources to ask questions about Terraform.

@@ -51,7 +51,7 @@ func dataSourceAuthServer() *schema.Resource {
 
 func dataSourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	name := d.Get("name").(string)
-	servers, _, err := getOktaClientFromMetadata(m).AuthorizationServer.ListAuthorizationServers(context.Background(), &query.Params{Q: name, Limit: 1})
+	servers, _, err := getOktaClientFromMetadata(m).AuthorizationServer.ListAuthorizationServers(ctx, &query.Params{Q: name, Limit: 1})
 	if err != nil {
 		return diag.Errorf("failed to find auth server '%s': %v", name, err)
 	}
