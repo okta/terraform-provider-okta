@@ -26,10 +26,10 @@ resource "okta_app_oauth" "test" {
   // This block will be ignored when implicit_assignment is true,
   // Added in so that the acceptance test would fail due to okta 400 error should that ingore code not be working
   users {
-    id       = "${okta_user.user.id}"
-    username = "${okta_user.user.email}"
+    id       = okta_user.user.id
+    username = okta_user.user.email
   }
 
   // This block will be ignored when implicit_assignment is true
-  groups = ["${okta_group.group.id}"]
+  groups = [okta_group.group.id]
 }

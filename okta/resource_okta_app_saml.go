@@ -18,7 +18,7 @@ const (
 )
 
 // Fields required if preconfigured_app is not provided
-var customappSamlRequiredFields = []string{
+var customAppSamlRequiredFields = []string{
 	"sso_url",
 	"recipient",
 	"destination",
@@ -27,7 +27,6 @@ var customappSamlRequiredFields = []string{
 	"subject_name_id_format",
 	"signature_algorithm",
 	"digest_algorithm",
-	//"honor_force_authn",
 	"authn_context_class_ref",
 }
 
@@ -410,7 +409,7 @@ func buildApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 
 		reason := "Custom SAML applications must contain these fields"
 		// Need to verify the fields that are now required since it is not preconfigured
-		if err := conditionalRequire(d, customappSamlRequiredFields, reason); err != nil {
+		if err := conditionalRequire(d, customAppSamlRequiredFields, reason); err != nil {
 			return app, err
 		}
 

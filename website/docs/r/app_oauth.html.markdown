@@ -95,7 +95,7 @@ The following arguments are supported:
 
 - `profile` - (Optional) Custom JSON that represents an OAuth application's profile.
 
-* `implicit_assignment` - (Optional)  Enables [Federation Broker Mode](https://help.okta.com/en/prod/Content/Topics/Apps/Apps_Apps_Page.htm#Enable).  When this mode is enabled, `users` and `groups` arguments are ignored.
+* `implicit_assignment` - (Optional) *Early Access Property*. Enables [Federation Broker Mode]( https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm). When this mode is enabled, `users` and `groups` arguments are ignored.
 
 ## Attributes Reference
 

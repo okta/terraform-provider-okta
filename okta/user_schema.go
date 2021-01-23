@@ -213,14 +213,14 @@ func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) {
 }
 
 func getBaseProperty(s *sdk.UserSchema, id string) *sdk.UserSubSchema {
-	if s == nil {
+	if s == nil || s.Definitions == nil || s.Definitions.Base == nil {
 		return nil
 	}
 	return s.Definitions.Base.Properties[id]
 }
 
 func getCustomProperty(s *sdk.UserSchema, id string) *sdk.UserSubSchema {
-	if s == nil {
+	if s == nil || s.Definitions == nil || s.Definitions.Custom == nil {
 		return nil
 	}
 	return s.Definitions.Custom.Properties[id]
