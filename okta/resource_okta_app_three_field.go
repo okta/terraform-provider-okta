@@ -1,57 +1,59 @@
 package okta
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func resourceAppThreeField() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceAppThreeFieldCreate,
-		Read:   resourceAppThreeFieldRead,
-		Update: resourceAppThreeFieldUpdate,
-		Delete: resourceAppThreeFieldDelete,
-		Exists: resourceAppExists,
+		CreateContext: resourceAppThreeFieldCreate,
+		ReadContext:   resourceAppThreeFieldRead,
+		UpdateContext: resourceAppThreeFieldUpdate,
+		DeleteContext: resourceAppThreeFieldDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
-			"button_selector": &schema.Schema{
+			"button_selector": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Login button field CSS selector",
 			},
-			"password_selector": &schema.Schema{
+			"password_selector": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Login password field CSS selector",
 			},
-			"username_selector": &schema.Schema{
+			"username_selector": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Login username field CSS selector",
 			},
-			"extra_field_selector": &schema.Schema{
+			"extra_field_selector": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Extra field CSS selector",
 			},
-			"extra_field_value": &schema.Schema{
+			"extra_field_value": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Value for extra form field",
 			},
-			"url": &schema.Schema{
-				Type:         schema.TypeString,
-				Required:     true,
-				Description:  "Login URL",
-				ValidateFunc: validateIsURL,
+			"url": {
+				Type:             schema.TypeString,
+				Required:         true,
+				Description:      "Login URL",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
-			"url_regex": &schema.Schema{
+			"url_regex": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "A regex that further restricts URL to the specified regex",
@@ -60,79 +62,66 @@ func resourceAppThreeField() *schema.Resource {
 	}
 }
 
-func resourceAppThreeFieldCreate(d *schema.ResourceData, m interface{}) error {
+func resourceAppThreeFieldCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppThreeField(d, m)
-	activate := d.Get("status").(string) == "ACTIVE"
+	app := buildAppThreeField(d)
+	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(app, params)
-
+	_, _, err := client.Application.CreateApplication(ctx, app, params)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create three field application: %v", err)
 	}
-
 	d.SetId(app.Id)
-
-	return resourceAppThreeFieldRead(d, m)
+	return resourceAppThreeFieldRead(ctx, d, m)
 }
 
-func resourceAppThreeFieldRead(d *schema.ResourceData, m interface{}) error {
+func resourceAppThreeFieldRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	app := okta.NewSwaThreeFieldApplication()
-	err := fetchApp(d, m, app)
-
-	if app == nil {
+	err := fetchApp(ctx, d, m, app)
+	if err != nil {
+		return diag.Errorf("failed to get three field application: %v", err)
+	}
+	if app.Id == "" {
 		d.SetId("")
 		return nil
 	}
-
-	if err != nil {
-		return err
-	}
-
-	d.Set("button_selector", app.Settings.App.ButtonSelector)
-	d.Set("password_selector", app.Settings.App.PasswordSelector)
-	d.Set("username_selector", app.Settings.App.UserNameSelector)
-	d.Set("extra_field_selector", app.Settings.App.ExtraFieldSelector)
-	d.Set("extra_field_value", app.Settings.App.ExtraFieldValue)
-	d.Set("url", app.Settings.App.TargetURL)
-	d.Set("url_regex", app.Settings.App.LoginUrlRegex)
-	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
-	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("button_selector", app.Settings.App.ButtonSelector)
+	_ = d.Set("password_selector", app.Settings.App.PasswordSelector)
+	_ = d.Set("username_selector", app.Settings.App.UserNameSelector)
+	_ = d.Set("extra_field_selector", app.Settings.App.ExtraFieldSelector)
+	_ = d.Set("extra_field_value", app.Settings.App.ExtraFieldValue)
+	_ = d.Set("url", app.Settings.App.TargetURL)
+	_ = d.Set("url_regex", app.Settings.App.LoginUrlRegex)
+	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
+	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
-
 	return nil
 }
 
-func resourceAppThreeFieldUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceAppThreeFieldUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppThreeField(d, m)
-	_, resp, err := client.Application.UpdateApplication(d.Id(), app)
-
+	app := buildAppThreeField(d)
+	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
-		return responseErr(resp, err)
+		return diag.Errorf("failed to update three field application: %v", err)
 	}
-
-	desiredStatus := d.Get("status").(string)
-	err = setAppStatus(d, client, app.Status, desiredStatus)
-
+	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set three field application status: %v", err)
 	}
-
-	return resourceAppThreeFieldRead(d, m)
+	return resourceAppThreeFieldRead(ctx, d, m)
 }
 
-func resourceAppThreeFieldDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	resp, err := client.Application.DeactivateApplication(d.Id())
+func resourceAppThreeFieldDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, m)
 	if err != nil {
-		return responseErr(resp, err)
+		return diag.Errorf("failed to delete three field application: %v", err)
 	}
-
-	return responseErr(client.Application.DeleteApplication(d.Id()))
+	return nil
 }
 
-func buildAppThreeField(d *schema.ResourceData, m interface{}) *okta.SwaThreeFieldApplication {
+func buildAppThreeField(d *schema.ResourceData) *okta.SwaThreeFieldApplication {
 	app := okta.NewSwaThreeFieldApplication()
 	app.Label = d.Get("label").(string)
 

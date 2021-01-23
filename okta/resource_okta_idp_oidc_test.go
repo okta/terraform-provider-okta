@@ -4,29 +4,26 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaIdpOidc_crud(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(idpResource)
+	mgr := newFixtureManager(idpOidc)
 	config := mgr.GetFixtures("generic_oidc.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("generic_oidc_updated.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.test", idpResource)
+	resourceName := fmt.Sprintf("%s.test", idpOidc)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(idpResource, createDoesIdpExist(&sdk.OIDCIdentityProvider{})),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(idpOidc, createDoesIdpExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
-					resource.TestCheckResourceAttr(resourceName, "acs_binding", "HTTP-POST"),
-					resource.TestCheckResourceAttr(resourceName, "acs_type", "INSTANCE"),
 					resource.TestCheckResourceAttr(resourceName, "authorization_url", "https://idp.example.com/authorize"),
 					resource.TestCheckResourceAttr(resourceName, "authorization_binding", "HTTP-REDIRECT"),
 					resource.TestCheckResourceAttr(resourceName, "token_url", "https://idp.example.com/token"),
@@ -45,8 +42,6 @@ func TestAccOktaIdpOidc_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
-					resource.TestCheckResourceAttr(resourceName, "acs_binding", "HTTP-POST"),
-					resource.TestCheckResourceAttr(resourceName, "acs_type", "INSTANCE"),
 					resource.TestCheckResourceAttr(resourceName, "authorization_url", "https://idp.example.com/authorize2"),
 					resource.TestCheckResourceAttr(resourceName, "authorization_binding", "HTTP-REDIRECT"),
 					resource.TestCheckResourceAttr(resourceName, "token_url", "https://idp.example.com/token2"),

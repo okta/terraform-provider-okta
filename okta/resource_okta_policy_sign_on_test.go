@@ -5,12 +5,13 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func deleteSignOnPolicies(client *testClient) error {
-	return deletePolicyByType(signOnPolicyType, client)
+	return deletePolicyByType(sdk.SignOnPolicyType, client)
 }
 
 func TestAccOktaPolicySignon_defaultError(t *testing.T) {
@@ -18,9 +19,9 @@ func TestAccOktaPolicySignon_defaultError(t *testing.T) {
 	config := testOktaPolicySignOnDefaultErrors(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createPolicyCheckDestroy(policySignOn),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createPolicyCheckDestroy(policySignOn),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -39,16 +40,16 @@ func TestAccOktaPolicySignon_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", policySignOn)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createPolicyCheckDestroy(policySignOn),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createPolicyCheckDestroy(policySignOn),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test SignOn Policy"),
 				),
 			},
@@ -57,7 +58,7 @@ func TestAccOktaPolicySignon_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test SignOn Policy Updated"),
 				),
 			},
@@ -66,7 +67,7 @@ func TestAccOktaPolicySignon_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAccUpdated_%d", ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test SignOn Policy"),
 				),
 			},

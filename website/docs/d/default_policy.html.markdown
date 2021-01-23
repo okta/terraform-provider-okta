@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_default_policy"
-sidebar_current: "docs-okta-datasource-default-policy"
+layout: 'okta'
+page_title: 'Okta: okta_default_policy'
+sidebar_current: 'docs-okta-datasource-default-policy'
 description: |-
   Get a Default policy from Okta.
 ---
@@ -20,10 +20,10 @@ data "okta_default_policy" "example" {
 
 ## Arguments Reference
 
-* `type` - (Required) type of policy to retrieve.
+- `type` - (Required) type of policy to retrieve.  Valid values: `OKTA_SIGN_ON`, `PASSWORD`, `MFA_ENROLL`, `OAUTH_AUTHORIZATION_POLICY`, `IDP_DISCOVERY`
 
 ## Attributes Reference
 
-* `id` - id of policy.
+- `id` - id of policy.
 
-* `type` - type of policy.
+- `type` - type of policy.

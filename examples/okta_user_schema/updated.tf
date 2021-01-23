@@ -9,6 +9,7 @@ resource "okta_user_schema" "testAcc_replace_with_uuid" {
   permissions = "READ_WRITE"
   master      = "OKTA"
   enum        = ["S", "M", "L", "XXL"]
+  pattern     = ".+"
 
   one_of {
     const = "S"

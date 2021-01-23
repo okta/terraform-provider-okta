@@ -1,17 +1,16 @@
 package okta
 
 import (
-	"encoding/xml"
+	"context"
 	"fmt"
 
-	"github.com/crewjam/saml"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceIdpMetadataSaml() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceIdpSamlMetadataRead,
-
+		ReadContext: dataSourceIdpSamlMetadataRead,
 		Schema: map[string]*schema.Schema{
 			"idp_id": {
 				Type:     schema.TypeString,
@@ -56,27 +55,19 @@ func dataSourceIdpMetadataSaml() *schema.Resource {
 	}
 }
 
-func dataSourceIdpSamlMetadataRead(d *schema.ResourceData, m interface{}) error {
+func dataSourceIdpSamlMetadataRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	id := d.Get("idp_id").(string)
 	d.SetId(fmt.Sprintf("%s_metadata", id))
-	client := getSupplementFromMetadata(m)
-	metadata, _, err := client.GetSAMLIdpMetdata(id)
+	metadata, metadataRoot, err := getSupplementFromMetadata(m).GetSAMLIdpMetadata(ctx, id)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to get SAML IdP metadata: %v", err)
 	}
-
-	d.Set("metadata", string(metadata))
-	metadataRoot := &saml.EntityDescriptor{}
-	err = xml.Unmarshal(metadata, metadataRoot)
-	if err != nil {
-		return fmt.Errorf("Could not parse SAML app metadata, error: %s", err)
-	}
-
+	_ = d.Set("metadata", string(metadata))
 	desc := metadataRoot.SPSSODescriptors[0]
 	syncSamlIndexEndpointBinding(d, desc.AssertionConsumerServices)
-	d.Set("entity_id", metadataRoot.EntityID)
-	d.Set("authn_request_signed", desc.AuthnRequestsSigned)
-	d.Set("assertions_signed", desc.WantAssertionsSigned)
+	_ = d.Set("entity_id", metadataRoot.EntityID)
+	_ = d.Set("authn_request_signed", desc.AuthnRequestsSigned)
+	_ = d.Set("assertions_signed", desc.WantAssertionsSigned)
 	syncSamlCertificates(d, desc.KeyDescriptors)
 	return nil
 }

@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"regexp"
@@ -8,22 +9,22 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func sweepUsers(client *testClient) error {
 	var errorList []error
-	users, _, err := client.oktaClient.User.ListUsers(&query.Params{Q: testResourcePrefix})
+	users, _, err := client.oktaClient.User.ListUsers(context.Background(), &query.Params{Q: testResourcePrefix})
 	if err != nil {
 		return err
 	}
 
 	for _, u := range users {
-		if err := ensureUserDelete(u.Id, u.Status, client.oktaClient); err != nil {
+		if err := ensureUserDelete(context.Background(), u.Id, u.Status, client.oktaClient); err != nil {
 			errorList = append(errorList, err)
 		}
 	}
@@ -38,12 +39,12 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("remove_custom_attributes.tf", ri, t)
 	importConfig := mgr.GetFixtures("import.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", oktaUser)
-	email := fmt.Sprintf("test-acc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckUserDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:  config,
@@ -106,12 +107,12 @@ func TestAccOktaUser_groupMembership(t *testing.T) {
 	config := mgr.GetFixtures("group_assigned.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("group_unassigned.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", oktaUser)
-	email := fmt.Sprintf("test-acc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckUserDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -151,12 +152,12 @@ func TestAccOktaUser_invalidCustomProfileAttribute(t *testing.T) {
 	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckUserDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config:      testOktaUserConfig_invalidCustomProfileAttribute(rName),
+				Config:      testOktaUserConfigInvalidCustomProfileAttribute(rName),
 				ExpectError: regexp.MustCompile("Api validation failed: newUser"),
 			},
 		},
@@ -170,12 +171,12 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("all_attributes.tf", ri, t)
 	minimalConfig := mgr.GetFixtures("basic.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", oktaUser)
-	email := fmt.Sprintf("test-acc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckUserDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -243,12 +244,12 @@ func TestAccOktaUser_updateCredentials(t *testing.T) {
 	config := mgr.GetFixtures("basic_with_credentials.tf", ri, t)
 	minimalConfigWithCredentials := mgr.GetFixtures("basic_with_credentials_updated.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", oktaUser)
-	email := fmt.Sprintf("test-acc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckUserDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -282,12 +283,12 @@ func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
 	statusChanged := mgr.GetFixtures("deprovisioned.tf", ri, t)
 	config := mgr.GetFixtures("staged.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", oktaUser)
-	email := fmt.Sprintf("test-acc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckUserDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -299,7 +300,7 @@ func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
 					resource.TestCheckResourceAttr(resourceName, "login", email),
 					resource.TestCheckResourceAttr(resourceName, "email", email),
-					resource.TestCheckResourceAttr(resourceName, "status", "DEPROVISIONED"),
+					resource.TestCheckResourceAttr(resourceName, "status", userStatusDeprovisioned),
 				),
 			},
 		},
@@ -312,15 +313,15 @@ func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
 	config := mgr.GetFixtures("deprovisioned.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckUserDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 			},
 			{
-				Config:      testOktaUserConfig_updateDeprovisioned(strconv.Itoa(ri)),
+				Config:      testOktaUserConfigUpdateDeprovisioned(strconv.Itoa(ri)),
 				ExpectError: regexp.MustCompile(".*Only the status of a DEPROVISIONED user can be updated, we detected other change"),
 			},
 		},
@@ -331,42 +332,42 @@ func TestAccOktaUser_validRole(t *testing.T) {
 	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckUserDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config:      testOktaUserConfig_validRole(rName),
-				ExpectError: regexp.MustCompile("GROUP_ADMIN is not a valid Okta role"),
+				Config:      testOktaUserConfigValidRole(rName),
+				ExpectError: regexp.MustCompile("'GROUP_ADMIN' is not a valid Okta role"),
 			},
 		},
 	})
 }
 
 func testAccCheckUserDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*Config).oktaClient
+	client := getOktaClientFromMetadata(testAccProvider.Meta())
 
 	for _, r := range s.RootModule().Resources {
-		if _, resp, err := client.User.GetUser(r.Primary.ID); err != nil {
+		if _, resp, err := client.User.GetUser(context.Background(), r.Primary.ID); err != nil {
 			if strings.Contains(resp.Response.Status, "404") {
 				continue
 			}
 			return fmt.Errorf("[ERROR] Error Getting User in Okta: %v", err)
 		}
-		return fmt.Errorf("User still exists")
+		return fmt.Errorf("user still exists")
 	}
 
 	return nil
 }
 
-func testOktaUserConfig_invalidCustomProfileAttribute(r string) string {
+func testOktaUserConfigInvalidCustomProfileAttribute(r string) string {
 	return fmt.Sprintf(`
 resource okta_user "test" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "%[1]s"
-  login       = "test-acc-%[1]s@example.com"
-  email       = "test-acc-%[1]s@example.com"
+  login       = "testAcc-%[1]s@example.com"
+  email       = "testAcc-%[1]s@example.com"
 
   custom_profile_attributes = <<JSON
   {
@@ -377,27 +378,27 @@ resource okta_user "test" {
 `, r)
 }
 
-func testOktaUserConfig_updateDeprovisioned(r string) string {
+func testOktaUserConfigUpdateDeprovisioned(r string) string {
 	return fmt.Sprintf(`
 resource okta_user "test" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "%[1]s"
-  login       = "test-acc-%[1]s@example.com"
+  login       = "testAcc-%[1]s@example.com"
   status      = "DEPROVISIONED"
   email       = "hello@example.com"
 }
 `, r)
 }
 
-func testOktaUserConfig_validRole(r string) string {
+func testOktaUserConfigValidRole(r string) string {
 	return fmt.Sprintf(`
 resource okta_user "test" {
   admin_roles = ["APP_ADMIN", "USER_ADMIN", "GROUP_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "Smith"
-  login       = "test-acc-%[1]s@example.com"
-  email       = "test-acc-%[1]s@example.com"
+  login       = "testAcc-%[1]s@example.com"
+  email       = "testAcc-%[1]s@example.com"
 }
 `, r)
 }

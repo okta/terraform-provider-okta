@@ -4,19 +4,18 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 func TestAccOktaDataSourcePolicy_read(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testAccDataSourcePolicyConfig(ri)
+	config := testAccDataSourcePolicyConfig()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		Providers: testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -28,11 +27,11 @@ func TestAccOktaDataSourcePolicy_read(t *testing.T) {
 	})
 }
 
-func testAccDataSourcePolicyConfig(rInt int) string {
+func testAccDataSourcePolicyConfig() string {
 	return fmt.Sprintf(`
 data "okta_policy" "test" {
   type = "%s"
   name = "Default Policy"
 }
-`, passwordPolicyType)
+`, sdk.PasswordPolicyType)
 }

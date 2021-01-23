@@ -1,4 +1,4 @@
-resource okta_app_swa test {
+resource "okta_app_swa" "test" {
   label          = "testAcc_replace_with_uuid"
   button_field   = "btn-login"
   password_field = "txtbox-password"

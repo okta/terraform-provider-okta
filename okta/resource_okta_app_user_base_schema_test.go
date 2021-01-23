@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 )
 
 func TestAccAppUserBaseSchema_change(t *testing.T) {
@@ -18,8 +18,8 @@ func TestAccAppUserBaseSchema_change(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appUserBaseSchema)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
 		// Just need to make sure the app gets cleaned up
 		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
