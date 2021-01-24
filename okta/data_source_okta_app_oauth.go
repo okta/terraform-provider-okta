@@ -111,7 +111,7 @@ func dataSourceAppOauth() *schema.Resource {
 			},
 			"policy_uri": {
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 				Description: "URI to web page providing client policy document.",
 			},
 		},

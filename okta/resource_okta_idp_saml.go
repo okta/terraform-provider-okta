@@ -38,8 +38,9 @@ func resourceIdpSaml() *schema.Resource {
 				ValidateDiagFunc: stringInSlice([]string{"INSTANCE", "ORG"}),
 			},
 			"sso_url": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:             schema.TypeString,
+				Required:         true,
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"sso_binding": {
 				Type:             schema.TypeString,

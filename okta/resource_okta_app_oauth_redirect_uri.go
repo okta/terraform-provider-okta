@@ -24,9 +24,10 @@ func resourceAppOAuthRedirectURI() *schema.Resource {
 				ForceNew: true,
 			},
 			"uri": {
-				Required:    true,
-				Type:        schema.TypeString,
-				Description: "Redirect URI to append to Okta OIDC application.",
+				Required:         true,
+				Type:             schema.TypeString,
+				Description:      "Redirect URI to append to Okta OIDC application.",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 		},
 	}

@@ -145,8 +145,9 @@ var (
 	}
 
 	urlSchema = &schema.Schema{
-		Type:     schema.TypeString,
-		Required: true,
+		Type:             schema.TypeString,
+		Required:         true,
+		ValidateDiagFunc: stringIsURL(validURLSchemes...),
 	}
 )
 

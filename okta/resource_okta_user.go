@@ -211,14 +211,16 @@ func resourceUser() *schema.Resource {
 				Description: "User primary phone number",
 			},
 			"profile_url": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "User online profile (web page)",
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "User online profile (web page)",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"second_email": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "User secondary email address, used for account recovery",
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "User secondary email address, used for account recovery",
+				ValidateDiagFunc: stringIsEmail,
 			},
 			"state": {
 				Type:        schema.TypeString,
