@@ -56,7 +56,7 @@ func resourceAuthServerPolicy() *schema.Resource {
 }
 
 func resourceAuthServerPolicyCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if !d.Get("status").(bool) {
+	if d.Get("status").(string) == statusInactive {
 		return diag.Errorf("can not create an inactive auth server policy, only existing ones can be deactivated")
 	}
 	policy := buildAuthServerPolicy(d)
