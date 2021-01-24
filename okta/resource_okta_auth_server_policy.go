@@ -56,6 +56,9 @@ func resourceAuthServerPolicy() *schema.Resource {
 }
 
 func resourceAuthServerPolicyCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if !d.Get("status").(bool) {
+		return diag.Errorf("can not create an inactive auth server policy, only existing ones can be deactivated")
+	}
 	policy := buildAuthServerPolicy(d)
 	respPolicy, _, err := getOktaClientFromMetadata(m).AuthorizationServer.CreateAuthorizationServerPolicy(ctx, d.Get("auth_server_id").(string), policy)
 	if err != nil {
@@ -87,6 +90,17 @@ func resourceAuthServerPolicyUpdate(ctx context.Context, d *schema.ResourceData,
 	_, _, err := getOktaClientFromMetadata(m).AuthorizationServer.UpdateAuthorizationServerPolicy(ctx, d.Get("auth_server_id").(string), d.Id(), policy)
 	if err != nil {
 		return diag.Errorf("failed to update auth server policy: %v", err)
+	}
+	oldStatus, newStatus := d.GetChange("status")
+	if oldStatus != newStatus {
+		if newStatus == statusActive {
+			_, err = getSupplementFromMetadata(m).ActivateAuthorizationServerPolicy(ctx, d.Get("auth_server_id").(string), d.Id())
+		} else {
+			_, err = getSupplementFromMetadata(m).DeactivateAuthorizationServerPolicy(ctx, d.Get("auth_server_id").(string), d.Id())
+		}
+		if err != nil {
+			return diag.Errorf("failed to change authorization server policy status: %v", err)
+		}
 	}
 	return resourceAuthServerPolicyRead(ctx, d, m)
 }

@@ -135,7 +135,7 @@ func policyActivate(ctx context.Context, d *schema.ResourceData, m interface{}) 
 	if d.Get("status").(string) == statusInactive {
 		_, err := client.Policy.DeactivatePolicy(ctx, d.Id())
 		if err != nil {
-			return fmt.Errorf("dctivation has failed: %v", err)
+			return fmt.Errorf("deactivation has failed: %v", err)
 		}
 	}
 	return nil
