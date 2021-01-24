@@ -45,6 +45,14 @@ func dataSourceAuthServer() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"issuer": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"issuer_mode": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -68,5 +76,10 @@ func dataSourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m int
 	_ = d.Set("credentials_next_rotation", authServer.Credentials.Signing.NextRotation.String())
 	_ = d.Set("credentials_last_rotated", authServer.Credentials.Signing.LastRotated.String())
 	_ = d.Set("status", authServer.Status)
+	_ = d.Set("issuer", authServer.Issuer)
+	// Do not sync these unless the issuer mode is specified since it is an EA feature
+	if authServer.IssuerMode != "" {
+		_ = d.Set("issuer_mode", authServer.IssuerMode)
+	}
 	return nil
 }
