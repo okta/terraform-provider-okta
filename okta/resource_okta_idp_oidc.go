@@ -52,8 +52,9 @@ func resourceIdpOidc() *schema.Resource {
 				Sensitive: true,
 			},
 			"issuer_url": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:             schema.TypeString,
+				Required:         true,
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"issuer_mode": {
 				Type:             schema.TypeString,
