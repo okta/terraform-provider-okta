@@ -3,6 +3,7 @@ package okta
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -90,6 +91,9 @@ func resourceAppOAuth() *schema.Resource {
 				if oldValue.(bool) && !newValue.(bool) {
 					return d.ForceNew("omit_secret")
 				}
+			}
+			if _, ok := d.GetOk("jwks"); !ok && d.Get("token_endpoint_auth_method").(string) == "private_key_jwt" {
+				return errors.New("'jwks' is required when 'token_endpoint_auth_method' is 'private_key_jwt'")
 			}
 			return nil
 		},
