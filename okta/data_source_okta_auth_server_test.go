@@ -13,11 +13,8 @@ func TestAccOktaDataSourceAuthServer_read(t *testing.T) {
 	mgr := newFixtureManager(authServer)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 	authServer := buildTestAuthServer(ri)
-
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
@@ -29,6 +26,7 @@ func TestAccOktaDataSourceAuthServer_read(t *testing.T) {
 					resource.TestCheckResourceAttrSet("okta_auth_server.test", "id"),
 					resource.TestCheckResourceAttr("data.okta_auth_server.test", "name", fmt.Sprintf("testAcc_%d", ri)),
 					resource.TestCheckResourceAttr("data.okta_auth_server.test", "status", statusActive),
+					resource.TestCheckResourceAttrSet("data.okta_auth_server.test", "issuer"),
 				),
 			},
 		},

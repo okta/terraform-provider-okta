@@ -55,12 +55,12 @@ func resourceAuthServer() *schema.Resource {
 			"issuer": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "EA Feature: allows you to use a custom issuer URL",
+				Description: "allows you to use a custom issuer URL",
 			},
 			"issuer_mode": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				Description:      "EA Feature: allows you to use a custom issuer URL",
+				Description:      "*Early Access Property*. Indicates which value is specified in the issuer of the tokens that a Custom Authorization Server returns: the original Okta org domain URL or a custom domain URL",
 				Default:          "ORG_URL",
 				ValidateDiagFunc: stringInSlice([]string{"CUSTOM_URL", "ORG_URL"}),
 			},
