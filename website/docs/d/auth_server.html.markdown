@@ -30,7 +30,7 @@ data "okta_auth_server" "example" {
 
 - `description` - description of Authorization server.
 
-- `audiences` - array of audiences,
+- `audiences` - array of audiences.
 
 - `kid` - auth server key id.
 

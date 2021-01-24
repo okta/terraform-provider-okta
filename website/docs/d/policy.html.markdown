@@ -21,9 +21,9 @@ data "okta_policy" "example" {
 
 ## Arguments Reference
 
-- `name` - (Required) name of policy to retrieve.
+- `name` - (Required) Name of policy to retrieve.
 
-- `type` - (Required) type of policy to retrieve.
+- `type` - (Required) Type of policy to retrieve. Valid values: `OKTA_SIGN_ON`, `PASSWORD`, `MFA_ENROLL`, `IDP_DISCOVERY`
 
 ## Attributes Reference
 

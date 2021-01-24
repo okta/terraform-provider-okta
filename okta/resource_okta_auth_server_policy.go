@@ -22,6 +22,10 @@ func resourceAuthServerPolicy() *schema.Resource {
 				Optional:    true,
 				Default:     sdk.OauthAuthorizationPolicyType,
 				Description: "Auth server policy type, unlikely this will be anything other then the default",
+				Deprecated:  "Policy type can only be of value 'OAUTH_AUTHORIZATION_POLICY', so this will be removed in the future, or set as 'Computed' value",
+				DiffSuppressFunc: func(string, string, string, *schema.ResourceData) bool {
+					return true
+				},
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -98,7 +102,7 @@ func resourceAuthServerPolicyDelete(ctx context.Context, d *schema.ResourceData,
 func buildAuthServerPolicy(d *schema.ResourceData) okta.Policy {
 	return okta.Policy{
 		Name:        d.Get("name").(string),
-		Type:        d.Get("type").(string),
+		Type:        sdk.OauthAuthorizationPolicyType,
 		Status:      d.Get("status").(string),
 		Priority:    int64(d.Get("priority").(int)),
 		Description: d.Get("description").(string),

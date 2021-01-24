@@ -10,7 +10,6 @@ import (
 )
 
 // data source to retrieve information on a Default Policy
-
 func dataSourceDefaultPolicies() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceDefaultPolicyRead,
@@ -21,10 +20,9 @@ func dataSourceDefaultPolicies() *schema.Resource {
 					sdk.SignOnPolicyType,
 					sdk.PasswordPolicyType,
 					sdk.MfaPolicyType,
-					sdk.OauthAuthorizationPolicyType,
 					sdk.IdpDiscoveryType,
 				}),
-				Description: fmt.Sprintf("Policy type: %s, %s, %s, %s, or %s", sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.OauthAuthorizationPolicyType, sdk.IdpDiscoveryType),
+				Description: fmt.Sprintf("Policy type: %s, %s, %s, or %s", sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.IdpDiscoveryType),
 				Required:    true,
 			},
 		},
