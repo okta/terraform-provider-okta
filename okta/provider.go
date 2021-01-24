@@ -234,6 +234,7 @@ func Provider() *schema.Provider {
 			"okta_idp_saml":                    dataSourceIdpSaml(),
 			idpOidc:                            dataSourceIdpOidc(),
 			"okta_policy":                      dataSourcePolicy(),
+			authServerPolicy:                   dataSourceAuthServerPolicy(),
 			"okta_user_profile_mapping_source": dataSourceUserProfileMappingSource(),
 			"okta_user":                        dataSourceUser(),
 			"okta_users":                       dataSourceUsers(),
