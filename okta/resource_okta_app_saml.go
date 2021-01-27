@@ -507,10 +507,8 @@ func buildApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	}
 
 	if id, ok := d.GetOk("key_id"); ok {
-		app.Credentials = &okta.ApplicationCredentials{
-			Signing: &okta.ApplicationCredentialsSigning{
-				Kid: id.(string),
-			},
+		app.Credentials.Signing = &okta.ApplicationCredentialsSigning{
+			Kid: id.(string),
 		}
 	}
 
