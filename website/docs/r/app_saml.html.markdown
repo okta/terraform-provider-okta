@@ -120,6 +120,13 @@ The following arguments are supported:
 
 - `key_name` - (Optional) Certificate name. This modulates the rotation of keys. New name == new key. Required to be set with `key_years_valid`.
 
+- `single_logout_issuer` - (Optional) The issuer of the Service Provider that generates the Single Logout request.
+
+- `single_logout_url` - (Optional) The location where the logout response is sent.
+
+- `single_logout_certificate` - (Optional) x509 encoded certificate that the Service Provider uses to sign Single Logout requests. 
+  Note: should be provided without `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`, see [official documentation](https://developer.okta.com/docs/reference/api/apps/#service-provider-certificate).
+
 ## Attributes Reference
 
 - `id` - id of application.

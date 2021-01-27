@@ -279,12 +279,33 @@ func resourceAppSaml() *schema.Resource {
 					Schema: attributeStatements,
 				},
 			},
+			"single_logout_issuer": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "The issuer of the Service Provider that generates the Single Logout request",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				RequiredWith:     []string{"single_logout_url", "single_logout_certificate"},
+			},
+			"single_logout_url": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "The location where the logout response is sent",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				RequiredWith:     []string{"single_logout_issuer", "single_logout_certificate"},
+			},
+			"single_logout_certificate": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "x509 encoded certificate that the Service Provider uses to sign Single Logout requests",
+				ValidateDiagFunc: stringIsCertificate,
+				RequiredWith:     []string{"single_logout_issuer", "single_logout_url"},
+			},
 		}),
 	}
 }
 
 func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app, err := buildApp(d)
+	app, err := buildSamlApp(d)
 	if err != nil {
 		return diag.Errorf("failed to create SAML application: %v", err)
 	}
@@ -360,7 +381,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-	app, err := buildApp(d)
+	app, err := buildSamlApp(d)
 	if err != nil {
 		return diag.Errorf("failed to create SAML application: %v", err)
 	}
@@ -393,7 +414,7 @@ func resourceAppSamlDelete(ctx context.Context, d *schema.ResourceData, m interf
 	return nil
 }
 
-func buildApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
+func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewSamlApplication()
 	app.Label = d.Get("label").(string)
@@ -458,6 +479,16 @@ func buildApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 		DigestAlgorithm:       d.Get("digest_algorithm").(string),
 		HonorForceAuthn:       &honorForce,
 		AuthnContextClassRef:  d.Get("authn_context_class_ref").(string),
+		Slo:                   &okta.SingleLogout{Enabled: boolPtr(false)},
+	}
+	sli := d.Get("single_logout_issuer").(string)
+	if sli != "" {
+		app.Settings.SignOn.Slo = &okta.SingleLogout{
+			Enabled:   boolPtr(true),
+			Issuer:    sli,
+			LogoutUrl: d.Get("single_logout_url").(string),
+		}
+		// TODO add "single_logout_certificate"
 	}
 	app.Credentials = &okta.ApplicationCredentials{
 		UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
