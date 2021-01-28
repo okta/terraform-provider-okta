@@ -294,10 +294,10 @@ func resourceAppSaml() *schema.Resource {
 				RequiredWith:     []string{"single_logout_issuer", "single_logout_certificate"},
 			},
 			"single_logout_certificate": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "x509 encoded certificate that the Service Provider uses to sign Single Logout requests",
-				RequiredWith:     []string{"single_logout_issuer", "single_logout_url"},
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "x509 encoded certificate that the Service Provider uses to sign Single Logout requests",
+				RequiredWith: []string{"single_logout_issuer", "single_logout_url"},
 			},
 		}),
 	}
