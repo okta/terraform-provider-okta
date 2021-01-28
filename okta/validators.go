@@ -1,8 +1,6 @@
 package okta
 
 import (
-	"crypto/x509"
-	"encoding/pem"
 	"net/url"
 	"regexp"
 	"strings"
@@ -164,26 +162,6 @@ func stringIsVersion(i interface{}, k cty.Path) diag.Diagnostics {
 	}
 	if !versionRegex.MatchString(v) {
 		return diag.Errorf("%s field is not a valid version", k)
-	}
-	return nil
-}
-
-func stringIsCertificate(i interface{}, k cty.Path) diag.Diagnostics {
-	v, ok := i.(string)
-	if !ok {
-		return diag.Errorf("expected type of %s to be string", k)
-	}
-	if v == "" {
-		return diag.Errorf("expected %s to not be empty", k)
-	}
-	v = `-----BEGIN CERTIFICATE-----\n` + strings.ReplaceAll(v, `\r\n`, "\n") + `\n-----END CERTIFICATE-----`
-	block, _ := pem.Decode([]byte(v))
-	if block == nil {
-		return diag.Errorf("failed to decode certificate")
-	}
-	_, err := x509.ParseCertificate(block.Bytes)
-	if err != nil {
-		return diag.Errorf("failed to parse certificate: %v", err)
 	}
 	return nil
 }

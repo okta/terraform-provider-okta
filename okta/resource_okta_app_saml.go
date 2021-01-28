@@ -297,7 +297,6 @@ func resourceAppSaml() *schema.Resource {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Description:      "x509 encoded certificate that the Service Provider uses to sign Single Logout requests",
-				ValidateDiagFunc: stringIsCertificate,
 				RequiredWith:     []string{"single_logout_issuer", "single_logout_url"},
 			},
 		}),
@@ -488,7 +487,9 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 			Issuer:    sli,
 			LogoutUrl: d.Get("single_logout_url").(string),
 		}
-		// TODO add "single_logout_certificate"
+		app.Settings.SignOn.SpCertificate = &okta.SpCertificate{
+			X5c: []string{d.Get("single_logout_certificate").(string)},
+		}
 	}
 	app.Credentials = &okta.ApplicationCredentials{
 		UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{

@@ -226,6 +226,21 @@ func dataSourceAppSaml() *schema.Resource {
 					Schema: attributeStatements,
 				},
 			},
+			"single_logout_issuer": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The issuer of the Service Provider that generates the Single Logout request",
+			},
+			"single_logout_url": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The location where the logout response is sent",
+			},
+			"single_logout_certificate": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "x509 encoded certificate that the Service Provider uses to sign Single Logout requests",
+			},
 		},
 	}
 }
