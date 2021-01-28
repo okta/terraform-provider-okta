@@ -103,3 +103,9 @@ data "okta_app_saml" "example" {
   - `namespace` - (Optional) The attribute namespace. It can be set to `"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"`, `"urn:oasis:names:tc:SAML:2.0:attrname-format:uri"`, or `"urn:oasis:names:tc:SAML:2.0:attrname-format:basic"`.
   - `type` - (Optional) The type of attribute statement value. Can be `"EXPRESSION"` or `"GROUP"`.
   - `values` - (Optional) Array of values to use.
+
+- `single_logout_issuer` - The issuer of the Service Provider that generates the Single Logout request.
+
+- `single_logout_url` - The location where the logout response is sent.
+
+- `single_logout_certificate` - x509 encoded certificate that the Service Provider uses to sign Single Logout requests.

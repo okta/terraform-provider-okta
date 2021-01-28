@@ -538,7 +538,13 @@ func setSamlSettings(d *schema.ResourceData, signOn *okta.SamlApplicationSetting
 			"filter_value": st.FilterValue,
 		}
 	}
-
+	if signOn.Slo != nil && signOn.Slo.Enabled != nil && *signOn.Slo.Enabled {
+		_ = d.Set("single_logout_issuer", signOn.Slo.Issuer)
+		_ = d.Set("single_logout_url", signOn.Slo.LogoutUrl)
+		if len(signOn.SpCertificate.X5c) > 0 {
+			_ = d.Set("single_logout_certificate", signOn.SpCertificate.X5c[0])
+		}
+	}
 	return setNonPrimitives(d, map[string]interface{}{
 		"attribute_statements": arr,
 	})
