@@ -363,6 +363,7 @@ resource "%s" "%s" {
   type		  = "service"
   grant_types = [ "implicit" ]
   redirect_uris = ["http://d.com/"]
+  response_types   = ["token"]
 }
 `, appOAuth, name, name)
 }

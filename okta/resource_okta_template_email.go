@@ -44,6 +44,7 @@ func resourceTemplateEmail() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Email template type",
+				ForceNew:    true,
 			},
 			"translations": {
 				Type:     schema.TypeSet,

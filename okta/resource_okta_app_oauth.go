@@ -95,6 +95,34 @@ func resourceAppOAuth() *schema.Resource {
 			if _, ok := d.GetOk("jwks"); !ok && d.Get("token_endpoint_auth_method").(string) == "private_key_jwt" {
 				return errors.New("'jwks' is required when 'token_endpoint_auth_method' is 'private_key_jwt'")
 			}
+			if d.Get("login_mode").(string) != "DISABLED" {
+				if d.Get("login_uri").(string) == "" {
+					return errors.New("you have to set up 'login_uri' to configure any 'login_mode' besides 'DISABLED'")
+				}
+				if len(convertInterfaceToStringSetNullable(d.Get("login_scopes"))) < 1 {
+					return errors.New("you have to set up 'login_scopes' to configure any 'login_mode' besides 'DISABLED'")
+				}
+			}
+			grantTypes := convertInterfaceToStringSet(d.Get("grant_types"))
+			hasImplicit := false
+			for _, v := range grantTypes {
+				if v == "implicit" {
+					hasImplicit = true
+					break
+				}
+			}
+			if hasImplicit {
+				hasTokenOrTokenID := false
+				for _, v := range convertInterfaceToStringSetNullable(d.Get("response_types")) {
+					if v == "token" || v == "id_token" {
+						hasTokenOrTokenID = true
+						break
+					}
+				}
+				if !hasTokenOrTokenID {
+					return errors.New("'response_types' must contain at least one of ['token', 'id_token'] when 'grant_types' contains 'implicit'")
+				}
+			}
 			return nil
 		},
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
@@ -174,6 +202,22 @@ func resourceAppOAuth() *schema.Resource {
 				Optional:         true,
 				Description:      "URI that initiates login.",
 				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+			},
+			"login_mode": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "The type of Idp-Initiated login that the client supports, if any",
+				Default:          "DISABLED",
+				ValidateDiagFunc: stringInSlice([]string{"DISABLED", "SPEC", "OKTA"}),
+			},
+			"login_scopes": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateDiagFunc: stringInSlice([]string{"openid", "profile", "email", "address", "phone"}),
+				},
+				Description: "List of scopes to use for the request",
 			},
 			"redirect_uris": {
 				Type:        schema.TypeSet,
@@ -408,6 +452,10 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 		"grant_types":               convertStringSetToInterface(grantTypes),
 		"post_logout_redirect_uris": convertStringSetToInterface(app.Settings.OauthClient.PostLogoutRedirectUris),
 	}
+	if app.Settings.OauthClient.IdpInitiatedLogin != nil {
+		_ = d.Set("login_mode", app.Settings.OauthClient.IdpInitiatedLogin.Mode)
+		aggMap["login_scopes"] = convertStringSetToInterface(app.Settings.OauthClient.IdpInitiatedLogin.DefaultScope)
+	}
 	err = setNonPrimitives(d, aggMap)
 	if err != nil {
 		return diag.Errorf("failed to set OAuth application properties: %v", err)
@@ -454,9 +502,6 @@ func resourceAppOAuthDelete(ctx context.Context, d *schema.ResourceData, m inter
 func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := sdk.NewOpenIdConnectApplication()
-
-	// Need to a bool pointer, it appears the Okta SDK uses this as a way to avoid false being omitted.
-	keyRotation := d.Get("auto_key_rotation").(bool)
 	appType := d.Get("type").(string)
 	grantTypes := convertInterfaceToStringSet(d.Get("grant_types"))
 	responseTypes := convertInterfaceToStringSetNullable(d.Get("response_types"))
@@ -464,7 +509,6 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 	// If grant_types are not set, we default to the bare minimum.
 	if len(grantTypes) < 1 {
 		appMap := appGrantTypeMap[appType]
-
 		if appMap.RequiredGrantTypes == nil {
 			grantTypes = appMap.ValidGrantTypes
 		} else {
@@ -489,7 +533,7 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 	authMethod := d.Get("token_endpoint_auth_method").(string)
 	app.Credentials = &okta.OAuthApplicationCredentials{
 		OauthClient: &okta.ApplicationCredentialsOAuthClient{
-			AutoKeyRotation:         &keyRotation,
+			AutoKeyRotation:         boolPtr(d.Get("auto_key_rotation").(bool)),
 			ClientId:                d.Get("client_id").(string),
 			TokenEndpointAuthMethod: authMethod,
 		},
@@ -529,6 +573,10 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 				ResponseTypes:          oktaRespTypes,
 				TosUri:                 d.Get("tos_uri").(string),
 				IssuerMode:             d.Get("issuer_mode").(string),
+				IdpInitiatedLogin: &okta.OpenIdConnectApplicationIdpInitiatedLogin{
+					DefaultScope: convertInterfaceToStringSetNullable(d.Get("login_scopes")),
+					Mode:         d.Get("login_mode").(string),
+				},
 			},
 		},
 	}
