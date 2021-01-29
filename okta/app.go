@@ -145,47 +145,6 @@ var baseAppSwaSchema = map[string]*schema.Schema{
 	},
 }
 
-var attributeStatements = map[string]*schema.Schema{
-	"filter_type": {
-		Type:        schema.TypeString,
-		Optional:    true,
-		Description: "Type of group attribute filter",
-	},
-	"filter_value": {
-		Type:        schema.TypeString,
-		Optional:    true,
-		Description: "Filter value to use",
-	},
-	"name": {
-		Type:     schema.TypeString,
-		Required: true,
-	},
-	"namespace": {
-		Type:     schema.TypeString,
-		Optional: true,
-		Default:  "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
-		ValidateDiagFunc: stringInSlice([]string{
-			"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
-			"urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
-			"urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
-		}),
-	},
-	"type": {
-		Type:     schema.TypeString,
-		Optional: true,
-		Default:  "EXPRESSION",
-		ValidateDiagFunc: stringInSlice([]string{
-			"EXPRESSION",
-			"GROUP",
-		}),
-	},
-	"values": {
-		Type:     schema.TypeList,
-		Optional: true,
-		Elem:     &schema.Schema{Type: schema.TypeString},
-	},
-}
-
 var appSamlDiffSuppressFunc = func(k, old, new string, d *schema.ResourceData) bool {
 	// Conditional default
 	return new == "" && old == "http://www.okta.com/${org.externalKey}"

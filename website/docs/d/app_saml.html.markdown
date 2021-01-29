@@ -96,13 +96,13 @@ data "okta_app_saml" "example" {
 
 - `acs_endpoints` - An array of ACS endpoints. You can configure a maximum of 100 endpoints.
 
-- `attribute_statements` - (Optional) List of SAML Attribute statements.
-  - `name` - (Required) The name of the attribute statement.
-  - `filter_type` - (Optional) Type of group attribute filter.
-  - `filter_value` - (Optional) Filter value to use.
-  - `namespace` - (Optional) The attribute namespace. It can be set to `"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"`, `"urn:oasis:names:tc:SAML:2.0:attrname-format:uri"`, or `"urn:oasis:names:tc:SAML:2.0:attrname-format:basic"`.
-  - `type` - (Optional) The type of attribute statement value. Can be `"EXPRESSION"` or `"GROUP"`.
-  - `values` - (Optional) Array of values to use.
+- `attribute_statements` - List of SAML Attribute statements.
+  - `name` - The name of the attribute statement.
+  - `filter_type` - Type of group attribute filter.
+  - `filter_value` - Filter value to use.
+  - `namespace` - The attribute namespace.
+  - `type` - The type of attribute statement value.
+  - `values` - Array of values to use.
 
 - `single_logout_issuer` - The issuer of the Service Provider that generates the Single Logout request.
 
