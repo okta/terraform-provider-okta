@@ -99,6 +99,17 @@ func dataSourceAppOauth() *schema.Resource {
 				Computed:    true,
 				Description: "URI that initiates login.",
 			},
+			"login_mode": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The type of Idp-Initiated login that the client supports, if any",
+			},
+			"login_scopes": {
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "List of scopes to use for the request when 'login_mode' == OKTA",
+			},
 			"client_uri": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -178,6 +189,10 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 		"response_types":            convertStringSetToInterface(respTypes),
 		"grant_types":               convertStringSetToInterface(grantTypes),
 		"post_logout_redirect_uris": convertStringSetToInterface(app.Settings.OauthClient.PostLogoutRedirectUris),
+	}
+	if app.Settings.OauthClient.IdpInitiatedLogin != nil {
+		_ = d.Set("login_mode", app.Settings.OauthClient.IdpInitiatedLogin.Mode)
+		aggMap["login_scopes"] = convertStringSetToInterface(app.Settings.OauthClient.IdpInitiatedLogin.DefaultScope)
 	}
 	err = setNonPrimitives(d, aggMap)
 	if err != nil {
