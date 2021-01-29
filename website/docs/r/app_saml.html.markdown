@@ -113,7 +113,7 @@ The following arguments are supported:
   - `filter_type` - (Optional) Type of group attribute filter. Valid values are: `"STARTS_WITH"`, `"EQUALS"`, `"CONTAINS"`, or `"REGEX"`
   - `filter_value` - (Optional) Filter value to use.
   - `namespace` - (Optional) The attribute namespace. It can be set to `"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"`, `"urn:oasis:names:tc:SAML:2.0:attrname-format:uri"`, or `"urn:oasis:names:tc:SAML:2.0:attrname-format:basic"`.
-  - `type` - (Optional) The type of attribute statement value. Can only be `"GROUP"`.
+  - `type` - (Optional) The type of attribute statement value. Valid values are: `"EXPRESSION"` or `"GROUP"`. Default is `"EXPRESSION"`.
   - `values` - (Optional) Array of values to use.
 
 - `key_years_valid` - (Optional) Number of years the certificate is valid (2 - 10 years).
