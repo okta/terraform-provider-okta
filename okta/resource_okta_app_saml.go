@@ -92,6 +92,11 @@ func resourceAppSaml() *schema.Resource {
 				Description: "SAML xml metadata payload",
 				Computed:    true,
 			},
+			"metadata_url": {
+				Type:        schema.TypeString,
+				Description: "SAML xml metadata URL",
+				Computed:    true,
+			},
 			"certificate": {
 				Type:        schema.TypeString,
 				Description: "cert from SAML XML metadata payload",
@@ -420,7 +425,13 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		if err != nil {
 			return diag.Errorf("failed to get app's SAML metadata: %v", err)
 		}
+		var q string
+		if keyID != "" {
+			q = fmt.Sprintf("?kid=%s", keyID)
+		}
 		_ = d.Set("metadata", string(keyMetadata))
+		_ = d.Set("metadata_url", fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata%s",
+			getOktaClientFromMetadata(m).GetConfig().Okta.Client.OrgUrl, d.Id(), q))
 		desc := metadataRoot.IDPSSODescriptors[0]
 		syncSamlEndpointBinding(d, desc.SingleSignOnServices)
 		uri := metadataRoot.EntityID
