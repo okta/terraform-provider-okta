@@ -27,26 +27,21 @@ resource "okta_auth_server_policy_rule" "test" {
   status               = "ACTIVE"
   name                 = "test"
   priority             = 1
-//  refresh_token_lifetime_minutes= 5
-  group_whitelist      = [
-    data.okta_group.all.id]
-  grant_type_whitelist = [
-    "implicit"]
+  group_whitelist      = [data.okta_group.all.id]
+  grant_type_whitelist = ["implicit"]
   inline_hook_id       = okta_inline_hook.test.id
 }
 
 resource "okta_auth_server" "test" {
   name        = "testAcc_replace_with_uuid"
   description = "test"
-  audiences   = [
-    "whatever.rise.zone"]
+  audiences   = ["whatever.rise.zone"]
 }
 
 resource "okta_auth_server_policy" "test" {
   name             = "test"
   description      = "test"
   priority         = 1
-  client_whitelist = [
-    "ALL_CLIENTS"]
+  client_whitelist = ["ALL_CLIENTS"]
   auth_server_id   = okta_auth_server.test.id
 }
