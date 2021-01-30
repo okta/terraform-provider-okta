@@ -44,6 +44,7 @@ const (
 	inlineHook             = "okta_inline_hook"
 	networkZone            = "okta_network_zone"
 	oktaGroup              = "okta_group"
+	oktaGroupMembership    = "okta_group_membership"
 	oktaProfileMapping     = "okta_profile_mapping"
 	oktaUser               = "okta_user"
 	policyMfa              = "okta_policy_mfa"
@@ -185,6 +186,7 @@ func Provider() *schema.Provider {
 			inlineHook:             resourceInlineHook(),
 			networkZone:            resourceNetworkZone(),
 			oktaGroup:              resourceGroup(),
+			oktaGroupMembership:    resourceGroupMembership(),
 			oktaProfileMapping:     resourceOktaProfileMapping(),
 			oktaUser:               resourceUser(),
 			policyMfa:              resourcePolicyMfa(),
