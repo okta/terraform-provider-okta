@@ -52,11 +52,12 @@ The following arguments are supported:
 
 - `scope_whitelist` - (Required) Scopes allowed for this policy rule. They can be whitelisted by name or all can be whitelisted with `"*"`.
 
-- `access_token_lifetime_minutes` - (Optional) Lifetime of access token. Can be set to a value between 5 and 1440.
+- `access_token_lifetime_minutes` - (Optional) Lifetime of access token. Can be set to a value between 5 and 1440 minutes.
 
 - `refresh_token_lifetime_minutes` - (Optional) Lifetime of refresh token.
 
-- `refresh_token_window_minutes` - (Optional) Window in which a refresh token can be used. It can be a value between 10 and 2628000 (5 years).
+- `refresh_token_window_minutes` - (Optional) Window in which a refresh token can be used. It can be a value between 5 and 2628000 (5 years) minutes.
+  `"refresh_token_window_minutes"` must be between `"access_token_lifetime_minutes"` and `"refresh_token_lifetime_minutes"`.
 
 - `inline_hook_id` - (Optional) The ID of the inline token to trigger.
 
