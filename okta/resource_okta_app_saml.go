@@ -39,6 +39,25 @@ func resourceAppSaml() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
+			jwks, ok := d.GetOk("attribute_statements")
+			if !ok {
+				return nil
+			}
+			for i := range jwks.([]interface{}) {
+				objType := d.Get(fmt.Sprintf("attribute_statements.%d.type", i)).(string)
+				if (d.Get(fmt.Sprintf("attribute_statements.%d.filter_type", i)).(string) != "" ||
+					d.Get(fmt.Sprintf("attribute_statements.%d.filter_value", i)).(string) != "") &&
+					objType != "GROUP" {
+					return errors.New("invalid 'attribute_statements': when setting 'filter_value' or 'filter_type', value of 'type' should be set to 'GROUP'")
+				}
+				if objType == "GROUP" &&
+					len(convertInterfaceToStringArrNullable(d.Get(fmt.Sprintf("attribute_statements.%d.values", i)))) > 0 {
+					return errors.New("invalid 'attribute_statements': when setting 'values', 'type' should be set to 'EXPRESSION'")
+				}
+			}
+			return nil
+		},
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
 		Schema: buildAppSchema(map[string]*schema.Schema{
@@ -276,7 +295,47 @@ func resourceAppSaml() *schema.Resource {
 				Type:     schema.TypeList,
 				Optional: true,
 				Elem: &schema.Resource{
-					Schema: attributeStatements,
+					Schema: map[string]*schema.Schema{
+						"filter_type": {
+							Type:             schema.TypeString,
+							Optional:         true,
+							Description:      "Type of group attribute filter",
+							ValidateDiagFunc: stringInSlice([]string{"STARTS_WITH", "EQUALS", "CONTAINS", "REGEX"}),
+						},
+						"filter_value": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Filter value to use",
+						},
+						"name": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "The reference name of the attribute statement",
+						},
+						"namespace": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+							ValidateDiagFunc: stringInSlice([]string{
+								"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+								"urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
+								"urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
+							}),
+							Description: "The name format of the attribute",
+						},
+						"type": {
+							Type:             schema.TypeString,
+							Optional:         true,
+							Default:          "EXPRESSION",
+							ValidateDiagFunc: stringInSlice([]string{"GROUP", "EXPRESSION"}),
+							Description:      "The type of attribute statements object",
+						},
+						"values": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+						},
+					},
 				},
 			},
 			"single_logout_issuer": {

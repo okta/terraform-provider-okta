@@ -223,7 +223,38 @@ func dataSourceAppSaml() *schema.Resource {
 				Type:     schema.TypeList,
 				Optional: true,
 				Elem: &schema.Resource{
-					Schema: attributeStatements,
+					Schema: map[string]*schema.Schema{
+						"filter_type": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Type of group attribute filter",
+						},
+						"filter_value": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Filter value to use",
+						},
+						"name": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The reference name of the attribute statement",
+						},
+						"namespace": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The name format of the attribute",
+						},
+						"type": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The type of attribute statements object",
+						},
+						"values": {
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+						},
+					},
 				},
 			},
 			"single_logout_issuer": {
