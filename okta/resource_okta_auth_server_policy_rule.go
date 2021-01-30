@@ -31,8 +31,13 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 					}
 				}
 			}
-			if d.Get("access_token_lifetime_minutes").(int) > d.Get("refresh_token_window_minutes").(int) ||
-				d.Get("refresh_token_lifetime_minutes").(int) < d.Get("refresh_token_window_minutes").(int) {
+			rtlm := d.Get("refresh_token_lifetime_minutes").(int)
+			atlm := d.Get("access_token_lifetime_minutes").(int)
+			rtwm := d.Get("refresh_token_window_minutes").(int)
+			if rtlm > 0 && rtlm < atlm {
+				return errors.New("'refresh_token_lifetime_minutes' must be greater than or equal to 'access_token_lifetime_minutes'")
+			}
+			if rtlm > 0 && (atlm > rtwm || rtlm < rtwm) {
 				return errors.New("'refresh_token_window_minutes' must be between 'access_token_lifetime_minutes' and 'refresh_token_lifetime_minutes'")
 			}
 			return nil

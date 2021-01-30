@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
 type (
@@ -367,7 +366,7 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := sdk.NewOpenIdConnectApplication()
+	app := okta.NewOpenIdConnectApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get OAuth application: %v", err)
@@ -414,15 +413,15 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 		_ = d.Set("client_secret", "")
 	}
 
-	if app.Settings.OauthClient.JWKS != nil {
-		jwks := app.Settings.OauthClient.JWKS.Keys
+	if app.Settings.OauthClient.Jwks != nil {
+		jwks := app.Settings.OauthClient.Jwks.Keys
 		arr := make([]map[string]interface{}, len(jwks))
 		for i, jwk := range jwks {
 			arr[i] = map[string]interface{}{
-				"kty": jwk.Type,
-				"kid": jwk.ID,
-				"e":   jwk.Exponent,
-				"n":   jwk.Modulus,
+				"kty": jwk.Kty,
+				"kid": jwk.Kid,
+				"e":   jwk.E,
+				"n":   jwk.N,
 			}
 		}
 		err = setNonPrimitives(d, map[string]interface{}{"jwks": arr})
@@ -499,9 +498,9 @@ func resourceAppOAuthDelete(ctx context.Context, d *schema.ResourceData, m inter
 	return nil
 }
 
-func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
+func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
-	app := sdk.NewOpenIdConnectApplication()
+	app := okta.NewOpenIdConnectApplication()
 	appType := d.Get("type").(string)
 	grantTypes := convertInterfaceToStringSet(d.Get("grant_types"))
 	responseTypes := convertInterfaceToStringSetNullable(d.Get("response_types"))
@@ -557,41 +556,39 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 		gt := okta.OAuthGrantType(grantTypes[i])
 		oktaGrantTypes[i] = &gt
 	}
-	app.Settings = &sdk.OpenIdConnectApplicationSettings{
+	app.Settings = &okta.OpenIdConnectApplicationSettings{
 		ImplicitAssignment: boolPtr(d.Get("implicit_assignment").(bool)),
-		OauthClient: &sdk.OpenIdConnectApplicationSettingsClient{
-			OpenIdConnectApplicationSettingsClient: okta.OpenIdConnectApplicationSettingsClient{
-				ApplicationType:        appType,
-				ClientUri:              d.Get("client_uri").(string),
-				ConsentMethod:          d.Get("consent_method").(string),
-				GrantTypes:             oktaGrantTypes,
-				InitiateLoginUri:       d.Get("login_uri").(string),
-				LogoUri:                d.Get("logo_uri").(string),
-				PolicyUri:              d.Get("policy_uri").(string),
-				RedirectUris:           convertInterfaceToStringSetNullable(d.Get("redirect_uris")),
-				PostLogoutRedirectUris: convertInterfaceToStringSetNullable(d.Get("post_logout_redirect_uris")),
-				ResponseTypes:          oktaRespTypes,
-				TosUri:                 d.Get("tos_uri").(string),
-				IssuerMode:             d.Get("issuer_mode").(string),
-				IdpInitiatedLogin: &okta.OpenIdConnectApplicationIdpInitiatedLogin{
-					DefaultScope: convertInterfaceToStringSetNullable(d.Get("login_scopes")),
-					Mode:         d.Get("login_mode").(string),
-				},
+		OauthClient: &okta.OpenIdConnectApplicationSettingsClient{
+			ApplicationType:        appType,
+			ClientUri:              d.Get("client_uri").(string),
+			ConsentMethod:          d.Get("consent_method").(string),
+			GrantTypes:             oktaGrantTypes,
+			InitiateLoginUri:       d.Get("login_uri").(string),
+			LogoUri:                d.Get("logo_uri").(string),
+			PolicyUri:              d.Get("policy_uri").(string),
+			RedirectUris:           convertInterfaceToStringSetNullable(d.Get("redirect_uris")),
+			PostLogoutRedirectUris: convertInterfaceToStringSetNullable(d.Get("post_logout_redirect_uris")),
+			ResponseTypes:          oktaRespTypes,
+			TosUri:                 d.Get("tos_uri").(string),
+			IssuerMode:             d.Get("issuer_mode").(string),
+			IdpInitiatedLogin: &okta.OpenIdConnectApplicationIdpInitiatedLogin{
+				DefaultScope: convertInterfaceToStringSetNullable(d.Get("login_scopes")),
+				Mode:         d.Get("login_mode").(string),
 			},
 		},
 	}
 	jwks := d.Get("jwks").([]interface{})
 	if len(jwks) > 0 {
-		keys := make([]*sdk.JWK, len(jwks))
+		keys := make([]*okta.JsonWebKey, len(jwks))
 		for i := range jwks {
-			keys[i] = &sdk.JWK{
-				ID:       d.Get(fmt.Sprintf("jwks.%d.kid", i)).(string),
-				Type:     d.Get(fmt.Sprintf("jwks.%d.kty", i)).(string),
-				Exponent: d.Get(fmt.Sprintf("jwks.%d.e", i)).(string),
-				Modulus:  d.Get(fmt.Sprintf("jwks.%d.n", i)).(string),
+			keys[i] = &okta.JsonWebKey{
+				Kid: d.Get(fmt.Sprintf("jwks.%d.kid", i)).(string),
+				Kty: d.Get(fmt.Sprintf("jwks.%d.kty", i)).(string),
+				E:   d.Get(fmt.Sprintf("jwks.%d.e", i)).(string),
+				N:   d.Get(fmt.Sprintf("jwks.%d.n", i)).(string),
 			}
 		}
-		app.Settings.OauthClient.JWKS = &sdk.JWKS{Keys: keys}
+		app.Settings.OauthClient.Jwks = &okta.OpenIdConnectApplicationSettingsClientKeys{Keys: keys}
 	}
 
 	app.Visibility = buildVisibility(d)

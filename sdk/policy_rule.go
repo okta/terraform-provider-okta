@@ -77,23 +77,6 @@ func (m *ApiSupplement) CreatePolicyRule(ctx context.Context, policyID string, b
 	return &policyRule, resp, nil
 }
 
-// Removes a policy rule.
-func (m *ApiSupplement) DeletePolicyRule(ctx context.Context, policyID, ruleId string) (*okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyID, ruleId)
-
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest("DELETE", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := m.RequestExecutor.Do(ctx, req, nil)
-	if err != nil {
-		return resp, err
-	}
-
-	return resp, nil
-}
-
 // Gets a policy rule.
 func (m *ApiSupplement) GetPolicyRule(ctx context.Context, policyID, ruleId string) (*PolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyID, ruleId)
@@ -130,27 +113,4 @@ func (m *ApiSupplement) UpdatePolicyRule(ctx context.Context, policyID, ruleId s
 	}
 
 	return &policyRule, resp, nil
-}
-
-// Activates a policy rule.
-func (m *ApiSupplement) ActivatePolicyRule(ctx context.Context, policyID, ruleId string) (*okta.Response, error) {
-	return m.changePolicyRuleLifecycle(ctx, policyID, ruleId, "activate")
-}
-
-// Deactivates a policy rule.
-func (m *ApiSupplement) DeactivatePolicyRule(ctx context.Context, policyID, ruleId string) (*okta.Response, error) {
-	return m.changePolicyRuleLifecycle(ctx, policyID, ruleId, "deactivate")
-}
-
-func (m *ApiSupplement) changePolicyRuleLifecycle(ctx context.Context, policyID, ruleId, action string) (*okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/policies/%s/rules/%s/lifecycle/%s", policyID, ruleId, action)
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest("POST", url, nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := m.RequestExecutor.Do(ctx, req, nil)
-	if err != nil {
-		return resp, err
-	}
-	return resp, nil
 }

@@ -206,8 +206,7 @@ func updateRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 
 // activate or deactivate a policy rule according to the terraform schema status field
 func policyRuleActivate(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	client := getSupplementFromMetadata(m)
-
+	client := getOktaClientFromMetadata(m).Policy
 	if d.Get("status").(string) == statusActive {
 		_, err := client.ActivatePolicyRule(ctx, d.Get("policyid").(string), d.Id())
 		if err != nil {
