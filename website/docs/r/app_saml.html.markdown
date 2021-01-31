@@ -143,6 +143,8 @@ The following arguments are supported:
 
 - `metadata` - The raw SAML metadata in XML.
 
+- `metadata_url` - SAML xml metadata URL.
+
 - `http_post_binding` - `urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Post` location from the SAML metadata.
 
 - `http_redirect_binding` - `urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect` location from the SAML metadata.
