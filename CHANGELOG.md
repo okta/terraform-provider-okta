@@ -7,6 +7,7 @@ ENHANCEMENTS:
 * Add support for OAuth Authorization for Okta API [#290](https://github.com/oktadeveloper/terraform-provider-okta/pull/290). Thanks, [@me](https://github.com/bogdanprodan-okta)!
 * Make `key_id` optional for `okta_app_saml_metadata` [#128](https://github.com/oktadeveloper/terraform-provider-okta/pull/128). Thanks, [@cludden](https://github.com/cludden)!
 * Add new `okta_group_membership` resource [#252](https://github.com/oktadeveloper/terraform-provider-okta/pull/252). Thanks, [@ymylei](https://github.com/ymylei)!
+* Add new `okta_group_role` resource [#255](https://github.com/oktadeveloper/terraform-provider-okta/pull/255). Thanks, [@ymylei](https://github.com/ymylei)!
 * Add new `okta_idp_oidc` data source [#286](https://github.com/oktadeveloper/terraform-provider-okta/pull/286). Thanks, [@me](https://github.com/bogdanprodan-okta)!
 * Add new `okta_app_oauth` data source [#293](https://github.com/oktadeveloper/terraform-provider-okta/pull/293). Thanks, [@me](https://github.com/bogdanprodan-okta)!
 * Add new `okta_auth_server_policy` data source [#298](https://github.com/oktadeveloper/terraform-provider-okta/pull/298). Thanks, [@me](https://github.com/bogdanprodan-okta)!
