@@ -41,7 +41,7 @@ func (m *ApiSupplement) getXml(ctx context.Context, url string) ([]byte, *saml.E
 	if err != nil {
 		return nil, nil, err
 	}
-	// this means, that SDK didn't decode the data, so doing it manually
+	// this means, that RequestExecutor didn't decode the data, so doing it manually
 	if metadataRoot.EntityID == "" {
 		copyRawBytes := make([]byte, len(raw))
 		copy(copyRawBytes, raw)
