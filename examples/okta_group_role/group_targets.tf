@@ -12,8 +12,20 @@ resource "okta_user" "test" {
   group_memberships = [okta_group.test.id]
 }
 
+// Test Target Groups
+resource "okta_group" "test_target1" {
+  name        = "testTarget1Acc_replace_with_uuid"
+  description = "testing"
+}
+
+resource "okta_group" "test_target2" {
+  name        = "testTarget2Acc_replace_with_uuid"
+  description = "testing"
+}
+
 //Usage of role
 resource "okta_group_role" "test" {
-  group_id  = okta_group.test.id
-  role_type = "READ_ONLY_ADMIN"
+  group_id          = okta_group.test.id
+  role_type         = "HELP_DESK_ADMIN"
+  target_group_list = [okta_group.test_target1.id, okta_group.test_target2.id]
 }

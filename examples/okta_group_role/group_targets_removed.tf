@@ -15,5 +15,5 @@ resource "okta_user" "test" {
 //Usage of role
 resource "okta_group_role" "test" {
   group_id  = okta_group.test.id
-  role_type = "READ_ONLY_ADMIN"
+  role_type = "HELP_DESK_ADMIN"
 }

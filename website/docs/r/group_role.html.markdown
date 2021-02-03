@@ -29,6 +29,9 @@ The following arguments are supported:
   , `"ORG_ADMIN"`, `"APP_ADMIN"`, `"USER_ADMIN"`, `"HELP_DESK_ADMIN"`, `"READ_ONLY_ADMIN"`
   , `"MOBILE_ADMIN"`, `"API_ACCESS_MANAGEMENT_ADMIN"`, `"REPORT_ADMIN"`, `"GROUP_MEMBERSHIP_ADMIN"`.
 
+- `target_group_list` - (Optional) A list of group IDs you would like as the targets of the admin role.
+    - Only supported when used with the role types: `GROUP_MEMBERSHIP_ADMIN`, `HELP_DESK_ADMIN`, or `USER_ADMIN`.
+
 ## Attributes Reference
 
 - `id` - The ID of the Group Role Assignment.
