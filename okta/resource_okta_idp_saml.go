@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"errors"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,6 +17,13 @@ func resourceIdpSaml() *schema.Resource {
 		DeleteContext: resourceIdpDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
+		},
+		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
+			if d.Get("subject_match_type").(string) != "CUSTOM_ATTRIBUTE" &&
+				len(d.Get("subject_match_attribute").(string)) > 0 {
+				return errors.New("you can only provide 'subject_match_attribute' with 'subject_match_type' set to 'CUSTOM_ATTRIBUTE'")
+			}
+			return nil
 		},
 		Schema: buildIdpSchema(map[string]*schema.Schema{
 			"type": {
@@ -118,6 +126,7 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	_ = d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
 	_ = d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
 	_ = d.Set("subject_match_type", idp.Policy.Subject.MatchType)
+	_ = d.Set("subject_match_attribute", idp.Policy.Subject.MatchAttribute)
 	_ = d.Set("subject_filter", idp.Policy.Subject.Filter)
 	_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
 	_ = d.Set("issuer", idp.Protocol.Credentials.Trust.Issuer)
@@ -169,9 +178,10 @@ func buildIdPSaml(d *schema.ResourceData) okta.IdentityProvider {
 			AccountLink:  buildPolicyAccountLink(d),
 			Provisioning: buildIdPProvisioning(d),
 			Subject: &okta.PolicySubject{
-				Filter:    d.Get("subject_filter").(string),
-				Format:    convertInterfaceToStringSet(d.Get("subject_format")),
-				MatchType: d.Get("subject_match_type").(string),
+				Filter:         d.Get("subject_filter").(string),
+				Format:         convertInterfaceToStringSet(d.Get("subject_format")),
+				MatchType:      d.Get("subject_match_type").(string),
+				MatchAttribute: d.Get("subject_match_attribute").(string),
 				UserNameTemplate: &okta.PolicyUserNameTemplate{
 					Template: d.Get("username_template").(string),
 				},
