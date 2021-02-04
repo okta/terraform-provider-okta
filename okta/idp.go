@@ -67,9 +67,10 @@ var (
 			Default:  "idpuser.email",
 		},
 		"subject_match_type": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Default:  "USERNAME",
+			Type:             schema.TypeString,
+			Optional:         true,
+			Default:          "USERNAME",
+			ValidateDiagFunc: stringInSlice([]string{"USERNAME", "EMAIL", "USERNAME_OR_EMAIL", "CUSTOM_ATTRIBUTE"}),
 		},
 		"subject_match_attribute": {
 			Type:     schema.TypeString,
