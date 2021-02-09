@@ -15,7 +15,14 @@ func resourceGroup() *schema.Resource {
 		UpdateContext: resourceGroupUpdate,
 		DeleteContext: resourceGroupDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+				userIDList, err := listGroupUserIDs(ctx, m, d.Id())
+				if err != nil {
+					return nil, err
+				}
+				_ = d.Set("users", convertStringSetToInterface(userIDList))
+				return []*schema.ResourceData{d}, nil
+			},
 		},
 		Schema: map[string]*schema.Schema{
 			"name": {
