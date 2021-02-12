@@ -15,6 +15,7 @@ import (
 
 // Resource names, defined in place, used throughout the provider and tests
 const (
+	adminRoleTargets       = "okta_admin_role_targets"
 	appAutoLogin           = "okta_app_auto_login"
 	appBookmark            = "okta_app_bookmark"
 	appBasicAuth           = "okta_app_basic_auth"
@@ -158,6 +159,7 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
+			adminRoleTargets:       resourceAdminRoleTargets(),
 			appAutoLogin:           resourceAppAutoLogin(),
 			appBookmark:            resourceAppBookmark(),
 			appBasicAuth:           resourceAppBasicAuth(),
