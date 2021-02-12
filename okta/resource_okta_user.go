@@ -66,7 +66,6 @@ func resourceUser() *schema.Resource {
 					return nil, err
 				}
 				d.SetId(user.Id)
-
 				return []*schema.ResourceData{d}, nil
 			},
 		},
