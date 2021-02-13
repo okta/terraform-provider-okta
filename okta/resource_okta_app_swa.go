@@ -133,6 +133,7 @@ func buildAppSwa(d *schema.ResourceData) *okta.SwaApplication {
 	name := d.Get("preconfigured_app").(string)
 	if name != "" {
 		app.Name = name
+		app.SignOnMode = "AUTO_LOGIN"
 	}
 	app.Settings = &okta.SwaApplicationSettings{
 		App: &okta.SwaApplicationSettingsApplication{
