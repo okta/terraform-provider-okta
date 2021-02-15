@@ -38,6 +38,8 @@ resource "okta_app_oauth" "app" {
 }
 ```
 
+~> **Important:** When the `app_group_assignment` is retained, by setting `retain_assignment` to `true`, it is no longer managed by Terraform after it is destroyed. To truly delete the assignment, you will need to remove it either through the Okta Console or API. This argument exists for the use case where the same group is assigned in multiple places in order to prevent a single destruction removing all of them.
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -47,6 +49,8 @@ The following arguments are supported:
 - `group_id` - (Required) The ID of the group to assign the app to.
 
 - `profile` - (Optional) JSON document containing [application profile](https://developer.okta.com/docs/reference/api/apps/#profile-object)
+
+- `retain_assignment` - (Optional) Retain the group assignment on destroy. If set to true, the resource will be removed from state but not from the Okta app.
 
 ## Attributes Reference
 

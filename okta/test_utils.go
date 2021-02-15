@@ -45,3 +45,13 @@ func createCheckResourceDestroy(typeName string, checkUpstream checkUpstream) re
 		return nil
 	}
 }
+
+func ensureResourceNotExists(name string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		_, ok := s.RootModule().Resources[name]
+		if !ok {
+			return nil
+		}
+		return fmt.Errorf("Resource found: %s", name)
+	}
+}

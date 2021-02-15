@@ -78,6 +78,41 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 	})
 }
 
+func TestAccAppGroupAssignment_retain(t *testing.T) {
+	ri := acctest.RandInt()
+	resourceName := fmt.Sprintf("%s.test", appGroupAssignment)
+	appName := fmt.Sprintf("%s.test", appOAuth)
+	groupName := fmt.Sprintf("%s.test", oktaGroup)
+	mgr := newFixtureManager(appGroupAssignment)
+	retainAssignment := mgr.GetFixtures("retain_assignment.tf", ri, t)
+	retainAssignmentDestroy := mgr.GetFixtures("retain_assignment_destroy.tf", ri, t)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: retainAssignment,
+				Check: resource.ComposeTestCheckFunc(
+					ensureAppGroupAssignmentExists(resourceName),
+					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "group_id"),
+					resource.TestCheckResourceAttr(resourceName, "retain_assignment", "true"),
+					resource.TestCheckResourceAttr(resourceName, "profile", "{}"),
+				),
+			},
+			{
+				Config: retainAssignmentDestroy,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceNotExists(resourceName),
+					ensureAppGroupAssignmentRetained(appName, groupName),
+				),
+			},
+		},
+	})
+}
+
 func ensureAppGroupAssignmentExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		missingErr := fmt.Errorf("resource not found: %s", name)
@@ -95,6 +130,35 @@ func ensureAppGroupAssignmentExists(name string) resource.TestCheckFunc {
 			return err
 		} else if g == nil {
 			return missingErr
+		}
+
+		return nil
+	}
+}
+
+func ensureAppGroupAssignmentRetained(appName string, groupName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		notFound := "resource not found: %s"
+		// app group assignment has been removed from state, so use app and group to query okta
+		appRes, ok := s.RootModule().Resources[appName]
+		if !ok {
+			return fmt.Errorf(notFound, appName)
+		}
+
+		groupRes, ok := s.RootModule().Resources[groupName]
+		if !ok {
+			return fmt.Errorf(notFound, groupName)
+		}
+
+		appID := appRes.Primary.ID
+		groupID := groupRes.Primary.ID
+		client := getOktaClientFromMetadata(testAccProvider.Meta())
+
+		g, _, err := client.Application.GetApplicationGroupAssignment(context.Background(), appID, groupID, nil)
+		if err != nil {
+			return err
+		} else if g == nil {
+			return fmt.Errorf("Application Group Assignment not found for app ID, group ID: %s, %s", appID, groupID)
 		}
 
 		return nil
