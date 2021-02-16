@@ -117,6 +117,14 @@ func resourceProfileMappingRead(ctx context.Context, d *schema.ResourceData, m i
 	_ = d.Set("target_type", mapping.Target.Type)
 	_ = d.Set("target_id", mapping.Target.ID)
 	_ = d.Set("target_name", mapping.Target.Name)
+	if !d.Get("delete_when_absent").(bool) {
+		current := buildMappingProperties(d.Get("mappings").(*schema.Set))
+		for k := range mapping.Properties {
+			if _, ok := current[k]; !ok {
+				delete(mapping.Properties, k)
+			}
+		}
+	}
 	_ = d.Set("mappings", flattenMappingProperties(mapping.Properties))
 	return nil
 }
