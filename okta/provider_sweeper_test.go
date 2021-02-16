@@ -51,7 +51,6 @@ func setupSweeper(resourceType string, del func(*testClient) error) {
 		Name: resourceType,
 		F: func(_ string) error {
 			client, apiSupplement, err := sharedClient()
-
 			if err != nil {
 				return err
 			}

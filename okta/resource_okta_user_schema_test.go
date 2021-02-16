@@ -66,6 +66,7 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enum.3", "XL"),
 					resource.TestCheckResourceAttr(resourceName, "one_of.#", "4"),
 					resource.TestCheckResourceAttr(resourceName, "pattern", ""),
+					resource.TestCheckResourceAttr(resourceName, "scope", "SELF"),
 				),
 			},
 			{
@@ -87,6 +88,7 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enum.3", "XXL"),
 					resource.TestCheckResourceAttr(resourceName, "one_of.#", "4"),
 					resource.TestCheckResourceAttr(resourceName, "pattern", ".+"),
+					resource.TestCheckResourceAttr(resourceName, "scope", "NONE"),
 				),
 			},
 			{
@@ -208,7 +210,7 @@ func TestAccOktaUserSchema_arrayString(t *testing.T) {
 func checkOktaUserSchemasDestroy() resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		for _, rs := range s.RootModule().Resources {
-			var schemaUserType = "default"
+			schemaUserType := "default"
 			if rs.Primary.Attributes["user_type"] != "" {
 				schemaUserType = rs.Primary.Attributes["user_type"]
 			}
@@ -229,7 +231,7 @@ func testOktaUserSchemasExists(name string) resource.TestCheckFunc {
 			return fmt.Errorf("not found: %s", name)
 		}
 
-		var schemaUserType = "default"
+		schemaUserType := "default"
 		if rs.Primary.Attributes["user_type"] != "" {
 			schemaUserType = rs.Primary.Attributes["user_type"]
 		}

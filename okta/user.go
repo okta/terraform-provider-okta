@@ -225,10 +225,12 @@ func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 	profile["login"] = d.Get("login").(string)
 	profile["email"] = d.Get("email").(string)
 
-	getSetParams := []string{"city", "costCenter", "countryCode", "department", "displayName", "division",
+	getSetParams := []string{
+		"city", "costCenter", "countryCode", "department", "displayName", "division",
 		"employeeNumber", "honorificPrefix", "honorificSuffix", "locale", "manager", "managerId", "middleName",
 		"mobilePhone", "nickName", "organization", "preferredLanguage", "primaryPhone", "profileUrl",
-		"secondEmail", "state", "streetAddress", "timezone", "title", "userType", "zipCode"}
+		"secondEmail", "state", "streetAddress", "timezone", "title", "userType", "zipCode",
+	}
 
 	for i := range getSetParams {
 		if res, ok := d.GetOk(camelCaseToUnderscore(getSetParams[i])); ok {

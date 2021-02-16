@@ -66,12 +66,6 @@ var (
 			ConflictsWith: []string{"array_type"},
 			Elem:          &schema.Schema{Type: schema.TypeString},
 		},
-		"scope": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          "NONE",
-			ValidateDiagFunc: stringInSlice([]string{"SELF", "NONE", ""}),
-		},
 		"one_of": {
 			Type:          schema.TypeList,
 			ForceNew:      true,

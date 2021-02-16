@@ -31,7 +31,6 @@ type (
 func (m *ApiSupplement) GetProfileMappingBySourceId(ctx context.Context, sourceId, targetId string) (*Mapping, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/mappings?sourceId=%s&targetId=%s", sourceId, targetId)
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
-
 	if err != nil {
 		return nil, nil, err
 	}
@@ -90,7 +89,6 @@ func (m *ApiSupplement) FindProfileMappingSource(ctx context.Context, name, typ 
 	}
 
 	req, err := m.RequestExecutor.NewRequest("GET", uri, nil)
-
 	if err != nil {
 		return nil, nil, err
 	}

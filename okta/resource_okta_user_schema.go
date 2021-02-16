@@ -39,6 +39,14 @@ func resourceUserSchema() *schema.Resource {
 			userSchemaSchema,
 			userTypeSchema,
 			userPatternSchema,
+			map[string]*schema.Schema{
+				"scope": {
+					Type:             schema.TypeString,
+					Optional:         true,
+					Default:          "NONE",
+					ValidateDiagFunc: stringInSlice([]string{"SELF", "NONE", ""}),
+				},
+			},
 		),
 		SchemaVersion: 1,
 		StateUpgraders: []schema.StateUpgrader{
@@ -55,7 +63,14 @@ func resourceUserSchema() *schema.Resource {
 }
 
 func resourceUserSchemaResourceV0() *schema.Resource {
-	return &schema.Resource{Schema: buildSchema(userBaseSchemaSchema, userSchemaSchema)}
+	return &schema.Resource{Schema: buildSchema(userBaseSchemaSchema, userSchemaSchema, map[string]*schema.Schema{
+		"scope": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			Default:          "NONE",
+			ValidateDiagFunc: stringInSlice([]string{"SELF", "NONE", ""}),
+		},
+	})}
 }
 
 // Sometime Okta API does not update or create custom property on the first try, thus that require running

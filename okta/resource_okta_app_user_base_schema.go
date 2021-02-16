@@ -36,7 +36,8 @@ func resourceAppUserBaseSchema() *schema.Resource {
 				"app_id": {
 					Type:     schema.TypeString,
 					Required: true,
-				}}),
+				},
+			}),
 		SchemaVersion: 1,
 		StateUpgraders: []schema.StateUpgrader{
 			{

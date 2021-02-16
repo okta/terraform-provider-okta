@@ -8,27 +8,25 @@ import (
 	"github.com/oktadeveloper/terraform-provider-okta/sdk"
 )
 
-var (
-	mappingResource = &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"id": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The mapping property key.",
-			},
-			"expression": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"push_status": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Default:          dontPush,
-				ValidateDiagFunc: stringInSlice([]string{push, dontPush}),
-			},
+var mappingResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"id": {
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The mapping property key.",
 		},
-	}
-)
+		"expression": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"push_status": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			Default:          dontPush,
+			ValidateDiagFunc: stringInSlice([]string{push, dontPush}),
+		},
+	},
+}
 
 const (
 	push     = "PUSH"
