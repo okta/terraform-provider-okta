@@ -29,7 +29,6 @@ func resourceAppGroupAssignment() *schema.Resource {
 
 				assignment, _, err := getOktaClientFromMetadata(m).Application.
 					GetApplicationGroupAssignment(ctx, parts[0], parts[1], nil)
-
 				if err != nil {
 					return nil, err
 				}

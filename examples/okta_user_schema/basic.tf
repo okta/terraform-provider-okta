@@ -9,6 +9,7 @@ resource "okta_user_schema" "testAcc_replace_with_uuid" {
   permissions = "READ_ONLY"
   master      = "PROFILE_MASTER"
   enum        = ["S", "M", "L", "XL"]
+  scope       = "SELF"
 
   one_of {
     const = "S"

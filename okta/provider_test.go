@@ -10,8 +10,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-var testAccProvidersFactories map[string]func() (*schema.Provider, error)
-var testAccProvider *schema.Provider
+var (
+	testAccProvidersFactories map[string]func() (*schema.Provider, error)
+	testAccProvider           *schema.Provider
+)
 
 func init() {
 	testAccProvider = Provider()
@@ -29,7 +31,7 @@ func TestProvider(t *testing.T) {
 }
 
 func TestProvider_impl(t *testing.T) {
-	var _ = Provider()
+	_ = Provider()
 }
 
 func oktaConfig() (*Config, error) {

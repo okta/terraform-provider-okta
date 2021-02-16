@@ -44,6 +44,13 @@ func resourceAppUserSchema() *schema.Resource {
 					Default:       false,
 					ConflictsWith: []string{"enum"},
 				},
+				"scope": {
+					Type:             schema.TypeString,
+					Optional:         true,
+					Default:          "NONE",
+					ValidateDiagFunc: stringInSlice([]string{"SELF", "NONE", ""}),
+					ForceNew:         true, // since the `scope` is read-only attribute, the resource should be recreated
+				},
 			}),
 		SchemaVersion: 2,
 		StateUpgraders: []schema.StateUpgrader{
@@ -73,6 +80,13 @@ func resourceAppUserSchemaResourceV1() *schema.Resource {
 			Type:     schema.TypeString,
 			Required: true,
 		},
+		"scope": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			Default:          "NONE",
+			ValidateDiagFunc: stringInSlice([]string{"SELF", "NONE", ""}),
+			ForceNew:         true, // since the `scope` is read-only attribute, the resource should be recreated
+		},
 	}, userSchemaSchema, userBaseSchemaSchema, userTypeSchema, userPatternSchema)}
 }
 
@@ -81,6 +95,13 @@ func resourceAppUserSchemaResourceV0() *schema.Resource {
 		"app_id": {
 			Type:     schema.TypeString,
 			Required: true,
+		},
+		"scope": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			Default:          "NONE",
+			ValidateDiagFunc: stringInSlice([]string{"SELF", "NONE", ""}),
+			ForceNew:         true, // since the `scope` is read-only attribute, the resource should be recreated
 		},
 	}, userSchemaSchema, userBaseSchemaSchema)}
 }

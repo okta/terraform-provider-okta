@@ -29,7 +29,6 @@ func resourceAppUser() *schema.Resource {
 
 				assignment, _, err := getOktaClientFromMetadata(m).Application.
 					GetApplicationUser(ctx, parts[0], parts[1], nil)
-
 				if err != nil {
 					return nil, err
 				}

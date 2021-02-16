@@ -152,7 +152,7 @@ func testOktaUserBaseSchemasExists(name string) resource.TestCheckFunc {
 		if !ok {
 			return fmt.Errorf("not found: %s", name)
 		}
-		var schemaUserType = "default"
+		schemaUserType := "default"
 		if rs.Primary.Attributes["user_type"] != "" {
 			schemaUserType = rs.Primary.Attributes["user_type"]
 		}
