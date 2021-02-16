@@ -98,8 +98,8 @@ func resourceAppOAuth() *schema.Resource {
 				if d.Get("login_uri").(string) == "" {
 					return errors.New("you have to set up 'login_uri' to configure any 'login_mode' besides 'DISABLED'")
 				}
-				if len(convertInterfaceToStringSetNullable(d.Get("login_scopes"))) < 1 {
-					return errors.New("you have to set up 'login_scopes' to configure any 'login_mode' besides 'DISABLED'")
+				if d.Get("login_mode").(string) == "OKTA" && len(convertInterfaceToStringSet(d.Get("login_scopes"))) < 1 {
+					return errors.New("you have to set up non-empty 'login_scopes' when 'login_mode' is 'OKTA'")
 				}
 			}
 			grantTypes := convertInterfaceToStringSet(d.Get("grant_types"))
