@@ -151,6 +151,9 @@ func dataSourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m inte
 		if err != nil {
 			return diag.Errorf("failed to get social identity provider with id '%s': %v", id, err)
 		}
+		if !contains([]string{"APPLE", "FACEBOOK", "LINKEDIN", "MICROSOFT", "GOOGLE"}, idp.Type) {
+			return diag.Errorf("social identity provider with id '%s' does not exist", id)
+		}
 	} else {
 		idp, err = getSocialIdPByName(ctx, m, name)
 		if err != nil {
@@ -203,7 +206,7 @@ func getSocialIdPByName(ctx context.Context, m interface{}, name string) (*okta.
 		return nil, fmt.Errorf("failed to get social identity provider with name '%s': %v", name, err)
 	}
 	if len(idps) < 1 || !contains([]string{"APPLE", "FACEBOOK", "LINKEDIN", "MICROSOFT", "GOOGLE"}, idps[0].Type) {
-		return nil, fmt.Errorf("social identity provider with name '%s' does not exist: %v", name, err)
+		return nil, fmt.Errorf("social identity provider with name '%s' does not exist", name)
 	}
 	k := 0
 	for i, n := range idps {
@@ -219,7 +222,7 @@ func getSocialIdPByName(ctx context.Context, m interface{}, name string) (*okta.
 	}
 	idps = idps[:k]
 	if len(idps) == 0 {
-		return nil, fmt.Errorf("social identity provider with name '%s' does not exist: %v", name, err)
+		return nil, fmt.Errorf("social identity provider with name '%s' does not exist", name)
 	}
 	if len(idps) > 1 {
 		logger(m).Warn(fmt.Sprintf("found multiple social IdPs with name '%s': "+
