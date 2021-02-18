@@ -26,7 +26,7 @@ func resourceIdpSocial() *schema.Resource {
 			"type": {
 				Type:             schema.TypeString,
 				Required:         true,
-				ValidateDiagFunc: stringInSlice([]string{"FACEBOOK", "LINKEDIN", "MICROSOFT", "GOOGLE"}),
+				ValidateDiagFunc: stringInSlice([]string{"FACEBOOK", "LINKEDIN", "MICROSOFT", "GOOGLE", "APPLE"}),
 			},
 			"scopes": {
 				Type:     schema.TypeSet,
