@@ -3,6 +3,7 @@ package okta
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -47,6 +48,7 @@ func resourceGroupMembershipCreate(ctx context.Context, d *schema.ResourceData, 
 		return diag.Errorf("failed to add user to group: %v", err)
 	}
 	d.SetId(fmt.Sprintf("%s+%s", groupId, userId))
+	time.Sleep(5 * time.Second)
 	return resourceGroupMembershipRead(ctx, d, m)
 }
 
