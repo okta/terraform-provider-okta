@@ -10,7 +10,7 @@ ENHANCEMENTS:
 
 BUGS:
 
-* Fix preconfigured `okta_app_swa` creation  in case it has more that one sign-on modes [#328](https://github.com/oktadeveloper/terraform-provider-okta/pull/328). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Fix preconfigured `okta_app_swa` creation in case it has more that one sign-on modes [#328](https://github.com/oktadeveloper/terraform-provider-okta/pull/328). Thanks, [@me](https://github.com/bogdanprodan-okta)!
 * Add force recreate in case `okta_app_user_schema` changes the `scope` value since it's a read-only attribute [#331](https://github.com/oktadeveloper/terraform-provider-okta/pull/331). Thanks, [@me](https://github.com/bogdanprodan-okta)!
 * Fix false positive output when runnning `terraform plan`for the `okta_profile_mapping` resource in case `delete_when_absent` is set to `false` [#332](https://github.com/oktadeveloper/terraform-provider-okta/pull/332). Thanks, [@me](https://github.com/bogdanprodan-okta)!
 * Fix `okta_app_oauth` validation [#333](https://github.com/oktadeveloper/terraform-provider-okta/pull/333) and [#340](https://github.com/oktadeveloper/terraform-provider-okta/pull/340). Thanks, [@me](https://github.com/bogdanprodan-okta)!
