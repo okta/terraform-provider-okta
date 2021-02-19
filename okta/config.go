@@ -115,20 +115,20 @@ func errHandler(resp *http.Response, err error, numTries int) (*http.Response, e
 
 type contextKey string
 
-const retryOnNotFoundKey contextKey = "retryOnNotFound"
+const retryOnStatusCodes contextKey = "retryOnStatusCodes"
 
-// Used to make http client retry on 404 response status code
+// Used to make http client retry on provided list of response status codes
 //
-// To enable this check, inject `retryOnNotFoundKey` key into the context with value == 'true'
-// 		ctx = context.WithValue(ctx, retryOnNotFoundKey, true)
+// To enable this check, inject `retryOnStatusCodes` key into the context with list of status codes you want to retry on
+// 		ctx = context.WithValue(ctx, retryOnStatusCodes, []int{404, 409})
 //
 func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, error) {
 	// do not retry on context.Canceled or context.DeadlineExceeded
 	if ctx.Err() != nil {
 		return false, ctx.Err()
 	}
-	retry, ok := ctx.Value(retryOnNotFoundKey).(bool)
-	if ok && retry && resp != nil && resp.StatusCode == http.StatusNotFound {
+	retryCodes, ok := ctx.Value(retryOnStatusCodes).([]int)
+	if ok && resp != nil && containsInt(retryCodes, resp.StatusCode) {
 		return true, nil
 	}
 	return retryablehttp.DefaultRetryPolicy(ctx, resp, err)

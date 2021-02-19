@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -209,9 +210,11 @@ func removeAllTargets(ctx context.Context, d *schema.ResourceData, m interface{}
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return "", fmt.Errorf("failed to unassign '%s' role from user: %v", d.Get("role_type").(string), err)
 	}
-	role, resp, err := getOktaClientFromMetadata(m).User.AssignRoleToUser(ctx, d.Get("user_id").(string),
+	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusConflict, http.StatusBadRequest})
+	role, _, err := getOktaClientFromMetadata(m).User.AssignRoleToUser(ctx, d.Get("user_id").(string),
 		okta.AssignRoleRequest{Type: d.Get("role_type").(string)}, nil)
-	if err := suppressErrorOn404(resp, err); err != nil {
+	if err != nil {
+		d.SetId("")
 		return "", fmt.Errorf("failed to assign '%s' role back to user: %v", d.Get("role_type").(string), err)
 	}
 	return role.Id, nil

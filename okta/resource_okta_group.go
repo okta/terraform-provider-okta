@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -121,7 +122,7 @@ func updateGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}
 	if !exists {
 		return nil
 	}
-	ctx = context.WithValue(ctx, retryOnNotFoundKey, true)
+	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusNotFound})
 	client := getOktaClientFromMetadata(m)
 	existingUserList, _, err := client.Group.ListGroupUsers(ctx, d.Id(), nil)
 	if err != nil {
