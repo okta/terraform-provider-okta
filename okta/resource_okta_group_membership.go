@@ -3,6 +3,8 @@ package okta
 import (
 	"context"
 	"fmt"
+	"github.com/cenkalti/backoff/v4"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -46,8 +48,24 @@ func resourceGroupMembershipCreate(ctx context.Context, d *schema.ResourceData, 
 	if err != nil {
 		return diag.Errorf("failed to add user to group: %v", err)
 	}
+	bOff := backoff.NewExponentialBackOff()
+	bOff.MaxElapsedTime = time.Second * 10
+	bOff.InitialInterval = time.Second
+	err = backoff.Retry(func() error {
+		inGroup, err := checkIfUserInGroup(ctx, client, groupId, userId)
+		if err != nil {
+			return backoff.Permanent(fmt.Errorf("failed to find user (%s) in group (%s) after addition with error: %v", userId, groupId, err))
+		}
+		if inGroup {
+			return nil
+		}
+		return fmt.Errorf("failed to find user (%s) in group (%s) after multiple tries", userId, groupId)
+	}, bOff)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	d.SetId(fmt.Sprintf("%s+%s", groupId, userId))
-	return resourceGroupMembershipRead(ctx, d, m)
+	return nil
 }
 
 func resourceGroupMembershipRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
