@@ -225,11 +225,5 @@ func removeGroupTargetsFromRole(ctx context.Context, client *okta.Client, groupI
 }
 
 func supportsGroupTargets(roleType string) bool {
-	supportedRoles := []string{"GROUP_MEMBERSHIP_ADMIN", "HELP_DESK_ADMIN", "USER_ADMIN"}
-	for _, role := range supportedRoles {
-		if roleType == role {
-			return true
-		}
-	}
-	return false
+	return contains([]string{"GROUP_MEMBERSHIP_ADMIN", "HELP_DESK_ADMIN", "USER_ADMIN"}, roleType)
 }
