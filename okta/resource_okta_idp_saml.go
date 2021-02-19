@@ -18,13 +18,6 @@ func resourceIdpSaml() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
-			if d.Get("subject_match_type").(string) != "CUSTOM_ATTRIBUTE" &&
-				len(d.Get("subject_match_attribute").(string)) > 0 {
-				return errors.New("you can only provide 'subject_match_attribute' with 'subject_match_type' set to 'CUSTOM_ATTRIBUTE'")
-			}
-			return nil
-		},
 		Schema: buildIdpSchema(map[string]*schema.Schema{
 			"type": {
 				Type:     schema.TypeString,
@@ -96,7 +89,10 @@ func resourceIdpSaml() *schema.Resource {
 }
 
 func resourceIdpSamlCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	idp := buildIdPSaml(d)
+	idp, err := buildIdPSaml(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	respIdp, _, err := getOktaClientFromMetadata(m).IdentityProvider.CreateIdentityProvider(ctx, idp)
 	if err != nil {
 		return diag.Errorf("failed to create SAML identity provider: %v", err)
@@ -157,8 +153,11 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 func resourceIdpSamlUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	idp := buildIdPSaml(d)
-	_, _, err := getOktaClientFromMetadata(m).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
+	idp, err := buildIdPSaml(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	_, _, err = getOktaClientFromMetadata(m).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
 	if err != nil {
 		return diag.Errorf("failed to update SAML identity provider: %v", err)
 	}
@@ -169,7 +168,11 @@ func resourceIdpSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	return resourceIdpSamlRead(ctx, d, m)
 }
 
-func buildIdPSaml(d *schema.ResourceData) okta.IdentityProvider {
+func buildIdPSaml(d *schema.ResourceData) (okta.IdentityProvider, error) {
+	if d.Get("subject_match_type").(string) != "CUSTOM_ATTRIBUTE" &&
+		len(d.Get("subject_match_attribute").(string)) > 0 {
+		return okta.IdentityProvider{}, errors.New("you can only provide 'subject_match_attribute' with 'subject_match_type' set to 'CUSTOM_ATTRIBUTE'")
+	}
 	return okta.IdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       saml2Idp,
@@ -212,5 +215,5 @@ func buildIdPSaml(d *schema.ResourceData) okta.IdentityProvider {
 				},
 			},
 		},
-	}
+	}, nil
 }
