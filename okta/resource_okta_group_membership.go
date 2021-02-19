@@ -49,7 +49,18 @@ func resourceGroupMembershipCreate(ctx context.Context, d *schema.ResourceData, 
 	}
 	d.SetId(fmt.Sprintf("%s+%s", groupId, userId))
 	time.Sleep(5 * time.Second)
-	return resourceGroupMembershipRead(ctx, d, m)
+	for i := 0; i < 5; i++ {
+		inGroup, err := checkIfUserInGroup(ctx, client, groupId, userId)
+		if err != nil {
+			diag.Errorf("failed to find user in group after addition: %v", err)
+		}
+		if inGroup {
+			return nil
+		}
+		time.Sleep(time.Duration(1 + 2 * i) * time.Second)
+	}
+	d.SetId("")
+	return diag.Errorf("failed to find user in group after multiple tries")
 }
 
 func resourceGroupMembershipRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
