@@ -4,8 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
+	"time"
 
+	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -209,12 +212,30 @@ func removeAllTargets(ctx context.Context, d *schema.ResourceData, m interface{}
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return "", fmt.Errorf("failed to unassign '%s' role from user: %v", d.Get("role_type").(string), err)
 	}
-	role, resp, err := getOktaClientFromMetadata(m).User.AssignRoleToUser(ctx, d.Get("user_id").(string),
-		okta.AssignRoleRequest{Type: d.Get("role_type").(string)}, nil)
-	if err := suppressErrorOn404(resp, err); err != nil {
-		return "", fmt.Errorf("failed to assign '%s' role back to user: %v", d.Get("role_type").(string), err)
+	bOff := backoff.NewExponentialBackOff()
+	bOff.MaxElapsedTime = time.Second*5
+	bOff.InitialInterval = time.Second
+	var id string
+	err = backoff.Retry(func() error {
+		role, resp, err := getOktaClientFromMetadata(m).User.AssignRoleToUser(ctx, d.Get("user_id").(string),
+			okta.AssignRoleRequest{Type: d.Get("role_type").(string)}, nil)
+		if resp!= nil && resp.StatusCode == http.StatusConflict {
+			return errors.New("user still has the role")
+		}
+		if err != nil {
+			return backoff.Permanent(fmt.Errorf("failed to assign '%s' role back to user: %v", d.Get("role_type").(string), err))
+		}
+		id = role.Id
+		return nil
+	}, bOff)
+	if err != nil {
+		var pErr backoff.PermanentError
+		if errors.Is(err, &pErr) {
+			return "", err
+		}
+		d.SetId("")
 	}
-	return role.Id, nil
+	return id, nil
 }
 
 func addAppTargets(ctx context.Context, d *schema.ResourceData, m interface{}, apps []string) error {
