@@ -48,7 +48,6 @@ func resourceGroupMembershipCreate(ctx context.Context, d *schema.ResourceData, 
 	if err != nil {
 		return diag.Errorf("failed to add user to group: %v", err)
 	}
-	d.SetId(fmt.Sprintf("%s+%s", groupId, userId))
 	bOff := backoff.NewExponentialBackOff()
 	bOff.MaxElapsedTime = time.Second * 10
 	bOff.InitialInterval = time.Second
@@ -63,9 +62,9 @@ func resourceGroupMembershipCreate(ctx context.Context, d *schema.ResourceData, 
 		return fmt.Errorf("failed to find user (%s) in group (%s) after multiple tries", userId, groupId)
 	}, bOff)
 	if err != nil {
-		d.SetId("")
 		return diag.FromErr(err)
 	}
+	d.SetId(fmt.Sprintf("%s+%s", groupId, userId))
 	return nil
 }
 
