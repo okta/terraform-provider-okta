@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"errors"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -72,7 +73,10 @@ func resourceIdpOidc() *schema.Resource {
 }
 
 func resourceIdpCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	idp := buildIdPOidc(d)
+	idp, err := buildIdPOidc(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	respIdp, _, err := getOktaClientFromMetadata(m).IdentityProvider.CreateIdentityProvider(ctx, idp)
 	if err != nil {
 		return diag.Errorf("failed to create OIDC identity provider: %v", err)
@@ -135,8 +139,11 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, m interface{})
 }
 
 func resourceIdpUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	idp := buildIdPOidc(d)
-	_, _, err := getOktaClientFromMetadata(m).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
+	idp, err := buildIdPOidc(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	_, _, err = getOktaClientFromMetadata(m).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
 	if err != nil {
 		return diag.Errorf("failed to update OIDC identity provider: %v", err)
 	}
@@ -147,7 +154,11 @@ func resourceIdpUpdate(ctx context.Context, d *schema.ResourceData, m interface{
 	return resourceIdpRead(ctx, d, m)
 }
 
-func buildIdPOidc(d *schema.ResourceData) okta.IdentityProvider {
+func buildIdPOidc(d *schema.ResourceData) (okta.IdentityProvider, error) {
+	if d.Get("subject_match_type").(string) != "CUSTOM_ATTRIBUTE" &&
+		len(d.Get("subject_match_attribute").(string)) > 0 {
+		return okta.IdentityProvider{}, errors.New("you can only provide 'subject_match_attribute' with 'subject_match_type' set to 'CUSTOM_ATTRIBUTE'")
+	}
 	return okta.IdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       "OIDC",
@@ -157,7 +168,8 @@ func buildIdPOidc(d *schema.ResourceData) okta.IdentityProvider {
 			MaxClockSkew: int64(d.Get("max_clock_skew").(int)),
 			Provisioning: buildIdPProvisioning(d),
 			Subject: &okta.PolicySubject{
-				MatchType: d.Get("subject_match_type").(string),
+				MatchType:      d.Get("subject_match_type").(string),
+				MatchAttribute: d.Get("subject_match_attribute").(string),
 				UserNameTemplate: &okta.PolicyUserNameTemplate{
 					Template: d.Get("username_template").(string),
 				},
@@ -178,5 +190,5 @@ func buildIdPOidc(d *schema.ResourceData) okta.IdentityProvider {
 				Url: d.Get("issuer_url").(string),
 			},
 		},
-	}
+	}, nil
 }
