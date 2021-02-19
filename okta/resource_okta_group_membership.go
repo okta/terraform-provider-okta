@@ -55,12 +55,12 @@ func resourceGroupMembershipCreate(ctx context.Context, d *schema.ResourceData, 
 	err = backoff.Retry(func() error {
 		inGroup, err := checkIfUserInGroup(ctx, client, groupId, userId)
 		if err != nil {
-			return backoff.Permanent(fmt.Errorf("failed to find user in group after addition with error: %v", err))
+			return backoff.Permanent(fmt.Errorf("failed to find user (%s) in group (%s) after addition with error: %v", userId, groupId, err))
 		}
 		if inGroup {
 			return nil
 		}
-		return fmt.Errorf("failed to find user in group after multiple tries")
+		return fmt.Errorf("failed to find user (%s) in group (%s) after multiple tries", userId, groupId)
 	}, bOff)
 	if err != nil {
 		d.SetId("")
