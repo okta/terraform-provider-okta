@@ -213,13 +213,13 @@ func removeAllTargets(ctx context.Context, d *schema.ResourceData, m interface{}
 		return "", fmt.Errorf("failed to unassign '%s' role from user: %v", d.Get("role_type").(string), err)
 	}
 	bOff := backoff.NewExponentialBackOff()
-	bOff.MaxElapsedTime = time.Second*5
+	bOff.MaxElapsedTime = time.Second * 5
 	bOff.InitialInterval = time.Second
 	var id string
 	err = backoff.Retry(func() error {
 		role, resp, err := getOktaClientFromMetadata(m).User.AssignRoleToUser(ctx, d.Get("user_id").(string),
 			okta.AssignRoleRequest{Type: d.Get("role_type").(string)}, nil)
-		if resp!= nil && resp.StatusCode == http.StatusConflict {
+		if resp != nil && resp.StatusCode == http.StatusConflict {
 			return errors.New("user still has the role")
 		}
 		if err != nil {
