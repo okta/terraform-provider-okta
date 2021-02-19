@@ -121,7 +121,7 @@ func updateGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}
 	if !exists {
 		return nil
 	}
-	ctx = context.WithValue(ctx, retryOnNotFoundKey, true)
+	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusNotFound})
 	client := getOktaClientFromMetadata(m)
 	existingUserList, _, err := client.Group.ListGroupUsers(ctx, d.Id(), nil)
 	if err != nil {

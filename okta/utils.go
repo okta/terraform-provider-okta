@@ -107,6 +107,15 @@ func contains(s []string, e string) bool {
 	return false
 }
 
+func containsInt(codes []int, code int) bool {
+	for _, a := range codes {
+		if a == code {
+			return true
+		}
+	}
+	return false
+}
+
 // Ensures all elements are contained in slice.
 func containsAll(s []string, elements ...string) bool {
 	for _, a := range elements {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"sync"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -387,7 +388,7 @@ func setAppStatus(ctx context.Context, d *schema.ResourceData, client *okta.Clie
 }
 
 func syncGroupsAndUsers(ctx context.Context, id string, d *schema.ResourceData, m interface{}) error {
-	ctx = context.WithValue(ctx, retryOnNotFoundKey, true)
+	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusNotFound})
 	client := getOktaClientFromMetadata(m)
 	// Temporary high limit to avoid issues short term. Need to support pagination here
 	userList, _, err := client.Application.ListApplicationUsers(ctx, id, &query.Params{Limit: defaultPaginationLimit})
