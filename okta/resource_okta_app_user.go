@@ -26,6 +26,7 @@ func resourceAppUser() *schema.Resource {
 
 				_ = d.Set("app_id", parts[0])
 				_ = d.Set("user_id", parts[1])
+				_ = d.Set("retain_assignment", false)
 
 				assignment, _, err := getOktaClientFromMetadata(m).Application.
 					GetApplicationUser(ctx, parts[0], parts[1], nil)
@@ -67,6 +68,12 @@ func resourceAppUser() *schema.Resource {
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return new == ""
 				},
+			},
+			"retain_assignment": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Retain the user assignment on destroy. If set to true, the resource will be removed from state but not from the Okta app.",
 			},
 		},
 	}
@@ -123,6 +130,12 @@ func resourceAppUserRead(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 func resourceAppUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	retain := d.Get("retain_assignment").(bool)
+	if retain {
+		// The assignment should be retained, bail before DeleteApplicationUser is called
+		return nil
+	}
+
 	_, err := getOktaClientFromMetadata(m).Application.DeleteApplicationUser(
 		ctx,
 		d.Get("app_id").(string),

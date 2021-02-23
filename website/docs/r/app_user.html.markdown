@@ -20,6 +20,8 @@ lifecycle {
 }
 ```
 
+~> **Important:** When the `okta_app_user` is retained, by setting `retain_assignment` to `true`, it is no longer managed by Terraform after it is destroyed. To truly delete the assignment, you will need to remove it either through the Okta Console or API. This argument exists for the use case where the same user is assigned in multiple places in order to prevent a single destruction removing all of them.
+
 ## Example Usage
 
 ```hcl
@@ -43,6 +45,8 @@ The following arguments are supported:
 - `password` - (Optional) The password to use.
 
 - `profile` - (Optional) The JSON profile of the App User.
+
+- `retain_assignment` - (Optional) Retain the user association on destroy. If set to true, the resource will be removed from state but not from the Okta app.
 
 ## Attributes Reference
 
