@@ -11,6 +11,7 @@ import (
 func TestAccOktaGroupAdminRole_crud(t *testing.T) {
 	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", groupRole)
+	resourceName2 := fmt.Sprintf("%s.test_app", groupRole)
 	mgr := newFixtureManager(groupRole)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	groupTarget := mgr.GetFixtures("group_targets.tf", ri, t)
@@ -24,19 +25,35 @@ func TestAccOktaGroupAdminRole_crud(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: config,
-				Check:  resource.TestCheckResourceAttr(resourceName, "role_type", "READ_ONLY_ADMIN"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "role_type", "READ_ONLY_ADMIN"),
+					resource.TestCheckResourceAttr(resourceName2, "role_type", "APP_ADMIN"),
+					resource.TestCheckResourceAttr(resourceName2, "target_app_list.#", "0"),
+				),
 			},
 			{
 				Config: groupTarget,
-				Check:  resource.TestCheckResourceAttr(resourceName, "role_type", "HELP_DESK_ADMIN"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "role_type", "HELP_DESK_ADMIN"),
+					resource.TestCheckResourceAttr(resourceName2, "role_type", "APP_ADMIN"),
+					resource.TestCheckResourceAttr(resourceName2, "target_app_list.#", "1"),
+				),
 			},
 			{
 				Config: groupTargetsUpdated,
-				Check:  resource.TestCheckResourceAttr(resourceName, "role_type", "HELP_DESK_ADMIN"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "role_type", "HELP_DESK_ADMIN"),
+					resource.TestCheckResourceAttr(resourceName2, "role_type", "APP_ADMIN"),
+					resource.TestCheckResourceAttr(resourceName2, "target_app_list.#", "1"),
+				),
 			},
 			{
 				Config: groupTargetsRemoved,
-				Check:  resource.TestCheckResourceAttr(resourceName, "role_type", "HELP_DESK_ADMIN"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "role_type", "HELP_DESK_ADMIN"),
+					resource.TestCheckResourceAttr(resourceName2, "role_type", "APP_ADMIN"),
+					resource.TestCheckResourceAttr(resourceName2, "target_app_list.#", "0"),
+				),
 			},
 		},
 	})

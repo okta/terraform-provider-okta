@@ -32,6 +32,11 @@ The following arguments are supported:
 - `target_group_list` - (Optional) A list of group IDs you would like as the targets of the admin role.
     - Only supported when used with the role types: `GROUP_MEMBERSHIP_ADMIN`, `HELP_DESK_ADMIN`, or `USER_ADMIN`.
 
+- `target_app_list` - (Optional) A list of app names (name represents set of app instances, like 'salesforce' or '
+  facebook'), or a combination of app name and app instance ID (like 'facebook.0oapsqQ6dv19pqyEo0g3') you would like as
+  the targets of the admin role.
+    - Only supported when used with the role type `"APP_ADMIN"`.
+
 ## Attributes Reference
 
 - `id` - The ID of the Group Role Assignment.
