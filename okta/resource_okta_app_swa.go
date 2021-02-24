@@ -11,9 +11,6 @@ import (
 
 func resourceAppSwa() *schema.Resource {
 	return &schema.Resource{
-		CustomizeDiff: func(_ context.Context, diff *schema.ResourceDiff, v interface{}) error {
-			return nil
-		},
 		CreateContext: resourceAppSwaCreate,
 		ReadContext:   resourceAppSwaRead,
 		UpdateContext: resourceAppSwaUpdate,

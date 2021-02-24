@@ -18,19 +18,6 @@ func resourceUserBaseSchema() *schema.Resource {
 		ReadContext:   resourceUserBaseSchemaRead,
 		UpdateContext: resourceUserBaseSchemaUpdate,
 		DeleteContext: resourceUserBaseSchemaDelete,
-		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
-			_, ok := d.GetOk("pattern")
-			if d.Get("index").(string) != "login" {
-				if ok {
-					return fmt.Errorf("'pattern' property is only allowed to be set for 'login'")
-				}
-				return nil
-			}
-			if !d.Get("required").(bool) {
-				return fmt.Errorf("'login' base schema is always required attribute")
-			}
-			return nil
-		},
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				resourceIndex := d.Id()
@@ -65,6 +52,10 @@ func resourceUserBaseSchemaResourceV0() *schema.Resource {
 }
 
 func resourceUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateUserBaseSchema(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	schemaUrl, err := getUserTypeSchemaUrl(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
 	if err != nil {
 		return diag.Errorf("failed to create user base schema: %v", err)
@@ -102,6 +93,10 @@ func getBaseSubSchema(ctx context.Context, client *sdk.ApiSupplement, schemaUrl 
 }
 
 func resourceUserBaseSchemaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateUserBaseSchema(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	schemaUrl, err := getUserTypeSchemaUrl(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
 	if err != nil {
 		return diag.Errorf("failed to update user base schema: %v", err)
@@ -127,6 +122,20 @@ func updateBaseSubschema(ctx context.Context, client *sdk.ApiSupplement, schemaU
 	)
 	if err != nil {
 		return fmt.Errorf("failed to update base user schema property: %v", err)
+	}
+	return nil
+}
+
+func validateUserBaseSchema(d *schema.ResourceData) error {
+	_, ok := d.GetOk("pattern")
+	if d.Get("index").(string) != "login" {
+		if ok {
+			return fmt.Errorf("'pattern' property is only allowed to be set for 'login'")
+		}
+		return nil
+	}
+	if !d.Get("required").(bool) {
+		return fmt.Errorf("'login' base schema is always required attribute")
 	}
 	return nil
 }

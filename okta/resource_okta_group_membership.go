@@ -3,8 +3,9 @@ package okta
 import (
 	"context"
 	"fmt"
-	"github.com/cenkalti/backoff/v4"
 	"time"
+
+	"github.com/cenkalti/backoff/v4"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"

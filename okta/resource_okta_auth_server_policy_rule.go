@@ -18,30 +18,6 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 		UpdateContext: resourceAuthServerPolicyRuleUpdate,
 		DeleteContext: resourceAuthServerPolicyRuleDelete,
 		Importer:      createNestedResourceImporter([]string{"auth_server_id", "policy_id", "id"}),
-		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
-			if w, ok := d.GetOk("grant_type_whitelist"); ok {
-				for _, v := range convertInterfaceToStringSet(w) {
-					if v != implicit {
-						continue
-					}
-					_, okUsers := d.GetOk("user_whitelist")
-					_, okGroups := d.GetOk("group_whitelist")
-					if !okUsers && !okGroups {
-						return fmt.Errorf(`at least "user_whitelist" or "group_whitelist" should be provided when using '%s' in "grant_type_whitelist"`, implicit)
-					}
-				}
-			}
-			rtlm := d.Get("refresh_token_lifetime_minutes").(int)
-			atlm := d.Get("access_token_lifetime_minutes").(int)
-			rtwm := d.Get("refresh_token_window_minutes").(int)
-			if rtlm > 0 && rtlm < atlm {
-				return errors.New("'refresh_token_lifetime_minutes' must be greater than or equal to 'access_token_lifetime_minutes'")
-			}
-			if rtlm > 0 && (atlm > rtwm || rtlm < rtwm) {
-				return errors.New("'refresh_token_window_minutes' must be between 'access_token_lifetime_minutes' and 'refresh_token_lifetime_minutes'")
-			}
-			return nil
-		},
 		Schema: map[string]*schema.Schema{
 			"type": {
 				Type:        schema.TypeString,
@@ -131,6 +107,10 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 }
 
 func resourceAuthServerPolicyRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateAuthServerPolicyRule(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	authServerPolicyRule := buildAuthServerPolicyRule(d)
 	responseAuthServerPolicyRule, _, err := getSupplementFromMetadata(m).CreateAuthorizationServerPolicyRule(
 		ctx,
@@ -182,8 +162,12 @@ func resourceAuthServerPolicyRuleRead(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceAuthServerPolicyRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateAuthServerPolicyRule(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	authServerPolicyRule := buildAuthServerPolicyRule(d)
-	_, _, err := getSupplementFromMetadata(m).UpdateAuthorizationServerPolicyRule(
+	_, _, err = getSupplementFromMetadata(m).UpdateAuthorizationServerPolicyRule(
 		ctx,
 		d.Get("auth_server_id").(string),
 		d.Get("policy_id").(string), d.Id(),
@@ -260,4 +244,29 @@ func setPeopleAssignments(d *schema.ResourceData, c *okta.GroupRulePeopleConditi
 		"user_whitelist": convertStringSetToInterface(c.Users.Include),
 		"user_blacklist": convertStringSetToInterface(c.Users.Exclude),
 	})
+}
+
+func validateAuthServerPolicyRule(d *schema.ResourceData) error {
+	if w, ok := d.GetOk("grant_type_whitelist"); ok {
+		for _, v := range convertInterfaceToStringSet(w) {
+			if v != implicit {
+				continue
+			}
+			_, okUsers := d.GetOk("user_whitelist")
+			_, okGroups := d.GetOk("group_whitelist")
+			if !okUsers && !okGroups {
+				return fmt.Errorf(`at least "user_whitelist" or "group_whitelist" should be provided when using '%s' in "grant_type_whitelist"`, implicit)
+			}
+		}
+	}
+	rtlm := d.Get("refresh_token_lifetime_minutes").(int)
+	atlm := d.Get("access_token_lifetime_minutes").(int)
+	rtwm := d.Get("refresh_token_window_minutes").(int)
+	if rtlm > 0 && rtlm < atlm {
+		return errors.New("'refresh_token_lifetime_minutes' must be greater than or equal to 'access_token_lifetime_minutes'")
+	}
+	if rtlm > 0 && (atlm > rtwm || rtlm < rtwm) {
+		return errors.New("'refresh_token_window_minutes' must be between 'access_token_lifetime_minutes' and 'refresh_token_lifetime_minutes'")
+	}
+	return nil
 }
