@@ -81,10 +81,10 @@ func resourceGroupRole() *schema.Resource {
 				Description: "List of groups ids for the targets of the admin role.",
 			},
 			"target_app_list": {
-				Type:          schema.TypeSet,
-				Elem:          &schema.Schema{Type: schema.TypeString},
-				Optional:      true,
-				Description:   "List of apps ids for the targets of the admin role.",
+				Type:        schema.TypeSet,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Optional:    true,
+				Description: "List of apps ids for the targets of the admin role.",
 			},
 		},
 	}
