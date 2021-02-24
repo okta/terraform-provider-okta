@@ -17,3 +17,8 @@ resource "okta_group_role" "test" {
   group_id  = okta_group.test.id
   role_type = "READ_ONLY_ADMIN"
 }
+
+resource "okta_group_role" "test_app" {
+  group_id  = okta_group.test.id
+  role_type = "APP_ADMIN"
+}

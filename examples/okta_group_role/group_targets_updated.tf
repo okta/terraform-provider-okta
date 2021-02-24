@@ -24,3 +24,9 @@ resource "okta_group_role" "test" {
   role_type         = "HELP_DESK_ADMIN"
   target_group_list = [okta_group.test_target1.id]
 }
+
+resource "okta_group_role" "test_app" {
+  group_id        = okta_group.test.id
+  role_type       = "APP_ADMIN"
+  target_app_list = ["facebook"]
+}
