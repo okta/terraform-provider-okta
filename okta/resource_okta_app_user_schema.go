@@ -16,17 +16,6 @@ func resourceAppUserSchema() *schema.Resource {
 		UpdateContext: resourceAppUserSchemaUpdate,
 		DeleteContext: resourceAppUserSchemaDelete,
 		Importer:      createNestedResourceImporter([]string{"app_id", "index"}),
-		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
-			if scope, ok := d.GetOk("scope"); ok {
-				if union, ok := d.GetOk("union"); ok {
-					if scope == "SELF" && union.(bool) {
-						return errors.New("you can not use combine values across groups (union=true) for self scoped " +
-							"attribute (scope=SELF). Either change scope to 'NONE', or use group priority option by setting union to 'false'")
-					}
-				}
-			}
-			return nil
-		},
 		Schema: buildSchema(
 			userSchemaSchema,
 			userBaseSchemaSchema,
@@ -107,6 +96,10 @@ func resourceAppUserSchemaResourceV0() *schema.Resource {
 }
 
 func resourceAppUserSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateAppUserSchema(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	if err := updateAppUserSubschema(ctx, d, m); err != nil {
 		return err
 	}
@@ -139,6 +132,10 @@ func resourceAppUserSchemaRead(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceAppUserSchemaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateAppUserSchema(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	if err := updateAppUserSubschema(ctx, d, m); err != nil {
 		return err
 	}
@@ -168,6 +165,18 @@ func updateAppUserSubschema(ctx context.Context, d *schema.ResourceData, m inter
 	)
 	if err != nil {
 		return diag.Errorf("failed to update custom app user schema property: %v", err)
+	}
+	return nil
+}
+
+func validateAppUserSchema(d *schema.ResourceData) error {
+	if scope, ok := d.GetOk("scope"); ok {
+		if union, ok := d.GetOk("union"); ok {
+			if scope == "SELF" && union.(bool) {
+				return errors.New("you can not use combine values across groups (union=true) for self scoped " +
+					"attribute (scope=SELF). Either change scope to 'NONE', or use group priority option by setting union to 'false'")
+			}
+		}
 	}
 	return nil
 }

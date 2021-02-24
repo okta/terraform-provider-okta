@@ -19,13 +19,6 @@ func resourceNetworkZone() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
-			proxies, ok := d.GetOk("proxies")
-			if d.Get("usage").(string) != "POLICY" && ok && proxies.(*schema.Set).Len() != 0 {
-				return fmt.Errorf(`zones with usage = "BLOCKLIST" cannot have trusted proxies`)
-			}
-			return nil
-		},
 		Schema: map[string]*schema.Schema{
 			"dynamic_locations": {
 				Type:        schema.TypeSet,
@@ -68,8 +61,12 @@ func resourceNetworkZone() *schema.Resource {
 }
 
 func resourceNetworkZoneCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateNetworkZone(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	networkZone := buildNetworkZone(d)
-	_, _, err := getSupplementFromMetadata(m).CreateNetworkZone(ctx, networkZone, nil)
+	_, _, err = getSupplementFromMetadata(m).CreateNetworkZone(ctx, networkZone, nil)
 	if err != nil {
 		return diag.Errorf("failed to create network zone: %v", err)
 	}
@@ -101,8 +98,12 @@ func resourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, m inte
 }
 
 func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateNetworkZone(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	networkZone := buildNetworkZone(d)
-	_, _, err := getSupplementFromMetadata(m).UpdateNetworkZone(ctx, d.Id(), *networkZone, nil)
+	_, _, err = getSupplementFromMetadata(m).UpdateNetworkZone(ctx, d.Id(), *networkZone, nil)
 	if err != nil {
 		return diag.Errorf("failed to update network zone: %v", err)
 	}
@@ -182,4 +183,12 @@ func flattenDynamicLocations(locations []*sdk.Location) interface{} {
 		}
 	}
 	return schema.NewSet(schema.HashString, arr)
+}
+
+func validateNetworkZone(d *schema.ResourceData) error {
+	proxies, ok := d.GetOk("proxies")
+	if d.Get("usage").(string) != "POLICY" && ok && proxies.(*schema.Set).Len() != 0 {
+		return fmt.Errorf(`zones with usage = "BLOCKLIST" cannot have trusted proxies`)
+	}
+	return nil
 }

@@ -15,19 +15,6 @@ func resourceAppUserBaseSchema() *schema.Resource {
 		UpdateContext: resourceAppUserBaseSchemaUpdate,
 		DeleteContext: resourceAppUserBaseSchemaDelete,
 		Importer:      createNestedResourceImporter([]string{"app_id", "index"}),
-		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
-			_, ok := d.GetOk("pattern")
-			if d.Get("index").(string) != "login" {
-				if ok {
-					return fmt.Errorf("'pattern' property is only allowed to be set for 'login'")
-				}
-				return nil
-			}
-			if !d.Get("required").(bool) {
-				return fmt.Errorf("'login' base schema is always required attribute")
-			}
-			return nil
-		},
 		Schema: buildSchema(
 			userBaseSchemaSchema,
 			userTypeSchema,
@@ -62,6 +49,10 @@ func resourceAppUserBaseSchemaResourceV0() *schema.Resource {
 }
 
 func resourceAppUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateAppUserBaseSchema(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	if err := updateAppUserBaseSubschema(ctx, d, m); err != nil {
 		return err
 	}
@@ -84,6 +75,10 @@ func resourceAppUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceAppUserBaseSchemaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateAppUserBaseSchema(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	if err := updateAppUserBaseSubschema(ctx, d, m); err != nil {
 		return err
 	}
@@ -105,6 +100,20 @@ func updateAppUserBaseSubschema(ctx context.Context, d *schema.ResourceData, m i
 	)
 	if err != nil {
 		return diag.Errorf("failed to update application user base schema: %v", err)
+	}
+	return nil
+}
+
+func validateAppUserBaseSchema(d *schema.ResourceData) error {
+	_, ok := d.GetOk("pattern")
+	if d.Get("index").(string) != "login" {
+		if ok {
+			return fmt.Errorf("'pattern' property is only allowed to be set for 'login'")
+		}
+		return nil
+	}
+	if !d.Get("required").(bool) {
+		return fmt.Errorf("'login' base schema is always required attribute")
 	}
 	return nil
 }
