@@ -73,7 +73,7 @@ func (c *Config) loadAndValidate() error {
 		okta.WithPrivateKey(c.privateKey),
 		okta.WithScopes(c.scopes),
 		okta.WithCache(false),
-		okta.WithHttpClient(*httpClient),
+		okta.WithHttpClientPtr(httpClient),
 		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
 		okta.WithRequestTimeout(int64(c.requestTimeout)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
