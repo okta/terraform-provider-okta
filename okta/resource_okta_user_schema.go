@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"errors"
 	"reflect"
 	"strings"
 	"time"
@@ -46,6 +47,32 @@ func resourceUserSchema() *schema.Resource {
 					Default:          "NONE",
 					ValidateDiagFunc: stringInSlice([]string{"SELF", "NONE", ""}),
 				},
+				"master": {
+					Type:     schema.TypeString,
+					Optional: true,
+					// Accepting an empty value to allow for zero value (when provisioning is off)
+					ValidateDiagFunc: stringInSlice([]string{"PROFILE_MASTER", "OKTA", "OVERRIDE", ""}),
+					Description:      "SubSchema profile manager, if not set it will inherit its setting.",
+					Default:          "PROFILE_MASTER",
+				},
+				"master_override_priority": {
+					Type:        schema.TypeList,
+					Optional:    true,
+					Description: "",
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"type": {
+								Type:     schema.TypeString,
+								Optional: true,
+								Default:  "APP",
+							},
+							"value": {
+								Type:     schema.TypeString,
+								Required: true,
+							},
+						},
+					},
+				},
 			},
 		),
 		SchemaVersion: 1,
@@ -78,6 +105,10 @@ func resourceUserSchemaResourceV0() *schema.Resource {
 // this retry logic will be demolished.
 func resourceUserSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	logger(m).Info("creating user schema", "name", d.Get("index").(string))
+	err := validateUserSchema(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	schemaUrl, err := getUserTypeSchemaUrl(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
 	if err != nil {
 		return diag.Errorf("failed to create user custom schema: %v", err)
@@ -145,6 +176,18 @@ func resourceUserSchemaDelete(ctx context.Context, d *schema.ResourceData, m int
 	_, err = getSupplementFromMetadata(m).DeleteUserSchemaProperty(ctx, schemaUrl, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete user custom schema: %v", err)
+	}
+	return nil
+}
+
+func validateUserSchema(d *schema.ResourceData) error {
+	v, ok := d.GetOk("master")
+	if !ok || v.(string) != "OVERRIDE" {
+		return nil
+	}
+	mop, _ := d.Get("master_override_priority").([]interface{})
+	if len(mop) == 0 {
+		return errors.New("when setting profile master type to 'OVERRIDE' at least one 'master_override_priority' should be provided")
 	}
 	return nil
 }

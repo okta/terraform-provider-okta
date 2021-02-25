@@ -40,6 +40,14 @@ func resourceAppUserSchema() *schema.Resource {
 					ValidateDiagFunc: stringInSlice([]string{"SELF", "NONE", ""}),
 					ForceNew:         true, // since the `scope` is read-only attribute, the resource should be recreated
 				},
+				"master": {
+					Type:     schema.TypeString,
+					Optional: true,
+					// Accepting an empty value to allow for zero value (when provisioning is off)
+					ValidateDiagFunc: stringInSlice([]string{"PROFILE_MASTER", "OKTA", ""}),
+					Description:      "SubSchema profile manager, if not set it will inherit its setting.",
+					Default:          "PROFILE_MASTER",
+				},
 			}),
 		SchemaVersion: 2,
 		StateUpgraders: []schema.StateUpgrader{

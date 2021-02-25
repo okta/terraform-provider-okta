@@ -325,11 +325,11 @@ func remove(arr []string, el string) []string {
 }
 
 // The best practices states that aggregate types should have error handling (think non-primitive). This will not attempt to set nil values.
-func setNonPrimitives(data *schema.ResourceData, valueMap map[string]interface{}) error {
+func setNonPrimitives(d *schema.ResourceData, valueMap map[string]interface{}) error {
 	for k, v := range valueMap {
 		if v != nil {
-			if err := data.Set(k, v); err != nil {
-				return fmt.Errorf("error setting %s for resource %s: %s", k, data.Id(), err)
+			if err := d.Set(k, v); err != nil {
+				return fmt.Errorf("error setting %s for resource %s: %s", k, d.Id(), err)
 			}
 		}
 	}

@@ -41,7 +41,13 @@ type (
 	}
 
 	UserSchemaMaster struct {
-		Type string `json:"type,omitempty"`
+		Type     string                     `json:"type,omitempty"`
+		Priority []UserSchemaMasterPriority `json:"priority,omitempty"`
+	}
+
+	UserSchemaMasterPriority struct {
+		Type  string `json:"type,omitempty"`
+		Value string `json:"value,omitempty"`
 	}
 
 	UserSchemaEnum struct {

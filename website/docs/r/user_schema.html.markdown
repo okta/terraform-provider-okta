@@ -64,7 +64,11 @@ The following arguments are supported:
 
 - `permissions` - (Optional) Access control permissions for the property. It can be set to `"READ_WRITE"`, `"READ_ONLY"`, `"HIDE"`.
 
-- `master` - (Optional) Master priority for the user schema property. It can be set to `"PROFILE_MASTER"` or `"OKTA"`.
+- `master` - (Optional) Master priority for the user schema property. It can be set to `"PROFILE_MASTER"`, `"OVERRIDE"` or `"OKTA"`.
+
+- `master_override_priority` - (Optional) Prioritized list of profile sources (required when `master` is `"OVERRIDE"`).
+  - `type` - (Optional) - Type of profile source.
+  - `value` - (Required) - ID of profile source.
 
 - `external_name` - (Optional) External name of the user schema property.
 

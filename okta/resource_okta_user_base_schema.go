@@ -33,7 +33,21 @@ func resourceUserBaseSchema() *schema.Resource {
 			},
 		},
 		SchemaVersion: 1,
-		Schema:        buildSchema(userBaseSchemaSchema, userTypeSchema, userPatternSchema),
+		Schema: buildSchema(
+			userBaseSchemaSchema,
+			userTypeSchema,
+			userPatternSchema,
+			map[string]*schema.Schema{
+				"master": {
+					Type:     schema.TypeString,
+					Optional: true,
+					// Accepting an empty value to allow for zero value (when provisioning is off)
+					ValidateDiagFunc: stringInSlice([]string{"PROFILE_MASTER", "OKTA", "OVERRIDE", ""}),
+					Description:      "SubSchema profile manager, if not set it will inherit its setting.",
+					Default:          "PROFILE_MASTER",
+				},
+			},
+		),
 		StateUpgraders: []schema.StateUpgrader{
 			{
 				Type: resourceUserBaseSchemaResourceV0().CoreConfigSchema().ImpliedType(),
