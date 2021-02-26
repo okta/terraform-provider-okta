@@ -22,6 +22,7 @@ const (
 	appGroupAssignment     = "okta_app_group_assignment"
 	appUser                = "okta_app_user"
 	appOAuth               = "okta_app_oauth"
+	appOAuthApiScope       = "okta_app_oauth_api_scope"
 	appOAuthRedirectURI    = "okta_app_oauth_redirect_uri"
 	appSaml                = "okta_app_saml"
 	appSecurePasswordStore = "okta_app_secure_password_store"
@@ -166,6 +167,7 @@ func Provider() *schema.Provider {
 			appGroupAssignment:     resourceAppGroupAssignment(),
 			appUser:                resourceAppUser(),
 			appOAuth:               resourceAppOAuth(),
+			appOAuthApiScope:       resourceAppOAuthApiScope(),
 			appOAuthRedirectURI:    resourceAppOAuthRedirectURI(),
 			appSaml:                resourceAppSaml(),
 			appSecurePasswordStore: resourceAppSecurePasswordStore(),
@@ -229,24 +231,22 @@ func Provider() *schema.Provider {
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"okta_app":                         dataSourceApp(),
-			appSaml:                            dataSourceAppSaml(),
+			"okta_app_saml":                    dataSourceAppSaml(),
 			appOAuth:                           dataSourceAppOauth(),
 			"okta_app_metadata_saml":           dataSourceAppMetadataSaml(),
 			"okta_default_policies":            deprecatedPolicies,
 			"okta_default_policy":              dataSourceDefaultPolicies(),
 			"okta_everyone_group":              dataSourceEveryoneGroup(),
-			oktaGroup:                          dataSourceGroup(),
+			"okta_group":                       dataSourceGroup(),
 			"okta_idp_metadata_saml":           dataSourceIdpMetadataSaml(),
-			idpSaml:                            dataSourceIdpSaml(),
+			"okta_idp_saml":                    dataSourceIdpSaml(),
 			idpOidc:                            dataSourceIdpOidc(),
-			idpSocial:                          dataSourceIdpSocial(),
 			"okta_policy":                      dataSourcePolicy(),
 			authServerPolicy:                   dataSourceAuthServerPolicy(),
 			"okta_user_profile_mapping_source": dataSourceUserProfileMappingSource(),
-			oktaUser:                           dataSourceUser(),
+			"okta_user":                        dataSourceUser(),
 			"okta_users":                       dataSourceUsers(),
 			authServer:                         dataSourceAuthServer(),
-			"okta_auth_server_scopes":          dataSourceAuthServerScopes(),
 			userType:                           dataSourceUserType(),
 		},
 		ConfigureContextFunc: providerConfigure,
