@@ -547,7 +547,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 			TosUri:                 d.Get("tos_uri").(string),
 			IssuerMode:             d.Get("issuer_mode").(string),
 			IdpInitiatedLogin: &okta.OpenIdConnectApplicationIdpInitiatedLogin{
-				DefaultScope: convertInterfaceToStringSetNullable(d.Get("login_scopes")),
+				DefaultScope: convertInterfaceToStringSet(d.Get("login_scopes")),
 				Mode:         d.Get("login_mode").(string),
 			},
 		},
