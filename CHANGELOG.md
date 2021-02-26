@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.10.1 (February 26, 2021)
+
+ENHANCEMENTS:
+
+* Add `target_app_list` field to the `okta_group_role` resource [#349](https://github.com/oktadeveloper/terraform-provider-okta/pull/349). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Add support for `OVERRIDE` value in `master` field and new `master_override_priority` field to the `okta_user_schema` resource [#351](https://github.com/oktadeveloper/terraform-provider-okta/pull/351). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+
+* Fix set of `subject_match_attribute` value for `okta_idp_oidc` resource [#344](https://github.com/oktadeveloper/terraform-provider-okta/pull/344). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Fix resource validation [#348](https://github.com/oktadeveloper/terraform-provider-okta/pull/348). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Fix setup of empty `login_scopes` for `okta_app_oauth` resource [#352](https://github.com/oktadeveloper/terraform-provider-okta/pull/352). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+
 ## 3.10.0 (February 19, 2021)
 
 ENHANCEMENTS:
