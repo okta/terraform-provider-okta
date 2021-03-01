@@ -14,6 +14,12 @@
 The Terraform Okta provider is a plugin for Terraform that allows for the full lifecycle management of Okta resources.
 This provider is maintained internally by the Okta development team.
 
+## Examples
+
+All the resources and data sources has [one or more examples](./examples) to give you an idea of how to use this provider to build your 
+own Okta infrastructure. Provider's official documentation is located in the 
+[official terraform registry](https://registry.terraform.io/providers/oktadeveloper/okta/latest/docs), or [here](./website/docs) in form of raw markdown files.
+
 # Development Environment Setup
 
 ## Requirements
