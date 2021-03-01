@@ -81,40 +81,37 @@ func (m *ApiSupplement) UpdateMapping(ctx context.Context, mappingId string, bod
 }
 
 // FindProfileMappingSource retrieves profile mapping source/target via name
-func (m *ApiSupplement) FindProfileMappingSource(ctx context.Context, name, typ string, qp *query.Params) (*MappingSource, *okta.Response, error) {
+func (m *ApiSupplement) FindProfileMappingSource(ctx context.Context, name, typ string, qp *query.Params) (*MappingSource, error) {
 	uri := "/api/v1/mappings"
-
 	if qp != nil {
 		uri += qp.String()
 	}
-
 	req, err := m.RequestExecutor.NewRequest("GET", uri, nil)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-
 	var mappings []*Mapping
-	res, err := m.RequestExecutor.Do(ctx, req, &mappings)
+	resp, err := m.RequestExecutor.Do(ctx, req, &mappings)
 	if err != nil {
-		return nil, res, err
+		return nil, err
 	}
-
-	for _, m := range mappings {
-		if m.Target.Name == name && m.Target.Type == typ {
-			return m.Target, res, nil
-		} else if m.Source.Name == name && m.Source.Type == typ {
-			return m.Source, res, nil
+	for {
+		for _, m := range mappings {
+			if m.Target.Name == name && m.Target.Type == typ {
+				return m.Target, nil
+			} else if m.Source.Name == name && m.Source.Type == typ {
+				return m.Source, nil
+			}
+		}
+		if resp.HasNextPage() {
+			resp, err = resp.Next(ctx, &mappings)
+			if err != nil {
+				return nil, err
+			}
+			continue
+		} else {
+			break
 		}
 	}
-
-	if after := GetAfterParam(res); after != "" {
-		if qp == nil {
-			qp = &query.Params{}
-		}
-		qp.After = after
-
-		return m.FindProfileMappingSource(ctx, name, typ, qp)
-	}
-
-	return nil, res, fmt.Errorf("could not locate profile mapping source with name '%s'", name)
+	return nil, fmt.Errorf("could not locate profile mapping source with name '%s' and type '%s'", name, typ)
 }

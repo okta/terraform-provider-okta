@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func dataSourceUserProfileMappingSource() *schema.Resource {
@@ -29,14 +30,12 @@ func dataSourceUserProfileMappingSource() *schema.Resource {
 }
 
 func dataSourceUserProfileMappingSourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	mapping, _, err := getSupplementFromMetadata(m).FindProfileMappingSource(ctx, "user", "user", nil)
+	mapping, err := getSupplementFromMetadata(m).FindProfileMappingSource(ctx, "user", "user", &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return diag.Errorf("failed to find profile mapping source: %v", err)
 	}
-
 	d.SetId(mapping.ID)
 	_ = d.Set("type", mapping.Type)
 	_ = d.Set("name", mapping.Name)
-
 	return nil
 }
