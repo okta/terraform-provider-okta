@@ -9,6 +9,26 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
+var validScopes = []string{
+	"okta.apps.manage", "okta.apps.read",
+	"okta.authorizationServers.manage", "okta.authorizationServers.read",
+	"okta.clients.manage", "okta.clients.read", "okta.clients.register",
+	"okta.eventHooks.manage", "okta.eventHooks.read",
+	"okta.events.read",
+	"okta.factors.manage", "okta.factors.read",
+	"okta.groups.manage", "okta.groups.read",
+	"okta.idps.manage", "okta.idps.read",
+	"okta.inlineHooks.manage", "okta.inlineHooks.read",
+	"okta.linkedObjects.manage", "okta.linkedObjects.read",
+	"okta.logs.read",
+	"okta.roles.manage", "okta.roles.read",
+	"okta.schemas.manage", "okta.schemas.read",
+	"okta.sessions.manage", "okta.sessions.read",
+	"okta.templates.manage", "okta.templates.read",
+	"okta.trustedOrigins.manage", "okta.trustedOrigins.read",
+	"okta.users.manage", "okta.users.read", "okta.users.manage.self", "okta.users.read.self",
+	"okta.policies.manage", "okta.policies.read"}
+
 func resourceAppOAuthApiScope() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppOAuthApiScopeCreate,
@@ -50,9 +70,12 @@ func resourceAppOAuthApiScope() *schema.Resource {
 				Description: "The issuer of your Org Authorization Server, your Org URL.",
 			},
 			"scopes": {
-				Type:        schema.TypeList,
-				Required:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeList,
+				Required: true,
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateDiagFunc: stringInSlice(validScopes),
+				},
 				Description: "Scopes of the application for which consent is granted.",
 			},
 		},
