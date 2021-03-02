@@ -4,6 +4,7 @@ GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=okta
 GOLINT=./bin/golangci-lint
+GOFMT:=gofumpt
 TFPROVIDERLINT=tfproviderlint
 
 # Expression to match against tests
@@ -44,8 +45,13 @@ vet:
 		exit 1; \
 	fi
 
-fmt:
-	gofmt -w $(GOFMT_FILES)
+.PHONY: fmt
+fmt: check-fmt # Format the code
+	@echo "formatting the code..."
+	@$(GOFMT) -l -w $$(find . -name '*.go' |grep -v vendor)
+
+check-fmt:
+	@which $(GOFMT) > /dev/null || (echo "downloading formatter..." && GO111MODULE=on go get mvdan.cc/gofumpt)
 
 fmtcheck: dep
 	@sh -c "'$(CURDIR)/scripts/gofmtcheck.sh'"
