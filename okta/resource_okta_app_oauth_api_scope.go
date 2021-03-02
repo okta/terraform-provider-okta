@@ -208,9 +208,7 @@ func revokeOAuthApiScope(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 // Diff function to identify which scope needs to be added or removed to the application
-func getOAuthApiScopeUpdateLists(d *schema.ResourceData, from []*okta.OAuth2ScopeConsentGrant) ([]string, []string) {
-	grantList := make([]string, 0)
-	revokeList := make([]string, 0)
+func getOAuthApiScopeUpdateLists(d *schema.ResourceData, from []*okta.OAuth2ScopeConsentGrant) (grantList, revokeList []string) {
 	desiredScopes := make([]string, 0)
 	currentScopes := make([]string, 0)
 
@@ -224,19 +222,6 @@ func getOAuthApiScopeUpdateLists(d *schema.ResourceData, from []*okta.OAuth2Scop
 		currentScopes = append(currentScopes, currentScope.ScopeId)
 	}
 
-	// find scopes that should not be there
-	for _, currentScope := range currentScopes {
-		if !contains(desiredScopes, currentScope) {
-			revokeList = append(revokeList, currentScope)
-		}
-	}
-
-	// scopes that need to be granted
-	for _, desiredScope := range desiredScopes {
-		if !contains(currentScopes, desiredScope) {
-			grantList = append(grantList, desiredScope)
-		}
-	}
-
-	return grantList, revokeList
+	// return scopes that should be added or removed
+	return splitTargets(desiredScopes, currentScopes)
 }
