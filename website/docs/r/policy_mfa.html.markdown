@@ -69,6 +69,8 @@ The following arguments are supported:
 - `symantec_vip` - (Optional) Symantec VIP [MFA policy settings](#mfa-settings).
 
 - `yubikey_token` - (Optional) Yubikey Token [MFA policy settings](#mfa-settings).
+  
+- `hotp` - (Optional) HMAC-based One-Time Password [MFA policy settings](#mfa-settings).
 
 ### MFA Settings
 
