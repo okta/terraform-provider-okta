@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -27,7 +28,8 @@ var validScopes = []string{
 	"okta.templates.manage", "okta.templates.read",
 	"okta.trustedOrigins.manage", "okta.trustedOrigins.read",
 	"okta.users.manage", "okta.users.read", "okta.users.manage.self", "okta.users.read.self",
-	"okta.policies.manage", "okta.policies.read"}
+	"okta.policies.manage", "okta.policies.read",
+}
 
 func resourceAppOAuthApiScope() *schema.Resource {
 	return &schema.Resource{
@@ -118,7 +120,6 @@ func resourceAppOAuthApiScopeRead(ctx context.Context, d *schema.ResourceData, m
 
 func resourceAppOAuthApiScopeUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	scopes, _, err := getOktaClientFromMetadata(m).Application.ListScopeConsentGrants(ctx, d.Get("app_id").(string), nil)
-
 	if err != nil {
 		return diag.Errorf("failed to get application scope consent grants: %v", err)
 	}
