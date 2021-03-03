@@ -1,4 +1,4 @@
-module github.com/oktadeveloper/terraform-provider-okta
+module github.com/okta/terraform-provider-okta
 
 go 1.15
 

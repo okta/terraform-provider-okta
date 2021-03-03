@@ -42,7 +42,7 @@ func TestAccOktaNetworkZone_crud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "type", "IP"),
 					resource.TestCheckResourceAttr(resourceName, "proxies.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "gateways.#", "2"),

@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func deleteSignOnPolicyRules(client *testClient) error {
@@ -47,7 +47,7 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 				),
 			},
@@ -55,7 +55,7 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "access", "DENY"),
 					resource.TestCheckResourceAttr(resourceName, "session_idle", "240"),
@@ -68,7 +68,7 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 				Config: excludedNetwork,
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "access", "DENY"),
 					resource.TestCheckResourceAttr(resourceName, "network_connection", "ZONE"),

@@ -23,7 +23,7 @@ func TestAccOktaIdpOidc_crud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "authorization_url", "https://idp.example.com/authorize"),
 					resource.TestCheckResourceAttr(resourceName, "authorization_binding", "HTTP-REDIRECT"),
 					resource.TestCheckResourceAttr(resourceName, "token_url", "https://idp.example.com/token"),
@@ -41,7 +41,7 @@ func TestAccOktaIdpOidc_crud(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "authorization_url", "https://idp.example.com/authorize2"),
 					resource.TestCheckResourceAttr(resourceName, "authorization_binding", "HTTP-REDIRECT"),
 					resource.TestCheckResourceAttr(resourceName, "token_url", "https://idp.example.com/token2"),
