@@ -30,6 +30,7 @@ const (
 	RsaTokenFactor     = "rsa_token"
 	SymantecVipFactor  = "symantec_vip"
 	YubikeyTokenFactor = "yubikey_token"
+	HotpFactor         = "hotp"
 )
 
 // GetFactor gets a factor by ID.

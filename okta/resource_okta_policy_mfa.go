@@ -55,6 +55,7 @@ func resourcePolicyMfaRead(ctx context.Context, d *schema.ResourceData, m interf
 	syncFactor(d, sdk.RsaTokenFactor, policy.Settings.Factors.RsaToken)
 	syncFactor(d, sdk.SymantecVipFactor, policy.Settings.Factors.SymantecVip)
 	syncFactor(d, sdk.YubikeyTokenFactor, policy.Settings.Factors.YubikeyToken)
+	syncFactor(d, sdk.HotpFactor, policy.Settings.Factors.YubikeyToken)
 	err = syncPolicyFromUpstream(d, policy)
 	if err != nil {
 		return diag.Errorf("failed to sync policy: %v", err)
@@ -121,6 +122,7 @@ func buildMfaPolicy(d *schema.ResourceData) sdk.Policy {
 			RsaToken:     buildFactorProvider(d, sdk.RsaTokenFactor),
 			SymantecVip:  buildFactorProvider(d, sdk.SymantecVipFactor),
 			YubikeyToken: buildFactorProvider(d, sdk.YubikeyTokenFactor),
+			Hotp:         buildFactorProvider(d, sdk.HotpFactor),
 		},
 	}
 	policy.Conditions = &okta.PolicyRuleConditions{
@@ -154,6 +156,7 @@ var factorProviders = []string{
 	sdk.RsaTokenFactor,
 	sdk.SymantecVipFactor,
 	sdk.YubikeyTokenFactor,
+	sdk.HotpFactor,
 }
 
 // List of factor provider above, they all follow the same schema
