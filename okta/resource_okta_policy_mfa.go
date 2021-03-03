@@ -51,7 +51,7 @@ func resourcePolicyMfaRead(ctx context.Context, d *schema.ResourceData, m interf
 	syncFactor(d, sdk.OktaPushFactor, policy.Settings.Factors.OktaPush)
 	syncFactor(d, sdk.OktaQuestionFactor, policy.Settings.Factors.OktaQuestion)
 	syncFactor(d, sdk.OktaSmsFactor, policy.Settings.Factors.OktaSms)
-	syncFactor(d, sdk.OktaEmailFactor, policy.Settings.Factors.OktaSms)
+	syncFactor(d, sdk.OktaEmailFactor, policy.Settings.Factors.OktaEmail)
 	syncFactor(d, sdk.RsaTokenFactor, policy.Settings.Factors.RsaToken)
 	syncFactor(d, sdk.SymantecVipFactor, policy.Settings.Factors.SymantecVip)
 	syncFactor(d, sdk.YubikeyTokenFactor, policy.Settings.Factors.YubikeyToken)
