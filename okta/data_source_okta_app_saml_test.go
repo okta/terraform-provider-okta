@@ -27,8 +27,8 @@ func TestAccOktaDataSourceAppSaml_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_app_saml.test", "key_id"),
-					resource.TestCheckResourceAttr("data.okta_app_saml.test", "label", fmt.Sprintf("testAcc_%d", ri)),
-					resource.TestCheckResourceAttr("data.okta_app_saml.test_label", "label", fmt.Sprintf("testAcc_%d", ri)),
+					resource.TestCheckResourceAttr("data.okta_app_saml.test", "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr("data.okta_app_saml.test_label", "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr("data.okta_app_saml.test", "status", statusActive),
 					resource.TestCheckResourceAttr("data.okta_app_saml.test_label", "status", statusActive),
 				),

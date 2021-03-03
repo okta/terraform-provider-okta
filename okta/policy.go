@@ -15,7 +15,6 @@ var (
 		"name": {
 			Type:        schema.TypeString,
 			Required:    true,
-			ForceNew:    true,
 			Description: "Policy Name",
 		},
 		"description": {

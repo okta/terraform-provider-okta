@@ -3,7 +3,7 @@ data "okta_group" "all" {
 }
 
 resource "okta_policy_mfa" "test" {
-  name            = "testAcc_replace_with_uuid"
+  name            = "testAcc_replace_with_uuid_new"
   status          = "INACTIVE"
   description     = "Terraform Acceptance Test MFA Policy Updated"
   groups_included = [data.okta_group.all.id]

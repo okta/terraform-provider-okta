@@ -27,9 +27,9 @@ func TestAccOktaDataSourceApp_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("okta_app_oauth.test", "id"),
-					resource.TestCheckResourceAttr("data.okta_app.test", "label", fmt.Sprintf("testAcc_%d", ri)),
-					resource.TestCheckResourceAttr("data.okta_app.test2", "label", fmt.Sprintf("testAcc_%d", ri)),
-					resource.TestCheckResourceAttr("data.okta_app.test3", "label", fmt.Sprintf("testAcc_%d", ri)),
+					resource.TestCheckResourceAttr("data.okta_app.test", "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr("data.okta_app.test2", "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr("data.okta_app.test3", "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr("data.okta_app.test", "status", statusActive),
 					resource.TestCheckResourceAttr("data.okta_app.test2", "status", statusActive),
 					resource.TestCheckResourceAttr("data.okta_app.test3", "status", statusActive),

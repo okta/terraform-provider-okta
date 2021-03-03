@@ -23,7 +23,7 @@ func TestAccOktaIdpSaml_crud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "acs_type", "INSTANCE"),
 					resource.TestCheckResourceAttrSet(resourceName, "audience"),
 					resource.TestCheckResourceAttr(resourceName, "sso_url", "https://idp.example.com"),
@@ -41,7 +41,7 @@ func TestAccOktaIdpSaml_crud(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "max_clock_skew", "60"),
 					resource.TestCheckResourceAttr(resourceName, "acs_type", "INSTANCE"),
 					resource.TestCheckResourceAttrSet(resourceName, "audience"),

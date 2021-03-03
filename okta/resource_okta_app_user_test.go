@@ -39,7 +39,7 @@ func TestAccOktaAppUser_crud(t *testing.T) {
 					ensureAppUserExists(resourceName),
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "user_id"),
-					resource.TestCheckResourceAttr(resourceName, "username", fmt.Sprintf("testAcc_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "username", buildResourceName(ri)),
 				),
 			},
 			{
