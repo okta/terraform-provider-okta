@@ -42,6 +42,7 @@ func resourceFactor() *schema.Resource {
 					sdk.RsaTokenFactor,
 					sdk.SymantecVipFactor,
 					sdk.YubikeyTokenFactor,
+					sdk.HotpFactor,
 				}),
 				Description: "Factor provider ID",
 				ForceNew:    true,

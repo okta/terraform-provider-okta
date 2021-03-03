@@ -46,6 +46,7 @@ func TestAccOktaMfaPolicy_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "google_otp.enroll", "OPTIONAL"),
 					resource.TestCheckResourceAttr(resourceName, "okta_sms.enroll", "OPTIONAL"),
 					resource.TestCheckResourceAttr(resourceName, "okta_email.enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "hotp.enroll", "OPTIONAL"),
 				),
 			},
 		},

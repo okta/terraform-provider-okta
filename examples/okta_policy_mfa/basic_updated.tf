@@ -20,7 +20,11 @@ resource "okta_policy_mfa" "test" {
     enroll = "OPTIONAL"
   }
 
-  depends_on = [okta_factor.google_otp, okta_factor.okta_sms, okta_factor.okta_email]
+  hotp = {
+    enroll = "OPTIONAL"
+  }
+
+  depends_on = [okta_factor.google_otp, okta_factor.okta_sms, okta_factor.okta_email, okta_factor.hotp]
 }
 
 resource "okta_factor" "google_otp" {
@@ -33,4 +37,8 @@ resource "okta_factor" "okta_sms" {
 
 resource "okta_factor" "okta_email" {
   provider_id = "okta_email"
+}
+
+resource "okta_factor" "hotp" {
+  provider_id = "hotp"
 }
