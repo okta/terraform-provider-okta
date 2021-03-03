@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourcePolicyPassword() *schema.Resource {
@@ -199,7 +199,7 @@ func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, m i
 	}
 
 	// Update with upstream state when it is manually updated from Okta UI or API directly.
-	// See https://github.com/oktadeveloper/terraform-provider-okta/issues/61
+	// See https://github.com/okta/terraform-provider-okta/issues/61
 	if policy.Conditions.AuthProvider != nil && policy.Conditions.AuthProvider.Provider != "" {
 		_ = d.Set("auth_provider", policy.Conditions.AuthProvider.Provider)
 	}

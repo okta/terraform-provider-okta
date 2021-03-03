@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 // data source to retrieve information on a Default Policy

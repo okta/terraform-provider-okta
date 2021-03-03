@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/oktadeveloper/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func (adt *AddHeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {

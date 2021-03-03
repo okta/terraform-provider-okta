@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/travis/oktadeveloper/terraform-provider-okta.svg?logo=travis)](https://travis-ci.com/github/oktadeveloper/terraform-provider-okta)
+[![Build Status](https://img.shields.io/travis/okta/terraform-provider-okta.svg?logo=travis)](https://travis-ci.com/github/okta/terraform-provider-okta)
 <br/><br/>
 
 <a href="https://terraform.io">
@@ -18,7 +18,7 @@ This provider is maintained internally by the Okta development team.
 
 All the resources and data sources has [one or more examples](./examples) to give you an idea of how to use this provider to build your 
 own Okta infrastructure. Provider's official documentation is located in the 
-[official terraform registry](https://registry.terraform.io/providers/oktadeveloper/okta/latest/docs), or [here](./website/docs) in form of raw markdown files.
+[official terraform registry](https://registry.terraform.io/providers/okta/okta/latest/docs), or [here](./website/docs) in form of raw markdown files.
 
 # Development Environment Setup
 
@@ -37,7 +37,7 @@ Clone repository to: `$HOME/development/terraform-providers/`
 
 ```sh
 $ mkdir -p $HOME/development/terraform-providers/; cd $HOME/development/terraform-providers/
-$ git clone git@github.com:oktadeveloper/terraform-provider-okta.git
+$ git clone git@github.com:okta/terraform-provider-okta.git
 ...
 ```
 
@@ -66,7 +66,7 @@ $ make test
 
 In order to run the full suite of Acceptance tests, run `make testacc`.
 
-_Note:_ Acceptance tests create real resources, and often cost money to run. Please read [Running an Acceptance Test](https://github.com/oktadeveloper/terraform-provider-okta/blob/master/.github/CONTRIBUTING.md#running-an-acceptance-test) in the contribution guidelines for more information on usage.
+_Note:_ Acceptance tests create real resources, and often cost money to run. Please read [Running an Acceptance Test](https://github.com/okta/terraform-provider-okta/blob/master/.github/CONTRIBUTING.md#running-an-acceptance-test) in the contribution guidelines for more information on usage.
 
 ```sh
 $ make testacc
