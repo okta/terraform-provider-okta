@@ -325,11 +325,10 @@ func resourceAppSaml() *schema.Resource {
 				},
 			},
 			"single_logout_issuer": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "The issuer of the Service Provider that generates the Single Logout request",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
-				RequiredWith:     []string{"single_logout_url", "single_logout_certificate"},
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "The issuer of the Service Provider that generates the Single Logout request",
+				RequiredWith: []string{"single_logout_url", "single_logout_certificate"},
 			},
 			"single_logout_url": {
 				Type:             schema.TypeString,

@@ -97,10 +97,10 @@ func (c *Config) loadAndValidate() error {
 }
 
 func errHandler(resp *http.Response, err error, numTries int) (*http.Response, error) {
-	defer resp.Body.Close()
 	if err != nil {
-		return nil, err
+		return resp, err
 	}
+	defer resp.Body.Close()
 	err = okta.CheckResponseForError(resp)
 	if err != nil {
 		oErr, ok := err.(*okta.Error)
