@@ -166,10 +166,9 @@ func resourceAppOAuth() *schema.Resource {
 				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"login_uri": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "URI that initiates login.",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "URI that initiates login.",
 			},
 			"login_mode": {
 				Type:             schema.TypeString,
