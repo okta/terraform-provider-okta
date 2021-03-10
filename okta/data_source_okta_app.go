@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -41,6 +42,11 @@ func dataSourceApp() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"links": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Discoverable resources related to the app",
+			},
 		},
 	}
 }
@@ -76,5 +82,7 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 	_ = d.Set("label", app.Label)
 	_ = d.Set("name", app.Name)
 	_ = d.Set("status", app.Status)
+	p, _ := json.Marshal(app.Links)
+	_ = d.Set("links", string(p))
 	return nil
 }

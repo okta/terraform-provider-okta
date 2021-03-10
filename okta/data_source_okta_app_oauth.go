@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -125,6 +126,11 @@ func dataSourceAppOauth() *schema.Resource {
 				Computed:    true,
 				Description: "URI to web page providing client policy document.",
 			},
+			"links": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Discoverable resources related to the app",
+			},
 		},
 	}
 }
@@ -198,5 +204,7 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.Errorf("failed to set OAuth application properties: %v", err)
 	}
+	p, _ := json.Marshal(app.Links)
+	_ = d.Set("links", string(p))
 	return nil
 }
