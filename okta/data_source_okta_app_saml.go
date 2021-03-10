@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -272,6 +273,11 @@ func dataSourceAppSaml() *schema.Resource {
 				Computed:    true,
 				Description: "x509 encoded certificate that the Service Provider uses to sign Single Logout requests",
 			},
+			"links": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Discoverable resources related to the app",
+			},
 		},
 	}
 }
@@ -331,5 +337,7 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
+	p, _ := json.Marshal(app.Links)
+	_ = d.Set("links", string(p))
 	return nil
 }
