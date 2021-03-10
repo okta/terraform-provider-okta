@@ -18,6 +18,7 @@ func TestAccOktaAuthServerDefault_crud(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
