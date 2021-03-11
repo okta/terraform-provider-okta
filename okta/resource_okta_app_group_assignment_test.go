@@ -136,7 +136,7 @@ func ensureAppGroupAssignmentExists(name string) resource.TestCheckFunc {
 	}
 }
 
-func ensureAppGroupAssignmentRetained(appName string, groupName string) resource.TestCheckFunc {
+func ensureAppGroupAssignmentRetained(appName, groupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		notFound := "resource not found: %s"
 		// app group assignment has been removed from state, so use app and group to query okta
@@ -158,9 +158,8 @@ func ensureAppGroupAssignmentRetained(appName string, groupName string) resource
 		if err != nil {
 			return err
 		} else if g == nil {
-			return fmt.Errorf("Application Group Assignment not found for app ID, group ID: %s, %s", appID, groupID)
+			return fmt.Errorf("application group assignment not found for app ID, group ID: %s, %s", appID, groupID)
 		}
-
 		return nil
 	}
 }

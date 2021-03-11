@@ -79,7 +79,6 @@ func resourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, m interf
 	}
 
 	_ = d.Set("name", g.Name)
-	// _ = d.Set("type", g.Type)
 	_ = d.Set("status", g.Status)
 	// Just for the sake of safety, should never be nil
 	if g.Conditions != nil && g.Conditions.Expression != nil {

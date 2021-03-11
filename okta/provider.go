@@ -22,7 +22,7 @@ const (
 	appGroupAssignment     = "okta_app_group_assignment"
 	appUser                = "okta_app_user"
 	appOAuth               = "okta_app_oauth"
-	appOAuthApiScope       = "okta_app_oauth_api_scope"
+	appOAuthAPIScope       = "okta_app_oauth_api_scope"
 	appOAuthRedirectURI    = "okta_app_oauth_redirect_uri"
 	appSaml                = "okta_app_saml"
 	appSecurePasswordStore = "okta_app_secure_password_store"
@@ -168,7 +168,7 @@ func Provider() *schema.Provider {
 			appGroupAssignment:     resourceAppGroupAssignment(),
 			appUser:                resourceAppUser(),
 			appOAuth:               resourceAppOAuth(),
-			appOAuthApiScope:       resourceAppOAuthApiScope(),
+			appOAuthAPIScope:       resourceAppOAuthAPIScope(),
 			appOAuthRedirectURI:    resourceAppOAuthRedirectURI(),
 			appSaml:                resourceAppSaml(),
 			appSecurePasswordStore: resourceAppSecurePasswordStore(),

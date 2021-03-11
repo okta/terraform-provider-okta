@@ -478,9 +478,9 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	responseSigned := d.Get("response_signed").(bool)
 	assertionSigned := d.Get("assertion_signed").(bool)
 
-	preconfigName, isPreconfig := d.GetOk("preconfigured_app") // nolint:staticcheck
+	preconfigName, ok := d.GetOk("preconfigured_app")
 
-	if isPreconfig {
+	if ok {
 		app.Name = preconfigName.(string)
 	} else {
 		app.Name = d.Get("name").(string)

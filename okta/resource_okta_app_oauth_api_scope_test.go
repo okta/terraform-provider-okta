@@ -13,10 +13,10 @@ import (
 
 func TestAccAppOAuthApplication_apiScope(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuthApiScope)
+	mgr := newFixtureManager(appOAuthAPIScope)
 	plainConfig := mgr.GetFixtures("basic.tf", ri, t)
 	plainUpdatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.test_app_scopes", appOAuthApiScope)
+	resourceName := fmt.Sprintf("%s.test_app_scopes", appOAuthAPIScope)
 
 	// Replace example org url with actual url to prevent API error
 	config := strings.ReplaceAll(plainConfig, "https://your.okta.org", getOktaDomainName())

@@ -73,10 +73,9 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 		}
 		if filters.Label != "" && appList[0].Label != filters.Label {
 			return diag.Errorf("no application found with provided label: %s", filters.Label)
-		} else {
-			logger(m).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
-			app = appList[0]
 		}
+		logger(m).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
+		app = appList[0]
 	}
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
