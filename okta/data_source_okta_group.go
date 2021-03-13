@@ -58,14 +58,15 @@ func findGroup(ctx context.Context, name string, d *schema.ResourceData, m inter
 	groups, _, err := client.Group.ListGroups(ctx, searchParams)
 	if err != nil {
 		return diag.Errorf("failed to query for groups: %v", err)
-	} else if len(groups) < 1 {
+	} else if len(groups) == 0 {
 		if okType {
 			return diag.Errorf("group with name '%s' and type '%s' does not exist", name, d.Get("type").(string))
 		}
 		return diag.Errorf("group with name '%s' does not exist", name)
 	} else if len(groups) > 1 {
+		// TODO try to find exact match
 		logger(m).Warn("Found multiple groups with the supplied parameters: using the first one which may only be a partial match", "name", groups[0].Profile.Name)
-	} else if len(groups[0].Profile.Name) != len(name) {
+	} else if groups[0].Profile.Name != name {
 		logger(m).Warn("The group with an exact match to the supplied name was not found: using partial match which contains name as a substring", "name", groups[0].Profile.Name)
 	}
 	d.SetId(groups[0].Id)
