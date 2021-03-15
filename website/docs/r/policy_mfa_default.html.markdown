@@ -78,8 +78,8 @@ All MFA settings above have the following structure.
 
 ## Import
 
-An MFA Policy can be imported via the Okta ID.
+Default MFA Policy can be imported without providing Okta ID.
 
 ```
-$ terraform import okta_policy_mfa_default.example <policy id>
+$ terraform import okta_policy_mfa_default.example .
 ```

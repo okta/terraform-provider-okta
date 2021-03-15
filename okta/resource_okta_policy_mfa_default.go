@@ -2,12 +2,10 @@ package okta
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -18,48 +16,32 @@ func resourcePolicyMfaDefault() *schema.Resource {
 		UpdateContext: resourcePolicyMfaDefaultCreateOrUpdate,
 		DeleteContext: resourcePolicyMfaDefaultDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+				_, err := setDefaultPolicy(ctx, d, m, sdk.MfaPolicyType)
+				if err != nil {
+					return nil, err
+				}
+				return []*schema.ResourceData{d}, nil
+			},
 		},
 		Schema: buildDefaultPolicySchema(buildFactorProviders()),
 	}
 }
 
 func resourcePolicyMfaDefaultCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	id, err := setDefaultMFAPolicy(ctx, d, m)
-	if err != nil {
-		return diag.FromErr(err)
+	id := d.Id()
+	if id == "" {
+		policy, err := setDefaultPolicy(ctx, d, m, sdk.MfaPolicyType)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		id = policy.Id
 	}
-	policy, _, err := getSupplementFromMetadata(m).UpdatePolicy(ctx, id, buildDefaultMFAPolicy(d))
+	_, _, err := getSupplementFromMetadata(m).UpdatePolicy(ctx, id, buildDefaultMFAPolicy(d))
 	if err != nil {
 		return diag.Errorf("failed to update default MFA policy: %v", err)
 	}
-	d.SetId(policy.Id)
 	return resourcePolicyMfaDefaultRead(ctx, d, m)
-}
-
-func setDefaultMFAPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) (string, error) {
-	id := d.Id()
-	if id != "" {
-		return id, nil
-	}
-	policy, err := findPolicy(ctx, m, "Default Policy", sdk.MfaPolicyType)
-	if err != nil {
-		return "", err
-	}
-	groups, _, err := getOktaClientFromMetadata(m).Group.ListGroups(ctx, &query.Params{Q: "Everyone"})
-	if err != nil {
-		return "", fmt.Errorf("failed find default group for default MFA policy: %v", err)
-	}
-	for i := range groups {
-		if groups[i].Profile.Name == "Everyone" {
-			_ = d.Set("default_included_group_id", groups[i].Id)
-		}
-	}
-	_ = d.Set("name", policy.Name)
-	_ = d.Set("description", policy.Description)
-	_ = d.Set("status", policy.Status)
-	_ = d.Set("priority", policy.Priority)
-	return policy.Id, nil
 }
 
 func resourcePolicyMfaDefaultRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -85,10 +67,6 @@ func resourcePolicyMfaDefaultRead(ctx context.Context, d *schema.ResourceData, m
 	syncFactor(d, sdk.SymantecVipFactor, policy.Settings.Factors.SymantecVip)
 	syncFactor(d, sdk.YubikeyTokenFactor, policy.Settings.Factors.YubikeyToken)
 	syncFactor(d, sdk.HotpFactor, policy.Settings.Factors.YubikeyToken)
-	_ = d.Set("name", policy.Name)
-	_ = d.Set("description", policy.Description)
-	_ = d.Set("status", policy.Status)
-	_ = d.Set("priority", policy.Priority)
 	return nil
 }
 

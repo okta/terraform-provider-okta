@@ -107,6 +107,28 @@ func findPolicy(ctx context.Context, m interface{}, name, policyType string) (*o
 	return nil, fmt.Errorf("no policies retrieved for policy type '%s' and name '%s'", policyType, name)
 }
 
+func setDefaultPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, policyType string) (*okta.Policy, error) {
+	policy, err := findPolicy(ctx, m, "Default Policy", policyType)
+	if err != nil {
+		return nil, err
+	}
+	groups, _, err := getOktaClientFromMetadata(m).Group.ListGroups(ctx, &query.Params{Q: "Everyone"})
+	if err != nil {
+		return nil, fmt.Errorf("failed find default group for default password policy: %v", err)
+	}
+	for i := range groups {
+		if groups[i].Profile.Name == "Everyone" {
+			_ = d.Set("default_included_group_id", groups[i].Id)
+		}
+	}
+	_ = d.Set("name", policy.Name)
+	_ = d.Set("description", policy.Description)
+	_ = d.Set("status", policy.Status)
+	_ = d.Set("priority", policy.Priority)
+	d.SetId(policy.Id)
+	return policy, nil
+}
+
 func getPeopleConditions(d *schema.ResourceData) *okta.GroupRulePeopleCondition {
 	return &okta.GroupRulePeopleCondition{
 		Groups: &okta.GroupRuleGroupCondition{
