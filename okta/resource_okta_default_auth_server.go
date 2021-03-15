@@ -10,7 +10,7 @@ import (
 func resourceAuthServerDefault() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAuthServerDefaultUpdate,
-		ReadContext:   resourceAuthServerRead,
+		ReadContext:   resourceAuthServerDefaultRead,
 		UpdateContext: resourceAuthServerDefaultUpdate,
 		DeleteContext: resourceAuthServerDefaultDelete,
 		Importer: &schema.ResourceImporter{
@@ -22,12 +22,8 @@ func resourceAuthServerDefault() *schema.Resource {
 				Optional:    true,
 				Description: "Currently Okta only supports a single value here",
 				Elem:        &schema.Schema{Type: schema.TypeString},
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					if old == new {
-						return true
-					}
-					_, ok := d.GetOk("audiences")
-					return ok && (new == "0" || new == "") && old != ""
+				DefaultFunc: func() (interface{}, error) {
+					return []interface{}{"api://default"}, nil
 				},
 			},
 			"status": statusSchema,
@@ -48,18 +44,12 @@ func resourceAuthServerDefault() *schema.Resource {
 				Optional:         true,
 				ValidateDiagFunc: stringInSlice([]string{"AUTO", "MANUAL"}),
 				Description:      "Credential rotation mode, in many cases you cannot set this to MANUAL, the API will ignore the value and you will get a perpetual diff. This should rarely be used.",
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					_, ok := d.GetOk("credentials_rotation_mode")
-					return new == "" && ok
-				},
+				Default:          "MANUAL",
 			},
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					_, ok := d.GetOk("description")
-					return new == "" && ok
-				},
+				Default:  "Default Authorization Server for your Applications",
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -125,18 +115,9 @@ func resourceAuthServerDefaultUpdate(ctx context.Context, d *schema.ResourceData
 			}
 		}
 	}
-	ok := d.HasChange("audiences")
-	if ok {
-		authServer.Audiences = convertInterfaceToStringSet(d.Get("audiences"))
-	}
-	ok = d.HasChange("credentials_rotation_mode")
-	if ok {
-		authServer.Credentials.Signing.RotationMode = d.Get("credentials_rotation_mode").(string)
-	}
-	ok = d.HasChange("description")
-	if ok {
-		authServer.Description = d.Get("description").(string)
-	}
+	authServer.Audiences = convertInterfaceToStringSet(d.Get("audiences"))
+	authServer.Credentials.Signing.RotationMode = d.Get("credentials_rotation_mode").(string)
+	authServer.Description = d.Get("description").(string)
 	authServer.Name = d.Get("name").(string)
 	_, _, err = getOktaClientFromMetadata(m).AuthorizationServer.UpdateAuthorizationServer(ctx, id, *authServer)
 	if err != nil {

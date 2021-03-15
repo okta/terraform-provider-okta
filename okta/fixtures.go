@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 )
@@ -19,10 +17,9 @@ const uuidPattern = "replace_with_uuid"
 
 // newFixtureManager get a new fixture manager for a particular resource.
 func newFixtureManager(resourceName string) *fixtureManager {
-	_, filename, _, _ := runtime.Caller(0)
-	exPath := filepath.Dir(filename)
+	dir, _ := os.Getwd()
 	return &fixtureManager{
-		Path: path.Join(exPath, "../examples", resourceName),
+		Path: path.Join(dir, "../examples", resourceName),
 	}
 }
 

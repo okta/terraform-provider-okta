@@ -31,19 +31,18 @@ var validScopes = []string{
 	"okta.policies.manage", "okta.policies.read",
 }
 
-func resourceAppOAuthApiScope() *schema.Resource {
+func resourceAppOAuthAPIScope() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceAppOAuthApiScopeCreate,
-		ReadContext:   resourceAppOAuthApiScopeRead,
-		UpdateContext: resourceAppOAuthApiScopeUpdate,
-		DeleteContext: resourceAppOAuthApiScopeDelete,
+		CreateContext: resourceAppOAuthAPIScopeCreate,
+		ReadContext:   resourceAppOAuthAPIScopeRead,
+		UpdateContext: resourceAppOAuthAPIScopeUpdate,
+		DeleteContext: resourceAppOAuthAPIScopeDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				scopes, _, err := getOktaClientFromMetadata(m).Application.ListScopeConsentGrants(ctx, d.Id(), nil)
 				if err != nil {
 					return nil, err
 				}
-
 				_ = d.Set("app_id", d.Id())
 				if len(scopes) > 0 {
 					// Assume issuer is the same for all granted scopes, taking the first
@@ -51,10 +50,10 @@ func resourceAppOAuthApiScope() *schema.Resource {
 				} else {
 					return nil, errors.New("no application scope found")
 				}
-				if err = setOAuthApiScopes(d, scopes); err != nil {
+				err = setOAuthApiScopes(d, scopes)
+				if err != nil {
 					return nil, err
 				}
-
 				return []*schema.ResourceData{d}, nil
 			},
 		},
@@ -84,7 +83,7 @@ func resourceAppOAuthApiScope() *schema.Resource {
 	}
 }
 
-func resourceAppOAuthApiScopeCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppOAuthAPIScopeCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	scopes := make([]string, 0)
 
 	for _, scope := range d.Get("scopes").([]interface{}) {
@@ -96,10 +95,10 @@ func resourceAppOAuthApiScopeCreate(ctx context.Context, d *schema.ResourceData,
 		return diag.Errorf("failed to create application scope consent grant: %v", err)
 	}
 
-	return resourceAppOAuthApiScopeRead(ctx, d, m)
+	return resourceAppOAuthAPIScopeRead(ctx, d, m)
 }
 
-func resourceAppOAuthApiScopeRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppOAuthAPIScopeRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	scopes, _, err := getOktaClientFromMetadata(m).Application.ListScopeConsentGrants(ctx, d.Get("app_id").(string), nil)
 	if err != nil {
 		return diag.Errorf("failed to get application scope consent grants: %v", err)
@@ -118,7 +117,7 @@ func resourceAppOAuthApiScopeRead(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func resourceAppOAuthApiScopeUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppOAuthAPIScopeUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	scopes, _, err := getOktaClientFromMetadata(m).Application.ListScopeConsentGrants(ctx, d.Get("app_id").(string), nil)
 	if err != nil {
 		return diag.Errorf("failed to get application scope consent grants: %v", err)
@@ -145,10 +144,10 @@ func resourceAppOAuthApiScopeUpdate(ctx context.Context, d *schema.ResourceData,
 		return diag.Errorf("failed to revoke application scope consent grant: %v", err)
 	}
 
-	return resourceAppOAuthApiScopeRead(ctx, d, m)
+	return resourceAppOAuthAPIScopeRead(ctx, d, m)
 }
 
-func resourceAppOAuthApiScopeDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppOAuthAPIScopeDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	scopeMap, err := getOAuthApiScopeIdMap(ctx, d, m)
 	if err != nil {
 		return diag.Errorf("failed to get application scope consent grant: %v", err)
@@ -168,7 +167,7 @@ func resourceAppOAuthApiScopeDelete(ctx context.Context, d *schema.ResourceData,
 
 // Resource Helpers
 // Creates a new OAuth2ScopeConsentGrant struct
-func newOAuthApiScope(scopeId string, issuer string) *okta.OAuth2ScopeConsentGrant {
+func newOAuthApiScope(scopeId, issuer string) *okta.OAuth2ScopeConsentGrant {
 	return &okta.OAuth2ScopeConsentGrant{
 		Issuer:  issuer,
 		ScopeId: scopeId,

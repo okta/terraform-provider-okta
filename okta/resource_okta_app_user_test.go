@@ -160,7 +160,7 @@ func checkAppUserDestroy(s *terraform.State) error {
 	return nil
 }
 
-func ensureAppUserRetained(appName string, userName string) resource.TestCheckFunc {
+func ensureAppUserRetained(appName, userName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		notFound := "resource not found: %s"
 		// app user has been removed from state, so use app and user to query okta

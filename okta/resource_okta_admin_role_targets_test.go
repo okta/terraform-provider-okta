@@ -64,26 +64,27 @@ func doesTargetExists() func(string) (bool, error) {
 			return false, fmt.Errorf("failed to get list of roles associated with the user: %v", err)
 		}
 		for i := range roles {
-			if roles[i].Type == parts[1] {
-				apps, _, err := getOktaClientFromMetadata(testAccProvider.Meta()).User.
-					ListApplicationTargetsForApplicationAdministratorRoleForUser(
-						context.Background(), parts[0], roles[i].Id, nil)
-				if err != nil {
-					return false, fmt.Errorf("failed to read app targets: %v", err)
-				}
-				if len(apps) > 0 {
-					return true, nil
-				}
-				groups, _, err := getOktaClientFromMetadata(testAccProvider.Meta()).User.
-					ListGroupTargetsForRole(context.Background(), parts[0], roles[i].Id, nil)
-				if err != nil {
-					return false, fmt.Errorf("failed to read group targets: %v", err)
-				}
-				if len(groups) > 0 {
-					return true, nil
-				}
-				break
+			if roles[i].Type != parts[1] {
+				continue
 			}
+			apps, _, err := getOktaClientFromMetadata(testAccProvider.Meta()).User.
+				ListApplicationTargetsForApplicationAdministratorRoleForUser(
+					context.Background(), parts[0], roles[i].Id, nil)
+			if err != nil {
+				return false, fmt.Errorf("failed to read app targets: %v", err)
+			}
+			if len(apps) > 0 {
+				return true, nil
+			}
+			groups, _, err := getOktaClientFromMetadata(testAccProvider.Meta()).User.
+				ListGroupTargetsForRole(context.Background(), parts[0], roles[i].Id, nil)
+			if err != nil {
+				return false, fmt.Errorf("failed to read group targets: %v", err)
+			}
+			if len(groups) > 0 {
+				return true, nil
+			}
+			break
 		}
 		return false, nil
 	}

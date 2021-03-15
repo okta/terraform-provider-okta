@@ -34,6 +34,16 @@ func TestAccOktaAuthServerDefault_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, authServerExists),
+					resource.TestCheckResourceAttr(resourceName, "description", "Default Authorization Server"),
+					resource.TestCheckResourceAttr(resourceName, "name", "default"),
+					resource.TestCheckResourceAttr(resourceName, "audiences.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_rotation_mode", "MANUAL"),
+				),
+			},
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, authServerExists),
 					resource.TestCheckResourceAttr(resourceName, "description", "Default Authorization Server for your Applications"),
 					resource.TestCheckResourceAttr(resourceName, "name", "default"),
 					resource.TestCheckResourceAttr(resourceName, "audiences.#", "1"),

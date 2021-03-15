@@ -216,19 +216,13 @@ func fetchAppByID(ctx context.Context, id string, m interface{}, app okta.App) e
 	_, resp, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, id, app, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation.
 	// Check if app's ID is set to ensure that app exists
-	if err := suppressErrorOn404(resp, err); err != nil {
-		return err
-	}
-	return nil
+	return suppressErrorOn404(resp, err)
 }
 
 func updateAppByID(ctx context.Context, id string, m interface{}, app okta.App) error {
 	_, resp, err := getOktaClientFromMetadata(m).Application.UpdateApplication(ctx, id, app)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
-	if err := suppressErrorOn404(resp, err); err != nil {
-		return err
-	}
-	return nil
+	return suppressErrorOn404(resp, err)
 }
 
 func handleAppGroups(ctx context.Context, id string, d *schema.ResourceData, client *okta.Client) []func() error {

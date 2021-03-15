@@ -307,7 +307,7 @@ func addGroupTargetsToRole(ctx context.Context, client *okta.Client, groupID, ro
 	return nil
 }
 
-func removeGroupTargetsFromRole(ctx context.Context, client *okta.Client, groupID string, roleID string, groupTargets []string) error {
+func removeGroupTargetsFromRole(ctx context.Context, client *okta.Client, groupID, roleID string, groupTargets []string) error {
 	for i := range groupTargets {
 		_, err := client.Group.RemoveGroupTargetFromGroupAdministratorRoleGivenToGroup(ctx, groupID, roleID, groupTargets[i])
 		if err != nil {
