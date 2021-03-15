@@ -52,7 +52,9 @@ const (
 	oktaProfileMapping     = "okta_profile_mapping"
 	oktaUser               = "okta_user"
 	policyMfa              = "okta_policy_mfa"
+	policyMfaDefault       = "okta_policy_mfa_default"
 	policyPassword         = "okta_policy_password"
+	policyPasswordDefault  = "okta_policy_password_default"
 	policyRuleIdpDiscovery = "okta_policy_rule_idp_discovery"
 	policyRuleMfa          = "okta_policy_rule_mfa"
 	policyRulePassword     = "okta_policy_rule_password"
@@ -198,7 +200,9 @@ func Provider() *schema.Provider {
 			oktaProfileMapping:     resourceOktaProfileMapping(),
 			oktaUser:               resourceUser(),
 			policyMfa:              resourcePolicyMfa(),
+			policyMfaDefault:       resourcePolicyMfaDefault(),
 			policyPassword:         resourcePolicyPassword(),
+			policyPasswordDefault:  resourcePolicyPasswordDefault(),
 			policySignOn:           resourcePolicySignOn(),
 			policyRuleIdpDiscovery: resourcePolicyRuleIdpDiscovery(),
 			policyRuleMfa:          resourcePolicyMfaRule(),

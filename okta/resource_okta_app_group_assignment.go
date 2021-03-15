@@ -39,7 +39,6 @@ func resourceAppGroupAssignment() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-
 		Schema: map[string]*schema.Schema{
 			"app_id": {
 				Type:        schema.TypeString,
