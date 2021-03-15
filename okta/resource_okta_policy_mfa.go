@@ -25,7 +25,7 @@ func resourcePolicyMfa() *schema.Resource {
 }
 
 func resourcePolicyMfaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	policy := buildMfaPolicy(d)
+	policy := buildMFAPolicy(d)
 	err := createPolicy(ctx, d, m, policy)
 	if err != nil {
 		return diag.Errorf("failed to create MFA policy: %v", err)
@@ -64,7 +64,7 @@ func resourcePolicyMfaRead(ctx context.Context, d *schema.ResourceData, m interf
 }
 
 func resourcePolicyMfaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	policy := buildMfaPolicy(d)
+	policy := buildMFAPolicy(d)
 	err := updatePolicy(ctx, d, m, policy)
 	if err != nil {
 		return diag.Errorf("failed to update MFA policy: %v", err)
@@ -97,8 +97,8 @@ func buildFactorProvider(d *schema.ResourceData, key string) *sdk.PolicyFactor {
 	return f
 }
 
-// create or update a password policy
-func buildMfaPolicy(d *schema.ResourceData) sdk.Policy {
+// create or update a MFA policy
+func buildMFAPolicy(d *schema.ResourceData) sdk.Policy {
 	policy := sdk.MfaPolicy()
 	policy.Name = d.Get("name").(string)
 	policy.Status = d.Get("status").(string)
@@ -163,18 +163,7 @@ var factorProviders = []string{
 func buildFactorProviders() map[string]*schema.Schema {
 	res := make(map[string]*schema.Schema)
 	for _, key := range factorProviders {
-		sMap := getPolicyFactorSchema(key)
-		for nestedKey, nestedVal := range sMap {
-			res[nestedKey] = nestedVal
-		}
-	}
-	return res
-}
-
-func getPolicyFactorSchema(key string) map[string]*schema.Schema {
-	// These are primitives to allow defaulting. Terraform still does not support aggregate defaults.
-	return map[string]*schema.Schema{
-		key: {
+		res[key] = &schema.Schema{
 			Optional: true,
 			Type:     schema.TypeMap,
 			Elem: &schema.Schema{
@@ -200,6 +189,7 @@ func getPolicyFactorSchema(key string) map[string]*schema.Schema {
 				}
 				return errs
 			},
-		},
+		}
 	}
+	return res
 }

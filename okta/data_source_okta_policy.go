@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -16,7 +15,7 @@ func dataSourcePolicy() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
-				Description: "name of policy",
+				Description: "Name of policy",
 				Required:    true,
 			},
 			"type": {
@@ -35,20 +34,10 @@ func dataSourcePolicy() *schema.Resource {
 }
 
 func dataSourcePolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return setPolicyByName(ctx, d, m, d.Get("name").(string))
-}
-
-func setPolicyByName(ctx context.Context, d *schema.ResourceData, m interface{}, name string) diag.Diagnostics {
-	policyType := d.Get("type").(string)
-	policies, _, err := getOktaClientFromMetadata(m).Policy.ListPolicies(ctx, &query.Params{Type: policyType})
+	policy, err := findPolicy(ctx, m, d.Get("name").(string), d.Get("type").(string))
 	if err != nil {
-		return diag.Errorf("failed to list policies: %v", err)
+		return diag.FromErr(err)
 	}
-	for _, policy := range policies {
-		if policy.Name == name {
-			d.SetId(policy.Id)
-			return nil
-		}
-	}
-	return diag.Errorf("no policies retrieved for policy type %s, name %s", policyType, name)
+	d.SetId(policy.Id)
+	return nil
 }
