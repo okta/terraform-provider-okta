@@ -10,12 +10,12 @@ resource "okta_user" "test" {
 }
 
 ## Test Case
-resource "okta_group" "test" {
-  name        = "testAcc_replace_with_uuid"
+resource "okta_group" "test_2" {
+  name        = "testAcc_2_replace_with_uuid"
   description = "testing, testing"
 }
 
-resource "okta_group_membership" "test" {
-  group_id = okta_group.test.id
+resource "okta_group_membership" "test_2" {
+  group_id = okta_group.test_2.id
   user_id  = okta_user.test.id
 }
