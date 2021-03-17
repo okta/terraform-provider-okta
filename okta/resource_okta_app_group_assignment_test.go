@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"testing"
 
@@ -12,6 +13,7 @@ import (
 
 func TestAccAppGroupAssignment_crud(t *testing.T) {
 	ri := acctest.RandInt()
+	resourceName := fmt.Sprintf("%s.test", appGroupAssignment)
 	resourceName0 := fmt.Sprintf("%s.test.0", appGroupAssignment)
 	resourceName1 := fmt.Sprintf("%s.test.1", appGroupAssignment)
 	mgr := newFixtureManager(appGroupAssignment)
@@ -67,6 +69,26 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName1, "priority", "1"),
 					resource.TestCheckResourceAttr(resourceName1, "profile", "{}"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName0]
+					if !ok {
+						return "", fmt.Errorf("failed to find %s", resourceName)
+					}
+					appID := rs.Primary.Attributes["app_id"]
+					groupID := rs.Primary.Attributes["group_id"]
+					return fmt.Sprintf("%s/%s", appID, groupID), nil
+				},
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import schema into state")
+					}
+					return nil
+				},
 			},
 		},
 	})
