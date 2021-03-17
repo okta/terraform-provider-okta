@@ -23,19 +23,15 @@ func resourceAppGroupAssignment() *schema.Resource {
 				if len(parts) != 2 {
 					return nil, errors.New("invalid resource import specifier. Use: terraform import <app_id>/<group_id>")
 				}
-
 				_ = d.Set("app_id", parts[0])
 				_ = d.Set("group_id", parts[1])
 				_ = d.Set("retain_assignment", false)
-
 				assignment, _, err := getOktaClientFromMetadata(m).Application.
 					GetApplicationGroupAssignment(ctx, parts[0], parts[1], nil)
 				if err != nil {
 					return nil, err
 				}
-
 				d.SetId(assignment.Id)
-
 				return []*schema.ResourceData{d}, nil
 			},
 		},
@@ -55,6 +51,10 @@ func resourceAppGroupAssignment() *schema.Resource {
 			"priority": {
 				Type:     schema.TypeInt,
 				Optional: true,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					p, n := d.GetChange("priority")
+					return p == n && new == "0"
+				},
 			},
 			"profile": {
 				Type:             schema.TypeString,
