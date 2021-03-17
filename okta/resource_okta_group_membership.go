@@ -100,8 +100,11 @@ func resourceGroupMembershipDelete(ctx context.Context, d *schema.ResourceData, 
 
 func checkIfUserInGroup(ctx context.Context, client *okta.Client, groupId, userId string) (bool, error) {
 	users, resp, err := client.Group.ListGroupUsers(ctx, groupId, &query.Params{Limit: defaultPaginationLimit})
+	groupExists, err := doesResourceExist(resp, err)
 	if err != nil {
 		return false, err
+	} else if !groupExists {
+		return false, nil
 	}
 	for {
 		for _, user := range users {
