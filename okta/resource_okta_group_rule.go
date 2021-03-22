@@ -43,6 +43,11 @@ func resourceGroupRule() *schema.Resource {
 				Required: true,
 			},
 			"status": statusSchema,
+			"remove_assigned_users": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Remove users added by this rule from the assigned group after deleting this resource",
+			},
 		},
 		CustomizeDiff: customdiff.ForceNewIf("status", func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
 			g, _, _ := getOktaClientFromMetadata(meta).Group.GetGroupRule(ctx, d.Id(), nil)
@@ -148,7 +153,11 @@ func resourceGroupRuleDelete(ctx context.Context, d *schema.ResourceData, m inte
 			return diag.Errorf("failed to deactivate group rule before removing: %v", err)
 		}
 	}
-	_, err := client.Group.DeleteGroupRule(ctx, d.Id())
+	id := d.Id()
+	if d.Get("remove_assigned_users").(bool) {
+		id += "?removeUsers=true"
+	}
+	_, err := client.Group.DeleteGroupRule(ctx, id)
 	if err != nil {
 		return diag.Errorf("failed to delete group rule: %v", err)
 	}
