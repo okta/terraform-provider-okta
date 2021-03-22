@@ -3,7 +3,7 @@ module github.com/okta/terraform-provider-okta
 go 1.15
 
 require (
-	github.com/bflad/tfproviderlint v0.22.0
+	github.com/bflad/tfproviderlint v0.23.0
 	github.com/cenkalti/backoff/v4 v4.1.0
 	github.com/client9/misspell v0.3.4
 	github.com/crewjam/saml v0.4.5
