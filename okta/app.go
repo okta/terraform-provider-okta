@@ -269,9 +269,7 @@ func listApplicationGroupAssignments(ctx context.Context, client *okta.Client, i
 		return nil, err
 	}
 	for {
-		for _, group := range groups {
-			resGroups = append(resGroups, group)
-		}
+		resGroups = append(resGroups, groups...)
 		if resp.HasNextPage() {
 			resp, err = resp.Next(ctx, &groups)
 			if err != nil {
@@ -400,9 +398,7 @@ func listApplicationUsers(ctx context.Context, client *okta.Client, id string) (
 		return nil, err
 	}
 	for {
-		for _, group := range users {
-			resUsers = append(resUsers, group)
-		}
+		resUsers = append(resUsers, users...)
 		if resp.HasNextPage() {
 			resp, err = resp.Next(ctx, &users)
 			if err != nil {
