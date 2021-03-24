@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
+	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -118,7 +120,20 @@ func resourceGroupRoleCreate(ctx context.Context, d *schema.ResourceData, m inte
 		}
 	}
 	d.SetId(role.Id)
-	return resourceGroupRoleRead(ctx, d, m)
+	bOff := backoff.NewExponentialBackOff()
+	bOff.MaxElapsedTime = time.Second * 10
+	bOff.InitialInterval = time.Second
+	err = backoff.Retry(func() error {
+		err := resourceGroupRoleRead(ctx, d, m)
+		if err != nil {
+			return backoff.Permanent(fmt.Errorf("%s", err[0].Summary))
+		}
+		if d.Id() != "" {
+			return nil
+		}
+		return fmt.Errorf("role %s was not assigned to a group %s", roleType, groupID)
+	}, bOff)
+	return diag.FromErr(err)
 }
 
 func resourceGroupRoleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
