@@ -28,7 +28,7 @@ resource "okta_auth_server_claim" "example" {
 
 The following arguments are supported:
 
-- `auth_server_id` - (Required) The Application's display name.
+- `auth_server_id` - (Required) ID of the authorization server.
 
 - `name` - (Required) The name of the claim.
 

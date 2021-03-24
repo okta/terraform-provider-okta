@@ -76,7 +76,7 @@ func resourceAuthServerClaimCreate(ctx context.Context, d *schema.ResourceData, 
 func resourceAuthServerClaimRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	claim, resp, err := getOktaClientFromMetadata(m).AuthorizationServer.GetOAuth2Claim(ctx, d.Get("auth_server_id").(string), d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
-		return diag.Errorf("failed to get auth server: %v", err)
+		return diag.Errorf("failed to get auth server claim: %v", err)
 	}
 	if claim == nil {
 		d.SetId("")

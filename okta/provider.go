@@ -33,6 +33,7 @@ const (
 	authServer             = "okta_auth_server"
 	authServerDefault      = "okta_auth_server_default"
 	authServerClaim        = "okta_auth_server_claim"
+	authServerClaimDefault = "okta_auth_server_claim_default"
 	authServerPolicy       = "okta_auth_server_policy"
 	authServerPolicyRule   = "okta_auth_server_policy_rule"
 	authServerScope        = "okta_auth_server_scope"
@@ -181,6 +182,7 @@ func Provider() *schema.Provider {
 			authServer:             resourceAuthServer(),
 			authServerDefault:      resourceAuthServerDefault(),
 			authServerClaim:        resourceAuthServerClaim(),
+			authServerClaimDefault: resourceAuthServerClaimDefault(),
 			authServerPolicy:       resourceAuthServerPolicy(),
 			authServerPolicyRule:   resourceAuthServerPolicyRule(),
 			authServerScope:        resourceAuthServerScope(),
