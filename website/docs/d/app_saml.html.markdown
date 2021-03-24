@@ -8,7 +8,7 @@ description: |-
 
 # okta_app_saml
 
-Use this data source to retrieve the collaborators for a given repository.
+Use this data source to retrieve an SAML application from Okta.
 
 ## Example Usage
 
@@ -20,9 +20,12 @@ data "okta_app_saml" "example" {
 
 ## Arguments Reference
 
-- `label` - (Optional) The label of the app to retrieve, conflicts with `label_prefix` and `id`.
+- `label` - (Optional) The label of the app to retrieve, conflicts with `label_prefix` and `id`. Label uses
+  the `?q=<label>` query parameter exposed by Okta's API. It should be noted that at this time this searches both `name`
+  and `label`. This is used to avoid paginating through all applications.
 
-- `label_prefix` - (Optional) Label prefix of the app to retrieve, conflicts with `label` and `id`. This will tell the provider to do a `starts with` query as opposed to an `equals` query.
+- `label_prefix` - (Optional) Label prefix of the app to retrieve, conflicts with `label` and `id`. This will tell the
+  provider to do a `starts with` query as opposed to an `equals` query.
 
 - `id` - (Optional) `id` of application to retrieve, conflicts with `label` and `label_prefix`.
 
@@ -76,7 +79,8 @@ data "okta_app_saml" "example" {
 
 - `honor_force_authn` - Prompt user to re-authenticate if SP asks for it.
 
-- `authn_context_class_ref` - Identifies the SAML authentication context class for the assertion’s authentication statement.
+- `authn_context_class_ref` - Identifies the SAML authentication context class for the assertion’s authentication
+  statement.
 
 - `accessibility_self_service` - Enable self-service.
 
@@ -97,15 +101,21 @@ data "okta_app_saml" "example" {
 - `acs_endpoints` - An array of ACS endpoints. You can configure a maximum of 100 endpoints.
 
 - `attribute_statements` - List of SAML Attribute statements.
-  - `name` - The name of the attribute statement.
-  - `filter_type` - Type of group attribute filter.
-  - `filter_value` - Filter value to use.
-  - `namespace` - The attribute namespace.
-  - `type` - The type of attribute statement value.
-  - `values` - Array of values to use.
+    - `name` - The name of the attribute statement.
+    - `filter_type` - Type of group attribute filter.
+    - `filter_value` - Filter value to use.
+    - `namespace` - The attribute namespace.
+    - `type` - The type of attribute statement value.
+    - `values` - Array of values to use.
 
 - `single_logout_issuer` - The issuer of the Service Provider that generates the Single Logout request.
 
 - `single_logout_url` - The location where the logout response is sent.
 
 - `single_logout_certificate` - x509 encoded certificate that the Service Provider uses to sign Single Logout requests.
+
+- `links` - Generic JSON containing discoverable resources related to the app
+
+- `users` - List of users IDs assigned to the application.
+
+- `groups` - List of groups IDs assigned to the application.

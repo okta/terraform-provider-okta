@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
@@ -13,9 +14,14 @@ func dataSourceGroup() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceGroupRead,
 		Schema: map[string]*schema.Schema{
+			"id": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"name", "type"},
+			},
 			"name": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"type": {
 				Type:             schema.TypeString,
@@ -48,44 +54,49 @@ func dataSourceGroupRead(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 func findGroup(ctx context.Context, name string, d *schema.ResourceData, m interface{}, isEveryone bool) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
-	searchParams := &query.Params{Q: name}
-	t, okType := d.GetOk("type")
-	if okType {
-		searchParams.Filter = fmt.Sprintf("type eq \"%s\"", t.(string))
-	}
-	logger(m).Info("looking for data source group", "query", searchParams.String())
-	groups, _, err := client.Group.ListGroups(ctx, searchParams)
-	switch {
-	case err != nil:
-		return diag.Errorf("failed to query for groups: %v", err)
-	case len(groups) < 1:
+	var group *okta.Group
+	id := d.Get("id").(string)
+	if id != "" {
+		respGroup, _, err := getOktaClientFromMetadata(m).Group.GetGroup(ctx, id)
+		if err != nil {
+			return diag.Errorf("failed get group by ID: %v", err)
+		}
+		group = respGroup
+	} else {
+		client := getOktaClientFromMetadata(m)
+		searchParams := &query.Params{Q: name, Limit: 1}
+		t, okType := d.GetOk("type")
 		if okType {
-			return diag.Errorf("group with name '%s' and type '%s' does not exist", name, d.Get("type").(string))
+			searchParams.Filter = fmt.Sprintf("type eq \"%s\"", t.(string))
 		}
-		return diag.Errorf("group with name '%s' does not exist", name)
-	case len(groups) > 1:
-		// TODO try to find exact match
-		logger(m).Warn("Found multiple groups with the supplied parameters: using the first one which may only be a partial match", "name", groups[0].Profile.Name)
-	case len(groups[0].Profile.Name) != len(name):
-		logger(m).Warn("The group with an exact match to the supplied name was not found: using partial match which contains name as a substring", "name", groups[0].Profile.Name)
+		logger(m).Info("looking for data source group", "query", searchParams.String())
+		groups, _, err := client.Group.ListGroups(ctx, searchParams)
+		switch {
+		case err != nil:
+			return diag.Errorf("failed to query for groups: %v", err)
+		case len(groups) < 1:
+			if okType {
+				return diag.Errorf("group with name '%s' and type '%s' does not exist", name, d.Get("type").(string))
+			}
+			return diag.Errorf("group with name '%s' does not exist", name)
+		case groups[0].Profile.Name != name:
+			logger(m).Warn("group with exact name match was not found: using partial match which contains name as a substring", "name", groups[0].Profile.Name)
+		}
+		group = groups[0]
 	}
-	d.SetId(groups[0].Id)
-	_ = d.Set("description", groups[0].Profile.Description)
+	d.SetId(group.Id)
+	_ = d.Set("description", group.Profile.Description)
 	if !isEveryone {
-		_ = d.Set("type", groups[0].Type)
+		_ = d.Set("type", group.Type)
+		_ = d.Set("name", group.Profile.Name)
 	}
-	if d.Get("include_users").(bool) {
-		userIDList, err := listGroupUserIDs(ctx, m, d.Id())
-		if err != nil {
-			return diag.Errorf("failed to list group user IDs: %v", err)
-		}
-		// just user ids for now
-		err = d.Set("users", convertStringSetToInterface(userIDList))
-		if err != nil {
-			return diag.FromErr(err)
-		}
+	if !d.Get("include_users").(bool) {
 		return nil
 	}
+	userIDList, err := listGroupUserIDs(ctx, m, d.Id())
+	if err != nil {
+		return diag.Errorf("failed to list group user IDs: %v", err)
+	}
+	_ = d.Set("users", convertStringSetToInterface(userIDList))
 	return nil
 }
