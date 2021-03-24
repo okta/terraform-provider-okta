@@ -177,7 +177,31 @@ func resourceAuthServerPolicyRuleUpdate(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		return diag.Errorf("failed to update auth server policy rule: %v", err)
 	}
+	if d.HasChange("status") {
+		err := handleAuthServerPolicyRuleLifecycle(ctx, d, m)
+		if err != nil {
+			return err
+		}
+	}
 	return resourceAuthServerPolicyRuleRead(ctx, d, m)
+}
+
+func handleAuthServerPolicyRuleLifecycle(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	client := getSupplementFromMetadata(m)
+	if d.Get("status").(string) == statusActive {
+		_, err := client.ActivateAuthorizationServerPolicyRule(ctx, d.Get("auth_server_id").(string),
+			d.Get("policy_id").(string), d.Id())
+		if err != nil {
+			return diag.Errorf("failed to activate authorization server: %v", err)
+		}
+		return nil
+	}
+	_, err := client.DeactivateAuthorizationServerPolicyRule(ctx, d.Get("auth_server_id").(string),
+		d.Get("policy_id").(string), d.Id())
+	if err != nil {
+		return diag.Errorf("failed to deactivate authorization server: %v", err)
+	}
+	return nil
 }
 
 func resourceAuthServerPolicyRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
