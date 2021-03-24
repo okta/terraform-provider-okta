@@ -1,9 +1,6 @@
 ---
-layout: 'okta'
-page_title: 'Okta: okta_group_rule'
-sidebar_current: 'docs-okta-resource-group-rule'
-description: |-
-  Creates an Okta Group Rule.
+layout: 'okta' page_title: 'Okta: okta_group_rule' sidebar_current: 'docs-okta-resource-group-rule' description: |-
+Creates an Okta Group Rule.
 ---
 
 # okta_group_rule
@@ -18,7 +15,8 @@ This resource allows you to create and configure an Okta Group Rule.
 resource "okta_group_rule" "example" {
   name              = "example"
   status            = "ACTIVE"
-  group_assignments = ["<group id>"]
+  group_assignments = [
+    "<group id>"]
   expression_type   = "urn:okta:expression:1.0"
   expression_value  = "String.startsWith(user.firstName,\"andy\")"
 }
@@ -32,11 +30,15 @@ The following arguments are supported:
 
 - `group_assignments` - (Required) The list of group ids to assign the users to.
 
-- `expression_type` - (Optional) The expression type to use to invoke the rule. The default is `"urn:okta:expression:1.0"`.
+- `expression_type` - (Optional) The expression type to use to invoke the rule. The default
+  is `"urn:okta:expression:1.0"`.
 
 - `expression_value` - (Required) The expression value.
 
 - `status` - (Optional) The status of the group rule.
+
+- `remove_assigned_users` - (Optional) This tells the provider to remove users added by this rule from the assigned
+  group after destroying this resource. Default is `false`.
 
 ## Attributes Reference
 
