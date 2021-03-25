@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -61,6 +62,10 @@ func resourcePolicyRuleIdpDiscovery() *schema.Resource {
 }
 
 func resourcePolicyRuleIdpDiscoveryCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validatePolicyRuleIdpDiscovery(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	logger(m).Info("creating IdP discovery policy rule", "policy_id", d.Get("policyid").(string))
 	newRule := buildIdpDiscoveryRule(d)
 	rule, _, err := getSupplementFromMetadata(m).CreateIdpDiscoveryRule(ctx, d.Get("policyid").(string), *newRule, nil)
@@ -106,6 +111,10 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 }
 
 func resourcePolicyRuleIdpDiscoveryUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validatePolicyRuleIdpDiscovery(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	logger(m).Info("updating IdP discovery policy rule", "id", d.Id(), "policy_id", d.Get("policyid").(string))
 	newRule := buildIdpDiscoveryRule(d)
 	rule, _, err := getSupplementFromMetadata(m).UpdateIdpDiscoveryRule(ctx, d.Get("policyid").(string), d.Id(), *newRule, nil)
@@ -173,74 +182,72 @@ func buildIdpDiscoveryRule(d *schema.ResourceData) *sdk.IdpDiscoveryRule {
 		Name:   d.Get("name").(string),
 		Status: d.Get("status").(string),
 	}
-
 	if priority, ok := d.GetOk("priority"); ok {
 		rule.Priority = priority.(int)
 	}
-
 	return rule
 }
 
-var platformIncludeResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"type": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          "ANY",
-			ValidateDiagFunc: stringInSlice([]string{"ANY", "MOBILE", "DESKTOP"}),
+var (
+	platformIncludeResource = &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"type": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Default:          "ANY",
+				ValidateDiagFunc: stringInSlice([]string{"ANY", "MOBILE", "DESKTOP"}),
+			},
+			"os_type": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Default:          "ANY",
+				ValidateDiagFunc: stringInSlice([]string{"ANY", "IOS", "WINDOWS", "ANDROID", "OTHER", "OSX"}),
+			},
+			"os_expression": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Only available with OTHER OS type",
+			},
 		},
-		"os_type": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          "ANY",
-			ValidateDiagFunc: stringInSlice([]string{"ANY", "IOS", "WINDOWS", "ANDROID", "OTHER", "OSX"}),
-		},
-		"os_expression": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Description: "Only available with OTHER OS type",
-		},
-	},
-}
+	}
 
-var userIDPatternResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"match_type": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			ValidateDiagFunc: stringInSlice([]string{"SUFFIX", "EQUALS", "STARTS_WITH", "CONTAINS", "EXPRESSION"}),
+	userIDPatternResource = &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"match_type": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"SUFFIX", "EQUALS", "STARTS_WITH", "CONTAINS", "EXPRESSION"}),
+			},
+			"value": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 		},
-		"value": {
-			Type:     schema.TypeString,
-			Optional: true,
-		},
-	},
-}
+	}
 
-var appResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"type": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			ValidateDiagFunc: stringInSlice([]string{"APP", "APP_TYPE"}),
+	appResource = &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"type": {
+				Type:             schema.TypeString,
+				Required:         true,
+				ValidateDiagFunc: stringInSlice([]string{"APP", "APP_TYPE"}),
+			},
+			"name": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"id": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 		},
-		"name": {
-			Type:     schema.TypeString,
-			Optional: true,
-		},
-		"id": {
-			Type:     schema.TypeString,
-			Optional: true,
-		},
-	},
-}
+	}
+)
 
 func buildPlatformInclude(d *schema.ResourceData) *sdk.IdpDiscoveryRulePlatform {
 	var includeList []*sdk.IdpDiscoveryRulePlatformInclude
-
 	if v, ok := d.GetOk("platform_include"); ok {
 		valueList := v.(*schema.Set).List()
-
 		for _, item := range valueList {
 			if value, ok := item.(map[string]interface{}); ok {
 				includeList = append(includeList, &sdk.IdpDiscoveryRulePlatformInclude{
@@ -252,7 +259,6 @@ func buildPlatformInclude(d *schema.ResourceData) *sdk.IdpDiscoveryRulePlatform 
 				})
 			}
 		}
-
 		return &sdk.IdpDiscoveryRulePlatform{
 			Include: includeList,
 		}
@@ -274,7 +280,6 @@ func buildAppConditions(d *schema.ResourceData) *sdk.IdpDiscoveryRuleApp {
 			}
 		}
 	}
-
 	var excludeList []*sdk.IdpDiscoveryRuleAppObj
 	if v, ok := d.GetOk("app_exclude"); ok {
 		valueList := v.(*schema.Set).List()
@@ -288,7 +293,6 @@ func buildAppConditions(d *schema.ResourceData) *sdk.IdpDiscoveryRuleApp {
 			}
 		}
 	}
-
 	return &sdk.IdpDiscoveryRuleApp{
 		Include: includeList,
 		Exclude: excludeList,
@@ -297,10 +301,8 @@ func buildAppConditions(d *schema.ResourceData) *sdk.IdpDiscoveryRuleApp {
 
 func buildUserIDPatterns(d *schema.ResourceData) []*sdk.IdpDiscoveryRulePattern {
 	var patternList []*sdk.IdpDiscoveryRulePattern
-
 	if raw, ok := d.GetOk("user_identifier_patterns"); ok {
 		patterns := raw.(*schema.Set).List()
-
 		for _, pattern := range patterns {
 			if value, ok := pattern.(map[string]interface{}); ok {
 				patternList = append(patternList, &sdk.IdpDiscoveryRulePattern{
@@ -315,7 +317,6 @@ func buildUserIDPatterns(d *schema.ResourceData) []*sdk.IdpDiscoveryRulePattern 
 
 func buildIdentifier(d *schema.ResourceData) *sdk.IdpDiscoveryRuleUserIdentifier {
 	uidType := d.Get("user_identifier_type").(string)
-
 	if uidType != "" {
 		return &sdk.IdpDiscoveryRuleUserIdentifier{
 			Attribute: d.Get("user_identifier_attribute").(string),
@@ -323,26 +324,22 @@ func buildIdentifier(d *schema.ResourceData) *sdk.IdpDiscoveryRuleUserIdentifier
 			Patterns:  buildUserIDPatterns(d),
 		}
 	}
-
 	return nil
 }
 
 func flattenUserIDPatterns(patterns []*sdk.IdpDiscoveryRulePattern) *schema.Set {
 	flattened := make([]interface{}, len(patterns))
-
 	for i := range patterns {
 		flattened[i] = map[string]interface{}{
 			"match_type": patterns[i].MatchType,
 			"value":      patterns[i].Value,
 		}
 	}
-
 	return schema.NewSet(schema.HashResource(userIDPatternResource), flattened)
 }
 
 func flattenPlatformInclude(platform *sdk.IdpDiscoveryRulePlatform) *schema.Set {
 	var flattened []interface{}
-
 	if platform != nil && platform.Include != nil {
 		for _, v := range platform.Include {
 			flattened = append(flattened, map[string]interface{}{
@@ -356,31 +353,54 @@ func flattenPlatformInclude(platform *sdk.IdpDiscoveryRulePlatform) *schema.Set 
 }
 
 func flattenAppInclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
-	var flattened []interface{}
+	if app != nil {
+		return flattenAppObj(app.Include)
+	}
+	return flattenAppObj(nil)
+}
 
-	if app != nil && app.Include != nil {
-		for _, v := range app.Include {
-			flattened = append(flattened, map[string]interface{}{
-				"id":   v.ID,
-				"name": v.Name,
-				"type": v.Type,
-			})
-		}
+func flattenAppExclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
+	if app != nil {
+		return flattenAppObj(app.Exclude)
+	}
+	return flattenAppObj(nil)
+}
+
+func flattenAppObj(appObj []*sdk.IdpDiscoveryRuleAppObj) *schema.Set {
+	var flattened []interface{}
+	for _, v := range appObj {
+		flattened = append(flattened, map[string]interface{}{
+			"id":   v.ID,
+			"name": v.Name,
+			"type": v.Type,
+		})
 	}
 	return schema.NewSet(schema.HashResource(appResource), flattened)
 }
 
-func flattenAppExclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
-	var flattened []interface{}
+var (
+	errFDiscoveryRuleIdPAppConditionID   = "either 'name' or 'id' should be provided in the '%s' block"
+	errFDiscoveryRuleIdPAppConditionName = "'name' is required if the type is 'APP_TYPE' in the '%s' block"
+)
 
-	if app != nil && app.Exclude != nil {
-		for _, v := range app.Exclude {
-			flattened = append(flattened, map[string]interface{}{
-				"id":   v.ID,
-				"name": v.Name,
-				"type": v.Type,
-			})
+func validatePolicyRuleIdpDiscovery(d *schema.ResourceData) error {
+	for _, appCondition := range []string{"app_include", "app_exclude"} {
+		v, ok := d.GetOk(appCondition)
+		if !ok {
+			continue
+		}
+		for _, item := range v.(*schema.Set).List() {
+			if value, ok := item.(map[string]interface{}); ok {
+				id := getMapString(value, "id")
+				name := getMapString(value, "name")
+				if id == "" && name == "" {
+					return fmt.Errorf(errFDiscoveryRuleIdPAppConditionID, appCondition)
+				}
+				if getMapString(value, "type") == "APP_TYPE" && name == "" {
+					return fmt.Errorf(errFDiscoveryRuleIdPAppConditionName, appCondition)
+				}
+			}
 		}
 	}
-	return schema.NewSet(schema.HashResource(appResource), flattened)
+	return nil
 }
