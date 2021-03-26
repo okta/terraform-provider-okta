@@ -55,22 +55,21 @@ func dataSourceGroupRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 func findGroup(ctx context.Context, name string, d *schema.ResourceData, m interface{}, isEveryone bool) diag.Diagnostics {
 	var group *okta.Group
-	id := d.Get("id").(string)
-	if id != "" {
-		respGroup, _, err := getOktaClientFromMetadata(m).Group.GetGroup(ctx, id)
+	groupID, ok := d.GetOk("id")
+	if ok {
+		respGroup, _, err := getOktaClientFromMetadata(m).Group.GetGroup(ctx, groupID.(string))
 		if err != nil {
 			return diag.Errorf("failed get group by ID: %v", err)
 		}
 		group = respGroup
 	} else {
-		client := getOktaClientFromMetadata(m)
 		searchParams := &query.Params{Q: name, Limit: 1}
 		t, okType := d.GetOk("type")
 		if okType {
 			searchParams.Filter = fmt.Sprintf("type eq \"%s\"", t.(string))
 		}
 		logger(m).Info("looking for data source group", "query", searchParams.String())
-		groups, _, err := client.Group.ListGroups(ctx, searchParams)
+		groups, _, err := getOktaClientFromMetadata(m).Group.ListGroups(ctx, searchParams)
 		switch {
 		case err != nil:
 			return diag.Errorf("failed to query for groups: %v", err)

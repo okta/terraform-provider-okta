@@ -49,6 +49,7 @@ const (
 	inlineHook             = "okta_inline_hook"
 	networkZone            = "okta_network_zone"
 	oktaGroup              = "okta_group"
+	oktaGroups             = "okta_groups"
 	oktaGroupMembership    = "okta_group_membership"
 	oktaProfileMapping     = "okta_profile_mapping"
 	oktaUser               = "okta_user"
@@ -246,6 +247,7 @@ func Provider() *schema.Provider {
 			"okta_default_policy":              dataSourceDefaultPolicies(),
 			"okta_everyone_group":              dataSourceEveryoneGroup(),
 			oktaGroup:                          dataSourceGroup(),
+			oktaGroups:                         dataSourceGroups(),
 			"okta_idp_metadata_saml":           dataSourceIdpMetadataSaml(),
 			idpSaml:                            dataSourceIdpSaml(),
 			idpOidc:                            dataSourceIdpOidc(),
