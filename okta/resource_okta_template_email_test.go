@@ -1,11 +1,12 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaEmailTemplate_crud(t *testing.T) {
@@ -15,9 +16,9 @@ func TestAccOktaEmailTemplate_crud(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(templateEmail, doesEmailTemplateExist),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(templateEmail, doesEmailTemplateExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -30,8 +31,6 @@ func TestAccOktaEmailTemplate_crud(t *testing.T) {
 }
 
 func doesEmailTemplateExist(id string) (bool, error) {
-	client := getSupplementFromMetadata(testAccProvider.Meta())
-	_, response, err := client.GetEmailTemplate(id)
-
+	_, response, err := getSupplementFromMetadata(testAccProvider.Meta()).GetEmailTemplate(context.Background(), id)
 	return doesResourceExist(response, err)
 }

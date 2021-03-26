@@ -1,165 +1,156 @@
 package okta
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strings"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceAppGroupAssignment() *schema.Resource {
 	return &schema.Resource{
-		// No point in having an exist function, since only the group has to exist
-		Create: resourceAppGroupAssignmentCreate,
-		Exists: resourceAppGroupAssignmentExists,
-		Read:   resourceAppGroupAssignmentRead,
-		Delete: resourceAppGroupAssignmentDelete,
-		Update: resourceAppGroupAssignmentUpdate,
+		CreateContext: resourceAppGroupAssignmentCreate,
+		ReadContext:   resourceAppGroupAssignmentRead,
+		DeleteContext: resourceAppGroupAssignmentDelete,
+		UpdateContext: resourceAppGroupAssignmentUpdate,
 		Importer: &schema.ResourceImporter{
-			State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				parts := strings.Split(d.Id(), "/")
 				if len(parts) != 2 {
-					return nil, errors.New("Invalid resource import specifier. Use: terraform import <app_id>/<group_id>")
+					return nil, errors.New("invalid resource import specifier. Use: terraform import <app_id>/<group_id>")
 				}
-
-				d.Set("app_id", parts[0])
-				d.Set("group_id", parts[1])
-
+				_ = d.Set("app_id", parts[0])
+				_ = d.Set("group_id", parts[1])
+				_ = d.Set("retain_assignment", false)
 				assignment, _, err := getOktaClientFromMetadata(m).Application.
-					GetApplicationGroupAssignment(parts[0], parts[1], nil)
-
+					GetApplicationGroupAssignment(ctx, parts[0], parts[1], nil)
 				if err != nil {
 					return nil, err
 				}
-
 				d.SetId(assignment.Id)
-
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-
 		Schema: map[string]*schema.Schema{
-			"app_id": &schema.Schema{
+			"app_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "App to associate group with",
 				ForceNew:    true,
 			},
-			"group_id": &schema.Schema{
+			"group_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Group associated with the application",
 				ForceNew:    true,
 			},
-			"priority": &schema.Schema{
+			"priority": {
 				Type:     schema.TypeInt,
 				Optional: true,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					p, n := d.GetChange("priority")
+					return p == n && new == "0"
+				},
 			},
-			"profile": &schema.Schema{
-				Type:      schema.TypeString,
-				StateFunc: normalizeDataJSON,
-				Optional:  true,
-				Default:   "{}",
+			"profile": {
+				Type:             schema.TypeString,
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
+				Optional:         true,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
+			},
+			"retain_assignment": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Retain the group assignment on destroy. If set to true, the resource will be removed from state but not from the Okta app.",
 			},
 		},
 	}
 }
 
-func resourceAppGroupAssignmentExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	client := getOktaClientFromMetadata(m)
-	_, resp, err := client.Application.GetApplicationGroupAssignment(
+func resourceAppGroupAssignmentCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	assignment, _, err := getOktaClientFromMetadata(m).Application.CreateApplicationGroupAssignment(
+		ctx,
+		d.Get("app_id").(string),
+		d.Get("group_id").(string),
+		buildAppGroupAssignment(d),
+	)
+	if err != nil {
+		return diag.Errorf("failed to create application group assignment: %v", err)
+	}
+	d.SetId(assignment.Id)
+	return resourceAppGroupAssignmentRead(ctx, d, m)
+}
+
+func resourceAppGroupAssignmentUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	// Create actually does a PUT
+	_, _, err := getOktaClientFromMetadata(m).Application.CreateApplicationGroupAssignment(
+		ctx,
+		d.Get("app_id").(string),
+		d.Get("group_id").(string),
+		buildAppGroupAssignment(d),
+	)
+	if err != nil {
+		return diag.Errorf("failed to update application group assignment: %v", err)
+	}
+	return resourceAppGroupAssignmentRead(ctx, d, m)
+}
+
+func resourceAppGroupAssignmentRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	g, resp, err := getOktaClientFromMetadata(m).Application.GetApplicationGroupAssignment(
+		ctx,
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
 		nil,
 	)
-
-	if is404(resp.StatusCode) {
-		return false, nil
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get application group assignment: %v", err)
 	}
-
-	return err == nil, err
+	if g == nil {
+		d.SetId("")
+		return nil
+	}
+	jsonProfile, err := json.Marshal(g.Profile)
+	if err != nil {
+		return diag.Errorf("failed to marshal app user profile to JSON: %v", err)
+	}
+	_ = d.Set("profile", string(jsonProfile))
+	_ = d.Set("priority", g.Priority)
+	return nil
 }
 
-func getAppGroupAssignment(d *schema.ResourceData) okta.ApplicationGroupAssignment {
+func resourceAppGroupAssignmentDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	retain := d.Get("retain_assignment").(bool)
+	if retain {
+		// The assignment should be retained, bail before DeleteApplicationGroupAssignment is called
+		return nil
+	}
+
+	_, err := getOktaClientFromMetadata(m).Application.DeleteApplicationGroupAssignment(
+		ctx,
+		d.Get("app_id").(string),
+		d.Get("group_id").(string),
+	)
+	if err != nil {
+		return diag.Errorf("failed to delete application group assignment: %v", err)
+	}
+	return nil
+}
+
+func buildAppGroupAssignment(d *schema.ResourceData) okta.ApplicationGroupAssignment {
 	var profile interface{}
-
 	rawProfile := d.Get("profile").(string)
-	// JSON is already validated
-	json.Unmarshal([]byte(rawProfile), &profile)
+	_ = json.Unmarshal([]byte(rawProfile), &profile)
 	priority := d.Get("priority").(int)
-
 	return okta.ApplicationGroupAssignment{
 		Profile:  profile,
 		Priority: int64(priority),
 	}
-}
-
-func resourceAppGroupAssignmentCreate(d *schema.ResourceData, m interface{}) error {
-	assignment, _, err := getOktaClientFromMetadata(m).Application.CreateApplicationGroupAssignment(
-		d.Get("app_id").(string),
-		d.Get("group_id").(string),
-		getAppGroupAssignment(d),
-	)
-
-	if err != nil {
-		return err
-	}
-
-	d.SetId(assignment.Id)
-
-	return resourceAppGroupAssignmentRead(d, m)
-}
-
-func resourceAppGroupAssignmentUpdate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	// Create actually does a PUT
-	_, _, err := client.Application.CreateApplicationGroupAssignment(
-		d.Get("app_id").(string),
-		d.Get("group_id").(string),
-		getAppGroupAssignment(d),
-	)
-
-	if err != nil {
-		return err
-	}
-
-	return resourceAppGroupAssignmentRead(d, m)
-}
-
-func resourceAppGroupAssignmentRead(d *schema.ResourceData, m interface{}) error {
-	g, resp, err := getOktaClientFromMetadata(m).Application.GetApplicationGroupAssignment(
-		d.Get("app_id").(string),
-		d.Get("group_id").(string),
-		nil,
-	)
-
-	if is404(resp.StatusCode) {
-		d.SetId("")
-		return nil
-	}
-
-	if err != nil {
-		return err
-	}
-
-	jsonProfile, err := json.Marshal(g.Profile)
-	if err != nil {
-		return fmt.Errorf("Failed to marshal app user profile to JSON, error: %s", err)
-	}
-
-	d.Set("profile", string(jsonProfile))
-	d.Set("priority", g.Priority)
-
-	return nil
-}
-
-func resourceAppGroupAssignmentDelete(d *schema.ResourceData, m interface{}) error {
-	_, err := getOktaClientFromMetadata(m).Application.DeleteApplicationGroupAssignment(
-		d.Get("app_id").(string),
-		d.Get("group_id").(string),
-	)
-	return err
 }

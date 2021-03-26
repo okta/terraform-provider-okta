@@ -5,26 +5,21 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 )
 
-type (
-	fixtureManager struct {
-		Path string
-	}
-)
+type fixtureManager struct {
+	Path string
+}
 
 const uuidPattern = "replace_with_uuid"
 
 // newFixtureManager get a new fixture manager for a particular resource.
 func newFixtureManager(resourceName string) *fixtureManager {
-	_, filename, _, _ := runtime.Caller(0)
-	exPath := filepath.Dir(filename)
+	dir, _ := os.Getwd()
 	return &fixtureManager{
-		Path: path.Join(exPath, "../examples", resourceName),
+		Path: path.Join(dir, "../examples", resourceName),
 	}
 }
 
@@ -42,5 +37,5 @@ func (manager *fixtureManager) GetFixtures(fixtureName string, rInt int, t *test
 		return tfConfig
 	}
 
-	return strings.Replace(tfConfig, uuidPattern, fmt.Sprintf("%d", rInt), -1)
+	return strings.ReplaceAll(tfConfig, uuidPattern, fmt.Sprintf("%d", rInt))
 }

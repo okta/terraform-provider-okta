@@ -1,227 +1,195 @@
 package okta
 
 import (
-	"fmt"
-	"log"
+	"context"
+	"strings"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-
-	articulateOkta "github.com/articulate/oktasdk-go/okta"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
-
-func getPolicyFactorSchema(key string) map[string]*schema.Schema {
-	// These are primitives to allow defaulting. Terraform still does not support aggregate defaults.
-	return map[string]*schema.Schema{
-		key: &schema.Schema{
-			Optional: true,
-			Type:     schema.TypeMap,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"enroll": &schema.Schema{
-						Type:         schema.TypeString,
-						Optional:     true,
-						Default:      "OPTIONAL",
-						ValidateFunc: validation.StringInSlice([]string{"NOT_ALLOWED", "OPTIONAL", "REQUIRED"}, false),
-						Description:  "Requirements for use-initiated enrollment.",
-					},
-					"consent_type": &schema.Schema{
-						Type:         schema.TypeString,
-						Optional:     true,
-						Default:      "NONE",
-						ValidateFunc: validation.StringInSlice([]string{"NONE", "TERMS_OF_SERVICE"}, false),
-						Description:  "User consent type required before enrolling in the factor: NONE or TERMS_OF_SERVICE.",
-					},
-				},
-			},
-		},
-	}
-}
-
-var factorProviders = []string{
-	"duo",
-	"fido_u2f",
-	"fido_webauthn",
-	"google_otp",
-	"okta_call",
-	"okta_otp",
-	"okta_password",
-	"okta_push",
-	"okta_question",
-	"okta_sms",
-	"rsa_token",
-	"symantec_vip",
-	"yubikey_token",
-}
-
-func buildFactorProviders(target map[string]*schema.Schema) map[string]*schema.Schema {
-	for _, key := range factorProviders {
-		sMap := getPolicyFactorSchema(key)
-
-		for nestedKey, nestedVal := range sMap {
-			target[nestedKey] = nestedVal
-		}
-	}
-
-	return target
-}
 
 func resourcePolicyMfa() *schema.Resource {
 	return &schema.Resource{
-		Exists: resourcePolicyExists,
-		Create: resourcePolicyMfaCreate,
-		Read:   resourcePolicyMfaRead,
-		Update: resourcePolicyMfaUpdate,
-		Delete: resourcePolicyMfaDelete,
+		CreateContext: resourcePolicyMfaCreate,
+		ReadContext:   resourcePolicyMfaRead,
+		UpdateContext: resourcePolicyMfaUpdate,
+		DeleteContext: resourcePolicyMfaDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
-
-		Schema: buildPolicySchema(
-			// List of factor provider above, they all follow the same schema
-			buildFactorProviders(map[string]*schema.Schema{}),
-		),
+		Schema: buildPolicySchema(buildFactorProviders()),
 	}
 }
 
-func resourcePolicyMfaCreate(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultPolicy(d); err != nil {
-		return err
-	}
-
-	policy := buildMfaPolicy(d, m)
-	err := createPolicy(d, m, policy)
+func resourcePolicyMfaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	policy := buildMFAPolicy(d)
+	err := createPolicy(ctx, d, m, policy)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create MFA policy: %v", err)
 	}
-
-	return resourcePolicyMfaRead(d, m)
+	return resourcePolicyMfaRead(ctx, d, m)
 }
 
-func resourcePolicyMfaRead(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] List Policy %v", d.Get("name").(string))
-
-	policy, err := getPolicy(d, m)
-
+func resourcePolicyMfaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	policy, err := getPolicy(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to get MFA policy: %v", err)
+	}
 	if policy == nil {
-		d.SetId("")
 		return nil
 	}
-
+	syncFactor(d, sdk.DuoFactor, policy.Settings.Factors.Duo)
+	syncFactor(d, sdk.FidoU2fFactor, policy.Settings.Factors.FidoU2f)
+	syncFactor(d, sdk.FidoWebauthnFactor, policy.Settings.Factors.FidoWebauthn)
+	syncFactor(d, sdk.GoogleOtpFactor, policy.Settings.Factors.GoogleOtp)
+	syncFactor(d, sdk.OktaCallFactor, policy.Settings.Factors.OktaCall)
+	syncFactor(d, sdk.OktaOtpFactor, policy.Settings.Factors.OktaOtp)
+	syncFactor(d, sdk.OktaPasswordFactor, policy.Settings.Factors.OktaPassword)
+	syncFactor(d, sdk.OktaPushFactor, policy.Settings.Factors.OktaPush)
+	syncFactor(d, sdk.OktaQuestionFactor, policy.Settings.Factors.OktaQuestion)
+	syncFactor(d, sdk.OktaSmsFactor, policy.Settings.Factors.OktaSms)
+	syncFactor(d, sdk.OktaEmailFactor, policy.Settings.Factors.OktaEmail)
+	syncFactor(d, sdk.RsaTokenFactor, policy.Settings.Factors.RsaToken)
+	syncFactor(d, sdk.SymantecVipFactor, policy.Settings.Factors.SymantecVip)
+	syncFactor(d, sdk.YubikeyTokenFactor, policy.Settings.Factors.YubikeyToken)
+	syncFactor(d, sdk.HotpFactor, policy.Settings.Factors.YubikeyToken)
+	err = syncPolicyFromUpstream(d, policy)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to sync policy: %v", err)
 	}
-
-	syncFactor(d, "duo", policy.Settings.Factors.Duo)
-	syncFactor(d, "fido_u2f", policy.Settings.Factors.FidoU2f)
-	syncFactor(d, "fido_webauthn", policy.Settings.Factors.FidoWebauthn)
-	syncFactor(d, "google_otp", policy.Settings.Factors.GoogleOtp)
-	syncFactor(d, "okta_call", policy.Settings.Factors.OktaOtp)
-	syncFactor(d, "okta_otp", policy.Settings.Factors.OktaOtp)
-	syncFactor(d, "okta_password", policy.Settings.Factors.OktaPassword)
-	syncFactor(d, "okta_push", policy.Settings.Factors.OktaPush)
-	syncFactor(d, "okta_question", policy.Settings.Factors.OktaQuestion)
-	syncFactor(d, "okta_sms", policy.Settings.Factors.OktaSms)
-	syncFactor(d, "rsa_token", policy.Settings.Factors.RsaToken)
-	syncFactor(d, "symantec_vip", policy.Settings.Factors.SymantecVip)
-	syncFactor(d, "yubikey_token", policy.Settings.Factors.YubikeyToken)
-
-	return syncPolicyFromUpstream(d, policy)
-}
-
-func resourcePolicyMfaUpdate(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultPolicy(d); err != nil {
-		return err
-	}
-
-	d.Partial(true)
-	policy := buildMfaPolicy(d, m)
-	err := updatePolicy(d, m, policy)
-	if err != nil {
-		return err
-	}
-	d.Partial(false)
-
-	return resourcePolicyMfaRead(d, m)
-}
-
-func resourcePolicyMfaDelete(d *schema.ResourceData, m interface{}) error {
-	if err := ensureNotDefaultPolicy(d); err != nil {
-		return err
-	}
-
-	log.Printf("[INFO] Delete Policy %v", d.Get("name").(string))
-	client := m.(*Config).articulateOktaClient
-
-	_, err := client.Policies.DeletePolicy(d.Id())
-	if err != nil {
-		return fmt.Errorf("[ERROR] Error Deleting Policy from Okta: %v", err)
-	}
-
 	return nil
 }
 
-// create or update a password policy
-func buildMfaPolicy(d *schema.ResourceData, m interface{}) *articulateOkta.Policy {
-	client := getClientFromMetadata(m)
-
-	policy := client.Policies.MfaPolicy()
-	policy.Name = d.Get("name").(string)
-	policy.Status = d.Get("status").(string)
-	policy.Type = mfaPolicyType
-	policy.Description = d.Get("description").(string)
-	if priority, ok := d.GetOk("priority"); ok {
-		policy.Priority = priority.(int)
+func resourcePolicyMfaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	policy := buildMFAPolicy(d)
+	err := updatePolicy(ctx, d, m, policy)
+	if err != nil {
+		return diag.Errorf("failed to update MFA policy: %v", err)
 	}
-
-	policy.Settings = &articulateOkta.PolicySettings{
-		Factors: &articulateOkta.Factors{
-			Duo:          buildFactorProvider(d, "duo"),
-			FidoU2f:      buildFactorProvider(d, "fido_u2f"),
-			FidoWebauthn: buildFactorProvider(d, "fido_webauthn"),
-			GoogleOtp:    buildFactorProvider(d, "google_otp"),
-			OktaCall:     buildFactorProvider(d, "okta_call"),
-			OktaOtp:      buildFactorProvider(d, "okta_otp"),
-			OktaPassword: buildFactorProvider(d, "okta_password"),
-			OktaPush:     buildFactorProvider(d, "okta_push"),
-			OktaQuestion: buildFactorProvider(d, "okta_question"),
-			OktaSms:      buildFactorProvider(d, "okta_sms"),
-			RsaToken:     buildFactorProvider(d, "rsa_token"),
-			SymantecVip:  buildFactorProvider(d, "symantec_vip"),
-			YubikeyToken: buildFactorProvider(d, "yubikey_token"),
-		},
-	}
-	policy.Conditions = &articulateOkta.PolicyConditions{
-		People: getGroups(d),
-	}
-
-	return &policy
+	return resourcePolicyMfaRead(ctx, d, m)
 }
 
-func buildFactorProvider(d *schema.ResourceData, key string) *articulateOkta.FactorProvider {
-	consent := d.Get(fmt.Sprintf("%s.consent_type", key)).(string)
-	enroll := d.Get(fmt.Sprintf("%s.enroll", key)).(string)
+func resourcePolicyMfaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := deletePolicy(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to delete MFA policy: %v", err)
+	}
+	return nil
+}
 
-	if consent == "" && enroll == "" {
+func buildFactorProvider(d *schema.ResourceData, key string) *sdk.PolicyFactor {
+	rawFactor := d.Get(key).(map[string]interface{})
+	consent := rawFactor["consent_type"]
+	enroll := rawFactor["enroll"]
+	if consent == nil && enroll == nil {
 		return nil
 	}
-
-	provider := &articulateOkta.FactorProvider{}
-
-	if consent != "" {
-		provider.Consent = articulateOkta.Consent{Type: consent}
+	f := &sdk.PolicyFactor{}
+	if consent != nil {
+		f.Consent = &sdk.Consent{Type: consent.(string)}
 	}
-
-	if enroll != "" {
-		provider.Enroll = articulateOkta.Enroll{Self: enroll}
+	if enroll != nil {
+		f.Enroll = &sdk.Enroll{Self: enroll.(string)}
 	}
-
-	return provider
+	return f
 }
 
-func syncFactor(d *schema.ResourceData, k string, f *articulateOkta.FactorProvider) {
-	if f != nil {
-		d.Set(fmt.Sprintf("%s.consent_type", k), f.Consent.Type)
-		d.Set(fmt.Sprintf("%s.enroll", k), f.Enroll.Self)
+// create or update a MFA policy
+func buildMFAPolicy(d *schema.ResourceData) sdk.Policy {
+	policy := sdk.MfaPolicy()
+	policy.Name = d.Get("name").(string)
+	policy.Status = d.Get("status").(string)
+	policy.Description = d.Get("description").(string)
+	if priority, ok := d.GetOk("priority"); ok {
+		policy.Priority = int64(priority.(int))
 	}
+	policy.Settings = &sdk.PolicySettings{
+		Factors: &sdk.PolicyFactorsSettings{
+			Duo:          buildFactorProvider(d, sdk.DuoFactor),
+			FidoU2f:      buildFactorProvider(d, sdk.FidoU2fFactor),
+			FidoWebauthn: buildFactorProvider(d, sdk.FidoWebauthnFactor),
+			GoogleOtp:    buildFactorProvider(d, sdk.GoogleOtpFactor),
+			OktaCall:     buildFactorProvider(d, sdk.OktaCallFactor),
+			OktaOtp:      buildFactorProvider(d, sdk.OktaOtpFactor),
+			OktaPassword: buildFactorProvider(d, sdk.OktaPasswordFactor),
+			OktaPush:     buildFactorProvider(d, sdk.OktaPushFactor),
+			OktaQuestion: buildFactorProvider(d, sdk.OktaQuestionFactor),
+			OktaSms:      buildFactorProvider(d, sdk.OktaSmsFactor),
+			OktaEmail:    buildFactorProvider(d, sdk.OktaEmailFactor),
+			RsaToken:     buildFactorProvider(d, sdk.RsaTokenFactor),
+			SymantecVip:  buildFactorProvider(d, sdk.SymantecVipFactor),
+			YubikeyToken: buildFactorProvider(d, sdk.YubikeyTokenFactor),
+			Hotp:         buildFactorProvider(d, sdk.HotpFactor),
+		},
+	}
+	policy.Conditions = &okta.PolicyRuleConditions{
+		People: getGroups(d),
+	}
+	return policy
+}
+
+func syncFactor(d *schema.ResourceData, k string, f *sdk.PolicyFactor) {
+	if f == nil {
+		return
+	}
+	_ = d.Set(k, map[string]interface{}{
+		"consent_type": f.Consent.Type,
+		"enroll":       f.Enroll.Self,
+	})
+}
+
+var factorProviders = []string{
+	sdk.DuoFactor,
+	sdk.FidoU2fFactor,
+	sdk.FidoWebauthnFactor,
+	sdk.GoogleOtpFactor,
+	sdk.OktaCallFactor,
+	sdk.OktaOtpFactor,
+	sdk.OktaPasswordFactor,
+	sdk.OktaPushFactor,
+	sdk.OktaQuestionFactor,
+	sdk.OktaSmsFactor,
+	sdk.OktaEmailFactor,
+	sdk.RsaTokenFactor,
+	sdk.SymantecVipFactor,
+	sdk.YubikeyTokenFactor,
+	sdk.HotpFactor,
+}
+
+// List of factor provider above, they all follow the same schema
+func buildFactorProviders() map[string]*schema.Schema {
+	res := make(map[string]*schema.Schema)
+	for _, key := range factorProviders {
+		res[key] = &schema.Schema{
+			Optional: true,
+			Type:     schema.TypeMap,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+				return strings.HasSuffix(k, ".%") || new == ""
+			},
+			ValidateDiagFunc: func(i interface{}, path cty.Path) diag.Diagnostics {
+				var errs diag.Diagnostics
+				m := i.(map[string]interface{})
+				if enroll, ok := m["enroll"]; ok {
+					dErr := stringInSlice([]string{"NOT_ALLOWED", "OPTIONAL", "REQUIRED"})(enroll, cty.GetAttrPath("enroll"))
+					if dErr != nil {
+						errs = append(errs, dErr...)
+					}
+				}
+				if consentType, ok := m["consent_type"]; ok {
+					dErr := stringInSlice([]string{"NONE", "TERMS_OF_SERVICE"})(consentType, cty.GetAttrPath("consent_type"))
+					if dErr != nil {
+						errs = append(errs, dErr...)
+					}
+				}
+				return errs
+			},
+		}
+	}
+	return res
 }

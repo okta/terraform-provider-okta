@@ -1,35 +1,40 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 type (
 	AuthorizationServerPolicyRule struct {
-		Status     string                `json:"status,omitempty"`
-		Priority   int                   `json:"priority,omitempty"`
-		Type       string                `json:"type,omitempty"`
-		Name       string                `json:"name,omitempty"`
-		Id         string                `json:"id,omitempty"`
-		Conditions *PolicyRuleConditions `json:"conditions,omitempty"`
-		Actions    *PolicyRuleActions    `json:"actions,omitempty"`
+		Status     string                                   `json:"status,omitempty"`
+		Priority   int                                      `json:"priority,omitempty"`
+		Type       string                                   `json:"type,omitempty"`
+		Name       string                                   `json:"name,omitempty"`
+		Id         string                                   `json:"id,omitempty"`
+		Conditions *AuthorizationServerPolicyRuleConditions `json:"conditions,omitempty"`
+		Actions    *AuthorizationServerPolicyRuleActions    `json:"actions,omitempty"`
 	}
 
 	AuthServerInlineHook struct {
 		Id string `json:"id,omitempty"`
 	}
 
-	PolicyRuleActions struct {
+	AuthorizationServerPolicyRuleActions struct {
 		Token *TokenActions `json:"token,omitempty"`
 	}
 
-	PolicyRuleConditions struct {
-		GrantTypes *Whitelist                     `json:"grantTypes,omitempty"`
+	AuthorizationServerPolicyRuleConditions struct {
+		GrantTypes *Conditions                    `json:"grantTypes,omitempty"`
 		People     *okta.GroupRulePeopleCondition `json:"people,omitempty"`
-		Scopes     *Whitelist                     `json:"scopes,omitempty"`
+		Scopes     *Conditions                    `json:"scopes,omitempty"`
+	}
+
+	Conditions struct {
+		Include []string `json:"include,omitempty"`
 	}
 
 	TokenActions struct {
@@ -40,32 +45,20 @@ type (
 	}
 )
 
-func (m *ApiSupplement) DeleteAuthorizationServerPolicyRule(authServerId, policyId, id string) (*okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules/%s", authServerId, policyId, id)
+func (m *ApiSupplement) DeleteAuthorizationServerPolicyRule(ctx context.Context, authServerID, policyID, id string) (*okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules/%s", authServerID, policyID, id)
 	req, err := m.RequestExecutor.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return m.RequestExecutor.Do(req, nil)
+	return m.RequestExecutor.Do(ctx, req, nil)
 }
 
-func (m *ApiSupplement) ListAuthorizationServerPolicyRules(authServerId, policyId string) ([]*AuthorizationServerPolicyRule, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules", authServerId, policyId)
-	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var auth []*AuthorizationServerPolicyRule
-	resp, err := m.RequestExecutor.Do(req, &auth)
-	return auth, resp, err
-}
-
-func (m *ApiSupplement) CreateAuthorizationServerPolicyRule(authServerId, policyId string, body AuthorizationServerPolicyRule, qp *query.Params) (*AuthorizationServerPolicyRule, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules", authServerId, policyId)
+func (m *ApiSupplement) CreateAuthorizationServerPolicyRule(ctx context.Context, authServerID, policyID string, body AuthorizationServerPolicyRule, qp *query.Params) (*AuthorizationServerPolicyRule, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules", authServerID, policyID)
 	if qp != nil {
-		url = url + qp.String()
+		url += qp.String()
 	}
 	req, err := m.RequestExecutor.NewRequest("POST", url, body)
 	if err != nil {
@@ -73,14 +66,14 @@ func (m *ApiSupplement) CreateAuthorizationServerPolicyRule(authServerId, policy
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(ctx, req, &authorizationServer)
 	return &authorizationServer, resp, err
 }
 
-func (m *ApiSupplement) UpdateAuthorizationServerPolicyRule(authServerId, policyId, id string, body AuthorizationServerPolicyRule, qp *query.Params) (*AuthorizationServerPolicyRule, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules/%s", authServerId, policyId, id)
+func (m *ApiSupplement) UpdateAuthorizationServerPolicyRule(ctx context.Context, authServerID, policyID, id string, body AuthorizationServerPolicyRule, qp *query.Params) (*AuthorizationServerPolicyRule, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules/%s", authServerID, policyID, id)
 	if qp != nil {
-		url = url + qp.String()
+		url += qp.String()
 	}
 	req, err := m.RequestExecutor.NewRequest("PUT", url, body)
 	if err != nil {
@@ -88,24 +81,45 @@ func (m *ApiSupplement) UpdateAuthorizationServerPolicyRule(authServerId, policy
 	}
 
 	authorizationServer := body
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(ctx, req, &authorizationServer)
 	if err != nil {
 		return nil, resp, err
 	}
 	return &authorizationServer, resp, nil
 }
 
-func (m *ApiSupplement) GetAuthorizationServerPolicyRule(authServerId, policyId, id string, authorizationServerInstance AuthorizationServerPolicyRule) (*AuthorizationServerPolicyRule, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules/%s", authServerId, policyId, id)
+func (m *ApiSupplement) GetAuthorizationServerPolicyRule(ctx context.Context, authServerID, policyID, id string, authorizationServerInstance AuthorizationServerPolicyRule) (*AuthorizationServerPolicyRule, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules/%s", authServerID, policyID, id)
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	authorizationServer := authorizationServerInstance
-	resp, err := m.RequestExecutor.Do(req, &authorizationServer)
+	resp, err := m.RequestExecutor.Do(ctx, req, &authorizationServer)
 	if err != nil {
 		return nil, resp, err
 	}
 	return &authorizationServer, resp, nil
+}
+
+func (m *ApiSupplement) ActivateAuthorizationServerPolicyRule(ctx context.Context, authServerID, policyID, ruleID string) (*okta.Response, error) {
+	return m.changeAuthorizationServerPolicyRuleLifecycle(ctx, authServerID, policyID, ruleID, "activate")
+}
+
+func (m *ApiSupplement) DeactivateAuthorizationServerPolicyRule(ctx context.Context, authServerID, policyID, ruleID string) (*okta.Response, error) {
+	return m.changeAuthorizationServerPolicyRuleLifecycle(ctx, authServerID, policyID, ruleID, "deactivate")
+}
+
+func (m *ApiSupplement) changeAuthorizationServerPolicyRuleLifecycle(ctx context.Context, authServerID, policyID, ruleID, action string) (*okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules/%s/lifecycle/%s", authServerID, policyID, ruleID, action)
+	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest("POST", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := m.RequestExecutor.Do(ctx, req, nil)
+	if err != nil {
+		return resp, err
+	}
+	return resp, nil
 }

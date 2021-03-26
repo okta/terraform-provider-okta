@@ -1,104 +1,127 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceAppUserBaseSchema() *schema.Resource {
 	return &schema.Resource{
-		Create:   resourceAppUserBaseSchemaCreate,
-		Read:     resourceAppUserBaseSchemaRead,
-		Update:   resourceAppUserBaseSchemaUpdate,
-		Delete:   resourceAppUserBaseSchemaDelete,
-		Exists:   resourceAppUserBaseSchemaExists,
-		Importer: createNestedResourceImporter([]string{"app_id", "id"}),
-
-		Schema: buildBaseUserSchema(map[string]*schema.Schema{
-			"app_id": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+		CreateContext: resourceAppUserBaseSchemaCreate,
+		ReadContext:   resourceAppUserBaseSchemaRead,
+		UpdateContext: resourceAppUserBaseSchemaUpdate,
+		DeleteContext: resourceAppUserBaseSchemaDelete,
+		Importer:      createNestedResourceImporter([]string{"app_id", "index"}),
+		Schema: buildSchema(
+			userBaseSchemaSchema,
+			userTypeSchema,
+			userPatternSchema,
+			map[string]*schema.Schema{
+				"master": {
+					Type:     schema.TypeString,
+					Optional: true,
+					// Accepting an empty value to allow for zero value (when provisioning is off)
+					ValidateDiagFunc: stringInSlice([]string{"PROFILE_MASTER", "OKTA", ""}),
+					Description:      "SubSchema profile manager, if not set it will inherit its setting.",
+					Default:          "PROFILE_MASTER",
+				},
+				"app_id": {
+					Type:     schema.TypeString,
+					Required: true,
+				},
+			}),
+		SchemaVersion: 1,
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type: resourceAppUserBaseSchemaResourceV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: func(ctx context.Context, rawState map[string]interface{}, meta interface{}) (map[string]interface{}, error) {
+					rawState["user_type"] = "default"
+					return rawState, nil
+				},
+				Version: 0,
 			},
-		}),
+		},
 	}
 }
 
-func resourceAppUserBaseSchemaCreate(d *schema.ResourceData, m interface{}) error {
-	if err := updateAppUserBaseSubschema(d, m); err != nil {
+func resourceAppUserBaseSchemaResourceV0() *schema.Resource {
+	return &schema.Resource{Schema: buildSchema(map[string]*schema.Schema{
+		"app_id": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+	}, userBaseSchemaSchema)}
+}
+
+func resourceAppUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateAppUserBaseSchema(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if err := updateAppUserBaseSubschema(ctx, d, m); err != nil {
 		return err
 	}
 	d.SetId(fmt.Sprintf("%s/%s", d.Get("app_id").(string), d.Get("index").(string)))
-
-	return resourceAppUserBaseSchemaRead(d, m)
+	return resourceAppUserBaseSchemaRead(ctx, d, m)
 }
 
-func resourceAppUserBaseSchemaExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	subschema, err := getAppUserBaseSubSchema(d, m)
-
-	return subschema != nil, err
-}
-
-func resourceAppUserBaseSchemaRead(d *schema.ResourceData, m interface{}) error {
-	subschema, err := getAppUserBaseSubSchema(d, m)
+func resourceAppUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	us, _, err := getSupplementFromMetadata(m).GetAppUserSchema(ctx, d.Get("app_id").(string))
 	if err != nil {
-		return err
-	} else if subschema == nil {
+		return diag.Errorf("failed to get app user base schema: %v", err)
+	}
+	subschema := getBaseProperty(us, d.Get("index").(string))
+	if subschema == nil {
 		d.SetId("")
 		return nil
 	}
-
 	syncBaseUserSchema(d, subschema)
-
 	return nil
 }
 
-func getAppUserBaseSubSchema(d *schema.ResourceData, m interface{}) (subschema *sdk.UserSubSchema, err error) {
-	var schema *sdk.UserSchema
-
-	schema, _, err = getSupplementFromMetadata(m).GetAppUserSchema(d.Get("app_id").(string))
+func resourceAppUserBaseSchemaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateAppUserBaseSchema(d)
 	if err != nil {
-		return
+		return diag.FromErr(err)
 	}
-
-	subschema = getBaseProperty(schema, d.Get("index").(string))
-	return
-}
-
-func resourceAppUserBaseSchemaUpdate(d *schema.ResourceData, m interface{}) error {
-	if err := updateAppUserBaseSubschema(d, m); err != nil {
+	if err := updateAppUserBaseSubschema(ctx, d, m); err != nil {
 		return err
 	}
-
-	return resourceAppUserBaseSchemaRead(d, m)
+	return resourceAppUserBaseSchemaRead(ctx, d, m)
 }
 
 // can't delete Base
-func resourceAppUserBaseSchemaDelete(d *schema.ResourceData, m interface{}) error {
+func resourceAppUserBaseSchemaDelete(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
 	return nil
 }
 
-// create or modify a  subschema
-func updateAppUserBaseSubschema(d *schema.ResourceData, m interface{}) error {
-	schema := &sdk.UserSubSchema{
-		Master: getNullableMaster(d),
-		Title:  d.Get("title").(string),
-		Type:   d.Get("type").(string),
-		Permissions: []*sdk.UserSchemaPermission{
-			{
-				Action:    d.Get("permissions").(string),
-				Principal: "SELF",
-			},
-		},
-		Required: boolPtr(d.Get("required").(bool)),
-	}
-
+// create or modify a subschema
+func updateAppUserBaseSubschema(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	_, _, err := getSupplementFromMetadata(m).UpdateBaseAppUserSchemaProperty(
+		ctx,
 		d.Get("index").(string),
 		d.Get("app_id").(string),
-		schema,
+		userBasedSubSchema(d),
 	)
+	if err != nil {
+		return diag.Errorf("failed to update application user base schema: %v", err)
+	}
+	return nil
+}
 
-	return err
+func validateAppUserBaseSchema(d *schema.ResourceData) error {
+	_, ok := d.GetOk("pattern")
+	if d.Get("index").(string) != "login" {
+		if ok {
+			return fmt.Errorf("'pattern' property is only allowed to be set for 'login'")
+		}
+		return nil
+	}
+	if !d.Get("required").(bool) {
+		return fmt.Errorf("'login' base schema is always required attribute")
+	}
+	return nil
 }

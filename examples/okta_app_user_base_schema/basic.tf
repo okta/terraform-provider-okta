@@ -1,14 +1,14 @@
-resource okta_app_user_base_schema test {
+resource "okta_app_user_base_schema" "test" {
   index       = "name"
   master      = "PROFILE_MASTER"
   permissions = "READ_ONLY"
   title       = "Name"
   type        = "string"
-  app_id      = "${okta_app_oauth.test.id}"
+  app_id      = okta_app_oauth.test.id
   required    = true
 }
 
-resource okta_app_oauth test {
+resource "okta_app_oauth" "test" {
   label          = "testAcc_replace_with_uuid"
   type           = "native"
   grant_types    = ["authorization_code"]

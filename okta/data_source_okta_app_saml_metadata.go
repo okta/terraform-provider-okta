@@ -1,17 +1,16 @@
 package okta
 
 import (
-	"encoding/xml"
+	"context"
 	"fmt"
 
-	"github.com/crewjam/saml"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceAppMetadataSaml() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceAppMetadataSamlRead,
-
+		ReadContext: dataSourceAppMetadataSamlRead,
 		Schema: map[string]*schema.Schema{
 			"app_id": {
 				Type:     schema.TypeString,
@@ -19,7 +18,7 @@ func dataSourceAppMetadataSaml() *schema.Resource {
 			},
 			"key_id": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"metadata": {
 				Type:     schema.TypeString,
@@ -52,26 +51,19 @@ func dataSourceAppMetadataSaml() *schema.Resource {
 	}
 }
 
-func dataSourceAppMetadataSamlRead(d *schema.ResourceData, m interface{}) error {
+func dataSourceAppMetadataSamlRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	id := d.Get("app_id").(string)
 	kid := d.Get("key_id").(string)
-	metadata, _, err := getSupplementFromMetadata(m).GetSAMLMetdata(id, kid)
+	metadata, metadataRoot, err := getSupplementFromMetadata(m).GetSAMLMetadata(ctx, id, kid)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to get app's SAML metadata: %v", err)
 	}
 	d.SetId(fmt.Sprintf("%s/%s_metadata", id, kid))
-
-	d.Set("metadata", string(metadata))
-	metadataRoot := &saml.EntityDescriptor{}
-	err = xml.Unmarshal(metadata, metadataRoot)
-	if err != nil {
-		return fmt.Errorf("Could not parse SAML app metadata, error: %s", err)
-	}
-
+	_ = d.Set("metadata", string(metadata))
 	desc := metadataRoot.IDPSSODescriptors[0]
 	syncSamlEndpointBinding(d, desc.SingleSignOnServices)
-	d.Set("entity_id", metadataRoot.EntityID)
-	d.Set("want_authn_requests_signed", desc.WantAuthnRequestsSigned)
-	d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
+	_ = d.Set("entity_id", metadataRoot.EntityID)
+	_ = d.Set("want_authn_requests_signed", desc.WantAuthnRequestsSigned)
+	_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
 	return nil
 }

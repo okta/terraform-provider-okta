@@ -3,6 +3,9 @@ TEST?=$$(go list ./... |grep -v 'vendor')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=okta
+GOLINT=./bin/golangci-lint
+GOFMT:=gofumpt
+TFPROVIDERLINT=tfproviderlint
 
 # Expression to match against tests
 # go test -run <filter>
@@ -12,6 +15,10 @@ ifdef TEST_FILTER
 endif
 
 default: build
+
+dep: # Download required dependencies
+	go mod tidy
+	go mod vendor
 
 build: fmtcheck
 	go install
@@ -38,10 +45,15 @@ vet:
 		exit 1; \
 	fi
 
-fmt:
-	gofmt -w $(GOFMT_FILES)
+.PHONY: fmt
+fmt: check-fmt # Format the code
+	@echo "formatting the code..."
+	@$(GOFMT) -l -w $$(find . -name '*.go' |grep -v vendor)
 
-fmtcheck:
+check-fmt:
+	@which $(GOFMT) > /dev/null || (echo "downloading formatter..." && GO111MODULE=on go get mvdan.cc/gofumpt)
+
+fmtcheck: dep
 	@sh -c "'$(CURDIR)/scripts/gofmtcheck.sh'"
 
 errcheck:
@@ -55,10 +67,10 @@ test-compile:
 	fi
 	go test -c $(TEST) $(TESTARGS)
 
-lint:
+lint: tools
 	@echo "==> Checking source code against linters..."
-	@GOGC=30 ./bin/golangci-lint run ./$(PKG_NAME)
-	@tfproviderlint \
+	@GOGC=30 $(GOLINT) run ./$(PKG_NAME)
+	@$(TFPROVIDERLINT) \
 		-c 1 \
 		-AT001 \
     -R004 \
@@ -82,8 +94,8 @@ lint:
 		./$(PKG_NAME)
 
 tools:
-	@curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.17.1
-	@go install github.com/bflad/tfproviderlint/cmd/tfproviderlint
+	@which $(GOLINT) || curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.33.0
+	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint
 
 website:
 ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))

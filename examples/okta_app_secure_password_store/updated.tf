@@ -1,4 +1,4 @@
-resource okta_app_secure_password_store test {
+resource "okta_app_secure_password_store" "test" {
   label              = "testAcc_replace_with_uuid"
   status             = "INACTIVE"
   username_field     = "user"

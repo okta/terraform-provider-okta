@@ -6,8 +6,8 @@ resource "okta_group" "test" {
 resource "okta_user" "test" {
   first_name = "TestAcc"
   last_name  = "Smith"
-  login      = "test-acc-replace_with_uuid@example.com"
-  email      = "test-acc-replace_with_uuid@example.com"
+  login      = "testAcc-replace_with_uuid@example.com"
+  email      = "testAcc-replace_with_uuid@example.com"
 
-  group_memberships = ["${okta_group.test.id}"]
+  group_memberships = [okta_group.test.id]
 }

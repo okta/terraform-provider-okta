@@ -1,31 +1,31 @@
-dist: trusty
+dist: bionic
 sudo: required
 services:
-- docker
+  - docker
 language: go
 
 env:
   - GOFLAGS=-mod=vendor
 
 install:
-- make build
-- make tools
+  - make build
+  - make tools
 
 branches:
   only:
-  - master
+    - master
 
 matrix:
   fast_finish: true
   allow_failures:
-  - go: tip
+    - go: tip
   include:
-  - go: "1.13.x"
-    name: "Code Lint"
-    script: make lint
-  - go: "1.13.x"
-    name: "Code Vet"
-    script: make vet
-  - go: "1.13.x"
-    name: "Code UnitTest"
-    script: make test
+    - go: '1.15.x'
+      name: 'Code Lint'
+      script: make lint
+    - go: '1.15.x'
+      name: 'Code Vet'
+      script: make vet
+    - go: '1.15.x'
+      name: 'Code UnitTest'
+      script: make test

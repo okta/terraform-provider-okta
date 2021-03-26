@@ -4,7 +4,7 @@ This resource represents an Okta OIDC Application in various configuration state
 
 ## Notes
 
-By default the client_secret will be stored in state in plain text.
+By default, the `client_secret` will be stored in state in plain text.
 
 ## Preconfigured Applications
 
