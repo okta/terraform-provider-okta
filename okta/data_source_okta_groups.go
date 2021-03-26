@@ -1,34 +1,53 @@
 package okta
 
 import (
+	"context"
 	"fmt"
+	"hash/crc32"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func dataSourceGroups() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceGroupsRead,
-
+		ReadContext: dataSourceGroupsRead,
 		Schema: map[string]*schema.Schema{
 			"q": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Searches the name property of groups for matching value",
 			},
+			"search": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Searches for groups with a supported filtering expression for all attributes except for '_embedded', '_links', and 'objectClass'",
+			},
+			"type": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Type of the group. When specified in the terraform resource, will act as a filter when searching for the groups",
+				ValidateDiagFunc: stringInSlice([]string{"OKTA_GROUP", "APP_GROUP", "BUILT_IN"}),
+			},
 			"groups": {
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": &schema.Schema{
+						"id": {
 							Type:     schema.TypeString,
-							Required: true,
+							Computed: true,
 						},
-						"description": &schema.Schema{
+						"name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"type": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"description": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -39,25 +58,30 @@ func dataSourceGroups() *schema.Resource {
 	}
 }
 
-func dataSourceGroupsRead(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	q := d.Get("q").(string)
-
-	groups, _, err := client.Group.ListGroups(&query.Params{Q: q})
-
-	if err != nil {
-		return fmt.Errorf("failed to query for groups: %v", err)
+func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	qp := &query.Params{
+		Q:      d.Get("q").(string),
+		Search: d.Get("search").(string),
+		Limit:  defaultPaginationLimit,
 	}
-
-	d.SetId(fmt.Sprintf("%d", hashcode.String(q)))
+	groupType, ok := d.Get("type").(string)
+	if ok {
+		qp.Filter = fmt.Sprintf("type eq \"%s\"", groupType)
+	}
+	groups, err := listGroups(ctx, getOktaClientFromMetadata(m), qp)
+	if err != nil {
+		return diag.Errorf("failed to list groups: %v", err)
+	}
+	d.SetId(fmt.Sprintf("%d", crc32.ChecksumIEEE([]byte(qp.String()))))
 	arr := make([]map[string]interface{}, len(groups))
-
-	for i, group := range groups {
+	for i := range groups {
 		arr[i] = map[string]interface{}{
-			"name":        group.Profile.Name,
-			"description": group.Profile.Description,
+			"id":          groups[i].Id,
+			"name":        groups[i].Profile.Name,
+			"type":        groups[i].Type,
+			"description": groups[i].Profile.Description,
 		}
 	}
-
-	return d.Set("groups", arr)
+	_ = d.Set("groups", arr)
+	return nil
 }
