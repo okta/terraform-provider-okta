@@ -1,5 +1,31 @@
 # Changelog
 
+## 3.11.0 (March 26, 2021)
+
+ENHANCEMENTS:
+
+* Add new `okta_app_oauth_api_scope` resource [#356](https://github.com/okta/terraform-provider-okta/pull/356). Thanks, [@mariussturm](https://github.com/mariussturm)!
+* Remove `ForceNew` in case policy name changes to avoid policy resources recreation [#362](https://github.com/okta/terraform-provider-okta/pull/362). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Add hotp factor to the `okta_policy_mfa` resource [#363](https://github.com/okta/terraform-provider-okta/pull/363). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Remove unnecessary validations from the `okta_app_oauth` resource [#372](https://github.com/okta/terraform-provider-okta/pull/372). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Add `links` field to `okta_app`, `okta_app_saml` and `okta_app_oauth` data sources [#374](https://github.com/okta/terraform-provider-okta/pull/374). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Add new `okta_auth_server_default` resource [#375](https://github.com/okta/terraform-provider-okta/pull/375). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Add new `okta_policy_mfa_default` and `okta_policy_password_default` resources [#378](https://github.com/okta/terraform-provider-okta/pull/378). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Add `remove_assigned_users` field to the `okta_group_rule` resource [#388](https://github.com/okta/terraform-provider-okta/pull/388). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Add new `auth_server_claim_default` resource [#392](https://github.com/okta/terraform-provider-okta/pull/392). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Add `groups` and `users` fields to the `okta_app`, `okta_app_oauth` and `okta_app_saml` data sources [#395](https://github.com/okta/terraform-provider-okta/pull/395). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Add `id` field to the `okta_group` data source [#395](https://github.com/okta/terraform-provider-okta/pull/395). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Add new `auth_server_claim_default` resource [#392](https://github.com/okta/terraform-provider-okta/pull/392). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Add new `okta_groups` data source [#103](https://github.com/okta/terraform-provider-okta/pull/103). Thanks, [@bendrucker](https://github.com/bendrucker) and [@me](https://github.com/bogdanprodan-okta)!
+* Several minor bug fixes and enhancements.
+
+BUGS:
+
+* Add group existence check to `okta_group_membership` resource [#380](https://github.com/okta/terraform-provider-okta/pull/380). Thanks, [@ymylei](https://github.com/ymylei)!
+* Fix group assignment priority in the `okta_app_group_assignment` resource [#381](https://github.com/okta/terraform-provider-okta/pull/381). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Fixed status change in the `okta_auth_server_policy_rule` resource [](https://github.com/okta/terraform-provider-okta/pull/386). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+* Add operation retry to the `okta_group_role` resource [#390](https://github.com/okta/terraform-provider-okta/pull/390). Thanks, [@me](https://github.com/bogdanprodan-okta)!
+
 ## 3.10.1 (February 26, 2021)
 
 ENHANCEMENTS:
