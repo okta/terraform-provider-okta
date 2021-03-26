@@ -8,17 +8,26 @@ import (
 )
 
 func listGroupUserIDs(ctx context.Context, m interface{}, id string) ([]string, error) {
-	arr, _, err := getOktaClientFromMetadata(m).Group.ListGroupUsers(ctx, id, nil)
+	var resUsers []string
+	users, resp, err := getOktaClientFromMetadata(m).Group.ListGroupUsers(ctx, id, &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return nil, err
 	}
-
-	userIDList := make([]string, len(arr))
-	for i, user := range arr {
-		userIDList[i] = user.Id
+	for {
+		for _, user := range users {
+			resUsers = append(resUsers, user.Id)
+		}
+		if resp.HasNextPage() {
+			resp, err = resp.Next(ctx, &users)
+			if err != nil {
+				return nil, err
+			}
+			continue
+		} else {
+			break
+		}
 	}
-
-	return userIDList, nil
+	return resUsers, nil
 }
 
 func listGroups(ctx context.Context, client *okta.Client, qp *query.Params) ([]*okta.Group, error) {

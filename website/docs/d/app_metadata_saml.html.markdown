@@ -8,7 +8,7 @@ description: |-
 
 # okta_app_metadata_saml
 
-Use this data source to retrieve the collaborators for a given repository.
+Use this data source to retrieve the metadata for SAML application from Okta.
 
 ## Example Usage
 

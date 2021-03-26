@@ -201,7 +201,7 @@ func dataSourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m inte
 
 func getSocialIdPByName(ctx context.Context, m interface{}, name string) (*okta.IdentityProvider, error) {
 	idps, _, err := getOktaClientFromMetadata(m).IdentityProvider.
-		ListIdentityProviders(ctx, &query.Params{Q: name, Limit: 200})
+		ListIdentityProviders(ctx, &query.Params{Q: name, Limit: defaultPaginationLimit})
 	if err != nil {
 		return nil, fmt.Errorf("failed to get social identity provider with name '%s': %v", name, err)
 	}

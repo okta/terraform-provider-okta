@@ -90,7 +90,7 @@ The following arguments are supported:
 
   - `name` - (Optional) Use if the `type` is `"APP_TYPE"` to indicate the type of application(s) to include in instances where an entire group (i.e. `yahoo_mail`) of applications should be included.
 
-  - `type` - (Optional) One of: `"APP"`, `"APP_TYPE"`
+  - `type` - (Required) One of: `"APP"`, `"APP_TYPE"`
 
 ```hcl
 app_include {
