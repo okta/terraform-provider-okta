@@ -1,6 +1,9 @@
 ---
-layout: 'okta' page_title: 'Okta: okta_group_membership' sidebar_current: 'docs-okta-resource-group-membership'
-description: |- Manage an individual instance of group membership.
+layout: 'okta' 
+page_title: 'Okta: okta_group_membership' 
+sidebar_current: 'docs-okta-resource-group-membership'
+description: |- 
+    Manage an individual instance of group membership.
 ---
 
 # okta_group_membership

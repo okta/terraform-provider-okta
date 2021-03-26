@@ -6,7 +6,7 @@ description: |-
   Get a user type from Okta.
 ---
 
-# okta_group
+# okta_user_type
 
 Use this data source to retrieve a user type from Okta.
 
