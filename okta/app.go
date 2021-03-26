@@ -264,7 +264,7 @@ func handleAppGroups(ctx context.Context, id string, d *schema.ResourceData, cli
 
 func listApplicationGroupAssignments(ctx context.Context, client *okta.Client, id string) ([]*okta.ApplicationGroupAssignment, error) {
 	var resGroups []*okta.ApplicationGroupAssignment
-	groups, resp, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{Limit: 200})
+	groups, resp, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return nil, err
 	}
@@ -393,7 +393,7 @@ func handleAppUsers(ctx context.Context, id string, d *schema.ResourceData, clie
 
 func listApplicationUsers(ctx context.Context, client *okta.Client, id string) ([]*okta.AppUser, error) {
 	var resUsers []*okta.AppUser
-	users, resp, err := client.Application.ListApplicationUsers(ctx, id, &query.Params{Limit: 200})
+	users, resp, err := client.Application.ListApplicationUsers(ctx, id, &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return nil, err
 	}
