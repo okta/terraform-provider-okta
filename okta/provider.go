@@ -20,6 +20,7 @@ const (
 	appBookmark            = "okta_app_bookmark"
 	appBasicAuth           = "okta_app_basic_auth"
 	appGroupAssignment     = "okta_app_group_assignment"
+	appGroupAssignments    = "okta_app_group_assignments"
 	appUser                = "okta_app_user"
 	appOAuth               = "okta_app_oauth"
 	appOAuthAPIScope       = "okta_app_oauth_api_scope"
@@ -170,6 +171,7 @@ func Provider() *schema.Provider {
 			appBookmark:            resourceAppBookmark(),
 			appBasicAuth:           resourceAppBasicAuth(),
 			appGroupAssignment:     resourceAppGroupAssignment(),
+			appGroupAssignments:    resourceAppGroupAssignments(),
 			appUser:                resourceAppUser(),
 			appOAuth:               resourceAppOAuth(),
 			appOAuthAPIScope:       resourceAppOAuthAPIScope(),
