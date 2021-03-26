@@ -226,7 +226,7 @@ func updateAppByID(ctx context.Context, id string, m interface{}, app okta.App) 
 }
 
 func handleAppGroups(ctx context.Context, id string, d *schema.ResourceData, client *okta.Client) []func() error {
-	existingGroup, _, _ := client.Application.ListApplicationGroupAssignments(ctx, id, nil)
+	existingGroups, _ := listApplicationGroupAssignments(ctx, client, id)
 	var (
 		asyncActionList []func() error
 		groupIDList     []string
@@ -240,7 +240,7 @@ func handleAppGroups(ctx context.Context, id string, d *schema.ResourceData, cli
 			groupID := gID.(string)
 			groupIDList[i] = groupID
 
-			if !containsGroup(existingGroup, groupID) {
+			if !containsGroup(existingGroups, groupID) {
 				asyncActionList = append(asyncActionList, func() error {
 					_, resp, err := client.Application.CreateApplicationGroupAssignment(ctx, id,
 						groupID, okta.ApplicationGroupAssignment{})
@@ -250,7 +250,7 @@ func handleAppGroups(ctx context.Context, id string, d *schema.ResourceData, cli
 		}
 	}
 
-	for _, group := range existingGroup {
+	for _, group := range existingGroups {
 		if !contains(groupIDList, group.Id) {
 			groupID := group.Id
 			asyncActionList = append(asyncActionList, func() error {
@@ -260,6 +260,27 @@ func handleAppGroups(ctx context.Context, id string, d *schema.ResourceData, cli
 	}
 
 	return asyncActionList
+}
+
+func listApplicationGroupAssignments(ctx context.Context, client *okta.Client, id string) ([]*okta.ApplicationGroupAssignment, error) {
+	var resGroups []*okta.ApplicationGroupAssignment
+	groups, resp, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{Limit: defaultPaginationLimit})
+	if err != nil {
+		return nil, err
+	}
+	for {
+		resGroups = append(resGroups, groups...)
+		if resp.HasNextPage() {
+			resp, err = resp.Next(ctx, &groups)
+			if err != nil {
+				return nil, err
+			}
+			continue
+		} else {
+			break
+		}
+	}
+	return resGroups, nil
 }
 
 func containsGroup(groupList []*okta.ApplicationGroupAssignment, id string) bool {
@@ -309,7 +330,7 @@ func handleAppGroupsAndUsers(ctx context.Context, id string, d *schema.ResourceD
 
 func handleAppUsers(ctx context.Context, id string, d *schema.ResourceData, client *okta.Client) []func() error {
 	// Looking upstream for existing user's, rather then the config for accuracy.
-	existingUsers, _, _ := client.Application.ListApplicationUsers(ctx, id, nil)
+	existingUsers, _ := listApplicationUsers(ctx, client, id)
 	var (
 		asyncActionList []func() error
 		users           []interface{}
@@ -368,6 +389,27 @@ func handleAppUsers(ctx context.Context, id string, d *schema.ResourceData, clie
 	}
 
 	return asyncActionList
+}
+
+func listApplicationUsers(ctx context.Context, client *okta.Client, id string) ([]*okta.AppUser, error) {
+	var resUsers []*okta.AppUser
+	users, resp, err := client.Application.ListApplicationUsers(ctx, id, &query.Params{Limit: defaultPaginationLimit})
+	if err != nil {
+		return nil, err
+	}
+	for {
+		resUsers = append(resUsers, users...)
+		if resp.HasNextPage() {
+			resp, err = resp.Next(ctx, &users)
+			if err != nil {
+				return nil, err
+			}
+			continue
+		} else {
+			break
+		}
+	}
+	return resUsers, nil
 }
 
 func setAppStatus(ctx context.Context, d *schema.ResourceData, client *okta.Client, status string) error {
@@ -514,4 +556,24 @@ func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{
 	}
 	_, err := client.Application.DeleteApplication(ctx, d.Id())
 	return err
+}
+
+func listAppUsersAndGroupsIDs(ctx context.Context, client *okta.Client, id string) (users []string, groups []string, err error) {
+	appUsers, err := listApplicationUsers(ctx, client, id)
+	if err != nil {
+		return nil, nil, err
+	}
+	appGroups, err := listApplicationGroupAssignments(ctx, client, id)
+	if err != nil {
+		return nil, nil, err
+	}
+	users = make([]string, len(appUsers))
+	groups = make([]string, len(appGroups))
+	for i := range appUsers {
+		users[i] = appUsers[i].Id
+	}
+	for i := range appGroups {
+		groups[i] = appGroups[i].Id
+	}
+	return
 }

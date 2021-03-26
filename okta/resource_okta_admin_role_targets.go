@@ -285,7 +285,7 @@ func removeUserGroupTargets(ctx context.Context, d *schema.ResourceData, m inter
 func listUserGroupTargets(ctx context.Context, d *schema.ResourceData, m interface{}) ([]string, error) {
 	var resGroups []string
 	groups, resp, err := getOktaClientFromMetadata(m).User.
-		ListGroupTargetsForRole(ctx, d.Get("user_id").(string), d.Get("role_id").(string), &query.Params{Limit: 200})
+		ListGroupTargetsForRole(ctx, d.Get("user_id").(string), d.Get("role_id").(string), &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return nil, err
 	}
@@ -310,7 +310,7 @@ func listUserApplicationTargets(ctx context.Context, d *schema.ResourceData, m i
 	var resApps []string
 	apps, resp, err := getOktaClientFromMetadata(m).User.
 		ListApplicationTargetsForApplicationAdministratorRoleForUser(
-			ctx, d.Get("user_id").(string), d.Get("role_id").(string), &query.Params{Limit: 200})
+			ctx, d.Get("user_id").(string), d.Get("role_id").(string), &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return nil, err
 	}

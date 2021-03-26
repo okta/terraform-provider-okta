@@ -8,7 +8,8 @@ description: |-
 
 # okta_everyone_group
 
-Use this data source to retrieve the `Everyone` group from Okta. The same can be achieved with the `okta_group` data source with `name = "Everyone"`. This is simply a shortcut.
+Use this data source to retrieve the `Everyone` group from Okta. The same can be achieved with the `okta_group` data
+source with `name = "Everyone"`. This is simply a shortcut.
 
 ## Example Usage
 
@@ -16,6 +17,12 @@ Use this data source to retrieve the `Everyone` group from Okta. The same can be
 data "okta_everyone_group" "example" {}
 ```
 
+## Arguments Reference
+
+- `include_users` - (Optional) whether to retrieve all member ids.
+
 ## Attributes Reference
 
-- `id` - the id of the group.
+- `id` - ID of the group.
+
+- `description` - description of group.
