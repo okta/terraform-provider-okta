@@ -16,7 +16,7 @@ func dataSourceGroups() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"q": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				Description: "Searches the name property of groups for matching value",
 			},
 			"search": {
@@ -59,14 +59,18 @@ func dataSourceGroups() *schema.Resource {
 }
 
 func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	qp := &query.Params{
-		Q:      d.Get("q").(string),
-		Search: d.Get("search").(string),
-		Limit:  defaultPaginationLimit,
-	}
-	groupType, ok := d.Get("type").(string)
+	qp := &query.Params{Limit: defaultPaginationLimit}
+	groupType, ok := d.GetOk("type")
 	if ok {
-		qp.Filter = fmt.Sprintf("type eq \"%s\"", groupType)
+		qp.Filter = fmt.Sprintf("type eq \"%s\"", groupType.(string))
+	}
+	q, ok := d.GetOk("q")
+	if ok {
+		qp.Q = q.(string)
+	}
+	search, ok := d.GetOk("search")
+	if ok {
+		qp.Search = search.(string)
 	}
 	groups, err := listGroups(ctx, getOktaClientFromMetadata(m), qp)
 	if err != nil {
