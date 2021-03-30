@@ -5,14 +5,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/url"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
-	"github.com/peterhellberg/link"
-	"github.com/pkg/errors"
 )
 
 func resourceAppGroupAssignments() *schema.Resource {
@@ -95,7 +91,7 @@ func resourceAppGroupAssignmentsCreate(ctx context.Context, d *schema.ResourceDa
 		}
 	}
 
-	// okta_app_group_assignments completely controll all assignments for an application
+	// okta_app_group_assignments completely control all assignments for an application
 	d.SetId(d.Get("app_id").(string))
 	return resourceAppGroupAssignmentsRead(ctx, d, m)
 }
@@ -103,22 +99,22 @@ func resourceAppGroupAssignmentsCreate(ctx context.Context, d *schema.ResourceDa
 func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
 
-	assignments, err := listAppGroupAssignments(
-		client.Application.ListApplicationGroupAssignments,
+	assignments, err := listApplicationGroupAssignments(
 		ctx,
+		client,
 		d.Get("app_id").(string),
 	)
 	if err != nil {
 		return diag.Errorf("failed to fetch group assignments: %v", err)
 	}
 
-	tfFlattenedAssignments := []interface{}{}
-	for _, assignment := range assignments {
+	tfFlattenedAssignments := make([]interface{}, len(assignments))
+	for i, assignment := range assignments {
 		tfAssignment, err := groupAssignmentToTFGroup(assignment)
 		if err != nil {
 			return diag.Errorf("failed to marshal group profile: %v", err)
 		}
-		tfFlattenedAssignments = append(tfFlattenedAssignments, tfAssignment)
+		tfFlattenedAssignments[i] = tfAssignment
 	}
 
 	err = d.Set("group", tfFlattenedAssignments)
@@ -140,7 +136,7 @@ func resourceAppGroupAssignmentsDelete(ctx context.Context, d *schema.ResourceDa
 			group["id"].(string),
 		)
 		if err != nil {
-			return diag.Errorf("failted to delete application group assignment: %v", err)
+			return diag.Errorf("failed to delete application group assignment: %v", err)
 		}
 	}
 	return nil
@@ -229,49 +225,6 @@ func tfGroupsToGroupAssignments(groups ...interface{}) map[string]okta.Applicati
 	return assignments
 }
 
-// paginate listAppGroupAssignments
-func listAppGroupAssignments(
-	fetch func(context.Context, string, *query.Params) ([]*okta.ApplicationGroupAssignment, *okta.Response, error),
-	ctx context.Context,
-	appID string,
-) ([]*okta.ApplicationGroupAssignment, error) {
-
-	var assignments []*okta.ApplicationGroupAssignment
-	qp := query.Params{
-		Limit: 200, // Biggest page possible
-	}
-
-	for {
-		assignmentsPage, resp, err := fetch(ctx, appID, &qp)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, assignment := range assignmentsPage {
-			if assignment == nil {
-				continue
-			}
-
-			// we only care about the id for now
-			assignments = append(assignments, assignment)
-		}
-
-		// Parse the link header and iterate
-		links := link.ParseResponse(resp.Response)
-		if links["next"] == nil {
-			return assignments, nil // we're done, no next page
-		}
-		nextLink := links["next"].String()
-		nextLinkURL, err := url.Parse(nextLink)
-		if err != nil {
-			return nil, err
-		}
-
-		nextLinkMapping := nextLinkURL.Query()
-		qp.After = nextLinkMapping.Get("after")
-	}
-}
-
 // addGroupAssignments adds all group assignments
 func addGroupAssignments(
 	add func(context.Context, string, string, okta.ApplicationGroupAssignment) (*okta.ApplicationGroupAssignment, *okta.Response, error),
@@ -298,7 +251,12 @@ func deleteGroupAssignments(
 	for groupID := range assignments {
 		_, err := delete(ctx, appID, groupID)
 		if err != nil {
-			return errors.Wrapf(err, "could not delete assignment for group %s, to application %s", groupID, appID)
+			return fmt.Errorf(
+				"could not delete assignment for group %s, to application %s: %w",
+				groupID,
+				appID,
+				err,
+			)
 		}
 	}
 	return nil
