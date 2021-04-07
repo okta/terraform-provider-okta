@@ -9,6 +9,50 @@
     <img src="https://www.okta.com/sites/default/files/Dev_Logo-03_Large.png" alt="OKTA logo" title="OKTA" height="50" />
 </a>
 
+# Important note
+
+As you might notice, the latest GitHub version of the provider differs from the one in the registry.
+The problem is that the official Okta provider has migrated from `oktadeveloper` to `okta` namespace and thus we can not 
+publish it to the registry without a new `gpg` key.
+
+The official answer from Hashicorp states:
+```
+We're currently going through an engineering org change. The request to transfer to `okta` namespace will hopefully be possible in just a few weeks.
+```
+
+There is always a possibility to use [in-house provider ](https://www.terraform.io/docs/cloud/run/install-software.html#in-house-providers) 
+built from source. Basically, you clone the repo and run `go install` or download a binary from 
+the [release page](https://github.com/okta/terraform-provider-okta/releases/tag/v3.11.0) and you can use it as your main provider.
+
+For example, here is my local terraform provider configuration:
+```
+├── terraform.d
+│   └── plugins
+│       └── my-host
+│           └── me
+│               └── okta
+│                   └── 4.0.0                            <- version can be whatever you like
+│                       └── darwin_amd64                 <- arch
+│                           └── terraform-provider-okta  <- binary 
+└── versions.tf
+```
+
+`versions.tf` file content:
+
+```
+terraform {
+  required_providers {
+    okta = {
+      source  = "my-host/me/okta"                          
+      version = "4.0.0"                                               <- version can be whatever you like
+    }
+  }
+  required_version = ">= 0.13"
+}
+```
+
+After that, you should run `terraform init` to make terraform use your custom provider.
+
 # Terraform Provider for Okta
 
 The Terraform Okta provider is a plugin for Terraform that allows for the full lifecycle management of Okta resources.
