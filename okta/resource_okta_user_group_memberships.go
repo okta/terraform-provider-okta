@@ -118,8 +118,8 @@ func resourceUserGroupMembershipUpdate(ctx context.Context, d *schema.ResourceDa
 	oldSet := old.(*schema.Set)
 	newSet := new.(*schema.Set)
 
-	groupsToAdd := convertInterfaceToStringSetNullable(newSet.Difference(oldSet).List())
-	groupsToRemove := convertInterfaceToStringSetNullable(oldSet.Difference(newSet).List())
+	groupsToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
+	groupsToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
 
 	err := addUserToGroups(ctx, client, userId, groupsToAdd)
 	if err != nil {
