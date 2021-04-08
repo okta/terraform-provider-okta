@@ -17,10 +17,8 @@ func resourceUserGroupMemberships() *schema.Resource {
 		ReadContext:   resourceUserGroupMembershipRead,
 		UpdateContext: resourceUserGroupMembershipUpdate,
 		DeleteContext: resourceUserGroupMembershipDelete,
-		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
-		},
-		Description: "Resource to manage a set of group memberships for a specific user.",
+		Importer:      nil,
+		Description:   "Resource to manage a set of group memberships for a specific user.",
 		Schema: map[string]*schema.Schema{
 			"user_id": {
 				Type:        schema.TypeString,
