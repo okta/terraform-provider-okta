@@ -48,7 +48,7 @@ func resourceUserGroupMembershipCreate(ctx context.Context, d *schema.ResourceDa
 	} else if !exists {
 		return diag.Errorf("user (%s) does not exist in this Okta instance", userId)
 	}
-	err := addUserToGroups(ctx, client, userId, groups)
+	err = addUserToGroups(ctx, client, userId, groups)
 	if err != nil {
 		return diag.FromErr(err)
 	}
