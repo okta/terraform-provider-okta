@@ -40,13 +40,7 @@ func resourceUserGroupMembershipCreate(ctx context.Context, d *schema.ResourceDa
 	userId := d.Get("user_id").(string)
 	groups := convertInterfaceToStringSetNullable(d.Get("groups"))
 	client := getOktaClientFromMetadata(m)
-	exists, err := doesUserExist(ctx, client, userId)
-	if err != nil {
-		return diag.Errorf("error validating user (%s): %v", userId, err)
-	} else if !exists {
-		return diag.Errorf("user (%s) does not exist in this Okta instance", userId)
-	}
-	err = addUserToGroups(ctx, client, userId, groups)
+	err := addUserToGroups(ctx, client, userId, groups)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -75,14 +69,6 @@ func resourceUserGroupMembershipRead(ctx context.Context, d *schema.ResourceData
 	userId := d.Get("user_id").(string)
 	groups := convertInterfaceToStringSetNullable(d.Get("groups"))
 	client := getOktaClientFromMetadata(m)
-	exists, err := doesUserExist(ctx, client, userId)
-	if err != nil {
-		return diag.Errorf("error validating user (%s): %v", userId, err)
-	} else if !exists {
-		d.SetId("")
-		logger(m).Info("user (%s) does not exist in this Okta instance", userId)
-		return nil
-	}
 	ok, err := checkIfUserHasGroups(ctx, client, userId, groups)
 	if err != nil {
 		return diag.Errorf("unable to complete group check for user: %v", err)
@@ -91,7 +77,7 @@ func resourceUserGroupMembershipRead(ctx context.Context, d *schema.ResourceData
 		return nil
 	} else {
 		d.SetId("")
-		logger(m).Info("user (%s) did not have expected group memberships", userId)
+		logger(m).Info("user (%s) did not have expected group memberships or did not exist", userId)
 		return nil
 	}
 }
@@ -133,9 +119,14 @@ func resourceUserGroupMembershipUpdate(ctx context.Context, d *schema.ResourceDa
 }
 
 func checkIfUserHasGroups(ctx context.Context, client *okta.Client, userId string, groups []string) (bool, error) {
-	userGroups, _, err := client.User.ListUserGroups(ctx, userId)
+	userGroups, resp, err := client.User.ListUserGroups(ctx, userId)
+	exists, err := doesResourceExist(resp, err)
 	if err != nil {
 		return false, fmt.Errorf("unable to return groups for user (%s) from API", userId)
+	}
+
+	if !exists {
+		return false, nil
 	}
 
 	// Create set of groups
@@ -164,9 +155,13 @@ func checkIfUserHasGroups(ctx context.Context, client *okta.Client, userId strin
 
 func addUserToGroups(ctx context.Context, client *okta.Client, userId string, groups []string) error {
 	for _, group := range groups {
-		_, err := client.Group.AddUserToGroup(ctx, group, userId)
+		resp, err := client.Group.AddUserToGroup(ctx, group, userId)
+		exists, err := doesResourceExist(resp, err)
 		if err != nil {
 			return fmt.Errorf("failed to add user (%s) to group (%s): %v", userId, group, err)
+		}
+		if !exists {
+			return fmt.Errorf("targeted object does not exist: %s", err)
 		}
 	}
 	return nil
@@ -181,9 +176,4 @@ func removeUserFromGroups(ctx context.Context, client *okta.Client, userId strin
 		}
 	}
 	return nil
-}
-
-func doesUserExist(ctx context.Context, client *okta.Client, userId string) (bool, error) {
-	_, resp, err := client.User.GetUser(ctx, userId)
-	return doesResourceExist(resp, err)
 }
