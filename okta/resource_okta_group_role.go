@@ -139,9 +139,14 @@ func resourceGroupRoleCreate(ctx context.Context, d *schema.ResourceData, m inte
 func resourceGroupRoleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	groupID := d.Get("group_id").(string)
 	client := getOktaClientFromMetadata(m)
-	rolesAssigned, _, err := client.Group.ListGroupAssignedRoles(ctx, groupID, nil)
+	rolesAssigned, resp, err := client.Group.ListGroupAssignedRoles(ctx, groupID, nil)
+	exists, err := doesResourceExist(resp, err)
 	if err != nil {
 		return diag.Errorf("failed to list roles assigned to group %s: %v", groupID, err)
+	} else if !exists {
+		logger(m).Warn("group (%s) which had these resources assigned no longer exists", groupID)
+		d.SetId("")
+		return nil
 	}
 	for i := range rolesAssigned {
 		if rolesAssigned[i].Id == d.Id() {
@@ -211,7 +216,8 @@ func resourceGroupRoleDelete(ctx context.Context, d *schema.ResourceData, m inte
 	groupID := d.Get("group_id").(string)
 	roleType := d.Get("role_type").(string)
 	logger(m).Info("deleting assigned role from group", "group_id", groupID, "role_type", roleType)
-	_, err := getOktaClientFromMetadata(m).Group.RemoveRoleFromGroup(ctx, groupID, d.Id())
+	resp, err := getOktaClientFromMetadata(m).Group.RemoveRoleFromGroup(ctx, groupID, d.Id())
+	err = suppressErrorOn404(resp, err)
 	if err != nil {
 		return diag.Errorf("failed to remove role %s assigned to group %s: %v", roleType, groupID, err)
 	}
@@ -324,7 +330,8 @@ func addGroupTargetsToRole(ctx context.Context, client *okta.Client, groupID, ro
 
 func removeGroupTargetsFromRole(ctx context.Context, client *okta.Client, groupID, roleID string, groupTargets []string) error {
 	for i := range groupTargets {
-		_, err := client.Group.RemoveGroupTargetFromGroupAdministratorRoleGivenToGroup(ctx, groupID, roleID, groupTargets[i])
+		resp, err := client.Group.RemoveGroupTargetFromGroupAdministratorRoleGivenToGroup(ctx, groupID, roleID, groupTargets[i])
+		err = suppressErrorOn404(resp, err)
 		if err != nil {
 			return err
 		}
@@ -356,14 +363,16 @@ func removeGroupAppTargets(ctx context.Context, client *okta.Client, groupID, ro
 	for i := range apps {
 		app := strings.Split(apps[i], ".")
 		if len(app) == 1 {
-			_, err := client.Group.RemoveApplicationTargetFromApplicationAdministratorRoleGivenToGroup(ctx,
+			resp, err := client.Group.RemoveApplicationTargetFromApplicationAdministratorRoleGivenToGroup(ctx,
 				groupID, roleID, app[0])
+			err = suppressErrorOn404(resp, err)
 			if err != nil {
 				return fmt.Errorf("failed to remove an app target from an app administrator role given to a group: %v", err)
 			}
 		} else {
-			_, err := client.Group.RemoveApplicationTargetFromAdministratorRoleGivenToGroup(ctx,
+			resp, err := client.Group.RemoveApplicationTargetFromAdministratorRoleGivenToGroup(ctx,
 				groupID, roleID, app[0], strings.Join(app[1:], ""))
+			err = suppressErrorOn404(resp, err)
 			if err != nil {
 				return fmt.Errorf("failed to remove an app instance target from an app administrator role given to a group: %v", err)
 			}
