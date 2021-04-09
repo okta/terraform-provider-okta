@@ -49,7 +49,6 @@ func resourceUserGroupMembershipCreate(ctx context.Context, d *schema.ResourceDa
 	bOff.InitialInterval = time.Second
 	err = backoff.Retry(func() error {
 		ok, err := checkIfUserHasGroups(ctx, client, userId, groups)
-		//TODO: Fix error messages
 		if err != nil {
 			return backoff.Permanent(err)
 		}
