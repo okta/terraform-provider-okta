@@ -174,7 +174,8 @@ func addUserToGroups(ctx context.Context, client *okta.Client, userId string, gr
 
 func removeUserFromGroups(ctx context.Context, client *okta.Client, userId string, groups []string) error {
 	for _, group := range groups {
-		_, err := client.Group.RemoveUserFromGroup(ctx, group, userId)
+		resp, err := client.Group.RemoveUserFromGroup(ctx, group, userId)
+		err = suppressErrorOn404(resp, err)
 		if err != nil {
 			return fmt.Errorf("failed to remove user (%s) from group (%s): %v", userId, group, err)
 		}
