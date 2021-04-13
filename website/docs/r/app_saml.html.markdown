@@ -127,6 +127,8 @@ The following arguments are supported:
 - `single_logout_certificate` - (Optional) x509 encoded certificate that the Service Provider uses to sign Single Logout requests. 
   Note: should be provided without `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`, see [official documentation](https://developer.okta.com/docs/reference/api/apps/#service-provider-certificate).
 
+- `logo` (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+
 ## Attributes Reference
 
 - `id` - id of application.
@@ -152,6 +154,8 @@ The following arguments are supported:
 - `entity_key` - Entity ID, the ID portion of the `entity_url`.
 
 - `entity_url` - Entity URL for instance [http://www.okta.com/exk1fcia6d6EMsf331d8](http://www.okta.com/exk1fcia6d6EMsf331d8).
+
+- `logo_url` - Direct link of application logo.
 
 ## Import
 

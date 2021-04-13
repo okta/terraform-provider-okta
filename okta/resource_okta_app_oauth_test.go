@@ -43,6 +43,7 @@ func TestAccAppOauth_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "response_types.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "client_secret", "something_from_somewhere"),
 					resource.TestCheckResourceAttr(resourceName, "client_id", "something_from_somewhere"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
 			{
@@ -58,6 +59,7 @@ func TestAccAppOauth_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "1"),
 					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
 					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
 			{
@@ -67,7 +69,6 @@ func TestAccAppOauth_basic(t *testing.T) {
 					if len(s) != 1 {
 						return errors.New("failed to import schema into state")
 					}
-
 					return nil
 				},
 			},

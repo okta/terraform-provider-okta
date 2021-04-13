@@ -43,6 +43,8 @@ The following arguments are supported:
 
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
+- `logo` (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+
 ## Attributes Reference
 
 - `id` - ID of the Application.
@@ -50,6 +52,8 @@ The following arguments are supported:
 - `label` - The Application's display name.
 
 - `url` - The URL of the bookmark.
+
+- `logo_url` - Direct link of application logo.
 
 ## Import
 

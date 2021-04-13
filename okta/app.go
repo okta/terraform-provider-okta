@@ -41,7 +41,7 @@ var baseAppSchema = map[string]*schema.Schema{
 	"name": {
 		Type:        schema.TypeString,
 		Computed:    true,
-		Description: "name of app.",
+		Description: "Name of the app.",
 	},
 	"label": {
 		Type:        schema.TypeString,
@@ -71,6 +71,20 @@ var baseAppSchema = map[string]*schema.Schema{
 		Default:          statusActive,
 		ValidateDiagFunc: stringInSlice([]string{statusActive, statusInactive}),
 		Description:      "Status of application.",
+	},
+	"logo": {
+		Type:             schema.TypeString,
+		Optional:         true,
+		ValidateDiagFunc: logoValid(),
+		Description:      "Logo of the application.",
+		DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+			return new == ""
+		},
+	},
+	"logo_url": {
+		Type:        schema.TypeString,
+		Computed:    true,
+		Description: "URL of the application's logo",
 	},
 }
 
@@ -326,6 +340,15 @@ func handleAppGroupsAndUsers(ctx context.Context, id string, d *schema.ResourceD
 	wg.Wait()
 
 	return getPromiseError(<-resultChan, "failed to associate user or groups with application")
+}
+
+func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, appID string, links interface{}) error {
+	l, ok := d.GetOk("logo")
+	if !ok {
+		return nil
+	}
+	_, err := getSupplementFromMetadata(m).UploadAppLogo(ctx, appID, l.(string))
+	return err
 }
 
 func handleAppUsers(ctx context.Context, id string, d *schema.ResourceData, client *okta.Client) []func() error {

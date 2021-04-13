@@ -102,6 +102,8 @@ The following arguments are supported:
 
 - `login_scopes` - (Optional) List of scopes to use for the request. Valid values: `"openid"`, `"profile"`, `"email"`, `"address"`, `"phone"`. Required when `login_mode` is NOT `DISABLED`.
 
+- `logo` (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+
 ## Attributes Reference
 
 - `id` - ID of the application.
@@ -113,6 +115,8 @@ The following arguments are supported:
 - `client_id` - The client ID of the application.
 
 - `client_secret` - The client secret of the application.
+
+- `logo_url` - Direct link of application logo.
 
 ## Import
 

@@ -372,6 +372,10 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interf
 	if err != nil {
 		return diag.Errorf("failed to handle groups and users for SAML application: %v", err)
 	}
+	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	if err != nil {
+		return diag.Errorf("failed to upload logo for SAML application: %v", err)
+	}
 	return resourceAppSamlRead(ctx, d, m)
 }
 
@@ -402,6 +406,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	_ = d.Set("preconfigured_app", app.Name)
+	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	if app.Credentials.Signing.Kid != "" && app.Status != statusInactive {
 		keyID := app.Credentials.Signing.Kid
 		_ = d.Set("key_id", keyID)
@@ -459,6 +464,14 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
 		return diag.Errorf("failed to handle groups and users for SAML application: %v", err)
+	}
+	if d.HasChange("logo") {
+		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		if err != nil {
+			o, _ := d.GetChange("logo")
+			_ = d.Set("logo", o)
+			return diag.Errorf("failed to upload logo for SAML application: %v", err)
+		}
 	}
 	return resourceAppSamlRead(ctx, d, m)
 }

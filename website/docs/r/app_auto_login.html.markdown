@@ -64,10 +64,15 @@ The following arguments are supported:
 
 - `groups` - (Optional) Groups associated with the application. See `okta_app_group_assignment` for a more flexible approach.
 
+- `logo` (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+
 ## Attributes Reference
 
 - `name` - Name assigned to the application by Okta.
+  
 - `sign_on_mode` - Sign-on mode of the application.
+
+- `logo_url` - Direct link of application logo.
 
 ## Import
 

@@ -60,6 +60,8 @@ The following arguments are supported:
 
 - `hide_web` - (Optional) Do not display application icon to users.
 
+- `logo` (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+
 ## Attributes Reference
 
 - `name` - Name assigned to the application by Okta.
@@ -69,6 +71,8 @@ The following arguments are supported:
 - `user_name_template` - The default username assigned to each user.
 
 - `user_name_template_type` - The Username template type.
+
+- `logo_url` - Direct link of application logo.
 
 ## Import
 

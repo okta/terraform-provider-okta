@@ -83,6 +83,10 @@ func resourceAppAutoLoginCreate(ctx context.Context, d *schema.ResourceData, m i
 	if err != nil {
 		return diag.Errorf("failed to handle groups and users for auto login application: %v", err)
 	}
+	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	if err != nil {
+		return diag.Errorf("failed to upload logo for auto login application: %v", err)
+	}
 	return resourceAppAutoLoginRead(ctx, d, m)
 }
 
@@ -106,10 +110,19 @@ func resourceAppAutoLoginRead(ctx context.Context, d *schema.ResourceData, m int
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
+	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 	err = syncGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
 		return diag.Errorf("failed to sync groups and users for auto login application: %v", err)
+	}
+	if d.HasChange("logo") {
+		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		if err != nil {
+			o, _ := d.GetChange("logo")
+			_ = d.Set("logo", o)
+			return diag.Errorf("failed to upload logo for basic auth application: %v", err)
+		}
 	}
 	return nil
 }

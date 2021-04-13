@@ -333,6 +333,10 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 			return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
 		}
 	}
+	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	if err != nil {
+		return diag.Errorf("failed to upload logo for OAuth application: %v", err)
+	}
 	return resourceAppOAuthRead(ctx, d, m)
 }
 
@@ -369,6 +373,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	_ = d.Set("auto_submit_toolbar", app.Visibility.AutoSubmitToolbar)
 	_ = d.Set("hide_ios", app.Visibility.Hide.IOS)
 	_ = d.Set("hide_web", app.Visibility.Hide.Web)
+	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	if app.Settings.ImplicitAssignment != nil {
 		_ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
 	}
@@ -459,6 +464,14 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
 		if err != nil {
 			return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
+		}
+	}
+	if d.HasChange("logo") {
+		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		if err != nil {
+			o, _ := d.GetChange("logo")
+			_ = d.Set("logo", o)
+			return diag.Errorf("failed to upload logo for OAuth application: %v", err)
 		}
 	}
 	return resourceAppOAuthRead(ctx, d, m)

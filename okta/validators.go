@@ -2,6 +2,7 @@ package okta
 
 import (
 	"net/url"
+	"os"
 	"regexp"
 	"strings"
 
@@ -62,6 +63,23 @@ func stringInSlice(valid []string) schema.SchemaValidateDiagFunc {
 			}
 		}
 		return diag.Errorf("expected %v to be one of %v, got %s", k, strings.Join(valid, ","), v)
+	}
+}
+
+func logoValid() schema.SchemaValidateDiagFunc {
+	return func(i interface{}, k cty.Path) diag.Diagnostics {
+		v, ok := i.(string)
+		if !ok {
+			return diag.Errorf("expected type of %v to be string", k)
+		}
+		stat, err := os.Stat(v)
+		if err != nil {
+			return diag.Errorf("invalid '%s' file: %v", v, err)
+		}
+		if stat.Size() > 1<<20 { // should be less than 1 MB in size.
+			return diag.Errorf("file '%s' should be less than 1 MB in size", v)
+		}
+		return nil
 	}
 }
 

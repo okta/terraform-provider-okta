@@ -28,6 +28,7 @@ func TestAccAppSwaApplication_preconfig(t *testing.T) {
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaApplication())),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
 			{
@@ -36,6 +37,7 @@ func TestAccAppSwaApplication_preconfig(t *testing.T) {
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
 		},

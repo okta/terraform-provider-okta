@@ -29,6 +29,7 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
 					resource.TestCheckResourceAttr(resourceName, "groups.#", "1"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
 			{
@@ -39,6 +40,7 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
 					resource.TestCheckResourceAttr(resourceName, "users.#", "1"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
 		},

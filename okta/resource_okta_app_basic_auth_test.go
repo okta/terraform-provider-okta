@@ -30,6 +30,7 @@ func TestAccAppBasicAuthApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "url", "https://example.com/login.html"),
 					resource.TestCheckResourceAttr(resourceName, "auth_url", "https://example.com/auth.html"),
 					resource.TestCheckResourceAttr(resourceName, "groups.#", "1"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
 			{
@@ -41,6 +42,7 @@ func TestAccAppBasicAuthApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "url", "https://example.com/login.html"),
 					resource.TestCheckResourceAttr(resourceName, "auth_url", "https://example.com/auth.html"),
 					resource.TestCheckResourceAttr(resourceName, "users.#", "1"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
 		},
