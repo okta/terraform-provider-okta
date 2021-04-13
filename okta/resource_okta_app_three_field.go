@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAppThreeField() *schema.Resource {
@@ -71,6 +72,10 @@ func resourceAppThreeFieldCreate(ctx context.Context, d *schema.ResourceData, m 
 	if err != nil {
 		return diag.Errorf("failed to create three field application: %v", err)
 	}
+	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	if err != nil {
+		return diag.Errorf("failed to upload logo for three field application: %v", err)
+	}
 	d.SetId(app.Id)
 	return resourceAppThreeFieldRead(ctx, d, m)
 }
@@ -95,6 +100,7 @@ func resourceAppThreeFieldRead(ctx context.Context, d *schema.ResourceData, m in
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
+	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 	return nil
 }
@@ -109,6 +115,14 @@ func resourceAppThreeFieldUpdate(ctx context.Context, d *schema.ResourceData, m 
 	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
 		return diag.Errorf("failed to set three field application status: %v", err)
+	}
+	if d.HasChange("logo") {
+		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		if err != nil {
+			o, _ := d.GetChange("logo")
+			_ = d.Set("logo", o)
+			return diag.Errorf("failed to upload logo for three field application: %v", err)
+		}
 	}
 	return resourceAppThreeFieldRead(ctx, d, m)
 }

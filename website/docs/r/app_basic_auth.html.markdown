@@ -44,6 +44,8 @@ The following arguments are supported:
 
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
+- `logo` (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+
 ## Attributes Reference
 
 - `id` - ID of the Application.
@@ -53,6 +55,8 @@ The following arguments are supported:
 - `url` - The URL of the sign-in page for basic auth app.
 
 - `auth_url` - The URL of the authenticating site for basic auth app.
+
+- `logo_url` - Direct link of application logo.
 
 ## Import
 

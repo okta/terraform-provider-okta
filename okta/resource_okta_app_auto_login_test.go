@@ -32,6 +32,7 @@ func TestAccAppAutoLoginApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "credentials_scheme", "EDIT_USERNAME_AND_PASSWORD"),
 					resource.TestCheckResourceAttr(resourceName, "user_name_template_type", "CUSTOM"),
 					resource.TestCheckResourceAttr(resourceName, "user_name_template", "user.firstName"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
 			{
@@ -48,6 +49,7 @@ func TestAccAppAutoLoginApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "credentials_scheme", "SHARED_USERNAME_AND_PASSWORD"),
 					resource.TestCheckResourceAttr(resourceName, "user_name_template_type", "CUSTOM"),
 					resource.TestCheckResourceAttr(resourceName, "user_name_template", "user.firstName"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
 		},

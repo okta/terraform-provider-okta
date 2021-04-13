@@ -32,6 +32,7 @@ func TestAccAppThreeFieldApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "extra_field_selector", "third"),
 					resource.TestCheckResourceAttr(resourceName, "extra_field_value", "third"),
 					resource.TestCheckResourceAttr(resourceName, "url", "http://example.com"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
 			{
@@ -46,6 +47,7 @@ func TestAccAppThreeFieldApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "url", "http://example.com"),
 					resource.TestCheckResourceAttr(resourceName, "extra_field_selector", "mfa"),
 					resource.TestCheckResourceAttr(resourceName, "extra_field_value", "mfa"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
 		},
