@@ -7,5 +7,5 @@ resource "okta_app_basic_auth" "test" {
   url      = "https://example.com/login.html"
   auth_url = "https://example.com/auth.html"
   groups   = [okta_group.group.id]
-  logo     = "/Users/bprodan/Projects/src/terra/terra/2.png"
+  logo     = "../examples/okta_app_basic_auth/terraform_icon.png"
 }
