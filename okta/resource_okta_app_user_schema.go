@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-    "github.com/cenkalti/backoff/v4"
+	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -115,19 +115,19 @@ func resourceAppUserSchemaCreate(ctx context.Context, d *schema.ResourceData, m 
 	}
 	d.SetId(fmt.Sprintf("%s/%s", d.Get("app_id").(string), d.Get("index").(string)))
 	bOff := backoff.NewExponentialBackOff()
-    bOff.MaxElapsedTime = time.Second * 10
-    bOff.InitialInterval = time.Second
-    err = backoff.Retry(func() error {
-    	err := resourceAppUserSchemaRead(ctx, d, m)
-    	if err != nil {
-    		return backoff.Permanent(fmt.Errorf("%s", err[0].Summary))
-    	}
-    	if d.Id() != "" {
-    		return nil
-    	}
-    	return fmt.Errorf("Application User Schema property %s was not created in app %s", d.Get("index").(string), d.Get("app_id").(string))
-    }, bOff)
-    return diag.FromErr(err)
+	bOff.MaxElapsedTime = time.Second * 10
+	bOff.InitialInterval = time.Second
+	err = backoff.Retry(func() error {
+		err := resourceAppUserSchemaRead(ctx, d, m)
+		if err != nil {
+			return backoff.Permanent(fmt.Errorf("%s", err[0].Summary))
+		}
+		if d.Id() != "" {
+			return nil
+		}
+		return fmt.Errorf("Application User Schema property %s was not created in app %s", d.Get("index").(string), d.Get("app_id").(string))
+	}, bOff)
+	return diag.FromErr(err)
 }
 
 func resourceAppUserSchemaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -163,19 +163,19 @@ func resourceAppUserSchemaUpdate(ctx context.Context, d *schema.ResourceData, m 
 		return err
 	}
 	bOff := backoff.NewExponentialBackOff()
-    bOff.MaxElapsedTime = time.Second * 10
-    bOff.InitialInterval = time.Second
-    err = backoff.Retry(func() error {
-    	err := resourceAppUserSchemaRead(ctx, d, m)
-    	if err != nil {
-    		return backoff.Permanent(fmt.Errorf("%s", err[0].Summary))
-    	}
-    	if d.Id() != "" {
-    		return nil
-    	}
-    	return fmt.Errorf("Application User Schema property %s was not created in app %s", d.Get("index").(string), d.Get("app_id").(string))
-    }, bOff)
-    return diag.FromErr(err)
+	bOff.MaxElapsedTime = time.Second * 10
+	bOff.InitialInterval = time.Second
+	err = backoff.Retry(func() error {
+		err := resourceAppUserSchemaRead(ctx, d, m)
+		if err != nil {
+			return backoff.Permanent(fmt.Errorf("%s", err[0].Summary))
+		}
+		if d.Id() != "" {
+			return nil
+		}
+		return fmt.Errorf("Application User Schema property %s was not created in app %s", d.Get("index").(string), d.Get("app_id").(string))
+	}, bOff)
+	return diag.FromErr(err)
 }
 
 func resourceAppUserSchemaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
