@@ -151,12 +151,17 @@ func convertInterfaceToStringArr(purportedList interface{}) []string {
 	rawArr, ok := purportedList.([]interface{})
 
 	if ok {
-		arr = make([]string, len(rawArr))
-		for i, thing := range rawArr {
-			arr[i] = thing.(string)
-		}
+		arr = convertInterfaceArrToStringArr(rawArr)
 	}
 
+	return arr
+}
+
+func convertInterfaceArrToStringArr(rawArr []interface{}) []string {
+	arr := make([]string, len(rawArr))
+	for i, thing := range rawArr {
+		arr[i] = thing.(string)
+	}
 	return arr
 }
 
