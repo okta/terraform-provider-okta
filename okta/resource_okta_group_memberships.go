@@ -13,30 +13,30 @@ import (
 
 func resourceGroupMemberships() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceUserGroupMembershipCreate,
-		ReadContext:   resourceUserGroupMembershipRead,
-		UpdateContext: resourceUserGroupMembershipUpdate,
-		DeleteContext: resourceUserGroupMembershipDelete,
+		CreateContext: resourceGroupMembershipsCreate,
+		ReadContext:   resourceGroupMembershipsRead,
+		UpdateContext: resourceGroupMembershipsUpdate,
+		DeleteContext: resourceGroupMembershipsDelete,
 		Importer:      nil,
 		Description:   "Resource to manage a set of group memberships for a specific user.",
 		Schema: map[string]*schema.Schema{
-			"user_id": {
+			"group_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "ID of a Okta User",
+				Description: "ID of a Okta group",
 				ForceNew:    true,
 			},
-			"groups": {
+			"users": {
 				Type:        schema.TypeSet,
 				Required:    true,
-				Description: "The list of Okta group IDs which the user should have membership managed for.",
+				Description: "The list of Okta user IDs which the group should have membership managed for.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 		},
 	}
 }
 
-func resourceGroupMembershipCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
 	groups := convertInterfaceToStringSetNullable(d.Get("groups"))
 	client := getOktaClientFromMetadata(m)
@@ -64,7 +64,7 @@ func resourceGroupMembershipCreate(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func resourceGroupMembershipRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
 	groups := convertInterfaceToStringSetNullable(d.Get("groups"))
 	client := getOktaClientFromMetadata(m)
@@ -81,7 +81,7 @@ func resourceGroupMembershipRead(ctx context.Context, d *schema.ResourceData, m 
 	}
 }
 
-func resourceUserGroupMembershipDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGroupMembershipsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
 	groups := convertInterfaceToStringSetNullable(d.Get("groups"))
 	client := getOktaClientFromMetadata(m)
@@ -92,7 +92,7 @@ func resourceUserGroupMembershipDelete(ctx context.Context, d *schema.ResourceDa
 	return nil
 }
 
-func resourceGroupMembershipUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
 	client := getOktaClientFromMetadata(m)
 
