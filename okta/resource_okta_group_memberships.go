@@ -24,7 +24,7 @@ func resourceGroupMemberships() *schema.Resource {
 			"group_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "ID of a Okta group",
+				Description: "ID of a Okta group.",
 				ForceNew:    true,
 			},
 			"users": {
