@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func resourceGroupMemberships() *schema.Resource {
@@ -37,10 +38,10 @@ func resourceGroupMemberships() *schema.Resource {
 }
 
 func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	userId := d.Get("user_id").(string)
-	groups := convertInterfaceToStringSetNullable(d.Get("groups"))
+	groupId := d.Get("group_id").(string)
+	users := convertInterfaceToStringSetNullable(d.Get("users"))
 	client := getOktaClientFromMetadata(m)
-	err := addUserToGroups(ctx, client, userId, groups)
+	err := addGroupMembers(ctx, client, groupId, users)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -48,27 +49,27 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 	bOff.MaxElapsedTime = time.Second * 10
 	bOff.InitialInterval = time.Second
 	err = backoff.Retry(func() error {
-		ok, err := checkIfUserHasGroups(ctx, client, userId, groups)
+		ok, err := checkIfGroupHasUsers(ctx, client, groupId, users)
 		if err != nil {
 			return backoff.Permanent(err)
 		}
 		if ok {
 			return nil
 		}
-		return fmt.Errorf("user (%s) did not have expected group memberships after multiple checks", userId)
+		return fmt.Errorf("group (%s) did not have expected user memberships after multiple checks", groupId)
 	}, bOff)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(userId)
+	d.SetId(groupId)
 	return nil
 }
 
 func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	userId := d.Get("user_id").(string)
-	groups := convertInterfaceToStringSetNullable(d.Get("groups"))
+	groupId := d.Get("group_id").(string)
+	users := convertInterfaceToStringSetNullable(d.Get("users"))
 	client := getOktaClientFromMetadata(m)
-	ok, err := checkIfUserHasGroups(ctx, client, userId, groups)
+	ok, err := checkIfGroupHasUsers(ctx, client, groupId, users)
 	if err != nil {
 		return diag.Errorf("unable to complete group check for user: %v", err)
 	}
@@ -76,16 +77,16 @@ func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, m
 		return nil
 	} else {
 		d.SetId("")
-		logger(m).Info("user (%s) did not have expected group memberships or did not exist", userId)
+		logger(m).Info("group (%s) did not have expected memberships or did not exist", groupId)
 		return nil
 	}
 }
 
 func resourceGroupMembershipsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	userId := d.Get("user_id").(string)
-	groups := convertInterfaceToStringSetNullable(d.Get("groups"))
+	groupId := d.Get("group_id").(string)
+	users := convertInterfaceToStringSetNullable(d.Get("users"))
 	client := getOktaClientFromMetadata(m)
-	err := removeUserFromGroups(ctx, client, userId, groups)
+	err := removeGroupMembers(ctx, client, groupId, users)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -93,23 +94,23 @@ func resourceGroupMembershipsDelete(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	userId := d.Get("user_id").(string)
+	groupId := d.Get("group_id").(string)
 	client := getOktaClientFromMetadata(m)
 
-	old, new := d.GetChange("groups")
+	old, new := d.GetChange("users")
 
 	oldSet := old.(*schema.Set)
 	newSet := new.(*schema.Set)
 
-	groupsToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
-	groupsToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
+	usersToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
+	usersToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
 
-	err := addUserToGroups(ctx, client, userId, groupsToAdd)
+	err := addGroupMembers(ctx, client, groupId, usersToAdd)
 	if err != nil {
 		diag.FromErr(err)
 	}
 
-	err = removeUserFromGroups(ctx, client, userId, groupsToRemove)
+	err = removeGroupMembers(ctx, client, groupId, usersToRemove)
 	if err != nil {
 		diag.FromErr(err)
 	}
@@ -117,33 +118,46 @@ func resourceGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func checkIfGroupHasUsers(ctx context.Context, client *okta.Client, userId string, groups []string) (bool, error) {
-	userGroups, resp, err := client.User.ListUserGroups(ctx, userId)
+func checkIfGroupHasUsers(ctx context.Context, client *okta.Client, groupId string, users []string) (bool, error) {
+	groupUsers, resp, err := client.Group.ListGroupUsers(ctx, groupId, &query.Params{Limit: defaultPaginationLimit})
 	exists, err := doesResourceExist(resp, err)
 	if err != nil {
-		return false, fmt.Errorf("unable to return groups for user (%s) from API", userId)
+		return false, fmt.Errorf("unable to return membership for group (%s) from API", groupId)
 	}
 
 	if !exists {
 		return false, nil
 	}
-
-	// Create set of groups
-	expectedGroupSet := make(map[string]bool)
-
-	for _, group := range groups {
-		expectedGroupSet[group] = false
+	if resp.HasNextPage() {
+		for {
+			var additionalUsers []*okta.User
+			resp, err := resp.Next(ctx, additionalUsers)
+			if err != nil {
+				return false, fmt.Errorf("unable to return membership for group (%s) from API", groupId)
+			}
+			groupUsers = append(groupUsers, additionalUsers...)
+			if !resp.HasNextPage() {
+				break
+			}
+		}
 	}
 
-	// Use groups pulled from user and mark set if found
-	for _, group := range userGroups {
-		if _, ok := expectedGroupSet[group.Id]; ok {
-			expectedGroupSet[group.Id] = true
+	// Create set of users
+	expectedUserSet := make(map[string]bool)
+
+	for _, user := range users {
+		expectedUserSet[user] = false
+	}
+
+	// Use users pulled from user and mark set if found
+	for _, user := range groupUsers {
+		if _, ok := expectedUserSet[user.Id]; ok {
+			expectedUserSet[user.Id] = true
 		}
 	}
 
 	// Check set for any missing values
-	for _, state := range expectedGroupSet {
+	for _, state := range expectedUserSet {
 		if !state {
 			return false, nil
 		}
@@ -152,12 +166,12 @@ func checkIfGroupHasUsers(ctx context.Context, client *okta.Client, userId strin
 	return true, nil
 }
 
-func addUserToGroups(ctx context.Context, client *okta.Client, userId string, groups []string) error {
-	for _, group := range groups {
-		resp, err := client.Group.AddUserToGroup(ctx, group, userId)
+func addGroupMembers(ctx context.Context, client *okta.Client, groupId string, users []string) error {
+	for _, user := range users {
+		resp, err := client.Group.AddUserToGroup(ctx, groupId, user)
 		exists, err := doesResourceExist(resp, err)
 		if err != nil {
-			return fmt.Errorf("failed to add user (%s) to group (%s): %v", userId, group, err)
+			return fmt.Errorf("failed to add user (%s) to group (%s): %v", user, groupId, err)
 		}
 		if !exists {
 			return fmt.Errorf("targeted object does not exist: %s", err)
@@ -166,12 +180,12 @@ func addUserToGroups(ctx context.Context, client *okta.Client, userId string, gr
 	return nil
 }
 
-func removeUserFromGroups(ctx context.Context, client *okta.Client, userId string, groups []string) error {
-	for _, group := range groups {
-		resp, err := client.Group.RemoveUserFromGroup(ctx, group, userId)
+func removeGroupMembers(ctx context.Context, client *okta.Client, groupId string, users []string) error {
+	for _, user := range users {
+		resp, err := client.Group.RemoveUserFromGroup(ctx, groupId, user)
 		err = suppressErrorOn404(resp, err)
 		if err != nil {
-			return fmt.Errorf("failed to remove user (%s) from group (%s): %v", userId, group, err)
+			return fmt.Errorf("failed to remove user (%s) from group (%s): %v", user, groupId, err)
 		}
 	}
 	return nil
