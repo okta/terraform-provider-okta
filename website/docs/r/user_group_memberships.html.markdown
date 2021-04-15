@@ -1,6 +1,6 @@
 ---
 layout: "okta"
-page_title: "Okta: okta_user_group_membership"
+page_title: "Okta: okta_user_group_memberships"
 sidebar_current: "docs-okta-resource-user-group-memberships"
 description: |-
   Resource to manage a set of group memberships for a specific user.
