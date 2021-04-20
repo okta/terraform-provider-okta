@@ -52,7 +52,7 @@ func listGroups(ctx context.Context, client *okta.Client, qp *query.Params) ([]*
 	return resGroups, nil
 }
 
-// Group Primary Key Operations
+// Group Primary Key Operations (Use when # groups < # users in operations)
 func addGroupMembers(ctx context.Context, client *okta.Client, groupId string, users []string) error {
 	for _, user := range users {
 		resp, err := client.Group.AddUserToGroup(ctx, groupId, user)
@@ -78,7 +78,7 @@ func removeGroupMembers(ctx context.Context, client *okta.Client, groupId string
 	return nil
 }
 
-//User Primary Key Operatios
+// User Primary Key Operations (use when # users < # groups in operations)
 func addUserToGroups(ctx context.Context, client *okta.Client, userId string, groups []string) error {
 	for _, group := range groups {
 		resp, err := client.Group.AddUserToGroup(ctx, group, userId)
