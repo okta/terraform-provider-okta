@@ -26,6 +26,7 @@ func TestAccOktaAuthServerScope_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "consent", "REQUIRED"),
 					resource.TestCheckResourceAttr(resourceName, "name", "test:something"),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "display_name", "test"),
 				),
 			},
 			{
@@ -34,6 +35,7 @@ func TestAccOktaAuthServerScope_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "consent", "REQUIRED"),
 					resource.TestCheckResourceAttr(resourceName, "name", "test:something"),
 					resource.TestCheckResourceAttr(resourceName, "description", "test_updated"),
+					resource.TestCheckResourceAttr(resourceName, "display_name", "test_updated"),
 				),
 			},
 		},
