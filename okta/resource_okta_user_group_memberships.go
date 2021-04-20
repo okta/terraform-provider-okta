@@ -97,7 +97,6 @@ func resourceUserGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceD
 	client := getOktaClientFromMetadata(m)
 
 	old, new := d.GetChange("groups")
-
 	oldSet := old.(*schema.Set)
 	newSet := new.(*schema.Set)
 
@@ -106,14 +105,12 @@ func resourceUserGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceD
 
 	err := addUserToGroups(ctx, client, userId, groupsToAdd)
 	if err != nil {
-		diag.FromErr(err)
+		return diag.FromErr(err)
 	}
-
 	err = removeUserFromGroups(ctx, client, userId, groupsToRemove)
 	if err != nil {
-		diag.FromErr(err)
+		return diag.FromErr(err)
 	}
-
 	return nil
 }
 

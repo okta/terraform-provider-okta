@@ -382,23 +382,6 @@ func updateAdminRolesOnUser(ctx context.Context, userID string, rolesToAssign []
 	return assignAdminRolesToUser(ctx, userID, rolesToAssign, c)
 }
 
-// need to remove from all current groups and reassign based on terraform configs when a change is detected
-func updateGroupsOnUser(ctx context.Context, u string, g []string, c *okta.Client) error {
-	groups, _, err := c.User.ListUserGroups(ctx, u)
-	if err != nil {
-		return fmt.Errorf("failed to list user groups: %v", err)
-	}
-	for _, group := range groups {
-		if group.Type != "BUILT_IN" && group.Type != "APP_GROUP" {
-			_, err = c.Group.RemoveUserFromGroup(ctx, group.Id, u)
-			if err != nil {
-				return fmt.Errorf("failed to remove user from group: %v", err)
-			}
-		}
-	}
-	return assignGroupsToUser(ctx, u, g, c)
-}
-
 // handle setting of user status based on what the current status is because okta
 // only allows transitions to certain statuses from other statuses - consult okta User API docs for more info
 // https://developer.okta.com/docs/api/resources/users#lifecycle-operations
