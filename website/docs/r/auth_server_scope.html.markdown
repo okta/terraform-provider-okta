@@ -33,6 +33,8 @@ The following arguments are supported:
 
 - `description` - (Optional) Description of the Auth Server Scope.
 
+- `display_name` - (Optional) Name of the end user displayed in a consent dialog box.
+
 - `consent` - (Optional) Indicates whether a consent dialog is needed for the scope. It can be set to `"REQUIRED"` or `"IMPLICIT"`.
 
 - `metadata_publish` - (Optional) Whether to publish metadata or not. It can be set to `"ALL_CLIENTS"` or `"NO_CLIENTS"`.

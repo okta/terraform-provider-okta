@@ -30,6 +30,11 @@ func resourceAuthServerScope() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"display_name": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Name of the end user displayed in a consent dialog box",
+			},
 			"consent": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -74,6 +79,7 @@ func resourceAuthServerScopeRead(ctx context.Context, d *schema.ResourceData, m 
 	}
 	_ = d.Set("name", scope.Name)
 	_ = d.Set("description", scope.Description)
+	_ = d.Set("display_name", scope.DisplayName)
 	_ = d.Set("metadata_publish", scope.MetadataPublish)
 	_ = d.Set("default", scope.Default)
 	if scope.Consent != "" {
@@ -105,6 +111,7 @@ func buildAuthServerScope(d *schema.ResourceData) okta.OAuth2Scope {
 		Description:     d.Get("description").(string),
 		MetadataPublish: d.Get("metadata_publish").(string),
 		Name:            d.Get("name").(string),
+		DisplayName:     d.Get("display_name").(string),
 		Default:         boolPtr(d.Get("default").(bool)),
 	}
 }
