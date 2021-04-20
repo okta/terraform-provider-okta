@@ -435,9 +435,9 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	}
 
 	if groupChange {
-		old, new := d.GetChange("group_memberships")
-		oldSet := old.(*schema.Set)
-		newSet := new.(*schema.Set)
+		oldGM, newGM := d.GetChange("group_memberships")
+		oldSet := oldGM.(*schema.Set)
+		newSet := newGM.(*schema.Set)
 		groupsToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
 		groupsToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
 		err := addUserToGroups(ctx, client, d.Id(), groupsToAdd)
@@ -448,7 +448,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 		if err != nil {
 			return diag.FromErr(err)
 		}
-	}// assignments
+	}
 
 	if passwordChange {
 		oldPassword, newPassword := d.GetChange("password")
