@@ -36,6 +36,10 @@ func dataSourceAuthServerScopes() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"display_name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 						"consent": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -80,6 +84,7 @@ func flattenScope(s *okta.OAuth2Scope) map[string]interface{} {
 		"id":               s.Id,
 		"name":             s.Name,
 		"description":      s.Description,
+		"display_name":     s.DisplayName,
 		"consent":          s.Consent,
 		"metadata_publish": s.MetadataPublish,
 		"default":          s.Default,

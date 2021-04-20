@@ -28,6 +28,7 @@ data "okta_auth_server_scopes" "test" {
   - `id` - ID of the Scope
   - `name` - Name of the Scope
   - `description` - Description of the Scope
+  - `display_name` - Name of the end user displayed in a consent dialog box
   - `consent` - Indicates whether a consent dialog is needed for the Scope
   - `metadata_publish` - Whether the Scope should be included in the metadata
   - `default` - Whether the Scope is a default Scope
