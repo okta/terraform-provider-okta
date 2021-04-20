@@ -435,12 +435,20 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	}
 
 	if groupChange {
-		groups := convertInterfaceToStringSet(d.Get("group_memberships"))
-		if err := updateGroupsOnUser(ctx, d.Id(), groups, client); err != nil {
-			return diag.Errorf("failed to update user: %v", err)
+		old, new := d.GetChange("group_memberships")
+		oldSet := old.(*schema.Set)
+		newSet := new.(*schema.Set)
+		groupsToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
+		groupsToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
+		err := addUserToGroups(ctx, client, d.Id(), groupsToAdd)
+		if err != nil {
+			return diag.FromErr(err)
 		}
-		_ = d.Set("group_memberships", groups)
-	}
+		err = removeUserFromGroups(ctx, client, d.Id(), groupsToRemove)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+	}// assignments
 
 	if passwordChange {
 		oldPassword, newPassword := d.GetChange("password")
