@@ -148,28 +148,3 @@ func checkIfUserHasGroups(ctx context.Context, client *okta.Client, userId strin
 
 	return true, nil
 }
-
-func addUserToGroups(ctx context.Context, client *okta.Client, userId string, groups []string) error {
-	for _, group := range groups {
-		resp, err := client.Group.AddUserToGroup(ctx, group, userId)
-		exists, err := doesResourceExist(resp, err)
-		if err != nil {
-			return fmt.Errorf("failed to add user (%s) to group (%s): %v", userId, group, err)
-		}
-		if !exists {
-			return fmt.Errorf("targeted object does not exist: %s", err)
-		}
-	}
-	return nil
-}
-
-func removeUserFromGroups(ctx context.Context, client *okta.Client, userId string, groups []string) error {
-	for _, group := range groups {
-		resp, err := client.Group.RemoveUserFromGroup(ctx, group, userId)
-		err = suppressErrorOn404(resp, err)
-		if err != nil {
-			return fmt.Errorf("failed to remove user (%s) from group (%s): %v", userId, group, err)
-		}
-	}
-	return nil
-}
