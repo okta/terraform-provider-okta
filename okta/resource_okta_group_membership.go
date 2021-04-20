@@ -36,6 +36,7 @@ func resourceGroupMembership() *schema.Resource {
 				ForceNew:    true,
 			},
 		},
+		DeprecationMessage: "resource `okta_group_membersip` is now deprecated, please use `okta_group_memberships` or `okta_user_group_memberships` based applicable needs",
 	}
 }
 
