@@ -162,7 +162,6 @@ func resourceUser() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "User Okta login",
-				ForceNew:    true,
 			},
 			"manager": {
 				Type:        schema.TypeString,
