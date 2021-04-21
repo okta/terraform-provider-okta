@@ -344,6 +344,33 @@ func TestAccOktaUser_validRole(t *testing.T) {
 	})
 }
 
+func TestAccOktaUser_loginUpdates(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(oktaUser)
+	config := mgr.GetFixtures("basic.tf", ri, t)
+	updatedLogin := mgr.GetFixtures("login_changed.tf", ri, t)
+
+	resourceName := fmt.Sprintf("%s.test", oktaUser)
+	email := fmt.Sprintf("testAcc-%d@example.com", ri)
+	updatedEmail := fmt.Sprintf("testAccUpdated-%d@example.com", ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check:  resource.TestCheckResourceAttr(resourceName, "email", email),
+			},
+			{
+				Config: updatedLogin,
+				Check:  resource.TestCheckResourceAttr(resourceName, "email", updatedEmail),
+			},
+		},
+	})
+}
+
 func testAccCheckUserDestroy(s *terraform.State) error {
 	client := getOktaClientFromMetadata(testAccProvider.Meta())
 	for _, r := range s.RootModule().Resources {
