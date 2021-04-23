@@ -491,10 +491,9 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	responseSigned := d.Get("response_signed").(bool)
 	assertionSigned := d.Get("assertion_signed").(bool)
 
-	preconfigName, ok := d.GetOk("preconfigured_app")
-
+	preConfigName, ok := d.GetOk("preconfigured_app")
 	if ok {
-		app.Name = preconfigName.(string)
+		app.Name = preConfigName.(string)
 	} else {
 		app.Name = d.Get("name").(string)
 
@@ -607,6 +606,8 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 			}
 		}
 		app.Settings.SignOn.AttributeStatements = samlAttr
+	} else {
+		app.Settings.SignOn.AttributeStatements = []*okta.SamlAttributeStatement{}
 	}
 
 	if id, ok := d.GetOk("key_id"); ok {

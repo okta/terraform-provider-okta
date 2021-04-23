@@ -131,5 +131,9 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 	if ok && resp != nil && containsInt(retryCodes, resp.StatusCode) {
 		return true, nil
 	}
+	// don't retry on internal server errors
+	if resp != nil && resp.StatusCode == http.StatusInternalServerError {
+		return false, nil
+	}
 	return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
 }
