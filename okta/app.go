@@ -347,7 +347,8 @@ func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, a
 	if !ok {
 		return nil
 	}
-	_, err := getSupplementFromMetadata(m).UploadAppLogo(ctx, appID, l.(string))
+	resp, err := getSupplementFromMetadata(m).UploadAppLogo(ctx, appID, l.(string))
+	_ = resp
 	return err
 }
 

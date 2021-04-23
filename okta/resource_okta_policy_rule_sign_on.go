@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"errors"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -65,7 +66,6 @@ func resourcePolicySignonRule() *schema.Resource {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: "Max minutes a session is active: Disable = 0.",
-				Default:     120,
 			},
 			"session_persistent": {
 				Type:        schema.TypeBool,
@@ -78,8 +78,12 @@ func resourcePolicySignonRule() *schema.Resource {
 }
 
 func resourcePolicySignOnRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateSignOnPolicyRule(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	template := buildSignOnPolicyRule(d)
-	err := createRule(ctx, d, m, template, policyRuleSignOn)
+	err = createRule(ctx, d, m, template, policyRuleSignOn)
 	if err != nil {
 		return diag.Errorf("failed to create sign-on policy rule: %v", err)
 	}
@@ -116,8 +120,12 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourcePolicySignOnRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateSignOnPolicyRule(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	template := buildSignOnPolicyRule(d)
-	err := updateRule(ctx, d, m, template)
+	err = updateRule(ctx, d, m, template)
 	if err != nil {
 		return diag.Errorf("failed to update sign-on policy rule: %v", err)
 	}
@@ -164,4 +172,18 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 		},
 	}
 	return template
+}
+
+func validateSignOnPolicyRule(d *schema.ResourceData) error {
+	prompt, ok := d.GetOk("mfa_prompt")
+	if !ok {
+		return nil
+	}
+	if prompt.(string) != "DEVICE" {
+		d, ok := d.GetOk("mfa_remember_device")
+		if ok && d.(bool) {
+			return errors.New("'mfa_remember_device' can only be set when mfa_prompt='DEVICE'")
+		}
+	}
+	return nil
 }

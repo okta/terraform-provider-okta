@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/http"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -76,6 +77,7 @@ func resourceAppGroupAssignment() *schema.Resource {
 }
 
 func resourceAppGroupAssignmentCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusInternalServerError})
 	assignment, _, err := getOktaClientFromMetadata(m).Application.CreateApplicationGroupAssignment(
 		ctx,
 		d.Get("app_id").(string),
