@@ -8,22 +8,42 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-var translationResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"language": {
-			Type:     schema.TypeString,
-			Required: true,
+var (
+	translationResource = &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"language": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"subject": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"template": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
 		},
-		"subject": {
-			Type:     schema.TypeString,
-			Required: true,
-		},
-		"template": {
-			Type:     schema.TypeString,
-			Required: true,
-		},
-	},
-}
+	}
+	validEmailTemplateTypes = []string{
+		"email.welcome", "email.forgotPassword", "email.emailLinkRecoveryResetFactor",
+		"email.emailLinkRecoveryResetPwdFactor", "email.emailLinkRecoveryAdResetFactor",
+		"email.emailLinkRecoveryAdResetPwdFactor", "email.emailLinkRecoveryLdapResetPwdFactor",
+		"email.forgotPasswordDenied", "email.tempPassword", "email.ad.welcome", "email.ad.forgotPassword",
+		"email.ad.forgotPasswordReset", "email.sunone.welcome", "email.sunone.forgotPassword",
+		"email.sunone.forgotPasswordDenied", "email.selfServiceUnlock", "email.emailLinkRecoveryUnlockFactor",
+		"email.emailLinkRecoveryAdUnlockFactor", "email.emailLinkRecoveryUnlockPwdFactor",
+		"email.emailLinkRecoveryAdUnlockPwdFactor", "email.emailLinkRecoveryLdapUnlockPwdFactor",
+		"email.ad.selfServiceUnlock", "email.pushVerifyActivation", "email.accountLockout",
+		"email.emailTransactionVerification", "email.emailLinkAuthenticationTransaction",
+		"email.emailActivation", "email.signInFromNewDevice", "email.registrationActivation",
+		"email.emailChangeConfirmation", "email.emailNewChangeNotification", "email.emailNewAlreadyChangedNotification",
+		"email.registrationEmailVerification", "email.emailLinkFactorVerification",
+		"email.selfServiceUnlockOnUnlockedAccount", "email.endUserScheduledLifecycleStatusChange",
+		"email.adminUsersListScheduledLifecycleStatusChange", "email.factorEnrollment", "email.factorReset",
+		"email.authenticatorEnrollment", "email.authenticatorReset", "email.automation", "email.passwordChanged",
+	}
+)
 
 func resourceTemplateEmail() *schema.Resource {
 	return &schema.Resource{
@@ -41,10 +61,11 @@ func resourceTemplateEmail() *schema.Resource {
 				Default:  "en",
 			},
 			"type": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Email template type",
-				ForceNew:    true,
+				Type:             schema.TypeString,
+				Required:         true,
+				Description:      "Email template type",
+				ForceNew:         true,
+				ValidateDiagFunc: stringInSlice(validEmailTemplateTypes),
 			},
 			"translations": {
 				Type:     schema.TypeSet,
