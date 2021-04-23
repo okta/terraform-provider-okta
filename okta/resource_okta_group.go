@@ -104,10 +104,6 @@ func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 func syncGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	// Only sync when the user opts in by outlining users in the group config
-	if _, exists := d.GetOk("users"); !exists {
-		return nil
-	}
 	userIDList, err := listGroupUserIDs(ctx, m, d.Id())
 	if err != nil {
 		return err
