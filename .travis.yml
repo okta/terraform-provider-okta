@@ -4,9 +4,6 @@ services:
   - docker
 language: go
 
-env:
-  - GOFLAGS=-mod=mod
-
 install:
   - make build
   - make tools
