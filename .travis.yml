@@ -5,7 +5,7 @@ services:
 language: go
 
 env:
-  - GOFLAGS=-mod=vendor
+  - GOFLAGS=-mod=readonly
 
 install:
   - make build
