@@ -19,6 +19,11 @@ func resourceAppSharedCredentials() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
+			"accessibility_login_redirect_url": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Custom login page URL",
+			},
 			"button_field": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -78,6 +83,10 @@ func resourceAppSharedCredentialsCreate(ctx context.Context, d *schema.ResourceD
 		return diag.Errorf("failed to create SWA shared credentials application: %v", err)
 	}
 	d.SetId(app.Id)
+	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	if err != nil {
+		return diag.Errorf("failed to upload logo for SWA shared credentials application: %v", err)
+	}
 	return resourceAppSharedCredentialsRead(ctx, d, m)
 }
 
@@ -93,16 +102,17 @@ func resourceAppSharedCredentialsRead(ctx context.Context, d *schema.ResourceDat
 	}
 	flatMap := map[string]interface{}(*app.Settings.App)
 	_ = d.Set("button_field", flatMap["buttonField"])
-	_ = d.Set("username_field", flatMap["loginUrlRegex"])
+	_ = d.Set("url_regex", flatMap["loginUrlRegex"])
 	_ = d.Set("password_field", flatMap["passwordField"])
 	_ = d.Set("url", flatMap["url"])
-	_ = d.Set("url_regex", flatMap["usernameField"])
+	_ = d.Set("username_field", flatMap["usernameField"])
 	_ = d.Set("redirect_url", flatMap["redirectUrl"])
 	_ = d.Set("checkbox", flatMap["checkbox"])
 	_ = d.Set("shared_username", app.Credentials.UserName)
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
+	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
 	return nil
 }
@@ -117,6 +127,14 @@ func resourceAppSharedCredentialsUpdate(ctx context.Context, d *schema.ResourceD
 	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
 		return diag.Errorf("failed to set SWA shared credentials application status: %v", err)
+	}
+	if d.HasChange("logo") {
+		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		if err != nil {
+			o, _ := d.GetChange("logo")
+			_ = d.Set("logo", o)
+			return diag.Errorf("failed to upload logo for SWA shared credentials application: %v", err)
+		}
 	}
 	return resourceAppSharedCredentialsRead(ctx, d, m)
 }
@@ -136,10 +154,10 @@ func buildAppSharedCredentials(d *schema.ResourceData) *okta.BrowserPluginApplic
 	app.Settings = &okta.ApplicationSettings{
 		App: &okta.ApplicationSettingsApplication{
 			"buttonField":   d.Get("button_field").(string),
-			"loginUrlRegex": d.Get("username_field").(string),
+			"loginUrlRegex": d.Get("url_regex").(string),
 			"passwordField": d.Get("password_field").(string),
 			"url":           d.Get("url").(string),
-			"usernameField": d.Get("url_regex").(string),
+			"usernameField": d.Get("username_field").(string),
 			"redirectUrl":   d.Get("redirect_url").(string),
 			"checkbox":      d.Get("checkbox").(string),
 		},

@@ -117,10 +117,9 @@ var baseAppSwaSchema = map[string]*schema.Schema{
 		Description: "Enable self service",
 	},
 	"accessibility_error_redirect_url": {
-		Type:             schema.TypeString,
-		Optional:         true,
-		Description:      "Custom error page URL",
-		ValidateDiagFunc: stringIsURL(validURLSchemes...),
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Custom error page URL",
 	},
 	"auto_submit_toolbar": {
 		Type:        schema.TypeBool,
