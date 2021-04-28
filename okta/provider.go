@@ -28,6 +28,7 @@ const (
 	appSaml                = "okta_app_saml"
 	appSecurePasswordStore = "okta_app_secure_password_store"
 	appSwa                 = "okta_app_swa"
+	appSharedCredentials   = "okta_app_shared_credentials"
 	appThreeField          = "okta_app_three_field"
 	appUserSchema          = "okta_app_user_schema"
 	appUserBaseSchema      = "okta_app_user_base_schema"
@@ -180,6 +181,7 @@ func Provider() *schema.Provider {
 			appSaml:                resourceAppSaml(),
 			appSecurePasswordStore: resourceAppSecurePasswordStore(),
 			appSwa:                 resourceAppSwa(),
+			appSharedCredentials:   resourceAppSharedCredentials(),
 			appThreeField:          resourceAppThreeField(),
 			appUserSchema:          resourceAppUserSchema(),
 			appUserBaseSchema:      resourceAppUserBaseSchema(),
