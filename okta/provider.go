@@ -53,6 +53,7 @@ const (
 	oktaGroup              = "okta_group"
 	oktaGroups             = "okta_groups"
 	oktaGroupMembership    = "okta_group_membership"
+	oktaGroupMemberships   = "okta_group_memberships"
 	oktaProfileMapping     = "okta_profile_mapping"
 	oktaUser               = "okta_user"
 	policyMfa              = "okta_policy_mfa"
@@ -205,6 +206,7 @@ func Provider() *schema.Provider {
 			networkZone:            resourceNetworkZone(),
 			oktaGroup:              resourceGroup(),
 			oktaGroupMembership:    resourceGroupMembership(),
+			oktaGroupMemberships:   resourceGroupMemberships(),
 			oktaProfileMapping:     resourceOktaProfileMapping(),
 			oktaUser:               resourceUser(),
 			policyMfa:              resourcePolicyMfa(),
