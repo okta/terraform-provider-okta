@@ -243,17 +243,17 @@ func resourceAppOAuth() *schema.Resource {
 				Default:          "ORG_URL",
 				Description:      "*Early Access Property*. Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.",
 			},
-			"refresh_token_rotation_type": {
+			"refresh_token_rotation": {
 				Type:             schema.TypeString,
 				Optional:         true,
 				ValidateDiagFunc: stringInSlice([]string{"STATIC", "ROTATE"}),
-				Description:      "Refresh token behavior",
+				Description:      "*Early Access Property* Refresh token rotation behavior",
 			},
 			"refresh_token_leeway": {
 				Type:             schema.TypeInt,
 				Optional:         true,
 				ValidateDiagFunc: intBetween(0, 60),
-				Description:      "Grace period for token rotation",
+				Description:      "*Early Access Property* Grace period for token rotation",
 			},
 			"auto_submit_toolbar": {
 				Type:        schema.TypeBool,
@@ -395,6 +395,10 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	}
 	if app.Settings.OauthClient.IssuerMode != "" {
 		_ = d.Set("issuer_mode", app.Settings.OauthClient.IssuerMode)
+	}
+	if app.Settings.OauthClient.RefreshToken != nil {
+		_ = d.Set("refresh_token_rotation", app.Settings.OauthClient.RefreshToken.RotationType)
+		_ = d.Set("refresh_token_leeway", app.Settings.OauthClient.RefreshToken.Leeway)
 	}
 
 	// If this is ever changed omit it.
@@ -589,6 +593,22 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 			}
 		}
 		app.Settings.OauthClient.Jwks = &okta.OpenIdConnectApplicationSettingsClientKeys{Keys: keys}
+	}
+
+	refresh := &okta.OpenIdConnectApplicationSettingsRefreshToken{}
+	hasRefresh := false
+	if rotate, ok := d.GetOk("refresh_token_rotation"); ok {
+		refresh.RotationType = rotate.(string)
+		hasRefresh = true
+	}
+
+	if leeway, ok := d.GetOk("refresh_token_leeway"); ok {
+		refresh.Leeway = int64(leeway.(int))
+		hasRefresh = true
+	}
+
+	if hasRefresh {
+		app.Settings.OauthClient.RefreshToken = refresh
 	}
 
 	app.Visibility = buildVisibility(d)

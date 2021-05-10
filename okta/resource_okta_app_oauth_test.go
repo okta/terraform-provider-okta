@@ -76,6 +76,63 @@ func TestAccAppOauth_basic(t *testing.T) {
 	})
 }
 
+// TestAccAppOauth_refreshToken enables refresh token for browser type oauth app
+func TestAccAppOauth_refreshToken(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appOAuth)
+	config := mgr.GetFixtures("refresh.tf", ri, t)
+	update := mgr.GetFixtures("refresh_update.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", appOAuth)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "hide_ios", "true"),
+					resource.TestCheckResourceAttr(resourceName, "hide_web", "true"),
+					resource.TestCheckResourceAttr(resourceName, "auto_submit_toolbar", "false"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_uris.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "response_types.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_rotation", "STATIC"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_leeway", "0"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+				),
+			},
+			{
+				Config: update,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "hide_ios", "true"),
+					resource.TestCheckResourceAttr(resourceName, "hide_web", "true"),
+					resource.TestCheckResourceAttr(resourceName, "auto_submit_toolbar", "false"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_uris.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "response_types.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_rotation", "ROTATE"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_leeway", "30"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+				),
+			},
+		},
+	})
+}
+
 // Tests creation of service app and updates it to native
 func TestAccAppOauth_serviceNative(t *testing.T) {
 	ri := acctest.RandInt()
