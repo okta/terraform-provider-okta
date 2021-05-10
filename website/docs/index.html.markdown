@@ -57,8 +57,8 @@ explained below:
 
 ### Environment variables
 
-You can provide your credentials via the `OKTA_ORG_NAME`, `OKTA_BASE_URL`, `OKTA_API_TOKEN`, `OKTA_CLIENT_ID`, 
-`OKTA_API_SCOPES` and `OKTA_PRIVATE_KEY` environment variables, representing your Okta Organization Name, 
+You can provide your credentials via the `OKTA_ORG_NAME`, `OKTA_BASE_URL`, `OKTA_API_TOKEN`, `OKTA_API_CLIENT_ID`, 
+`OKTA_API_SCOPES` and `OKTA_API_PRIVATE_KEY` environment variables, representing your Okta Organization Name, 
 Okta Base URL (i.e. `"okta.com"` or `"oktapreview.com"`), Okta API Token, Okta Client ID, Okta API scopes 
 and Okta API private key respectively.
 
@@ -86,11 +86,11 @@ In addition to [generic `provider` arguments](https://www.terraform.io/docs/conf
 
 - `api_token` - (Optional) This is the API token to interact with your Okta org (either `"api_token"` or `"client_id"`, `"scopesv` and `"private_key"` must be provided). It can also be sourced from the `OKTA_API_TOKEN` environment variable.
 
-- `client_id` - (Optional) This is the client ID for obtaining the API token. It can also be sourced from the `OKTA_CLIENT_ID` environment variable. 
+- `client_id` - (Optional) This is the client ID for obtaining the API token. It can also be sourced from the `OKTA_API_CLIENT_ID` environment variable. 
 
 - `scopes` - (Optional) These are scopes for obtaining the API token in form of a comma separated list. It can also be sourced from the `OKTA_API_SCOPES` environment variable.
 
-- `private_key` - (Optional) This is the private key for obtaining the API token (can be represented by a filepath, or the key itself). It can also be sourced from the `OKTA_PRIVATE_KEY` environment variable.
+- `private_key` - (Optional) This is the private key for obtaining the API token (can be represented by a filepath, or the key itself). It can also be sourced from the `OKTA_API_PRIVATE_KEY` environment variable.
 
 - `backoff` - (Optional) Whether to use exponential back off strategy for rate limits, the default is `true`.
 
