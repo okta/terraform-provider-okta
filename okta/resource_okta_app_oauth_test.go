@@ -78,6 +78,11 @@ func TestAccAppOauth_basic(t *testing.T) {
 
 // TestAccAppOauth_refreshToken enables refresh token for browser type oauth app
 func TestAccAppOauth_refreshToken(t *testing.T) {
+	// TODO: This is an "Early Access Feature" and needs to be enabled by Okta
+	//       Skipping for now assuming that the okta account doesn't have this feature enabled.
+	//       If this feature is enabled or Okta releases this to all this test should be enabled.
+	//       SEE https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm
+	t.Skip("This is an 'Early Access Feature' and needs to be enabled by Okta, skipping this test as it fails when this feature is not available")
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appOAuth)
 	config := mgr.GetFixtures("refresh.tf", ri, t)
