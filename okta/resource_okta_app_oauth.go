@@ -61,6 +61,7 @@ var appGrantTypeMap = map[string]*applicationMap{
 		ValidGrantTypes: []string{
 			implicit,
 			authorizationCode,
+			refreshToken,
 		},
 	},
 	"service": {
