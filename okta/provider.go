@@ -164,8 +164,8 @@ func Provider() *schema.Provider {
 				Type:             schema.TypeInt,
 				Optional:         true,
 				Default:          0,
-				ValidateDiagFunc: intBetween(0, 100),
-				Description:      "Timeout for single request (in seconds) which is made to Okta, the default is `0` (means no limit is set). The maximum value can be `100`.",
+				ValidateDiagFunc: intBetween(0, 300),
+				Description:      "Timeout for single request (in seconds) which is made to Okta, the default is `0` (means no limit is set). The maximum value can be `300`.",
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
