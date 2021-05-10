@@ -243,6 +243,18 @@ func resourceAppOAuth() *schema.Resource {
 				Default:          "ORG_URL",
 				Description:      "*Early Access Property*. Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.",
 			},
+			"refresh_token_rotation_type": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"STATIC", "ROTATE"}),
+				Description:      "Refresh token behavior",
+			},
+			"refresh_token_leeway": {
+				Type:             schema.TypeInt,
+				Optional:         true,
+				ValidateDiagFunc: intBetween(0, 60),
+				Description:      "Grace period for token rotation",
+			},
 			"auto_submit_toolbar": {
 				Type:        schema.TypeBool,
 				Optional:    true,
