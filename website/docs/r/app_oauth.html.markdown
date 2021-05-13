@@ -88,6 +88,10 @@ The following arguments are supported:
 
 - `issuer_mode` - (Optional) Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.
 
+- `refresh_token_rotation` - (Optional) Refresh token rotation behavior. Valid values: `"STATIC"` or `"ROTATE"`.
+
+- `refresh_token_leeway` - (Optional) Grace period for token rotation. Valid values: 0 to 60 seconds.
+
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
 - `hide_ios` - (Optional) Do not display application icon on mobile app.

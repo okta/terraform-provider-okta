@@ -76,6 +76,50 @@ func TestAccAppOauth_basic(t *testing.T) {
 	})
 }
 
+// TestAccAppOauth_refreshToken enables refresh token for browser type oauth app
+func TestAccAppOauth_refreshToken(t *testing.T) {
+	// TODO: This is an "Early Access Feature" and needs to be enabled by Okta
+	//       Skipping for now assuming that the okta account doesn't have this feature enabled.
+	//       If this feature is enabled or Okta releases this to all this test should be enabled.
+	//       SEE https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm
+	t.Skip("This is an 'Early Access Feature' and needs to be enabled by Okta, skipping this test as it fails when this feature is not available")
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appOAuth)
+	config := mgr.GetFixtures("refresh.tf", ri, t)
+	update := mgr.GetFixtures("refresh_update.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", appOAuth)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_rotation", "STATIC"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_leeway", "0"),
+				),
+			},
+			{
+				Config: update,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_rotation", "ROTATE"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_leeway", "30"),
+				),
+			},
+		},
+	})
+}
+
 // Tests creation of service app and updates it to native
 func TestAccAppOauth_serviceNative(t *testing.T) {
 	ri := acctest.RandInt()
