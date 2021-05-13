@@ -193,6 +193,13 @@ func resourceAppOAuth() *schema.Resource {
 				Optional:    true,
 				Description: "List of URIs for use in the redirect-based flow. This is required for all application types except service. Note: see okta_app_oauth_redirect_uri for appending to this list in a decentralized way.",
 			},
+			"wildcard_redirect": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Indicates if the client is allowed to use wildcard matching of redirect_uris",
+				Default:          "DISABLED",
+				ValidateDiagFunc: stringInSlice([]string{"DISABLED", "SUBDOMAIN"}),
+			},
 			"post_logout_redirect_uris": {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -383,6 +390,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	_ = d.Set("tos_uri", app.Settings.OauthClient.TosUri)
 	_ = d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
 	_ = d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
+	_ = d.Set("wildcard_redirect", app.Settings.OauthClient.WildcardRedirect)
 	_ = d.Set("auto_submit_toolbar", app.Visibility.AutoSubmitToolbar)
 	_ = d.Set("hide_ios", app.Visibility.Hide.IOS)
 	_ = d.Set("hide_web", app.Visibility.Hide.Web)
@@ -579,6 +587,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 				DefaultScope: convertInterfaceToStringSet(d.Get("login_scopes")),
 				Mode:         d.Get("login_mode").(string),
 			},
+			WildcardRedirect: d.Get("wildcard_redirect").(string),
 		},
 	}
 	jwks := d.Get("jwks").([]interface{})
