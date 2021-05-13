@@ -244,6 +244,18 @@ func resourceAppOAuth() *schema.Resource {
 				Default:          "ORG_URL",
 				Description:      "*Early Access Property*. Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.",
 			},
+			"refresh_token_rotation": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"STATIC", "ROTATE"}),
+				Description:      "*Early Access Property* Refresh token rotation behavior",
+			},
+			"refresh_token_leeway": {
+				Type:             schema.TypeInt,
+				Optional:         true,
+				ValidateDiagFunc: intBetween(0, 60),
+				Description:      "*Early Access Property* Grace period for token rotation",
+			},
 			"auto_submit_toolbar": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -457,6 +469,10 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	}
 	if app.Settings.OauthClient.IssuerMode != "" {
 		_ = d.Set("issuer_mode", app.Settings.OauthClient.IssuerMode)
+	}
+	if app.Settings.OauthClient.RefreshToken != nil {
+		_ = d.Set("refresh_token_rotation", app.Settings.OauthClient.RefreshToken.RotationType)
+		_ = d.Set("refresh_token_leeway", app.Settings.OauthClient.RefreshToken.Leeway)
 	}
 
 	// If this is ever changed omit it.
@@ -678,6 +694,22 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 		app.Settings.OauthClient.Jwks = &okta.OpenIdConnectApplicationSettingsClientKeys{Keys: keys}
 	}
 
+	refresh := &okta.OpenIdConnectApplicationSettingsRefreshToken{}
+	hasRefresh := false
+	if rotate, ok := d.GetOk("refresh_token_rotation"); ok {
+		refresh.RotationType = rotate.(string)
+		hasRefresh = true
+	}
+
+	if leeway, ok := d.GetOk("refresh_token_leeway"); ok {
+		refresh.Leeway = int64(leeway.(int))
+		hasRefresh = true
+	}
+
+	if hasRefresh {
+		app.Settings.OauthClient.RefreshToken = refresh
+	}
+
 	app.Visibility = buildVisibility(d)
 
 	if rawAttrs, ok := d.GetOk("profile"); ok {
@@ -700,6 +732,11 @@ func validateGrantTypes(d *schema.ResourceData) error {
 }
 
 func validateAppOAuth(d *schema.ResourceData) error {
+	rtr := d.Get("refresh_token_rotation")
+	rtl := d.Get("refresh_token_leeway")
+	if rtr.(string) == "STATIC" && rtl.(int) != 0 {
+		return errors.New("you can not set 'refresh_token_leeway' when 'refresh_token_rotation' is static")
+	}
 	raw, ok := d.GetOk("groups_claim")
 	if ok {
 		groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
