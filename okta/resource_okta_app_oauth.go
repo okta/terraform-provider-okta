@@ -633,6 +633,11 @@ func validateGrantTypes(d *schema.ResourceData) error {
 }
 
 func validateAppOAuth(d *schema.ResourceData) error {
+	rtr := d.Get("refresh_token_rotation")
+	rtl := d.Get("refresh_token_leeway")
+	if rtr.(string) == "STATIC" && rtl.(int) != 0 {
+		return errors.New("you can not set 'refresh_token_leeway' when 'refresh_token_rotation' is static")
+	}
 	if _, ok := d.GetOk("jwks"); !ok && d.Get("token_endpoint_auth_method").(string) == "private_key_jwt" {
 		return errors.New("'jwks' is required when 'token_endpoint_auth_method' is 'private_key_jwt'")
 	}
