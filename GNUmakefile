@@ -93,7 +93,7 @@ lint: tools
 		./$(PKG_NAME)
 
 tools:
-	@which $(GOLINT) || curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.33.0
+	@which $(GOLINT) || curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.39.0
 	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint
 
 website:
