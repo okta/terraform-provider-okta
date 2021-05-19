@@ -43,6 +43,7 @@ func TestAccAppOauth_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "response_types.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "client_secret", "something_from_somewhere"),
 					resource.TestCheckResourceAttr(resourceName, "client_id", "something_from_somewhere"),
+					resource.TestCheckResourceAttr(resourceName, "wildcard_redirect", "DISABLED"),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
@@ -60,6 +61,7 @@ func TestAccAppOauth_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
 					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttr(resourceName, "wildcard_redirect", "SUBDOMAIN"),
 				),
 			},
 			{
