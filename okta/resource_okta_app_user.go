@@ -53,7 +53,14 @@ func resourceAppUser() *schema.Resource {
 			},
 			"username": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return d.Get("has_shared_username").(bool)
+				},
+			},
+			"has_shared_username": {
+				Type:     schema.TypeBool,
+				Computed: true,
 			},
 			"password": {
 				Type:      schema.TypeString,
@@ -80,6 +87,24 @@ func resourceAppUser() *schema.Resource {
 }
 
 func resourceAppUserCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var app *okta.AutoLoginApplication
+	respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), okta.NewAutoLoginApplication(), nil)
+	if err != nil {
+		return diag.Errorf("failed to get application by ID: %v", err)
+	}
+	app = respApp.(*okta.AutoLoginApplication)
+	un := d.Get("username").(string)
+	if app.Credentials != nil && app.Credentials.Scheme == "SHARED_USERNAME_AND_PASSWORD" {
+		if un != "" {
+			return diag.Errorf("'username' should not be set if it is assigned to the app with 'SHARED_USERNAME_AND_PASSWORD' credentials scheme")
+		}
+		_ = d.Set("has_shared_username", true)
+	} else {
+		if un == "" {
+			return diag.Errorf("'username' is required (the only exception is when the assigned app has 'SHARED_USERNAME_AND_PASSWORD' credentials scheme)")
+		}
+		_ = d.Set("has_shared_username", false)
+	}
 	u, _, err := getOktaClientFromMetadata(m).Application.AssignUserToApplication(
 		ctx,
 		d.Get("app_id").(string),
@@ -93,7 +118,25 @@ func resourceAppUserCreate(ctx context.Context, d *schema.ResourceData, m interf
 }
 
 func resourceAppUserUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getOktaClientFromMetadata(m).Application.UpdateApplicationUser(
+	var app *okta.AutoLoginApplication
+	respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), okta.NewAutoLoginApplication(), nil)
+	if err != nil {
+		return diag.Errorf("failed to get application by ID: %v", err)
+	}
+	app = respApp.(*okta.AutoLoginApplication)
+	un := d.Get("username").(string)
+	if app.Credentials != nil && app.Credentials.Scheme == "SHARED_USERNAME_AND_PASSWORD" {
+		if un != "" {
+			return diag.Errorf("'username' should not be set if it is assigned to the app with 'SHARED_USERNAME_AND_PASSWORD' credentials scheme")
+		}
+		_ = d.Set("has_shared_username", true)
+	} else {
+		if un == "" {
+			return diag.Errorf("'username' is required (the only exception is when the assigned app has 'SHARED_USERNAME_AND_PASSWORD' credentials scheme)")
+		}
+		_ = d.Set("has_shared_username", false)
+	}
+	_, _, err = getOktaClientFromMetadata(m).Application.UpdateApplicationUser(
 		ctx,
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
@@ -106,6 +149,17 @@ func resourceAppUserUpdate(ctx context.Context, d *schema.ResourceData, m interf
 }
 
 func resourceAppUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var app *okta.AutoLoginApplication
+	respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), okta.NewAutoLoginApplication(), nil)
+	if err != nil {
+		return diag.Errorf("failed to get application by ID: %v", err)
+	}
+	app = respApp.(*okta.AutoLoginApplication)
+	if app.Credentials != nil && app.Credentials.Scheme == "SHARED_USERNAME_AND_PASSWORD" {
+		_ = d.Set("has_shared_username", true)
+	} else {
+		_ = d.Set("has_shared_username", false)
+	}
 	u, resp, err := getOktaClientFromMetadata(m).Application.GetApplicationUser(
 		ctx,
 		d.Get("app_id").(string),
