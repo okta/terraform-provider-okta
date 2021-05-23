@@ -58,12 +58,14 @@ var baseAppSchema = map[string]*schema.Schema{
 		Optional:    true,
 		Elem:        appUserResource,
 		Description: "Users associated with the application",
+		Deprecated:  "The direct configuration of users in this app resource is deprecated, please ensure you are the resource `okta_app_user` for this functionality.",
 	},
 	"groups": {
 		Type:        schema.TypeSet,
 		Optional:    true,
 		Elem:        &schema.Schema{Type: schema.TypeString},
 		Description: "Groups associated with the application",
+		Deprecated:  "The direct configuration of users in this app resource is deprecated, please ensure you are the resource `okta_app_group_assignments` for this functionality.",
 	},
 	"status": {
 		Type:             schema.TypeString,
