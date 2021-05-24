@@ -121,6 +121,20 @@ func resourceOktaAppUserAssignmentsRead(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
+func resourceOktaAppUserAssignmentsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(m)
+	appID := d.Get("app_id").(string)
+	users := d.Get("users").(*schema.Set).List()
+
+	assignments := tfUsersToUserAssignments(users...)
+
+	err := removeUserAssignments(ctx, client, appID, assignments)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	return nil
+}
+
 func tfUsersToUserAssignments(users ...interface{}) map[string]okta.AppUser {
 	assignments := map[string]okta.AppUser{}
 
