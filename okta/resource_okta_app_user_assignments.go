@@ -14,10 +14,10 @@ import (
 
 func resourceOktaAppUserAssignments() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: nil,
-		ReadContext:   nil,
-		UpdateContext: nil,
-		DeleteContext: nil,
+		CreateContext: resourceOktaAppUserAssignmentsCreate,
+		ReadContext:   resourceOktaAppUserAssignmentsRead,
+		UpdateContext: resourceOktaAppUserAssignmentsUpdate,
+		DeleteContext: resourceOktaAppUserAssignmentsDelete,
 		Importer:      nil,
 		Schema: map[string]*schema.Schema{
 			"app_id": {
