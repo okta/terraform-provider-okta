@@ -92,7 +92,33 @@ func resourceOktaAppUserAssignmentsCreate(ctx context.Context, d *schema.Resourc
 
 	//okta_app_user_assignments completely controls all assignments for an application
 	d.SetId(appID)
-	return nil //TODO: Use read function here
+	return resourceOktaAppUserAssignmentsRead(ctx, d, m)
+}
+
+func resourceOktaAppUserAssignmentsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(m)
+	appID := d.Get("app_id").(string)
+
+	assignments, err := listApplicationUsers(ctx, client, appID)
+	if err != nil {
+		return diag.Errorf("failed to get users assigned to app (%s): %s", appID, err)
+	}
+
+	var tfFlattenedAssignments []interface{}
+
+	for _, assignment := range assignments {
+		tfAssignment, err := userAssignmentToTFUser(assignment)
+		if err != nil {
+			return diag.Errorf("failed to marshall user profile: %s", err)
+		}
+		tfFlattenedAssignments = append(tfFlattenedAssignments, tfAssignment)
+	}
+
+	err = d.Set("users", tfFlattenedAssignments)
+	if err != nil {
+		return diag.Errorf("failed to set users in tf state: %s", err)
+	}
+	return nil
 }
 
 func tfUsersToUserAssignments(users ...interface{}) map[string]okta.AppUser {
@@ -126,6 +152,26 @@ func tfUsersToUserAssignments(users ...interface{}) map[string]okta.AppUser {
 		}
 	}
 	return assignments
+}
+
+func userAssignmentToTFUser(assignment *okta.AppUser) (map[string]interface{}, error) {
+	profile := "{}"
+
+	jsonProfile, err := json.Marshal(assignment.Profile)
+	if err != nil {
+		return nil, err
+	}
+
+	if string(jsonProfile) != "" {
+		profile = string(jsonProfile)
+	}
+
+	tfAssignment := map[string]interface{}{
+		"id":       assignment.Id,
+		"username": assignment.Credentials.UserName,
+		"profile":  profile,
+	}
+	return tfAssignment, nil
 }
 
 func addUserAssignments(ctx context.Context, client *okta.Client, appID string, assignments map[string]okta.AppUser) error {
