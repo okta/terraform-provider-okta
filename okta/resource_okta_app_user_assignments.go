@@ -61,6 +61,7 @@ func resourceAppUserAssignments() *schema.Resource {
 							ValidateDiagFunc: stringIsJSON,
 							StateFunc:        normalizeDataJSON,
 							Optional:         true,
+							Computed:         true,
 							DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 								return new == ""
 							},
