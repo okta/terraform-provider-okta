@@ -12,12 +12,12 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
-func resourceOktaAppUserAssignments() *schema.Resource {
+func resourceAppUserAssignments() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceOktaAppUserAssignmentsCreate,
-		ReadContext:   resourceOktaAppUserAssignmentsRead,
-		UpdateContext: resourceOktaAppUserAssignmentsUpdate,
-		DeleteContext: resourceOktaAppUserAssignmentsDelete,
+		CreateContext: resourceAppUserAssignmentsCreate,
+		ReadContext:   resourceAppUserAssignmentsRead,
+		UpdateContext: resourceAppUserAssignmentsUpdate,
+		DeleteContext: resourceAppUserAssignmentsDelete,
 		Importer:      nil,
 		Schema: map[string]*schema.Schema{
 			"app_id": {
@@ -78,7 +78,7 @@ func resourceOktaAppUserAssignments() *schema.Resource {
 	}
 }
 
-func resourceOktaAppUserAssignmentsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppUserAssignmentsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	users := d.Get("users").(*schema.Set).List()
 	client := getOktaClientFromMetadata(m)
 	appID := d.Get("app_id").(string)
@@ -92,10 +92,10 @@ func resourceOktaAppUserAssignmentsCreate(ctx context.Context, d *schema.Resourc
 
 	//okta_app_user_assignments completely controls all assignments for an application
 	d.SetId(appID)
-	return resourceOktaAppUserAssignmentsRead(ctx, d, m)
+	return resourceAppUserAssignmentsRead(ctx, d, m)
 }
 
-func resourceOktaAppUserAssignmentsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppUserAssignmentsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
 	appID := d.Get("app_id").(string)
 
@@ -121,7 +121,7 @@ func resourceOktaAppUserAssignmentsRead(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func resourceOktaAppUserAssignmentsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppUserAssignmentsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
 	appID := d.Get("app_id").(string)
 	users := d.Get("users").(*schema.Set).List()
@@ -135,7 +135,7 @@ func resourceOktaAppUserAssignmentsDelete(ctx context.Context, d *schema.Resourc
 	return nil
 }
 
-func resourceOktaAppUserAssignmentsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppUserAssignmentsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
 	appID := d.Get("app_id").(string)
 
@@ -159,7 +159,7 @@ func resourceOktaAppUserAssignmentsUpdate(ctx context.Context, d *schema.Resourc
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	return resourceOktaAppUserAssignmentsRead(ctx, d, m)
+	return resourceAppUserAssignmentsRead(ctx, d, m)
 }
 
 func tfUsersToUserAssignments(users ...interface{}) map[string]okta.AppUser {
