@@ -44,9 +44,4 @@ resource "okta_app_user_assignments" "test" {
     id       = okta_user.test2.id
     username = okta_user.test2.login
   }
-
-  users {
-    id       = okta_user.test3.id
-    username = okta_user.test3.login
-  }
 }
