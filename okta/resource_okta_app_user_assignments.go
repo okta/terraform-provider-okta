@@ -226,7 +226,7 @@ func addUserAssignments(ctx context.Context, client *okta.Client, appID string, 
 }
 
 func removeUserAssignments(ctx context.Context, client *okta.Client, appID string, assignments map[string]okta.AppUser) error {
-	for userID, _ := range assignments {
+	for userID := range assignments {
 		_, err := client.Application.DeleteApplicationUser(ctx, appID, userID, &query.Params{})
 		if err != nil {
 			return fmt.Errorf("failed to unassign user (%s) from app (%s): %s", userID, appID, err)
