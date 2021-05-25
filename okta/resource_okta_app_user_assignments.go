@@ -61,7 +61,6 @@ func resourceAppUserAssignments() *schema.Resource {
 							ValidateDiagFunc: stringIsJSON,
 							StateFunc:        normalizeDataJSON,
 							Optional:         true,
-							Computed:         true,
 							DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 								return new == ""
 							},
@@ -163,8 +162,8 @@ func resourceAppUserAssignmentsUpdate(ctx context.Context, d *schema.ResourceDat
 	return resourceAppUserAssignmentsRead(ctx, d, m)
 }
 
-func tfUsersToUserAssignments(users ...interface{}) map[string]okta.AppUser {
-	assignments := map[string]okta.AppUser{}
+func tfUsersToUserAssignments(users ...interface{}) []okta.AppUser {
+	var assignments []okta.AppUser
 
 	for _, rawUser := range users {
 		user := rawUser.(map[string]interface{})
@@ -182,7 +181,7 @@ func tfUsersToUserAssignments(users ...interface{}) map[string]okta.AppUser {
 		var profile interface{}
 		_ = json.Unmarshal([]byte(rawProfile.(string)), &profile)
 
-		assignments[id] = okta.AppUser{
+		assignments = append(assignments, okta.AppUser{
 			Id:      id,
 			Profile: profile,
 			Credentials: &okta.AppUserCredentials{
@@ -191,7 +190,7 @@ func tfUsersToUserAssignments(users ...interface{}) map[string]okta.AppUser {
 					Value: password,
 				},
 			},
-		}
+		})
 	}
 	return assignments
 }
@@ -216,21 +215,21 @@ func userAssignmentToTFUser(assignment *okta.AppUser) (map[string]interface{}, e
 	return tfAssignment, nil
 }
 
-func addUserAssignments(ctx context.Context, client *okta.Client, appID string, assignments map[string]okta.AppUser) error {
-	for userID, assignment := range assignments {
+func addUserAssignments(ctx context.Context, client *okta.Client, appID string, assignments []okta.AppUser) error {
+	for _, assignment := range assignments {
 		_, _, err := client.Application.AssignUserToApplication(ctx, appID, assignment)
 		if err != nil {
-			return fmt.Errorf("failed to assign user (%s) to app (%s): %s", userID, appID, err)
+			return fmt.Errorf("failed to assign user (%s) to app (%s): %s", assignment.Id, appID, err)
 		}
 	}
 	return nil
 }
 
-func removeUserAssignments(ctx context.Context, client *okta.Client, appID string, assignments map[string]okta.AppUser) error {
-	for userID := range assignments {
-		_, err := client.Application.DeleteApplicationUser(ctx, appID, userID, &query.Params{})
+func removeUserAssignments(ctx context.Context, client *okta.Client, appID string, assignments []okta.AppUser) error {
+	for _, assignment := range assignments {
+		_, err := client.Application.DeleteApplicationUser(ctx, appID, assignment.Id, &query.Params{})
 		if err != nil {
-			return fmt.Errorf("failed to unassign user (%s) from app (%s): %s", userID, appID, err)
+			return fmt.Errorf("failed to unassign user (%s) from app (%s): %s", assignment.Id, appID, err)
 		}
 	}
 	return nil
