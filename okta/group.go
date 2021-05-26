@@ -32,24 +32,24 @@ func listGroupUserIDs(ctx context.Context, m interface{}, id string) ([]string, 
 }
 
 func listGroups(ctx context.Context, client *okta.Client, qp *query.Params) ([]*okta.Group, error) {
-	var resGroups []*okta.Group
 	groups, resp, err := client.Group.ListGroups(ctx, qp)
 	if err != nil {
 		return nil, err
 	}
 	for {
-		resGroups = append(resGroups, groups...)
+		var nextGroups []*okta.Group
 		if resp.HasNextPage() {
-			resp, err = resp.Next(ctx, &groups)
+			resp, err = resp.Next(ctx, &nextGroups)
 			if err != nil {
 				return nil, err
 			}
-			continue
+			groups = append(groups, nextGroups...)
+
 		} else {
 			break
 		}
 	}
-	return resGroups, nil
+	return groups, nil
 }
 
 // Group Primary Key Operations (Use when # groups < # users in operations)
