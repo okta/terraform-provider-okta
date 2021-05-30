@@ -132,7 +132,6 @@ func TestAccAppSaml_crud(t *testing.T) {
 	})
 }
 
-
 func buildTestSamlConfigMissingFields(rInt int) string {
 	name := buildResourceName(rInt)
 
