@@ -13,4 +13,6 @@ require (
 	github.com/hashicorp/go-retryablehttp v0.7.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.6.1
 	github.com/okta/okta-sdk-golang/v2 v2.3.1-0.20210513125447-0c69158bf0ef
+	golang.org/x/sys v0.0.0-20210525143221-35b2ab0089ea // indirect
+	golang.org/x/tools v0.1.2 // indirect
 )
