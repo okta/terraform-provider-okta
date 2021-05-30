@@ -338,14 +338,6 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if !d.Get("omit_secret").(bool) {
 		_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
 	}
-	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-	// So Skip setting assignments while this is on
-	if !d.Get("implicit_assignment").(bool) {
-		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-		if err != nil {
-			return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
-		}
-	}
 	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for OAuth application: %v", err)
@@ -431,13 +423,6 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	for i := range app.Settings.OauthClient.GrantTypes {
 		grantTypes[i] = string(*app.Settings.OauthClient.GrantTypes[i])
 	}
-	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-	// So Skip setting assignments while this is on
-	if !d.Get("implicit_assignment").(bool) {
-		if err = syncGroupsAndUsers(ctx, app.Id, d, m); err != nil {
-			return diag.Errorf("failed to sync groups and users for OAuth application: %v", err)
-		}
-	}
 	aggMap := map[string]interface{}{
 		"redirect_uris":             convertStringSetToInterface(app.Settings.OauthClient.RedirectUris),
 		"response_types":            convertStringSetToInterface(respTypes),
@@ -474,14 +459,6 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
 		return diag.Errorf("failed to set OAuth application status: %v", err)
-	}
-	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-	// So Skip setting assignments while this is on
-	if !d.Get("implicit_assignment").(bool) {
-		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-		if err != nil {
-			return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
-		}
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
