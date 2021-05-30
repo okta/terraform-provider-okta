@@ -310,9 +310,9 @@ func resourceAppOAuth() *schema.Resource {
 				},
 			},
 			"implicit_assignment": {
-				Type:          schema.TypeBool,
-				Optional:      true,
-				Description:   "*Early Access Property*. Enable Federation Broker Mode.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "*Early Access Property*. Enable Federation Broker Mode.",
 			},
 		}),
 	}
