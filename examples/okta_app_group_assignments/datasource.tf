@@ -41,5 +41,6 @@ resource "okta_app_group_assignments" "test" {
 }
 
 data "okta_app_group_assingments" "test" {
+  depends_on = [okta_app_group_assignments.test]
   id = okta_app_oauth.id
 }
