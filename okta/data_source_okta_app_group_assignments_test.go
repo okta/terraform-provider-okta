@@ -18,6 +18,9 @@ func TestAccOktaDataSourceAppGroupAssignments_read(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet("data.okta_app_group_assignments.test", "groups.#"),
+				),
 			},
 		},
 	})
