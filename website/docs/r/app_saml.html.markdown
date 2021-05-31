@@ -105,8 +105,10 @@ The following arguments are supported:
 - `acs_endpoints` - An array of ACS endpoints. You can configure a maximum of 100 endpoints.
 
 - `users` - (Optional) Users associated with the application.
+  - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
 - `groups` - (Optional) Groups associated with the application.
+  - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
 
 - `attribute_statements` - (Optional) List of SAML Attribute statements.
   - `name` - (Required) The name of the attribute statement.

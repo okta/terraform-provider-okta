@@ -57,8 +57,10 @@ The following arguments are supported:
 - `shared_password` - (Optional) Shared password, required for certain schemes.
 
 - `users` - (Optional) The users assigned to the application. See `okta_app_user` for a more flexible approach.
+  - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
 - `groups` - (Optional) Groups associated with the application. See `okta_app_group_assignment` for a more flexible approach.
+  - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
 
 - `status` - (Optional) Status of application. By default, it is `"ACTIVE"`.
 
