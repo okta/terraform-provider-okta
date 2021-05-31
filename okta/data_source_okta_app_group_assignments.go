@@ -8,9 +8,9 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
-func dataSourceOktaAppGroupAssignments() *schema.Resource {
+func dataSourceAppGroupAssignments() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: nil,
+		ReadContext: dataSourceAppGroupAssignmentsRead,
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:        schema.TypeString,
@@ -28,7 +28,7 @@ func dataSourceOktaAppGroupAssignments() *schema.Resource {
 	}
 }
 
-func dataSourceOktaAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
 	id := d.Get("id").(string)
 
