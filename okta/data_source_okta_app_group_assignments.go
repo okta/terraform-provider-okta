@@ -21,7 +21,7 @@ func dataSourceAppGroupAssignments() *schema.Resource {
 			"groups": {
 				Type:        schema.TypeSet,
 				Computed:    true,
-				Elem:        schema.TypeString,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "List of groups IDs assigned to the app",
 			},
 		},
