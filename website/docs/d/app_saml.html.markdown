@@ -117,5 +117,7 @@ data "okta_app_saml" "example" {
 - `links` - Generic JSON containing discoverable resources related to the app
 
 - `users` - List of users IDs assigned to the application.
+  - `DEPRECATED`: Please replace all usage of this field with the data source `okta_app_user_assignments`.
 
 - `groups` - List of groups IDs assigned to the application.
+  - `DEPRECATED`: Please replace all usage of this field with the data source `okta_app_group_assignments`.
