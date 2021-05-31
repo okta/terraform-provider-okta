@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
@@ -32,9 +33,22 @@ func dataSourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceDa
 	client := getOktaClientFromMetadata(m)
 	id := d.Get("id").(string)
 
-	groupAssignments, _, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{})
+	groupAssignments, resp, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{})
 	if err != nil {
-		return diag.Errorf("Unable to query for groups from app (%s): %s", id, err)
+		return diag.Errorf("unable to query for groups from app (%s): %s", id, err)
+	}
+
+	for {
+		var moreAssignments []*okta.ApplicationGroupAssignment
+		if resp.HasNextPage() {
+			resp, err = resp.Next(ctx, &moreAssignments)
+			if err != nil {
+				return diag.Errorf("unable to query for groups from app (%s): %s", id, err)
+			}
+			groupAssignments = append(groupAssignments, moreAssignments...)
+		} else {
+			break
+		}
 	}
 
 	var groups []string
