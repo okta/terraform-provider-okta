@@ -40,7 +40,7 @@ resource "okta_app_group_assignments" "test" {
   }
 }
 
-data "okta_app_group_assingments" "test" {
+data "okta_app_group_assignments" "test" {
   depends_on = [okta_app_group_assignments.test]
-  id         = okta_app_oauth.id
+  id         = okta_app_oauth.test.id
 }
