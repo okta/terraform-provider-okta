@@ -110,6 +110,12 @@ The following arguments are supported:
 
 - `logo` (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 
+- `groups_claim` - (Optional) Groups claim for an OpenID Connect client application.
+  - `type` - (Required) Groups claim type. Valid values: `"FILTER"`, `"EXPRESSION"`.
+  - `filter_type` - (Optional) Groups claim filter. Can only be set if type is `"FILTER"`. Valid values: `"EQUALS"`, `"STARTS_WITH"`, `"CONTAINS"`, `"REGEX"`.
+  - `name` - (Required) Name of the claim that will be used in the token.
+  - `value` - (Required) Value of the claim. Can be an Okta Expression Language statement that evaluates at the time the token is minted.
+
 ## Attributes Reference
 
 - `id` - ID of the application.

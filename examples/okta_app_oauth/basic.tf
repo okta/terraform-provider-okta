@@ -9,4 +9,9 @@ resource "okta_app_oauth" "test" {
   token_endpoint_auth_method = "client_secret_basic"
   consent_method             = "TRUSTED"
   wildcard_redirect          = "DISABLED"
+  groups_claim {
+    type        = "EXPRESSION"
+    value       = "aa"
+    name        = "bb"
+  }
 }

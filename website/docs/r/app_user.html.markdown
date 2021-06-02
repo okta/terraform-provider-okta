@@ -40,7 +40,8 @@ The following arguments are supported:
 
 - `user_id` - (Required) User to associate the application with.
 
-- `username` - (Required) The username to use for the app user.
+- `username` - (Optional) The username to use for the app user. In case the user is assigned to the app with 
+  'SHARED_USERNAME_AND_PASSWORD' credentials scheme, this field will be computed and should not be set.
 
 - `password` - (Optional) The password to use.
 

@@ -52,7 +52,7 @@ The following arguments are supported:
 
 - `okta_call` - (Optional) Okta Call [MFA policy settings](#mfa-settings).
 
-- `okta_otp` - (Optional) Okta OTP [MFA policy settings](#mfa-settings).
+- `okta_otp` - (Optional) Okta OTP (via the Okta Verify app) [MFA policy settings](#mfa-settings).
 
 - `okta_password` - (Optional) Okta Password [MFA policy settings](#mfa-settings).
 

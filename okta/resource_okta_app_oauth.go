@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 type (
@@ -322,6 +323,38 @@ func resourceAppOAuth() *schema.Resource {
 				Description:   "*Early Access Property*. Enable Federation Broker Mode.",
 				ConflictsWith: []string{"groups", "users"},
 			},
+			"groups_claim": {
+				Type:        schema.TypeSet,
+				MaxItems:    1,
+				Description: "Groups claim for an OpenID Connect client application",
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Description:      "Groups claim type.",
+							Type:             schema.TypeString,
+							Required:         true,
+							ValidateDiagFunc: stringInSlice([]string{"FILTER", "EXPRESSION"}),
+						},
+						"filter_type": {
+							Description:      "Groups claim filter. Can only be set if type is FILTER.",
+							Type:             schema.TypeString,
+							Optional:         true,
+							ValidateDiagFunc: stringInSlice([]string{"EQUALS", "STARTS_WITH", "CONTAINS", "REGEX"}),
+						},
+						"name": {
+							Description: "Name of the claim that will be used in the token.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"value": {
+							Description: "Value of the claim. Can be an Okta Expression Language statement that evaluates at the time the token is minted.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+					},
+				},
+			},
 		}),
 	}
 }
@@ -357,7 +390,48 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.Errorf("failed to upload logo for OAuth application: %v", err)
 	}
+	err = setAppOauthGroupsClaim(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
+	}
 	return resourceAppOAuthRead(ctx, d, m)
+}
+
+func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	raw, ok := d.GetOk("groups_claim")
+	if !ok {
+		return nil
+	}
+	groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
+	gc := &sdk.AppOauthGroupClaim{
+		IssuerMode: "ORG_URL",
+		Name:       groupsClaim["name"].(string),
+		Value:      groupsClaim["value"].(string),
+	}
+	gct := groupsClaim["type"].(string)
+	if gct == "FILTER" {
+		gc.ValueType = "GROUPS"
+		gc.GroupFilterType = groupsClaim["filter_type"].(string)
+	} else {
+		gc.ValueType = gct
+	}
+	_, err := getSupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
+	return err
+}
+
+func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	raw, ok := d.GetOk("groups_claim")
+	if !ok {
+		return nil
+	}
+	if len(raw.(*schema.Set).List()) == 0 {
+		gc := &sdk.AppOauthGroupClaim{
+			IssuerMode: "ORG_URL",
+		}
+		_, err := getSupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
+		return err
+	}
+	return setAppOauthGroupsClaim(ctx, d, m)
 }
 
 func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -460,6 +534,27 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	if err != nil {
 		return diag.Errorf("failed to set OAuth application properties: %v", err)
 	}
+	gc, _, err := getSupplementFromMetadata(m).GetAppOauthGroupsClaim(ctx, d.Id())
+	if err != nil {
+		return diag.Errorf("failed to get groups claim for OAuth application: %v", err)
+	}
+	if gc.Name != "" {
+		arr := []map[string]interface{}{
+			{
+				"name":  gc.Name,
+				"value": gc.Value,
+				"type":  gc.ValueType,
+			},
+		}
+		if gc.ValueType == "GROUPS" {
+			arr[0]["type"] = "FILTER"
+			arr[0]["filter_type"] = gc.GroupFilterType
+		}
+		err = setNonPrimitives(d, map[string]interface{}{"groups_claim": arr})
+		if err != nil {
+			return diag.Errorf("failed to set OAuth application properties: %v", err)
+		}
+	}
 	return nil
 }
 
@@ -498,6 +593,10 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 			_ = d.Set("logo", o)
 			return diag.Errorf("failed to upload logo for OAuth application: %v", err)
 		}
+	}
+	err = updateAppOauthGroupsClaim(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
 	return resourceAppOAuthRead(ctx, d, m)
 }
@@ -646,6 +745,19 @@ func validateAppOAuth(d *schema.ResourceData) error {
 	rtl := d.Get("refresh_token_leeway")
 	if rtr.(string) == "STATIC" && rtl.(int) != 0 {
 		return errors.New("you can not set 'refresh_token_leeway' when 'refresh_token_rotation' is static")
+	}
+	raw, ok := d.GetOk("groups_claim")
+	if ok {
+		groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
+		if groupsClaim["type"].(string) == "EXPRESSION" && groupsClaim["filter_type"].(string) != "" {
+			return errors.New("'filter_type' in 'groups_claim' can only be set when 'type' is set to 'FILTER'")
+		}
+		if groupsClaim["type"].(string) == "FILTER" && groupsClaim["filter_type"].(string) == "" {
+			return errors.New("'filter_type' in 'groups_claim' is required when 'type' is set to 'FILTER'")
+		}
+		if groupsClaim["name"].(string) == "" || groupsClaim["value"].(string) == "" {
+			return errors.New("'name' 'value' and in 'groups_claim' should not be empty")
+		}
 	}
 	if _, ok := d.GetOk("jwks"); !ok && d.Get("token_endpoint_auth_method").(string) == "private_key_jwt" {
 		return errors.New("'jwks' is required when 'token_endpoint_auth_method' is 'private_key_jwt'")
