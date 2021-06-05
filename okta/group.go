@@ -37,8 +37,8 @@ func listGroups(ctx context.Context, client *okta.Client, qp *query.Params) ([]*
 		return nil, err
 	}
 	for {
-		var nextGroups []*okta.Group
 		if resp.HasNextPage() {
+			var nextGroups []*okta.Group
 			resp, err = resp.Next(ctx, &nextGroups)
 			if err != nil {
 				return nil, err
