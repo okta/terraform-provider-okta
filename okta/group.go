@@ -44,7 +44,6 @@ func listGroups(ctx context.Context, client *okta.Client, qp *query.Params) ([]*
 				return nil, err
 			}
 			groups = append(groups, nextGroups...)
-
 		} else {
 			break
 		}
