@@ -3,7 +3,7 @@ TEST?=$$(go list ./... |grep -v 'vendor')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=okta
-GOLINT=./bin/golangci-lint
+GOLINT=golangci-lint
 GOFMT:=gofumpt
 TFPROVIDERLINT=tfproviderlint
 
@@ -45,12 +45,9 @@ vet:
 	fi
 
 .PHONY: fmt
-fmt: check-fmt # Format the code
+fmt: tools # Format the code
 	@echo "formatting the code..."
 	@$(GOFMT) -l -w $$(find . -name '*.go' |grep -v vendor)
-
-check-fmt:
-	@which $(GOFMT) > /dev/null || (echo "downloading formatter..." && GO111MODULE=on go get mvdan.cc/gofumpt)
 
 fmtcheck: dep
 	@sh -c "'$(CURDIR)/scripts/gofmtcheck.sh'"
@@ -93,8 +90,9 @@ lint: tools
 		./$(PKG_NAME)
 
 tools:
-	@which $(GOLINT) || curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.40.0
+	@which $(GOLINT) || curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.40.1
 	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint
+	@which $(GOFMT) || GO111MODULE=on go get mvdan.cc/gofumpt@v0.1.1
 
 website:
 ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
