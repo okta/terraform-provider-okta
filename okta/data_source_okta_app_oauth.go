@@ -140,6 +140,11 @@ func dataSourceAppOauth() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "Users associated with the application",
 			},
+			"wildcard_redirect": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Indicates if the client is allowed to use wildcard matching of redirect_uris",
+			},
 		},
 	}
 }
@@ -196,6 +201,7 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
 	_ = d.Set("client_id", app.Credentials.OauthClient.ClientId)
 	_ = d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
+	_ = d.Set("wildcard_redirect", app.Settings.OauthClient.WildcardRedirect)
 	respTypes := make([]string, len(app.Settings.OauthClient.ResponseTypes))
 	for i := range app.Settings.OauthClient.ResponseTypes {
 		respTypes[i] = string(*app.Settings.OauthClient.ResponseTypes[i])
