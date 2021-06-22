@@ -73,6 +73,8 @@ The following arguments are supported:
 
 - `redirect_uris` - (Optional) List of URIs for use in the redirect-based flow. This is required for all application types except service.
 
+- `wildcard_redirect` - (Optional) Indicates if the client is allowed to use wildcard matching of `redirect_uris`. Valid values: `"DISABLED"`, `"SUBDOMAIN"`. Default value is `"DISABLED"`.
+
 - `post_logout_redirect_uris` - (Optional) List of URIs for redirection after logout.
 
 - `response_types` - (Optional) List of OAuth 2.0 response type strings.
@@ -107,6 +109,12 @@ The following arguments are supported:
 - `login_scopes` - (Optional) List of scopes to use for the request. Valid values: `"openid"`, `"profile"`, `"email"`, `"address"`, `"phone"`. Required when `login_mode` is NOT `DISABLED`.
 
 - `logo` (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+
+- `groups_claim` - (Optional) Groups claim for an OpenID Connect client application.
+  - `type` - (Required) Groups claim type. Valid values: `"FILTER"`, `"EXPRESSION"`.
+  - `filter_type` - (Optional) Groups claim filter. Can only be set if type is `"FILTER"`. Valid values: `"EQUALS"`, `"STARTS_WITH"`, `"CONTAINS"`, `"REGEX"`.
+  - `name` - (Required) Name of the claim that will be used in the token.
+  - `value` - (Required) Value of the claim. Can be an Okta Expression Language statement that evaluates at the time the token is minted.
 
 ## Attributes Reference
 
