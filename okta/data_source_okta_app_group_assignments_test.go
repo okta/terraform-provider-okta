@@ -24,5 +24,4 @@ func TestAccOktaDataSourceAppGroupAssignments_read(t *testing.T) {
 			},
 		},
 	})
-
 }
