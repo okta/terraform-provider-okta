@@ -252,6 +252,7 @@ func Provider() *schema.Provider {
 			appSaml:                            dataSourceAppSaml(),
 			appOAuth:                           dataSourceAppOauth(),
 			"okta_app_metadata_saml":           dataSourceAppMetadataSaml(),
+			"okta_app_user_assignments":        dataSourceAppUserAssignments(),
 			"okta_default_policies":            deprecatedPolicies,
 			"okta_default_policy":              dataSourceDefaultPolicies(),
 			"okta_everyone_group":              dataSourceEveryoneGroup(),
