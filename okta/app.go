@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/okta/terraform-provider-okta/sdk"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
@@ -79,6 +81,14 @@ var baseAppSchema = map[string]*schema.Schema{
 		Description:      "Logo of the application.",
 		DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 			return new == ""
+		},
+		StateFunc: func(val interface{}) string {
+			logoPath := val.(string)
+			if logoPath == "" {
+				return logoPath
+			}
+
+			return fmt.Sprintf("%s (%s)", logoPath, sdk.GetAppLogoHash(logoPath))
 		},
 	},
 	"logo_url": {
