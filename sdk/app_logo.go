@@ -3,11 +3,8 @@ package sdk
 import (
 	"bytes"
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"io"
-	"log"
 	"mime/multipart"
 	"os"
 
@@ -37,21 +34,4 @@ func (m *ApiSupplement) UploadAppLogo(ctx context.Context, appID, filename strin
 		return nil, err
 	}
 	return m.RequestExecutor.Do(ctx, req, nil)
-}
-
-func GetAppLogoHash(filename string) string {
-	file, err := os.Open(filename)
-	if err != nil {
-		return ""
-	}
-	defer func() {
-		_ = file.Close()
-	}()
-
-	h := sha256.New()
-	if _, err := io.Copy(h, file); err != nil {
-		log.Fatal(err)
-	}
-
-	return hex.EncodeToString(h.Sum(nil))
 }
