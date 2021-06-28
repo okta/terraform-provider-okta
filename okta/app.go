@@ -2,9 +2,14 @@ package okta
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"net/http"
+	"os"
 	"sync"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -79,6 +84,13 @@ var baseAppSchema = map[string]*schema.Schema{
 		Description:      "Logo of the application.",
 		DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 			return new == ""
+		},
+		StateFunc: func(val interface{}) string {
+			logoPath := val.(string)
+			if logoPath == "" {
+				return logoPath
+			}
+			return fmt.Sprintf("%s (%s)", logoPath, computeFileHash(logoPath))
 		},
 	},
 	"logo_url": {
@@ -598,4 +610,19 @@ func listAppUsersAndGroupsIDs(ctx context.Context, client *okta.Client, id strin
 		groups[i] = appGroups[i].Id
 	}
 	return
+}
+
+func computeFileHash(filename string) string {
+	file, err := os.Open(filename)
+	if err != nil {
+		return ""
+	}
+	defer func() {
+		_ = file.Close()
+	}()
+	h := sha256.New()
+	if _, err := io.Copy(h, file); err != nil {
+		log.Fatal(err)
+	}
+	return hex.EncodeToString(h.Sum(nil))
 }
