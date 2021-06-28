@@ -132,7 +132,7 @@ The following arguments are supported:
 
 ## Attributes Reference
 
-- `index` - (Optional) ID of the User schema property.
+- `id` - (Optional) ID of the User schema property.
 
 ## Import
 
