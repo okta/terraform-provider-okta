@@ -3,7 +3,7 @@ layout: "okta"
 page_title: "Okta: okta_user_admin_roles"
 sidebar_current: "docs-okta-resource-user-admin-roles"
 description: |-
-  Resource to manage a set of admin rolesfor a specific user.
+  Resource to manage a set of admin roles for a specific user.
 ---
 
 # okta_user_admin_roles
@@ -47,3 +47,11 @@ The following arguments are supported:
 ## Attributes Reference
 
 N/A
+
+## Import
+
+Existing user admin roles can be imported via the Okta User ID.
+
+```
+$ terraform import okta_user_admin_roles.example <user id>
+```
