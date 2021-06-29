@@ -13,8 +13,14 @@ func resourceUserAdminRoles() *schema.Resource {
 		ReadContext:   resourceUserAdminRolesRead,
 		UpdateContext: resourceUserAdminRolesUpdate,
 		DeleteContext: resourceUserAdminRolesDelete,
-		Importer:      nil,
-		Description:   "Resource to manage a set of administrator roles for a specific user.",
+		Importer: &schema.ResourceImporter{
+			StateContext: func(_ context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+				_ = d.Set("user_id", d.Id())
+				d.SetId(d.Id())
+				return []*schema.ResourceData{d}, nil
+			},
+		},
+		Description: "Resource to manage a set of administrator roles for a specific user.",
 		Schema: map[string]*schema.Schema{
 			"user_id": {
 				Type:        schema.TypeString,
