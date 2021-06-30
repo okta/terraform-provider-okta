@@ -41,7 +41,7 @@ func resourceIdpOidc() *schema.Resource {
 				Type:             schema.TypeString,
 				Default:          "OIDC",
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"OIDC", "OAUTH2"}),
+				ValidateDiagFunc: elemInSlice([]string{"OIDC", "OAUTH2"}),
 			},
 			"client_id": {
 				Type:     schema.TypeString,
@@ -60,7 +60,7 @@ func resourceIdpOidc() *schema.Resource {
 			"issuer_mode": {
 				Type:             schema.TypeString,
 				Description:      "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
-				ValidateDiagFunc: stringInSlice([]string{"ORG_URL", "CUSTOM_URL"}),
+				ValidateDiagFunc: elemInSlice([]string{"ORG_URL", "CUSTOM_URL"}),
 				Default:          "ORG_URL",
 				Optional:         true,
 			},

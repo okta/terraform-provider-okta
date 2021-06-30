@@ -46,14 +46,14 @@ func resourceNetworkZone() *schema.Resource {
 			"type": {
 				Type:             schema.TypeString,
 				Required:         true,
-				ValidateDiagFunc: stringInSlice([]string{"IP", "DYNAMIC"}),
+				ValidateDiagFunc: elemInSlice([]string{"IP", "DYNAMIC"}),
 				Description:      "Type of the Network Zone - can either be IP or DYNAMIC only",
 			},
 			"usage": {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Description:      "Zone's purpose: POLICY or BLOCKLIST",
-				ValidateDiagFunc: stringInSlice([]string{"POLICY", "BLOCKLIST"}),
+				ValidateDiagFunc: elemInSlice([]string{"POLICY", "BLOCKLIST"}),
 				Default:          "POLICY",
 			},
 		},

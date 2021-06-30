@@ -46,7 +46,7 @@ func resourceAuthServerScope() *schema.Resource {
 				Optional:         true,
 				Default:          "ALL_CLIENTS",
 				Description:      "Whether to publish metadata or not, matching API type despite the fact it could just be a boolean",
-				ValidateDiagFunc: stringInSlice([]string{"ALL_CLIENTS", "NO_CLIENTS"}),
+				ValidateDiagFunc: elemInSlice([]string{"ALL_CLIENTS", "NO_CLIENTS"}),
 			},
 			"default": {
 				Type:        schema.TypeBool,

@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -43,7 +44,7 @@ type PolicyRuleActions struct {
 func (m *ApiSupplement) ListPolicyRules(ctx context.Context, policyID string) ([]PolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules", policyID)
 
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest("GET", url, nil)
+	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -62,7 +63,7 @@ func (m *ApiSupplement) ListPolicyRules(ctx context.Context, policyID string) ([
 func (m *ApiSupplement) CreatePolicyRule(ctx context.Context, policyID string, body PolicyRule) (*PolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules", policyID)
 
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest("POST", url, body)
+	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -81,7 +82,7 @@ func (m *ApiSupplement) CreatePolicyRule(ctx context.Context, policyID string, b
 func (m *ApiSupplement) GetPolicyRule(ctx context.Context, policyID, ruleId string) (*PolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyID, ruleId)
 
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest("GET", url, nil)
+	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -100,7 +101,7 @@ func (m *ApiSupplement) GetPolicyRule(ctx context.Context, policyID, ruleId stri
 func (m *ApiSupplement) UpdatePolicyRule(ctx context.Context, policyID, ruleId string, body PolicyRule) (*PolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyID, ruleId)
 
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest("PUT", url, body)
+	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
 	if err != nil {
 		return nil, nil, err
 	}

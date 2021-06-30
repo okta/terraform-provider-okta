@@ -53,7 +53,7 @@ func resourceEventHook() *schema.Resource {
 						errs = append(errs, diag.Errorf("auth 'key' should not be empty")...)
 					}
 					if t, ok := m["type"]; ok {
-						dErr := stringInSlice([]string{"HEADER"})(t, cty.GetAttrPath("type"))
+						dErr := elemInSlice([]string{"HEADER"})(t, cty.GetAttrPath("type"))
 						if dErr != nil {
 							errs = append(errs, dErr...)
 						}
@@ -82,7 +82,7 @@ func resourceEventHook() *schema.Resource {
 					var errs diag.Diagnostics
 					m := i.(map[string]interface{})
 					if t, ok := m["type"]; ok {
-						dErr := stringInSlice([]string{"HTTP"})(t, cty.GetAttrPath("type"))
+						dErr := elemInSlice([]string{"HTTP"})(t, cty.GetAttrPath("type"))
 						if dErr != nil {
 							errs = append(errs, dErr...)
 						}

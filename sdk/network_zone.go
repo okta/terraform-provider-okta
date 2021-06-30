@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
@@ -36,7 +37,7 @@ func (m *ApiSupplement) CreateNetworkZone(ctx context.Context, body *NetworkZone
 	if qp != nil {
 		url += qp.String()
 	}
-	req, err := m.RequestExecutor.NewRequest("POST", url, body)
+	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -48,7 +49,7 @@ func (m *ApiSupplement) CreateNetworkZone(ctx context.Context, body *NetworkZone
 
 func (m *ApiSupplement) GetNetworkZone(ctx context.Context, id string) (*NetworkZone, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/zones/%s", id)
-	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
+	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -63,7 +64,7 @@ func (m *ApiSupplement) GetNetworkZone(ctx context.Context, id string) (*Network
 
 func (m *ApiSupplement) ListNetworkZones(ctx context.Context) ([]*NetworkZone, *okta.Response, error) {
 	url := "/api/v1/zones"
-	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
+	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -77,7 +78,7 @@ func (m *ApiSupplement) ListNetworkZones(ctx context.Context) ([]*NetworkZone, *
 
 func (m *ApiSupplement) DeleteNetworkZone(ctx context.Context, id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/zones/%s", id)
-	req, err := m.RequestExecutor.NewRequest("DELETE", url, nil)
+	req, err := m.RequestExecutor.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +91,7 @@ func (m *ApiSupplement) UpdateNetworkZone(ctx context.Context, id string, body N
 	if qp != nil {
 		url += qp.String()
 	}
-	req, err := m.RequestExecutor.NewRequest("PUT", url, body)
+	req, err := m.RequestExecutor.NewRequest(http.MethodPut, url, body)
 	if err != nil {
 		return nil, nil, err
 	}

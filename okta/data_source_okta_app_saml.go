@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -115,7 +116,7 @@ func dataSourceAppSaml() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Identifies the SAML processing rules.",
-				ValidateDiagFunc: stringInSlice(
+				ValidateDiagFunc: elemInSlice(
 					[]string{
 						"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
 						"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
@@ -144,13 +145,13 @@ func dataSourceAppSaml() *schema.Resource {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Description:      "Signature algorithm used ot digitally sign the assertion and response",
-				ValidateDiagFunc: stringInSlice([]string{"RSA_SHA256", "RSA_SHA1"}),
+				ValidateDiagFunc: elemInSlice([]string{"RSA_SHA256", "RSA_SHA1"}),
 			},
 			"digest_algorithm": {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Description:      "Determines the digest algorithm used to digitally sign the SAML assertion and response",
-				ValidateDiagFunc: stringInSlice([]string{"SHA256", "SHA1"}),
+				ValidateDiagFunc: elemInSlice([]string{"SHA256", "SHA1"}),
 			},
 			"honor_force_authn": {
 				Type:        schema.TypeBool,
@@ -202,7 +203,7 @@ func dataSourceAppSaml() *schema.Resource {
 				Optional:         true,
 				Default:          "BUILT_IN",
 				Description:      "Username template type",
-				ValidateDiagFunc: stringInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
+				ValidateDiagFunc: elemInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
 			},
 			"app_settings_json": {
 				Type:             schema.TypeString,
@@ -309,7 +310,7 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 	} else {
 		re := getOktaClientFromMetadata(m).GetRequestExecutor()
 		qp := &query.Params{Limit: 1, Filter: filters.Status, Q: filters.getQ()}
-		req, err := re.NewRequest("GET", fmt.Sprintf("/api/v1/apps%s", qp.String()), nil)
+		req, err := re.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/apps%s", qp.String()), nil)
 		if err != nil {
 			return diag.Errorf("failed to list SAML apps: %v", err)
 		}

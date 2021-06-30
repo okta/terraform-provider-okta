@@ -22,7 +22,7 @@ func resourcePolicyPassword() *schema.Resource {
 			"auth_provider": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"OKTA", "ACTIVE_DIRECTORY"}),
+				ValidateDiagFunc: elemInSlice([]string{"OKTA", "ACTIVE_DIRECTORY"}),
 				Description:      "Authentication Provider: OKTA or ACTIVE_DIRECTORY.",
 				Default:          "OKTA",
 			},
@@ -139,7 +139,7 @@ func resourcePolicyPassword() *schema.Resource {
 			"email_recovery": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{statusActive, statusInactive}),
+				ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
 				Description:      "Enable or disable email password recovery: ACTIVE or INACTIVE.",
 				Default:          statusActive,
 			},
@@ -152,21 +152,21 @@ func resourcePolicyPassword() *schema.Resource {
 			"sms_recovery": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{statusActive, statusInactive}),
+				ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
 				Description:      "Enable or disable SMS password recovery: ACTIVE or INACTIVE.",
 				Default:          statusInactive,
 			},
 			"question_recovery": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{statusActive, statusInactive}),
+				ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
 				Description:      "Enable or disable security question password recovery: ACTIVE or INACTIVE.",
 				Default:          statusActive,
 			},
 			"call_recovery": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{statusActive, statusInactive}),
+				ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
 				Description:      "Enable or disable voice call recovery: ACTIVE or INACTIVE.",
 				Default:          statusInactive,
 			},

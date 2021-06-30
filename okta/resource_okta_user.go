@@ -230,7 +230,7 @@ func resourceUser() *schema.Resource {
 				Optional:         true,
 				Description:      "The status of the User in Okta - remove to set user back to active/provisioned",
 				Default:          statusActive,
-				ValidateDiagFunc: stringInSlice([]string{statusActive, userStatusStaged, userStatusDeprovisioned, userStatusSuspended}),
+				ValidateDiagFunc: elemInSlice([]string{statusActive, userStatusStaged, userStatusDeprovisioned, userStatusSuspended}),
 				// ignore diff changing to ACTIVE if state is set to PROVISIONED or PASSWORD_EXPIRED
 				// since this is a similar status in Okta terms
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {

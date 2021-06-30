@@ -26,7 +26,7 @@ func resourceIdpSaml() *schema.Resource {
 			"acs_binding": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}),
+				ValidateDiagFunc: elemInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}),
 				Deprecated:       "This property will be removed in the future, as it can only be set to 'HTTP-POST'",
 				DiffSuppressFunc: func(string, string, string, *schema.ResourceData) bool {
 					return true
@@ -36,7 +36,7 @@ func resourceIdpSaml() *schema.Resource {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Default:          "INSTANCE",
-				ValidateDiagFunc: stringInSlice([]string{"INSTANCE", "ORG"}),
+				ValidateDiagFunc: elemInSlice([]string{"INSTANCE", "ORG"}),
 			},
 			"sso_url": {
 				Type:             schema.TypeString,
@@ -46,7 +46,7 @@ func resourceIdpSaml() *schema.Resource {
 			"sso_binding": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{postBindingAlias, redirectBindingAlias}),
+				ValidateDiagFunc: elemInSlice([]string{postBindingAlias, redirectBindingAlias}),
 				Default:          postBindingAlias,
 			},
 			"sso_destination": {

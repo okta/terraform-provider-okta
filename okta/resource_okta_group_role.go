@@ -63,7 +63,7 @@ func resourceGroupRole() *schema.Resource {
 				Required:    true,
 				Description: "Type of Role to assign",
 				ForceNew:    true,
-				ValidateDiagFunc: stringInSlice([]string{
+				ValidateDiagFunc: elemInSlice([]string{
 					"API_ACCESS_MANAGEMENT_ADMIN",
 					"APP_ADMIN",
 					"GROUP_MEMBERSHIP_ADMIN",

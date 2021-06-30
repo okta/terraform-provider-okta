@@ -256,11 +256,9 @@ func doesResourceExist(response *okta.Response, err error) (bool, error) {
 	if response.StatusCode == 404 {
 		return false, nil
 	}
-
 	if err != nil {
 		return false, responseErr(response, err)
 	}
-
 	return true, err
 }
 

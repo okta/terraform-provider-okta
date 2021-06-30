@@ -30,7 +30,7 @@ func (m *ApiSupplement) UpdateAppOauthGroupsClaim(ctx context.Context, appID str
 
 func (m *ApiSupplement) GetAppOauthGroupsClaim(ctx context.Context, appID string) (*AppOauthGroupClaim, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/internal/apps/%s/settings/oauth/idToken", appID)
-	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
+	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}

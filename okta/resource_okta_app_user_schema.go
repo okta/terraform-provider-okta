@@ -39,14 +39,14 @@ func resourceAppUserSchema() *schema.Resource {
 					Type:             schema.TypeString,
 					Optional:         true,
 					Default:          "NONE",
-					ValidateDiagFunc: stringInSlice([]string{"SELF", "NONE", ""}),
+					ValidateDiagFunc: elemInSlice([]string{"SELF", "NONE", ""}),
 					ForceNew:         true, // since the `scope` is read-only attribute, the resource should be recreated
 				},
 				"master": {
 					Type:     schema.TypeString,
 					Optional: true,
 					// Accepting an empty value to allow for zero value (when provisioning is off)
-					ValidateDiagFunc: stringInSlice([]string{"PROFILE_MASTER", "OKTA", ""}),
+					ValidateDiagFunc: elemInSlice([]string{"PROFILE_MASTER", "OKTA", ""}),
 					Description:      "SubSchema profile manager, if not set it will inherit its setting.",
 					Default:          "PROFILE_MASTER",
 				},
@@ -83,7 +83,7 @@ func resourceAppUserSchemaResourceV1() *schema.Resource {
 			Type:             schema.TypeString,
 			Optional:         true,
 			Default:          "NONE",
-			ValidateDiagFunc: stringInSlice([]string{"SELF", "NONE", ""}),
+			ValidateDiagFunc: elemInSlice([]string{"SELF", "NONE", ""}),
 			ForceNew:         true, // since the `scope` is read-only attribute, the resource should be recreated
 		},
 	}, userSchemaSchema, userBaseSchemaSchema, userTypeSchema, userPatternSchema)}
@@ -99,7 +99,7 @@ func resourceAppUserSchemaResourceV0() *schema.Resource {
 			Type:             schema.TypeString,
 			Optional:         true,
 			Default:          "NONE",
-			ValidateDiagFunc: stringInSlice([]string{"SELF", "NONE", ""}),
+			ValidateDiagFunc: elemInSlice([]string{"SELF", "NONE", ""}),
 			ForceNew:         true, // since the `scope` is read-only attribute, the resource should be recreated
 		},
 	}, userSchemaSchema, userBaseSchemaSchema)}

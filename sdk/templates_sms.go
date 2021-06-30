@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 
@@ -23,7 +24,7 @@ type (
 
 func (m *ApiSupplement) GetSmsTemplate(ctx context.Context, id string) (*SmsTemplate, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/templates/sms/%s", id)
-	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
+	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -40,7 +41,7 @@ func (m *ApiSupplement) CreateSmsTemplate(ctx context.Context, body SmsTemplate,
 		url += qp.String()
 	}
 
-	req, err := m.RequestExecutor.NewRequest("POST", url, body)
+	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -54,7 +55,7 @@ func (m *ApiSupplement) UpdateSmsTemplate(ctx context.Context, id string, body S
 	if qp != nil {
 		url += qp.String()
 	}
-	req, err := m.RequestExecutor.NewRequest("PUT", url, body)
+	req, err := m.RequestExecutor.NewRequest(http.MethodPut, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
