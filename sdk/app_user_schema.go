@@ -14,7 +14,6 @@ func (m *ApiSupplement) UpdateAppUserSchema(ctx context.Context, appID string, s
 	if err != nil {
 		return nil, nil, err
 	}
-
 	fullSchema := &UserSchema{}
 	resp, err := m.RequestExecutor.Do(ctx, req, fullSchema)
 	return fullSchema, resp, err
@@ -35,7 +34,6 @@ func (m *ApiSupplement) DeleteAppUserSchemaProperty(ctx context.Context, id, app
 	if err != nil {
 		return nil, err
 	}
-
 	return m.RequestExecutor.Do(ctx, req, nil)
 }
 

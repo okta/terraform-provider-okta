@@ -39,7 +39,7 @@ type PolicyRuleActions struct {
 	*okta.PasswordPolicyRuleActions
 }
 
-// Enumerates all policy rules.
+// ListPolicyRules enumerates all policy rules.
 func (m *ApiSupplement) ListPolicyRules(ctx context.Context, policyID string) ([]PolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules", policyID)
 
@@ -58,7 +58,7 @@ func (m *ApiSupplement) ListPolicyRules(ctx context.Context, policyID string) ([
 	return policyRule, resp, nil
 }
 
-// Creates a policy rule.
+// CreatePolicyRule creates a policy rule.
 func (m *ApiSupplement) CreatePolicyRule(ctx context.Context, policyID string, body PolicyRule) (*PolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules", policyID)
 
@@ -77,7 +77,7 @@ func (m *ApiSupplement) CreatePolicyRule(ctx context.Context, policyID string, b
 	return &policyRule, resp, nil
 }
 
-// Gets a policy rule.
+// GetPolicyRule gets a policy rule.
 func (m *ApiSupplement) GetPolicyRule(ctx context.Context, policyID, ruleId string) (*PolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyID, ruleId)
 
@@ -96,7 +96,7 @@ func (m *ApiSupplement) GetPolicyRule(ctx context.Context, policyID, ruleId stri
 	return &policyRule, resp, nil
 }
 
-// Updates a policy rule.
+// UpdatePolicyRule updates a policy rule.
 func (m *ApiSupplement) UpdatePolicyRule(ctx context.Context, policyID, ruleId string, body PolicyRule) (*PolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyID, ruleId)
 
