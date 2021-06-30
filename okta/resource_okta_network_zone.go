@@ -26,6 +26,12 @@ func resourceNetworkZone() *schema.Resource {
 				Description: "Array of locations ISO-3166-1(2). Format code: countryCode OR countryCode-regionCode",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"dynamic_proxy_type": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringInSlice([]string{"Any", "TorAnonymizer", "NotTorAnonymizer"}),
+				Description:      "Type of proxy being controlled by this network zone",
+			},
 			"gateways": {
 				Type:        schema.TypeSet,
 				Optional:    true,
@@ -86,6 +92,7 @@ func resourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, m inte
 	_ = d.Set("name", zone.Name)
 	_ = d.Set("type", zone.Type)
 	_ = d.Set("usage", zone.Usage)
+	_ = d.Set("dynamic_proxy_type", zone.ProxyType)
 	err = setNonPrimitives(d, map[string]interface{}{
 		"gateways":          flattenAddresses(zone.Gateways),
 		"proxies":           flattenAddresses(zone.Proxies),
@@ -123,6 +130,7 @@ func buildNetworkZone(d *schema.ResourceData) *sdk.NetworkZone {
 	var proxiesList []*sdk.AddressObj
 	var locationsList []*sdk.Location
 	zoneType := d.Get("type").(string)
+	proxyType := d.Get("dynamic_proxy_type").(string)
 
 	if zoneType == "IP" {
 		if values, ok := d.GetOk("gateways"); ok {
@@ -147,6 +155,7 @@ func buildNetworkZone(d *schema.ResourceData) *sdk.NetworkZone {
 		Gateways:  gatewaysList,
 		Locations: locationsList,
 		Proxies:   proxiesList,
+		ProxyType: proxyType,
 		Usage:     d.Get("usage").(string),
 	}
 }
