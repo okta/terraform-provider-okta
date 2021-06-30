@@ -25,6 +25,7 @@ type (
 		Locations []*Location   `json:"locations,omitempty"`
 		Name      string        `json:"name,omitempty"`
 		Proxies   []*AddressObj `json:"proxies,omitempty"`
+		ProxyType string        `json:"proxyType,omitempty"`
 		System    bool          `json:"system,omitempty"`
 		Type      string        `json:"type,omitempty"`
 		Usage     string        `json:"usage,omitempty"`

@@ -23,6 +23,17 @@ resource "okta_network_zone" "example" {
 }
 ```
 
+## Example Usage - Dynamic Tor Blocker
+
+```hcl
+resource "okta_network_zone" "example" {
+  name               = "TOR Blocker"
+  type               = "DYNAMIC"
+  usage              = "BLOCKLIST"
+  dynamic_proxy_type = "TorAnonymizer"
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -33,6 +44,8 @@ The following arguments are supported:
 
 - `dynamic_locations` - (Optional) Array of locations [ISO-3166-1](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
   and [ISO-3166-2](https://en.wikipedia.org/wiki/ISO_3166-2). Format code: countryCode OR countryCode-regionCode.
+
+- `dynamic_proxy_type` - (Optional) Type of proxy being controlled by this dynamic network zone - can be one of `Any`, `TorAnonymizer` or `NotTorAnonymizer`.
 
 - `gateways` - (Optional) Array of values in CIDR/range form.
 
