@@ -64,18 +64,18 @@ func elemInSlice(s interface{}) schema.SchemaValidateDiagFunc {
 					return nil
 				}
 			}
-			return diag.Errorf("expected %v to be one of %v, got %s", k, strings.Join(s.([]string), ","), v)
+			return diag.FromErr(k.NewErrorf("expected value to be one of %v, got '%s'", strings.Join(s.([]string), "', '"), v))
 		case []int:
 			v, ok := i.(int)
 			if !ok {
 				return diag.Errorf("expected type of %s to be integer", i)
 			}
-			for _, str := range s.([]int) {
-				if v == str {
+			for _, number := range s.([]int) {
+				if v == number {
 					return nil
 				}
 			}
-			return diag.Errorf("expected %v to be one of %v, got %d", k, s.([]int), v)
+			return diag.FromErr(k.NewErrorf("expected value to be one of '%v', got '%d'", s.([]int), v))
 		default:
 			return diag.Errorf("validator only works with []string and []int")
 		}
