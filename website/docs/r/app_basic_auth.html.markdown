@@ -33,8 +33,10 @@ The following arguments are supported:
 - `auth_url` - (Required) The URL of the authenticating site for this app.
 
 - `users` - (Optional) Users associated with the application.
+  - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
 - `groups` - (Optional) Groups associated with the application.
+  - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
 
 - `status` - (Optional) Status of application. (`"ACTIVE"` or `"INACTIVE"`).
 
