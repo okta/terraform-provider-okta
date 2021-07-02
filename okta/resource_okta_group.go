@@ -41,6 +41,7 @@ func resourceGroup() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "Users associated with the group. This can also be done per user.",
+				Deprecated:  "The `users` field is now deprecated for the resource `okta_group`, please replace all uses of this with: `okta_group_memberships`",
 			},
 		},
 	}

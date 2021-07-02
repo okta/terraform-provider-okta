@@ -74,7 +74,10 @@ func resourceUser() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "User Okta admin roles - ie. ['APP_ADMIN', 'USER_ADMIN']",
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateDiagFunc: elemInSlice(validAdminRoles),
+				},
 			},
 			"city": {
 				Type:        schema.TypeString,
@@ -137,6 +140,7 @@ func resourceUser() *schema.Resource {
 				Optional:    true,
 				Description: "The groups that you want this user to be a part of. This can also be done via the group using the `users` property.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
+				Deprecated:  "The `group_memberships` field is now deprecated for the resource `okta_user`, please replace all uses of this with: `okta_user_group_memberships`",
 			},
 			"honorific_prefix": {
 				Type:        schema.TypeString,

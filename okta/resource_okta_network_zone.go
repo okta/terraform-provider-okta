@@ -29,7 +29,7 @@ func resourceNetworkZone() *schema.Resource {
 			"dynamic_proxy_type": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"Any", "TorAnonymizer", "NotTorAnonymizer"}),
+				ValidateDiagFunc: elemInSlice([]string{"Any", "TorAnonymizer", "NotTorAnonymizer"}),
 				Description:      "Type of proxy being controlled by this network zone",
 			},
 			"gateways": {
