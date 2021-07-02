@@ -32,7 +32,10 @@ func resourceUserAdminRoles() *schema.Resource {
 				Type:        schema.TypeSet,
 				Required:    true,
 				Description: "User Okta admin roles - ie. ['APP_ADMIN', 'USER_ADMIN']",
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateDiagFunc: elemInSlice(validAdminRoles),
+				},
 			},
 		},
 	}
