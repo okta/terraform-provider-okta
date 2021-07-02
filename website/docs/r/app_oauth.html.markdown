@@ -52,8 +52,10 @@ The following arguments are supported:
 - `type` - (Required) The type of OAuth application. Valid values: `"web"`, `"native"`, `"browser"`, `"service"`.
 
 - `users` - (Optional) The users assigned to the application. It is recommended not to use this and instead use `okta_app_user`.
+  - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
 - `groups` - (Optional) The groups assigned to the application. It is recommended not to use this and instead use `okta_app_group_assignment`.
+  - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
 
 - `client_id` - (Optional) OAuth client ID. If set during creation, app is created with this id.
 
