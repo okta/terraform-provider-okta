@@ -19,6 +19,7 @@ type AppOauthGroupClaim struct {
 	Value           string `json:"value,omitempty"`
 }
 
+// UpdateAppOauthGroupsClaim updated OAuth app group claim
 func (m *ApiSupplement) UpdateAppOauthGroupsClaim(ctx context.Context, appID string, gc *AppOauthGroupClaim) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/internal/apps/%s/settings/oauth/idToken", appID)
 	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, gc)
@@ -28,6 +29,7 @@ func (m *ApiSupplement) UpdateAppOauthGroupsClaim(ctx context.Context, appID str
 	return m.RequestExecutor.Do(ctx, req, nil)
 }
 
+// GetAppOauthGroupsClaim gets OAuth app group claim
 func (m *ApiSupplement) GetAppOauthGroupsClaim(ctx context.Context, appID string) (*AppOauthGroupClaim, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/internal/apps/%s/settings/oauth/idToken", appID)
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)

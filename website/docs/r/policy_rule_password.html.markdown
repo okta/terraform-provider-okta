@@ -16,7 +16,9 @@ This resource allows you to create and configure a Password Policy Rule.
 
 The following arguments are supported:
 
-- `policyid` - (Required) Policy ID.
+- `policyid` - (Deprecated) Policy ID.
+  
+- `policy_id` - (Required) Policy ID.
 
 - `name` - (Required) Policy Rule Name.
 
@@ -40,7 +42,9 @@ The following arguments are supported:
 
 - `id` - ID of the Rule.
 
-- `policyid` - Policy ID.
+- `policyid` - (Deprecated) Policy ID.
+  
+- `policy_id` - Policy ID.
 
 ## Import
 

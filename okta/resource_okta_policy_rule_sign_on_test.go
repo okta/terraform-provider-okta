@@ -83,7 +83,7 @@ func testOktaPolicyRuleSignOnDefaultErrors(rInt int) string {
 
 	return fmt.Sprintf(`
 resource "%s" "%s" {
-	policyid = "garbageID"
+	policy_id = "garbageID"
 	name     = "Default Rule"
 	status   = "ACTIVE"
 }

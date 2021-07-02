@@ -51,7 +51,7 @@ func resourcePolicySignonRule() *schema.Resource {
 				Description: "Remember MFA device.",
 				Default:     false,
 			},
-			"mfa_lifetime": { // mfa_require must be true, mfaprompt must be SESSION
+			"mfa_lifetime": { // mfa_require must be true, mfa_prompt must be SESSION
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: "Elapsed time before the next MFA challenge",

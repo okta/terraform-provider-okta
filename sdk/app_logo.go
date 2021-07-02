@@ -11,6 +11,7 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
+// UploadAppLogo uploads app's logo
 func (m *ApiSupplement) UploadAppLogo(ctx context.Context, appID, filename string) (*okta.Response, error) {
 	file, err := os.Open(filename)
 	if err != nil {
