@@ -72,7 +72,7 @@ func resourceAppSecurePasswordStore() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "EDIT_USERNAME_AND_PASSWORD",
-				ValidateDiagFunc: stringInSlice(
+				ValidateDiagFunc: elemInSlice(
 					[]string{
 						"EDIT_USERNAME_AND_PASSWORD",
 						"ADMIN_SETS_CREDENTIALS",

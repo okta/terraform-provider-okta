@@ -39,7 +39,7 @@ func resourceAppAutoLogin() *schema.Resource {
 			"credentials_scheme": {
 				Type:     schema.TypeString,
 				Optional: true,
-				ValidateDiagFunc: stringInSlice(
+				ValidateDiagFunc: elemInSlice(
 					[]string{
 						"EDIT_USERNAME_AND_PASSWORD",
 						"ADMIN_SETS_CREDENTIALS",

@@ -16,7 +16,7 @@ func dataSourceDefaultPolicies() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"type": {
 				Type: schema.TypeString,
-				ValidateDiagFunc: stringInSlice([]string{
+				ValidateDiagFunc: elemInSlice([]string{
 					sdk.SignOnPolicyType,
 					sdk.PasswordPolicyType,
 					sdk.MfaPolicyType,

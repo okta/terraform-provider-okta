@@ -46,7 +46,7 @@ func resourcePolicyRuleIdpDiscovery() *schema.Resource {
 			"user_identifier_type": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"IDENTIFIER", "ATTRIBUTE", ""}),
+				ValidateDiagFunc: elemInSlice([]string{"IDENTIFIER", "ATTRIBUTE", ""}),
 			},
 			"user_identifier_attribute": {
 				Type:     schema.TypeString,
@@ -230,13 +230,13 @@ var (
 				Type:             schema.TypeString,
 				Optional:         true,
 				Default:          "ANY",
-				ValidateDiagFunc: stringInSlice([]string{"ANY", "MOBILE", "DESKTOP"}),
+				ValidateDiagFunc: elemInSlice([]string{"ANY", "MOBILE", "DESKTOP"}),
 			},
 			"os_type": {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Default:          "ANY",
-				ValidateDiagFunc: stringInSlice([]string{"ANY", "IOS", "WINDOWS", "ANDROID", "OTHER", "OSX"}),
+				ValidateDiagFunc: elemInSlice([]string{"ANY", "IOS", "WINDOWS", "ANDROID", "OTHER", "OSX"}),
 			},
 			"os_expression": {
 				Type:        schema.TypeString,
@@ -251,7 +251,7 @@ var (
 			"match_type": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"SUFFIX", "EQUALS", "STARTS_WITH", "CONTAINS", "EXPRESSION"}),
+				ValidateDiagFunc: elemInSlice([]string{"SUFFIX", "EQUALS", "STARTS_WITH", "CONTAINS", "EXPRESSION"}),
 			},
 			"value": {
 				Type:     schema.TypeString,
@@ -265,7 +265,7 @@ var (
 			"type": {
 				Type:             schema.TypeString,
 				Required:         true,
-				ValidateDiagFunc: stringInSlice([]string{"APP", "APP_TYPE"}),
+				ValidateDiagFunc: elemInSlice([]string{"APP", "APP_TYPE"}),
 			},
 			"name": {
 				Type:     schema.TypeString,

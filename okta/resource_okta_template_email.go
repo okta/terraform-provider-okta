@@ -65,7 +65,7 @@ func resourceTemplateEmail() *schema.Resource {
 				Required:         true,
 				Description:      "Email template type",
 				ForceNew:         true,
-				ValidateDiagFunc: stringInSlice(validEmailTemplateTypes),
+				ValidateDiagFunc: elemInSlice(validEmailTemplateTypes),
 			},
 			"translations": {
 				Type:     schema.TypeSet,

@@ -22,14 +22,14 @@ func resourcePolicySignonRule() *schema.Resource {
 			"authtype": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"ANY", "RADIUS"}),
+				ValidateDiagFunc: elemInSlice([]string{"ANY", "RADIUS"}),
 				Description:      "Authentication entrypoint: ANY or RADIUS.",
 				Default:          "ANY",
 			},
 			"access": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"ALLOW", "DENY"}),
+				ValidateDiagFunc: elemInSlice([]string{"ALLOW", "DENY"}),
 				Description:      "Allow or deny access based on the rule conditions: ALLOW or DENY.",
 				Default:          "ALLOW",
 			},
@@ -42,7 +42,7 @@ func resourcePolicySignonRule() *schema.Resource {
 			"mfa_prompt": { // mfa_require must be true
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"DEVICE", "SESSION", "ALWAYS"}),
+				ValidateDiagFunc: elemInSlice([]string{"DEVICE", "SESSION", "ALWAYS"}),
 				Description:      "Prompt for MFA based on the device used, a factor session lifetime, or every sign-on attempt: DEVICE, SESSION or ALWAYS",
 			},
 			"mfa_remember_device": {

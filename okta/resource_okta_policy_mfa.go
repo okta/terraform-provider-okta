@@ -55,7 +55,7 @@ func resourcePolicyMfaRead(ctx context.Context, d *schema.ResourceData, m interf
 	syncFactor(d, sdk.RsaTokenFactor, policy.Settings.Factors.RsaToken)
 	syncFactor(d, sdk.SymantecVipFactor, policy.Settings.Factors.SymantecVip)
 	syncFactor(d, sdk.YubikeyTokenFactor, policy.Settings.Factors.YubikeyToken)
-	syncFactor(d, sdk.HotpFactor, policy.Settings.Factors.YubikeyToken)
+	syncFactor(d, sdk.HotpFactor, policy.Settings.Factors.Hotp)
 	err = syncPolicyFromUpstream(d, policy)
 	if err != nil {
 		return diag.Errorf("failed to sync policy: %v", err)
@@ -176,13 +176,13 @@ func buildFactorProviders() map[string]*schema.Schema {
 				var errs diag.Diagnostics
 				m := i.(map[string]interface{})
 				if enroll, ok := m["enroll"]; ok {
-					dErr := stringInSlice([]string{"NOT_ALLOWED", "OPTIONAL", "REQUIRED"})(enroll, cty.GetAttrPath("enroll"))
+					dErr := elemInSlice([]string{"NOT_ALLOWED", "OPTIONAL", "REQUIRED"})(enroll, cty.GetAttrPath("enroll"))
 					if dErr != nil {
 						errs = append(errs, dErr...)
 					}
 				}
 				if consentType, ok := m["consent_type"]; ok {
-					dErr := stringInSlice([]string{"NONE", "TERMS_OF_SERVICE"})(consentType, cty.GetAttrPath("consent_type"))
+					dErr := elemInSlice([]string{"NONE", "TERMS_OF_SERVICE"})(consentType, cty.GetAttrPath("consent_type"))
 					if dErr != nil {
 						errs = append(errs, dErr...)
 					}

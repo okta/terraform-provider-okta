@@ -42,7 +42,7 @@ func resourceAuthServerDefault() *schema.Resource {
 			"credentials_rotation_mode": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"AUTO", "MANUAL"}),
+				ValidateDiagFunc: elemInSlice([]string{"AUTO", "MANUAL"}),
 				Description:      "Credential rotation mode, in many cases you cannot set this to MANUAL, the API will ignore the value and you will get a perpetual diff. This should rarely be used.",
 				Default:          "MANUAL",
 			},

@@ -74,7 +74,7 @@ var baseAppSchema = map[string]*schema.Schema{
 		Type:             schema.TypeString,
 		Optional:         true,
 		Default:          statusActive,
-		ValidateDiagFunc: stringInSlice([]string{statusActive, statusInactive}),
+		ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
 		Description:      "Status of application.",
 	},
 	"logo": {
@@ -167,7 +167,7 @@ var baseAppSwaSchema = map[string]*schema.Schema{
 		Optional:         true,
 		Default:          "BUILT_IN",
 		Description:      "Username template type",
-		ValidateDiagFunc: stringInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
+		ValidateDiagFunc: elemInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
 	},
 }
 

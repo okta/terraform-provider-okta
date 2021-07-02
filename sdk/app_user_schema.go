@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
@@ -10,7 +11,7 @@ import (
 var appUserSchemaURL = "/api/v1/meta/schemas/apps/%s/default"
 
 func (m *ApiSupplement) UpdateAppUserSchema(ctx context.Context, appID string, schema *UserSchema) (*UserSchema, *okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("POST", fmt.Sprintf(appUserSchemaURL, appID), schema)
+	req, err := m.RequestExecutor.NewRequest(http.MethodPost, fmt.Sprintf(appUserSchemaURL, appID), schema)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -20,7 +21,7 @@ func (m *ApiSupplement) UpdateAppUserSchema(ctx context.Context, appID string, s
 }
 
 func (m *ApiSupplement) GetAppUserSchema(ctx context.Context, appID string) (*UserSchema, *okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("GET", fmt.Sprintf(appUserSchemaURL, appID), nil)
+	req, err := m.RequestExecutor.NewRequest(http.MethodGet, fmt.Sprintf(appUserSchemaURL, appID), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -30,7 +31,7 @@ func (m *ApiSupplement) GetAppUserSchema(ctx context.Context, appID string) (*Us
 }
 
 func (m *ApiSupplement) DeleteAppUserSchemaProperty(ctx context.Context, id, appID string) (*okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("POST", fmt.Sprintf(appUserSchemaURL, appID), getCustomUserSchema(id, nil))
+	req, err := m.RequestExecutor.NewRequest(http.MethodPost, fmt.Sprintf(appUserSchemaURL, appID), getCustomUserSchema(id, nil))
 	if err != nil {
 		return nil, err
 	}

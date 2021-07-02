@@ -41,6 +41,7 @@ const (
 	authServerScope        = "okta_auth_server_scope"
 	eventHook              = "okta_event_hook"
 	factor                 = "okta_factor"
+	factorTotp             = "okta_factor_totp"
 	groupRole              = "okta_group_role"
 	groupRoles             = "okta_group_roles"
 	groupRule              = "okta_group_rule"
@@ -195,6 +196,7 @@ func Provider() *schema.Provider {
 			authServerScope:        resourceAuthServerScope(),
 			eventHook:              resourceEventHook(),
 			factor:                 resourceFactor(),
+			factorTotp:             resourceFactorTOTP(),
 			groupRole:              resourceGroupRole(),
 			groupRoles:             resourceGroupRoles(),
 			groupRule:              resourceGroupRule(),

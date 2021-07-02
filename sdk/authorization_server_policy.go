@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
@@ -17,7 +18,7 @@ func (m *ApiSupplement) DeactivateAuthorizationServerPolicy(ctx context.Context,
 
 func (m *ApiSupplement) changeAuthorizationServerPolicyLifecycle(ctx context.Context, authServerID, policyID, action string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/lifecycle/%s", authServerID, policyID, action)
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest("POST", url, nil)
+	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, nil)
 	if err != nil {
 		return nil, err
 	}

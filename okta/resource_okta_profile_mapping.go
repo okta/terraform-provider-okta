@@ -23,7 +23,7 @@ var mappingResource = &schema.Resource{
 			Type:             schema.TypeString,
 			Optional:         true,
 			Default:          dontPush,
-			ValidateDiagFunc: stringInSlice([]string{push, dontPush}),
+			ValidateDiagFunc: elemInSlice([]string{push, dontPush}),
 		},
 	},
 }

@@ -75,7 +75,7 @@ func resourceAppOAuthAPIScope() *schema.Resource {
 				Required: true,
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
-					ValidateDiagFunc: stringInSlice(validScopes),
+					ValidateDiagFunc: elemInSlice(validScopes),
 				},
 				Description: "Scopes of the application for which consent is granted.",
 			},

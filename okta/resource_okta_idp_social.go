@@ -26,7 +26,7 @@ func resourceIdpSocial() *schema.Resource {
 			"type": {
 				Type:             schema.TypeString,
 				Required:         true,
-				ValidateDiagFunc: stringInSlice([]string{"FACEBOOK", "LINKEDIN", "MICROSOFT", "GOOGLE", "APPLE"}),
+				ValidateDiagFunc: elemInSlice([]string{"FACEBOOK", "LINKEDIN", "MICROSOFT", "GOOGLE", "APPLE"}),
 			},
 			"scopes": {
 				Type:     schema.TypeSet,
@@ -37,7 +37,7 @@ func resourceIdpSocial() *schema.Resource {
 				Type:             schema.TypeString,
 				Default:          "OAUTH2",
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"OIDC", "OAUTH2"}),
+				ValidateDiagFunc: elemInSlice([]string{"OIDC", "OAUTH2"}),
 			},
 			"client_id": {
 				Type:     schema.TypeString,
@@ -65,7 +65,7 @@ func resourceIdpSocial() *schema.Resource {
 			"issuer_mode": {
 				Type:             schema.TypeString,
 				Description:      "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
-				ValidateDiagFunc: stringInSlice([]string{"ORG_URL", "CUSTOM_URL"}),
+				ValidateDiagFunc: elemInSlice([]string{"ORG_URL", "CUSTOM_URL"}),
 				Default:          "ORG_URL",
 				Optional:         true,
 			},

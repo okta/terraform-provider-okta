@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
@@ -30,7 +31,7 @@ func (m *ApiSupplement) CreateEmailTemplate(ctx context.Context, body EmailTempl
 	if qp != nil {
 		url += qp.String()
 	}
-	req, err := m.RequestExecutor.NewRequest("POST", url, body)
+	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -45,7 +46,7 @@ func (m *ApiSupplement) UpdateEmailTemplate(ctx context.Context, id string, body
 	if qp != nil {
 		url += qp.String()
 	}
-	req, err := m.RequestExecutor.NewRequest("PUT", url, body)
+	req, err := m.RequestExecutor.NewRequest(http.MethodPut, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -57,7 +58,7 @@ func (m *ApiSupplement) UpdateEmailTemplate(ctx context.Context, id string, body
 
 func (m *ApiSupplement) GetEmailTemplate(ctx context.Context, id string) (*EmailTemplate, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/templates/emails/%s", id)
-	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
+	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -68,7 +69,7 @@ func (m *ApiSupplement) GetEmailTemplate(ctx context.Context, id string) (*Email
 
 func (m *ApiSupplement) DeleteEmailTemplate(ctx context.Context, id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/templates/emails/%s", id)
-	req, err := m.RequestExecutor.NewRequest("DELETE", url, nil)
+	req, err := m.RequestExecutor.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		return nil, err
 	}

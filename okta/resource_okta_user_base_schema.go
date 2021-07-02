@@ -42,7 +42,7 @@ func resourceUserBaseSchema() *schema.Resource {
 					Type:     schema.TypeString,
 					Optional: true,
 					// Accepting an empty value to allow for zero value (when provisioning is off)
-					ValidateDiagFunc: stringInSlice([]string{"PROFILE_MASTER", "OKTA", "OVERRIDE", ""}),
+					ValidateDiagFunc: elemInSlice([]string{"PROFILE_MASTER", "OKTA", "OVERRIDE", ""}),
 					Description:      "SubSchema profile manager, if not set it will inherit its setting.",
 					Default:          "PROFILE_MASTER",
 				},
