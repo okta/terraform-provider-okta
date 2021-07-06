@@ -33,19 +33,23 @@ resource "okta_policy_rule_signon" "example" {
   risc_level = "HIGH"
   behaviors = [data.okta_behavior.new_city.id]
   factor_sequence {
-    primary_criteria_factor_type = "token:hotp"
+    primary_criteria_factor_type = "token:hotp" // TOTP
     primary_criteria_provider = "CUSTOM"
     secondary_criteria {
-      factor_type = "token:software:totp"
+      factor_type = "token:software:totp" // TOTP + Okta Verify
       provider = "OKTA"
     }
-    secondary_criteria {
+    secondary_criteria { // TOTP + Okta Verify Push
       factor_type = "push"
+      provider = "OKTA"
+    }
+    secondary_criteria { // TOTP + Password
+      factor_type = "password"
       provider = "OKTA"
     }
   }
   factor_sequence {
-    primary_criteria_factor_type = "token:software:totp"
+    primary_criteria_factor_type = "token:software:totp" // Okta Verify
     primary_criteria_provider = "OKTA"
   }
 }
