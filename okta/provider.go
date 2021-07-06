@@ -39,6 +39,8 @@ const (
 	authServerPolicy       = "okta_auth_server_policy"
 	authServerPolicyRule   = "okta_auth_server_policy_rule"
 	authServerScope        = "okta_auth_server_scope"
+	behavior               = "okta_behavior"
+	behaviors              = "okta_behaviors"
 	eventHook              = "okta_event_hook"
 	factor                 = "okta_factor"
 	factorTotp             = "okta_factor_totp"
@@ -219,7 +221,7 @@ func Provider() *schema.Provider {
 			policyRuleIdpDiscovery: resourcePolicyRuleIdpDiscovery(),
 			policyRuleMfa:          resourcePolicyMfaRule(),
 			policyRulePassword:     resourcePolicyPasswordRule(),
-			policyRuleSignOn:       resourcePolicySignonRule(),
+			policyRuleSignOn:       resourcePolicySignOnRule(),
 			templateEmail:          resourceTemplateEmail(),
 			templateSms:            resourceTemplateSms(),
 			trustedOrigin:          resourceTrustedOrigin(),
@@ -243,7 +245,7 @@ func Provider() *schema.Provider {
 			"okta_swa_app":                   deprecateIncorrectNaming(resourceAppSwa(), appSwa),
 			"okta_password_policy":           deprecateIncorrectNaming(resourcePolicyPassword(), policyPassword),
 			"okta_signon_policy":             deprecateIncorrectNaming(resourcePolicySignOn(), policySignOn),
-			"okta_signon_policy_rule":        deprecateIncorrectNaming(resourcePolicySignonRule(), policyRuleSignOn),
+			"okta_signon_policy_rule":        deprecateIncorrectNaming(resourcePolicySignOnRule(), policyRuleSignOn),
 			"okta_password_policy_rule":      deprecateIncorrectNaming(resourcePolicyPasswordRule(), policyRulePassword),
 			"okta_mfa_policy":                deprecateIncorrectNaming(resourcePolicyMfa(), policyMfa),
 			"okta_mfa_policy_rule":           deprecateIncorrectNaming(resourcePolicyMfaRule(), policyRuleMfa),
@@ -258,6 +260,8 @@ func Provider() *schema.Provider {
 			"okta_default_policies":            deprecatedPolicies,
 			"okta_default_policy":              dataSourceDefaultPolicies(),
 			"okta_everyone_group":              dataSourceEveryoneGroup(),
+			behavior:                           dataSourceBehavior(),
+			behaviors:                          dataSourceBehaviors(),
 			oktaGroup:                          dataSourceGroup(),
 			oktaGroups:                         dataSourceGroups(),
 			"okta_idp_metadata_saml":           dataSourceIdpMetadataSaml(),

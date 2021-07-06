@@ -64,7 +64,7 @@ func elemInSlice(s interface{}) schema.SchemaValidateDiagFunc {
 					return nil
 				}
 			}
-			return diag.FromErr(k.NewErrorf("expected value to be one of %v, got '%s'", strings.Join(s.([]string), "', '"), v))
+			return diag.FromErr(k.NewErrorf("expected value to be one of '%v', got '%s'", strings.Join(s.([]string), "', '"), v))
 		case []int:
 			v, ok := i.(int)
 			if !ok {

@@ -35,9 +35,37 @@ type PolicyRule struct {
 }
 
 type PolicyRuleActions struct {
-	Enroll *Enroll `json:"enroll,omitempty"`
-	*okta.OktaSignOnPolicyRuleActions
+	Enroll *Enroll                        `json:"enroll,omitempty"`
+	SignOn *SignOnPolicyRuleSignOnActions `json:"signon,omitempty"`
 	*okta.PasswordPolicyRuleActions
+}
+
+type SignOnPolicyRuleSignOnActions struct {
+	Access                  string                                         `json:"access,omitempty"`
+	FactorLifetime          int64                                          `json:"factorLifetime,omitempty"`
+	FactorPromptMode        string                                         `json:"factorPromptMode,omitempty"`
+	RememberDeviceByDefault *bool                                          `json:"rememberDeviceByDefault,omitempty"`
+	RequireFactor           *bool                                          `json:"requireFactor,omitempty"`
+	Session                 *okta.OktaSignOnPolicyRuleSignonSessionActions `json:"session,omitempty"`
+	Challenge               *SignOnPolicyRuleSignOnActionsChallenge        `json:"challenge,omitempty"`
+}
+
+type SignOnPolicyRuleSignOnActionsChallenge struct {
+	Chain []SignOnPolicyRuleSignOnActionsChallengeChain `json:"chain,omitempty"`
+}
+
+type SignOnPolicyRuleSignOnActionsChallengeChain struct {
+	Criteria []SignOnPolicyRuleSignOnActionsChallengeChainCriteria `json:"criteria,omitempty"`
+	Next     []SignOnPolicyRuleSignOnActionsChallengeChainNext     `json:"next,omitempty"`
+}
+
+type SignOnPolicyRuleSignOnActionsChallengeChainCriteria struct {
+	Provider   string `json:"provider,omitempty"`
+	FactorType string `json:"factorType,omitempty"`
+}
+
+type SignOnPolicyRuleSignOnActionsChallengeChainNext struct {
+	Criteria []SignOnPolicyRuleSignOnActionsChallengeChainCriteria `json:"criteria,omitempty"`
 }
 
 // ListPolicyRules enumerates all policy rules.
