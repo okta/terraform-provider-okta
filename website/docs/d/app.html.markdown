@@ -30,15 +30,15 @@ data "okta_app" "example" {
 
 ## Attributes Reference
 
-- `id` - `id` of application.
+- `id` - Application ID.
 
-- `label` - `label` of application.
+- `label` - Application label.
 
-- `name` - `name` of application.
+- `name` - Application name.
 
-- `status` - `status` of application.
+- `status` - Application status.
  
-- `links` - Generic JSON containing discoverable resources related to the app
+- `links` - Generic JSON containing discoverable resources related to the app.
 
 - `users` - List of users IDs assigned to the application.
   - `DEPRECATED`: Please replace all usage of this field with the data source `okta_app_user_assignments`.

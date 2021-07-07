@@ -10,73 +10,74 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-var userExcludedSchema = map[string]*schema.Schema{
-	"users_excluded": {
-		Type:        schema.TypeSet,
-		Optional:    true,
-		Description: "Set of User IDs to Exclude",
-		Elem:        &schema.Schema{Type: schema.TypeString},
-	},
-}
+var (
+	userExcludedSchema = map[string]*schema.Schema{
+		"users_excluded": {
+			Type:        schema.TypeSet,
+			Optional:    true,
+			Description: "Set of User IDs to Exclude",
+			Elem:        &schema.Schema{Type: schema.TypeString},
+		},
+	}
 
-// Basis of policy rules
-var baseRuleSchema = map[string]*schema.Schema{
-	"policyid": {
-		Type:        schema.TypeString,
-		ForceNew:    true,
-		Optional:    true,
-		Description: "Policy ID of the Rule",
-		Deprecated:  "Because if incorrect naming, this field will be deprecated and then removed in the next versions of the provider. Please use 'policy_id' instead",
-	},
-	"policy_id": {
-		Type:          schema.TypeString,
-		ForceNew:      true,
-		Optional:      true,
-		Description:   "Policy ID of the Rule",
-		ConflictsWith: []string{"policyid"},
-	},
-	"name": {
-		Type:        schema.TypeString,
-		ForceNew:    true,
-		Required:    true,
-		Description: "Policy Rule Name",
-	},
-	"priority": {
-		Type:        schema.TypeInt,
-		Optional:    true,
-		Description: "Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last (lowest) if not there.",
-		// Suppress diff if config is empty.
-		DiffSuppressFunc: createValueDiffSuppression("0"),
-	},
-	"status": {
-		Type:             schema.TypeString,
-		Optional:         true,
-		Default:          statusActive,
-		ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
-		Description:      "Policy Rule Status: ACTIVE or INACTIVE.",
-	},
-	"network_connection": {
-		Type:             schema.TypeString,
-		Optional:         true,
-		ValidateDiagFunc: elemInSlice([]string{"ANYWHERE", "ZONE", "ON_NETWORK", "OFF_NETWORK"}),
-		Description:      "Network selection mode: ANYWHERE, ZONE, ON_NETWORK, or OFF_NETWORK.",
-		Default:          "ANYWHERE",
-	},
-	"network_includes": {
-		Type:          schema.TypeList,
-		Optional:      true,
-		Description:   "The zones to include",
-		ConflictsWith: []string{"network_excludes"},
-		Elem:          &schema.Schema{Type: schema.TypeString},
-	},
-	"network_excludes": {
-		Type:          schema.TypeList,
-		Optional:      true,
-		Description:   "The zones to exclude",
-		ConflictsWith: []string{"network_includes"},
-		Elem:          &schema.Schema{Type: schema.TypeString},
-	},
-}
+	// Basis of policy rules
+	baseRuleSchema = map[string]*schema.Schema{
+		"policyid": {
+			Type:        schema.TypeString,
+			ForceNew:    true,
+			Optional:    true,
+			Description: "Policy ID of the Rule",
+			Deprecated:  "Because of incorrect naming, 'policyid' field will be deprecated and then removed in the next versions of the provider. Please use 'policy_id' instead",
+		},
+		"policy_id": {
+			Type:        schema.TypeString,
+			ForceNew:    true,
+			Optional:    true,
+			Description: "Policy ID of the Rule",
+		},
+		"name": {
+			Type:        schema.TypeString,
+			ForceNew:    true,
+			Required:    true,
+			Description: "Policy Rule Name",
+		},
+		"priority": {
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Description: "Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last (lowest) if not there.",
+			// Suppress diff if config is empty.
+			DiffSuppressFunc: createValueDiffSuppression("0"),
+		},
+		"status": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			Default:          statusActive,
+			ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
+			Description:      "Policy Rule Status: ACTIVE or INACTIVE.",
+		},
+		"network_connection": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			ValidateDiagFunc: elemInSlice([]string{"ANYWHERE", "ZONE", "ON_NETWORK", "OFF_NETWORK"}),
+			Description:      "Network selection mode: ANYWHERE, ZONE, ON_NETWORK, or OFF_NETWORK.",
+			Default:          "ANYWHERE",
+		},
+		"network_includes": {
+			Type:          schema.TypeList,
+			Optional:      true,
+			Description:   "The zones to include",
+			ConflictsWith: []string{"network_excludes"},
+			Elem:          &schema.Schema{Type: schema.TypeString},
+		},
+		"network_excludes": {
+			Type:          schema.TypeList,
+			Optional:      true,
+			Description:   "The zones to exclude",
+			ConflictsWith: []string{"network_includes"},
+			Elem:          &schema.Schema{Type: schema.TypeString},
+		},
+	}
+)
 
 func buildBaseRuleSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
 	return buildSchema(baseRuleSchema, target)
@@ -133,7 +134,6 @@ func createPolicyRuleImporter() *schema.ResourceImporter {
 			if len(parts) != 2 {
 				return nil, fmt.Errorf("invalid policy rule specifier. Expecting {policyID}/{ruleID}")
 			}
-			_ = d.Set("policyid", parts[0])
 			_ = d.Set("policy_id", parts[0])
 			d.SetId(parts[1])
 			return []*schema.ResourceData{d}, nil
@@ -200,10 +200,15 @@ func syncRuleFromUpstream(d *schema.ResourceData, rule *sdk.PolicyRule) error {
 	_ = d.Set("status", rule.Status)
 	_ = d.Set("priority", rule.Priority)
 	_ = d.Set("network_connection", rule.Conditions.Network.Connection)
+	if rule.Conditions.Network.Connection != "ANYWHERE" {
+		return setNonPrimitives(d, map[string]interface{}{
+			"users_excluded":   convertStringSetToInterface(rule.Conditions.People.Users.Exclude),
+			"network_includes": convertStringArrToInterface(rule.Conditions.Network.Include),
+			"network_excludes": convertStringArrToInterface(rule.Conditions.Network.Exclude),
+		})
+	}
 	return setNonPrimitives(d, map[string]interface{}{
-		"users_excluded":   convertStringSetToInterface(rule.Conditions.People.Users.Exclude),
-		"network_includes": convertStringArrToInterface(rule.Conditions.Network.Include),
-		"network_excludes": convertStringArrToInterface(rule.Conditions.Network.Exclude),
+		"users_excluded": convertStringSetToInterface(rule.Conditions.People.Users.Exclude),
 	})
 }
 

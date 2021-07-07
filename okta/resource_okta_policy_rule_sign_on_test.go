@@ -36,6 +36,7 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
 	excludedNetwork := mgr.GetFixtures("excluded_network.tf", ri, t)
+	factorSequence := mgr.GetFixtures("factor_sequence.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleSignOn)
 
 	resource.Test(t, resource.TestCase{
@@ -72,6 +73,26 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "access", "DENY"),
 					resource.TestCheckResourceAttr(resourceName, "network_connection", "ZONE"),
+				),
+			},
+			{
+				Config: factorSequence,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "access", "CHALLENGE"),
+					resource.TestCheckResourceAttr(resourceName, "behaviors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.primary_criteria_factor_type", "password"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.primary_criteria_provider", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.secondary_criteria.0.factor_type", "push"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.secondary_criteria.1.factor_type", "token:hotp"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.secondary_criteria.2.factor_type", "token:software:totp"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.secondary_criteria.0.provider", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.secondary_criteria.1.provider", "CUSTOM"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.secondary_criteria.2.provider", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.1.primary_criteria_factor_type", "token:hotp"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.1.primary_criteria_provider", "CUSTOM"),
 				),
 			},
 		},

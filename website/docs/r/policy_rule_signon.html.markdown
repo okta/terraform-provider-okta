@@ -10,6 +10,83 @@ description: |-
 
 Creates a Sign On Policy Rule.
 
+## Example Usage
+
+```hcl
+resource "okta_policy_signon" "test" {
+  name = "Example Policy"
+  status = "ACTIVE"
+  description = "Example Policy"
+}
+
+data "okta_behavior" "new_city" {
+  name = "New City"
+}
+
+resource "okta_policy_rule_signon" "example" {
+  access = "CHALLENGE"
+  authtype = "RADIUS"
+  name = "Example Policy Rule"
+  network_connection = "ANYWHERE"
+  policy_id = okta_policy_signon.example.id
+  status = "ACTIVE"
+  risc_level = "HIGH"
+  behaviors = [data.okta_behavior.new_city.id]
+  factor_sequence {
+    primary_criteria_factor_type = "token:hotp" // TOTP
+    primary_criteria_provider = "CUSTOM"
+    secondary_criteria {
+      factor_type = "token:software:totp" // Okta Verify
+      provider = "OKTA"
+    }
+    secondary_criteria { // Okta Verify Push
+      factor_type = "push"
+      provider = "OKTA"
+    }
+    secondary_criteria { // Password
+      factor_type = "password"
+      provider = "OKTA"
+    }
+    secondary_criteria { // Security Question
+      factor_type = "question"
+      provider = "OKTA"
+    }
+    secondary_criteria { // SMS
+      factor_type = "sms"
+      provider = "OKTA"
+    }
+    secondary_criteria { // Google Auth
+      factor_type = "token:software:totp"
+      provider = "GOOGLE"
+    }
+    secondary_criteria { // Email
+      factor_type = "email"
+      provider = "OKTA"
+    }
+    secondary_criteria { // Voice Call
+      factor_type = "call"
+      provider = "OKTA"
+    }
+    secondary_criteria { // FIDO2 (WebAuthn)
+      factor_type = "webauthn"
+      provider = "FIDO"
+    }
+    secondary_criteria { // RSA
+      factor_type = "token"
+      provider = "RSA"
+    }
+    secondary_criteria { // Symantec VIP
+      factor_type = "token"
+      provider = "SYMANTEC"
+    }
+  }
+  factor_sequence {
+    primary_criteria_factor_type = "token:software:totp" // Okta Verify
+    primary_criteria_provider = "OKTA"
+  }
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -24,9 +101,9 @@ The following arguments are supported:
 
 - `status` - (Optional) Policy Rule Status: `"ACTIVE"` or `"INACTIVE"`.
 
-- `authtype` - (Optional) Authentication entrypoint: `"ANY"` or `"RADIUS"`.
+- `authtype` - (Optional) Authentication entrypoint: `"ANY"`, `"LDAP_INTERFACE"` or `"RADIUS"`.
 
-- `access` - (Optional) Allow or deny access based on the rule conditions: `"ALLOW"` or `"DENY"`. The default is `"ALLOW"`.
+- `access` - (Optional) Allow or deny access based on the rule conditions: `"ALLOW"`, `"DENY"` or `"CHALLENGE"`. The default is `"ALLOW"`.
 
 - `mfa_required` - (Optional) Require MFA. By default is `false`.
 
@@ -47,6 +124,17 @@ The following arguments are supported:
 - `network_includes` - (Optional) The network zones to include. Conflicts with `network_excludes`.
 
 - `network_excludes` - (Optional) The network zones to exclude. Conflicts with `network_includes`.
+
+- `risc_level` - (Optional) Risc level: `"ANY"`, `"LOW"`, `"MEDIUM"` or `"HIGH"`. Default is `"ANY"`.
+
+- `behaviors` - (Optional) List of behavior IDs.
+
+- `factor_sequence` - (Optional) Auth factor sequences. Should be set if `access = "CHALLENGE"`.
+  - `primary_criteria_provider` - (Required) Primary provider of the auth section.
+  - `primary_criteria_factor_type` - (Required) Primary factor type of the auth section.
+  - `secondary_criteria` - (Optional) Additional authentication steps.
+    - `provider` - (Required) Provider of the additional authentication step.
+    - `factor_type` - (Required) Factor type of the additional authentication step.
 
 ## Attributes Reference
 

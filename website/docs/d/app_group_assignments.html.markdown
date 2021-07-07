@@ -15,7 +15,7 @@ Use this data source to retrieve the list of groups assigned to the given Okta a
 
 ```hcl
 data "okta_app_group_assignments" "test" {
-  id         = okta_app_oauth.test.id
+  id = okta_app_oauth.test.id
 }
 ```
 
