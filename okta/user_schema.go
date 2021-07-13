@@ -103,6 +103,7 @@ var (
 			Description:      "Subschema unique restriction",
 			ValidateDiagFunc: elemInSlice([]string{"UNIQUE_VALIDATED", "NOT_UNIQUE"}),
 			ConflictsWith:    []string{"one_of", "enum", "array_type"},
+			ForceNew:         true,
 		},
 	}
 

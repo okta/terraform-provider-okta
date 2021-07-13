@@ -114,8 +114,8 @@ func resourceUserSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 		return diag.Errorf("failed to create user custom schema: %v", err)
 	}
 	var subschema *sdk.UserSubSchema
-	timer := time.NewTimer(time.Second * 3)
-	ticker := time.NewTicker(time.Millisecond * 500)
+	timer := time.NewTimer(time.Second * 30) // sometimes it takes some time to recreate user schema
+	ticker := time.NewTicker(time.Second)
 loop:
 	for {
 		select {
@@ -124,6 +124,7 @@ loop:
 		case <-timer.C:
 			return diag.Errorf("failed to create user custom schema: no more attempts left")
 		case <-ticker.C:
+			time.Sleep(time.Second)
 			updated, _, err := getSupplementFromMetadata(m).UpdateCustomUserSchemaProperty(ctx, schemaUrl, d.Get("index").(string), userSubSchema(d))
 			if err != nil {
 				if strings.Contains(err.Error(), "Wait until the data clean up process finishes and then try again") {
