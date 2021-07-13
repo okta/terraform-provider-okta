@@ -126,6 +126,9 @@ loop:
 		case <-ticker.C:
 			updated, _, err := getSupplementFromMetadata(m).UpdateCustomUserSchemaProperty(ctx, schemaUrl, d.Get("index").(string), userSubSchema(d))
 			if err != nil {
+				if strings.Contains(err.Error(), "Wait until the data clean up process finishes and then try again") {
+					continue
+				}
 				return diag.Errorf("failed to create user custom schema: %v", err)
 			}
 			d.SetId(d.Get("index").(string))
