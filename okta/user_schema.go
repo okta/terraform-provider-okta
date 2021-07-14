@@ -19,13 +19,11 @@ var (
 		"array_enum": {
 			Type:        schema.TypeList,
 			Optional:    true,
-			ForceNew:    true,
 			Description: "Custom Subschema enumerated value of a property of type array.",
 			Elem:        &schema.Schema{Type: schema.TypeString},
 		},
 		"array_one_of": {
 			Type:        schema.TypeList,
-			ForceNew:    true,
 			Optional:    true,
 			Description: "array of valid JSON schemas for property type array.",
 			Elem: &schema.Resource{
@@ -63,14 +61,12 @@ var (
 		"enum": {
 			Type:          schema.TypeList,
 			Optional:      true,
-			ForceNew:      true,
 			Description:   "Custom Subschema enumerated value of the property. see: developer.okta.com/docs/api/resources/schemas#user-profile-schema-property-object",
 			ConflictsWith: []string{"array_type"},
 			Elem:          &schema.Schema{Type: schema.TypeString},
 		},
 		"one_of": {
 			Type:          schema.TypeList,
-			ForceNew:      true,
 			Optional:      true,
 			Description:   "Custom Subschema json schemas. see: developer.okta.com/docs/api/resources/schemas#user-profile-schema-property-object",
 			ConflictsWith: []string{"array_type"},
@@ -107,6 +103,7 @@ var (
 			Description:      "Subschema unique restriction",
 			ValidateDiagFunc: elemInSlice([]string{"UNIQUE_VALIDATED", "NOT_UNIQUE"}),
 			ConflictsWith:    []string{"one_of", "enum", "array_type"},
+			ForceNew:         true,
 		},
 	}
 
