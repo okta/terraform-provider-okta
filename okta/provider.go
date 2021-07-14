@@ -41,6 +41,7 @@ const (
 	authServerScope        = "okta_auth_server_scope"
 	behavior               = "okta_behavior"
 	behaviors              = "okta_behaviors"
+	domain                 = "okta_domain"
 	eventHook              = "okta_event_hook"
 	factor                 = "okta_factor"
 	factorTotp             = "okta_factor_totp"
@@ -197,6 +198,7 @@ func Provider() *schema.Provider {
 			authServerPolicy:       resourceAuthServerPolicy(),
 			authServerPolicyRule:   resourceAuthServerPolicyRule(),
 			authServerScope:        resourceAuthServerScope(),
+			domain:                 resourceDomain(),
 			eventHook:              resourceEventHook(),
 			factor:                 resourceFactor(),
 			factorTotp:             resourceFactorTOTP(),
