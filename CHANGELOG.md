@@ -1,5 +1,37 @@
 # Changelog
 
+## 3.12.0 (Jul 20, 2021)
+
+ENHANCEMENTS:
+
+* Add new `okta_app_group_assignments` resource [#401](https://github.com/okta/terraform-provider-okta/pull/401). Thanks, [@edulop91](https://github.com/edulop91)!
+* Add new `okta_user_group_memberships` resource [#416](https://github.com/okta/terraform-provider-okta/pull/416). Thanks, [@ymylei](https://github.com/ymylei)!
+* Add `logo` and `logo_url` fields to all the `okta_app_*` related resources [#423](https://github.com/okta/terraform-provider-okta/pull/423) and [#514](https://github.com/okta/terraform-provider-okta/pull/514). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta) and [@gavinbunney](https://github.com/gavinbunney) for the fix!
+* Add new `okta_group_memberships` resource [#427](https://github.com/okta/terraform-provider-okta/pull/427). Thanks, [@ymylei](https://github.com/ymylei)!
+* Add `display_name` field to the `okta_auth_server_scope` resource [#433](https://github.com/okta/terraform-provider-okta/pull/433). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Add new `okta_app_shared_credentials` resource [#446](https://github.com/okta/terraform-provider-okta/pull/446). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Add `groups_claim` field to the `okta_app_oauth` resource [#468](https://github.com/okta/terraform-provider-okta/pull/468). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Add `wildcard_redirect` field to the `okta_app_oauth` resource [#474](https://github.com/okta/terraform-provider-okta/pull/474). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Add new `okta_app_group_assignments` data source [#498](https://github.com/okta/terraform-provider-okta/pull/498). Thanks, [@ymylei](https://github.com/ymylei)!
+* Add new `okta_app_user_assignments` data source [#501](https://github.com/okta/terraform-provider-okta/pull/501). Thanks, [@ymylei](https://github.com/ymylei)!
+* Add new `okta_user_admin_roles` resource [#518](https://github.com/okta/terraform-provider-okta/pull/518). Thanks, [@gavinbunney](https://github.com/gavinbunney)!
+* Add new `okta_factor_totp` resource [#519](https://github.com/okta/terraform-provider-okta/pull/519). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Add `dynamic_proxy_type` field to the `okta_network_zone` resource [#522](https://github.com/okta/terraform-provider-okta/pull/522). [@gavinbunney](https://github.com/gavinbunney)!
+* Add `issuer_mode` field to the `okta_auth_server_default` resource [#524](https://github.com/okta/terraform-provider-okta/pull/524). [@gavinbunney](https://github.com/gavinbunney)!
+* Add `risc_level`, `behaviors` and `factor_sequence` fields to the `okta_policy_rule_signon` resource [#526](https://github.com/okta/terraform-provider-okta/pull/526). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Add new `okta_behavior` data source [#526](https://github.com/okta/terraform-provider-okta/pull/526). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Add new `okta_domain` resource [#530](https://github.com/okta/terraform-provider-okta/pull/530). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+  
+BUGS:
+
+* Suppress 404 in case group role was removed outside of the terraform [#417](https://github.com/okta/terraform-provider-okta/pull/417). Thanks, [@ymylei](https://github.com/ymylei)!
+* Don't recreate `okta_user` resource in case `login` field is changed [#435](https://github.com/okta/terraform-provider-okta/pull/435/files). Thanks, [@ymylei](https://github.com/ymylei)!
+* Fixed attribute statements setup for preconfigured apps [#439](https://github.com/okta/terraform-provider-okta/pull/439). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Don't recreate schema related resources in case `array_enum`, `array_one_of`, `enum` or `one_of` have changed [@531](https://github.com/okta/terraform-provider-okta/pull/531/files). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+#### Special thanks to [@JeffAshton](https://github.com/JeffAshton), [@jeffg-hpe](https://github.com/jeffg-hpe), [@jtdoepke](https://github.com/jtdoepke), [@thatguysimon](https://github.com/thatguysimon), [@ymylei](https://github.com/ymylei), [@joshowen](https://github.com/joshowen), [@AlexanderProschek](https://github.com/AlexanderProschek), [@gavinbunney](https://github.com/gavinbunney) for a lot of various documentation fixes and code improvements!!!
+
+
 ## 3.11.0 (March 26, 2021)
 
 ENHANCEMENTS:
