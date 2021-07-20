@@ -1,33 +1,34 @@
 ---
 layout: 'okta'
-page_title: 'Okta: okta_user_base_schema'
-sidebar_current: 'docs-okta-resource-user-base-schema'
+page_title: 'Okta: okta_app_user_base_schema_property'
+sidebar_current: 'docs-okta-resource-app-user-base-schema-property'
 description: |-
-  Manages a User Base Schema property.
-  **DEPRECATED** use `okta_user_base_schema_property` instead.
+  Manages an Application User Base Schema property.
 ---
 
-# okta_user_base_schema
+# okta_app_user_base_schema_property
 
-Manages a User Base Schema property.
+Manages an Application User Base Schema property.
 
-This resource allows you to configure a base user schema property.
+This resource allows you to configure a base app user schema property.
 
 ## Example Usage
 
 ```hcl
-resource "okta_user_base_schema" "example" {
+resource "okta_app_user_base_schema_property" "example" {
+  app_id      = "<app id>"
   index       = "customPropertyName"
   title       = "customPropertyName"
   type        = "string"
   master      = "OKTA"
-  user_type   = "${data.okta_user_type.example.id}"
 }
 ```
 
 ## Argument Reference
 
 The following arguments are supported:
+
+- `app_id` - (Required) The Application's ID the user schema property should be assigned to.
 
 - `index` - (Required) The property name.
 
@@ -41,24 +42,18 @@ The following arguments are supported:
 
 - `master` - (Optional) Master priority for the user schema property. It can be set to `"PROFILE_MASTER"` or `"OKTA"`.
 
-- `user_type` - (Optional) User type ID
-
 - `pattern` - (Optional) The validation pattern to use for the subschema, only available for `login` property. Must be in form of `.+`, or `[<pattern>]+`.
 
 ## Attributes Reference
+
+- `app_id` - ID of the application the user property is associated with.
 
 - `index` - ID of the user schema property.
 
 ## Import
 
-User schema property of default user type can be imported via the property index.
+App user base schema property can be imported via the property index and app id.
 
 ```
-$ terraform import okta_user_base_schema.example <property name>
-```
-
-User schema property of custom user type can be imported via user type id and property index
-
-```
-$ terraform import okta_user_base_schema.example <user type id>.<property name>
+$ terraform import okta_app_user_base_schema_property.example <app id>/<property name>
 ```

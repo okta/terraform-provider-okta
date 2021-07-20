@@ -14,7 +14,7 @@ import (
 
 const customSchema = "custom"
 
-func resourceUserSchema() *schema.Resource {
+func resourceUserSchemaProperty() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceUserSchemaCreateOrUpdate,
 		ReadContext:   resourceUserSchemaRead,

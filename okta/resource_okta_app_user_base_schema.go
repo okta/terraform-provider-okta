@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceAppUserBaseSchema() *schema.Resource {
+func resourceAppUserBaseSchemaProperty() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppUserBaseSchemaCreate,
 		ReadContext:   resourceAppUserBaseSchemaRead,

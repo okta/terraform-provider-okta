@@ -1,13 +1,12 @@
 ---
 layout: 'okta'
-page_title: 'Okta: okta_user_schema'
-sidebar_current: 'docs-okta-resource-user-schema'
+page_title: 'Okta: okta_user_schema_property'
+sidebar_current: 'docs-okta-resource-user-schema-property'
 description: |-
   Creates a User Schema property.
-  **DEPRECATED** use `okta_user_schema_property` instead.
 ---
 
-# okta_user_schema
+# okta_user_schema_property
 
 Creates a User Schema property.
 
@@ -16,7 +15,7 @@ This resource allows you to create and configure a custom user schema property.
 ## Example Usage
 
 ```hcl
-resource "okta_user_schema" "example" {
+resource "okta_user_schema_property" "example" {
   index       = "customPropertyName"
   title       = "customPropertyName"
   type        = "string"
@@ -88,11 +87,11 @@ The following arguments are supported:
 User schema property of default user type can be imported via the property index.
 
 ```
-$ terraform import okta_user_schema.example <index>
+$ terraform import okta_user_schema_property.example <index>
 ```
 
 User schema property of custom user type can be imported via user type id and property index
 
 ```
-$ terraform import okta_user_schema.example <user type id>.<index>
+$ terraform import okta_user_schema_property.example <user type id>.<index>
 ```

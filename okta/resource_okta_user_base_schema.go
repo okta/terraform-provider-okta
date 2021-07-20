@@ -12,7 +12,7 @@ import (
 
 const baseSchema = "base"
 
-func resourceUserBaseSchema() *schema.Resource {
+func resourceUserBaseSchemaProperty() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceUserBaseSchemaCreate,
 		ReadContext:   resourceUserBaseSchemaRead,

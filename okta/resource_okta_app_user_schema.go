@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceAppUserSchema() *schema.Resource {
+func resourceAppUserSchemaProperty() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppUserSchemaCreate,
 		ReadContext:   resourceAppUserSchemaRead,
@@ -125,7 +125,7 @@ func resourceAppUserSchemaCreate(ctx context.Context, d *schema.ResourceData, m 
 		if d.Id() != "" {
 			return nil
 		}
-		return fmt.Errorf("Application User Schema property %s was not created in app %s", d.Get("index").(string), d.Get("app_id").(string))
+		return fmt.Errorf("application user schema property %s was not created in app %s", d.Get("index").(string), d.Get("app_id").(string))
 	}, bOff)
 	return diag.FromErr(err)
 }
