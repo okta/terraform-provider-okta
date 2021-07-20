@@ -290,7 +290,7 @@ func Provider() *schema.Provider {
 }
 
 func deprecateIncorrectNaming(d *schema.Resource, newResource string) *schema.Resource {
-	d.DeprecationMessage = fmt.Sprintf("Resource is deprecated due to a correction in naming conventions, please use %s instead.", newResource)
+	d.DeprecationMessage = fmt.Sprintf("Resource is deprecated due to a correction in naming conventions, please use '%s' instead.", newResource)
 	return d
 }
 
