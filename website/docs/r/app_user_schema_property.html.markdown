@@ -1,35 +1,36 @@
 ---
 layout: 'okta'
-page_title: 'Okta: okta_user_schema'
-sidebar_current: 'docs-okta-resource-user-schema'
+page_title: 'Okta: okta_app_user_schema_property'
+sidebar_current: 'docs-okta-resource-app-user-schema-property'
 description: |-
-  Creates a User Schema property.
-  **DEPRECATED** use `okta_user_schema_property` instead.
+  Creates an Application User Schema property.
 ---
 
-# okta_user_schema
+# okta_app_user_schema_property
 
-Creates a User Schema property.
+Creates an Application User Schema property.
 
-This resource allows you to create and configure a custom user schema property.
+This resource allows you to create and configure a custom user schema property and associate it with an application.
 
 ## Example Usage
 
 ```hcl
-resource "okta_user_schema" "example" {
+resource "okta_app_user_schema_property" "example" {
+  app_id      = "<app id>"
   index       = "customPropertyName"
   title       = "customPropertyName"
   type        = "string"
   description = "My custom property name"
   master      = "OKTA"
   scope       = "SELF"
-  user_type   = "${data.okta_user_type.example.id}"
 }
 ```
 
 ## Argument Reference
 
 The following arguments are supported:
+
+- `app_id` - (Required) The Application's ID the user custom schema property should be assigned to.
 
 - `index` - (Required) The property name.
 
@@ -65,34 +66,24 @@ The following arguments are supported:
 
 - `permissions` - (Optional) Access control permissions for the property. It can be set to `"READ_WRITE"`, `"READ_ONLY"`, `"HIDE"`.
 
-- `master` - (Optional) Master priority for the user schema property. It can be set to `"PROFILE_MASTER"`, `"OVERRIDE"` or `"OKTA"`.
-
-- `master_override_priority` - (Optional) Prioritized list of profile sources (required when `master` is `"OVERRIDE"`).
-  - `type` - (Optional) - Type of profile source.
-  - `value` - (Required) - ID of profile source.
+- `master` - (Optional) Master priority for the user schema property. It can be set to `"PROFILE_MASTER"` or `"OKTA"`.
 
 - `external_name` - (Optional) External name of the user schema property.
 
-- `external_namespace` - (Optional) External name of the user schema property.
+- `external_namespace` - (Optional) External namespace of the user schema property.
 
-- `unique` - (Optional) Whether the property should be unique. It can be set to `"UNIQUE_VALIDATED"` or `"NOT_UNIQUE"`.
-
-- `user_type` - (Optional) User type ID
+- `union` - (Optional) Used to assign attribute group priority. Can not be set to 'true' if `scope` is set to Individual level.
 
 ## Attributes Reference
+
+- `app_id` - ID of the application the user property is associated with.
 
 - `index` - ID of the user schema property.
 
 ## Import
 
-User schema property of default user type can be imported via the property index.
+App user schema property can be imported via the property index and app id.
 
 ```
-$ terraform import okta_user_schema.example <index>
-```
-
-User schema property of custom user type can be imported via user type id and property index
-
-```
-$ terraform import okta_user_schema.example <user type id>.<index>
+$ terraform import okta_app_user_schema_property.example <app id>/<property name>
 ```
