@@ -14,15 +14,15 @@ import (
 
 func TestAccAppUserSchemas_crud(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(appUserSchema)
+	mgr := newFixtureManager(appUserSchemaProperty)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updated := mgr.GetFixtures("updated.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.test", appUserSchema)
+	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchema, testAppUserSchemaExists),
+		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

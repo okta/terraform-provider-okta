@@ -1,4 +1,4 @@
-resource "okta_user_base_schema" "login" {
+resource "okta_user_base_schema_property" "login" {
   index       = "login"
   title       = "Username"
   type        = "string"

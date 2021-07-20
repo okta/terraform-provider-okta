@@ -1,17 +1,15 @@
-resource "okta_app_oauth" "test" {
-  label          = "testAcc_replace_with_uuid"
-  type           = "native"
-  grant_types    = ["authorization_code"]
-  redirect_uris  = ["http://d.com/"]
-  response_types = ["code"]
+resource "okta_user_type" "custom_user_type" {
+  name         = "testAcc_replace_with_uuid"
+  display_name = "testAcc_replace_with_uuid"
+  description  = "Terraform Acceptance Test Schema User Type"
 }
 
-resource "okta_app_user_schema" "test" {
-  app_id      = okta_app_oauth.test.id
+resource "okta_user_schema_property" "testAcc_replace_with_uuid" {
   index       = "testAcc_replace_with_uuid"
   title       = "terraform acceptance test"
   type        = "string"
   description = "terraform acceptance test"
+  user_type   = okta_user_type.custom_user_type.id
   required    = false
   min_length  = 1
   max_length  = 50

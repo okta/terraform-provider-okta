@@ -41,8 +41,8 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 - [okta_policy_signon](./okta_policy_signon) Supports the management of sign-on policies.
 - [okta_template_email](./okta_template_email) Supports the management of custom email templates.
 - [okta_trusted_origin](./okta_trusted_origin) Supports the management of Okta Trusted Sources and Origins.
-- [okta_user_base_schema](./okta_user_base_schema) Supports the management of Okta User Profile Attribute Schemas.
-- [okta_user_schema](./okta_user_schema) Supports the management of Okta defined User Profile Attribute Schemas.
+- [okta_user_base_schema_property](./okta_user_base_schema_property) Supports the management of Okta User Profile Attribute Schemas.
+- [okta_user_schema_property](./okta_user_schema_property) Supports the management of Okta defined User Profile Attribute Schemas.
 - [okta_user](./okta_user) Supports the management of Okta Users.
 - [okta_users](./okta_users) Data source to retrieve a group of users.
 - [okta_app_oauth_redirect_uri](./okta_app_oauth_redirect_uri) Supports decentralizing redirect uri config. Due to Okta's API not allowing this field to be null, you must set a redirect uri in your app, and ignore changes to this attribute. We follow TF best practices and detect config drift. The best case scenario is Okta makes this field nullable, and we can not detect config drift when this attr is not present.
@@ -50,7 +50,7 @@ Anything that lies underneath a resource directory is config we use as fixtures 
 ## Deprecated Resources
 
 - okta_identity_provider -- See okta_idp, okta_idp_social, and okta_idp_saml.
-- okta_user_schemas -- See okta_user_schema.
+- okta_user_schema_propertys -- See okta_user_schema_property.
 
 ## Notes
 

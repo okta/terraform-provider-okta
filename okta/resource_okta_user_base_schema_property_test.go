@@ -39,11 +39,11 @@ func sweepUserBaseSchema(client *testClient) error {
 
 func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(userBaseSchema)
+	mgr := newFixtureManager(userBaseSchemaProperty)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updated := mgr.GetFixtures("updated.tf", ri, t)
 	nonDefault := mgr.GetFixtures("non_default_user_type.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.%s", userBaseSchema, firstNameTestProp)
+	resourceName := fmt.Sprintf("%s.%s", userBaseSchemaProperty, firstNameTestProp)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -98,10 +98,10 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 
 func TestAccOktaUserBaseSchemaLogin_crud(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(userBaseSchema)
+	mgr := newFixtureManager(userBaseSchemaProperty)
 	config := mgr.GetFixtures("basic_login.tf", ri, t)
 	updated := mgr.GetFixtures("login_updated.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.%s", userBaseSchema, loginTestProp)
+	resourceName := fmt.Sprintf("%s.%s", userBaseSchemaProperty, loginTestProp)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

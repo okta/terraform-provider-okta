@@ -35,12 +35,12 @@ func sweepUserSchema(client *testClient) error {
 
 func TestAccOktaUserSchema_crud(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(userSchema)
+	mgr := newFixtureManager(userSchemaProperty)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updated := mgr.GetFixtures("updated.tf", ri, t)
 	unique := mgr.GetFixtures("unique.tf", ri, t)
 	nonDefault := mgr.GetFixtures("non_default_user_type.tf", ri, t)
-	resourceName := buildResourceFQN(userSchema, ri)
+	resourceName := buildResourceFQN(userSchemaProperty, ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -135,8 +135,8 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 
 func TestAccOktaUserSchema_arrayString(t *testing.T) {
 	ri := acctest.RandInt()
-	resourceName := fmt.Sprintf("%s.test", userSchema)
-	mgr := newFixtureManager(userSchema)
+	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
+	mgr := newFixtureManager(userSchemaProperty)
 	config := mgr.GetFixtures("array_string.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("array_string_updated.tf", ri, t)
 	arrayEnum := mgr.GetFixtures("array_enum.tf", ri, t)

@@ -4,7 +4,7 @@ resource "okta_user_type" "non_default_user_type" {
   description  = "Terraform Acceptance Test Schema User Type"
 }
 
-resource "okta_user_base_schema" "firstName" {
+resource "okta_user_base_schema_property" "firstName" {
   index       = "firstName"
   master      = "PROFILE_MASTER"
   permissions = "READ_ONLY"

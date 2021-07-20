@@ -1,4 +1,4 @@
-resource "okta_user_schema" "testAcc_replace_with_uuid" {
+resource "okta_user_schema_property" "testAcc_replace_with_uuid" {
   index       = "testAcc_replace_with_uuid"
   title       = "terraform acceptance test updated"
   type        = "string"

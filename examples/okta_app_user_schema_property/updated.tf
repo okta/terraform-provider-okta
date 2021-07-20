@@ -6,7 +6,7 @@ resource "okta_app_oauth" "test" {
   response_types = ["code"]
 }
 
-resource "okta_app_user_schema" "test" {
+resource "okta_app_user_schema_property" "test" {
   app_id      = okta_app_oauth.test.id
   index       = "testAcc_replace_with_uuid"
   title       = "terraform acceptance test"

@@ -11,10 +11,10 @@ import (
 
 func TestAccAppUserBaseSchema_change(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(appUserBaseSchema)
+	mgr := newFixtureManager(appUserBaseSchemaProperty)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updated := mgr.GetFixtures("updated.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.test", appUserBaseSchema)
+	resourceName := fmt.Sprintf("%s.test", appUserBaseSchemaProperty)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

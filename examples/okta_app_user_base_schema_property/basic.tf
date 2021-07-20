@@ -1,11 +1,11 @@
-resource "okta_app_user_base_schema" "test" {
+resource "okta_app_user_base_schema_property" "test" {
   index       = "name"
   master      = "PROFILE_MASTER"
   permissions = "READ_ONLY"
   title       = "Name"
   type        = "string"
   app_id      = okta_app_oauth.test.id
-  required    = false
+  required    = true
 }
 
 resource "okta_app_oauth" "test" {

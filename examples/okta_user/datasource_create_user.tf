@@ -1,4 +1,4 @@
-resource "okta_user_schema" "test_array" {
+resource "okta_user_schema_property" "test_array" {
   index      = "array123"
   title      = "terraform acceptance test"
   type       = "array"
@@ -6,12 +6,12 @@ resource "okta_user_schema" "test_array" {
   master     = "PROFILE_MASTER"
 }
 
-resource "okta_user_schema" "test_number" {
+resource "okta_user_schema_property" "test_number" {
   index      = "number123"
   title      = "terraform acceptance test"
   type       = "number"
   master     = "PROFILE_MASTER"
-  depends_on = [okta_user_schema.test_array]
+  depends_on = [okta_user_schema_property.test_array]
 }
 
 resource "okta_user" "test" {
@@ -22,8 +22,8 @@ resource "okta_user" "test" {
 
   custom_profile_attributes = <<JSON
   {
-    "${okta_user_schema.test_array.index}": ["test"],
-    "${okta_user_schema.test_number.index}": 1
+    "${okta_user_schema_property.test_array.index}": ["test"],
+    "${okta_user_schema_property.test_number.index}": 1
   }
 JSON
 }
