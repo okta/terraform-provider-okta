@@ -96,6 +96,10 @@ func resourceTemplateEmailRead(ctx context.Context, d *schema.ResourceData, m in
 		d.SetId("")
 		return nil
 	}
+	if temp.Id == "default" {
+		d.SetId("")
+		return nil
+	}
 	_ = d.Set("translations", flattenEmailTranslations(temp.Translations))
 	_ = d.Set("default_language", temp.DefaultLanguage)
 	return nil

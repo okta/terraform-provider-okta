@@ -31,6 +31,12 @@ func TestAccOktaEmailTemplate_crud(t *testing.T) {
 }
 
 func doesEmailTemplateExist(id string) (bool, error) {
-	_, response, err := getSupplementFromMetadata(testAccProvider.Meta()).GetEmailTemplate(context.Background(), id)
-	return doesResourceExist(response, err)
+	templ, _, err := getSupplementFromMetadata(testAccProvider.Meta()).GetEmailTemplate(context.Background(), id)
+	if err != nil {
+		return false, err
+	}
+	if templ == nil || templ.Id == "" || templ.Id == "default" {
+		return false, nil
+	}
+	return true, err
 }
