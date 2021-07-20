@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"io"
 	"mime/multipart"
+	"net/http"
 	"os"
 
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
+// UploadAppLogo uploads app's logo
 func (m *ApiSupplement) UploadAppLogo(ctx context.Context, appID, filename string) (*okta.Response, error) {
 	file, err := os.Open(filename)
 	if err != nil {
@@ -29,7 +31,7 @@ func (m *ApiSupplement) UploadAppLogo(ctx context.Context, appID, filename strin
 	}
 	_ = writer.Close()
 	url := fmt.Sprintf("/api/v1/apps/%s/logo", appID)
-	req, err := m.RequestExecutor.WithContentType(writer.FormDataContentType()).NewRequest("POST", url, body)
+	req, err := m.RequestExecutor.WithContentType(writer.FormDataContentType()).NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, err
 	}

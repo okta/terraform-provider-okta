@@ -27,7 +27,7 @@ func resourceFactor() *schema.Resource {
 			"provider_id": {
 				Type:     schema.TypeString,
 				Required: true,
-				ValidateDiagFunc: stringInSlice([]string{
+				ValidateDiagFunc: elemInSlice([]string{
 					sdk.DuoFactor,
 					sdk.FidoU2fFactor,
 					sdk.FidoWebauthnFactor,

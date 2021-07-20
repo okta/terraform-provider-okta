@@ -9,6 +9,9 @@ import (
 )
 
 func getUserTypeSchemaUrl(ctx context.Context, client *okta.Client, id string) (string, error) {
+	if id == "default" {
+		return "/api/v1/meta/schemas/user/default", nil
+	}
 	ut, _, err := client.UserType.GetUserType(ctx, id)
 	if err != nil {
 		return "", fmt.Errorf("failed to get user type: %v", err)

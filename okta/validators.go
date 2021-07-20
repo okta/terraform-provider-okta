@@ -51,18 +51,34 @@ func intAtMost(max int) schema.SchemaValidateDiagFunc {
 	}
 }
 
-func stringInSlice(valid []string) schema.SchemaValidateDiagFunc {
+func elemInSlice(s interface{}) schema.SchemaValidateDiagFunc {
 	return func(i interface{}, k cty.Path) diag.Diagnostics {
-		v, ok := i.(string)
-		if !ok {
-			return diag.Errorf("expected type of %v to be string", k)
-		}
-		for _, str := range valid {
-			if v == str {
-				return nil
+		switch s.(type) {
+		case []string:
+			v, ok := i.(string)
+			if !ok {
+				return diag.Errorf("expected type of %v to be string", i)
 			}
+			for _, str := range s.([]string) {
+				if v == str {
+					return nil
+				}
+			}
+			return diag.FromErr(k.NewErrorf("expected value to be one of '%v', got '%s'", strings.Join(s.([]string), "', '"), v))
+		case []int:
+			v, ok := i.(int)
+			if !ok {
+				return diag.Errorf("expected type of %s to be integer", i)
+			}
+			for _, number := range s.([]int) {
+				if v == number {
+					return nil
+				}
+			}
+			return diag.FromErr(k.NewErrorf("expected value to be one of '%v', got '%d'", s.([]int), v))
+		default:
+			return diag.Errorf("validator only works with []string and []int")
 		}
-		return diag.Errorf("expected %v to be one of %v, got %s", k, strings.Join(valid, ","), v)
 	}
 }
 

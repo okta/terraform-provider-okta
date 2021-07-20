@@ -34,7 +34,7 @@ var (
 			Type:             schema.TypeString,
 			Optional:         true,
 			Default:          statusActive,
-			ValidateDiagFunc: stringInSlice([]string{statusActive, statusInactive}),
+			ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
 			Description:      "Policy Status: ACTIVE or INACTIVE.",
 		},
 		"groups_included": {
@@ -79,7 +79,7 @@ var (
 		Type:             schema.TypeString,
 		Optional:         true,
 		Default:          statusActive,
-		ValidateDiagFunc: stringInSlice([]string{statusActive, statusInactive}),
+		ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
 	}
 )
 

@@ -44,7 +44,7 @@ func resourceInlineHook() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				ValidateDiagFunc: stringInSlice([]string{
+				ValidateDiagFunc: elemInSlice([]string{
 					"com.okta.oauth2.tokens.transform",
 					"com.okta.import.transform",
 					"com.okta.saml.tokens.transform",
@@ -81,7 +81,7 @@ func resourceInlineHook() *schema.Resource {
 						errs = append(errs, diag.Errorf("auth 'key' should not be empty")...)
 					}
 					if t, ok := m["type"]; ok {
-						dErr := stringInSlice([]string{"HEADER"})(t, cty.GetAttrPath("type"))
+						dErr := elemInSlice([]string{"HEADER"})(t, cty.GetAttrPath("type"))
 						if dErr != nil {
 							errs = append(errs, dErr...)
 						}
@@ -111,7 +111,7 @@ func resourceInlineHook() *schema.Resource {
 					var errs diag.Diagnostics
 					m := i.(map[string]interface{})
 					if t, ok := m["type"]; ok {
-						dErr := stringInSlice([]string{"HTTP"})(t, cty.GetAttrPath("type"))
+						dErr := elemInSlice([]string{"HTTP"})(t, cty.GetAttrPath("type"))
 						if dErr != nil {
 							errs = append(errs, dErr...)
 						}
@@ -125,7 +125,7 @@ func resourceInlineHook() *schema.Resource {
 						errs = append(errs, dErr...)
 					}
 					if method, ok := m["method"]; ok {
-						dErr = stringInSlice([]string{
+						dErr = elemInSlice([]string{
 							http.MethodPost,
 							http.MethodGet,
 							http.MethodPut,

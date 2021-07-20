@@ -2,9 +2,14 @@ package okta
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"net/http"
+	"os"
 	"sync"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -58,18 +63,20 @@ var baseAppSchema = map[string]*schema.Schema{
 		Optional:    true,
 		Elem:        appUserResource,
 		Description: "Users associated with the application",
+		Deprecated:  "The direct configuration of users in this app resource is deprecated, please ensure you use the resource `okta_app_user` for this functionality.",
 	},
 	"groups": {
 		Type:        schema.TypeSet,
 		Optional:    true,
 		Elem:        &schema.Schema{Type: schema.TypeString},
 		Description: "Groups associated with the application",
+		Deprecated:  "The direct configuration of groups in this app resource is deprecated, please ensure you use the resource `okta_app_group_assignments` for this functionality.",
 	},
 	"status": {
 		Type:             schema.TypeString,
 		Optional:         true,
 		Default:          statusActive,
-		ValidateDiagFunc: stringInSlice([]string{statusActive, statusInactive}),
+		ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
 		Description:      "Status of application.",
 	},
 	"logo": {
@@ -79,6 +86,13 @@ var baseAppSchema = map[string]*schema.Schema{
 		Description:      "Logo of the application.",
 		DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 			return new == ""
+		},
+		StateFunc: func(val interface{}) string {
+			logoPath := val.(string)
+			if logoPath == "" {
+				return logoPath
+			}
+			return fmt.Sprintf("%s (%s)", logoPath, computeFileHash(logoPath))
 		},
 	},
 	"logo_url": {
@@ -155,7 +169,7 @@ var baseAppSwaSchema = map[string]*schema.Schema{
 		Optional:         true,
 		Default:          "BUILT_IN",
 		Description:      "Username template type",
-		ValidateDiagFunc: stringInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
+		ValidateDiagFunc: elemInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
 	},
 }
 
@@ -598,4 +612,19 @@ func listAppUsersAndGroupsIDs(ctx context.Context, client *okta.Client, id strin
 		groups[i] = appGroups[i].Id
 	}
 	return
+}
+
+func computeFileHash(filename string) string {
+	file, err := os.Open(filename)
+	if err != nil {
+		return ""
+	}
+	defer func() {
+		_ = file.Close()
+	}()
+	h := sha256.New()
+	if _, err := io.Copy(h, file); err != nil {
+		log.Fatal(err)
+	}
+	return hex.EncodeToString(h.Sum(nil))
 }

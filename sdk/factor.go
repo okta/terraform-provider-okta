@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
@@ -36,7 +37,7 @@ const (
 // GetFactor gets a factor by ID.
 func (m *ApiSupplement) GetFactor(ctx context.Context, id string) (*Factor, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/org/factors/%s", id)
-	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
+	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -63,7 +64,7 @@ func (m *ApiSupplement) lifecycleChangeFactor(ctx context.Context, id, action st
 	req, err := m.RequestExecutor.
 		WithAccept("application/json").
 		WithContentType("application/json").
-		NewRequest("POST", url, nil)
+		NewRequest(http.MethodPost, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}

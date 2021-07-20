@@ -52,8 +52,10 @@ The following arguments are supported:
 - `type` - (Required) The type of OAuth application. Valid values: `"web"`, `"native"`, `"browser"`, `"service"`.
 
 - `users` - (Optional) The users assigned to the application. It is recommended not to use this and instead use `okta_app_user`.
+  - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
 - `groups` - (Optional) The groups assigned to the application. It is recommended not to use this and instead use `okta_app_group_assignment`.
+  - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
 
 - `client_id` - (Optional) OAuth client ID. If set during creation, app is created with this id.
 
@@ -73,6 +75,8 @@ The following arguments are supported:
 
 - `redirect_uris` - (Optional) List of URIs for use in the redirect-based flow. This is required for all application types except service.
 
+- `wildcard_redirect` - (Optional) Indicates if the client is allowed to use wildcard matching of `redirect_uris`. Valid values: `"DISABLED"`, `"SUBDOMAIN"`. Default value is `"DISABLED"`.
+
 - `post_logout_redirect_uris` - (Optional) List of URIs for redirection after logout.
 
 - `response_types` - (Optional) List of OAuth 2.0 response type strings.
@@ -87,6 +91,10 @@ The following arguments are supported:
 - `consent_method` - (Optional) Indicates whether user consent is required or implicit. Valid values: `"REQUIRED"`, `"TRUSTED"`. Default value is `"TRUSTED"`.
 
 - `issuer_mode` - (Optional) Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.
+
+- `refresh_token_rotation` - (Optional) Refresh token rotation behavior. Valid values: `"STATIC"` or `"ROTATE"`.
+
+- `refresh_token_leeway` - (Optional) Grace period for token rotation. Valid values: 0 to 60 seconds.
 
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
@@ -103,6 +111,12 @@ The following arguments are supported:
 - `login_scopes` - (Optional) List of scopes to use for the request. Valid values: `"openid"`, `"profile"`, `"email"`, `"address"`, `"phone"`. Required when `login_mode` is NOT `DISABLED`.
 
 - `logo` (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+
+- `groups_claim` - (Optional) Groups claim for an OpenID Connect client application.
+  - `type` - (Required) Groups claim type. Valid values: `"FILTER"`, `"EXPRESSION"`.
+  - `filter_type` - (Optional) Groups claim filter. Can only be set if type is `"FILTER"`. Valid values: `"EQUALS"`, `"STARTS_WITH"`, `"CONTAINS"`, `"REGEX"`.
+  - `name` - (Required) Name of the claim that will be used in the token.
+  - `value` - (Required) Value of the claim. Can be an Okta Expression Language statement that evaluates at the time the token is minted.
 
 ## Attributes Reference
 

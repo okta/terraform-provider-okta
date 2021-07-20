@@ -149,11 +149,9 @@ func convertInterfaceToStringSetNullable(purportedSet interface{}) []string {
 func convertInterfaceToStringArr(purportedList interface{}) []string {
 	var arr []string
 	rawArr, ok := purportedList.([]interface{})
-
 	if ok {
 		arr = convertInterfaceArrToStringArr(rawArr)
 	}
-
 	return arr
 }
 
@@ -168,11 +166,9 @@ func convertInterfaceArrToStringArr(rawArr []interface{}) []string {
 // Converts interface to string array, if there are no elements it returns nil to conform with optional properties.
 func convertInterfaceToStringArrNullable(purportedList interface{}) []string {
 	arr := convertInterfaceToStringArr(purportedList)
-
 	if len(arr) < 1 {
 		return nil
 	}
-
 	return arr
 }
 
@@ -256,11 +252,9 @@ func doesResourceExist(response *okta.Response, err error) (bool, error) {
 	if response.StatusCode == 404 {
 		return false, nil
 	}
-
 	if err != nil {
 		return false, responseErr(response, err)
 	}
-
 	return true, err
 }
 

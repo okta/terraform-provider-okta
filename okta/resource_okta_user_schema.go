@@ -45,13 +45,13 @@ func resourceUserSchema() *schema.Resource {
 					Type:             schema.TypeString,
 					Optional:         true,
 					Default:          "NONE",
-					ValidateDiagFunc: stringInSlice([]string{"SELF", "NONE", ""}),
+					ValidateDiagFunc: elemInSlice([]string{"SELF", "NONE", ""}),
 				},
 				"master": {
 					Type:     schema.TypeString,
 					Optional: true,
 					// Accepting an empty value to allow for zero value (when provisioning is off)
-					ValidateDiagFunc: stringInSlice([]string{"PROFILE_MASTER", "OKTA", "OVERRIDE", ""}),
+					ValidateDiagFunc: elemInSlice([]string{"PROFILE_MASTER", "OKTA", "OVERRIDE", ""}),
 					Description:      "SubSchema profile manager, if not set it will inherit its setting.",
 					Default:          "PROFILE_MASTER",
 				},
@@ -95,7 +95,7 @@ func resourceUserSchemaResourceV0() *schema.Resource {
 			Type:             schema.TypeString,
 			Optional:         true,
 			Default:          "NONE",
-			ValidateDiagFunc: stringInSlice([]string{"SELF", "NONE", ""}),
+			ValidateDiagFunc: elemInSlice([]string{"SELF", "NONE", ""}),
 		},
 	})}
 }
@@ -114,8 +114,8 @@ func resourceUserSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 		return diag.Errorf("failed to create user custom schema: %v", err)
 	}
 	var subschema *sdk.UserSubSchema
-	timer := time.NewTimer(time.Second * 3)
-	ticker := time.NewTicker(time.Millisecond * 500)
+	timer := time.NewTimer(time.Second * 30) // sometimes it takes some time to recreate user schema
+	ticker := time.NewTicker(time.Second)
 loop:
 	for {
 		select {
@@ -124,8 +124,12 @@ loop:
 		case <-timer.C:
 			return diag.Errorf("failed to create user custom schema: no more attempts left")
 		case <-ticker.C:
+			time.Sleep(time.Second)
 			updated, _, err := getSupplementFromMetadata(m).UpdateCustomUserSchemaProperty(ctx, schemaUrl, d.Get("index").(string), userSubSchema(d))
 			if err != nil {
+				if strings.Contains(err.Error(), "Wait until the data clean up process finishes and then try again") {
+					continue
+				}
 				return diag.Errorf("failed to create user custom schema: %v", err)
 			}
 			d.SetId(d.Get("index").(string))

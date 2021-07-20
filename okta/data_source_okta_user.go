@@ -39,7 +39,7 @@ func dataSourceUser() *schema.Resource {
 							Type:             schema.TypeString,
 							Optional:         true,
 							Default:          "eq",
-							ValidateDiagFunc: stringInSlice([]string{"eq", "lt", "gt", "sw"}),
+							ValidateDiagFunc: elemInSlice([]string{"eq", "lt", "gt", "sw"}),
 						},
 					},
 				},

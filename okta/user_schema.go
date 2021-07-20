@@ -12,20 +12,18 @@ var (
 		"array_type": {
 			Type:             schema.TypeString,
 			Optional:         true,
-			ValidateDiagFunc: stringInSlice([]string{"string", "number", "integer", "reference"}),
+			ValidateDiagFunc: elemInSlice([]string{"string", "number", "integer", "reference"}),
 			Description:      "Subschema array type: string, number, integer, reference. Type field must be an array.",
 			ForceNew:         true,
 		},
 		"array_enum": {
 			Type:        schema.TypeList,
 			Optional:    true,
-			ForceNew:    true,
 			Description: "Custom Subschema enumerated value of a property of type array.",
 			Elem:        &schema.Schema{Type: schema.TypeString},
 		},
 		"array_one_of": {
 			Type:        schema.TypeList,
-			ForceNew:    true,
 			Optional:    true,
 			Description: "array of valid JSON schemas for property type array.",
 			Elem: &schema.Resource{
@@ -63,14 +61,12 @@ var (
 		"enum": {
 			Type:          schema.TypeList,
 			Optional:      true,
-			ForceNew:      true,
 			Description:   "Custom Subschema enumerated value of the property. see: developer.okta.com/docs/api/resources/schemas#user-profile-schema-property-object",
 			ConflictsWith: []string{"array_type"},
 			Elem:          &schema.Schema{Type: schema.TypeString},
 		},
 		"one_of": {
 			Type:          schema.TypeList,
-			ForceNew:      true,
 			Optional:      true,
 			Description:   "Custom Subschema json schemas. see: developer.okta.com/docs/api/resources/schemas#user-profile-schema-property-object",
 			ConflictsWith: []string{"array_type"},
@@ -105,8 +101,9 @@ var (
 			Type:             schema.TypeString,
 			Optional:         true,
 			Description:      "Subschema unique restriction",
-			ValidateDiagFunc: stringInSlice([]string{"UNIQUE_VALIDATED", "NOT_UNIQUE"}),
+			ValidateDiagFunc: elemInSlice([]string{"UNIQUE_VALIDATED", "NOT_UNIQUE"}),
 			ConflictsWith:    []string{"one_of", "enum", "array_type"},
+			ForceNew:         true,
 		},
 	}
 
@@ -125,14 +122,14 @@ var (
 		"type": {
 			Type:             schema.TypeString,
 			Required:         true,
-			ValidateDiagFunc: stringInSlice([]string{"string", "boolean", "number", "integer", "array", "object"}),
+			ValidateDiagFunc: elemInSlice([]string{"string", "boolean", "number", "integer", "array", "object"}),
 			Description:      "Subschema type: string, boolean, number, integer, array, or object",
 			ForceNew:         true,
 		},
 		"permissions": {
 			Type:             schema.TypeString,
 			Optional:         true,
-			ValidateDiagFunc: stringInSlice([]string{"HIDE", "READ_ONLY", "READ_WRITE"}),
+			ValidateDiagFunc: elemInSlice([]string{"HIDE", "READ_ONLY", "READ_WRITE"}),
 			Description:      "SubSchema permissions: HIDE, READ_ONLY, or READ_WRITE.",
 			Default:          "READ_ONLY",
 		},

@@ -31,9 +31,12 @@ func resourceGroupRoles() *schema.Resource {
 				Description: "ID of group to attach admin roles to",
 			},
 			"admin_roles": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateDiagFunc: elemInSlice(validAdminRoles),
+				},
 				Description: "Admin roles associated with the group. This can also be done per user.",
 			},
 		},

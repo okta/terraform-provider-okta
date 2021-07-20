@@ -169,7 +169,7 @@ func resourceAppSaml() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Identifies the SAML processing rules.",
-				ValidateDiagFunc: stringInSlice([]string{
+				ValidateDiagFunc: elemInSlice([]string{
 					"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
 					"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
 					"urn:oasis:names:tc:SAML:1.1:nameid-format:x509SubjectName",
@@ -196,13 +196,13 @@ func resourceAppSaml() *schema.Resource {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Description:      "Signature algorithm used ot digitally sign the assertion and response",
-				ValidateDiagFunc: stringInSlice([]string{"RSA_SHA256", "RSA_SHA1"}),
+				ValidateDiagFunc: elemInSlice([]string{"RSA_SHA256", "RSA_SHA1"}),
 			},
 			"digest_algorithm": {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Description:      "Determines the digest algorithm used to digitally sign the SAML assertion and response",
-				ValidateDiagFunc: stringInSlice([]string{"SHA256", "SHA1"}),
+				ValidateDiagFunc: elemInSlice([]string{"SHA256", "SHA1"}),
 			},
 			"honor_force_authn": {
 				Type:        schema.TypeBool,
@@ -259,7 +259,7 @@ func resourceAppSaml() *schema.Resource {
 				Optional:         true,
 				Default:          "BUILT_IN",
 				Description:      "Username template type",
-				ValidateDiagFunc: stringInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
+				ValidateDiagFunc: elemInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
 			},
 			"app_settings_json": {
 				Type:             schema.TypeString,
@@ -286,7 +286,7 @@ func resourceAppSaml() *schema.Resource {
 							Type:             schema.TypeString,
 							Optional:         true,
 							Description:      "Type of group attribute filter",
-							ValidateDiagFunc: stringInSlice([]string{"STARTS_WITH", "EQUALS", "CONTAINS", "REGEX"}),
+							ValidateDiagFunc: elemInSlice([]string{"STARTS_WITH", "EQUALS", "CONTAINS", "REGEX"}),
 						},
 						"filter_value": {
 							Type:        schema.TypeString,
@@ -302,7 +302,7 @@ func resourceAppSaml() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 							Default:  "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
-							ValidateDiagFunc: stringInSlice([]string{
+							ValidateDiagFunc: elemInSlice([]string{
 								"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
 								"urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
 								"urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
@@ -313,7 +313,7 @@ func resourceAppSaml() *schema.Resource {
 							Type:             schema.TypeString,
 							Optional:         true,
 							Default:          "EXPRESSION",
-							ValidateDiagFunc: stringInSlice([]string{"GROUP", "EXPRESSION"}),
+							ValidateDiagFunc: elemInSlice([]string{"GROUP", "EXPRESSION"}),
 							Description:      "The type of attribute statements object",
 						},
 						"values": {

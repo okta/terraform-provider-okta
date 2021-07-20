@@ -74,7 +74,11 @@ func resourceUser() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "User Okta admin roles - ie. ['APP_ADMIN', 'USER_ADMIN']",
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Deprecated:  "The `admin_roles` field is now deprecated for the resource `okta_user`, please replace all uses of this with: `okta_user_admin_roles`",
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateDiagFunc: elemInSlice(validAdminRoles),
+				},
 			},
 			"city": {
 				Type:        schema.TypeString,
@@ -137,6 +141,7 @@ func resourceUser() *schema.Resource {
 				Optional:    true,
 				Description: "The groups that you want this user to be a part of. This can also be done via the group using the `users` property.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
+				Deprecated:  "The `group_memberships` field is now deprecated for the resource `okta_user`, please replace all uses of this with: `okta_user_group_memberships`",
 			},
 			"honorific_prefix": {
 				Type:        schema.TypeString,
@@ -230,7 +235,7 @@ func resourceUser() *schema.Resource {
 				Optional:         true,
 				Description:      "The status of the User in Okta - remove to set user back to active/provisioned",
 				Default:          statusActive,
-				ValidateDiagFunc: stringInSlice([]string{statusActive, userStatusStaged, userStatusDeprovisioned, userStatusSuspended}),
+				ValidateDiagFunc: elemInSlice([]string{statusActive, userStatusStaged, userStatusDeprovisioned, userStatusSuspended}),
 				// ignore diff changing to ACTIVE if state is set to PROVISIONED or PASSWORD_EXPIRED
 				// since this is a similar status in Okta terms
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
@@ -326,11 +331,14 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 	d.SetId(user.Id)
 
 	// role assigning can only happen after the user is created so order matters here
-	roles := convertInterfaceToStringSetNullable(d.Get("admin_roles"))
-	if roles != nil {
-		err = assignAdminRolesToUser(ctx, user.Id, roles, client)
-		if err != nil {
-			return diag.FromErr(err)
+	// Only sync admin roles when it is set by a consumer as field is deprecated
+	if _, exists := d.GetOk("admin_roles"); exists {
+		roles := convertInterfaceToStringSetNullable(d.Get("admin_roles"))
+		if roles != nil {
+			err = assignAdminRolesToUser(ctx, user.Id, roles, client)
+			if err != nil {
+				return diag.FromErr(err)
+			}
 		}
 	}
 

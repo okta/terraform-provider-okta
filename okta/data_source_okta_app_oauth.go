@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -133,12 +134,19 @@ func dataSourceAppOauth() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "Groups associated with the application",
+				Deprecated:  "The `groups` field is now deprecated for the data source `okta_app_oauth`, please replace all uses of this with: `okta_app_group_assignments`",
 			},
 			"users": {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "Users associated with the application",
+				Deprecated:  "The `users` field is now deprecated for the data source `okta_app_oauth`, please replace all uses of this with: `okta_app_user_assignments`",
+			},
+			"wildcard_redirect": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Indicates if the client is allowed to use wildcard matching of redirect_uris",
 			},
 		},
 	}
@@ -159,7 +167,7 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 	} else {
 		re := getOktaClientFromMetadata(m).GetRequestExecutor()
 		qp := &query.Params{Limit: 1, Filter: filters.Status, Q: filters.getQ()}
-		req, err := re.NewRequest("GET", fmt.Sprintf("/api/v1/apps%s", qp.String()), nil)
+		req, err := re.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/apps%s", qp.String()), nil)
 		if err != nil {
 			return diag.Errorf("failed to list OAuth apps: %v", err)
 		}
@@ -196,6 +204,7 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
 	_ = d.Set("client_id", app.Credentials.OauthClient.ClientId)
 	_ = d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
+	_ = d.Set("wildcard_redirect", app.Settings.OauthClient.WildcardRedirect)
 	respTypes := make([]string, len(app.Settings.OauthClient.ResponseTypes))
 	for i := range app.Settings.OauthClient.ResponseTypes {
 		respTypes[i] = string(*app.Settings.OauthClient.ResponseTypes[i])

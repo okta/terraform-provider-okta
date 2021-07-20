@@ -3,6 +3,7 @@ package sdk
 import (
 	"context"
 	"encoding/json"
+	"net/http"
 
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
@@ -117,7 +118,7 @@ func (u *UserSubSchema) MarshalJSON() ([]byte, error) {
 }
 
 func (m *ApiSupplement) DeleteUserSchemaProperty(ctx context.Context, schemaURL string, id string) (*okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("POST", schemaURL, getCustomUserSchema(id, nil))
+	req, err := m.RequestExecutor.NewRequest(http.MethodPost, schemaURL, getCustomUserSchema(id, nil))
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +135,7 @@ func (m *ApiSupplement) UpdateBaseUserSchemaProperty(ctx context.Context, schema
 }
 
 func (m *ApiSupplement) UpdateUserSchemaProperty(ctx context.Context, schemaURL string, schema *UserSchema) (*UserSchema, *okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("POST", schemaURL, schema)
+	req, err := m.RequestExecutor.NewRequest(http.MethodPost, schemaURL, schema)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -145,7 +146,7 @@ func (m *ApiSupplement) UpdateUserSchemaProperty(ctx context.Context, schemaURL 
 }
 
 func (m *ApiSupplement) GetUserSchema(ctx context.Context, schemaURL string) (*UserSchema, *okta.Response, error) {
-	req, err := m.RequestExecutor.NewRequest("GET", schemaURL, nil)
+	req, err := m.RequestExecutor.NewRequest(http.MethodGet, schemaURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}

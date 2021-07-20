@@ -43,7 +43,11 @@ func TestAccAppOauth_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "response_types.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "client_secret", "something_from_somewhere"),
 					resource.TestCheckResourceAttr(resourceName, "client_id", "something_from_somewhere"),
+					resource.TestCheckResourceAttr(resourceName, "wildcard_redirect", "DISABLED"),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.type", "EXPRESSION"),
+					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.value", "aa"),
+					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.name", "bb"),
 				),
 			},
 			{
@@ -60,6 +64,8 @@ func TestAccAppOauth_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
 					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttr(resourceName, "groups_claim.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "wildcard_redirect", "SUBDOMAIN"),
 				),
 			},
 			{
@@ -71,6 +77,50 @@ func TestAccAppOauth_basic(t *testing.T) {
 					}
 					return nil
 				},
+			},
+		},
+	})
+}
+
+// TestAccAppOauth_refreshToken enables refresh token for browser type oauth app
+func TestAccAppOauth_refreshToken(t *testing.T) {
+	// TODO: This is an "Early Access Feature" and needs to be enabled by Okta
+	//       Skipping for now assuming that the okta account doesn't have this feature enabled.
+	//       If this feature is enabled or Okta releases this to all this test should be enabled.
+	//       SEE https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm
+	t.Skip("This is an 'Early Access Feature' and needs to be enabled by Okta, skipping this test as it fails when this feature is not available")
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appOAuth)
+	config := mgr.GetFixtures("refresh.tf", ri, t)
+	update := mgr.GetFixtures("refresh_update.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", appOAuth)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_rotation", "STATIC"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_leeway", "0"),
+				),
+			},
+			{
+				Config: update,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_rotation", "ROTATE"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_leeway", "30"),
+				),
 			},
 		},
 	})

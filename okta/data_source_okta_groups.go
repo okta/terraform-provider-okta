@@ -28,7 +28,7 @@ func dataSourceGroups() *schema.Resource {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Description:      "Type of the group. When specified in the terraform resource, will act as a filter when searching for the groups",
-				ValidateDiagFunc: stringInSlice([]string{"OKTA_GROUP", "APP_GROUP", "BUILT_IN"}),
+				ValidateDiagFunc: elemInSlice([]string{"OKTA_GROUP", "APP_GROUP", "BUILT_IN"}),
 			},
 			"groups": {
 				Type:     schema.TypeList,
