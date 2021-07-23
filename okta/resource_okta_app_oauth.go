@@ -197,7 +197,7 @@ func resourceAppOAuth() *schema.Resource {
 			"wildcard_redirect": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				Description:      "Indicates if the client is allowed to use wildcard matching of redirect_uris",
+				Description:      "*Early Access Property*. Indicates if the client is allowed to use wildcard matching of redirect_uris",
 				Default:          "DISABLED",
 				ValidateDiagFunc: elemInSlice([]string{"DISABLED", "SUBDOMAIN"}),
 			},
@@ -464,7 +464,9 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	_ = d.Set("tos_uri", app.Settings.OauthClient.TosUri)
 	_ = d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
 	_ = d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
-	_ = d.Set("wildcard_redirect", app.Settings.OauthClient.WildcardRedirect)
+	if app.Settings.OauthClient.WildcardRedirect != "" {
+		_ = d.Set("wildcard_redirect", app.Settings.OauthClient.WildcardRedirect)
+	}
 	_ = d.Set("auto_submit_toolbar", app.Visibility.AutoSubmitToolbar)
 	_ = d.Set("hide_ios", app.Visibility.Hide.IOS)
 	_ = d.Set("hide_web", app.Visibility.Hide.Web)

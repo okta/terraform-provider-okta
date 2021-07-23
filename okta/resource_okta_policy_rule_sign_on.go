@@ -160,7 +160,9 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 	if rule.Actions.SignOn.FactorPromptMode != "" {
 		_ = d.Set("mfa_prompt", rule.Actions.SignOn.FactorPromptMode)
 	}
-	_ = d.Set("risc_level", rule.Conditions.RiskScore.Level)
+	if rule.Conditions != nil && rule.Conditions.RiskScore != nil {
+		_ = d.Set("risc_level", rule.Conditions.RiskScore.Level)
+	}
 	err = setNonPrimitives(d, map[string]interface{}{
 		"behaviors": convertStringSetToInterface(rule.Conditions.Risk.Behaviors),
 	})
