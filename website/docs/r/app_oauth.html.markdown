@@ -75,7 +75,7 @@ The following arguments are supported:
 
 - `redirect_uris` - (Optional) List of URIs for use in the redirect-based flow. This is required for all application types except service.
 
-- `wildcard_redirect` - (Optional) Indicates if the client is allowed to use wildcard matching of `redirect_uris`. Valid values: `"DISABLED"`, `"SUBDOMAIN"`. Default value is `"DISABLED"`.
+- `wildcard_redirect` - (Optional) *Early Access Property*. Indicates if the client is allowed to use wildcard matching of `redirect_uris`. Valid values: `"DISABLED"`, `"SUBDOMAIN"`. Default value is `"DISABLED"`.
 
 - `post_logout_redirect_uris` - (Optional) List of URIs for redirection after logout.
 
