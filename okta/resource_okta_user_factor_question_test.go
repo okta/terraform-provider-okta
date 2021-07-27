@@ -13,7 +13,6 @@ import (
 
 func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
 	ri := acctest.RandInt()
-
 	mgr := newFixtureManager("okta_user_factor_question")
 	config := mgr.GetFixtures("okta_user_factor_question.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", userFactorQuestion)
@@ -26,9 +25,8 @@ func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
 				{
 					Config: config,
 					Check: resource.ComposeTestCheckFunc(
-						// ensureUserFactorExists(resourceName),
 						resource.TestCheckResourceAttr(resourceName, "security_question_key", "disliked_food"),
-						resource.TestCheckResourceAttr(resourceName, "security_answer", "okta"),
+						resource.TestCheckResourceAttr(resourceName, "security_answer", "meatball"),
 					),
 				},
 			},
@@ -59,8 +57,4 @@ func doesUserFactorExistsUpstream(userId string, factorId string) (bool, error) 
 	var uf *okta.SecurityQuestionUserFactor
 	_, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).UserFactor.GetFactor(context.Background(), userId, factorId, uf)
 	return doesResourceExist(resp, err)
-}
-
-func ensureUserFactorExists(name string) resource.TestCheckFunc {
-	return nil
 }

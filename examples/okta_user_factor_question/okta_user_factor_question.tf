@@ -13,6 +13,6 @@ resource "okta_factor" "test_factor" {
 resource "okta_user_factor_question" "test" {
   user_id = okta_user.test.id
   security_question_key = "disliked_food"
-  security_answer = "okta"
+  security_answer = "meatball"
   depends_on = [okta_factor.test_factor]
 }
