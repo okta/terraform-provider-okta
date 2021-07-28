@@ -8,14 +8,14 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
-type Factor struct {
+type OrgFactor struct {
 	Id         string `json:"id"`
 	Provider   string `json:"provider"`
 	FactorType string `json:"factorType"`
 	Status     string `json:"status"`
 }
 
-// Current available factors for MFA
+// Current available org factors for MFA
 const (
 	DuoFactor          = "duo"
 	FidoU2fFactor      = "fido_u2f"
@@ -34,14 +34,14 @@ const (
 	HotpFactor         = "hotp"
 )
 
-// GetFactor gets a factor by ID.
-func (m *ApiSupplement) GetFactor(ctx context.Context, id string) (*Factor, *okta.Response, error) {
+// GetOrgFactor gets a factor by ID.
+func (m *ApiSupplement) GetOrgFactor(ctx context.Context, id string) (*OrgFactor, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/org/factors/%s", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
-	var factor Factor
+	var factor OrgFactor
 	resp, err := m.RequestExecutor.Do(ctx, req, &factor)
 	if err != nil {
 		return nil, resp, err
@@ -49,17 +49,17 @@ func (m *ApiSupplement) GetFactor(ctx context.Context, id string) (*Factor, *okt
 	return &factor, resp, nil
 }
 
-// ActivateFactor allows multifactor authentication to use provided factor type
-func (m *ApiSupplement) ActivateFactor(ctx context.Context, id string) (*Factor, *okta.Response, error) {
-	return m.lifecycleChangeFactor(ctx, id, "activate")
+// ActivateOrgFactor allows multifactor authentication to use provided factor type
+func (m *ApiSupplement) ActivateOrgFactor(ctx context.Context, id string) (*OrgFactor, *okta.Response, error) {
+	return m.lifecycleChangeOrgFactor(ctx, id, "activate")
 }
 
-// ActivateFactor denies multifactor authentication to use provided factor type
-func (m *ApiSupplement) DeactivateFactor(ctx context.Context, id string) (*Factor, *okta.Response, error) {
-	return m.lifecycleChangeFactor(ctx, id, "deactivate")
+// DeactivateOrgFactor denies multifactor authentication to use provided factor type
+func (m *ApiSupplement) DeactivateOrgFactor(ctx context.Context, id string) (*OrgFactor, *okta.Response, error) {
+	return m.lifecycleChangeOrgFactor(ctx, id, "deactivate")
 }
 
-func (m *ApiSupplement) lifecycleChangeFactor(ctx context.Context, id, action string) (*Factor, *okta.Response, error) {
+func (m *ApiSupplement) lifecycleChangeOrgFactor(ctx context.Context, id, action string) (*OrgFactor, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/org/factors/%s/lifecycle/%s", id, action)
 	req, err := m.RequestExecutor.
 		WithAccept("application/json").
@@ -68,7 +68,7 @@ func (m *ApiSupplement) lifecycleChangeFactor(ctx context.Context, id, action st
 	if err != nil {
 		return nil, nil, err
 	}
-	var factor *Factor
+	var factor *OrgFactor
 	resp, err := m.RequestExecutor.Do(ctx, req, factor)
 	if err != nil {
 		return nil, resp, err
