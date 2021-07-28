@@ -10,6 +10,7 @@ resource "okta_factor" "test_factor" {
   active      = true
 }
 
+
 resource "okta_user_factor_question" "test" {
   user_id = okta_user.test.id
   security_question_key = "disliked_food"
