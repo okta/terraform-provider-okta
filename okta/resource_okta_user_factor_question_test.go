@@ -14,7 +14,8 @@ import (
 func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager("okta_user_factor_question")
-	config := mgr.GetFixtures("okta_user_factor_question.tf", ri, t)
+	config := mgr.GetFixtures("basic.tf", ri, t)
+	updated := mgr.GetFixtures("updated.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", userFactorQuestion)
 	resource.Test(
 		t, resource.TestCase{
@@ -25,8 +26,17 @@ func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
 				{
 					Config: config,
 					Check: resource.ComposeTestCheckFunc(
-						resource.TestCheckResourceAttr(resourceName, "security_question_key", "disliked_food"),
-						resource.TestCheckResourceAttr(resourceName, "security_answer", "meatball"),
+						resource.TestCheckResourceAttr(resourceName, "key", "disliked_food"),
+						resource.TestCheckResourceAttr(resourceName, "answer", "meatball"),
+						resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					),
+				},
+				{
+					Config: updated,
+					Check: resource.ComposeTestCheckFunc(
+						resource.TestCheckResourceAttr(resourceName, "key", "name_of_first_plush_toy"),
+						resource.TestCheckResourceAttr(resourceName, "answer", "meatball"),
+						resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					),
 				},
 			},
