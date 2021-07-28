@@ -199,8 +199,6 @@ func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) {
 	}
 	if len(subschema.Permissions) > 0 {
 		_ = d.Set("permissions", subschema.Permissions[0].Action)
-	} else {
-		_ = d.Set("permissions", "")
 	}
 	if subschema.Pattern != nil {
 		_ = d.Set("pattern", &subschema.Pattern)
