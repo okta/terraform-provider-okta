@@ -49,3 +49,64 @@ func (m *ApiSupplement) GetBehavior(ctx context.Context, id string) (*Behavior, 
 	}
 	return &behavior, resp, nil
 }
+
+// CreateBehavior creates behavior
+func (m *ApiSupplement) CreateBehavior(ctx context.Context, body Behavior) (*Behavior, *okta.Response, error) {
+	url := "/api/v1/behaviors"
+	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
+	if err != nil {
+		return nil, nil, err
+	}
+	var behavior Behavior
+	resp, err := m.RequestExecutor.Do(ctx, req, &behavior)
+	if err != nil {
+		return nil, resp, err
+	}
+	return &behavior, resp, nil
+}
+
+// UpdateBehavior updates behavior
+func (m *ApiSupplement) UpdateBehavior(ctx context.Context, id string, body Behavior) (*Behavior, *okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/behaviors/%s", id)
+	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
+	if err != nil {
+		return nil, nil, err
+	}
+	var behavior Behavior
+	resp, err := m.RequestExecutor.Do(ctx, req, &behavior)
+	if err != nil {
+		return nil, resp, err
+	}
+	return &behavior, resp, nil
+}
+
+// DeleteBehavior deletes behavior by ID
+func (m *ApiSupplement) DeleteBehavior(ctx context.Context, id string) (*okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/behaviors/%s", id)
+	req, err := m.RequestExecutor.NewRequest(http.MethodDelete, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	return m.RequestExecutor.Do(ctx, req, nil)
+}
+
+func (m *ApiSupplement) ActivateBehavior(ctx context.Context, id string) (*okta.Response, error) {
+	return m.changeBehaviorLifecycle(ctx, id, "activate")
+}
+
+func (m *ApiSupplement) DeactivateBehavior(ctx context.Context, id string) (*okta.Response, error) {
+	return m.changeBehaviorLifecycle(ctx, id, "deactivate")
+}
+
+func (m *ApiSupplement) changeBehaviorLifecycle(ctx context.Context, id, action string) (*okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/behaviors/%s/lifecycle/%s", id, action)
+	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := m.RequestExecutor.Do(ctx, req, nil)
+	if err != nil {
+		return resp, err
+	}
+	return resp, nil
+}

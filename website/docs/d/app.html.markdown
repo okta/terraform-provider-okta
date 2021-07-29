@@ -1,6 +1,9 @@
 ---
-layout: 'okta' page_title: 'Okta: okta_app' sidebar_current: 'docs-okta-datasource-app' description: |- Get an
-application of any kind from Okta.
+layout: 'okta' 
+page_title: 'Okta: okta_app' 
+sidebar_current: 'docs-okta-datasource-app' 
+description: |- 
+  Get an application of any kind from Okta.
 ---
 
 # okta_app

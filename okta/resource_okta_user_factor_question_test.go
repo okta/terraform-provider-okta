@@ -13,7 +13,7 @@ import (
 
 func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager("okta_user_factor_question")
+	mgr := newFixtureManager(userFactorQuestion)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updated := mgr.GetFixtures("updated.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", userFactorQuestion)
@@ -43,10 +43,10 @@ func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
 		})
 }
 
-func createUserFactorCheckDestroy(FactorType string) func(*terraform.State) error {
+func createUserFactorCheckDestroy(factorType string) func(*terraform.State) error {
 	return func(s *terraform.State) error {
 		for _, rs := range s.RootModule().Resources {
-			if rs.Type != FactorType {
+			if rs.Type != factorType {
 				continue
 			}
 			userID := rs.Primary.Attributes["user_id"]
@@ -56,14 +56,14 @@ func createUserFactorCheckDestroy(FactorType string) func(*terraform.State) erro
 				return err
 			}
 			if exists {
-				return fmt.Errorf("user factor still exists,userID: %s, user factor ID: %s", userID, ID)
+				return fmt.Errorf("user factor still exists, user ID: %s, factor ID: %s", userID, ID)
 			}
 		}
 		return nil
 	}
 }
 
-func doesUserFactorExistsUpstream(userId string, factorId string) (bool, error) {
+func doesUserFactorExistsUpstream(userId, factorId string) (bool, error) {
 	var uf *okta.SecurityQuestionUserFactor
 	_, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).UserFactor.GetFactor(context.Background(), userId, factorId, uf)
 	return doesResourceExist(resp, err)
