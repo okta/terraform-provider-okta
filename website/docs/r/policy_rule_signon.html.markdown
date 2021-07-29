@@ -125,7 +125,8 @@ The following arguments are supported:
 
 - `network_excludes` - (Optional) The network zones to exclude. Conflicts with `network_includes`.
 
-- `risc_level` - (Optional) Risc level: `"ANY"`, `"LOW"`, `"MEDIUM"` or `"HIGH"`. Default is `"ANY"`.
+- `risc_level` - (Optional) Risc level: `"ANY"`, `"LOW"`, `"MEDIUM"` or `"HIGH"`. Default is `"ANY"`. It can be also 
+  set to an empty string in case `RISC_SCORING` org feature flag is disabled.
 
 - `behaviors` - (Optional) List of behavior IDs.
 
