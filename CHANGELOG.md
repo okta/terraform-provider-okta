@@ -1,5 +1,21 @@
 # Changelog
 
+## 3.13.0 (Jul 29, 2021)
+
+ENHANCEMENTS:
+
+* Add new `user_factor_question` resource [#551](https://github.com/okta/terraform-provider-okta/pull/551). Thanks, [@pengyuwang-okta](https://github.com/pengyuwang-okta)!
+* Add new `okta_behavior` resource [#552](https://github.com/okta/terraform-provider-okta/pull/552). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Add new `okta_user_security_questions` data source [#552](https://github.com/okta/terraform-provider-okta/pull/552). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.12.1 (Jul 24, 2021)
+
+BUGS:
+
+* Fix provider crash caused by the `okta_policy_rule_signon` resource [#543](https://github.com/okta/terraform-provider-okta/pull/543). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fix permissions field set behaviour in o`kta_app_user_schema_property` resource [#543](https://github.com/okta/terraform-provider-okta/pull/543). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Reverted the changes regarding the users field in the `okta_group` resource that was introducing breaking change [#543](https://github.com/okta/terraform-provider-okta/pull/543). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.12.0 (Jul 20, 2021)
 
 ENHANCEMENTS:

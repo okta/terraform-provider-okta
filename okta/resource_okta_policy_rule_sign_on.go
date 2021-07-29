@@ -77,7 +77,7 @@ func resourcePolicySignOnRule() *schema.Resource {
 			"risc_level": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ANY", "LOW", "MEDIUM", "HIGH"}),
+				ValidateDiagFunc: elemInSlice([]string{"", "ANY", "LOW", "MEDIUM", "HIGH"}),
 				Description:      "Risc level: ANY, LOW, MEDIUM or HIGH",
 				Default:          "ANY",
 			},
