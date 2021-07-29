@@ -72,12 +72,13 @@ const (
 	templateEmail             = "okta_template_email"
 	templateSms               = "okta_template_sms"
 	trustedOrigin             = "okta_trusted_origin"
+	userAdminRoles            = "okta_user_admin_roles"
 	userBaseSchemaProperty    = "okta_user_base_schema_property"
+	userFactorQuestion        = "okta_user_factor_question"
+	userGroupMemberships      = "okta_user_group_memberships"
+	userSecurityQuestions     = "okta_user_security_questions"
 	userSchemaProperty        = "okta_user_schema_property"
 	userType                  = "okta_user_type"
-	userGroupMemberships      = "okta_user_group_memberships"
-	userAdminRoles            = "okta_user_admin_roles"
-	userFactorQuestion        = "okta_user_factor_question"
 )
 
 // Provider establishes a client connection to an okta site
@@ -199,6 +200,7 @@ func Provider() *schema.Provider {
 			authServerPolicy:          resourceAuthServerPolicy(),
 			authServerPolicyRule:      resourceAuthServerPolicyRule(),
 			authServerScope:           resourceAuthServerScope(),
+			behavior:                  resourceBehavior(),
 			domain:                    resourceDomain(),
 			eventHook:                 resourceEventHook(),
 			factor:                    resourceFactor(),
@@ -286,6 +288,7 @@ func Provider() *schema.Provider {
 			authServer:                         dataSourceAuthServer(),
 			"okta_auth_server_scopes":          dataSourceAuthServerScopes(),
 			userType:                           dataSourceUserType(),
+			userSecurityQuestions:              dataSourceUserSecurityQuestions(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

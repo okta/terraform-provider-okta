@@ -1,6 +1,9 @@
 ---
-layout: 'okta' page_title: 'Okta: okta_group_role' sidebar_current: 'docs-okta-resource-group-role' description: |-
-Assigns Admin roles to Okta Groups.
+layout: 'okta' 
+page_title: 'Okta: okta_group_role' 
+sidebar_current: 'docs-okta-resource-group-role' 
+description: |-
+  Assigns Admin roles to Okta Groups.
 ---
 
 # okta_group_role

@@ -1,6 +1,9 @@
 ---
-layout: 'okta' page_title: 'Okta: okta_group_rule' sidebar_current: 'docs-okta-resource-group-rule' description: |-
-Creates an Okta Group Rule.
+layout: 'okta' 
+page_title: 'Okta: okta_group_rule' 
+sidebar_current: 'docs-okta-resource-group-rule' 
+description: |-
+  Creates an Okta Group Rule.
 ---
 
 # okta_group_rule
