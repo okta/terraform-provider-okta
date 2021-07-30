@@ -271,6 +271,11 @@ func resourceAppSaml() *schema.Resource {
 					return new == ""
 				},
 			},
+			"inline_hook_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Saml Inline Hook setting",
+			},
 			"acs_endpoints": {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -614,6 +619,10 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 		app.Credentials.Signing = &okta.ApplicationCredentialsSigning{
 			Kid: id.(string),
 		}
+	}
+
+	if id, ok := d.GetOk("inline_hook_id"); ok {
+		app.Settings.SignOn.InlineHooks = []*okta.SignOnInlineHook{{Id: id.(string)}}
 	}
 
 	return app, nil
