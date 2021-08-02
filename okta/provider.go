@@ -167,6 +167,15 @@ func Provider() *schema.Provider {
 				ValidateDiagFunc: intBetween(1, 5),
 				Description:      "providers log level. Minimum is 1 (TRACE), and maximum is 5 (ERROR)",
 			},
+			"max_api_capacity": {
+				Type:             schema.TypeInt,
+				Optional:         true,
+				Default:          100,
+				ValidateDiagFunc: intBetween(1, 100),
+				Description: "(Experimental) sets what percentage of capacity the provider can use of the total rate limit " +
+					"capacity while making calls to the Okta management API endpoints. Okta API operates in one minute buckets. " +
+					"See Okta Management API Rate Limits: https://developer.okta.com/docs/reference/rl-global-mgmt/",
+			},
 			"request_timeout": {
 				Type:             schema.TypeInt,
 				Optional:         true,
