@@ -6,6 +6,31 @@ import (
 	"time"
 )
 
+func TestHasCapacity(t *testing.T) {
+	amu, err := NewApiMutex(50)
+	if err != nil {
+		t.Fatalf("api mutex constructor had error %+v", err)
+	}
+
+	endPoint := "/api/v1/users"
+	reset := (time.Now().Unix() + int64(60))
+	// endpoint, limit, remaining, reset
+	amu.Update(endPoint, 90, 46, reset)
+	if !amu.HasCapacity(endPoint) {
+		t.Fatalf("ami mutex should have capacity, 50%% threshold, 90 limit, 46 remaining")
+	}
+
+	amu.Update(endPoint, 90, 45, reset)
+	if !amu.HasCapacity(endPoint) {
+		t.Fatalf("ami mutex should have capacity, 50%% threshold, 90 limit, 45 remaining")
+	}
+
+	amu.Update(endPoint, 90, 44, reset)
+	if amu.HasCapacity(endPoint) {
+		t.Fatalf("ami mutex shouldn't have capacity, 50%% threshold, 90 limit, 44 remaining")
+	}
+}
+
 func TestUpdate(t *testing.T) {
 	tests := []struct {
 		endPoint  string
@@ -25,7 +50,10 @@ func TestUpdate(t *testing.T) {
 		// here, we are testing that regardless of threading parallelism the api
 		// mutex will have the highest remaining value set for any given class
 		// of endpoint
-		amu := NewApiMutex()
+		amu, err := NewApiMutex(100)
+		if err != nil {
+			t.Fatalf("api mutex constructor had error %+v", err)
+		}
 		for _, remaining := range tc.remaining {
 			go func(remaining int) {
 				sleep := time.Duration(rand.Intn(100))
@@ -36,16 +64,19 @@ func TestUpdate(t *testing.T) {
 		}
 		time.Sleep(300 * time.Millisecond)
 
-		maxRemaining := maxRemaining(tc.remaining)
+		minRemaining := minRemaining(tc.remaining)
 		status := amu.Status(tc.endPoint)
-		if maxRemaining != status.remaining {
-			t.Fatalf("got %d, should be %d for the remaining value of %q's api status %+v", status.remaining, maxRemaining, tc.endPoint, status)
+		if minRemaining != status.remaining {
+			t.Fatalf("got %d, should be %d of %+v for the remaining value of %q's api status %+v", status.remaining, minRemaining, tc.remaining, tc.endPoint, status)
 		}
 	}
 }
 
 func TestGet(t *testing.T) {
-	amu := NewApiMutex()
+	amu, err := NewApiMutex(100)
+	if err != nil {
+		t.Fatalf("api mutex constructor had error %+v", err)
+	}
 	if len(amu.status) != 0 {
 		t.Fatalf("amu status map should be empty, but was sized %d", len(amu.status))
 	}
@@ -106,7 +137,10 @@ func TestNormalizeKey(t *testing.T) {
 		{endPoint: "/api/v1/templates/foo", expected: "other"},
 	}
 
-	amu := NewApiMutex()
+	amu, err := NewApiMutex(100)
+	if err != nil {
+		t.Fatalf("api mutex constructor had error %+v", err)
+	}
 	for _, tc := range tests {
 		// test that private normalizedKey function is operating correctly
 		key := amu.normalizeKey(tc.endPoint)
@@ -116,10 +150,16 @@ func TestNormalizeKey(t *testing.T) {
 	}
 }
 
-func maxRemaining(remaining []int) int {
+func minRemaining(remaining []int) int {
 	var result int
+	first := true
 	for _, r := range remaining {
-		if r > result {
+		if first {
+			result = r
+			first = false
+			continue
+		}
+		if r < result {
 			result = r
 		}
 	}

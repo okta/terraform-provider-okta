@@ -1,8 +1,10 @@
 package apimutex
 
 import (
+	"fmt"
 	"strings"
 	"sync"
+	"time"
 )
 
 // ApiMutex synchronizes keeping account of current known rate limit values from
@@ -12,8 +14,9 @@ import (
 // limits but it account for its own usage and attempt to preemptively react
 // appropriately.
 type ApiMutex struct {
-	lock   sync.Mutex
-	status map[string]*ApiStatus
+	lock     sync.Mutex
+	status   map[string]*ApiStatus
+	capacity int
 }
 
 // ApiStatus is used to hold rate limit information from Okta's API, see:
@@ -24,11 +27,34 @@ type ApiStatus struct {
 	reset     int64 // UTC epoch time in seconds
 }
 
-// NewApiMutex returns a new api mutex object.
-func NewApiMutex() *ApiMutex {
-	return &ApiMutex{
-		status: make(map[string]*ApiStatus),
+// NewApiMutex returns a new api mutex object that represents untilized capacity
+// under the specified capacity.
+func NewApiMutex(capacity int) (*ApiMutex, error) {
+	if capacity < 1 || capacity > 100 {
+		return nil, fmt.Errorf("expecting capacity as whole number > 0 and <= 100, was %d", capacity)
 	}
+	return &ApiMutex{
+		capacity: capacity,
+		status:   make(map[string]*ApiStatus),
+	}, nil
+}
+
+// HasCapacity approximates if there is capacity below the api mutex's maximum
+// capacity threshold.
+func (m *ApiMutex) HasCapacity(endPoint string) bool {
+	status := m.get(endPoint)
+
+	// if the status hasn't been updated recently assume there is capacity
+	now := time.Now().Unix()
+	if status.reset+60 < now {
+		return true
+	}
+
+	// calculate utilization
+	utilization := 100.0 * (float32(status.limit-status.remaining) / float32(status.limit))
+	fmt.Println(utilization)
+
+	return utilization <= float32(m.capacity)
 }
 
 // Update updates the known status for the given API endpoint. It is synchronous
@@ -56,7 +82,7 @@ func (m *ApiMutex) Update(endPoint string, limit, remaining int, reset int64) {
 		return
 	}
 
-	if remaining > status.remaining {
+	if remaining < status.remaining {
 		status.remaining = remaining
 	}
 }
@@ -77,6 +103,10 @@ func (m *ApiMutex) normalizeKey(endPoint string) string {
 		result = "other"
 	}
 	return result
+}
+
+func (s *ApiStatus) Reset() int64 {
+	return s.reset
 }
 
 func (m *ApiMutex) get(endPoint string) *ApiStatus {
