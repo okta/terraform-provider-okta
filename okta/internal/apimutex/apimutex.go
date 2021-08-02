@@ -7,12 +7,12 @@ import (
 	"time"
 )
 
-// ApiMutex synchronizes keeping account of current known rate limit values from
-// Okta management endpoints. Specifically apps, users, and other, see:
+// ApiMutex synchronizes keeping account of current known rate limit values
+// from Okta management endpoints. Specifically apps, users, and other, see:
 // https://developer.okta.com/docs/reference/rl-global-mgmt/ The Okta Terraform
 // Provider can not account for all other kinds of clients utilization of API
-// limits but it account for its own usage and attempt to preemptively react
-// appropriately.
+// limits but it can account for its own usage and attempt to preemptively
+// react appropriately.
 type ApiMutex struct {
 	lock     sync.Mutex
 	status   map[string]*ApiStatus
@@ -27,8 +27,8 @@ type ApiStatus struct {
 	reset     int64 // UTC epoch time in seconds
 }
 
-// NewApiMutex returns a new api mutex object that represents untilized capacity
-// under the specified capacity.
+// NewApiMutex returns a new api mutex object that represents untilized
+// capacity under the specified capacity percentage.
 func NewApiMutex(capacity int) (*ApiMutex, error) {
 	if capacity < 1 || capacity > 100 {
 		return nil, fmt.Errorf("expecting capacity as whole number > 0 and <= 100, was %d", capacity)
