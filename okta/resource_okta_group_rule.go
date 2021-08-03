@@ -5,12 +5,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 const statusInvalid = "INVALID"
