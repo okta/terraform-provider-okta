@@ -113,8 +113,8 @@ func resourceAuthServerPolicyDelete(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func buildAuthServerPolicy(d *schema.ResourceData) okta.Policy {
-	return okta.Policy{
+func buildAuthServerPolicy(d *schema.ResourceData) okta.AuthorizationServerPolicy {
+	return okta.AuthorizationServerPolicy{
 		Name:        d.Get("name").(string),
 		Type:        sdk.OauthAuthorizationPolicyType,
 		Status:      d.Get("status").(string),

@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -155,11 +157,8 @@ func resourceGroupRuleDelete(ctx context.Context, d *schema.ResourceData, m inte
 			return diag.Errorf("failed to deactivate group rule before removing: %v", err)
 		}
 	}
-	id := d.Id()
-	if d.Get("remove_assigned_users").(bool) {
-		id += "?removeUsers=true"
-	}
-	_, err := client.Group.DeleteGroupRule(ctx, id)
+	remove := d.Get("remove_assigned_users").(bool)
+	_, err := client.Group.DeleteGroupRule(ctx, d.Id(), &query.Params{RemoveUsers: &remove})
 	if err != nil {
 		return diag.Errorf("failed to delete group rule: %v", err)
 	}

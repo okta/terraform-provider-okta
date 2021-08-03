@@ -1,6 +1,6 @@
 module github.com/okta/terraform-provider-okta
 
-go 1.15
+go 1.16
 
 require (
 	github.com/bflad/tfproviderlint v0.27.1
@@ -12,5 +12,5 @@ require (
 	github.com/hashicorp/go-hclog v0.16.2
 	github.com/hashicorp/go-retryablehttp v0.7.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.7.0
-	github.com/okta/okta-sdk-golang/v2 v2.3.1-0.20210617075430-6c6c25f48f92
+	github.com/okta/okta-sdk-golang/v2 v2.5.1-0.20210803213055-ae6539a1c446
 )
