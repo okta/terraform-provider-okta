@@ -109,6 +109,14 @@ func (s *ApiStatus) Reset() int64 {
 	return s.reset
 }
 
+func (s *ApiStatus) Limit() int {
+	return s.limit
+}
+
+func (s *ApiStatus) Remaining() int {
+	return s.remaining
+}
+
 func (m *ApiMutex) get(endPoint string) *ApiStatus {
 	m.lock.Lock()
 	defer m.lock.Unlock()
