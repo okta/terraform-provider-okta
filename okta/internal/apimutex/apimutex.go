@@ -7,6 +7,12 @@ import (
 	"time"
 )
 
+const (
+	APPS_KEY  = "apps"
+	USERS_KEY = "users"
+	OTHER_KEY = "other"
+)
+
 // ApiMutex synchronizes keeping account of current known rate limit values
 // from Okta management endpoints. Specifically apps, users, and other, see:
 // https://developer.okta.com/docs/reference/rl-global-mgmt/ The Okta Terraform
@@ -33,9 +39,14 @@ func NewApiMutex(capacity int) (*ApiMutex, error) {
 	if capacity < 1 || capacity > 100 {
 		return nil, fmt.Errorf("expecting capacity as whole number > 0 and <= 100, was %d", capacity)
 	}
+	status := map[string]*ApiStatus{
+		APPS_KEY:  &ApiStatus{},
+		USERS_KEY: &ApiStatus{},
+		OTHER_KEY: &ApiStatus{},
+	}
 	return &ApiMutex{
 		capacity: capacity,
-		status:   make(map[string]*ApiStatus),
+		status:   status,
 	}, nil
 }
 
@@ -59,8 +70,6 @@ func (m *ApiMutex) HasCapacity(endPoint string) bool {
 // Update updates the known status for the given API endpoint. It is synchronous
 // and intellegently accounts for new values regardless of parallelism.
 func (m *ApiMutex) Update(endPoint string, limit, remaining int, reset int64) {
-	_ = m.get(endPoint) // get will initialize api status structs
-
 	m.lock.Lock()
 	defer m.lock.Unlock()
 
@@ -120,15 +129,6 @@ func (s *ApiStatus) Remaining() int {
 }
 
 func (m *ApiMutex) get(endPoint string) *ApiStatus {
-	m.lock.Lock()
-	defer m.lock.Unlock()
-
 	key := m.normalizeKey(endPoint)
-	status, found := m.status[key]
-	if !found {
-		status = &ApiStatus{}
-		m.status[key] = status
-	}
-
-	return status
+	return m.status[key]
 }

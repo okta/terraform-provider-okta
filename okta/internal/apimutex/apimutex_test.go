@@ -77,20 +77,6 @@ func TestGet(t *testing.T) {
 	if err != nil {
 		t.Fatalf("api mutex constructor had error %+v", err)
 	}
-	if len(amu.status) != 0 {
-		t.Fatalf("amu status map should be empty, but was sized %d", len(amu.status))
-	}
-	uris := []string{
-		"/api/v1/users",
-		"/api/v1/users",
-		"/api/v1/apps",
-		"/api/v1/apps",
-		"/api/v1/domains",
-		"/api/v1/domains",
-	}
-	for _, uri := range uris {
-		_ = amu.get(uri)
-	}
 	if len(amu.status) != 3 {
 		t.Fatalf("amu status map should sized 3 but was sized %d", len(amu.status))
 	}
