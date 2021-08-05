@@ -279,6 +279,11 @@ func dataSourceAppSaml() *schema.Resource {
 				Computed:    true,
 				Description: "Discoverable resources related to the app",
 			},
+			"inline_hook_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Saml Inline Hook setting",
+			},
 			"groups": {
 				Type:        schema.TypeSet,
 				Optional:    true,

@@ -557,6 +557,9 @@ func setSamlSettings(d *schema.ResourceData, signOn *okta.SamlApplicationSetting
 		}
 	}
 
+	if len(signOn.InlineHooks) > 0 {
+		_ = d.Set("inline_hook_id", signOn.InlineHooks[0].Id)
+	}
 	attrStatements := signOn.AttributeStatements
 	arr := make([]map[string]interface{}, len(attrStatements))
 
