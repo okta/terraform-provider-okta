@@ -73,7 +73,7 @@ func (c *Config) loadAndValidate() error {
 		httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
 	}
 
-	// adds transport governor to retriable or default client
+	// adds transport governor to retryable or default client
 	if c.maxApiCapacity > 0 {
 		log.Printf("[DEBUG] running with experimental max_api_capacity configuration at %d%%", c.maxApiCapacity)
 		apiMutex, err := apimutex.NewApiMutex(c.maxApiCapacity)
