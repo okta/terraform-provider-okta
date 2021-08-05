@@ -171,6 +171,30 @@ func TestAccAppSaml_userGroups(t *testing.T) {
 	})
 }
 
+func TestAccAppSaml_inlineHook(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appSaml)
+	config := mgr.GetFixtures("basic_inline_hook.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", appSaml)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttrSet(resourceName, "inline_hook_id"),
+				),
+			},
+		},
+	})
+}
+
 func buildTestSamlConfigMissingFields(rInt int) string {
 	name := buildResourceName(rInt)
 

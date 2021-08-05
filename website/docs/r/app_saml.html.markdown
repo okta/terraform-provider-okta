@@ -38,6 +38,53 @@ resource "okta_app_saml" "example" {
 }
 ```
 
+```hcl
+resource "okta_inline_hook" "test" {
+  name    = "testAcc_replace_with_uuid"
+  status  = "ACTIVE"
+  type    = "com.okta.saml.tokens.transform"
+  version = "1.0.2"
+
+  channel = {
+    type    = "HTTP"
+    version = "1.0.0"
+    uri     = "https://example.com/test1"
+    method  = "POST"
+  }
+  auth = {
+    key   = "Authorization"
+    type  = "HEADER"
+    value = "secret"
+  }
+}
+
+resource "okta_app_saml" "test" {
+  label                     = "testAcc_replace_with_uuid"
+  sso_url                   = "http://google.com"
+  recipient                 = "http://here.com"
+  destination               = "http://its-about-the-journey.com"
+  audience                  = "http://audience.com"
+  subject_name_id_template  = "$${user.userName}"
+  subject_name_id_format    = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
+  response_signed           = true
+  signature_algorithm       = "RSA_SHA256"
+  digest_algorithm          = "SHA256"
+  honor_force_authn         = false
+  authn_context_class_ref   = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+  inline_hook_id            = okta_inline_hook.test.id
+
+  depends_on = [
+    okta_inline_hook.test
+  ]
+  attribute_statements {
+    type         = "GROUP"
+    name         = "groups"
+    filter_type  = "REGEX"
+    filter_value = ".*"
+  }
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -118,6 +165,8 @@ The following arguments are supported:
   - `type` - (Optional) The type of attribute statement value. Valid values are: `"EXPRESSION"` or `"GROUP"`. Default is `"EXPRESSION"`.
   - `values` - (Optional) Array of values to use.
 
+- `inline_hook_id` - (Optional) Saml Inline Hook associated with the application.
+
 - `key_years_valid` - (Optional) Number of years the certificate is valid (2 - 10 years).
 
 - `key_name` - (Optional) Certificate name. This modulates the rotation of keys. New name == new key. Required to be set with `key_years_valid`.
@@ -126,7 +175,7 @@ The following arguments are supported:
 
 - `single_logout_url` - (Optional) The location where the logout response is sent.
 
-- `single_logout_certificate` - (Optional) x509 encoded certificate that the Service Provider uses to sign Single Logout requests. 
+- `single_logout_certificate` - (Optional) x509 encoded certificate that the Service Provider uses to sign Single Logout requests.
   Note: should be provided without `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`, see [official documentation](https://developer.okta.com/docs/reference/api/apps/#service-provider-certificate).
 
 - `logo` (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
