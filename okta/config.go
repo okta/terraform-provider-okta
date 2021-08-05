@@ -3,6 +3,7 @@ package okta
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -11,8 +12,12 @@ import (
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/okta/internal/apimutex"
+	"github.com/okta/terraform-provider-okta/okta/internal/transport"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
+
+var apiMutex *apimutex.ApiMutex
 
 func (adt *AddHeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	req.Header.Add("User-Agent", "Okta Terraform Provider")
@@ -40,6 +45,7 @@ type (
 		maxWait          int
 		logLevel         int
 		requestTimeout   int
+		maxApiCapacity   int // experimental
 		oktaClient       *okta.Client
 		supplementClient *sdk.ApiSupplement
 		logger           hclog.Logger
@@ -66,6 +72,17 @@ func (c *Config) loadAndValidate() error {
 		httpClient = cleanhttp.DefaultClient()
 		httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
 	}
+
+	// adds transport governor to retryable or default client
+	if c.maxApiCapacity > 0 {
+		log.Printf("[DEBUG] running with experimental max_api_capacity configuration at %d%%", c.maxApiCapacity)
+		apiMutex, err := apimutex.NewApiMutex(c.maxApiCapacity)
+		if err != nil {
+			return nil
+		}
+		httpClient.Transport = transport.NewGovernedTransport(httpClient.Transport, apiMutex)
+	}
+
 	setters := []okta.ConfigSetter{
 		okta.WithOrgUrl(fmt.Sprintf("https://%v.%v", c.orgName, c.domain)),
 		okta.WithToken(c.apiToken),

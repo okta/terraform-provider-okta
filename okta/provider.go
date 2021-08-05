@@ -167,6 +167,15 @@ func Provider() *schema.Provider {
 				ValidateDiagFunc: intBetween(1, 5),
 				Description:      "providers log level. Minimum is 1 (TRACE), and maximum is 5 (ERROR)",
 			},
+			"max_api_capacity": {
+				Type:             schema.TypeInt,
+				Optional:         true,
+				Default:          100,
+				ValidateDiagFunc: intBetween(1, 100),
+				Description: "(Experimental) sets what percentage of capacity the provider can use of the total rate limit " +
+					"capacity while making calls to the Okta management API endpoints. Okta API operates in one minute buckets. " +
+					"See Okta Management API Rate Limits: https://developer.okta.com/docs/reference/rl-global-mgmt/",
+			},
 			"request_timeout": {
 				Type:             schema.TypeInt,
 				Optional:         true,
@@ -305,16 +314,17 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 		orgName:        d.Get("org_name").(string),
 		domain:         d.Get("base_url").(string),
 		apiToken:       d.Get("api_token").(string),
-		parallelism:    d.Get("parallelism").(int),
 		clientID:       d.Get("client_id").(string),
 		privateKey:     d.Get("private_key").(string),
 		scopes:         convertInterfaceToStringSet(d.Get("scopes")),
 		retryCount:     d.Get("max_retries").(int),
+		parallelism:    d.Get("parallelism").(int),
+		backoff:        d.Get("backoff").(bool),
 		minWait:        d.Get("min_wait_seconds").(int),
 		maxWait:        d.Get("max_wait_seconds").(int),
-		backoff:        d.Get("backoff").(bool),
 		logLevel:       d.Get("log_level").(int),
 		requestTimeout: d.Get("request_timeout").(int),
+		maxApiCapacity: d.Get("max_api_capacity").(int),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, diag.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)
