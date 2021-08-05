@@ -21,9 +21,11 @@ type GovernedTransport struct {
 	apiMutex *apimutex.ApiMutex
 }
 
-// newRequestThrottleTransport returns RoundTripper which provides throttling according to maxRequests.
-// Every new instance returned has its own local state. Hence for every Okta API client instanced for
-// particular Okta Organization the same throttler should be used.
+// NewGovernedTransport returns a governed transport that relies on pre and post
+// requests from the http round tripper. The pre request consults the api mutex
+// to determine if sleeping for the Okta API one minute bucket is called for.
+// The post request updates the information it is holding about the current api
+// rate limits.
 func NewGovernedTransport(base http.RoundTripper, apiMutex *apimutex.ApiMutex) *GovernedTransport {
 	return &GovernedTransport{
 		base:     base,
@@ -31,6 +33,8 @@ func NewGovernedTransport(base http.RoundTripper, apiMutex *apimutex.ApiMutex) *
 	}
 }
 
+// RoundTrip returns the final http response after it has managed the api rate
+// limit accounting in the pre and post request hooks.
 func (t *GovernedTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	path := req.URL.Path
 	if err := t.preRequestHook(req.Context(), path); err != nil {

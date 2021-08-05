@@ -52,7 +52,6 @@ func (m *ApiMutex) HasCapacity(endPoint string) bool {
 
 	// calculate utilization
 	utilization := 100.0 * (float32(status.limit-status.remaining) / float32(status.limit))
-	fmt.Println(utilization)
 
 	return utilization <= float32(m.capacity)
 }
@@ -105,14 +104,17 @@ func (m *ApiMutex) normalizeKey(endPoint string) string {
 	return result
 }
 
+// Reset return the current reset value of the api status object.
 func (s *ApiStatus) Reset() int64 {
 	return s.reset
 }
 
+// Reset return the current limit value of the api status object.
 func (s *ApiStatus) Limit() int {
 	return s.limit
 }
 
+// Reset return the current remaining value of the api status object.
 func (s *ApiStatus) Remaining() int {
 	return s.remaining
 }
