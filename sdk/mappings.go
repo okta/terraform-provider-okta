@@ -29,7 +29,7 @@ type (
 	}
 )
 
-func (m *ApiSupplement) GetProfileMappingBySourceId(ctx context.Context, sourceId, targetId string) (*Mapping, *okta.Response, error) {
+func (m *APISupplement) GetProfileMappingBySourceId(ctx context.Context, sourceId, targetId string) (*Mapping, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/mappings?sourceId=%s&targetId=%s", sourceId, targetId)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -51,7 +51,7 @@ func (m *ApiSupplement) GetProfileMappingBySourceId(ctx context.Context, sourceI
 	return nil, resp, err
 }
 
-func (m *ApiSupplement) GetProfileMapping(ctx context.Context, mappingId string) (*Mapping, *okta.Response, error) {
+func (m *APISupplement) GetProfileMapping(ctx context.Context, mappingId string) (*Mapping, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/mappings/%s", mappingId)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -63,10 +63,10 @@ func (m *ApiSupplement) GetProfileMapping(ctx context.Context, mappingId string)
 	return mapping, resp, err
 }
 
-func (m *ApiSupplement) UpdateMapping(ctx context.Context, mappingId string, body Mapping, qp *query.Params) (*Mapping, *okta.Response, error) {
+func (m *APISupplement) UpdateMapping(ctx context.Context, mappingId string, body Mapping, qp *query.Params) (*Mapping, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/mappings/%s", mappingId)
 	if qp != nil {
-		url = url + qp.String()
+		url += qp.String()
 	}
 	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, body)
 	if err != nil {
@@ -82,7 +82,7 @@ func (m *ApiSupplement) UpdateMapping(ctx context.Context, mappingId string, bod
 }
 
 // FindProfileMappingSource retrieves profile mapping source/target via name
-func (m *ApiSupplement) FindProfileMappingSource(ctx context.Context, name, typ string, qp *query.Params) (*MappingSource, error) {
+func (m *APISupplement) FindProfileMappingSource(ctx context.Context, name, typ string, qp *query.Params) (*MappingSource, error) {
 	uri := "/api/v1/mappings"
 	if qp != nil {
 		uri += qp.String()

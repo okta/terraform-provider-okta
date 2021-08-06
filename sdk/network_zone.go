@@ -33,7 +33,7 @@ type (
 	}
 )
 
-func (m *ApiSupplement) CreateNetworkZone(ctx context.Context, body *NetworkZone, qp *query.Params) (*NetworkZone, *okta.Response, error) {
+func (m *APISupplement) CreateNetworkZone(ctx context.Context, body *NetworkZone, qp *query.Params) (*NetworkZone, *okta.Response, error) {
 	url := "/api/v1/zones"
 	if qp != nil {
 		url += qp.String()
@@ -48,7 +48,7 @@ func (m *ApiSupplement) CreateNetworkZone(ctx context.Context, body *NetworkZone
 	return zone, resp, err
 }
 
-func (m *ApiSupplement) GetNetworkZone(ctx context.Context, id string) (*NetworkZone, *okta.Response, error) {
+func (m *APISupplement) GetNetworkZone(ctx context.Context, id string) (*NetworkZone, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/zones/%s", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -63,7 +63,7 @@ func (m *ApiSupplement) GetNetworkZone(ctx context.Context, id string) (*Network
 	return zone, resp, nil
 }
 
-func (m *ApiSupplement) ListNetworkZones(ctx context.Context) ([]*NetworkZone, *okta.Response, error) {
+func (m *APISupplement) ListNetworkZones(ctx context.Context) ([]*NetworkZone, *okta.Response, error) {
 	url := "/api/v1/zones"
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -77,7 +77,7 @@ func (m *ApiSupplement) ListNetworkZones(ctx context.Context) ([]*NetworkZone, *
 	return zones, resp, nil
 }
 
-func (m *ApiSupplement) DeleteNetworkZone(ctx context.Context, id string) (*okta.Response, error) {
+func (m *APISupplement) DeleteNetworkZone(ctx context.Context, id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/zones/%s", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
@@ -87,7 +87,7 @@ func (m *ApiSupplement) DeleteNetworkZone(ctx context.Context, id string) (*okta
 	return m.RequestExecutor.Do(ctx, req, nil)
 }
 
-func (m *ApiSupplement) UpdateNetworkZone(ctx context.Context, id string, body NetworkZone, qp *query.Params) (*NetworkZone, *okta.Response, error) {
+func (m *APISupplement) UpdateNetworkZone(ctx context.Context, id string, body NetworkZone, qp *query.Params) (*NetworkZone, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/zones/%s", id)
 	if qp != nil {
 		url += qp.String()

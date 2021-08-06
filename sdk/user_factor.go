@@ -32,10 +32,10 @@ func (a *SecurityQuestionUserFactor) IsUserFactorInstance() bool {
 }
 
 // EnrollUserFactor enrolls a user with a supported factor.
-func (m *ApiSupplement) EnrollUserFactor(ctx context.Context, userId string, factorInstance Factor, qp *query.Params) (*okta.Response, error) {
+func (m *APISupplement) EnrollUserFactor(ctx context.Context, userId string, factorInstance Factor, qp *query.Params) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/factors", userId)
 	if qp != nil {
-		url = url + qp.String()
+		url += qp.String()
 	}
 	req, err := m.RequestExecutor.
 		WithAccept("application/json").
@@ -48,7 +48,7 @@ func (m *ApiSupplement) EnrollUserFactor(ctx context.Context, userId string, fac
 }
 
 // GetUserFactor fetches a factor for the specified user
-func (m *ApiSupplement) GetUserFactor(ctx context.Context, userId, factorId string, factorInstance Factor) (*okta.Response, error) {
+func (m *APISupplement) GetUserFactor(ctx context.Context, userId, factorId string, factorInstance Factor) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/factors/%v", userId, factorId)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -57,7 +57,7 @@ func (m *ApiSupplement) GetUserFactor(ctx context.Context, userId, factorId stri
 	return m.RequestExecutor.Do(ctx, req, factorInstance)
 }
 
-func (m *ApiSupplement) UpdateUserFactor(ctx context.Context, userId, factorId string, factorInstance Factor) (*okta.Response, error) {
+func (m *APISupplement) UpdateUserFactor(ctx context.Context, userId, factorId string, factorInstance Factor) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/factors/%v", userId, factorId)
 	req, err := m.RequestExecutor.
 		WithAccept("application/json").

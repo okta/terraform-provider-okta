@@ -7,7 +7,7 @@ import (
 )
 
 func TestHasCapacity(t *testing.T) {
-	amu, err := NewApiMutex(50)
+	amu, err := NewAPIMutex(50)
 	if err != nil {
 		t.Fatalf("api mutex constructor had error %+v", err)
 	}
@@ -50,7 +50,7 @@ func TestUpdate(t *testing.T) {
 		// here, we are testing that regardless of threading parallelism the api
 		// mutex will have the highest remaining value set for any given class
 		// of endpoint
-		amu, err := NewApiMutex(100)
+		amu, err := NewAPIMutex(100)
 		if err != nil {
 			t.Fatalf("api mutex constructor had error %+v", err)
 		}
@@ -73,7 +73,7 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	amu, err := NewApiMutex(100)
+	amu, err := NewAPIMutex(100)
 	if err != nil {
 		t.Fatalf("api mutex constructor had error %+v", err)
 	}
@@ -123,7 +123,7 @@ func TestNormalizeKey(t *testing.T) {
 		{endPoint: "/api/v1/templates/foo", expected: "other"},
 	}
 
-	amu, err := NewApiMutex(100)
+	amu, err := NewAPIMutex(100)
 	if err != nil {
 		t.Fatalf("api mutex constructor had error %+v", err)
 	}

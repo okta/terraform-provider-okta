@@ -26,7 +26,7 @@ type (
 	}
 )
 
-func (m *ApiSupplement) CreateEmailTemplate(ctx context.Context, body EmailTemplate, qp *query.Params) (*EmailTemplate, *okta.Response, error) {
+func (m *APISupplement) CreateEmailTemplate(ctx context.Context, body EmailTemplate, qp *query.Params) (*EmailTemplate, *okta.Response, error) {
 	url := "/api/v1/templates/emails"
 	if qp != nil {
 		url += qp.String()
@@ -41,7 +41,7 @@ func (m *ApiSupplement) CreateEmailTemplate(ctx context.Context, body EmailTempl
 	return temp, resp, err
 }
 
-func (m *ApiSupplement) UpdateEmailTemplate(ctx context.Context, id string, body EmailTemplate, qp *query.Params) (*EmailTemplate, *okta.Response, error) {
+func (m *APISupplement) UpdateEmailTemplate(ctx context.Context, id string, body EmailTemplate, qp *query.Params) (*EmailTemplate, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/templates/emails/%s", id)
 	if qp != nil {
 		url += qp.String()
@@ -56,7 +56,7 @@ func (m *ApiSupplement) UpdateEmailTemplate(ctx context.Context, id string, body
 	return temp, resp, err
 }
 
-func (m *ApiSupplement) GetEmailTemplate(ctx context.Context, id string) (*EmailTemplate, *okta.Response, error) {
+func (m *APISupplement) GetEmailTemplate(ctx context.Context, id string) (*EmailTemplate, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/templates/emails/%s", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -67,7 +67,7 @@ func (m *ApiSupplement) GetEmailTemplate(ctx context.Context, id string) (*Email
 	return temp, resp, err
 }
 
-func (m *ApiSupplement) DeleteEmailTemplate(ctx context.Context, id string) (*okta.Response, error) {
+func (m *APISupplement) DeleteEmailTemplate(ctx context.Context, id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/templates/emails/%s", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {

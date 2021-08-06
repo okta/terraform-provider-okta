@@ -20,7 +20,7 @@ type AppOauthGroupClaim struct {
 }
 
 // UpdateAppOauthGroupsClaim updated OAuth app group claim
-func (m *ApiSupplement) UpdateAppOauthGroupsClaim(ctx context.Context, appID string, gc *AppOauthGroupClaim) (*okta.Response, error) {
+func (m *APISupplement) UpdateAppOauthGroupsClaim(ctx context.Context, appID string, gc *AppOauthGroupClaim) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/internal/apps/%s/settings/oauth/idToken", appID)
 	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, gc)
 	if err != nil {
@@ -30,7 +30,7 @@ func (m *ApiSupplement) UpdateAppOauthGroupsClaim(ctx context.Context, appID str
 }
 
 // GetAppOauthGroupsClaim gets OAuth app group claim
-func (m *ApiSupplement) GetAppOauthGroupsClaim(ctx context.Context, appID string) (*AppOauthGroupClaim, *okta.Response, error) {
+func (m *APISupplement) GetAppOauthGroupsClaim(ctx context.Context, appID string) (*AppOauthGroupClaim, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/internal/apps/%s/settings/oauth/idToken", appID)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {

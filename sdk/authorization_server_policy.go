@@ -8,15 +8,15 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
-func (m *ApiSupplement) ActivateAuthorizationServerPolicy(ctx context.Context, authServerID, policyID string) (*okta.Response, error) {
+func (m *APISupplement) ActivateAuthorizationServerPolicy(ctx context.Context, authServerID, policyID string) (*okta.Response, error) {
 	return m.changeAuthorizationServerPolicyLifecycle(ctx, authServerID, policyID, "activate")
 }
 
-func (m *ApiSupplement) DeactivateAuthorizationServerPolicy(ctx context.Context, authServerID, policyID string) (*okta.Response, error) {
+func (m *APISupplement) DeactivateAuthorizationServerPolicy(ctx context.Context, authServerID, policyID string) (*okta.Response, error) {
 	return m.changeAuthorizationServerPolicyLifecycle(ctx, authServerID, policyID, "deactivate")
 }
 
-func (m *ApiSupplement) changeAuthorizationServerPolicyLifecycle(ctx context.Context, authServerID, policyID, action string) (*okta.Response, error) {
+func (m *APISupplement) changeAuthorizationServerPolicyLifecycle(ctx context.Context, authServerID, policyID, action string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/lifecycle/%s", authServerID, policyID, action)
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, nil)
 	if err != nil {

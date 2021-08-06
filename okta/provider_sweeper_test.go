@@ -13,7 +13,7 @@ import (
 
 type testClient struct {
 	oktaClient    *okta.Client
-	apiSupplement *sdk.ApiSupplement
+	apiSupplement *sdk.APISupplement
 }
 
 var testResourcePrefix = "testAcc"
@@ -70,7 +70,7 @@ func buildResourceName(testID int) string {
 }
 
 // sharedClient returns a common Okta Client for sweepers, which currently requires the original SDK and the official beta SDK
-func sharedClient() (*okta.Client, *sdk.ApiSupplement, error) {
+func sharedClient() (*okta.Client, *sdk.APISupplement, error) {
 	err := accPreCheck()
 	if err != nil {
 		return nil, nil, err
@@ -89,7 +89,7 @@ func sharedClient() (*okta.Client, *sdk.ApiSupplement, error) {
 	if err != nil {
 		return client, nil, err
 	}
-	api := &sdk.ApiSupplement{RequestExecutor: client.GetRequestExecutor()}
+	api := &sdk.APISupplement{RequestExecutor: client.GetRequestExecutor()}
 
 	return client, api, nil
 }

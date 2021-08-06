@@ -335,7 +335,7 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 		logger(m).Info("found multiple SAML applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
 	}
-	users, groups, err := listAppUsersAndGroupsIDs(ctx, getOktaClientFromMetadata(m), app.Id)
+	users, groups, err := listAppUsersIDsAndGroupsIDs(ctx, getOktaClientFromMetadata(m), app.Id)
 	if err != nil {
 		return diag.Errorf("failed to list SAML's app groups and users: %v", err)
 	}

@@ -46,19 +46,6 @@ func camelCaseToUnderscore(s string) string {
 	return s
 }
 
-func condenseError(errorList []error) error {
-	if len(errorList) < 1 {
-		return nil
-	}
-	msgList := make([]string, len(errorList))
-	for i, err := range errorList {
-		if err != nil {
-			msgList[i] = err.Error()
-		}
-	}
-	return fmt.Errorf("series of errors occurred: %s", strings.Join(msgList, ", "))
-}
-
 func conditionalRequire(d *schema.ResourceData, propList []string, reason string) error {
 	var missing []string
 
@@ -116,17 +103,6 @@ func containsInt(codes []int, code int) bool {
 	return false
 }
 
-// Ensures all elements are contained in slice.
-func containsAll(s []string, elements ...string) bool {
-	for _, a := range elements {
-		if !contains(s, a) {
-			return false
-		}
-	}
-
-	return true
-}
-
 // Ensures at least one element is contained in provided slice. More performant version of contains(..) || contains(..)
 func containsOne(s []string, elements ...string) bool {
 	for _, a := range s {
@@ -134,7 +110,6 @@ func containsOne(s []string, elements ...string) bool {
 			return true
 		}
 	}
-
 	return false
 }
 
@@ -285,7 +260,7 @@ func getOktaClientFromMetadata(meta interface{}) *okta.Client {
 	return meta.(*Config).oktaClient
 }
 
-func getSupplementFromMetadata(meta interface{}) *sdk.ApiSupplement {
+func getSupplementFromMetadata(meta interface{}) *sdk.APISupplement {
 	return meta.(*Config).supplementClient
 }
 

@@ -23,7 +23,7 @@ func TestPreRequestHook(t *testing.T) {
 	path := "/api/v1/apps"
 
 	client := &http.Client{}
-	apiMutex, _ := apimutex.NewApiMutex(percentage)
+	apiMutex, _ := apimutex.NewAPIMutex(percentage)
 	transport := NewGovernedTransport(client.Transport, apiMutex)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -46,7 +46,7 @@ func TestPostRequestHook(t *testing.T) {
 
 	percentage := 10
 	client := &http.Client{}
-	apiMutex, _ := apimutex.NewApiMutex(percentage)
+	apiMutex, _ := apimutex.NewAPIMutex(percentage)
 	transport := NewGovernedTransport(client.Transport, apiMutex)
 
 	path := "/api/v1/apps"

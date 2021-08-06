@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,8 +17,6 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/internal/transport"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
-
-var apiMutex *apimutex.ApiMutex
 
 func (adt *AddHeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	req.Header.Add("User-Agent", "Okta Terraform Provider")
@@ -45,9 +44,9 @@ type (
 		maxWait          int
 		logLevel         int
 		requestTimeout   int
-		maxApiCapacity   int // experimental
+		maxAPICapacity   int // experimental
 		oktaClient       *okta.Client
-		supplementClient *sdk.ApiSupplement
+		supplementClient *sdk.APISupplement
 		logger           hclog.Logger
 	}
 )
@@ -74,11 +73,11 @@ func (c *Config) loadAndValidate() error {
 	}
 
 	// adds transport governor to retryable or default client
-	if c.maxApiCapacity > 0 {
-		log.Printf("[DEBUG] running with experimental max_api_capacity configuration at %d%%", c.maxApiCapacity)
-		apiMutex, err := apimutex.NewApiMutex(c.maxApiCapacity)
+	if c.maxAPICapacity > 0 {
+		log.Printf("[DEBUG] running with experimental max_api_capacity configuration at %d%%", c.maxAPICapacity)
+		apiMutex, err := apimutex.NewAPIMutex(c.maxAPICapacity)
 		if err != nil {
-			return nil
+			return err
 		}
 		httpClient.Transport = transport.NewGovernedTransport(httpClient.Transport, apiMutex)
 	}
@@ -107,7 +106,7 @@ func (c *Config) loadAndValidate() error {
 		return err
 	}
 	c.oktaClient = client
-	c.supplementClient = &sdk.ApiSupplement{
+	c.supplementClient = &sdk.APISupplement{
 		RequestExecutor: client.GetRequestExecutor(),
 	}
 	return nil
@@ -120,8 +119,8 @@ func errHandler(resp *http.Response, err error, numTries int) (*http.Response, e
 	defer resp.Body.Close()
 	err = okta.CheckResponseForError(resp)
 	if err != nil {
-		oErr, ok := err.(*okta.Error)
-		if ok {
+		var oErr *okta.Error
+		if errors.As(err, &oErr) {
 			oErr.ErrorSummary = fmt.Sprintf("%s, giving up after %d attempt(s)", oErr.ErrorSummary, numTries)
 			return resp, oErr
 		}

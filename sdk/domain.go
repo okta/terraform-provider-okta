@@ -15,7 +15,7 @@ type Domain struct {
 	CertificateSourceType string `json:"certificateSourceType"`
 	ValidationStatus      string `json:"validationStatus,omitempty"`
 	DNSRecords            []struct {
-		Expiration string   `json:"expiration",omitempty"`
+		Expiration string   `json:"expiration,omitempty"`
 		Fqdn       string   `json:"fqdn,omitempty"`
 		Values     []string `json:"values,omitempty"`
 		RecordType string   `json:"recordType,omitempty"`
@@ -34,7 +34,7 @@ type Certificate struct {
 	CertificateChain string `json:"certificateChain,omitempty"`
 }
 
-func (m *ApiSupplement) CreateDomain(ctx context.Context, body Domain) (*Domain, *okta.Response, error) {
+func (m *APISupplement) CreateDomain(ctx context.Context, body Domain) (*Domain, *okta.Response, error) {
 	url := "/api/v1/domains"
 	req, err := m.RequestExecutor.
 		WithAccept("application/json").
@@ -51,7 +51,7 @@ func (m *ApiSupplement) CreateDomain(ctx context.Context, body Domain) (*Domain,
 	return &domain, resp, nil
 }
 
-func (m *ApiSupplement) VerifyDomain(ctx context.Context, id string) (*Domain, *okta.Response, error) {
+func (m *APISupplement) VerifyDomain(ctx context.Context, id string) (*Domain, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/domains/%s/verify", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, nil)
 	if err != nil {
@@ -65,7 +65,7 @@ func (m *ApiSupplement) VerifyDomain(ctx context.Context, id string) (*Domain, *
 	return &domain, resp, nil
 }
 
-func (m *ApiSupplement) GetDomain(ctx context.Context, id string) (*Domain, *okta.Response, error) {
+func (m *APISupplement) GetDomain(ctx context.Context, id string) (*Domain, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/domains/%v", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -79,7 +79,7 @@ func (m *ApiSupplement) GetDomain(ctx context.Context, id string) (*Domain, *okt
 	return &domain, resp, nil
 }
 
-func (m *ApiSupplement) DeleteDomain(ctx context.Context, id string) (*okta.Response, error) {
+func (m *APISupplement) DeleteDomain(ctx context.Context, id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/domains/%v", id)
 	req, err := m.RequestExecutor.NewRequest("DELETE", url, nil)
 	if err != nil {
