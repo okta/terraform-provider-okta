@@ -185,7 +185,7 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 		logger(m).Info("found multiple OAuth applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
 	}
-	users, groups, err := listAppUsersAndGroupsIDs(ctx, getOktaClientFromMetadata(m), app.Id)
+	users, groups, err := listAppUsersIDsAndGroupsIDs(ctx, getOktaClientFromMetadata(m), app.Id)
 	if err != nil {
 		return diag.Errorf("failed to list OAuth's app groups and users: %v", err)
 	}

@@ -100,7 +100,7 @@ type (
 	}
 )
 
-func (m *ApiSupplement) CreateIdpDiscoveryRule(ctx context.Context, policyID string, body IdpDiscoveryRule, qp *query.Params) (*IdpDiscoveryRule, *okta.Response, error) {
+func (m *APISupplement) CreateIdpDiscoveryRule(ctx context.Context, policyID string, body IdpDiscoveryRule, qp *query.Params) (*IdpDiscoveryRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%s/rules", policyID)
 	if qp != nil {
 		url += qp.String()
@@ -115,7 +115,7 @@ func (m *ApiSupplement) CreateIdpDiscoveryRule(ctx context.Context, policyID str
 	return &rule, resp, err
 }
 
-func (m *ApiSupplement) UpdateIdpDiscoveryRule(ctx context.Context, policyID, id string, body IdpDiscoveryRule, qp *query.Params) (*IdpDiscoveryRule, *okta.Response, error) {
+func (m *APISupplement) UpdateIdpDiscoveryRule(ctx context.Context, policyID, id string, body IdpDiscoveryRule, qp *query.Params) (*IdpDiscoveryRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%s/rules/%s", policyID, id)
 	if qp != nil {
 		url += qp.String()
@@ -130,7 +130,7 @@ func (m *ApiSupplement) UpdateIdpDiscoveryRule(ctx context.Context, policyID, id
 	return &rule, resp, err
 }
 
-func (m *ApiSupplement) GetIdpDiscoveryRule(ctx context.Context, policyID, id string) (*IdpDiscoveryRule, *okta.Response, error) {
+func (m *APISupplement) GetIdpDiscoveryRule(ctx context.Context, policyID, id string) (*IdpDiscoveryRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%s/rules/%s", policyID, id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {

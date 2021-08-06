@@ -95,6 +95,7 @@ type (
 	}
 )
 
+// MarshalJSON implements Marshaller
 // This is workaround for issue, when we should set 'pattern' to 'null' explicitly to use default Email Format for login
 // but for other cases `null` causes 500 error
 func (u *UserSubSchema) MarshalJSON() ([]byte, error) {
@@ -117,7 +118,7 @@ func (u *UserSubSchema) MarshalJSON() ([]byte, error) {
 	return ret, err
 }
 
-func (m *ApiSupplement) DeleteUserSchemaProperty(ctx context.Context, schemaURL string, id string) (*okta.Response, error) {
+func (m *APISupplement) DeleteUserSchemaProperty(ctx context.Context, schemaURL string, id string) (*okta.Response, error) {
 	req, err := m.RequestExecutor.NewRequest(http.MethodPost, schemaURL, getCustomUserSchema(id, nil))
 	if err != nil {
 		return nil, err
@@ -126,15 +127,15 @@ func (m *ApiSupplement) DeleteUserSchemaProperty(ctx context.Context, schemaURL 
 	return m.RequestExecutor.Do(ctx, req, nil)
 }
 
-func (m *ApiSupplement) UpdateCustomUserSchemaProperty(ctx context.Context, schemaURL string, id string, schema *UserSubSchema) (*UserSchema, *okta.Response, error) {
+func (m *APISupplement) UpdateCustomUserSchemaProperty(ctx context.Context, schemaURL string, id string, schema *UserSubSchema) (*UserSchema, *okta.Response, error) {
 	return m.UpdateUserSchemaProperty(ctx, schemaURL, getCustomUserSchema(id, schema))
 }
 
-func (m *ApiSupplement) UpdateBaseUserSchemaProperty(ctx context.Context, schemaURL string, id string, schema *UserSubSchema) (*UserSchema, *okta.Response, error) {
+func (m *APISupplement) UpdateBaseUserSchemaProperty(ctx context.Context, schemaURL string, id string, schema *UserSubSchema) (*UserSchema, *okta.Response, error) {
 	return m.UpdateUserSchemaProperty(ctx, schemaURL, getBaseUserSchema(id, schema))
 }
 
-func (m *ApiSupplement) UpdateUserSchemaProperty(ctx context.Context, schemaURL string, schema *UserSchema) (*UserSchema, *okta.Response, error) {
+func (m *APISupplement) UpdateUserSchemaProperty(ctx context.Context, schemaURL string, schema *UserSchema) (*UserSchema, *okta.Response, error) {
 	req, err := m.RequestExecutor.NewRequest(http.MethodPost, schemaURL, schema)
 	if err != nil {
 		return nil, nil, err
@@ -145,7 +146,7 @@ func (m *ApiSupplement) UpdateUserSchemaProperty(ctx context.Context, schemaURL 
 	return fullSchema, resp, err
 }
 
-func (m *ApiSupplement) GetUserSchema(ctx context.Context, schemaURL string) (*UserSchema, *okta.Response, error) {
+func (m *APISupplement) GetUserSchema(ctx context.Context, schemaURL string) (*UserSchema, *okta.Response, error) {
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, schemaURL, nil)
 	if err != nil {
 		return nil, nil, err

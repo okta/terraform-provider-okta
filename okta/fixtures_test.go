@@ -13,7 +13,11 @@ type fixtureManager struct {
 	Path string
 }
 
-const uuidPattern = "replace_with_uuid"
+const (
+	baseSchema   = "base"
+	customSchema = "custom"
+	uuidPattern  = "replace_with_uuid"
+)
 
 // newFixtureManager get a new fixture manager for a particular resource.
 func newFixtureManager(resourceName string) *fixtureManager {

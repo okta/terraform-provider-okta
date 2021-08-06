@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
-
 	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 type (
@@ -22,7 +21,7 @@ type (
 	}
 )
 
-func (m *ApiSupplement) GetSmsTemplate(ctx context.Context, id string) (*SmsTemplate, *okta.Response, error) {
+func (m *APISupplement) GetSmsTemplate(ctx context.Context, id string) (*SmsTemplate, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/templates/sms/%s", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -35,7 +34,7 @@ func (m *ApiSupplement) GetSmsTemplate(ctx context.Context, id string) (*SmsTemp
 	return temp, resp, err
 }
 
-func (m *ApiSupplement) CreateSmsTemplate(ctx context.Context, body SmsTemplate, qp *query.Params) (*SmsTemplate, *okta.Response, error) {
+func (m *APISupplement) CreateSmsTemplate(ctx context.Context, body SmsTemplate, qp *query.Params) (*SmsTemplate, *okta.Response, error) {
 	url := "/api/v1/templates/sms"
 	if qp != nil {
 		url += qp.String()
@@ -50,7 +49,7 @@ func (m *ApiSupplement) CreateSmsTemplate(ctx context.Context, body SmsTemplate,
 	return temp, resp, err
 }
 
-func (m *ApiSupplement) UpdateSmsTemplate(ctx context.Context, id string, body SmsTemplate, qp *query.Params) (*SmsTemplate, *okta.Response, error) {
+func (m *APISupplement) UpdateSmsTemplate(ctx context.Context, id string, body SmsTemplate, qp *query.Params) (*SmsTemplate, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/templates/sms/%s", id)
 	if qp != nil {
 		url += qp.String()

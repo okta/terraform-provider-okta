@@ -324,7 +324,7 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 		maxWait:        d.Get("max_wait_seconds").(int),
 		logLevel:       d.Get("log_level").(int),
 		requestTimeout: d.Get("request_timeout").(int),
-		maxApiCapacity: d.Get("max_api_capacity").(int),
+		maxAPICapacity: d.Get("max_api_capacity").(int),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, diag.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)

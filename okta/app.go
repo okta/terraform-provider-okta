@@ -253,39 +253,31 @@ func updateAppByID(ctx context.Context, id string, m interface{}, app okta.App) 
 }
 
 func handleAppGroups(ctx context.Context, id string, d *schema.ResourceData, client *okta.Client) []func() error {
-	existingGroups, _ := listApplicationGroupAssignments(ctx, client, id)
-	var (
-		asyncActionList []func() error
-		groupIDList     []string
-	)
-
-	if arr, ok := d.GetOk("groups"); ok {
-		rawArr := arr.(*schema.Set).List()
-		groupIDList = make([]string, len(rawArr))
-
-		for i, gID := range rawArr {
-			groupID := gID.(string)
-			groupIDList[i] = groupID
-
-			if !containsGroup(existingGroups, groupID) {
-				asyncActionList = append(asyncActionList, func() error {
-					_, resp, err := client.Application.CreateApplicationGroupAssignment(ctx, id,
-						groupID, okta.ApplicationGroupAssignment{})
-					return responseErr(resp, err)
-				})
-			}
-		}
+	if !d.HasChange("groups") {
+		return nil
 	}
+	var asyncActionList []func() error
 
-	for _, group := range existingGroups {
-		if !contains(groupIDList, group.Id) {
-			groupID := group.Id
-			asyncActionList = append(asyncActionList, func() error {
-				return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(ctx, id, groupID))
-			})
-		}
+	oldGs, newGs := d.GetChange("groups")
+	oldSet := oldGs.(*schema.Set)
+	newSet := newGs.(*schema.Set)
+	groupsToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
+	groupsToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
+
+	for i := range groupsToAdd {
+		gID := groupsToAdd[i]
+		asyncActionList = append(asyncActionList, func() error {
+			_, resp, err := client.Application.CreateApplicationGroupAssignment(ctx, id,
+				gID, okta.ApplicationGroupAssignment{})
+			return responseErr(resp, err)
+		})
 	}
-
+	for i := range groupsToRemove {
+		gID := groupsToRemove[i]
+		asyncActionList = append(asyncActionList, func() error {
+			return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(ctx, id, gID))
+		})
+	}
 	return asyncActionList
 }
 
@@ -308,15 +300,6 @@ func listApplicationGroupAssignments(ctx context.Context, client *okta.Client, i
 		}
 	}
 	return resGroups, nil
-}
-
-func containsGroup(groupList []*okta.ApplicationGroupAssignment, id string) bool {
-	for _, group := range groupList {
-		if group.Id == id {
-			return true
-		}
-	}
-	return false
 }
 
 func containsAppUser(userList []*okta.AppUser, id string) bool {
@@ -365,65 +348,66 @@ func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, a
 }
 
 func handleAppUsers(ctx context.Context, id string, d *schema.ResourceData, client *okta.Client) []func() error {
-	// Looking upstream for existing user's, rather then the config for accuracy.
-	existingUsers, _ := listApplicationUsers(ctx, client, id)
-	var (
-		asyncActionList []func() error
-		users           []interface{}
-		userIDList      []string
-	)
-
-	if set, ok := d.GetOk("users"); ok {
-		users = set.(*schema.Set).List()
-		userIDList = make([]string, len(users))
-		for i, user := range users {
-			userProfile := user.(map[string]interface{})
-			uID := userProfile["id"].(string)
-			username := userProfile["username"].(string)
-			userIDList[i] = uID
-			// Not required
-			password, _ := userProfile["password"].(string)
-			if !containsAppUser(existingUsers, uID) {
-				asyncActionList = append(asyncActionList, func() error {
-					_, _, err := client.Application.AssignUserToApplication(ctx, id, okta.AppUser{
-						Id: uID,
-						Credentials: &okta.AppUserCredentials{
-							UserName: username,
-							Password: &okta.AppUserPasswordCredential{
-								Value: password,
-							},
-						},
-					})
-					return err
-				})
-			} else if shouldUpdateUser(existingUsers, uID, username) {
-				asyncActionList = append(asyncActionList, func() error {
-					_, _, err := client.Application.UpdateApplicationUser(ctx, id, uID, okta.AppUser{
-						Id: uID,
-						Credentials: &okta.AppUserCredentials{
-							UserName: username,
-							Password: &okta.AppUserPasswordCredential{
-								Value: password,
-							},
-						},
-					})
-					return err
-				})
-			}
+	if !d.HasChange("users") {
+		return nil
+	}
+	existingUsers, err := listApplicationUsers(ctx, client, id)
+	if err != nil {
+		return []func() error{
+			func() error { return err },
 		}
 	}
 
-	for _, user := range existingUsers {
-		if user.Scope == userScope {
-			if !contains(userIDList, user.Id) {
-				userID := user.Id
-				asyncActionList = append(asyncActionList, func() error {
-					return suppressErrorOn404(client.Application.DeleteApplicationUser(ctx, id, userID, nil))
+	var asyncActionList []func() error
+
+	oldUs, newUs := d.GetChange("users")
+	oldSet := oldUs.(*schema.Set)
+	newSet := newUs.(*schema.Set)
+	usersToAdd := newSet.Difference(oldSet).List()
+	usersToRemove := oldSet.Difference(newSet).List()
+
+	for i := range usersToAdd {
+		userProfile := usersToAdd[i].(map[string]interface{})
+		uID := userProfile["id"].(string)
+		username := userProfile["username"].(string)
+		password := userProfile["password"].(string)
+		if shouldUpdateUser(existingUsers, uID, username) {
+			asyncActionList = append(asyncActionList, func() error {
+				_, _, err := client.Application.UpdateApplicationUser(ctx, id, uID, okta.AppUser{
+					Id: uID,
+					Credentials: &okta.AppUserCredentials{
+						UserName: username,
+						Password: &okta.AppUserPasswordCredential{
+							Value: password,
+						},
+					},
 				})
-			}
+				return err
+			})
+		} else {
+			asyncActionList = append(asyncActionList, func() error {
+				_, _, err := client.Application.AssignUserToApplication(ctx, id, okta.AppUser{
+					Id: uID,
+					Credentials: &okta.AppUserCredentials{
+						UserName: username,
+						Password: &okta.AppUserPasswordCredential{
+							Value: password,
+						},
+					},
+				})
+				return err
+			})
 		}
 	}
 
+	for i := range usersToRemove {
+		uID := usersToRemove[i].(map[string]interface{})["id"].(string)
+		if containsAppUser(existingUsers, uID) {
+			asyncActionList = append(asyncActionList, func() error {
+				return suppressErrorOn404(client.Application.DeleteApplicationUser(ctx, id, uID, nil))
+			})
+		}
+	}
 	return asyncActionList
 }
 
@@ -461,52 +445,40 @@ func setAppStatus(ctx context.Context, d *schema.ResourceData, client *okta.Clie
 
 func syncGroupsAndUsers(ctx context.Context, id string, d *schema.ResourceData, m interface{}) error {
 	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusNotFound})
-	client := getOktaClientFromMetadata(m)
-	// Temporary high limit to avoid issues short term. Need to support pagination here
-	userList, _, err := client.Application.ListApplicationUsers(ctx, id, &query.Params{Limit: defaultPaginationLimit})
+	appUsers, appGroups, err := listAppUsersAndGroups(ctx, getOktaClientFromMetadata(m), id)
 	if err != nil {
-		return fmt.Errorf("failed to list application users: %v", err)
+		return err
 	}
-	// Temporary high limit to avoid issues short term. Need to support pagination here
-	groupList, _, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{Limit: defaultPaginationLimit})
-	if err != nil {
-		return fmt.Errorf("failed to list application group assignments: %v", err)
+	flatGroupList := make([]interface{}, len(appGroups))
+	for i := range appGroups {
+		flatGroupList[i] = appGroups[i].Id
 	}
-	flatGroupList := make([]interface{}, len(groupList))
-
-	for i, g := range groupList {
-		flatGroupList[i] = g.Id
-	}
-
 	var flattenedUserList []interface{}
-
-	for _, user := range userList {
-		if user.Scope == userScope {
-			var un, up string
-			if user.Credentials != nil {
-				un = user.Credentials.UserName
-				if user.Credentials.Password != nil {
-					up = user.Credentials.Password.Value
-				}
-			}
-			flattenedUserList = append(flattenedUserList, map[string]interface{}{
-				"id":       user.Id,
-				"username": un,
-				"scope":    user.Scope,
-				"password": up,
-			})
+	for _, user := range appUsers {
+		if user.Scope != userScope {
+			continue
 		}
+		var un, up string
+		if user.Credentials != nil {
+			un = user.Credentials.UserName
+			if user.Credentials.Password != nil {
+				up = user.Credentials.Password.Value
+			}
+		}
+		flattenedUserList = append(flattenedUserList, map[string]interface{}{
+			"id":       user.Id,
+			"username": un,
+			"scope":    user.Scope,
+			"password": up,
+		})
 	}
 	flatMap := map[string]interface{}{}
-
 	if len(flattenedUserList) > 0 {
 		flatMap["users"] = schema.NewSet(schema.HashResource(appUserResource), flattenedUserList)
 	}
-
 	if len(flatGroupList) > 0 {
 		flatMap["groups"] = schema.NewSet(schema.HashString, flatGroupList)
 	}
-
 	return setNonPrimitives(d, flatMap)
 }
 
@@ -597,12 +569,17 @@ func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{
 	return err
 }
 
-func listAppUsersAndGroupsIDs(ctx context.Context, client *okta.Client, id string) (users []string, groups []string, err error) {
-	appUsers, err := listApplicationUsers(ctx, client, id)
+func listAppUsersAndGroups(ctx context.Context, client *okta.Client, id string) (users []*okta.AppUser, groups []*okta.ApplicationGroupAssignment, err error) {
+	users, err = listApplicationUsers(ctx, client, id)
 	if err != nil {
-		return nil, nil, err
+		return
 	}
-	appGroups, err := listApplicationGroupAssignments(ctx, client, id)
+	groups, err = listApplicationGroupAssignments(ctx, client, id)
+	return
+}
+
+func listAppUsersIDsAndGroupsIDs(ctx context.Context, client *okta.Client, id string) (users []string, groups []string, err error) {
+	appUsers, appGroups, err := listAppUsersAndGroups(ctx, client, id)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -622,12 +599,10 @@ func computeFileHash(filename string) string {
 	if err != nil {
 		return ""
 	}
-	defer func() {
-		_ = file.Close()
-	}()
 	h := sha256.New()
 	if _, err := io.Copy(h, file); err != nil {
 		log.Fatal(err)
 	}
+	_ = file.Close()
 	return hex.EncodeToString(h.Sum(nil))
 }

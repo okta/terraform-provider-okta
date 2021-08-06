@@ -13,38 +13,38 @@ const (
 	OTHER_KEY = "other"
 )
 
-// ApiMutex synchronizes keeping account of current known rate limit values
+// APIMutex synchronizes keeping account of current known rate limit values
 // from Okta management endpoints. Specifically apps, users, and other, see:
 // https://developer.okta.com/docs/reference/rl-global-mgmt/ The Okta Terraform
 // Provider can not account for all other kinds of clients utilization of API
 // limits but it can account for its own usage and attempt to preemptively
 // react appropriately.
-type ApiMutex struct {
+type APIMutex struct {
 	lock     sync.Mutex
-	status   map[string]*ApiStatus
+	status   map[string]*APIStatus
 	capacity int
 }
 
-// ApiStatus is used to hold rate limit information from Okta's API, see:
+// APIStatus is used to hold rate limit information from Okta's API, see:
 // https://developer.okta.com/docs/reference/rl-best-practices/
-type ApiStatus struct {
+type APIStatus struct {
 	limit     int
 	remaining int
 	reset     int64 // UTC epoch time in seconds
 }
 
-// NewApiMutex returns a new api mutex object that represents untilized
+// NewAPIMutex returns a new api mutex object that represents untilized
 // capacity under the specified capacity percentage.
-func NewApiMutex(capacity int) (*ApiMutex, error) {
+func NewAPIMutex(capacity int) (*APIMutex, error) {
 	if capacity < 1 || capacity > 100 {
 		return nil, fmt.Errorf("expecting capacity as whole number > 0 and <= 100, was %d", capacity)
 	}
-	status := map[string]*ApiStatus{
-		APPS_KEY:  &ApiStatus{},
-		USERS_KEY: &ApiStatus{},
-		OTHER_KEY: &ApiStatus{},
+	status := map[string]*APIStatus{
+		APPS_KEY:  {},
+		USERS_KEY: {},
+		OTHER_KEY: {},
 	}
-	return &ApiMutex{
+	return &APIMutex{
 		capacity: capacity,
 		status:   status,
 	}, nil
@@ -52,12 +52,11 @@ func NewApiMutex(capacity int) (*ApiMutex, error) {
 
 // HasCapacity approximates if there is capacity below the api mutex's maximum
 // capacity threshold.
-func (m *ApiMutex) HasCapacity(endPoint string) bool {
+func (m *APIMutex) HasCapacity(endPoint string) bool {
 	status := m.get(endPoint)
 
 	// if the status hasn't been updated recently assume there is capacity
-	now := time.Now().Unix()
-	if status.reset+60 < now {
+	if status.reset+60 < time.Now().Unix() {
 		return true
 	}
 
@@ -68,8 +67,8 @@ func (m *ApiMutex) HasCapacity(endPoint string) bool {
 }
 
 // Update updates the known status for the given API endpoint. It is synchronous
-// and intellegently accounts for new values regardless of parallelism.
-func (m *ApiMutex) Update(endPoint string, limit, remaining int, reset int64) {
+// and intelligently accounts for new values regardless of parallelism.
+func (m *APIMutex) Update(endPoint string, limit, remaining int, reset int64) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
 
@@ -95,12 +94,12 @@ func (m *ApiMutex) Update(endPoint string, limit, remaining int, reset int64) {
 	}
 }
 
-// Status return the ApiStatus for the given class of endpoint.
-func (m *ApiMutex) Status(endPoint string) *ApiStatus {
+// Status return the APIStatus for the given class of endpoint.
+func (m *APIMutex) Status(endPoint string) *APIStatus {
 	return m.get(endPoint)
 }
 
-func (m *ApiMutex) normalizeKey(endPoint string) string {
+func (m *APIMutex) normalizeKey(endPoint string) string {
 	var result string
 	switch {
 	case strings.HasPrefix(endPoint, "/api/v1/apps"):
@@ -113,22 +112,22 @@ func (m *ApiMutex) normalizeKey(endPoint string) string {
 	return result
 }
 
-// Reset return the current reset value of the api status object.
-func (s *ApiStatus) Reset() int64 {
+// Reset returns the current reset value of the api status object.
+func (s *APIStatus) Reset() int64 {
 	return s.reset
 }
 
-// Reset return the current limit value of the api status object.
-func (s *ApiStatus) Limit() int {
+// Limit returns the current limit value of the api status object.
+func (s *APIStatus) Limit() int {
 	return s.limit
 }
 
-// Reset return the current remaining value of the api status object.
-func (s *ApiStatus) Remaining() int {
+// Remaining returns the current remaining value of the api status object.
+func (s *APIStatus) Remaining() int {
 	return s.remaining
 }
 
-func (m *ApiMutex) get(endPoint string) *ApiStatus {
+func (m *APIMutex) get(endPoint string) *APIStatus {
 	key := m.normalizeKey(endPoint)
 	return m.status[key]
 }

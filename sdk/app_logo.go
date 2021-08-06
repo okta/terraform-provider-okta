@@ -13,7 +13,7 @@ import (
 )
 
 // UploadAppLogo uploads app's logo
-func (m *ApiSupplement) UploadAppLogo(ctx context.Context, appID, filename string) (*okta.Response, error) {
+func (m *APISupplement) UploadAppLogo(ctx context.Context, appID, filename string) (*okta.Response, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err

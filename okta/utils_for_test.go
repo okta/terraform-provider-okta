@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -54,4 +55,17 @@ func ensureResourceNotExists(name string) resource.TestCheckFunc {
 		}
 		return fmt.Errorf("Resource found: %s", name)
 	}
+}
+
+func condenseError(errorList []error) error {
+	if len(errorList) < 1 {
+		return nil
+	}
+	msgList := make([]string, len(errorList))
+	for i, err := range errorList {
+		if err != nil {
+			msgList[i] = err.Error()
+		}
+	}
+	return fmt.Errorf("series of errors occurred: %s", strings.Join(msgList, ", "))
 }

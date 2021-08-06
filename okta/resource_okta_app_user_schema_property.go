@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceAppUserSchemaProperty() *schema.Resource {
@@ -173,7 +175,7 @@ func resourceAppUserSchemaUpdate(ctx context.Context, d *schema.ResourceData, m 
 		if d.Id() != "" {
 			return nil
 		}
-		return fmt.Errorf("Application User Schema property %s was not created in app %s", d.Get("index").(string), d.Get("app_id").(string))
+		return fmt.Errorf("application user schema property %s was not created in the app %s", d.Get("index").(string), d.Get("app_id").(string))
 	}, bOff)
 	return diag.FromErr(err)
 }
@@ -193,16 +195,33 @@ func updateAppUserSubschema(ctx context.Context, d *schema.ResourceData, m inter
 	} else {
 		subSchema.Union = "DISABLE"
 	}
-	_, _, err := getSupplementFromMetadata(m).UpdateCustomAppUserSchemaProperty(
-		ctx,
-		d.Get("index").(string),
-		d.Get("app_id").(string),
-		subSchema,
-	)
-	if err != nil {
-		return diag.Errorf("failed to update custom app user schema property: %v", err)
-	}
-	return nil
+	bOff := backoff.NewExponentialBackOff()
+	bOff.MaxElapsedTime = time.Second * 10
+	bOff.InitialInterval = time.Second
+	err := backoff.Retry(func() error {
+		_, _, err := getSupplementFromMetadata(m).UpdateCustomAppUserSchemaProperty(
+			ctx,
+			d.Get("index").(string),
+			d.Get("app_id").(string),
+			subSchema,
+		)
+		if err != nil {
+			var oktaErr *okta.Error
+			if errors.As(err, &oktaErr) {
+				for i := range oktaErr.ErrorCauses {
+					for _, sum := range oktaErr.ErrorCauses[i] {
+						if strings.Contains(sum.(string), "deletion process for an attribute with the same variable name is incomplete") {
+							return err
+						}
+					}
+				}
+				return backoff.Permanent(fmt.Errorf("failed to update custom app user schema property: %w", err))
+			}
+			return backoff.Permanent(fmt.Errorf("failed to update custom app user schema property: %w", err))
+		}
+		return nil
+	}, bOff)
+	return diag.FromErr(err)
 }
 
 func validateAppUserSchema(d *schema.ResourceData) error {

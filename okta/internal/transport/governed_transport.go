@@ -18,7 +18,7 @@ const (
 
 type GovernedTransport struct {
 	base     http.RoundTripper
-	apiMutex *apimutex.ApiMutex
+	apiMutex *apimutex.APIMutex
 }
 
 // NewGovernedTransport returns a governed transport that relies on pre and post
@@ -26,7 +26,7 @@ type GovernedTransport struct {
 // to determine if sleeping for the Okta API one minute bucket is called for.
 // The post request updates the information it is holding about the current api
 // rate limits.
-func NewGovernedTransport(base http.RoundTripper, apiMutex *apimutex.ApiMutex) *GovernedTransport {
+func NewGovernedTransport(base http.RoundTripper, apiMutex *apimutex.APIMutex) *GovernedTransport {
 	return &GovernedTransport{
 		base:     base,
 		apiMutex: apiMutex,

@@ -241,7 +241,6 @@ func resourceGroupRoleImporter(ctx context.Context, d *schema.ResourceData, m in
 			_ = d.Set("target_group_list", groupIDs)
 		}
 		return []*schema.ResourceData{d}, nil
-
 	}
 	err = fmt.Errorf("unable to find the role ID %s assigned to the group %s", roleID, groupID)
 	return nil, err
