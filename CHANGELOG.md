@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.13.1 (Aug 6, 2021)
+
+ENHANCEMENTS:
+
+* Add `inline_hook_id` field to the `okta_app_saml` resource [#561](https://github.com/okta/terraform-provider-okta/pull/561). Thanks, [@noinarisak](https://github.com/noinarisak)!
+* Add experimental `max_api_capacity` configuration field to the provider. Thanks, [@monde](https://github.com/monde)!
+
+BUGS:
+
+* Fixed users and groups assignment for the application resources [#565](https://github.com/okta/terraform-provider-okta/pull/565). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.13.0 (Jul 29, 2021)
 
 ENHANCEMENTS:
