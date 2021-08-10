@@ -133,16 +133,16 @@ func resourceAppUserSchemaCreate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceAppUserSchemaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	us, resp, err := getSupplementFromMetadata(m).GetAppUserSchema(ctx, d.Get("app_id").(string))
+	us, resp, err := getOktaClientFromMetadata(m).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
 	if err := suppressErrorOn404(resp, err); err != nil {
-		return diag.Errorf("failed to get app user schema: %v", err)
+		return diag.Errorf("failed to get application user schema property: %v", err)
 	}
-	subschema := getCustomProperty(us, d.Get("index").(string))
+	subschema := userSchemaCustomAttribute(us, d.Get("index").(string))
 	if subschema == nil {
 		d.SetId("")
 		return nil
 	}
-	err = syncUserSchema(d, subschema)
+	err = syncCustomUserSchema(d, subschema)
 	if subschema.Union != "" {
 		if subschema.Union == "DISABLE" {
 			_ = d.Set("union", false)
@@ -151,7 +151,7 @@ func resourceAppUserSchemaRead(ctx context.Context, d *schema.ResourceData, m in
 		}
 	}
 	if err != nil {
-		return diag.Errorf("failed to set user schema properties: %v", err)
+		return diag.Errorf("failed to set application user schema properties: %v", err)
 	}
 	return nil
 }
@@ -181,30 +181,29 @@ func resourceAppUserSchemaUpdate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceAppUserSchemaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, err := getSupplementFromMetadata(m).DeleteAppUserSchemaProperty(ctx, d.Get("index").(string), d.Get("app_id").(string))
+	custom := buildCustomUserSchema(d.Get("index").(string), nil)
+	_, _, err := getOktaClientFromMetadata(m).UserSchema.
+		UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
 	if err != nil {
-		return diag.Errorf("failed to delete user schema property")
+		return diag.Errorf("failed to delete application user schema property")
 	}
 	return nil
 }
 
 func updateAppUserSubschema(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	subSchema := userSubSchema(d)
+	subSchema := buildUserCustomSchemaAttribute(d)
 	if d.Get("union").(bool) {
 		subSchema.Union = "ENABLE"
 	} else {
 		subSchema.Union = "DISABLE"
 	}
+	custom := buildCustomUserSchema(d.Get("index").(string), subSchema)
 	bOff := backoff.NewExponentialBackOff()
 	bOff.MaxElapsedTime = time.Second * 10
 	bOff.InitialInterval = time.Second
 	err := backoff.Retry(func() error {
-		_, _, err := getSupplementFromMetadata(m).UpdateCustomAppUserSchemaProperty(
-			ctx,
-			d.Get("index").(string),
-			d.Get("app_id").(string),
-			subSchema,
-		)
+		_, _, err := getOktaClientFromMetadata(m).UserSchema.
+			UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
 		if err != nil {
 			var oktaErr *okta.Error
 			if errors.As(err, &oktaErr) {

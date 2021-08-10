@@ -1,10 +1,8 @@
 package okta
 
 import (
-	"context"
 	"errors"
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
@@ -16,26 +14,6 @@ const (
 	firstNameTestProp = "firstName"
 	loginTestProp     = "login"
 )
-
-func sweepUserBaseSchema(client *testClient) error {
-	var errorList []error
-	schemaURL := "/api/v1/meta/schemas/user/default"
-
-	schema, _, err := client.apiSupplement.GetUserSchema(context.Background(), schemaURL)
-	if err != nil {
-		return err
-	}
-
-	for key := range schema.Definitions.Custom.Properties {
-		if strings.HasPrefix(key, testResourcePrefix) {
-			if _, err := client.apiSupplement.DeleteUserSchemaProperty(context.Background(), schemaURL, key); err != nil {
-				errorList = append(errorList, err)
-			}
-		}
-	}
-
-	return condenseError(errorList)
-}
 
 func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 	ri := acctest.RandInt()
