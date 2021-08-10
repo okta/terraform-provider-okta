@@ -94,9 +94,9 @@ func resourceAuthServerPolicyUpdate(ctx context.Context, d *schema.ResourceData,
 	oldStatus, newStatus := d.GetChange("status")
 	if oldStatus != newStatus {
 		if newStatus == statusActive {
-			_, err = getSupplementFromMetadata(m).ActivateAuthorizationServerPolicy(ctx, d.Get("auth_server_id").(string), d.Id())
+			_, err = getOktaClientFromMetadata(m).AuthorizationServer.ActivateAuthorizationServerPolicy(ctx, d.Get("auth_server_id").(string), d.Id())
 		} else {
-			_, err = getSupplementFromMetadata(m).DeactivateAuthorizationServerPolicy(ctx, d.Get("auth_server_id").(string), d.Id())
+			_, err = getOktaClientFromMetadata(m).AuthorizationServer.DeactivateAuthorizationServerPolicy(ctx, d.Get("auth_server_id").(string), d.Id())
 		}
 		if err != nil {
 			return diag.Errorf("failed to change authorization server policy status: %v", err)

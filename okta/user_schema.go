@@ -2,9 +2,11 @@ package okta
 
 import (
 	"fmt"
+	"reflect"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 var (
@@ -160,7 +162,7 @@ var (
 	}
 )
 
-func syncUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) error {
+func syncCustomUserSchema(d *schema.ResourceData, subschema *okta.UserSchemaAttribute) error {
 	syncBaseUserSchema(d, subschema)
 	_ = d.Set("description", subschema.Description)
 	_ = d.Set("min_length", subschema.MinLength)
@@ -180,7 +182,7 @@ func syncUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) error 
 	})
 }
 
-func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) {
+func syncBaseUserSchema(d *schema.ResourceData, subschema *okta.UserSchemaAttribute) {
 	_ = d.Set("title", subschema.Title)
 	_ = d.Set("type", subschema.Type)
 	_ = d.Set("required", subschema.Required)
@@ -207,48 +209,32 @@ func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSubSchema) {
 	}
 }
 
-func getBaseProperty(s *sdk.UserSchema, id string) *sdk.UserSubSchema {
-	if s == nil || s.Definitions == nil || s.Definitions.Base == nil {
-		return nil
-	}
-	return s.Definitions.Base.Properties[id]
-}
-
-func getCustomProperty(s *sdk.UserSchema, id string) *sdk.UserSubSchema {
-	if s == nil || s.Definitions == nil || s.Definitions.Custom == nil {
-		return nil
-	}
-	return s.Definitions.Custom.Properties[id]
-}
-
-func getNullableOneOf(d *schema.ResourceData, key string) (oneOf []*sdk.UserSchemaEnum) {
-	oneOf = []*sdk.UserSchemaEnum{}
-
+func getNullableOneOf(d *schema.ResourceData, key string) []*okta.UserSchemaAttributeEnum {
+	var oneOf []*okta.UserSchemaAttributeEnum
 	if oneOfList, ok := d.GetOk(key); ok {
 		for _, v := range oneOfList.([]interface{}) {
 			valueMap := v.(map[string]interface{})
-			oneOf = append(oneOf, &sdk.UserSchemaEnum{
+			oneOf = append(oneOf, &okta.UserSchemaAttributeEnum{
 				Const: valueMap["const"].(string),
 				Title: valueMap["title"].(string),
 			})
 		}
 	}
-
 	return oneOf
 }
 
-func getNullableMaster(d *schema.ResourceData) *sdk.UserSchemaMaster {
+func getNullableMaster(d *schema.ResourceData) *okta.UserSchemaAttributeMaster {
 	v, ok := d.GetOk("master")
 	if !ok {
 		return nil
 	}
-	usm := &sdk.UserSchemaMaster{Type: v.(string)}
+	usm := &okta.UserSchemaAttributeMaster{Type: v.(string)}
 	if v.(string) == "OVERRIDE" {
 		mop, ok := d.Get("master_override_priority").([]interface{})
 		if ok && len(mop) > 0 {
-			props := make([]sdk.UserSchemaMasterPriority, len(mop))
+			props := make([]*okta.UserSchemaAttributeMasterPriority, len(mop))
 			for i := range mop {
-				props[i] = sdk.UserSchemaMasterPriority{
+				props[i] = &okta.UserSchemaAttributeMasterPriority{
 					Type:  d.Get(fmt.Sprintf("master_override_priority.%d.type", i)).(string),
 					Value: d.Get(fmt.Sprintf("master_override_priority.%d.value", i)).(string),
 				}
@@ -259,9 +245,9 @@ func getNullableMaster(d *schema.ResourceData) *sdk.UserSchemaMaster {
 	return usm
 }
 
-func getNullableItem(d *schema.ResourceData) *sdk.UserSchemaItem {
+func getNullableItem(d *schema.ResourceData) *okta.UserSchemaAttributeItems {
 	if v, ok := d.GetOk("array_type"); ok {
-		return &sdk.UserSchemaItem{
+		return &okta.UserSchemaAttributeItems{
 			Type:  v.(string),
 			OneOf: getNullableOneOf(d, "array_one_of"),
 			Enum:  convertInterfaceToStringArrNullable(d.Get("array_enum")),
@@ -271,7 +257,7 @@ func getNullableItem(d *schema.ResourceData) *sdk.UserSchemaItem {
 	return nil
 }
 
-func flattenOneOf(oneOf []*sdk.UserSchemaEnum) []interface{} {
+func flattenOneOf(oneOf []*okta.UserSchemaAttributeEnum) []interface{} {
 	result := make([]interface{}, len(oneOf))
 	for i, v := range oneOf {
 		result[i] = map[string]interface{}{
@@ -282,13 +268,13 @@ func flattenOneOf(oneOf []*sdk.UserSchemaEnum) []interface{} {
 	return result
 }
 
-func userSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
-	subschema := &sdk.UserSubSchema{
+func buildUserCustomSchemaAttribute(d *schema.ResourceData) *okta.UserSchemaAttribute {
+	userSchemaAttribute := &okta.UserSchemaAttribute{
 		Title:       d.Get("title").(string),
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
 		Required:    boolPtr(d.Get("required").(bool)),
-		Permissions: []*sdk.UserSchemaPermission{
+		Permissions: []*okta.UserSchemaAttributePermission{
 			{
 				Action:    d.Get("permissions").(string),
 				Principal: "SELF",
@@ -298,8 +284,8 @@ func userSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
 		Enum:              convertInterfaceToStringArrNullable(d.Get("enum")),
 		Master:            getNullableMaster(d),
 		Items:             getNullableItem(d),
-		MinLength:         getNullableInt(d, "min_length"),
-		MaxLength:         getNullableInt(d, "max_length"),
+		MinLength:         int64(d.Get("min_length").(int)),
+		MaxLength:         int64(d.Get("max_length").(int)),
 		OneOf:             getNullableOneOf(d, "one_of"),
 		ExternalName:      d.Get("external_name").(string),
 		ExternalNamespace: d.Get("external_namespace").(string),
@@ -307,17 +293,19 @@ func userSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
 	}
 	p, ok := d.GetOk("pattern")
 	if ok {
-		subschema.Pattern = stringPtr(p.(string))
+		userSchemaAttribute.Pattern = stringPtr(p.(string))
+	} else {
+		userSchemaAttribute.Pattern = nil
 	}
-	return subschema
+	return userSchemaAttribute
 }
 
-func userBasedSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
-	subSchema := &sdk.UserSubSchema{
+func buildUserBaseSchemaAttribute(d *schema.ResourceData) *okta.UserSchemaAttribute {
+	userSchemaAttribute := &okta.UserSchemaAttribute{
 		Master: getNullableMaster(d),
 		Title:  d.Get("title").(string),
 		Type:   d.Get("type").(string),
-		Permissions: []*sdk.UserSchemaPermission{
+		Permissions: []*okta.UserSchemaAttributePermission{
 			{
 				Action:    d.Get("permissions").(string),
 				Principal: "SELF",
@@ -326,11 +314,82 @@ func userBasedSubSchema(d *schema.ResourceData) *sdk.UserSubSchema {
 		Required: boolPtr(d.Get("required").(bool)),
 	}
 	if d.Get("index").(string) == "login" {
-		subSchema.IsLogin = true
-		p := d.Get("pattern").(string)
-		if p != "" {
-			subSchema.Pattern = stringPtr(p)
+		p, ok := d.GetOk("pattern")
+		if ok {
+			userSchemaAttribute.Pattern = stringPtr(p.(string))
+		} else {
+			userSchemaAttribute.Pattern = nil
 		}
 	}
-	return subSchema
+	return userSchemaAttribute
+}
+
+func buildBaseUserSchema(index string, schema *okta.UserSchemaAttribute) *okta.UserSchema {
+	return &okta.UserSchema{
+		Definitions: &okta.UserSchemaDefinitions{
+			Base: &okta.UserSchemaBase{
+				Id:         "#base",
+				Properties: createUserSchemaBaseProperty(index, schema),
+				Type:       "object",
+			},
+		},
+	}
+}
+
+func buildCustomUserSchema(index string, schema *okta.UserSchemaAttribute) *okta.UserSchema {
+	return &okta.UserSchema{
+		Definitions: &okta.UserSchemaDefinitions{
+			Custom: &okta.UserSchemaPublic{
+				Id: "#custom",
+				Properties: map[string]*okta.UserSchemaAttribute{
+					index: schema,
+				},
+				Type: "object",
+			},
+		},
+	}
+}
+
+func userSchemaCustomAttribute(s *okta.UserSchema, index string) *okta.UserSchemaAttribute {
+	if s == nil || s.Definitions == nil || s.Definitions.Custom == nil {
+		return nil
+	}
+	return s.Definitions.Custom.Properties[index]
+}
+
+func userSchemaBaseAttribute(s *okta.UserSchema, index string) *okta.UserSchemaAttribute {
+	if s == nil || s.Definitions == nil || s.Definitions.Base == nil {
+		return nil
+	}
+	t := reflect.TypeOf(*s.Definitions.Base.Properties)
+	v := reflect.ValueOf(*s.Definitions.Base.Properties)
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		tag := field.Tag.Get("json")
+		if index != strings.TrimSuffix(tag, ",omitempty") {
+			continue
+		}
+		return v.Field(i).Interface().(*okta.UserSchemaAttribute)
+	}
+	return nil
+}
+
+func createUserSchemaBaseProperty(index string, schema *okta.UserSchemaAttribute) *okta.UserSchemaBaseProperties {
+	var p okta.UserSchemaBaseProperties
+	t := reflect.TypeOf(&p)
+	v := reflect.ValueOf(&p)
+	for i := 0; i < t.Elem().NumField(); i++ {
+		field := t.Elem().Field(i)
+		tag := field.Tag.Get("json")
+		if index != strings.TrimSuffix(tag, ",omitempty") {
+			continue
+		}
+		if v.Elem().Field(i).CanSet() {
+			v.Elem().Field(i).Set(reflect.ValueOf(schema))
+			return &p
+		} else {
+			panic("can not set")
+		}
+	}
+	return nil
 }

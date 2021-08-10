@@ -187,19 +187,20 @@ func resourceAuthServerPolicyRuleUpdate(ctx context.Context, d *schema.ResourceD
 }
 
 func handleAuthServerPolicyRuleLifecycle(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getSupplementFromMetadata(m)
-	if d.Get("status").(string) == statusActive {
-		_, err := client.ActivateAuthorizationServerPolicyRule(ctx, d.Get("auth_server_id").(string),
-			d.Get("policy_id").(string), d.Id())
-		if err != nil {
-			return diag.Errorf("failed to activate authorization server: %v", err)
-		}
+	var err error
+	oldStatus, newStatus := d.GetChange("status")
+	if oldStatus == newStatus {
 		return nil
 	}
-	_, err := client.DeactivateAuthorizationServerPolicyRule(ctx, d.Get("auth_server_id").(string),
-		d.Get("policy_id").(string), d.Id())
+	if newStatus == statusActive {
+		_, err = getOktaClientFromMetadata(m).AuthorizationServer.ActivateAuthorizationServerPolicyRule(ctx, d.Get("auth_server_id").(string),
+			d.Get("policy_id").(string), d.Id())
+	} else {
+		_, err = getOktaClientFromMetadata(m).AuthorizationServer.DeactivateAuthorizationServerPolicyRule(ctx, d.Get("auth_server_id").(string),
+			d.Get("policy_id").(string), d.Id())
+	}
 	if err != nil {
-		return diag.Errorf("failed to deactivate authorization server: %v", err)
+		return diag.Errorf("failed to change authorization server policy status: %v", err)
 	}
 	return nil
 }

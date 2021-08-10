@@ -69,11 +69,11 @@ func resourceAppUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceAppUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	us, _, err := getSupplementFromMetadata(m).GetAppUserSchema(ctx, d.Get("app_id").(string))
+	us, _, err := getOktaClientFromMetadata(m).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to get app user base schema: %v", err)
 	}
-	subschema := getBaseProperty(us, d.Get("index").(string))
+	subschema := userSchemaBaseAttribute(us, d.Get("index").(string))
 	if subschema == nil {
 		d.SetId("")
 		return nil
@@ -100,12 +100,9 @@ func resourceAppUserBaseSchemaDelete(context.Context, *schema.ResourceData, inte
 
 // create or modify a subschema
 func updateAppUserBaseSubschema(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getSupplementFromMetadata(m).UpdateBaseAppUserSchemaProperty(
-		ctx,
-		d.Get("index").(string),
-		d.Get("app_id").(string),
-		userBasedSubSchema(d),
-	)
+	base := buildBaseUserSchema(d.Get("index").(string), buildUserBaseSchemaAttribute(d))
+	_, _, err := getOktaClientFromMetadata(m).UserSchema.
+		UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *base)
 	if err != nil {
 		return diag.Errorf("failed to update application user base schema: %v", err)
 	}

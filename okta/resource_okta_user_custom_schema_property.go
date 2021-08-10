@@ -9,7 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceUserSchemaProperty() *schema.Resource {
@@ -107,11 +107,12 @@ func resourceUserSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	schemaURL, err := getUserTypeSchemaUrl(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
+	typeSchemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
 	if err != nil {
 		return diag.Errorf("failed to create user custom schema: %v", err)
 	}
-	var subschema *sdk.UserSubSchema
+	custom := buildCustomUserSchema(d.Get("index").(string), buildUserCustomSchemaAttribute(d))
+	var subschema *okta.UserSchemaAttribute
 	timer := time.NewTimer(time.Second * 30) // sometimes it takes some time to recreate user schema
 	ticker := time.NewTicker(time.Second)
 loop:
@@ -122,8 +123,7 @@ loop:
 		case <-timer.C:
 			return diag.Errorf("failed to create user custom schema: no more attempts left")
 		case <-ticker.C:
-			time.Sleep(time.Second)
-			updated, _, err := getSupplementFromMetadata(m).UpdateCustomUserSchemaProperty(ctx, schemaURL, d.Get("index").(string), userSubSchema(d))
+			updated, _, err := getOktaClientFromMetadata(m).UserSchema.UpdateUserProfile(ctx, typeSchemaID, *custom)
 			if err != nil {
 				if strings.Contains(err.Error(), "Wait until the data clean up process finishes and then try again") {
 					continue
@@ -131,17 +131,17 @@ loop:
 				return diag.Errorf("failed to create user custom schema: %v", err)
 			}
 			d.SetId(d.Get("index").(string))
-			s, _, err := getSupplementFromMetadata(m).GetUserSchema(ctx, schemaURL)
+			s, _, err := getOktaClientFromMetadata(m).UserSchema.GetUserSchema(ctx, typeSchemaID)
 			if err != nil {
 				return diag.Errorf("failed to get user custom schema: %v", err)
 			}
-			subschema = getCustomProperty(s, d.Id())
+			subschema = userSchemaCustomAttribute(s, d.Id())
 			if subschema != nil && reflect.DeepEqual(subschema, updated.Definitions.Custom.Properties[d.Id()]) {
 				break loop
 			}
 		}
 	}
-	err = syncUserSchema(d, subschema)
+	err = syncCustomUserSchema(d, subschema)
 	if err != nil {
 		return diag.Errorf("failed to set user custom schema properties: %v", err)
 	}
@@ -150,20 +150,20 @@ loop:
 
 func resourceUserSchemaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	logger(m).Info("reading user schema", "name", d.Get("index").(string))
-	schemaURL, err := getUserTypeSchemaUrl(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
+	typeSchemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
 	if err != nil {
 		return diag.Errorf("failed to get user custom schema: %v", err)
 	}
-	s, _, err := getSupplementFromMetadata(m).GetUserSchema(ctx, schemaURL)
+	s, _, err := getOktaClientFromMetadata(m).UserSchema.GetUserSchema(ctx, typeSchemaID)
 	if err != nil {
 		return diag.Errorf("failed to get user custom schema: %v", err)
 	}
-	subschema := getCustomProperty(s, d.Id())
+	subschema := userSchemaCustomAttribute(s, d.Id())
 	if subschema == nil {
 		d.SetId("")
 		return nil
 	}
-	err = syncUserSchema(d, subschema)
+	err = syncCustomUserSchema(d, subschema)
 	if err != nil {
 		return diag.Errorf("failed to set user custom schema properties: %v", err)
 	}
@@ -171,11 +171,12 @@ func resourceUserSchemaRead(ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func resourceUserSchemaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	schemaURL, err := getUserTypeSchemaUrl(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
+	typeSchemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
 	if err != nil {
 		return diag.Errorf("failed to delete user custom schema: %v", err)
 	}
-	_, err = getSupplementFromMetadata(m).DeleteUserSchemaProperty(ctx, schemaURL, d.Id())
+	custom := buildCustomUserSchema(d.Id(), nil)
+	_, _, err = getOktaClientFromMetadata(m).UserSchema.UpdateUserProfile(ctx, typeSchemaID, *custom)
 	if err != nil {
 		return diag.Errorf("failed to delete user custom schema: %v", err)
 	}

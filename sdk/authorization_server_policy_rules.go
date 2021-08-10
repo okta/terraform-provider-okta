@@ -103,24 +103,3 @@ func (m *APISupplement) GetAuthorizationServerPolicyRule(ctx context.Context, au
 	}
 	return &authorizationServer, resp, nil
 }
-
-func (m *APISupplement) ActivateAuthorizationServerPolicyRule(ctx context.Context, authServerID, policyID, ruleID string) (*okta.Response, error) {
-	return m.changeAuthorizationServerPolicyRuleLifecycle(ctx, authServerID, policyID, ruleID, "activate")
-}
-
-func (m *APISupplement) DeactivateAuthorizationServerPolicyRule(ctx context.Context, authServerID, policyID, ruleID string) (*okta.Response, error) {
-	return m.changeAuthorizationServerPolicyRuleLifecycle(ctx, authServerID, policyID, ruleID, "deactivate")
-}
-
-func (m *APISupplement) changeAuthorizationServerPolicyRuleLifecycle(ctx context.Context, authServerID, policyID, ruleID, action string) (*okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers/%s/policies/%s/rules/%s/lifecycle/%s", authServerID, policyID, ruleID, action)
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := m.RequestExecutor.Do(ctx, req, nil)
-	if err != nil {
-		return resp, err
-	}
-	return resp, nil
-}

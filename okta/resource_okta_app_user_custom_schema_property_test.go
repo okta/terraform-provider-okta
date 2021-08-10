@@ -78,18 +78,17 @@ func testAppUserSchemasExists(name string) resource.TestCheckFunc {
 
 func testAppUserSchemaExists(index string) (bool, error) {
 	ids := strings.Split(index, "/")
-	client := getSupplementFromMetadata(testAccProvider.Meta())
-	schema, resp, err := client.GetAppUserSchema(context.Background(), ids[0])
+	schema, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).UserSchema.
+		GetApplicationUserSchema(context.Background(), ids[0])
 	if err != nil {
 		if resp != nil && resp.StatusCode == 404 {
 			return false, nil
 		}
-		return false, fmt.Errorf("error Listing App User Schema in Okta: %v", err)
+		return false, fmt.Errorf("failed to get application user schema: %v", err)
 	}
-	cu := getCustomProperty(schema, ids[1])
+	cu := userSchemaCustomAttribute(schema, ids[1])
 	if cu != nil {
 		return true, nil
 	}
-
 	return false, nil
 }

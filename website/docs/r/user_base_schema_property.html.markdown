@@ -12,13 +12,22 @@ Manages a User Base Schema property.
 
 This resource allows you to configure a base user schema property.
 
+IMPORTANT NOTE: 
+
+Based on the [official documentation](https://developer.okta.com/docs/reference/api/schemas/#user-profile-base-subschema)
+base properties can not be modified, except to update permissions, to change the nullability of `firstName` and 
+`lastName` (`required` property) or to specify a `pattern` for `login`. Currently, `title` and `type` are required, so
+they should be set to the current values of the base property. This will be fixed in the future releases, as this is 
+a breaking change.
+
 ## Example Usage
 
 ```hcl
 resource "okta_user_base_schema_property" "example" {
-  index       = "customPropertyName"
-  title       = "customPropertyName"
+  index       = "firstName"
+  title       = "First name"
   type        = "string"
+  required    = true
   master      = "OKTA"
   user_type   = "${data.okta_user_type.example.id}"
 }
@@ -40,7 +49,7 @@ The following arguments are supported:
 
 - `master` - (Optional) Master priority for the user schema property. It can be set to `"PROFILE_MASTER"` or `"OKTA"`.
 
-- `user_type` - (Optional) User type ID
+- `user_type` - (Optional) User type ID.
 
 - `pattern` - (Optional) The validation pattern to use for the subschema, only available for `login` property. Must be in form of `.+`, or `[<pattern>]+`.
 

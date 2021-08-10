@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceDomain() *schema.Resource {
@@ -71,13 +71,13 @@ func resourceDomain() *schema.Resource {
 }
 
 func resourceDomainCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	domain, _, err := getSupplementFromMetadata(m).CreateDomain(ctx, buildDomain(d))
+	domain, _, err := getOktaClientFromMetadata(m).Domain.CreateDomain(ctx, buildDomain(d))
 	if err != nil {
 		return diag.Errorf("failed to create domain: %v", err)
 	}
-	d.SetId(domain.ID)
+	d.SetId(domain.Id)
 	if d.Get("verify").(bool) {
-		_, _, err := getSupplementFromMetadata(m).VerifyDomain(ctx, domain.ID)
+		_, _, err := getOktaClientFromMetadata(m).Domain.VerifyDomain(ctx, domain.Id)
 		if err != nil {
 			return diag.Errorf("failed to verify domain: %v", err)
 		}
@@ -86,7 +86,7 @@ func resourceDomainCreate(ctx context.Context, d *schema.ResourceData, m interfa
 }
 
 func resourceDomainRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	domain, resp, err := getSupplementFromMetadata(m).GetDomain(ctx, d.Id())
+	domain, resp, err := getOktaClientFromMetadata(m).Domain.GetDomain(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get domain: %v", err)
 	}
@@ -103,13 +103,13 @@ func resourceDomainRead(ctx context.Context, d *schema.ResourceData, m interface
 	} else {
 		_ = d.Set("validation_status", domain.ValidationStatus)
 	}
-	arr := make([]map[string]interface{}, len(domain.DNSRecords))
-	for i := range domain.DNSRecords {
+	arr := make([]map[string]interface{}, len(domain.DnsRecords))
+	for i := range domain.DnsRecords {
 		arr[i] = map[string]interface{}{
-			"expiration":  domain.DNSRecords[i].Expiration,
-			"fqdn":        domain.DNSRecords[i].Fqdn,
-			"record_type": domain.DNSRecords[i].RecordType,
-			"values":      convertStringArrToInterface(domain.DNSRecords[i].Values),
+			"expiration":  domain.DnsRecords[i].Expiration,
+			"fqdn":        domain.DnsRecords[i].Fqdn,
+			"record_type": domain.DnsRecords[i].RecordType,
+			"values":      convertStringArrToInterface(domain.DnsRecords[i].Values),
 		}
 	}
 	err = setNonPrimitives(d, map[string]interface{}{"dns_records": arr})
@@ -120,7 +120,7 @@ func resourceDomainRead(ctx context.Context, d *schema.ResourceData, m interface
 		return nil
 	}
 	if d.Get("verify").(bool) {
-		_, _, err := getSupplementFromMetadata(m).VerifyDomain(ctx, d.Id())
+		_, _, err := getOktaClientFromMetadata(m).Domain.VerifyDomain(ctx, d.Id())
 		if err != nil {
 			return diag.Errorf("failed to verify domain: %v", err)
 		}
@@ -131,7 +131,7 @@ func resourceDomainRead(ctx context.Context, d *schema.ResourceData, m interface
 
 func resourceDomainDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	logger(m).Info("deleting domain", "id", d.Id())
-	_, err := getSupplementFromMetadata(m).DeleteDomain(ctx, d.Id())
+	_, err := getOktaClientFromMetadata(m).Domain.DeleteDomain(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete domain: %v", err)
 	}
@@ -146,22 +146,22 @@ func resourceDomainUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 	return resourceDomainRead(ctx, d, m)
 }
 
-func validateDomain(ctx context.Context, d *schema.ResourceData, m interface{}, validationStatus string) (*sdk.Domain, error) {
+func validateDomain(ctx context.Context, d *schema.ResourceData, m interface{}, validationStatus string) (*okta.Domain, error) {
 	if validationStatus == "IN_PROGRESS" || validationStatus == "VERIFIED" || validationStatus == "COMPLETED" {
 		return nil, nil
 	}
 	if !d.Get("verify").(bool) {
 		return nil, nil
 	}
-	domain, _, err := getSupplementFromMetadata(m).VerifyDomain(ctx, d.Id())
+	domain, _, err := getOktaClientFromMetadata(m).Domain.VerifyDomain(ctx, d.Id())
 	if err != nil {
 		return nil, fmt.Errorf("failed to verify domain: %v", err)
 	}
 	return domain, nil
 }
 
-func buildDomain(d *schema.ResourceData) sdk.Domain {
-	return sdk.Domain{
+func buildDomain(d *schema.ResourceData) okta.Domain {
+	return okta.Domain{
 		Domain:                d.Get("name").(string),
 		CertificateSourceType: "MANUAL",
 	}

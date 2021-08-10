@@ -13,24 +13,28 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func sweepUserSchema(client *testClient) error {
-	userTypeList, _, _ := client.oktaClient.UserType.ListUserTypes(context.Background())
-	var errorList []error
-	for _, ut := range userTypeList {
-		schemaURL := userTypeURL(ut)
-		schema, _, err := client.apiSupplement.GetUserSchema(context.Background(), schemaURL)
+func sweepUserCustomSchema(client *testClient) error {
+	userTypes, _, err := client.oktaClient.UserType.ListUserTypes(context.Background())
+	if err != nil {
+		return err
+	}
+	for _, userType := range userTypes {
+		typeSchemaID := userTypeSchemaID(userType)
+		schema, _, err := client.oktaClient.UserSchema.GetUserSchema(context.Background(), typeSchemaID)
 		if err != nil {
 			return err
 		}
 		for key := range schema.Definitions.Custom.Properties {
 			if strings.HasPrefix(key, testResourcePrefix) {
-				if _, err := client.apiSupplement.DeleteUserSchemaProperty(context.Background(), schemaURL, key); err != nil {
-					errorList = append(errorList, err)
+				custom := buildCustomUserSchema(key, nil)
+				_, _, err = client.oktaClient.UserSchema.UpdateUserProfile(context.Background(), typeSchemaID, *custom)
+				if err != nil {
+					return err
 				}
 			}
 		}
 	}
-	return condenseError(errorList)
+	return nil
 }
 
 func TestAccOktaUserSchema_crud(t *testing.T) {
@@ -247,20 +251,20 @@ func testOktaUserSchemasExists(name string) resource.TestCheckFunc {
 }
 
 func testSchemaPropertyExists(schemaUserType, index, resolutionScope string) (bool, error) {
-	schemaURL, err := getUserTypeSchemaUrl(context.Background(), getOktaClientFromMetadata(testAccProvider.Meta()), schemaUserType)
+	typeSchemaID, err := getUserTypeSchemaID(context.Background(), getOktaClientFromMetadata(testAccProvider.Meta()), schemaUserType)
 	if err != nil {
 		return false, err
 	}
-	s, _, err := getSupplementFromMetadata(testAccProvider.Meta()).GetUserSchema(context.Background(), schemaURL)
+	us, _, err := getOktaClientFromMetadata(testAccProvider.Meta()).UserSchema.GetUserSchema(context.Background(), typeSchemaID)
 	if err != nil {
 		return false, fmt.Errorf("failed to get user schema: %v", err)
 	}
 	switch resolutionScope {
 	case baseSchema:
-		_, ok := s.Definitions.Base.Properties[index]
-		return ok, nil
+		bp := userSchemaBaseAttribute(us, index)
+		return bp != nil, nil
 	case customSchema:
-		_, ok := s.Definitions.Custom.Properties[index]
+		_, ok := us.Definitions.Custom.Properties[index]
 		return ok, nil
 	default:
 		return false, fmt.Errorf("resolution scope can be only 'base' or 'custom'")

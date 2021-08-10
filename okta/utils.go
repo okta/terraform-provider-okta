@@ -236,10 +236,8 @@ func doesResourceExist(response *okta.Response, err error) (bool, error) {
 func getNullableInt(d *schema.ResourceData, key string) *int {
 	if v, ok := d.GetOk(key); ok {
 		i := v.(int)
-
 		return &i
 	}
-
 	return nil
 }
 

@@ -518,7 +518,7 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	hideMobile := d.Get("hide_ios").(bool)
 	hideWeb := d.Get("hide_web").(bool)
 	a11ySelfService := d.Get("accessibility_self_service").(bool)
-	app.Settings = okta.NewSamlApplicationSettings()
+	app.Settings = &okta.SamlApplicationSettings{}
 	app.Visibility = &okta.ApplicationVisibility{
 		AutoSubmitToolbar: &autoSubmit,
 		Hide: &okta.ApplicationVisibilityHide{
