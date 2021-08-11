@@ -31,6 +31,7 @@ type APIStatus struct {
 	limit     int
 	remaining int
 	reset     int64 // UTC epoch time in seconds
+	class     string
 }
 
 // NewAPIMutex returns a new api mutex object that represents untilized
@@ -40,9 +41,9 @@ func NewAPIMutex(capacity int) (*APIMutex, error) {
 		return nil, fmt.Errorf("expecting capacity as whole number > 0 and <= 100, was %d", capacity)
 	}
 	status := map[string]*APIStatus{
-		APPS_KEY:  {},
-		USERS_KEY: {},
-		OTHER_KEY: {},
+		APPS_KEY:  {class: APPS_KEY},
+		USERS_KEY: {class: USERS_KEY},
+		OTHER_KEY: {class: OTHER_KEY},
 	}
 	return &APIMutex{
 		capacity: capacity,
@@ -125,6 +126,11 @@ func (s *APIStatus) Limit() int {
 // Remaining returns the current remaining value of the api status object.
 func (s *APIStatus) Remaining() int {
 	return s.remaining
+}
+
+// Class returns the api endpoint class for this status.
+func (s *APIStatus) Class() string {
+	return s.class
 }
 
 func (m *APIMutex) get(endPoint string) *APIStatus {
