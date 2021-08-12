@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.13.2 (Aug 12, 2021)
+
+ENHANCEMENTS:
+* Minor tweaks for the API governor [#569](https://github.com/okta/terraform-provider-okta/pull/569). Thanks, [@monde](https://github.com/monde)!
+* Use more methods from official Okta Golang SDK [#567](https://github.com/okta/terraform-provider-okta/pull/567). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Provider will now terminate in case of invalid credentials [#571](https://github.com/okta/terraform-provider-okta/pull/571). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+* Fixed `OKTA_API_SCOPES` env var parsing [#570](https://github.com/okta/terraform-provider-okta/pull/570). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fixed `target_app_list` and `target_group_list` fields behavior in `okta_group_role` resource [#570](https://github.com/okta/terraform-provider-okta/pull/570). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.13.1 (Aug 6, 2021)
 
 ENHANCEMENTS:
