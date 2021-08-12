@@ -73,19 +73,6 @@ type (
 		Type      string                     `json:"type,omitempty"`
 	}
 
-	IdpDiscoveryRulePolicy struct {
-		Conditions  interface{} `json:"conditions"`
-		Created     string      `json:"created"`
-		Description string      `json:"description"`
-		ID          string      `json:"id"`
-		LastUpdated string      `json:"lastUpdated"`
-		Name        string      `json:"name"`
-		Priority    int64       `json:"priority"`
-		Status      string      `json:"status"`
-		System      bool        `json:"system"`
-		Type        string      `json:"type"`
-	}
-
 	IdpDiscoveryRule struct {
 		Actions     *IdpDiscoveryRuleActions    `json:"actions"`
 		Conditions  *IdpDiscoveryRuleConditions `json:"conditions"`

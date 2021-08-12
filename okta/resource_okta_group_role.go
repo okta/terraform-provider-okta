@@ -144,13 +144,17 @@ func resourceGroupRoleRead(ctx context.Context, d *schema.ResourceData, m interf
 				if err != nil {
 					return diag.Errorf("unable to list group targets for role %s and group %s: %v", rolesAssigned[i].Id, groupID, err)
 				}
-				_ = d.Set("target_group_list", groupIDs)
+				if len(groupIDs) != 0 {
+					_ = d.Set("target_group_list", groupIDs)
+				}
 			} else if rolesAssigned[i].Type == "APP_ADMIN" {
 				apps, err := listGroupAppsTargets(ctx, d, m)
 				if err != nil {
 					return diag.Errorf("unable to list app targets for role %s and group %s: %v", rolesAssigned[i].Id, groupID, err)
 				}
-				_ = d.Set("target_app_list", apps)
+				if len(apps) != 0 {
+					_ = d.Set("target_app_list", apps)
+				}
 			}
 			_ = d.Set("role_type", rolesAssigned[i].Type)
 			return nil
