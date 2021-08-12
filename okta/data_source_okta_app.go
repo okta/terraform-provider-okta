@@ -91,10 +91,6 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 		logger(m).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
 	}
-	users, groups, err := listAppUsersIDsAndGroupsIDs(ctx, getOktaClientFromMetadata(m), app.Id)
-	if err != nil {
-		return diag.Errorf("failed to list app's groups and users: %v", err)
-	}
 
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
