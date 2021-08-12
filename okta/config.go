@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/hashicorp/go-cleanhttp"
@@ -52,8 +53,13 @@ type (
 )
 
 func (c *Config) loadAndValidate() error {
+	logLevel := hclog.Level(c.logLevel)
+	if os.Getenv("TF_LOG") != "" {
+		logLevel = hclog.LevelFromString(os.Getenv("TF_LOG"))
+	}
+
 	c.logger = hclog.New(&hclog.LoggerOptions{
-		Level:      hclog.Level(c.logLevel),
+		Level:      logLevel,
 		TimeFormat: "2006/01/02 03:04:05",
 	})
 	var httpClient *http.Client
@@ -67,19 +73,26 @@ func (c *Config) loadAndValidate() error {
 		retryableClient.ErrorHandler = errHandler
 		retryableClient.CheckRetry = checkRetry
 		httpClient = retryableClient.StandardClient()
+		c.logger.Info(fmt.Sprintf("running with backoff http client, wait min %d, wait max %d, retry max %d", retryableClient.RetryWaitMin, retryableClient.RetryWaitMax, retryableClient.RetryMax))
 	} else {
 		httpClient = cleanhttp.DefaultClient()
 		httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
+		c.logger.Info("running with default http client")
 	}
 
+	if os.Getenv("MAX_API_CAPACITY") != "" {
+		if cap, err := strconv.Atoi(os.Getenv("MAX_API_CAPACITY")); err == nil {
+			c.maxAPICapacity = cap
+		}
+	}
 	// adds transport governor to retryable or default client
-	if c.maxAPICapacity > 0 {
-		log.Printf("[DEBUG] running with experimental max_api_capacity configuration at %d%%", c.maxAPICapacity)
+	if c.maxAPICapacity > 0 && c.maxAPICapacity < 100 {
+		c.logger.Info(fmt.Sprintf("running with experimental max_api_capacity configuration at %d%%", c.maxAPICapacity))
 		apiMutex, err := apimutex.NewAPIMutex(c.maxAPICapacity)
 		if err != nil {
 			return err
 		}
-		httpClient.Transport = transport.NewGovernedTransport(httpClient.Transport, apiMutex)
+		httpClient.Transport = transport.NewGovernedTransport(httpClient.Transport, apiMutex, c.logger)
 	}
 
 	setters := []okta.ConfigSetter{
