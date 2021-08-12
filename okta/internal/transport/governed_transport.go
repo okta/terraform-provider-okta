@@ -24,7 +24,7 @@ type GovernedTransport struct {
 	logger   hclog.Logger
 }
 
-// NewGovernedTransport returns a governed transport that relies on pre and post
+// NewGovernedTransport returns a governed transport that relies on pre- and post-
 // requests from the http round tripper. The pre request consults the api mutex
 // to determine if sleeping for the Okta API one minute bucket is called for.
 // The post request updates the information it is holding about the current api
