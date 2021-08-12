@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/hashicorp/go-cleanhttp"
@@ -69,22 +68,17 @@ func (c *Config) loadAndValidate() error {
 		retryableClient.RetryWaitMax = time.Second * time.Duration(c.maxWait)
 		retryableClient.RetryMax = c.retryCount
 		retryableClient.Logger = c.logger
-		retryableClient.HTTPClient.Transport = logging.NewTransport("Okta", retryableClient.HTTPClient.Transport)
+		retryableClient.HTTPClient.Transport = transport.NewAuthTransport(logging.NewTransport("Okta", retryableClient.HTTPClient.Transport))
 		retryableClient.ErrorHandler = errHandler
 		retryableClient.CheckRetry = checkRetry
 		httpClient = retryableClient.StandardClient()
 		c.logger.Info(fmt.Sprintf("running with backoff http client, wait min %d, wait max %d, retry max %d", retryableClient.RetryWaitMin, retryableClient.RetryWaitMax, retryableClient.RetryMax))
 	} else {
 		httpClient = cleanhttp.DefaultClient()
-		httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
+		httpClient.Transport = transport.NewAuthTransport(logging.NewTransport("Okta", httpClient.Transport))
 		c.logger.Info("running with default http client")
 	}
 
-	if os.Getenv("MAX_API_CAPACITY") != "" {
-		if cap, err := strconv.Atoi(os.Getenv("MAX_API_CAPACITY")); err == nil {
-			c.maxAPICapacity = cap
-		}
-	}
 	// adds transport governor to retryable or default client
 	if c.maxAPICapacity > 0 && c.maxAPICapacity < 100 {
 		c.logger.Info(fmt.Sprintf("running with experimental max_api_capacity configuration at %d%%", c.maxAPICapacity))
