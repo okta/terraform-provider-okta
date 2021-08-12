@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.13.3 (Aug 12, 2021)
+
+BUGS:
+
+* Fix `OKTA_API_SCOPES` not being set via env variable [#574](https://github.com/okta/terraform-provider-okta/pull/574). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.13.2 (Aug 12, 2021)
 
 ENHANCEMENTS:
@@ -8,8 +14,8 @@ ENHANCEMENTS:
 * Provider will now terminate in case of invalid credentials [#571](https://github.com/okta/terraform-provider-okta/pull/571). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 
 BUGS:
-* Fixed `OKTA_API_SCOPES` env var parsing [#570](https://github.com/okta/terraform-provider-okta/pull/570). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
-* Fixed `target_app_list` and `target_group_list` fields behavior in `okta_group_role` resource [#570](https://github.com/okta/terraform-provider-okta/pull/570). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fix `OKTA_API_SCOPES` env var parsing [#570](https://github.com/okta/terraform-provider-okta/pull/570). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fix `target_app_list` and `target_group_list` fields behavior in `okta_group_role` resource [#570](https://github.com/okta/terraform-provider-okta/pull/570). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 
 ## 3.13.1 (Aug 6, 2021)
 
