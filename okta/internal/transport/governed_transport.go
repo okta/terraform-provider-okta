@@ -2,10 +2,12 @@ package transport
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/hashicorp/go-hclog"
 
 	"github.com/okta/terraform-provider-okta/okta/internal/apimutex"
 )
@@ -19,6 +21,7 @@ const (
 type GovernedTransport struct {
 	base     http.RoundTripper
 	apiMutex *apimutex.APIMutex
+	logger   hclog.Logger
 }
 
 // NewGovernedTransport returns a governed transport that relies on pre and post
@@ -26,10 +29,11 @@ type GovernedTransport struct {
 // to determine if sleeping for the Okta API one minute bucket is called for.
 // The post request updates the information it is holding about the current api
 // rate limits.
-func NewGovernedTransport(base http.RoundTripper, apiMutex *apimutex.APIMutex) *GovernedTransport {
+func NewGovernedTransport(base http.RoundTripper, apiMutex *apimutex.APIMutex, logger hclog.Logger) *GovernedTransport {
 	return &GovernedTransport{
 		base:     base,
 		apiMutex: apiMutex,
+		logger:   logger,
 	}
 }
 
@@ -37,13 +41,13 @@ func NewGovernedTransport(base http.RoundTripper, apiMutex *apimutex.APIMutex) *
 // limit accounting in the pre and post request hooks.
 func (t *GovernedTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	path := req.URL.Path
-	if err := t.preRequestHook(req.Context(), path); err != nil {
+	if err := t.preRequestHook(req.Context(), req.Method, path); err != nil {
 		return nil, err
 	}
 
 	resp, err := t.base.RoundTrip(req)
 	// always attempt to save x-headers
-	t.postRequestHook(path, resp)
+	t.postRequestHook(req.Method, path, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -51,16 +55,16 @@ func (t *GovernedTransport) RoundTrip(req *http.Request) (*http.Response, error)
 	return resp, nil
 }
 
-func (t *GovernedTransport) preRequestHook(ctx context.Context, path string) error {
-	if t.apiMutex.HasCapacity(path) {
+func (t *GovernedTransport) preRequestHook(ctx context.Context, method, path string) error {
+	if t.apiMutex.HasCapacity(method, path) {
 		return nil
 	}
 
-	status := t.apiMutex.Status(path)
+	status := t.apiMutex.Status(method, path)
 	now := time.Now().Unix()
 	timeToSleep := status.Reset() - now
 
-	log.Printf("[INFO] Throttling %s requests, sleeping for %d until rate limit reset", path, timeToSleep)
+	t.logger.Info(fmt.Sprintf("Throttling API requests, sleeping for %d seconds until rate limit reset (%q:%d/%d)", timeToSleep, status.Class(), status.Remaining(), status.Limit()))
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
@@ -69,22 +73,22 @@ func (t *GovernedTransport) preRequestHook(ctx context.Context, path string) err
 	}
 }
 
-func (t *GovernedTransport) postRequestHook(path string, resp *http.Response) {
+func (t *GovernedTransport) postRequestHook(method, path string, resp *http.Response) {
 	reset, err := strconv.ParseInt(resp.Header.Get(X_RATE_LIMIT_RESET), 10, 64)
 	if err != nil {
-		log.Printf("[WARN] %q response header is missing or invalid, skipping postRequestHook: %+v", X_RATE_LIMIT_RESET, err)
+		t.logger.Warn(fmt.Sprintf("%q response header is missing or invalid, skipping postRequestHook: %+v", X_RATE_LIMIT_RESET, err))
 		return
 	}
 	limit, err := strconv.Atoi(resp.Header.Get(X_RATE_LIMIT_LIMIT))
 	if err != nil {
-		log.Printf("[WARN] %q response header is missing or invalid, skipping postRequestHook: %+v", X_RATE_LIMIT_LIMIT, err)
+		t.logger.Warn(fmt.Sprintf("%q response header is missing or invalid, skipping postRequestHook: %+v", X_RATE_LIMIT_LIMIT, err))
 		return
 	}
 	remaining, err := strconv.Atoi(resp.Header.Get(X_RATE_LIMIT_REMAINING))
 	if err != nil {
-		log.Printf("[WARN] %q response header is missing or invalid, skipping postRequestHook: %+v", X_RATE_LIMIT_REMAINING, err)
+		t.logger.Warn(fmt.Sprintf("%q response header is missing or invalid, skipping postRequestHook: %+v", X_RATE_LIMIT_REMAINING, err))
 		return
 	}
 
-	t.apiMutex.Update(path, limit, remaining, reset)
+	t.apiMutex.Update(method, path, limit, remaining, reset)
 }

@@ -2,15 +2,26 @@ package apimutex
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 	"sync"
 	"time"
 )
 
 const (
-	APPS_KEY  = "apps"
-	USERS_KEY = "users"
-	OTHER_KEY = "other"
+	APPS_KEY      = "apps"
+	APPID_KEY     = "app-id"
+	CAS_KEY       = "cas-id"
+	CLIENTS_KEY   = "clients"
+	DEVICES_KEY   = "devices"
+	EVENTS_KEY    = "events"
+	GROUPS_KEY    = "groups"
+	GROUPID_KEY   = "group-id"
+	LOGS_KEY      = "logs"
+	USERS_KEY     = "users"
+	USERID_KEY    = "user-id"
+	USERIDGET_KEY = "user-id-get"
+	OTHER_KEY     = "other"
 )
 
 // APIMutex synchronizes keeping account of current known rate limit values
@@ -31,6 +42,7 @@ type APIStatus struct {
 	limit     int
 	remaining int
 	reset     int64 // UTC epoch time in seconds
+	class     string
 }
 
 // NewAPIMutex returns a new api mutex object that represents untilized
@@ -40,9 +52,19 @@ func NewAPIMutex(capacity int) (*APIMutex, error) {
 		return nil, fmt.Errorf("expecting capacity as whole number > 0 and <= 100, was %d", capacity)
 	}
 	status := map[string]*APIStatus{
-		APPS_KEY:  {},
-		USERS_KEY: {},
-		OTHER_KEY: {},
+		APPS_KEY:      {class: APPS_KEY},
+		APPID_KEY:     {class: APPID_KEY},
+		CAS_KEY:       {class: CAS_KEY},
+		CLIENTS_KEY:   {class: CLIENTS_KEY},
+		DEVICES_KEY:   {class: DEVICES_KEY},
+		LOGS_KEY:      {class: LOGS_KEY},
+		EVENTS_KEY:    {class: EVENTS_KEY},
+		GROUPS_KEY:    {class: GROUPS_KEY},
+		GROUPID_KEY:   {class: GROUPID_KEY},
+		OTHER_KEY:     {class: OTHER_KEY},
+		USERS_KEY:     {class: USERS_KEY},
+		USERID_KEY:    {class: USERID_KEY},
+		USERIDGET_KEY: {class: USERIDGET_KEY},
 	}
 	return &APIMutex{
 		capacity: capacity,
@@ -52,8 +74,8 @@ func NewAPIMutex(capacity int) (*APIMutex, error) {
 
 // HasCapacity approximates if there is capacity below the api mutex's maximum
 // capacity threshold.
-func (m *APIMutex) HasCapacity(endPoint string) bool {
-	status := m.get(endPoint)
+func (m *APIMutex) HasCapacity(method, endPoint string) bool {
+	status := m.get(method, endPoint)
 
 	// if the status hasn't been updated recently assume there is capacity
 	if status.reset+60 < time.Now().Unix() {
@@ -68,11 +90,11 @@ func (m *APIMutex) HasCapacity(endPoint string) bool {
 
 // Update updates the known status for the given API endpoint. It is synchronous
 // and intelligently accounts for new values regardless of parallelism.
-func (m *APIMutex) Update(endPoint string, limit, remaining int, reset int64) {
+func (m *APIMutex) Update(method, endPoint string, limit, remaining int, reset int64) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
 
-	key := m.normalizeKey(endPoint)
+	key := m.normalizeKey(method, endPoint)
 	status := m.status[key]
 
 	if reset > status.reset {
@@ -95,17 +117,37 @@ func (m *APIMutex) Update(endPoint string, limit, remaining int, reset int64) {
 }
 
 // Status return the APIStatus for the given class of endpoint.
-func (m *APIMutex) Status(endPoint string) *APIStatus {
-	return m.get(endPoint)
+func (m *APIMutex) Status(method, endPoint string) *APIStatus {
+	return m.get(method, endPoint)
 }
 
-func (m *APIMutex) normalizeKey(endPoint string) string {
+func (m *APIMutex) normalizeKey(method, endPoint string) string {
 	var result string
 	switch {
-	case strings.HasPrefix(endPoint, "/api/v1/apps"):
-		result = "apps"
-	case strings.HasPrefix(endPoint, "/api/v1/users"):
-		result = "users"
+	case endPoint == "/api/v1/apps":
+		result = APPS_KEY
+	case strings.HasPrefix(endPoint, "/api/v1/apps/"):
+		result = APPID_KEY
+	case endPoint == "/api/v1/certificateAuthorities":
+		result = CAS_KEY
+	case endPoint == "/oauth2/v1/clients":
+		result = CLIENTS_KEY
+	case endPoint == "/api/v1/devices":
+		result = DEVICES_KEY
+	case endPoint == "/api/v1/events":
+		result = EVENTS_KEY
+	case endPoint == "/api/v1/groups":
+		result = GROUPS_KEY
+	case strings.HasPrefix(endPoint, "/api/v1/groups/"):
+		result = GROUPID_KEY
+	case endPoint == "/api/v1/logs":
+		result = LOGS_KEY
+	case endPoint == "/api/v1/users":
+		result = USERS_KEY
+	case method == http.MethodGet && strings.HasPrefix(endPoint, "/api/v1/users/"):
+		result = USERIDGET_KEY
+	case strings.HasPrefix(endPoint, "/api/v1/users/"):
+		result = USERID_KEY
 	default:
 		result = "other"
 	}
@@ -127,7 +169,12 @@ func (s *APIStatus) Remaining() int {
 	return s.remaining
 }
 
-func (m *APIMutex) get(endPoint string) *APIStatus {
-	key := m.normalizeKey(endPoint)
+// Class returns the api endpoint class for this status.
+func (s *APIStatus) Class() string {
+	return s.class
+}
+
+func (m *APIMutex) get(method, endPoint string) *APIStatus {
+	key := m.normalizeKey(method, endPoint)
 	return m.status[key]
 }
