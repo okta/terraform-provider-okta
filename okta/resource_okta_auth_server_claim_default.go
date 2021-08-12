@@ -40,7 +40,7 @@ func resourceAuthServerClaimDefault() *schema.Resource {
 				Type:             schema.TypeString,
 				Required:         true,
 				Description:      "Default auth server claim name",
-				ValidateDiagFunc: stringInSlice(validDefaultAuthServerClaims),
+				ValidateDiagFunc: elemInSlice(validDefaultAuthServerClaims),
 				ForceNew:         true,
 			},
 			"auth_server_id": {

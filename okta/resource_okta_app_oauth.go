@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 type (
@@ -99,7 +100,7 @@ func resourceAppOAuth() *schema.Resource {
 		Schema: buildAppSchema(map[string]*schema.Schema{
 			"type": {
 				Type:             schema.TypeString,
-				ValidateDiagFunc: stringInSlice([]string{"web", "native", "browser", "service"}),
+				ValidateDiagFunc: elemInSlice([]string{"web", "native", "browser", "service"}),
 				Required:         true,
 				ForceNew:         true,
 				Description:      "The type of client application.",
@@ -144,7 +145,7 @@ func resourceAppOAuth() *schema.Resource {
 			"token_endpoint_auth_method": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"none", "client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"}),
+				ValidateDiagFunc: elemInSlice([]string{"none", "client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"}),
 				Default:          "client_secret_basic",
 				Description:      "Requested authentication method for the token endpoint.",
 			},
@@ -176,14 +177,14 @@ func resourceAppOAuth() *schema.Resource {
 				Optional:         true,
 				Description:      "The type of Idp-Initiated login that the client supports, if any",
 				Default:          "DISABLED",
-				ValidateDiagFunc: stringInSlice([]string{"DISABLED", "SPEC", "OKTA"}),
+				ValidateDiagFunc: elemInSlice([]string{"DISABLED", "SPEC", "OKTA"}),
 			},
 			"login_scopes": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
-					ValidateDiagFunc: stringInSlice([]string{"openid", "profile", "email", "address", "phone"}),
+					ValidateDiagFunc: elemInSlice([]string{"openid", "profile", "email", "address", "phone"}),
 				},
 				Description: "List of scopes to use for the request",
 			},
@@ -192,6 +193,13 @@ func resourceAppOAuth() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
 				Description: "List of URIs for use in the redirect-based flow. This is required for all application types except service. Note: see okta_app_oauth_redirect_uri for appending to this list in a decentralized way.",
+			},
+			"wildcard_redirect": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "*Early Access Property*. Indicates if the client is allowed to use wildcard matching of redirect_uris",
+				Default:          "DISABLED",
+				ValidateDiagFunc: elemInSlice([]string{"DISABLED", "SUBDOMAIN"}),
 			},
 			"post_logout_redirect_uris": {
 				Type:        schema.TypeSet,
@@ -203,7 +211,7 @@ func resourceAppOAuth() *schema.Resource {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
-					ValidateDiagFunc: stringInSlice([]string{"code", "token", "id_token"}),
+					ValidateDiagFunc: elemInSlice([]string{"code", "token", "id_token"}),
 				},
 				Optional:    true,
 				Description: "List of OAuth 2.0 response type strings.",
@@ -212,7 +220,7 @@ func resourceAppOAuth() *schema.Resource {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
-					ValidateDiagFunc: stringInSlice([]string{authorizationCode, implicit, password, refreshToken, clientCredentials}),
+					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, refreshToken, clientCredentials}),
 				},
 				Optional:    true,
 				Description: "List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.",
@@ -233,20 +241,20 @@ func resourceAppOAuth() *schema.Resource {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Default:          "TRUSTED",
-				ValidateDiagFunc: stringInSlice([]string{"REQUIRED", "TRUSTED"}),
+				ValidateDiagFunc: elemInSlice([]string{"REQUIRED", "TRUSTED"}),
 				Description:      "*Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED",
 			},
 			"issuer_mode": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"CUSTOM_URL", "ORG_URL"}),
+				ValidateDiagFunc: elemInSlice([]string{"CUSTOM_URL", "ORG_URL"}),
 				Default:          "ORG_URL",
 				Description:      "*Early Access Property*. Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.",
 			},
 			"refresh_token_rotation": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"STATIC", "ROTATE"}),
+				ValidateDiagFunc: elemInSlice([]string{"STATIC", "ROTATE"}),
 				Description:      "*Early Access Property* Refresh token rotation behavior",
 			},
 			"refresh_token_leeway": {
@@ -294,7 +302,7 @@ func resourceAppOAuth() *schema.Resource {
 							Type:             schema.TypeString,
 							Required:         true,
 							Description:      "Key type",
-							ValidateDiagFunc: stringInSlice([]string{"RSA"}),
+							ValidateDiagFunc: elemInSlice([]string{"RSA"}),
 						},
 						"e": {
 							Type:        schema.TypeString,
@@ -313,6 +321,38 @@ func resourceAppOAuth() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "*Early Access Property*. Enable Federation Broker Mode.",
+			},
+			"groups_claim": {
+				Type:        schema.TypeSet,
+				MaxItems:    1,
+				Description: "Groups claim for an OpenID Connect client application",
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Description:      "Groups claim type.",
+							Type:             schema.TypeString,
+							Required:         true,
+							ValidateDiagFunc: elemInSlice([]string{"FILTER", "EXPRESSION"}),
+						},
+						"filter_type": {
+							Description:      "Groups claim filter. Can only be set if type is FILTER.",
+							Type:             schema.TypeString,
+							Optional:         true,
+							ValidateDiagFunc: elemInSlice([]string{"EQUALS", "STARTS_WITH", "CONTAINS", "REGEX"}),
+						},
+						"name": {
+							Description: "Name of the claim that will be used in the token.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"value": {
+							Description: "Value of the claim. Can be an Okta Expression Language statement that evaluates at the time the token is minted.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+					},
+				},
 			},
 		}),
 	}
@@ -341,7 +381,48 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.Errorf("failed to upload logo for OAuth application: %v", err)
 	}
+	err = setAppOauthGroupsClaim(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
+	}
 	return resourceAppOAuthRead(ctx, d, m)
+}
+
+func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	raw, ok := d.GetOk("groups_claim")
+	if !ok {
+		return nil
+	}
+	groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
+	gc := &sdk.AppOauthGroupClaim{
+		IssuerMode: "ORG_URL",
+		Name:       groupsClaim["name"].(string),
+		Value:      groupsClaim["value"].(string),
+	}
+	gct := groupsClaim["type"].(string)
+	if gct == "FILTER" {
+		gc.ValueType = "GROUPS"
+		gc.GroupFilterType = groupsClaim["filter_type"].(string)
+	} else {
+		gc.ValueType = gct
+	}
+	_, err := getSupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
+	return err
+}
+
+func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	raw, ok := d.GetOk("groups_claim")
+	if !ok {
+		return nil
+	}
+	if len(raw.(*schema.Set).List()) == 0 {
+		gc := &sdk.AppOauthGroupClaim{
+			IssuerMode: "ORG_URL",
+		}
+		_, err := getSupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
+		return err
+	}
+	return setAppOauthGroupsClaim(ctx, d, m)
 }
 
 func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -374,6 +455,9 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	_ = d.Set("tos_uri", app.Settings.OauthClient.TosUri)
 	_ = d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
 	_ = d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
+	if app.Settings.OauthClient.WildcardRedirect != "" {
+		_ = d.Set("wildcard_redirect", app.Settings.OauthClient.WildcardRedirect)
+	}
 	_ = d.Set("auto_submit_toolbar", app.Visibility.AutoSubmitToolbar)
 	_ = d.Set("hide_ios", app.Visibility.Hide.IOS)
 	_ = d.Set("hide_web", app.Visibility.Hide.Web)
@@ -436,6 +520,27 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	if err != nil {
 		return diag.Errorf("failed to set OAuth application properties: %v", err)
 	}
+	gc, _, err := getSupplementFromMetadata(m).GetAppOauthGroupsClaim(ctx, d.Id())
+	if err != nil {
+		return diag.Errorf("failed to get groups claim for OAuth application: %v", err)
+	}
+	if gc.Name != "" {
+		arr := []map[string]interface{}{
+			{
+				"name":  gc.Name,
+				"value": gc.Value,
+				"type":  gc.ValueType,
+			},
+		}
+		if gc.ValueType == "GROUPS" {
+			arr[0]["type"] = "FILTER"
+			arr[0]["filter_type"] = gc.GroupFilterType
+		}
+		err = setNonPrimitives(d, map[string]interface{}{"groups_claim": arr})
+		if err != nil {
+			return diag.Errorf("failed to set OAuth application properties: %v", err)
+		}
+	}
 	return nil
 }
 
@@ -466,6 +571,10 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 			_ = d.Set("logo", o)
 			return diag.Errorf("failed to upload logo for OAuth application: %v", err)
 		}
+	}
+	err = updateAppOauthGroupsClaim(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
 	return resourceAppOAuthRead(ctx, d, m)
 }
@@ -555,6 +664,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 				DefaultScope: convertInterfaceToStringSet(d.Get("login_scopes")),
 				Mode:         d.Get("login_mode").(string),
 			},
+			WildcardRedirect: d.Get("wildcard_redirect").(string),
 		},
 	}
 	jwks := d.Get("jwks").([]interface{})
@@ -613,6 +723,19 @@ func validateAppOAuth(d *schema.ResourceData) error {
 	rtl := d.Get("refresh_token_leeway")
 	if rtr.(string) == "STATIC" && rtl.(int) != 0 {
 		return errors.New("you can not set 'refresh_token_leeway' when 'refresh_token_rotation' is static")
+	}
+	raw, ok := d.GetOk("groups_claim")
+	if ok {
+		groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
+		if groupsClaim["type"].(string) == "EXPRESSION" && groupsClaim["filter_type"].(string) != "" {
+			return errors.New("'filter_type' in 'groups_claim' can only be set when 'type' is set to 'FILTER'")
+		}
+		if groupsClaim["type"].(string) == "FILTER" && groupsClaim["filter_type"].(string) == "" {
+			return errors.New("'filter_type' in 'groups_claim' is required when 'type' is set to 'FILTER'")
+		}
+		if groupsClaim["name"].(string) == "" || groupsClaim["value"].(string) == "" {
+			return errors.New("'name' 'value' and in 'groups_claim' should not be empty")
+		}
 	}
 	if _, ok := d.GetOk("jwks"); !ok && d.Get("token_endpoint_auth_method").(string) == "private_key_jwt" {
 		return errors.New("'jwks' is required when 'token_endpoint_auth_method' is 'private_key_jwt'")

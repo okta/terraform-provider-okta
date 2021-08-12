@@ -36,7 +36,7 @@ var (
 		"provisioning_action": {
 			Type:             schema.TypeString,
 			Optional:         true,
-			ValidateDiagFunc: stringInSlice([]string{"AUTO", "DISABLED", ""}),
+			ValidateDiagFunc: elemInSlice([]string{"AUTO", "DISABLED", ""}),
 			Default:          "AUTO",
 		},
 		"deprovisioned_action": actionSchema,
@@ -45,7 +45,7 @@ var (
 			Type:             schema.TypeString,
 			Optional:         true,
 			Default:          "NONE",
-			ValidateDiagFunc: stringInSlice([]string{"NONE", "SYNC", "APPEND", "ASSIGN"}),
+			ValidateDiagFunc: elemInSlice([]string{"NONE", "SYNC", "APPEND", "ASSIGN"}),
 		},
 		"groups_attribute": {
 			Type:     schema.TypeString,
@@ -70,7 +70,7 @@ var (
 			Type:             schema.TypeString,
 			Optional:         true,
 			Default:          "USERNAME",
-			ValidateDiagFunc: stringInSlice([]string{"USERNAME", "EMAIL", "USERNAME_OR_EMAIL", "CUSTOM_ATTRIBUTE"}),
+			ValidateDiagFunc: elemInSlice([]string{"USERNAME", "EMAIL", "USERNAME_OR_EMAIL", "CUSTOM_ATTRIBUTE"}),
 		},
 		"subject_match_attribute": {
 			Type:     schema.TypeString,
@@ -85,14 +85,14 @@ var (
 			Type:             schema.TypeString,
 			Optional:         true,
 			Description:      "algorithm to use to sign response",
-			ValidateDiagFunc: stringInSlice([]string{"REQUEST", ""}),
+			ValidateDiagFunc: elemInSlice([]string{"REQUEST", ""}),
 		},
 		"response_signature_algorithm": algorithmSchema,
 		"response_signature_scope": {
 			Type:             schema.TypeString,
 			Optional:         true,
 			Description:      "algorithm to use to sign response",
-			ValidateDiagFunc: stringInSlice([]string{"RESPONSE", "ANY", ""}),
+			ValidateDiagFunc: elemInSlice([]string{"RESPONSE", "ANY", ""}),
 		},
 	}
 
@@ -106,7 +106,7 @@ var (
 		Type:             schema.TypeString,
 		Optional:         true,
 		Description:      "algorithm to use to sign requests",
-		ValidateDiagFunc: stringInSlice([]string{"SHA-256", "SHA-1"}),
+		ValidateDiagFunc: elemInSlice([]string{"SHA-256", "SHA-1"}),
 		Default:          "SHA-256",
 	}
 
@@ -128,19 +128,19 @@ var (
 	bindingSchema = &schema.Schema{
 		Type:             schema.TypeString,
 		Required:         true,
-		ValidateDiagFunc: stringInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}),
+		ValidateDiagFunc: elemInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}),
 	}
 
 	optionalBindingSchema = &schema.Schema{
 		Type:             schema.TypeString,
 		Optional:         true,
-		ValidateDiagFunc: stringInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}),
+		ValidateDiagFunc: elemInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}),
 	}
 
 	issuerMode = &schema.Schema{
 		Type:             schema.TypeString,
 		Description:      "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
-		ValidateDiagFunc: stringInSlice([]string{"ORG_URL", "CUSTOM_URL_DOMAIN"}),
+		ValidateDiagFunc: elemInSlice([]string{"ORG_URL", "CUSTOM_URL_DOMAIN"}),
 		Default:          "ORG_URL",
 		Optional:         true,
 	}

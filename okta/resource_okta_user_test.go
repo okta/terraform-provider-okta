@@ -338,7 +338,7 @@ func TestAccOktaUser_validRole(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      testOktaUserConfigValidRole(rName),
-				ExpectError: regexp.MustCompile("'GROUP_ADMIN' is not a valid Okta role"),
+				ExpectError: regexp.MustCompile("expected value to be one of 'SUPER_ADMIN', 'ORG_ADMIN', 'API_ACCESS_MANAGEMENT_ADMIN', 'APP_ADMIN', 'USER_ADMIN', 'MOBILE_ADMIN', 'READ_ONLY_ADMIN', 'HELP_DESK_ADMIN', 'REPORT_ADMIN', 'GROUP_MEMBERSHIP_ADMIN', got 'GROUP_ADMIN'"),
 			},
 		},
 	})

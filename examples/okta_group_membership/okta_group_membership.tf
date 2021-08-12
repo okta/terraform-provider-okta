@@ -13,6 +13,9 @@ resource "okta_user" "test" {
 resource "okta_group" "test" {
   name        = "testAcc_replace_with_uuid"
   description = "testing, testing"
+  lifecycle {
+    ignore_changes = [users]
+  }
 }
 
 resource "okta_group_membership" "test" {

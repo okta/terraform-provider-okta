@@ -15,9 +15,10 @@ func deleteMfaPolicyRules(client *testClient) error {
 
 func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
 	ri := acctest.RandInt()
-	config := testOktaMfaPolicyRule(ri)
-	updatedConfig := testOktaMfaPolicyRuleUpdated(ri)
-	resourceName := buildResourceFQN(policyRuleMfa, ri)
+	mgr := newFixtureManager(policyRuleMfa)
+	config := mgr.GetFixtures("basic.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", policyRuleMfa)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -42,37 +43,4 @@ func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
 			},
 		},
 	})
-}
-
-func testOktaMfaPolicyRule(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-data "okta_default_policy" "default-%d" {
-	type = "%s"
-}
-
-resource "%s" "%s" {
-	policyid = "${data.okta_default_policy.default-%d.id}"
-	name     = "%s"
-	status   = "ACTIVE"
-}
-`, rInt, sdk.MfaPolicyType, policyRuleMfa, name, rInt, name)
-}
-
-func testOktaMfaPolicyRuleUpdated(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-data "okta_default_policy" "default-%d" {
-	type = "%s"
-}
-
-resource "%s" "%s" {
-	policyid = "${data.okta_default_policy.default-%d.id}"
-	name     = "%s"
-	status   = "INACTIVE"
-	enroll	 = "LOGIN"
-}
-`, rInt, sdk.MfaPolicyType, policyRuleMfa, name, rInt, name)
 }

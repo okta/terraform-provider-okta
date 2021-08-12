@@ -41,6 +41,7 @@ func resourceGroup() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "Users associated with the group. This can also be done per user.",
+				Deprecated:  "The `users` field is now deprecated for the resource `okta_group`, please replace all uses of this with: `okta_group_memberships`",
 			},
 		},
 	}
@@ -104,6 +105,10 @@ func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 func syncGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	// Only sync when the user opts in by outlining users in the group config
+	if _, exists := d.GetOk("users"); !exists {
+		return nil
+	}
 	userIDList, err := listGroupUserIDs(ctx, m, d.Id())
 	if err != nil {
 		return err

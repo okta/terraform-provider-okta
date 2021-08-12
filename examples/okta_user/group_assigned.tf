@@ -1,6 +1,9 @@
 resource "okta_group" "test" {
   name        = "TestACC-replace_with_uuid"
   description = "An acceptance test created group"
+  lifecycle {
+    ignore_changes = [users]
+  }
 }
 
 resource "okta_user" "test" {

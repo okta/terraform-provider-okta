@@ -11,19 +11,19 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
-func (m *ApiSupplement) GetSAMLMetadata(ctx context.Context, id, keyID string) ([]byte, *saml.EntityDescriptor, error) {
+func (m *APISupplement) GetSAMLMetadata(ctx context.Context, id, keyID string) ([]byte, *saml.EntityDescriptor, error) {
 	var query string
 	if keyID != "" {
 		query = fmt.Sprintf("?kid=%s", keyID)
 	}
-	return m.getXml(ctx, fmt.Sprintf("/api/v1/apps/%s/sso/saml/metadata%s", id, query))
+	return m.getXML(ctx, fmt.Sprintf("/api/v1/apps/%s/sso/saml/metadata%s", id, query))
 }
 
-func (m *ApiSupplement) GetSAMLIdpMetadata(ctx context.Context, id string) ([]byte, *saml.EntityDescriptor, error) {
-	return m.getXml(ctx, fmt.Sprintf("/api/v1/idps/%s/metadata.xml", id))
+func (m *APISupplement) GetSAMLIdpMetadata(ctx context.Context, id string) ([]byte, *saml.EntityDescriptor, error) {
+	return m.getXML(ctx, fmt.Sprintf("/api/v1/idps/%s/metadata.xml", id))
 }
 
-func (m *ApiSupplement) getXml(ctx context.Context, url string) ([]byte, *saml.EntityDescriptor, error) {
+func (m *APISupplement) getXML(ctx context.Context, url string) ([]byte, *saml.EntityDescriptor, error) {
 	re := &okta.RequestExecutor{}
 	*re = *m.RequestExecutor
 	re = re.WithAccept("application/xml")

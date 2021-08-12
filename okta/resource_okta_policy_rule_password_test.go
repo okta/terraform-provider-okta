@@ -128,7 +128,7 @@ func ensureRuleExists(name string) resource.TestCheckFunc {
 			return missingErr
 		}
 
-		policyID := rs.Primary.Attributes["policyid"]
+		policyID := rs.Primary.Attributes["policy_id"]
 		ID := rs.Primary.ID
 		exist, err := doesRuleExistsUpstream(policyID, ID)
 		if err != nil {
@@ -148,7 +148,7 @@ func createRuleCheckDestroy(ruleType string) func(*terraform.State) error {
 				continue
 			}
 
-			policyID := rs.Primary.Attributes["policyid"]
+			policyID := rs.Primary.Attributes["policy_id"]
 			ID := rs.Primary.ID
 			exists, err := doesRuleExistsUpstream(policyID, ID)
 			if err != nil {
@@ -183,7 +183,7 @@ data "okta_default_policy" "default-%d" {
 }
 
 resource "%s" "%s" {
-	policyid = "${data.okta_default_policy.default-%d.id}"
+	policy_id = "${data.okta_default_policy.default-%d.id}"
 	name     = "%s"
 	status   = "ACTIVE"
 }
@@ -199,7 +199,7 @@ data "okta_default_policy" "default-%d" {
 }
 
 resource "%s" "%s" {
-	policyid = "${data.okta_default_policy.default-%d.id}"
+	policy_id = "${data.okta_default_policy.default-%d.id}"
 	name     = "%s"
 	priority = 1
 	status   = "ACTIVE"
@@ -216,7 +216,7 @@ data "okta_default_policy" "default-%d" {
 }
 
 resource "%s" "%s" {
-	policyid = "${data.okta_default_policy.default-%d.id}"
+	policy_id = "${data.okta_default_policy.default-%d.id}"
 	name     = "%s"
 	priority = 999
 	status   = "ACTIVE"
@@ -233,7 +233,7 @@ data "okta_default_policy" "default-%d" {
 }
 
 resource "%s" "%s" {
-	policyid = "${data.okta_default_policy.default-%d.id}"
+	policy_id = "${data.okta_default_policy.default-%d.id}"
 	name     = "%s"
 	status   = "INACTIVE"
 	password_change = "DENY"

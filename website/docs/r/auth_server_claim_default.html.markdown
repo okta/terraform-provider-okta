@@ -1,6 +1,9 @@
 ---
-layout: 'okta' page_title: 'Okta: okta_auth_server_claim_default' sidebar_current: '
-docs-okta-resource-auth-server-claim-default' description: |- Configures Default Authorization Server Claim
+layout: 'okta' 
+page_title: 'Okta: okta_auth_server_claim_default' 
+sidebar_current: 'docs-okta-resource-auth-server-claim-default' 
+description: |- 
+  Configures Default Authorization Server Claim
 ---
 
 # okta_auth_server_claim_default

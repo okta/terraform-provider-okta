@@ -18,7 +18,7 @@ resource "okta_user" "test" {
   email      = "testAcc_replace_with_uuid@example.com"
 }
 
-resource "okta_app_user_schema" "test" {
+resource "okta_app_user_schema_property" "test" {
   app_id      = okta_app_saml.test.id
   index       = "testCustom"
   title       = "terraform acceptance test"
@@ -38,5 +38,5 @@ resource "okta_app_user" "test" {
 {"testCustom":"testing"}
 JSON
 
-  depends_on = [okta_app_user_schema.test]
+  depends_on = [okta_app_user_schema_property.test]
 }

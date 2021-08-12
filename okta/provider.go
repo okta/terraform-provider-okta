@@ -15,63 +15,70 @@ import (
 
 // Resource names, defined in place, used throughout the provider and tests
 const (
-	adminRoleTargets       = "okta_admin_role_targets"
-	appAutoLogin           = "okta_app_auto_login"
-	appBookmark            = "okta_app_bookmark"
-	appBasicAuth           = "okta_app_basic_auth"
-	appGroupAssignment     = "okta_app_group_assignment"
-	appGroupAssignments    = "okta_app_group_assignments"
-	appUser                = "okta_app_user"
-	appOAuth               = "okta_app_oauth"
-	appOAuthAPIScope       = "okta_app_oauth_api_scope"
-	appOAuthRedirectURI    = "okta_app_oauth_redirect_uri"
-	appSaml                = "okta_app_saml"
-	appSecurePasswordStore = "okta_app_secure_password_store"
-	appSwa                 = "okta_app_swa"
-	appSharedCredentials   = "okta_app_shared_credentials"
-	appThreeField          = "okta_app_three_field"
-	appUserSchema          = "okta_app_user_schema"
-	appUserBaseSchema      = "okta_app_user_base_schema"
-	authServer             = "okta_auth_server"
-	authServerDefault      = "okta_auth_server_default"
-	authServerClaim        = "okta_auth_server_claim"
-	authServerClaimDefault = "okta_auth_server_claim_default"
-	authServerPolicy       = "okta_auth_server_policy"
-	authServerPolicyRule   = "okta_auth_server_policy_rule"
-	authServerScope        = "okta_auth_server_scope"
-	eventHook              = "okta_event_hook"
-	factor                 = "okta_factor"
-	groupRole              = "okta_group_role"
-	groupRoles             = "okta_group_roles"
-	groupRule              = "okta_group_rule"
-	idpOidc                = "okta_idp_oidc"
-	idpSaml                = "okta_idp_saml"
-	idpSamlKey             = "okta_idp_saml_key"
-	idpSocial              = "okta_idp_social"
-	inlineHook             = "okta_inline_hook"
-	networkZone            = "okta_network_zone"
-	oktaGroup              = "okta_group"
-	oktaGroups             = "okta_groups"
-	oktaGroupMembership    = "okta_group_membership"
-	oktaGroupMemberships   = "okta_group_memberships"
-	oktaProfileMapping     = "okta_profile_mapping"
-	oktaUser               = "okta_user"
-	policyMfa              = "okta_policy_mfa"
-	policyMfaDefault       = "okta_policy_mfa_default"
-	policyPassword         = "okta_policy_password"
-	policyPasswordDefault  = "okta_policy_password_default"
-	policyRuleIdpDiscovery = "okta_policy_rule_idp_discovery"
-	policyRuleMfa          = "okta_policy_rule_mfa"
-	policyRulePassword     = "okta_policy_rule_password"
-	policyRuleSignOn       = "okta_policy_rule_signon"
-	policySignOn           = "okta_policy_signon"
-	templateEmail          = "okta_template_email"
-	templateSms            = "okta_template_sms"
-	trustedOrigin          = "okta_trusted_origin"
-	userBaseSchema         = "okta_user_base_schema"
-	userSchema             = "okta_user_schema"
-	userType               = "okta_user_type"
-	userGroupMemberships   = "okta_user_group_memberships"
+	adminRoleTargets          = "okta_admin_role_targets"
+	appAutoLogin              = "okta_app_auto_login"
+	appBookmark               = "okta_app_bookmark"
+	appBasicAuth              = "okta_app_basic_auth"
+	appGroupAssignment        = "okta_app_group_assignment"
+	appGroupAssignments       = "okta_app_group_assignments"
+	appUser                   = "okta_app_user"
+	appOAuth                  = "okta_app_oauth"
+	appOAuthAPIScope          = "okta_app_oauth_api_scope"
+	appOAuthRedirectURI       = "okta_app_oauth_redirect_uri"
+	appSaml                   = "okta_app_saml"
+	appSecurePasswordStore    = "okta_app_secure_password_store"
+	appSwa                    = "okta_app_swa"
+	appSharedCredentials      = "okta_app_shared_credentials"
+	appThreeField             = "okta_app_three_field"
+	appUserSchemaProperty     = "okta_app_user_schema_property"
+	appUserBaseSchemaProperty = "okta_app_user_base_schema_property"
+	authServer                = "okta_auth_server"
+	authServerDefault         = "okta_auth_server_default"
+	authServerClaim           = "okta_auth_server_claim"
+	authServerClaimDefault    = "okta_auth_server_claim_default"
+	authServerPolicy          = "okta_auth_server_policy"
+	authServerPolicyRule      = "okta_auth_server_policy_rule"
+	authServerScope           = "okta_auth_server_scope"
+	behavior                  = "okta_behavior"
+	behaviors                 = "okta_behaviors"
+	domain                    = "okta_domain"
+	eventHook                 = "okta_event_hook"
+	factor                    = "okta_factor"
+	factorTotp                = "okta_factor_totp"
+	groupRole                 = "okta_group_role"
+	groupRoles                = "okta_group_roles"
+	groupRule                 = "okta_group_rule"
+	idpOidc                   = "okta_idp_oidc"
+	idpSaml                   = "okta_idp_saml"
+	idpSamlKey                = "okta_idp_saml_key"
+	idpSocial                 = "okta_idp_social"
+	inlineHook                = "okta_inline_hook"
+	networkZone               = "okta_network_zone"
+	oktaGroup                 = "okta_group"
+	oktaGroups                = "okta_groups"
+	oktaGroupMembership       = "okta_group_membership"
+	oktaGroupMemberships      = "okta_group_memberships"
+	oktaProfileMapping        = "okta_profile_mapping"
+	oktaUser                  = "okta_user"
+	policyMfa                 = "okta_policy_mfa"
+	policyMfaDefault          = "okta_policy_mfa_default"
+	policyPassword            = "okta_policy_password"
+	policyPasswordDefault     = "okta_policy_password_default"
+	policyRuleIdpDiscovery    = "okta_policy_rule_idp_discovery"
+	policyRuleMfa             = "okta_policy_rule_mfa"
+	policyRulePassword        = "okta_policy_rule_password"
+	policyRuleSignOn          = "okta_policy_rule_signon"
+	policySignOn              = "okta_policy_signon"
+	templateEmail             = "okta_template_email"
+	templateSms               = "okta_template_sms"
+	trustedOrigin             = "okta_trusted_origin"
+	userAdminRoles            = "okta_user_admin_roles"
+	userBaseSchemaProperty    = "okta_user_base_schema_property"
+	userFactorQuestion        = "okta_user_factor_question"
+	userGroupMemberships      = "okta_user_group_memberships"
+	userSecurityQuestions     = "okta_user_security_questions"
+	userSchemaProperty        = "okta_user_schema_property"
+	userType                  = "okta_user_type"
 )
 
 // Provider establishes a client connection to an okta site
@@ -160,6 +167,15 @@ func Provider() *schema.Provider {
 				ValidateDiagFunc: intBetween(1, 5),
 				Description:      "providers log level. Minimum is 1 (TRACE), and maximum is 5 (ERROR)",
 			},
+			"max_api_capacity": {
+				Type:             schema.TypeInt,
+				Optional:         true,
+				Default:          100,
+				ValidateDiagFunc: intBetween(1, 100),
+				Description: "(Experimental) sets what percentage of capacity the provider can use of the total rate limit " +
+					"capacity while making calls to the Okta management API endpoints. Okta API operates in one minute buckets. " +
+					"See Okta Management API Rate Limits: https://developer.okta.com/docs/reference/rl-global-mgmt/",
+			},
 			"request_timeout": {
 				Type:             schema.TypeInt,
 				Optional:         true,
@@ -169,62 +185,67 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			adminRoleTargets:       resourceAdminRoleTargets(),
-			appAutoLogin:           resourceAppAutoLogin(),
-			appBookmark:            resourceAppBookmark(),
-			appBasicAuth:           resourceAppBasicAuth(),
-			appGroupAssignment:     resourceAppGroupAssignment(),
-			appGroupAssignments:    resourceAppGroupAssignments(),
-			appUser:                resourceAppUser(),
-			appOAuth:               resourceAppOAuth(),
-			appOAuthAPIScope:       resourceAppOAuthAPIScope(),
-			appOAuthRedirectURI:    resourceAppOAuthRedirectURI(),
-			appSaml:                resourceAppSaml(),
-			appSecurePasswordStore: resourceAppSecurePasswordStore(),
-			appSwa:                 resourceAppSwa(),
-			appSharedCredentials:   resourceAppSharedCredentials(),
-			appThreeField:          resourceAppThreeField(),
-			appUserSchema:          resourceAppUserSchema(),
-			appUserBaseSchema:      resourceAppUserBaseSchema(),
-			authServer:             resourceAuthServer(),
-			authServerDefault:      resourceAuthServerDefault(),
-			authServerClaim:        resourceAuthServerClaim(),
-			authServerClaimDefault: resourceAuthServerClaimDefault(),
-			authServerPolicy:       resourceAuthServerPolicy(),
-			authServerPolicyRule:   resourceAuthServerPolicyRule(),
-			authServerScope:        resourceAuthServerScope(),
-			eventHook:              resourceEventHook(),
-			factor:                 resourceFactor(),
-			groupRole:              resourceGroupRole(),
-			groupRoles:             resourceGroupRoles(),
-			groupRule:              resourceGroupRule(),
-			idpOidc:                resourceIdpOidc(),
-			idpSaml:                resourceIdpSaml(),
-			idpSamlKey:             resourceIdpSigningKey(),
-			idpSocial:              resourceIdpSocial(),
-			inlineHook:             resourceInlineHook(),
-			networkZone:            resourceNetworkZone(),
-			oktaGroup:              resourceGroup(),
-			oktaGroupMembership:    resourceGroupMembership(),
-			oktaGroupMemberships:   resourceGroupMemberships(),
-			oktaProfileMapping:     resourceOktaProfileMapping(),
-			oktaUser:               resourceUser(),
-			policyMfa:              resourcePolicyMfa(),
-			policyMfaDefault:       resourcePolicyMfaDefault(),
-			policyPassword:         resourcePolicyPassword(),
-			policyPasswordDefault:  resourcePolicyPasswordDefault(),
-			policySignOn:           resourcePolicySignOn(),
-			policyRuleIdpDiscovery: resourcePolicyRuleIdpDiscovery(),
-			policyRuleMfa:          resourcePolicyMfaRule(),
-			policyRulePassword:     resourcePolicyPasswordRule(),
-			policyRuleSignOn:       resourcePolicySignonRule(),
-			templateEmail:          resourceTemplateEmail(),
-			templateSms:            resourceTemplateSms(),
-			trustedOrigin:          resourceTrustedOrigin(),
-			userSchema:             resourceUserSchema(),
-			userBaseSchema:         resourceUserBaseSchema(),
-			userType:               resourceUserType(),
-			userGroupMemberships:   resourceUserGroupMemberships(),
+			adminRoleTargets:          resourceAdminRoleTargets(),
+			appAutoLogin:              resourceAppAutoLogin(),
+			appBookmark:               resourceAppBookmark(),
+			appBasicAuth:              resourceAppBasicAuth(),
+			appGroupAssignment:        resourceAppGroupAssignment(),
+			appGroupAssignments:       resourceAppGroupAssignments(),
+			appUser:                   resourceAppUser(),
+			appOAuth:                  resourceAppOAuth(),
+			appOAuthAPIScope:          resourceAppOAuthAPIScope(),
+			appOAuthRedirectURI:       resourceAppOAuthRedirectURI(),
+			appSaml:                   resourceAppSaml(),
+			appSecurePasswordStore:    resourceAppSecurePasswordStore(),
+			appSwa:                    resourceAppSwa(),
+			appSharedCredentials:      resourceAppSharedCredentials(),
+			appThreeField:             resourceAppThreeField(),
+			appUserSchemaProperty:     resourceAppUserSchemaProperty(),
+			appUserBaseSchemaProperty: resourceAppUserBaseSchemaProperty(),
+			authServer:                resourceAuthServer(),
+			authServerDefault:         resourceAuthServerDefault(),
+			authServerClaim:           resourceAuthServerClaim(),
+			authServerClaimDefault:    resourceAuthServerClaimDefault(),
+			authServerPolicy:          resourceAuthServerPolicy(),
+			authServerPolicyRule:      resourceAuthServerPolicyRule(),
+			authServerScope:           resourceAuthServerScope(),
+			behavior:                  resourceBehavior(),
+			domain:                    resourceDomain(),
+			eventHook:                 resourceEventHook(),
+			factor:                    resourceFactor(),
+			factorTotp:                resourceFactorTOTP(),
+			groupRole:                 resourceGroupRole(),
+			groupRoles:                resourceGroupRoles(),
+			groupRule:                 resourceGroupRule(),
+			idpOidc:                   resourceIdpOidc(),
+			idpSaml:                   resourceIdpSaml(),
+			idpSamlKey:                resourceIdpSigningKey(),
+			idpSocial:                 resourceIdpSocial(),
+			inlineHook:                resourceInlineHook(),
+			networkZone:               resourceNetworkZone(),
+			oktaGroup:                 resourceGroup(),
+			oktaGroupMembership:       resourceGroupMembership(),
+			oktaGroupMemberships:      resourceGroupMemberships(),
+			oktaProfileMapping:        resourceOktaProfileMapping(),
+			oktaUser:                  resourceUser(),
+			policyMfa:                 resourcePolicyMfa(),
+			policyMfaDefault:          resourcePolicyMfaDefault(),
+			policyPassword:            resourcePolicyPassword(),
+			policyPasswordDefault:     resourcePolicyPasswordDefault(),
+			policySignOn:              resourcePolicySignOn(),
+			policyRuleIdpDiscovery:    resourcePolicyRuleIdpDiscovery(),
+			policyRuleMfa:             resourcePolicyMfaRule(),
+			policyRulePassword:        resourcePolicyPasswordRule(),
+			policyRuleSignOn:          resourcePolicySignOnRule(),
+			templateEmail:             resourceTemplateEmail(),
+			templateSms:               resourceTemplateSms(),
+			trustedOrigin:             resourceTrustedOrigin(),
+			userSchemaProperty:        resourceUserSchemaProperty(),
+			userBaseSchemaProperty:    resourceUserBaseSchemaProperty(),
+			userType:                  resourceUserType(),
+			userGroupMemberships:      resourceUserGroupMemberships(),
+			userAdminRoles:            resourceUserAdminRoles(),
+			userFactorQuestion:        resourceUserFactorQuestion(),
 
 			// The day I realized I was naming stuff wrong :'-(
 			"okta_idp":                       deprecateIncorrectNaming(resourceIdpOidc(), idpOidc),
@@ -241,19 +262,27 @@ func Provider() *schema.Provider {
 			"okta_swa_app":                   deprecateIncorrectNaming(resourceAppSwa(), appSwa),
 			"okta_password_policy":           deprecateIncorrectNaming(resourcePolicyPassword(), policyPassword),
 			"okta_signon_policy":             deprecateIncorrectNaming(resourcePolicySignOn(), policySignOn),
-			"okta_signon_policy_rule":        deprecateIncorrectNaming(resourcePolicySignonRule(), policyRuleSignOn),
+			"okta_signon_policy_rule":        deprecateIncorrectNaming(resourcePolicySignOnRule(), policyRuleSignOn),
 			"okta_password_policy_rule":      deprecateIncorrectNaming(resourcePolicyPasswordRule(), policyRulePassword),
 			"okta_mfa_policy":                deprecateIncorrectNaming(resourcePolicyMfa(), policyMfa),
 			"okta_mfa_policy_rule":           deprecateIncorrectNaming(resourcePolicyMfaRule(), policyRuleMfa),
+			"okta_app_user_schema":           deprecateIncorrectNaming(resourceAppUserSchemaProperty(), appUserSchemaProperty),
+			"okta_app_user_base_schema":      deprecateIncorrectNaming(resourceAppUserBaseSchemaProperty(), appUserBaseSchemaProperty),
+			"okta_user_schema":               deprecateIncorrectNaming(resourceUserSchemaProperty(), userSchemaProperty),
+			"okta_user_base_schema":          deprecateIncorrectNaming(resourceUserBaseSchemaProperty(), userBaseSchemaProperty),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"okta_app":                         dataSourceApp(),
+			appGroupAssignments:                dataSourceAppGroupAssignments(),
 			appSaml:                            dataSourceAppSaml(),
 			appOAuth:                           dataSourceAppOauth(),
 			"okta_app_metadata_saml":           dataSourceAppMetadataSaml(),
+			"okta_app_user_assignments":        dataSourceAppUserAssignments(),
 			"okta_default_policies":            deprecatedPolicies,
 			"okta_default_policy":              dataSourceDefaultPolicies(),
 			"okta_everyone_group":              dataSourceEveryoneGroup(),
+			behavior:                           dataSourceBehavior(),
+			behaviors:                          dataSourceBehaviors(),
 			oktaGroup:                          dataSourceGroup(),
 			oktaGroups:                         dataSourceGroups(),
 			"okta_idp_metadata_saml":           dataSourceIdpMetadataSaml(),
@@ -268,13 +297,14 @@ func Provider() *schema.Provider {
 			authServer:                         dataSourceAuthServer(),
 			"okta_auth_server_scopes":          dataSourceAuthServerScopes(),
 			userType:                           dataSourceUserType(),
+			userSecurityQuestions:              dataSourceUserSecurityQuestions(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
 }
 
 func deprecateIncorrectNaming(d *schema.Resource, newResource string) *schema.Resource {
-	d.DeprecationMessage = fmt.Sprintf("Resource is deprecated due to a correction in naming conventions, please use %s instead.", newResource)
+	d.DeprecationMessage = fmt.Sprintf("Resource is deprecated due to a correction in naming conventions, please use '%s' instead.", newResource)
 	return d
 }
 
@@ -284,16 +314,17 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 		orgName:        d.Get("org_name").(string),
 		domain:         d.Get("base_url").(string),
 		apiToken:       d.Get("api_token").(string),
-		parallelism:    d.Get("parallelism").(int),
 		clientID:       d.Get("client_id").(string),
 		privateKey:     d.Get("private_key").(string),
 		scopes:         convertInterfaceToStringSet(d.Get("scopes")),
 		retryCount:     d.Get("max_retries").(int),
+		parallelism:    d.Get("parallelism").(int),
+		backoff:        d.Get("backoff").(bool),
 		minWait:        d.Get("min_wait_seconds").(int),
 		maxWait:        d.Get("max_wait_seconds").(int),
-		backoff:        d.Get("backoff").(bool),
 		logLevel:       d.Get("log_level").(int),
 		requestTimeout: d.Get("request_timeout").(int),
+		maxAPICapacity: d.Get("max_api_capacity").(int),
 	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, diag.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)

@@ -4,6 +4,7 @@ page_title: 'Okta: okta_user_schema'
 sidebar_current: 'docs-okta-resource-user-schema'
 description: |-
   Creates a User Schema property.
+  **DEPRECATED** use `okta_user_schema_property` instead.
 ---
 
 # okta_user_schema

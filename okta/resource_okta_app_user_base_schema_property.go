@@ -1,0 +1,124 @@
+package okta
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+)
+
+func resourceAppUserBaseSchemaProperty() *schema.Resource {
+	return &schema.Resource{
+		CreateContext: resourceAppUserBaseSchemaCreate,
+		ReadContext:   resourceAppUserBaseSchemaRead,
+		UpdateContext: resourceAppUserBaseSchemaUpdate,
+		DeleteContext: resourceAppUserBaseSchemaDelete,
+		Importer:      createNestedResourceImporter([]string{"app_id", "index"}),
+		Schema: buildSchema(
+			userBaseSchemaSchema,
+			userTypeSchema,
+			userPatternSchema,
+			map[string]*schema.Schema{
+				"master": {
+					Type:     schema.TypeString,
+					Optional: true,
+					// Accepting an empty value to allow for zero value (when provisioning is off)
+					ValidateDiagFunc: elemInSlice([]string{"PROFILE_MASTER", "OKTA", ""}),
+					Description:      "SubSchema profile manager, if not set it will inherit its setting.",
+					Default:          "PROFILE_MASTER",
+				},
+				"app_id": {
+					Type:     schema.TypeString,
+					Required: true,
+				},
+			}),
+		SchemaVersion: 1,
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type: resourceAppUserBaseSchemaResourceV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: func(ctx context.Context, rawState map[string]interface{}, meta interface{}) (map[string]interface{}, error) {
+					rawState["user_type"] = "default"
+					return rawState, nil
+				},
+				Version: 0,
+			},
+		},
+	}
+}
+
+func resourceAppUserBaseSchemaResourceV0() *schema.Resource {
+	return &schema.Resource{Schema: buildSchema(map[string]*schema.Schema{
+		"app_id": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+	}, userBaseSchemaSchema)}
+}
+
+func resourceAppUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateAppUserBaseSchema(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if err := updateAppUserBaseSubschema(ctx, d, m); err != nil {
+		return err
+	}
+	d.SetId(fmt.Sprintf("%s/%s", d.Get("app_id").(string), d.Get("index").(string)))
+	return resourceAppUserBaseSchemaRead(ctx, d, m)
+}
+
+func resourceAppUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	us, _, err := getOktaClientFromMetadata(m).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
+	if err != nil {
+		return diag.Errorf("failed to get app user base schema: %v", err)
+	}
+	subschema := userSchemaBaseAttribute(us, d.Get("index").(string))
+	if subschema == nil {
+		d.SetId("")
+		return nil
+	}
+	syncBaseUserSchema(d, subschema)
+	return nil
+}
+
+func resourceAppUserBaseSchemaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateAppUserBaseSchema(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if err := updateAppUserBaseSubschema(ctx, d, m); err != nil {
+		return err
+	}
+	return resourceAppUserBaseSchemaRead(ctx, d, m)
+}
+
+// can't delete Base
+func resourceAppUserBaseSchemaDelete(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
+	return nil
+}
+
+// create or modify a subschema
+func updateAppUserBaseSubschema(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	base := buildBaseUserSchema(d.Get("index").(string), buildUserBaseSchemaAttribute(d))
+	_, _, err := getOktaClientFromMetadata(m).UserSchema.
+		UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *base)
+	if err != nil {
+		return diag.Errorf("failed to update application user base schema: %v", err)
+	}
+	return nil
+}
+
+func validateAppUserBaseSchema(d *schema.ResourceData) error {
+	_, ok := d.GetOk("pattern")
+	if d.Get("index").(string) != "login" {
+		if ok {
+			return fmt.Errorf("'pattern' property is only allowed to be set for 'login'")
+		}
+		return nil
+	}
+	if !d.Get("required").(bool) {
+		return fmt.Errorf("'login' base schema is always required attribute")
+	}
+	return nil
+}

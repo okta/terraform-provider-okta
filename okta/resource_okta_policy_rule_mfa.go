@@ -19,7 +19,7 @@ func resourcePolicyMfaRule() *schema.Resource {
 		Schema: buildRuleSchema(map[string]*schema.Schema{
 			"enroll": {
 				Type:             schema.TypeString,
-				ValidateDiagFunc: stringInSlice([]string{"CHALLENGE", "LOGIN", "NEVER"}),
+				ValidateDiagFunc: elemInSlice([]string{"CHALLENGE", "LOGIN", "NEVER"}),
 				Default:          "CHALLENGE",
 				Optional:         true,
 				Description:      "Should the user be enrolled the first time they LOGIN, the next time they are CHALLENGED, or NEVER?",

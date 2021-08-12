@@ -10,3 +10,10 @@ resource "okta_network_zone" "dynamic_network_zone_example" {
   type              = "DYNAMIC"
   dynamic_locations = ["US", "AF-BGL", "UA-26"]
 }
+
+resource "okta_network_zone" "dynamic_proxy_example" {
+  name               = "testAcc_replace_with_uuid Dynamic Proxy Updated"
+  type               = "DYNAMIC"
+  usage              = "POLICY"
+  dynamic_proxy_type = "NotTorAnonymizer"
+}

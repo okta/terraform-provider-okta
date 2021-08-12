@@ -47,6 +47,20 @@ func dataSourceApp() *schema.Resource {
 				Computed:    true,
 				Description: "Discoverable resources related to the app",
 			},
+			"groups": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "Groups associated with the application",
+				Deprecated:  "The `groups` field is now deprecated for the data source `okta_app`, please replace all uses of this with: `okta_app_group_assignments`",
+			},
+			"users": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "Users associated with the application",
+				Deprecated:  "The `users` field is now deprecated for the data source `okta_app`, please replace all uses of this with: `okta_app_user_assignments`",
+			},
 		},
 	}
 }
@@ -77,6 +91,7 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 		logger(m).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
 	}
+	users, groups, err := listAppUsersIDsAndGroupsIDs(ctx, getOktaClientFromMetadata(m), app.Id)
 	if err != nil {
 		return diag.Errorf("failed to list app's groups and users: %v", err)
 	}

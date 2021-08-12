@@ -4,7 +4,7 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
-// ApiSupplement not all APIs are supported by okta-sdk-golang, this will act as a supplement to the Okta SDK
-type ApiSupplement struct {
+// APISupplement not all APIs are supported by okta-sdk-golang, this will act as a supplement to the Okta SDK
+type APISupplement struct {
 	RequestExecutor *okta.RequestExecutor
 }

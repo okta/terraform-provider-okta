@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceNetworkZone() *schema.Resource {
@@ -25,6 +25,12 @@ func resourceNetworkZone() *schema.Resource {
 				Optional:    true,
 				Description: "Array of locations ISO-3166-1(2). Format code: countryCode OR countryCode-regionCode",
 				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"dynamic_proxy_type": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: elemInSlice([]string{"Any", "TorAnonymizer", "NotTorAnonymizer"}),
+				Description:      "Type of proxy being controlled by this network zone",
 			},
 			"gateways": {
 				Type:        schema.TypeSet,
@@ -46,14 +52,14 @@ func resourceNetworkZone() *schema.Resource {
 			"type": {
 				Type:             schema.TypeString,
 				Required:         true,
-				ValidateDiagFunc: stringInSlice([]string{"IP", "DYNAMIC"}),
+				ValidateDiagFunc: elemInSlice([]string{"IP", "DYNAMIC"}),
 				Description:      "Type of the Network Zone - can either be IP or DYNAMIC only",
 			},
 			"usage": {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Description:      "Zone's purpose: POLICY or BLOCKLIST",
-				ValidateDiagFunc: stringInSlice([]string{"POLICY", "BLOCKLIST"}),
+				ValidateDiagFunc: elemInSlice([]string{"POLICY", "BLOCKLIST"}),
 				Default:          "POLICY",
 			},
 		},
@@ -66,16 +72,16 @@ func resourceNetworkZoneCreate(ctx context.Context, d *schema.ResourceData, m in
 		return diag.FromErr(err)
 	}
 	networkZone := buildNetworkZone(d)
-	_, _, err = getSupplementFromMetadata(m).CreateNetworkZone(ctx, networkZone, nil)
+	_, _, err = getOktaClientFromMetadata(m).NetworkZone.CreateNetworkZone(ctx, *networkZone)
 	if err != nil {
 		return diag.Errorf("failed to create network zone: %v", err)
 	}
-	d.SetId(networkZone.ID)
+	d.SetId(networkZone.Id)
 	return resourceNetworkZoneRead(ctx, d, m)
 }
 
 func resourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	zone, resp, err := getSupplementFromMetadata(m).GetNetworkZone(ctx, d.Id())
+	zone, resp, err := getOktaClientFromMetadata(m).NetworkZone.GetNetworkZone(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get network zone: %v", err)
 	}
@@ -86,6 +92,7 @@ func resourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, m inte
 	_ = d.Set("name", zone.Name)
 	_ = d.Set("type", zone.Type)
 	_ = d.Set("usage", zone.Usage)
+	_ = d.Set("dynamic_proxy_type", zone.ProxyType)
 	err = setNonPrimitives(d, map[string]interface{}{
 		"gateways":          flattenAddresses(zone.Gateways),
 		"proxies":           flattenAddresses(zone.Proxies),
@@ -103,7 +110,7 @@ func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, m in
 		return diag.FromErr(err)
 	}
 	networkZone := buildNetworkZone(d)
-	_, _, err = getSupplementFromMetadata(m).UpdateNetworkZone(ctx, d.Id(), *networkZone, nil)
+	_, _, err = getOktaClientFromMetadata(m).NetworkZone.UpdateNetworkZone(ctx, d.Id(), *networkZone)
 	if err != nil {
 		return diag.Errorf("failed to update network zone: %v", err)
 	}
@@ -111,18 +118,18 @@ func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceNetworkZoneDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	resp, err := getSupplementFromMetadata(m).DeleteNetworkZone(ctx, d.Id())
+	resp, err := getOktaClientFromMetadata(m).NetworkZone.DeleteNetworkZone(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete network zone: %v", err)
 	}
 	return nil
 }
 
-func buildNetworkZone(d *schema.ResourceData) *sdk.NetworkZone {
-	var gatewaysList []*sdk.AddressObj
-	var proxiesList []*sdk.AddressObj
-	var locationsList []*sdk.Location
+func buildNetworkZone(d *schema.ResourceData) *okta.NetworkZone {
+	var gatewaysList, proxiesList []*okta.NetworkZoneAddress
+	var locationsList []*okta.NetworkZoneLocation
 	zoneType := d.Get("type").(string)
+	proxyType := d.Get("dynamic_proxy_type").(string)
 
 	if zoneType == "IP" {
 		if values, ok := d.GetOk("gateways"); ok {
@@ -134,38 +141,39 @@ func buildNetworkZone(d *schema.ResourceData) *sdk.NetworkZone {
 	} else if values, ok := d.GetOk("dynamic_locations"); ok {
 		for _, value := range values.(*schema.Set).List() {
 			if strings.Contains(value.(string), "-") {
-				locationsList = append(locationsList, &sdk.Location{Country: strings.Split(value.(string), "-")[0], Region: value.(string)})
+				locationsList = append(locationsList, &okta.NetworkZoneLocation{Country: strings.Split(value.(string), "-")[0], Region: value.(string)})
 			} else {
-				locationsList = append(locationsList, &sdk.Location{Country: value.(string)})
+				locationsList = append(locationsList, &okta.NetworkZoneLocation{Country: value.(string)})
 			}
 		}
 	}
 
-	return &sdk.NetworkZone{
+	return &okta.NetworkZone{
 		Name:      d.Get("name").(string),
 		Type:      zoneType,
 		Gateways:  gatewaysList,
 		Locations: locationsList,
 		Proxies:   proxiesList,
+		ProxyType: proxyType,
 		Usage:     d.Get("usage").(string),
 	}
 }
 
-func buildAddressObjList(values *schema.Set) []*sdk.AddressObj {
+func buildAddressObjList(values *schema.Set) []*okta.NetworkZoneAddress {
 	var addressType string
-	var addressObjList []*sdk.AddressObj
+	var addressObjList []*okta.NetworkZoneAddress
 	for _, value := range values.List() {
 		if strings.Contains(value.(string), "/") {
 			addressType = "CIDR"
 		} else {
 			addressType = "RANGE"
 		}
-		addressObjList = append(addressObjList, &sdk.AddressObj{Type: addressType, Value: value.(string)})
+		addressObjList = append(addressObjList, &okta.NetworkZoneAddress{Type: addressType, Value: value.(string)})
 	}
 	return addressObjList
 }
 
-func flattenAddresses(gateways []*sdk.AddressObj) interface{} {
+func flattenAddresses(gateways []*okta.NetworkZoneAddress) interface{} {
 	arr := make([]interface{}, len(gateways))
 	for i := range gateways {
 		arr[i] = gateways[i].Value
@@ -173,7 +181,7 @@ func flattenAddresses(gateways []*sdk.AddressObj) interface{} {
 	return schema.NewSet(schema.HashString, arr)
 }
 
-func flattenDynamicLocations(locations []*sdk.Location) interface{} {
+func flattenDynamicLocations(locations []*okta.NetworkZoneLocation) interface{} {
 	arr := make([]interface{}, len(locations))
 	for i := range locations {
 		if strings.Contains(locations[i].Region, "-") {

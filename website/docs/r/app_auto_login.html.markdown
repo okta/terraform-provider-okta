@@ -61,8 +61,10 @@ The following arguments are supported:
 - `accessibility_error_redirect_url` - (Optional) Custom error page URL.
 
 - `users` - (Optional) The users assigned to the application. See `okta_app_user` for a more flexible approach.
+  - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
 - `groups` - (Optional) Groups associated with the application. See `okta_app_group_assignment` for a more flexible approach.
+  - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
 
 - `logo` (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 

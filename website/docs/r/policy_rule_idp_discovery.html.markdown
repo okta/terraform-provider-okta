@@ -16,7 +16,7 @@ This resource allows you to create and configure an IdP Discovery Policy Rule.
 
 ```hcl
 resource "okta_policy_rule_idp_discovery" "example" {
-  policyid                  = "<policy id>"
+  policy_id                  = "<policy id>"
   name                      = "example"
   idp_id                    = "<idp id>"
   idp_type                  = "OIDC"
@@ -62,7 +62,9 @@ resource "okta_policy_rule_idp_discovery" "example" {
 
 The following arguments are supported:
 
-- `policyid` - (Required) Policy ID.
+- `policyid` - (Deprecated) Policy ID.
+
+- `policy_id` - (Required) Policy ID.
 
 - `name` - (Required) Policy rule name.
 
@@ -143,7 +145,9 @@ user_identifier_patterns {
 
 - `id` - ID of the Rule.
 
-- `policyid` - Policy ID.
+- `policyid` - (Deprecated) Policy ID.
+  
+- `policy_id` - Policy ID.
 
 ## Import
 

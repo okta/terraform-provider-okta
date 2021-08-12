@@ -59,22 +59,11 @@ func resourceGroupRole() *schema.Resource {
 				ForceNew:    true,
 			},
 			"role_type": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Type of Role to assign",
-				ForceNew:    true,
-				ValidateDiagFunc: stringInSlice([]string{
-					"API_ACCESS_MANAGEMENT_ADMIN",
-					"APP_ADMIN",
-					"GROUP_MEMBERSHIP_ADMIN",
-					"HELP_DESK_ADMIN",
-					"MOBILE_ADMIN",
-					"ORG_ADMIN",
-					"READ_ONLY_ADMIN",
-					"REPORT_ADMIN",
-					"SUPER_ADMIN",
-					"USER_ADMIN",
-				}),
+				Type:             schema.TypeString,
+				Required:         true,
+				Description:      "Type of Role to assign",
+				ForceNew:         true,
+				ValidateDiagFunc: elemInSlice(validAdminRoles),
 			},
 			"target_group_list": {
 				Type:        schema.TypeSet,
@@ -252,7 +241,6 @@ func resourceGroupRoleImporter(ctx context.Context, d *schema.ResourceData, m in
 			_ = d.Set("target_group_list", groupIDs)
 		}
 		return []*schema.ResourceData{d}, nil
-
 	}
 	err = fmt.Errorf("unable to find the role ID %s assigned to the group %s", roleID, groupID)
 	return nil, err

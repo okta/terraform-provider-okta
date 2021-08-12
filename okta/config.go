@@ -2,7 +2,9 @@ package okta
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -11,6 +13,8 @@ import (
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/okta/internal/apimutex"
+	"github.com/okta/terraform-provider-okta/okta/internal/transport"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -40,8 +44,9 @@ type (
 		maxWait          int
 		logLevel         int
 		requestTimeout   int
+		maxAPICapacity   int // experimental
 		oktaClient       *okta.Client
-		supplementClient *sdk.ApiSupplement
+		supplementClient *sdk.APISupplement
 		logger           hclog.Logger
 	}
 )
@@ -66,6 +71,17 @@ func (c *Config) loadAndValidate() error {
 		httpClient = cleanhttp.DefaultClient()
 		httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
 	}
+
+	// adds transport governor to retryable or default client
+	if c.maxAPICapacity > 0 {
+		log.Printf("[DEBUG] running with experimental max_api_capacity configuration at %d%%", c.maxAPICapacity)
+		apiMutex, err := apimutex.NewAPIMutex(c.maxAPICapacity)
+		if err != nil {
+			return err
+		}
+		httpClient.Transport = transport.NewGovernedTransport(httpClient.Transport, apiMutex)
+	}
+
 	setters := []okta.ConfigSetter{
 		okta.WithOrgUrl(fmt.Sprintf("https://%v.%v", c.orgName, c.domain)),
 		okta.WithToken(c.apiToken),
@@ -77,7 +93,7 @@ func (c *Config) loadAndValidate() error {
 		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
 		okta.WithRequestTimeout(int64(c.requestTimeout)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
-		okta.WithUserAgentExtra("okta-terraform/3.9.0"),
+		okta.WithUserAgentExtra("okta-terraform/3.13.1"),
 	}
 	if c.apiToken == "" {
 		setters = append(setters, okta.WithAuthorizationMode("PrivateKey"))
@@ -90,7 +106,7 @@ func (c *Config) loadAndValidate() error {
 		return err
 	}
 	c.oktaClient = client
-	c.supplementClient = &sdk.ApiSupplement{
+	c.supplementClient = &sdk.APISupplement{
 		RequestExecutor: client.GetRequestExecutor(),
 	}
 	return nil
@@ -103,8 +119,8 @@ func errHandler(resp *http.Response, err error, numTries int) (*http.Response, e
 	defer resp.Body.Close()
 	err = okta.CheckResponseForError(resp)
 	if err != nil {
-		oErr, ok := err.(*okta.Error)
-		if ok {
+		var oErr *okta.Error
+		if errors.As(err, &oErr) {
 			oErr.ErrorSummary = fmt.Sprintf("%s, giving up after %d attempt(s)", oErr.ErrorSummary, numTries)
 			return resp, oErr
 		}

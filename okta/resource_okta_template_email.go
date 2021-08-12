@@ -65,7 +65,7 @@ func resourceTemplateEmail() *schema.Resource {
 				Required:         true,
 				Description:      "Email template type",
 				ForceNew:         true,
-				ValidateDiagFunc: stringInSlice(validEmailTemplateTypes),
+				ValidateDiagFunc: elemInSlice(validEmailTemplateTypes),
 			},
 			"translations": {
 				Type:     schema.TypeSet,
@@ -93,6 +93,10 @@ func resourceTemplateEmailRead(ctx context.Context, d *schema.ResourceData, m in
 		return diag.Errorf("failed to get email template: %v", err)
 	}
 	if temp == nil {
+		d.SetId("")
+		return nil
+	}
+	if temp.Id == "default" {
 		d.SetId("")
 		return nil
 	}

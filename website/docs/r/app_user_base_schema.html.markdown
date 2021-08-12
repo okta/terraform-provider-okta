@@ -4,6 +4,7 @@ page_title: 'Okta: okta_app_user_base_schema'
 sidebar_current: 'docs-okta-resource-app-user-base-schema'
 description: |-
   Manages an Application User Base Schema property.
+  **DEPRECATED** use `okta_app_user_base_schema_property` instead.
 ---
 
 # okta_app_user_base_schema

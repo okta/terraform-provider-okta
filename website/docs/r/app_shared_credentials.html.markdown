@@ -1,6 +1,9 @@
 ---
-layout: 'okta' page_title: 'Okta: okta_app_shared_credentials' sidebar_current: '
-docs-okta-resource-app-shared-credentials' description: |- Creates a SWA shared credentials app.
+layout: 'okta' 
+page_title: 'Okta: okta_app_shared_credentials' 
+sidebar_current: 'docs-okta-resource-app-shared-credentials' 
+description: |- 
+    Creates a SWA shared credentials app.
 ---
 
 # okta_app_shared_credentials

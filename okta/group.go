@@ -32,24 +32,23 @@ func listGroupUserIDs(ctx context.Context, m interface{}, id string) ([]string, 
 }
 
 func listGroups(ctx context.Context, client *okta.Client, qp *query.Params) ([]*okta.Group, error) {
-	var resGroups []*okta.Group
 	groups, resp, err := client.Group.ListGroups(ctx, qp)
 	if err != nil {
 		return nil, err
 	}
 	for {
-		resGroups = append(resGroups, groups...)
 		if resp.HasNextPage() {
-			resp, err = resp.Next(ctx, &groups)
+			var nextGroups []*okta.Group
+			resp, err = resp.Next(ctx, &nextGroups)
 			if err != nil {
 				return nil, err
 			}
-			continue
+			groups = append(groups, nextGroups...)
 		} else {
 			break
 		}
 	}
-	return resGroups, nil
+	return groups, nil
 }
 
 // Group Primary Key Operations (Use when # groups < # users in operations)
@@ -58,7 +57,7 @@ func addGroupMembers(ctx context.Context, client *okta.Client, groupId string, u
 		resp, err := client.Group.AddUserToGroup(ctx, groupId, user)
 		exists, err := doesResourceExist(resp, err)
 		if err != nil {
-			return fmt.Errorf("failed to add user (%s) to group (%s): %v", user, groupId, err)
+			return fmt.Errorf("failed to add user (%s) to group (%s): %w", user, groupId, err)
 		}
 		if !exists {
 			return fmt.Errorf("targeted object does not exist: %s", err)

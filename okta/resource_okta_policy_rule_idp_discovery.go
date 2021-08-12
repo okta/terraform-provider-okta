@@ -46,7 +46,7 @@ func resourcePolicyRuleIdpDiscovery() *schema.Resource {
 			"user_identifier_type": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"IDENTIFIER", "ATTRIBUTE", ""}),
+				ValidateDiagFunc: elemInSlice([]string{"IDENTIFIER", "ATTRIBUTE", ""}),
 			},
 			"user_identifier_attribute": {
 				Type:     schema.TypeString,
@@ -66,9 +66,16 @@ func resourcePolicyRuleIdpDiscoveryCreate(ctx context.Context, d *schema.Resourc
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	logger(m).Info("creating IdP discovery policy rule", "policy_id", d.Get("policyid").(string))
+	policyID := d.Get("policy_id").(string)
+	if policyID == "" {
+		policyID = d.Get("policyid").(string)
+	}
+	if policyID == "" {
+		return diag.Errorf("either 'policyid' or 'policy_id' field should be set")
+	}
+	logger(m).Info("creating IdP discovery policy rule", "policy_id", policyID)
 	newRule := buildIdpDiscoveryRule(d)
-	rule, _, err := getSupplementFromMetadata(m).CreateIdpDiscoveryRule(ctx, d.Get("policyid").(string), *newRule, nil)
+	rule, _, err := getSupplementFromMetadata(m).CreateIdpDiscoveryRule(ctx, policyID, *newRule, nil)
 	if err != nil {
 		return diag.Errorf("failed to create IDP discovery policy rule: %v", err)
 	}
@@ -81,8 +88,15 @@ func resourcePolicyRuleIdpDiscoveryCreate(ctx context.Context, d *schema.Resourc
 }
 
 func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("reading IdP discovery policy rule", "id", d.Id(), "policy_id", d.Get("policyid").(string))
-	rule, resp, err := getSupplementFromMetadata(m).GetIdpDiscoveryRule(ctx, d.Get("policyid").(string), d.Id())
+	policyID := d.Get("policy_id").(string)
+	if policyID == "" {
+		policyID = d.Get("policyid").(string)
+	}
+	if policyID == "" {
+		return diag.Errorf("either 'policyid' or 'policy_id' field should be set")
+	}
+	logger(m).Info("reading IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
+	rule, resp, err := getSupplementFromMetadata(m).GetIdpDiscoveryRule(ctx, policyID, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get IDP discovery policy rule: %v", err)
 	}
@@ -115,9 +129,16 @@ func resourcePolicyRuleIdpDiscoveryUpdate(ctx context.Context, d *schema.Resourc
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	logger(m).Info("updating IdP discovery policy rule", "id", d.Id(), "policy_id", d.Get("policyid").(string))
+	policyID := d.Get("policy_id").(string)
+	if policyID == "" {
+		policyID = d.Get("policyid").(string)
+	}
+	if policyID == "" {
+		return diag.Errorf("either 'policyid' or 'policy_id' field should be set")
+	}
+	logger(m).Info("updating IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
 	newRule := buildIdpDiscoveryRule(d)
-	rule, _, err := getSupplementFromMetadata(m).UpdateIdpDiscoveryRule(ctx, d.Get("policyid").(string), d.Id(), *newRule, nil)
+	rule, _, err := getSupplementFromMetadata(m).UpdateIdpDiscoveryRule(ctx, policyID, d.Id(), *newRule, nil)
 	if err != nil {
 		return diag.Errorf("failed to update IDP discovery policy rule: %v", err)
 	}
@@ -129,8 +150,15 @@ func resourcePolicyRuleIdpDiscoveryUpdate(ctx context.Context, d *schema.Resourc
 }
 
 func resourcePolicyRuleIdpDiscoveryDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("deleting IdP discovery policy rule", "id", d.Id(), "policy_id", d.Get("policyid").(string))
-	_, err := getOktaClientFromMetadata(m).Policy.DeletePolicyRule(ctx, d.Get("policyid").(string), d.Id())
+	policyID := d.Get("policy_id").(string)
+	if policyID == "" {
+		policyID = d.Get("policyid").(string)
+	}
+	if policyID == "" {
+		return diag.Errorf("either 'policyid' or 'policy_id' field should be set")
+	}
+	logger(m).Info("deleting IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
+	_, err := getOktaClientFromMetadata(m).Policy.DeletePolicyRule(ctx, policyID, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete IDP discovery policy rule: %v", err)
 	}
@@ -142,14 +170,21 @@ func setRuleStatus(ctx context.Context, d *schema.ResourceData, m interface{}, s
 	if status == desiredStatus {
 		return nil
 	}
+	policyID := d.Get("policy_id").(string)
+	if policyID == "" {
+		policyID = d.Get("policyid").(string)
+	}
+	if policyID == "" {
+		return fmt.Errorf("either 'policyid' or 'policy_id' field should be set")
+	}
 	logger(m).Info("setting IdP discovery policy rule status", "id", d.Id(),
-		"policy_id", d.Get("policyid").(string), "status", desiredStatus)
+		"policy_id", policyID, "status", desiredStatus)
 	var err error
 	client := getOktaClientFromMetadata(m)
 	if desiredStatus == statusInactive {
-		_, err = client.Policy.DeactivatePolicyRule(ctx, d.Get("policyid").(string), d.Id())
+		_, err = client.Policy.DeactivatePolicyRule(ctx, policyID, d.Id())
 	} else {
-		_, err = client.Policy.ActivatePolicyRule(ctx, d.Get("policyid").(string), d.Id())
+		_, err = client.Policy.ActivatePolicyRule(ctx, policyID, d.Id())
 	}
 	return err
 }
@@ -195,13 +230,13 @@ var (
 				Type:             schema.TypeString,
 				Optional:         true,
 				Default:          "ANY",
-				ValidateDiagFunc: stringInSlice([]string{"ANY", "MOBILE", "DESKTOP"}),
+				ValidateDiagFunc: elemInSlice([]string{"ANY", "MOBILE", "DESKTOP"}),
 			},
 			"os_type": {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Default:          "ANY",
-				ValidateDiagFunc: stringInSlice([]string{"ANY", "IOS", "WINDOWS", "ANDROID", "OTHER", "OSX"}),
+				ValidateDiagFunc: elemInSlice([]string{"ANY", "IOS", "WINDOWS", "ANDROID", "OTHER", "OSX"}),
 			},
 			"os_expression": {
 				Type:        schema.TypeString,
@@ -216,7 +251,7 @@ var (
 			"match_type": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: stringInSlice([]string{"SUFFIX", "EQUALS", "STARTS_WITH", "CONTAINS", "EXPRESSION"}),
+				ValidateDiagFunc: elemInSlice([]string{"SUFFIX", "EQUALS", "STARTS_WITH", "CONTAINS", "EXPRESSION"}),
 			},
 			"value": {
 				Type:     schema.TypeString,
@@ -230,7 +265,7 @@ var (
 			"type": {
 				Type:             schema.TypeString,
 				Required:         true,
-				ValidateDiagFunc: stringInSlice([]string{"APP", "APP_TYPE"}),
+				ValidateDiagFunc: elemInSlice([]string{"APP", "APP_TYPE"}),
 			},
 			"name": {
 				Type:     schema.TypeString,

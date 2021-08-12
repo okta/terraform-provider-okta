@@ -13,7 +13,7 @@ resource "okta_idp_social" "facebook" {
   username_template = "idpuser.email"
 }
 
-resource "okta_user_schema" "schema_custom" {
+resource "okta_user_schema_property" "schema_custom" {
   index       = "customfieldId"
   title       = "Test Custom Field"
   type        = "string"
