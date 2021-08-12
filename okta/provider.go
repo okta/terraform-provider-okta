@@ -335,7 +335,12 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 func envDefaultSetFunc(k string, dv interface{}) schema.SchemaDefaultFunc {
 	return func() (interface{}, error) {
 		if v := os.Getenv(k); v != "" {
-			return convertStringSetToInterface(strings.Split(v, ",")), nil
+			stringList := strings.Split(v, ",")
+			arr := make([]interface{}, len(stringList))
+			for i, str := range stringList {
+				arr[i] = str
+			}
+			return arr, nil
 		}
 		return dv, nil
 	}
