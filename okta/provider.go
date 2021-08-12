@@ -109,9 +109,14 @@ func Provider() *schema.Provider {
 				ConflictsWith: []string{"api_token"},
 			},
 			"scopes": {
-				Type:          schema.TypeSet,
-				Optional:      true,
-				Elem:          &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+					DefaultFunc: func() (interface{}, error) {
+						return "a", nil
+					},
+				},
 				DefaultFunc:   envDefaultSetFunc("OKTA_API_SCOPES", nil),
 				Description:   "API Token granting privileges to Okta API.",
 				ConflictsWith: []string{"api_token"},
@@ -326,6 +331,9 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 		requestTimeout: d.Get("request_timeout").(int),
 		maxAPICapacity: d.Get("max_api_capacity").(int),
 	}
+	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(config.scopes) == 0 {
+		config.scopes = strings.Split(v, ",")
+	}
 	if err := config.loadAndValidate(); err != nil {
 		return nil, diag.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)
 	}
@@ -337,8 +345,8 @@ func envDefaultSetFunc(k string, dv interface{}) schema.SchemaDefaultFunc {
 		if v := os.Getenv(k); v != "" {
 			stringList := strings.Split(v, ",")
 			arr := make([]interface{}, len(stringList))
-			for i, str := range stringList {
-				arr[i] = str
+			for i := range stringList {
+				arr[i] = stringList[i]
 			}
 			return arr, nil
 		}
