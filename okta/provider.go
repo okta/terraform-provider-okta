@@ -175,8 +175,8 @@ func Provider() *schema.Provider {
 			"max_api_capacity": {
 				Type:             schema.TypeInt,
 				Optional:         true,
-				Default:          100,
 				ValidateDiagFunc: intBetween(1, 100),
+				DefaultFunc:      schema.EnvDefaultFunc("MAX_API_CAPACITY", 100),
 				Description: "(Experimental) sets what percentage of capacity the provider can use of the total rate limit " +
 					"capacity while making calls to the Okta management API endpoints. Okta API operates in one minute buckets. " +
 					"See Okta Management API Rate Limits: https://developer.okta.com/docs/reference/rl-global-mgmt/",
@@ -335,7 +335,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		config.scopes = strings.Split(v, ",")
 	}
 	if err := config.loadAndValidate(ctx); err != nil {
-		return nil, diag.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)
+		return nil, diag.Errorf("[ERROR] invalid configuration: %v", err)
 	}
 	return &config, nil
 }

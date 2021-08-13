@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/hashicorp/go-cleanhttp"
@@ -80,11 +79,6 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 		c.logger.Info("running with default http client")
 	}
 
-	if os.Getenv("MAX_API_CAPACITY") != "" {
-		if cap, err := strconv.Atoi(os.Getenv("MAX_API_CAPACITY")); err == nil {
-			c.maxAPICapacity = cap
-		}
-	}
 	// adds transport governor to retryable or default client
 	if c.maxAPICapacity > 0 && c.maxAPICapacity < 100 {
 		c.logger.Info(fmt.Sprintf("running with experimental max_api_capacity configuration at %d%%", c.maxAPICapacity))
@@ -120,7 +114,7 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 	}
 
 	if _, _, err := client.User.GetUser(ctx, "me"); err != nil {
-		return fmt.Errorf("invalid credentials, failed to GET /api/v1/users/me: %w", err)
+		return fmt.Errorf("invalid credentials: %w", err)
 	}
 
 	c.oktaClient = client
