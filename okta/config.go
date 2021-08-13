@@ -51,7 +51,7 @@ type (
 	}
 )
 
-func (c *Config) loadAndValidate() error {
+func (c *Config) loadAndValidate(ctx context.Context) error {
 	logLevel := hclog.Level(c.logLevel)
 	if os.Getenv("TF_LOG") != "" {
 		logLevel = hclog.LevelFromString(os.Getenv("TF_LOG"))
@@ -68,14 +68,14 @@ func (c *Config) loadAndValidate() error {
 		retryableClient.RetryWaitMax = time.Second * time.Duration(c.maxWait)
 		retryableClient.RetryMax = c.retryCount
 		retryableClient.Logger = c.logger
-		retryableClient.HTTPClient.Transport = transport.NewAuthTransport(logging.NewTransport("Okta", retryableClient.HTTPClient.Transport))
+		retryableClient.HTTPClient.Transport = logging.NewTransport("Okta", retryableClient.HTTPClient.Transport)
 		retryableClient.ErrorHandler = errHandler
 		retryableClient.CheckRetry = checkRetry
 		httpClient = retryableClient.StandardClient()
 		c.logger.Info(fmt.Sprintf("running with backoff http client, wait min %d, wait max %d, retry max %d", retryableClient.RetryWaitMin, retryableClient.RetryWaitMax, retryableClient.RetryMax))
 	} else {
 		httpClient = cleanhttp.DefaultClient()
-		httpClient.Transport = transport.NewAuthTransport(logging.NewTransport("Okta", httpClient.Transport))
+		httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
 		c.logger.Info("running with default http client")
 	}
 
@@ -112,6 +112,11 @@ func (c *Config) loadAndValidate() error {
 	if err != nil {
 		return err
 	}
+
+	if _, _, err := client.User.GetUser(ctx, "me"); err != nil {
+		return fmt.Errorf("invalid credentials: %w", err)
+	}
+
 	c.oktaClient = client
 	c.supplementClient = &sdk.APISupplement{
 		RequestExecutor: client.GetRequestExecutor(),
