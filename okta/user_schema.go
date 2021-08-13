@@ -2,8 +2,6 @@ package okta
 
 import (
 	"fmt"
-	"reflect"
-	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -293,7 +291,6 @@ func buildUserCustomSchemaAttribute(d *schema.ResourceData) *okta.UserSchemaAttr
 		ExternalNamespace: d.Get("external_namespace").(string),
 		Unique:            d.Get("unique").(string),
 	}
-	userSchemaAttribute.Pattern = stringPtr("")
 	return userSchemaAttribute
 }
 
@@ -325,9 +322,11 @@ func buildBaseUserSchema(index string, schema *okta.UserSchemaAttribute) *okta.U
 	return &okta.UserSchema{
 		Definitions: &okta.UserSchemaDefinitions{
 			Base: &okta.UserSchemaBase{
-				Id:         "#base",
-				Properties: createUserSchemaBaseProperty(index, schema),
-				Type:       "object",
+				Id: "#base",
+				Properties: map[string]*okta.UserSchemaAttribute{
+					index: schema,
+				},
+				Type: "object",
 			},
 		},
 	}
@@ -358,35 +357,5 @@ func userSchemaBaseAttribute(s *okta.UserSchema, index string) *okta.UserSchemaA
 	if s == nil || s.Definitions == nil || s.Definitions.Base == nil {
 		return nil
 	}
-	t := reflect.TypeOf(*s.Definitions.Base.Properties)
-	v := reflect.ValueOf(*s.Definitions.Base.Properties)
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-		tag := field.Tag.Get("json")
-		if index != strings.TrimSuffix(tag, ",omitempty") {
-			continue
-		}
-		return v.Field(i).Interface().(*okta.UserSchemaAttribute)
-	}
-	return nil
-}
-
-func createUserSchemaBaseProperty(index string, schema *okta.UserSchemaAttribute) *okta.UserSchemaBaseProperties {
-	var p okta.UserSchemaBaseProperties
-	t := reflect.TypeOf(&p)
-	v := reflect.ValueOf(&p)
-	for i := 0; i < t.Elem().NumField(); i++ {
-		field := t.Elem().Field(i)
-		tag := field.Tag.Get("json")
-		if index != strings.TrimSuffix(tag, ",omitempty") {
-			continue
-		}
-		if v.Elem().Field(i).CanSet() {
-			v.Elem().Field(i).Set(reflect.ValueOf(schema))
-			return &p
-		} else {
-			panic("can not set")
-		}
-	}
-	return nil
+	return s.Definitions.Base.Properties[index]
 }
