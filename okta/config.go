@@ -119,7 +119,7 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 		return err
 	}
 
-	if _, resp, err := client.User.GetUser(ctx, "me"); err != nil && resp.StatusCode == http.StatusUnauthorized {
+	if _, _, err := client.User.GetUser(ctx, "me"); err != nil {
 		return fmt.Errorf("invalid credentials, failed to GET /api/v1/users/me: %w", err)
 	}
 
