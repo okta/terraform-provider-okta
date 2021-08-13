@@ -52,7 +52,7 @@ type (
 	}
 )
 
-func (c *Config) loadAndValidate() error {
+func (c *Config) loadAndValidate(ctx context.Context) error {
 	logLevel := hclog.Level(c.logLevel)
 	if os.Getenv("TF_LOG") != "" {
 		logLevel = hclog.LevelFromString(os.Getenv("TF_LOG"))
@@ -118,6 +118,11 @@ func (c *Config) loadAndValidate() error {
 	if err != nil {
 		return err
 	}
+
+	if _, resp, err := client.User.GetUser(ctx, "me"); err != nil && resp.StatusCode == http.StatusUnauthorized {
+		return fmt.Errorf("invalid credentials, failed to GET /api/v1/users/me: %w", err)
+	}
+
 	c.oktaClient = client
 	c.supplementClient = &sdk.APISupplement{
 		RequestExecutor: client.GetRequestExecutor(),

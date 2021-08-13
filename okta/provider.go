@@ -313,7 +313,7 @@ func deprecateIncorrectNaming(d *schema.Resource, newResource string) *schema.Re
 	return d
 }
 
-func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	log.Printf("[INFO] Initializing Okta client")
 	config := Config{
 		orgName:        d.Get("org_name").(string),
@@ -334,7 +334,7 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(config.scopes) == 0 {
 		config.scopes = strings.Split(v, ",")
 	}
-	if err := config.loadAndValidate(); err != nil {
+	if err := config.loadAndValidate(ctx); err != nil {
 		return nil, diag.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)
 	}
 	return &config, nil
