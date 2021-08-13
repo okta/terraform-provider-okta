@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -48,7 +49,7 @@ func oktaConfig() (*Config, error) {
 		requestTimeout: 60,
 		maxAPICapacity: 80,
 	}
-	if err := config.loadAndValidate(); err != nil {
+	if err := config.loadAndValidate(context.Background()); err != nil {
 		return config, fmt.Errorf("error initializing Okta client: %v", err)
 	}
 	return config, nil
