@@ -57,10 +57,6 @@ func resourceAppUserBaseSchemaResourceV0() *schema.Resource {
 }
 
 func resourceAppUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := validateAppUserBaseSchema(d)
-	if err != nil {
-		return diag.FromErr(err)
-	}
 	if err := updateAppUserBaseSubschema(ctx, d, m); err != nil {
 		return err
 	}
@@ -83,10 +79,6 @@ func resourceAppUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceAppUserBaseSchemaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := validateAppUserBaseSchema(d)
-	if err != nil {
-		return diag.FromErr(err)
-	}
 	if err := updateAppUserBaseSubschema(ctx, d, m); err != nil {
 		return err
 	}
@@ -100,9 +92,19 @@ func resourceAppUserBaseSchemaDelete(context.Context, *schema.ResourceData, inte
 
 // create or modify a subschema
 func updateAppUserBaseSubschema(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	base := buildBaseUserSchema(d.Get("index").(string), buildUserBaseSchemaAttribute(d))
-	_, _, err := getOktaClientFromMetadata(m).UserSchema.
-		UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *base)
+	err := validateAppUserBaseSchema(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	base := buildBaseUserSchema(d)
+	url := fmt.Sprintf("/api/v1/meta/schemas/apps/%v/default", d.Get("app_id").(string))
+	re := getOktaClientFromMetadata(m).GetRequestExecutor()
+	req, err := re.WithAccept("application/json").WithContentType("application/json").
+		NewRequest("POST", url, base)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	_, err = re.Do(ctx, req, nil)
 	if err != nil {
 		return diag.Errorf("failed to update application user base schema: %v", err)
 	}
