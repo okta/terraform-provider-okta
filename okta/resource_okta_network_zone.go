@@ -71,12 +71,11 @@ func resourceNetworkZoneCreate(ctx context.Context, d *schema.ResourceData, m in
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	networkZone := buildNetworkZone(d)
-	_, _, err = getOktaClientFromMetadata(m).NetworkZone.CreateNetworkZone(ctx, *networkZone)
+	zone, _, err := getOktaClientFromMetadata(m).NetworkZone.CreateNetworkZone(ctx, buildNetworkZone(d))
 	if err != nil {
 		return diag.Errorf("failed to create network zone: %v", err)
 	}
-	d.SetId(networkZone.Id)
+	d.SetId(zone.Id)
 	return resourceNetworkZoneRead(ctx, d, m)
 }
 
@@ -109,8 +108,7 @@ func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, m in
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	networkZone := buildNetworkZone(d)
-	_, _, err = getOktaClientFromMetadata(m).NetworkZone.UpdateNetworkZone(ctx, d.Id(), *networkZone)
+	_, _, err = getOktaClientFromMetadata(m).NetworkZone.UpdateNetworkZone(ctx, d.Id(), buildNetworkZone(d))
 	if err != nil {
 		return diag.Errorf("failed to update network zone: %v", err)
 	}
@@ -125,7 +123,7 @@ func resourceNetworkZoneDelete(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func buildNetworkZone(d *schema.ResourceData) *okta.NetworkZone {
+func buildNetworkZone(d *schema.ResourceData) okta.NetworkZone {
 	var gatewaysList, proxiesList []*okta.NetworkZoneAddress
 	var locationsList []*okta.NetworkZoneLocation
 	zoneType := d.Get("type").(string)
@@ -148,7 +146,7 @@ func buildNetworkZone(d *schema.ResourceData) *okta.NetworkZone {
 		}
 	}
 
-	return &okta.NetworkZone{
+	return okta.NetworkZone{
 		Name:      d.Get("name").(string),
 		Type:      zoneType,
 		Gateways:  gatewaysList,

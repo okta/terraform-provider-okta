@@ -63,18 +63,8 @@ func resourceUserBaseSchemaResourceV0() *schema.Resource {
 }
 
 func resourceUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := validateUserBaseSchema(d)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	typeSchemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
-	if err != nil {
-		return diag.Errorf("failed to create user base schema: %v", err)
-	}
-	base := buildBaseUserSchema(d.Get("index").(string), buildUserBaseSchemaAttribute(d))
-	_, _, err = getOktaClientFromMetadata(m).UserSchema.UpdateUserProfile(ctx, typeSchemaID, *base)
-	if err != nil {
-		return diag.Errorf("failed to create user base schema: %v", err)
+	if err := updateUserBaseSubschema(ctx, d, m); err != nil {
+		return err
 	}
 	d.SetId(d.Get("index").(string))
 	return resourceUserBaseSchemaRead(ctx, d, m)
@@ -99,20 +89,35 @@ func resourceUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, m i
 }
 
 func resourceUserBaseSchemaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if err := updateUserBaseSubschema(ctx, d, m); err != nil {
+		return err
+	}
+	return resourceUserBaseSchemaRead(ctx, d, m)
+}
+
+// create or modify a subschema
+func updateUserBaseSubschema(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	err := validateUserBaseSchema(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	typeSchemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
-	if err != nil {
-		return diag.Errorf("failed to update user base schema: %v", err)
-	}
-	base := buildBaseUserSchema(d.Get("index").(string), buildUserBaseSchemaAttribute(d))
-	_, _, err = getOktaClientFromMetadata(m).UserSchema.UpdateUserProfile(ctx, typeSchemaID, *base)
+	schemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
 	if err != nil {
 		return diag.Errorf("failed to create user base schema: %v", err)
 	}
-	return resourceUserBaseSchemaRead(ctx, d, m)
+	base := buildBaseUserSchema(d)
+	url := fmt.Sprintf("/api/v1/meta/schemas/user/%v", schemaID)
+	re := getOktaClientFromMetadata(m).GetRequestExecutor()
+	req, err := re.WithAccept("application/json").WithContentType("application/json").
+		NewRequest("POST", url, base)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	_, err = re.Do(ctx, req, nil)
+	if err != nil {
+		return diag.Errorf("failed to create user base schema: %v", err)
+	}
+	return nil
 }
 
 // can't delete Base schema

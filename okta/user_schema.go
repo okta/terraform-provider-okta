@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -204,8 +205,6 @@ func syncBaseUserSchema(d *schema.ResourceData, subschema *okta.UserSchemaAttrib
 	}
 	if subschema.Pattern != nil {
 		_ = d.Set("pattern", &subschema.Pattern)
-	} else {
-		_ = d.Set("pattern", "")
 	}
 }
 
@@ -311,25 +310,37 @@ func buildUserBaseSchemaAttribute(d *schema.ResourceData) *okta.UserSchemaAttrib
 		p, ok := d.GetOk("pattern")
 		if ok {
 			userSchemaAttribute.Pattern = stringPtr(p.(string))
-		} else {
-			userSchemaAttribute.Pattern = nil
 		}
 	}
 	return userSchemaAttribute
 }
 
-func buildBaseUserSchema(index string, schema *okta.UserSchemaAttribute) *okta.UserSchema {
-	return &okta.UserSchema{
+func buildBaseUserSchema(d *schema.ResourceData) []byte {
+	us := &okta.UserSchema{
 		Definitions: &okta.UserSchemaDefinitions{
 			Base: &okta.UserSchemaBase{
 				Id: "#base",
 				Properties: map[string]*okta.UserSchemaAttribute{
-					index: schema,
+					d.Get("index").(string): buildUserBaseSchemaAttribute(d),
 				},
 				Type: "object",
 			},
 		},
 	}
+	type localIDX okta.UserSchema
+	m, _ := json.Marshal((*localIDX)(us))
+	if d.Get("index").(string) != "login" {
+		return m
+	}
+	var a interface{}
+	_ = json.Unmarshal(m, &a)
+	b := a.(map[string]interface{})
+	p := us.Definitions.Base.Properties["login"].Pattern
+	if p == nil {
+		b["definitions"].(map[string]interface{})["base"].(map[string]interface{})["properties"].(map[string]interface{})["login"].(map[string]interface{})["pattern"] = nil
+	}
+	m, _ = json.Marshal(b)
+	return m
 }
 
 func buildCustomUserSchema(index string, schema *okta.UserSchemaAttribute) *okta.UserSchema {
