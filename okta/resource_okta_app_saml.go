@@ -434,7 +434,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		_ = d.Set("entity_key", key)
 		_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
 	}
-	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
+	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	err = syncGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
 		return diag.Errorf("failed to sync groups and users for SAML application: %v", err)
@@ -518,7 +518,9 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	hideMobile := d.Get("hide_ios").(bool)
 	hideWeb := d.Get("hide_web").(bool)
 	a11ySelfService := d.Get("accessibility_self_service").(bool)
-	app.Settings = &okta.SamlApplicationSettings{}
+	app.Settings = &okta.SamlApplicationSettings{
+		Notes: buildAppNotes(d),
+	}
 	app.Visibility = &okta.ApplicationVisibility{
 		AutoSubmitToolbar: &autoSubmit,
 		Hide: &okta.ApplicationVisibilityHide{
@@ -653,7 +655,6 @@ func tryCreateCertificate(ctx context.Context, d *schema.ResourceData, m interfa
 		// Set ID and the read done at the end of update and create will do the GET on metadata
 		_ = d.Set("key_id", key.Kid)
 	}
-
 	return nil
 }
 

@@ -690,6 +690,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 			},
 			WildcardRedirect: d.Get("wildcard_redirect").(string),
 		},
+		Notes: buildAppNotes(d),
 	}
 	jwks := d.Get("jwks").([]interface{})
 	if len(jwks) > 0 {
@@ -721,7 +722,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 		app.Settings.OauthClient.RefreshToken = refresh
 	}
 
-	app.Visibility = buildVisibility(d)
+	app.Visibility = buildAppVisibility(d)
 
 	if rawAttrs, ok := d.GetOk("profile"); ok {
 		var attrs map[string]interface{}

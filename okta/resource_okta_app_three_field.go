@@ -100,7 +100,7 @@ func resourceAppThreeFieldRead(ctx context.Context, d *schema.ResourceData, m in
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
-	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
+	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	return nil
 }
 
@@ -148,8 +148,9 @@ func buildAppThreeField(d *schema.ResourceData) *okta.SwaThreeFieldApplication {
 			ExtraFieldValue:    d.Get("extra_field_value").(string),
 			LoginUrlRegex:      d.Get("url_regex").(string),
 		},
+		Notes: buildAppNotes(d),
 	}
-	app.Visibility = buildVisibility(d)
+	app.Visibility = buildAppVisibility(d)
 
 	return app
 }

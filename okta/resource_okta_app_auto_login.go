@@ -111,7 +111,7 @@ func resourceAppAutoLoginRead(ctx context.Context, d *schema.ResourceData, m int
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
-	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
+	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	err = syncGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
 		return diag.Errorf("failed to sync groups and users for auto login application: %v", err)
@@ -168,9 +168,10 @@ func buildAppAutoLogin(d *schema.ResourceData) *okta.AutoLoginApplication {
 			LoginUrl:    d.Get("sign_on_url").(string),
 			RedirectUrl: d.Get("sign_on_redirect_url").(string),
 		},
+		Notes: buildAppNotes(d),
 	}
-	app.Visibility = buildVisibility(d)
-	app.Credentials = buildSchemeCreds(d)
+	app.Visibility = buildAppVisibility(d)
+	app.Credentials = buildSchemeAppCreds(d)
 
 	return app
 }

@@ -139,7 +139,7 @@ func resourceAppSecurePasswordStoreRead(ctx context.Context, d *schema.ResourceD
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
-	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
+	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	return nil
 }
 
@@ -182,9 +182,10 @@ func buildAppSecurePasswordStore(d *schema.ResourceData) *okta.SecurePasswordSto
 			OptionalField2Value: d.Get("optional_field2_value").(string),
 			OptionalField3Value: d.Get("optional_field3_value").(string),
 		},
+		Notes: buildAppNotes(d),
 	}
-	app.Credentials = buildSchemeCreds(d)
-	app.Visibility = buildVisibility(d)
+	app.Credentials = buildSchemeAppCreds(d)
+	app.Visibility = buildAppVisibility(d)
 
 	return app
 }
