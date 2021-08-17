@@ -78,7 +78,7 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 		}
 		app = respApp.(*okta.Application)
 	} else {
-		appList, err := listApps(ctx, m, filters, 1)
+		appList, err := listApps(ctx, getOktaClientFromMetadata(m), filters, 1)
 		if err != nil {
 			return diag.Errorf("failed to list apps: %v", err)
 		}
