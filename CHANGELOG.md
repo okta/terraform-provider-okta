@@ -1,19 +1,25 @@
 # Changelog
 
+## 3.13.5 (Aug 17, 2021)
+
+ENHANCEMENTS:
+* Add `admin_note` and `enduser_note` to all `okta_app_*` resources [#589](https://github.com/okta/terraform-provider-okta/pull/589). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+* Fixed bug in config validator [#589](https://github.com/okta/terraform-provider-okta/pull/589). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.13.4 (Aug 16, 2021)
 
 ENHANCEMENTS:
 * Add auth config validator [#567](https://github.com/okta/terraform-provider-okta/pull/579). Thanks, [@bendrucker](https://github.com/bendrucker)!
 
 BUGS:
-
 * Fix unmarshalling error for `okta_network_zone` resource [#586](https://github.com/okta/terraform-provider-okta/pull/586). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 * Fix `pattern` property setup in `okta_user_schema_property` [#583](https://github.com/okta/terraform-provider-okta/pull/583). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 
 ## 3.13.3 (Aug 12, 2021)
 
 BUGS:
-
 * Fix `OKTA_API_SCOPES` not being set via env variable [#574](https://github.com/okta/terraform-provider-okta/pull/574). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 
 ## 3.13.2 (Aug 12, 2021)
