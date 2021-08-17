@@ -9,4 +9,6 @@ resource "okta_app_auto_login" "test" {
   shared_password         = "sharedpassword"
   user_name_template      = "user.firstName"
   user_name_template_type = "CUSTOM"
+  admin_note              = "admin note updated"
+  enduser_note            = "enduser note updated"
 }

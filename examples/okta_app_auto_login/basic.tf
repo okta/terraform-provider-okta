@@ -6,4 +6,6 @@ resource "okta_app_auto_login" "test" {
   credentials_scheme      = "EDIT_USERNAME_AND_PASSWORD"
   user_name_template      = "user.firstName"
   user_name_template_type = "CUSTOM"
+  admin_note              = "admin note"
+  enduser_note            = "enduser note"
 }
