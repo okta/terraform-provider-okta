@@ -71,7 +71,7 @@ func resourceTemplateSmsRead(ctx context.Context, d *schema.ResourceData, m inte
 		d.SetId("")
 		return nil
 	}
-	_ = d.Set("translations", flattenSmsTranslations(temp.Translations))
+	_ = d.Set("translations", flattenSmsTranslations(*temp.Translations))
 	return nil
 }
 
@@ -93,7 +93,7 @@ func resourceTemplateSmsDelete(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func buildSmsTemplate(d *schema.ResourceData) *okta.SmsTemplate {
-	trans := make(map[string]interface{})
+	trans := make(okta.SmsTemplateTranslations)
 	rawTransList := d.Get("translations").(*schema.Set).List()
 
 	for _, val := range rawTransList {
@@ -104,14 +104,14 @@ func buildSmsTemplate(d *schema.ResourceData) *okta.SmsTemplate {
 	return &okta.SmsTemplate{
 		Name:         "Custom",
 		Type:         d.Get("type").(string),
-		Translations: trans,
+		Translations: &trans,
 		Template:     d.Get("template").(string),
 	}
 }
 
-func flattenSmsTranslations(temp map[string]interface{}) *schema.Set {
+func flattenSmsTranslations(temp okta.SmsTemplateTranslations) *schema.Set {
 	var rawSet []interface{}
-	for key, val := range temp {
+	for key, val := range map[string]interface{}(temp) {
 		rawSet = append(rawSet, map[string]interface{}{
 			"language": key,
 			"template": val,

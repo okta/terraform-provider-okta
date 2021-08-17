@@ -66,7 +66,11 @@ The following arguments are supported:
 - `groups` - (Optional) Groups associated with the application. See `okta_app_group_assignment` for a more flexible approach.
   - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
 
-- `logo` (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+- `logo` - (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+
+- `admin_note` - (Optional) Application notes for admins.
+
+- `enduser_note` - (Optional) Application notes for end users.
 
 ## Attributes Reference
 

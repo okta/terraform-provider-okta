@@ -29,8 +29,8 @@ func (f *appFilters) String() string {
 	return fmt.Sprintf(`id: "%s", label: "%s", label_prefix: "%s"`, f.ID, f.Label, f.LabelPrefix)
 }
 
-func listApps(ctx context.Context, m interface{}, filters *appFilters, limit int64) ([]*okta.Application, error) {
-	apps, resp, err := getOktaClientFromMetadata(m).Application.
+func listApps(ctx context.Context, client *okta.Client, filters *appFilters, limit int64) ([]*okta.Application, error) {
+	apps, resp, err := client.Application.
 		ListApplications(ctx, &query.Params{Limit: limit, Filter: filters.Status, Q: filters.getQ()})
 	if err != nil {
 		return nil, err

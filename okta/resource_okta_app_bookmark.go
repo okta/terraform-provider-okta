@@ -127,7 +127,8 @@ func buildAppBookmark(d *schema.ResourceData) *okta.BookmarkApplication {
 			RequestIntegration: &integration,
 			Url:                d.Get("url").(string),
 		},
+		Notes: buildAppNotes(d),
 	}
-	app.Visibility = buildVisibility(d)
+	app.Visibility = buildAppVisibility(d)
 	return app
 }
