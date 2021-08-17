@@ -233,14 +233,6 @@ func doesResourceExist(response *okta.Response, err error) (bool, error) {
 	return true, err
 }
 
-func getNullableInt(d *schema.ResourceData, key string) *int {
-	if v, ok := d.GetOk(key); ok {
-		i := v.(int)
-		return &i
-	}
-	return nil
-}
-
 // Useful shortcut for suppressing errors from Okta's SDK when a resource does not exist. Usually used during deletion
 // of nested resources.
 func suppressErrorOn404(resp *okta.Response, err error) error {
