@@ -38,6 +38,8 @@ resource "okta_app_saml" "example" {
 }
 ```
 
+### With inline hook
+
 ```hcl
 resource "okta_inline_hook" "test" {
   name    = "testAcc_replace_with_uuid"
@@ -82,6 +84,25 @@ resource "okta_app_saml" "test" {
     filter_type  = "REGEX"
     filter_value = ".*"
   }
+}
+```
+
+### Pre-configured app with SAML 1.1 sign-on mode
+
+```hcl
+resource "okta_app_saml" "test" {
+  app_settings_json = <<JSON
+{
+    "groupFilter": "app1.*",
+    "siteURL": "http://www.okta.com"
+}
+JSON
+  label = "SharePoint (On-Premise)"
+  preconfigured_app = "sharepoint_onpremise"
+  saml_version = "1.1"
+  status = "ACTIVE"
+  user_name_template = "$${source.login}"
+  user_name_template_type = "BUILT_IN"
 }
 ```
 
@@ -183,6 +204,8 @@ The following arguments are supported:
 - `admin_note` - (Optional) Application notes for admins.
 
 - `enduser_note` - (Optional) Application notes for end users.
+
+- `saml_version` - (Optional) SAML version for the app's sign-on mode. Valid values are: `"2.0"` or `"1.1"`. Default is `"2.0"`.
 
 ## Attributes Reference
 

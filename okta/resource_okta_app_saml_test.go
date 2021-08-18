@@ -54,6 +54,7 @@ func TestAccAppSaml_crud(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	allFields := mgr.GetFixtures("updated.tf", ri, t)
 	importConfig := mgr.GetFixtures("import.tf", ri, t)
+	importSAML11Config := mgr.GetFixtures("import_saml_1_1.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
 	resource.Test(t, resource.TestCase{
@@ -123,6 +124,22 @@ func TestAccAppSaml_crud(t *testing.T) {
 						return errors.New("failed to import resource into state")
 					}
 					if s[0].Attributes["preconfigured_app"] != "pagerduty" {
+						return errors.New("failed to set required properties when import existing infrastructure")
+					}
+					return nil
+				},
+			},
+			{
+				Config: importSAML11Config,
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import resource into state")
+					}
+					if s[0].Attributes["preconfigured_app"] != "sharepoint_onpremise" {
 						return errors.New("failed to set required properties when import existing infrastructure")
 					}
 					return nil
