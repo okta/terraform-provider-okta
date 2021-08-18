@@ -254,6 +254,7 @@ func resourceAppOAuth() *schema.Resource {
 			"refresh_token_rotation": {
 				Type:             schema.TypeString,
 				Optional:         true,
+				Computed:         true,
 				ValidateDiagFunc: elemInSlice([]string{"STATIC", "ROTATE"}),
 				Description:      "*Early Access Property* Refresh token rotation behavior",
 			},
