@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.13.6 (Aug 18, 2021)
+
+ENHANCEMENTS:
+* Add `saml_version` field to the `okta_app_saml` resource [#593](https://github.com/okta/terraform-provider-okta/pull/593). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+* Fixed provider crash when using `okta_template_sms` without `translations` [#592](https://github.com/okta/terraform-provider-okta/pull/592). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.13.5 (Aug 17, 2021)
 
 ENHANCEMENTS:
