@@ -15,20 +15,28 @@ import (
 const (
 	postBinding     = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
 	redirectBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+	saml11          = "1.1"
+	saml20          = "2.0"
 )
 
-// Fields required if preconfigured_app is not provided
-var customAppSamlRequiredFields = []string{
-	"sso_url",
-	"recipient",
-	"destination",
-	"audience",
-	"subject_name_id_template",
-	"subject_name_id_format",
-	"signature_algorithm",
-	"digest_algorithm",
-	"authn_context_class_ref",
-}
+var (
+	// Fields required if preconfigured_app is not provided
+	customAppSamlRequiredFields = []string{
+		"sso_url",
+		"recipient",
+		"destination",
+		"audience",
+		"subject_name_id_template",
+		"subject_name_id_format",
+		"signature_algorithm",
+		"digest_algorithm",
+		"authn_context_class_ref",
+	}
+	samlVersions = map[string]string{
+		saml11: "SAML_1_1",
+		saml20: "SAML_2_0",
+	}
+)
 
 func resourceAppSaml() *schema.Resource {
 	return &schema.Resource{
@@ -348,6 +356,13 @@ func resourceAppSaml() *schema.Resource {
 				Description:  "x509 encoded certificate that the Service Provider uses to sign Single Logout requests",
 				RequiredWith: []string{"single_logout_issuer", "single_logout_url"},
 			},
+			"saml_version": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Default:          saml20,
+				Description:      "SAML version for the app's sign-on mode",
+				ValidateDiagFunc: elemInSlice([]string{saml20, saml11}),
+			},
 		}),
 	}
 }
@@ -435,6 +450,11 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
 	}
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
+	if app.SignOnMode == "SAML_1_1" {
+		_ = d.Set("saml_version", saml11)
+	} else {
+		_ = d.Set("saml_version", saml20)
+	}
 	err = syncGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
 		return diag.Errorf("failed to sync groups and users for SAML application: %v", err)
@@ -492,6 +512,7 @@ func resourceAppSamlDelete(ctx context.Context, d *schema.ResourceData, m interf
 func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewSamlApplication()
+	app.SignOnMode = samlVersions[d.Get("saml_version").(string)]
 	app.Label = d.Get("label").(string)
 	responseSigned := d.Get("response_signed").(bool)
 	assertionSigned := d.Get("assertion_signed").(bool)
