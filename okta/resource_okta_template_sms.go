@@ -71,7 +71,9 @@ func resourceTemplateSmsRead(ctx context.Context, d *schema.ResourceData, m inte
 		d.SetId("")
 		return nil
 	}
-	_ = d.Set("translations", flattenSmsTranslations(*temp.Translations))
+	if temp.Translations != nil {
+		_ = d.Set("translations", flattenSmsTranslations(*temp.Translations))
+	}
 	return nil
 }
 
