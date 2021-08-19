@@ -53,6 +53,8 @@ The following arguments are supported:
 
 - `usage` - (Optional) Usage of the Network Zone - can be either `"POLICY"` or `"BLOCKLIST"`. By default, it is `"POLICY"`.
 
+- `asns` - (Optional) Array of Autonomous System Numbers (each element is a string representation of an ASN numeric value).
+
 ## Attributes Reference
 
 - `id` - Network Zone ID.

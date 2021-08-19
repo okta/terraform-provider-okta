@@ -44,7 +44,7 @@ func dataSourceAuthServerPolicyRead(ctx context.Context, d *schema.ResourceData,
 		if policy.Name == name {
 			d.SetId(policy.Id)
 			_ = d.Set("description", policy.Description)
-			_ = d.Set("assigned_clients", convertStringSetToInterface(policy.Conditions.Clients.Include))
+			_ = d.Set("assigned_clients", convertStringSliceToSet(policy.Conditions.Clients.Include))
 			return nil
 		}
 	}

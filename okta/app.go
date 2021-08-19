@@ -547,7 +547,7 @@ func setSamlSettings(d *schema.ResourceData, signOn *okta.SamlApplicationSetting
 				for i := range acsEndpointsObj {
 					acsEndpoints[i] = acsEndpointsObj[i].Url
 				}
-				_ = d.Set("acs_endpoints", convertStringSetToInterface(acsEndpoints))
+				_ = d.Set("acs_endpoints", convertStringSliceToSet(acsEndpoints))
 			}
 		} else {
 			_ = d.Set("acs_endpoints", nil)

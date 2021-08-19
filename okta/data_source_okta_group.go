@@ -96,6 +96,6 @@ func findGroup(ctx context.Context, name string, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.Errorf("failed to list group user IDs: %v", err)
 	}
-	_ = d.Set("users", convertStringSetToInterface(userIDList))
+	_ = d.Set("users", convertStringSliceToSet(userIDList))
 	return nil
 }

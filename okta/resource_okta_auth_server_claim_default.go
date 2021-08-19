@@ -92,7 +92,7 @@ func resourceAuthServerClaimDefaultRead(ctx context.Context, d *schema.ResourceD
 		return nil
 	}
 	if claim.Conditions != nil && len(claim.Conditions.Scopes) > 0 {
-		_ = d.Set("scopes", convertStringSetToInterface(claim.Conditions.Scopes))
+		_ = d.Set("scopes", convertStringSliceToSet(claim.Conditions.Scopes))
 	}
 	_ = d.Set("name", claim.Name)
 	_ = d.Set("status", claim.Status)
@@ -111,7 +111,7 @@ func resourceAuthServerClaimDefaultUpdate(ctx context.Context, d *schema.Resourc
 		}
 		d.SetId(claim.Id)
 		if claim.Conditions != nil && len(claim.Conditions.Scopes) > 0 {
-			_ = d.Set("scopes", convertStringSetToInterface(claim.Conditions.Scopes))
+			_ = d.Set("scopes", convertStringSliceToSet(claim.Conditions.Scopes))
 		}
 		_ = d.Set("name", claim.Name)
 		_ = d.Set("status", claim.Status)

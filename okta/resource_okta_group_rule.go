@@ -94,7 +94,7 @@ func resourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, m interf
 		_ = d.Set("expression_value", g.Conditions.Expression.Value)
 	}
 	err = setNonPrimitives(d, map[string]interface{}{
-		"group_assignments": convertStringSetToInterface(g.Actions.AssignUserToGroups.GroupIds),
+		"group_assignments": convertStringSliceToSet(g.Actions.AssignUserToGroups.GroupIds),
 	})
 	if err != nil {
 		return diag.Errorf("failed to set group rule properties: %v", err)

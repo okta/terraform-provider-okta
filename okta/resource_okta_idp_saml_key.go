@@ -81,7 +81,7 @@ func resourceIdpSigningKeyRead(ctx context.Context, d *schema.ResourceData, m in
 	_ = d.Set("use", key.Use)
 	_ = d.Set("x5t_s256", key.X5tS256)
 	err = setNonPrimitives(d, map[string]interface{}{
-		"x5c": convertStringSetToInterface(key.X5c),
+		"x5c": convertStringSliceToSet(key.X5c),
 	})
 	if err != nil {
 		return diag.Errorf("failed to set identity provider signing key properties: %v", err)
