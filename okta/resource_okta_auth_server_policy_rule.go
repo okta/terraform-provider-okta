@@ -246,21 +246,21 @@ func buildAuthServerPolicyRule(d *schema.ResourceData) okta.AuthorizationServerP
 func setPeopleAssignments(d *schema.ResourceData, c *okta.PolicyPeopleCondition) error {
 	if c.Groups != nil {
 		err := setNonPrimitives(d, map[string]interface{}{
-			"group_whitelist": convertStringSetToInterface(c.Groups.Include),
-			"group_blacklist": convertStringSetToInterface(c.Groups.Exclude),
+			"group_whitelist": convertStringSliceToSet(c.Groups.Include),
+			"group_blacklist": convertStringSliceToSet(c.Groups.Exclude),
 		})
 		if err != nil {
 			return err
 		}
 	} else {
 		_ = setNonPrimitives(d, map[string]interface{}{
-			"group_whitelist": convertStringSetToInterface([]string{}),
-			"group_blacklist": convertStringSetToInterface([]string{}),
+			"group_whitelist": convertStringSliceToSet([]string{}),
+			"group_blacklist": convertStringSliceToSet([]string{}),
 		})
 	}
 	return setNonPrimitives(d, map[string]interface{}{
-		"user_whitelist": convertStringSetToInterface(c.Users.Include),
-		"user_blacklist": convertStringSetToInterface(c.Users.Exclude),
+		"user_whitelist": convertStringSliceToSet(c.Users.Include),
+		"user_blacklist": convertStringSliceToSet(c.Users.Exclude),
 	})
 }
 

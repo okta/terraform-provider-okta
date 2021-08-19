@@ -110,13 +110,13 @@ func resourceAdminRoleRead(ctx context.Context, d *schema.ResourceData, m interf
 		if err != nil {
 			return diag.Errorf("failed to read app targets: %v", err)
 		}
-		_ = d.Set("apps", convertStringSetToInterface(apps))
+		_ = d.Set("apps", convertStringSliceToSet(apps))
 	} else {
 		groups, err := listUserGroupTargets(ctx, d, m)
 		if err != nil {
 			return diag.Errorf("failed to read group targets: %v", err)
 		}
-		_ = d.Set("groups", convertStringSetToInterface(groups))
+		_ = d.Set("groups", convertStringSliceToSet(groups))
 	}
 	return nil
 }

@@ -81,7 +81,7 @@ func resourceAuthServerPolicyRead(ctx context.Context, d *schema.ResourceData, m
 	_ = d.Set("description", policy.Description)
 	_ = d.Set("status", policy.Status)
 	_ = d.Set("priority", policy.Priority)
-	_ = d.Set("client_whitelist", convertStringSetToInterface(policy.Conditions.Clients.Include))
+	_ = d.Set("client_whitelist", convertStringSliceToSet(policy.Conditions.Clients.Include))
 	return nil
 }
 

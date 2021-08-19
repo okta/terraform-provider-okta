@@ -421,7 +421,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 			return diag.Errorf("failed to set SAML app settings: %v", err)
 		}
 	}
-	_ = d.Set("features", convertStringSetToInterface(app.Features))
+	_ = d.Set("features", convertStringSliceToSet(app.Features))
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)

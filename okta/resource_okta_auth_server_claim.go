@@ -83,7 +83,7 @@ func resourceAuthServerClaimRead(ctx context.Context, d *schema.ResourceData, m 
 		return nil
 	}
 	if claim.Conditions != nil && len(claim.Conditions.Scopes) > 0 {
-		_ = d.Set("scopes", convertStringSetToInterface(claim.Conditions.Scopes))
+		_ = d.Set("scopes", convertStringSliceToSet(claim.Conditions.Scopes))
 	}
 	_ = d.Set("name", claim.Name)
 	_ = d.Set("status", claim.Status)

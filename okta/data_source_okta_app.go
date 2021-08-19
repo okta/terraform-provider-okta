@@ -95,8 +95,8 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 	if err != nil {
 		return diag.Errorf("failed to list app's groups and users: %v", err)
 	}
-	_ = d.Set("groups", convertStringSetToInterface(groups))
-	_ = d.Set("users", convertStringSetToInterface(users))
+	_ = d.Set("groups", convertStringSliceToSet(groups))
+	_ = d.Set("users", convertStringSliceToSet(users))
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
 	_ = d.Set("name", app.Name)

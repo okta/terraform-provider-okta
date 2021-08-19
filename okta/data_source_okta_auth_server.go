@@ -70,7 +70,7 @@ func dataSourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m int
 	d.SetId(authServer.Id)
 	_ = d.Set("name", authServer.Name)
 	_ = d.Set("description", authServer.Description)
-	_ = d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
+	_ = d.Set("audiences", convertStringSliceToSet(authServer.Audiences))
 	if authServer.Credentials != nil && authServer.Credentials.Signing != nil {
 		_ = d.Set("kid", authServer.Credentials.Signing.Kid)
 		_ = d.Set("credentials_rotation_mode", authServer.Credentials.Signing.RotationMode)

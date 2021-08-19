@@ -181,7 +181,18 @@ func convertStringArrToInterface(stringList []string) []interface{} {
 	return arr
 }
 
-func convertStringSetToInterface(stringList []string) *schema.Set {
+func convertStringSliceToSet(stringList []string) *schema.Set {
+	arr := make([]interface{}, len(stringList))
+	for i, str := range stringList {
+		arr[i] = str
+	}
+	return schema.NewSet(schema.HashString, arr)
+}
+
+func convertStringSliceToSetNullable(stringList []string) *schema.Set {
+	if len(stringList) == 0 {
+		return nil
+	}
 	arr := make([]interface{}, len(stringList))
 	for i, str := range stringList {
 		arr[i] = str

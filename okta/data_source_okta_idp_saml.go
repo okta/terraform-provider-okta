@@ -111,7 +111,7 @@ func dataSourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 		_ = d.Set("issuer_mode", idp.IssuerMode)
 	}
 	err = setNonPrimitives(d, map[string]interface{}{
-		"subject_format": convertStringSetToInterface(idp.Policy.Subject.Format),
+		"subject_format": convertStringSliceToSet(idp.Policy.Subject.Format),
 	})
 	if err != nil {
 		return diag.Errorf("failed to set SAML identity provider properties: %v", err)

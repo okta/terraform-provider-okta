@@ -55,7 +55,7 @@ func dataSourceAppUserAssignmentsRead(ctx context.Context, d *schema.ResourceDat
 	for _, assignment := range userAssignments {
 		users = append(users, assignment.Id)
 	}
-	_ = d.Set("users", convertStringSetToInterface(users))
+	_ = d.Set("users", convertStringSliceToSet(users))
 	d.SetId(id)
 	return nil
 }

@@ -80,7 +80,7 @@ func resourceAuthServerDefaultRead(ctx context.Context, d *schema.ResourceData, 
 		d.SetId("")
 		return nil
 	}
-	_ = d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
+	_ = d.Set("audiences", convertStringSliceToSet(authServer.Audiences))
 	if authServer.Credentials != nil && authServer.Credentials.Signing != nil {
 		_ = d.Set("kid", authServer.Credentials.Signing.Kid)
 		_ = d.Set("credentials_rotation_mode", authServer.Credentials.Signing.RotationMode)
