@@ -206,7 +206,6 @@ func TestAccAppSaml_preconfigured(t *testing.T) {
 
 func testAppSamlJson(name, expectedSettingsJSON, expectedLinksJSON string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
 			return fmt.Errorf("not found: %s", name)
