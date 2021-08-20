@@ -24,6 +24,21 @@ resource "okta_app_auto_login" "example" {
 }
 ```
 
+#### Pre-configured application
+```hcl
+resource "okta_app_auto_login" "example" {
+  label             = "Google Example App"
+  status            = "ACTIVE"
+  preconfigured_app = "google"
+  app_settings_json = <<JSON
+{
+    "domain": "okta",
+    "afwOnly": false
+}
+JSON
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -71,6 +86,8 @@ The following arguments are supported:
 - `admin_note` - (Optional) Application notes for admins.
 
 - `enduser_note` - (Optional) Application notes for end users.
+
+- `app_settings_json` - (Optional) Application settings in JSON format.
 
 ## Attributes Reference
 
