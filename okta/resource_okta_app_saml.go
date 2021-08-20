@@ -363,6 +363,16 @@ func resourceAppSaml() *schema.Resource {
 				Description:      "SAML version for the app's sign-on mode",
 				ValidateDiagFunc: elemInSlice([]string{saml20, saml11}),
 			},
+			"app_links_json": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Application settings in JSON format",
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
+			},
 		}),
 	}
 }
@@ -421,7 +431,11 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 			return diag.Errorf("failed to set SAML app settings: %v", err)
 		}
 	}
-	_ = d.Set("features", convertStringSliceToSet(app.Features))
+	err = setAppLinks(d, app.Visibility.AppLinks)
+	if err != nil {
+		return diag.Errorf("failed to set SAML app links: %v", err)
+	}
+	_ = d.Set("features", convertStringSliceToSetNullable(app.Features))
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
@@ -548,6 +562,9 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 			IOS: &hideMobile,
 			Web: &hideWeb,
 		},
+	}
+	if appLinks, ok := d.GetOk("app_links_json"); ok {
+		_ = json.Unmarshal([]byte(appLinks.(string)), &app.Visibility.AppLinks)
 	}
 	if appSettings, ok := d.GetOk("app_settings_json"); ok {
 		payload := map[string]interface{}{}

@@ -106,6 +106,51 @@ JSON
 }
 ```
 
+### Pre-configured app with SAML 1.1 sign-on mode, `app_settings_json` and `app_links_json`
+
+```hcl
+resource "okta_app_saml" "office365" {
+  preconfigured_app = "office365"
+  label             = "Microsoft Office 365"
+  status            = "ACTIVE"
+  saml_version      = "1.1"
+  app_settings_json = <<JSON
+    {
+       "wsFedConfigureType": "AUTO",
+       "windowsTransportEnabled": false,
+       "domain": "okta.com",
+       "msftTenant": "okta",
+       "domains": [],
+       "requireAdminConsent": false
+    }
+JSON
+  app_links_json    = <<JSON
+  {
+      "calendar": false,
+      "crm": false,
+      "delve": false,
+      "excel": false,
+      "forms": false,
+      "mail": false,
+      "newsfeed": false,
+      "onedrive": false,
+      "people": false,
+      "planner": false,
+      "powerbi": false,
+      "powerpoint": false,
+      "sites": false,
+      "sway": false,
+      "tasks": false,
+      "teams": false,
+      "video": false,
+      "word": false,
+      "yammer": false,
+      "login": true
+  }
+JSON
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -206,6 +251,8 @@ The following arguments are supported:
 - `enduser_note` - (Optional) Application notes for end users.
 
 - `saml_version` - (Optional) SAML version for the app's sign-on mode. Valid values are: `"2.0"` or `"1.1"`. Default is `"2.0"`.
+
+- `app_links_json` - (Optional) Displays specific appLinks for the app. The value for the link should be boolean.
 
 ## Attributes Reference
 
