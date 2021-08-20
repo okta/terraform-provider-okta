@@ -133,6 +133,10 @@ func resourceAuthServerPolicyRuleRead(ctx context.Context, d *schema.ResourceDat
 	_ = d.Set("status", authServerPolicyRule.Status)
 	_ = d.Set("priority", authServerPolicyRule.Priority)
 	_ = d.Set("type", authServerPolicyRule.Type)
+	_ = d.Set("access_token_lifetime_minutes", authServerPolicyRule.authServerPolicyRule.Actions.Token.AccessTokenLifetimeMinutes)
+	_ = d.Set("refresh_token_lifetime_minutes", authServerPolicyRule.authServerPolicyRule.Actions.Token.RefreshTokenLifetimeMinutes)
+	_ = d.Set("refresh_token_window_minutes", authServerPolicyRule.authServerPolicyRule.Actions.Token.RefreshTokenWindowMinutes)
+
 	if authServerPolicyRule.Actions.Token.InlineHook != nil {
 		_ = d.Set("inline_hook_id", authServerPolicyRule.Actions.Token.InlineHook.Id)
 	}
