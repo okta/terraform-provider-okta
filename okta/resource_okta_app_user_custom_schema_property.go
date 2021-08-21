@@ -152,7 +152,11 @@ func resourceAppUserSchemaRead(ctx context.Context, d *schema.ResourceData, m in
 	}
 	if err != nil {
 		return diag.Errorf("failed to set application user schema properties: %v", err)
+	} else {
+		out, err := json.Marshal(d)
+		fmt.Println(string(out))
 	}
+
 	return nil
 }
 
