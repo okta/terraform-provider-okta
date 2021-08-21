@@ -74,6 +74,9 @@ func (t *GovernedTransport) preRequestHook(ctx context.Context, method, path str
 }
 
 func (t *GovernedTransport) postRequestHook(method, path string, resp *http.Response) {
+	if resp == nil {
+		return
+	}
 	reset, err := strconv.ParseInt(resp.Header.Get(X_RATE_LIMIT_RESET), 10, 64)
 	if err != nil {
 		t.logger.Warn(fmt.Sprintf("%q response header is missing or invalid, skipping postRequestHook: %+v", X_RATE_LIMIT_RESET, err))
