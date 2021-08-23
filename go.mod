@@ -12,5 +12,5 @@ require (
 	github.com/hashicorp/go-hclog v0.16.2
 	github.com/hashicorp/go-retryablehttp v0.7.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.7.0
-	github.com/okta/okta-sdk-golang/v2 v2.6.0
+	github.com/okta/okta-sdk-golang/v2 v2.6.1
 )
