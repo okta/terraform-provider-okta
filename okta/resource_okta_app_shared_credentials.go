@@ -113,6 +113,7 @@ func resourceAppSharedCredentialsRead(ctx context.Context, d *schema.ResourceDat
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
+	_ = d.Set("accessibility_login_redirect_url", app.Accessibility.LoginRedirectUrl)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	return nil
 }

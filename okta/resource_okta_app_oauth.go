@@ -100,7 +100,7 @@ func resourceAppOAuth() *schema.Resource {
 		Schema: buildAppSchema(map[string]*schema.Schema{
 			"type": {
 				Type:             schema.TypeString,
-				ValidateDiagFunc: elemInSlice([]string{"web", "native", "browser", "service"}),
+				ValidateDiagFunc: elemInSlice([]string{"", "web", "native", "browser", "service"}),
 				Required:         true,
 				ForceNew:         true,
 				Description:      "The type of client application.",
@@ -328,35 +328,37 @@ func resourceAppOAuth() *schema.Resource {
 				MaxItems:    1,
 				Description: "Groups claim for an OpenID Connect client application",
 				Optional:    true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"type": {
-							Description:      "Groups claim type.",
-							Type:             schema.TypeString,
-							Required:         true,
-							ValidateDiagFunc: elemInSlice([]string{"FILTER", "EXPRESSION"}),
-						},
-						"filter_type": {
-							Description:      "Groups claim filter. Can only be set if type is FILTER.",
-							Type:             schema.TypeString,
-							Optional:         true,
-							ValidateDiagFunc: elemInSlice([]string{"EQUALS", "STARTS_WITH", "CONTAINS", "REGEX"}),
-						},
-						"name": {
-							Description: "Name of the claim that will be used in the token.",
-							Type:        schema.TypeString,
-							Required:    true,
-						},
-						"value": {
-							Description: "Value of the claim. Can be an Okta Expression Language statement that evaluates at the time the token is minted.",
-							Type:        schema.TypeString,
-							Required:    true,
-						},
-					},
-				},
+				Elem:        groupsClaimResource,
 			},
 		}),
 	}
+}
+
+var groupsClaimResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"type": {
+			Description:      "Groups claim type.",
+			Type:             schema.TypeString,
+			Required:         true,
+			ValidateDiagFunc: elemInSlice([]string{"FILTER", "EXPRESSION"}),
+		},
+		"filter_type": {
+			Description:      "Groups claim filter. Can only be set if type is FILTER.",
+			Type:             schema.TypeString,
+			Optional:         true,
+			ValidateDiagFunc: elemInSlice([]string{"EQUALS", "STARTS_WITH", "CONTAINS", "REGEX"}),
+		},
+		"name": {
+			Description: "Name of the claim that will be used in the token.",
+			Type:        schema.TypeString,
+			Required:    true,
+		},
+		"value": {
+			Description: "Value of the claim. Can be an Okta Expression Language statement that evaluates at the time the token is minted.",
+			Type:        schema.TypeString,
+			Required:    true,
+		},
+	},
 }
 
 func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -454,18 +456,11 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	_ = d.Set("sign_on_mode", app.SignOnMode)
 	_ = d.Set("label", app.Label)
 	_ = d.Set("profile", rawProfile)
-	_ = d.Set("type", app.Settings.OauthClient.ApplicationType)
 	// Not setting client_secret, it is only provided on create and update for auth methods that require it
-	_ = d.Set("client_id", app.Credentials.OauthClient.ClientId)
-	_ = d.Set("token_endpoint_auth_method", app.Credentials.OauthClient.TokenEndpointAuthMethod)
-	_ = d.Set("auto_key_rotation", app.Credentials.OauthClient.AutoKeyRotation)
-	_ = d.Set("client_uri", app.Settings.OauthClient.ClientUri)
-	_ = d.Set("logo_uri", app.Settings.OauthClient.LogoUri)
-	_ = d.Set("tos_uri", app.Settings.OauthClient.TosUri)
-	_ = d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
-	_ = d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
-	if app.Settings.OauthClient.WildcardRedirect != "" {
-		_ = d.Set("wildcard_redirect", app.Settings.OauthClient.WildcardRedirect)
+	if app.Credentials.OauthClient != nil {
+		_ = d.Set("client_id", app.Credentials.OauthClient.ClientId)
+		_ = d.Set("token_endpoint_auth_method", app.Credentials.OauthClient.TokenEndpointAuthMethod)
+		_ = d.Set("auto_key_rotation", app.Credentials.OauthClient.AutoKeyRotation)
 	}
 	_ = d.Set("auto_submit_toolbar", app.Visibility.AutoSubmitToolbar)
 	_ = d.Set("hide_ios", app.Visibility.Hide.IOS)
@@ -474,24 +469,70 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	if app.Settings.ImplicitAssignment != nil {
 		_ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
 	}
-	if app.Settings.OauthClient.ConsentMethod != "" { // Early Access Property, might be empty
-		_ = d.Set("consent_method", app.Settings.OauthClient.ConsentMethod)
-	}
-	if app.Settings.OauthClient.IssuerMode != "" {
-		_ = d.Set("issuer_mode", app.Settings.OauthClient.IssuerMode)
-	}
-	if app.Settings.OauthClient.RefreshToken != nil {
-		_ = d.Set("refresh_token_rotation", app.Settings.OauthClient.RefreshToken.RotationType)
-		_ = d.Set("refresh_token_leeway", app.Settings.OauthClient.RefreshToken.Leeway)
-	}
-
 	// If this is ever changed omit it.
 	if d.Get("omit_secret").(bool) {
 		_ = d.Set("client_secret", "")
 	}
+	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
+	// So Skip setting assignments while this is on
+	if !d.Get("implicit_assignment").(bool) {
+		if err = syncGroupsAndUsers(ctx, app.Id, d, m); err != nil {
+			return diag.Errorf("failed to sync groups and users for OAuth application: %v", err)
+		}
+	}
+	gc, err := flattenGroupsClaim(ctx, d, m)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	_ = d.Set("groups_claim", gc)
+	return setOAuthClientSettings(d, app.Settings.OauthClient)
+}
 
-	if app.Settings.OauthClient.Jwks != nil {
-		jwks := app.Settings.OauthClient.Jwks.Keys
+func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface{}) (*schema.Set, error) {
+	gc, resp, err := getSupplementFromMetadata(m).GetAppOauthGroupsClaim(ctx, d.Id())
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return nil, fmt.Errorf("failed to get groups claim for OAuth application: %w", err)
+	}
+	if gc == nil || gc.Name == "" {
+		return nil, nil
+	}
+	elem := map[string]interface{}{
+		"name":  gc.Name,
+		"value": gc.Value,
+		"type":  gc.ValueType,
+	}
+	if gc.ValueType == "GROUPS" {
+		elem["type"] = "FILTER"
+		elem["filter_type"] = gc.GroupFilterType
+	}
+	return schema.NewSet(schema.HashResource(groupsClaimResource), []interface{}{elem}), nil
+}
+
+func setOAuthClientSettings(d *schema.ResourceData, oauthClient *okta.OpenIdConnectApplicationSettingsClient) diag.Diagnostics {
+	if oauthClient == nil {
+		return nil
+	}
+	_ = d.Set("type", oauthClient.ApplicationType)
+	_ = d.Set("client_uri", oauthClient.ClientUri)
+	_ = d.Set("logo_uri", oauthClient.LogoUri)
+	_ = d.Set("tos_uri", oauthClient.TosUri)
+	_ = d.Set("policy_uri", oauthClient.PolicyUri)
+	_ = d.Set("login_uri", oauthClient.InitiateLoginUri)
+	if oauthClient.WildcardRedirect != "" {
+		_ = d.Set("wildcard_redirect", oauthClient.WildcardRedirect)
+	}
+	if oauthClient.ConsentMethod != "" { // Early Access Property, might be empty
+		_ = d.Set("consent_method", oauthClient.ConsentMethod)
+	}
+	if oauthClient.IssuerMode != "" {
+		_ = d.Set("issuer_mode", oauthClient.IssuerMode)
+	}
+	if oauthClient.RefreshToken != nil {
+		_ = d.Set("refresh_token_rotation", oauthClient.RefreshToken.RotationType)
+		_ = d.Set("refresh_token_leeway", oauthClient.RefreshToken.Leeway)
+	}
+	if oauthClient.Jwks != nil {
+		jwks := oauthClient.Jwks.Keys
 		arr := make([]map[string]interface{}, len(jwks))
 		for i, jwk := range jwks {
 			arr[i] = map[string]interface{}{
@@ -501,61 +542,33 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 				"n":   jwk.N,
 			}
 		}
-		err = setNonPrimitives(d, map[string]interface{}{"jwks": arr})
+		err := setNonPrimitives(d, map[string]interface{}{"jwks": arr})
 		if err != nil {
 			return diag.Errorf("failed to set OAuth application properties: %v", err)
 		}
 	}
 
-	respTypes := make([]string, len(app.Settings.OauthClient.ResponseTypes))
-	for i := range app.Settings.OauthClient.ResponseTypes {
-		respTypes[i] = string(*app.Settings.OauthClient.ResponseTypes[i])
+	respTypes := make([]string, len(oauthClient.ResponseTypes))
+	for i := range oauthClient.ResponseTypes {
+		respTypes[i] = string(*oauthClient.ResponseTypes[i])
 	}
-	grantTypes := make([]string, len(app.Settings.OauthClient.GrantTypes))
-	for i := range app.Settings.OauthClient.GrantTypes {
-		grantTypes[i] = string(*app.Settings.OauthClient.GrantTypes[i])
-	}
-	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-	// So Skip setting assignments while this is on
-	if !d.Get("implicit_assignment").(bool) {
-		if err = syncGroupsAndUsers(ctx, app.Id, d, m); err != nil {
-			return diag.Errorf("failed to sync groups and users for OAuth application: %v", err)
-		}
+	grantTypes := make([]string, len(oauthClient.GrantTypes))
+	for i := range oauthClient.GrantTypes {
+		grantTypes[i] = string(*oauthClient.GrantTypes[i])
 	}
 	aggMap := map[string]interface{}{
-		"redirect_uris":             convertStringSliceToSet(app.Settings.OauthClient.RedirectUris),
+		"redirect_uris":             convertStringSliceToSet(oauthClient.RedirectUris),
 		"response_types":            convertStringSliceToSet(respTypes),
 		"grant_types":               convertStringSliceToSet(grantTypes),
-		"post_logout_redirect_uris": convertStringSliceToSet(app.Settings.OauthClient.PostLogoutRedirectUris),
+		"post_logout_redirect_uris": convertStringSliceToSet(oauthClient.PostLogoutRedirectUris),
 	}
-	if app.Settings.OauthClient.IdpInitiatedLogin != nil {
-		_ = d.Set("login_mode", app.Settings.OauthClient.IdpInitiatedLogin.Mode)
-		aggMap["login_scopes"] = convertStringSliceToSet(app.Settings.OauthClient.IdpInitiatedLogin.DefaultScope)
+	if oauthClient.IdpInitiatedLogin != nil {
+		_ = d.Set("login_mode", oauthClient.IdpInitiatedLogin.Mode)
+		aggMap["login_scopes"] = convertStringSliceToSet(oauthClient.IdpInitiatedLogin.DefaultScope)
 	}
-	err = setNonPrimitives(d, aggMap)
+	err := setNonPrimitives(d, aggMap)
 	if err != nil {
 		return diag.Errorf("failed to set OAuth application properties: %v", err)
-	}
-	gc, _, err := getSupplementFromMetadata(m).GetAppOauthGroupsClaim(ctx, d.Id())
-	if err != nil {
-		return diag.Errorf("failed to get groups claim for OAuth application: %v", err)
-	}
-	if gc.Name != "" {
-		arr := []map[string]interface{}{
-			{
-				"name":  gc.Name,
-				"value": gc.Value,
-				"type":  gc.ValueType,
-			},
-		}
-		if gc.ValueType == "GROUPS" {
-			arr[0]["type"] = "FILTER"
-			arr[0]["filter_type"] = gc.GroupFilterType
-		}
-		err = setNonPrimitives(d, map[string]interface{}{"groups_claim": arr})
-		if err != nil {
-			return diag.Errorf("failed to set OAuth application properties: %v", err)
-		}
 	}
 	return nil
 }
@@ -620,11 +633,13 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 
 	// If grant_types are not set, we default to the bare minimum.
 	if len(grantTypes) < 1 {
-		appMap := appGrantTypeMap[appType]
-		if appMap.RequiredGrantTypes == nil {
-			grantTypes = appMap.ValidGrantTypes
-		} else {
-			grantTypes = appMap.RequiredGrantTypes
+		appMap, ok := appGrantTypeMap[appType]
+		if ok {
+			if appMap.RequiredGrantTypes == nil {
+				grantTypes = appMap.ValidGrantTypes
+			} else {
+				grantTypes = appMap.RequiredGrantTypes
+			}
 		}
 	}
 
@@ -737,8 +752,10 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 func validateGrantTypes(d *schema.ResourceData) error {
 	grantTypeList := convertInterfaceToStringSet(d.Get("grant_types"))
 	appType := d.Get("type").(string)
-	appMap := appGrantTypeMap[appType]
-
+	appMap, ok := appGrantTypeMap[appType]
+	if !ok {
+		return nil
+	}
 	// There is some conditional validation around grant types depending on application type.
 	return conditionalValidator("grant_types", appType, appMap.RequiredGrantTypes, appMap.ValidGrantTypes, grantTypeList)
 }

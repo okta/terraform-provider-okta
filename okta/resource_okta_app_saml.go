@@ -463,6 +463,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		_ = d.Set("entity_key", key)
 		_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
 	}
+	_ = d.Set("accessibility_login_redirect_url", app.Accessibility.LoginRedirectUrl)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	if app.SignOnMode == "SAML_1_1" {
 		_ = d.Set("saml_version", saml11)
