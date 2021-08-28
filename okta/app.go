@@ -197,6 +197,7 @@ func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *o
 	_ = d.Set("label", label)
 	_ = d.Set("accessibility_self_service", *accy.SelfService)
 	_ = d.Set("accessibility_error_redirect_url", accy.ErrorRedirectUrl)
+	_ = d.Set("accessibility_login_redirect_url", accy.LoginRedirectUrl)
 	_ = d.Set("auto_submit_toolbar", vis.AutoSubmitToolbar)
 	_ = d.Set("hide_ios", vis.Hide.IOS)
 	_ = d.Set("hide_web", vis.Hide.Web)
