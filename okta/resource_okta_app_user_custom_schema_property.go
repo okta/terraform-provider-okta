@@ -24,7 +24,7 @@ func resourceAppUserSchemaProperty() *schema.Resource {
 			userSchemaSchema,
 			userBaseSchemaSchema,
 			userTypeSchema,
-			userPatternSchema,
+			// userPatternSchema,
 			map[string]*schema.Schema{
 				"app_id": {
 					Type:     schema.TypeString,
