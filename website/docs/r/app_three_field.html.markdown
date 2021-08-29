@@ -62,7 +62,11 @@ The following arguments are supported:
 
 - `hide_web` - (Optional) Do not display application icon to users.
 
-- `logo` (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+- `logo` - (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+
+- `admin_note` - (Optional) Application notes for admins.
+
+- `enduser_note` - (Optional) Application notes for end users.
 
 ## Attributes Reference
 

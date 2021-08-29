@@ -21,7 +21,7 @@ func resourceGroup() *schema.Resource {
 				if err != nil {
 					return nil, err
 				}
-				_ = d.Set("users", convertStringSetToInterface(userIDList))
+				_ = d.Set("users", convertStringSliceToSet(userIDList))
 				return []*schema.ResourceData{d}, nil
 			},
 		},
@@ -113,7 +113,7 @@ func syncGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}) 
 	if err != nil {
 		return err
 	}
-	return d.Set("users", convertStringSetToInterface(userIDList))
+	return d.Set("users", convertStringSliceToSet(userIDList))
 }
 
 func updateGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}) error {

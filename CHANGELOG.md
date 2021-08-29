@@ -1,5 +1,57 @@
 # Changelog
 
+## 3.13.7 (Aug 23, 2021)
+
+ENHANCEMENTS:
+* Add `asns` field to the `okta_network_zone` resource [#599](https://github.com/okta/terraform-provider-okta/pull/599). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Add `app_links_json` to the `okta_app_saml` resource [#601](https://github.com/okta/terraform-provider-okta/pull/601). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Add `app_settings_json` to the `okta_app_auto_login` resource [#602](https://github.com/okta/terraform-provider-okta/pull/602). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+* Fix `*_token_*` fields setup when importing `okta_auth_server_policy_rule` resource [#600](https://github.com/okta/terraform-provider-okta/pull/600). Thanks, [@Philipp](https://github.com/phi1ipp)!
+* Governed Transport is now handling nil response in `postRequestHook` func [#603](https://github.com/okta/terraform-provider-okta/pull/603). Thanks, [@Mike](https://github.com/monde)!
+
+## 3.13.6 (Aug 18, 2021)
+
+ENHANCEMENTS:
+* Add `saml_version` field to the `okta_app_saml` resource [#593](https://github.com/okta/terraform-provider-okta/pull/593). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+* Fixed provider crash when using `okta_template_sms` without `translations` [#592](https://github.com/okta/terraform-provider-okta/pull/592). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.13.5 (Aug 17, 2021)
+
+ENHANCEMENTS:
+* Add `admin_note` and `enduser_note` to all `okta_app_*` resources [#589](https://github.com/okta/terraform-provider-okta/pull/589). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+* Fixed bug in config validator [#589](https://github.com/okta/terraform-provider-okta/pull/589). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.13.4 (Aug 16, 2021)
+
+ENHANCEMENTS:
+* Add auth config validator [#567](https://github.com/okta/terraform-provider-okta/pull/579). Thanks, [@bendrucker](https://github.com/bendrucker)!
+
+BUGS:
+* Fix unmarshalling error for `okta_network_zone` resource [#586](https://github.com/okta/terraform-provider-okta/pull/586). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fix `pattern` property setup in `okta_user_schema_property` [#583](https://github.com/okta/terraform-provider-okta/pull/583). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.13.3 (Aug 12, 2021)
+
+BUGS:
+* Fix `OKTA_API_SCOPES` not being set via env variable [#574](https://github.com/okta/terraform-provider-okta/pull/574). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.13.2 (Aug 12, 2021)
+
+ENHANCEMENTS:
+* Minor tweaks for the API governor [#569](https://github.com/okta/terraform-provider-okta/pull/569). Thanks, [@monde](https://github.com/monde)!
+* Use more methods from official Okta Golang SDK [#567](https://github.com/okta/terraform-provider-okta/pull/567). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Provider will now terminate in case of invalid credentials [#571](https://github.com/okta/terraform-provider-okta/pull/571). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+* Fix `OKTA_API_SCOPES` env var parsing [#570](https://github.com/okta/terraform-provider-okta/pull/570). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fix `target_app_list` and `target_group_list` fields behavior in `okta_group_role` resource [#570](https://github.com/okta/terraform-provider-okta/pull/570). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.13.1 (Aug 6, 2021)
 
 ENHANCEMENTS:

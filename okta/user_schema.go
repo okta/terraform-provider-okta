@@ -1,9 +1,8 @@
 package okta
 
 import (
+	"encoding/json"
 	"fmt"
-	"reflect"
-	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -176,8 +175,10 @@ func syncCustomUserSchema(d *schema.ResourceData, subschema *okta.UserSchemaAttr
 		_ = d.Set("array_one_of", flattenOneOf(subschema.Items.OneOf))
 		_ = d.Set("array_enum", convertStringArrToInterface(subschema.Items.Enum))
 	}
+	if len(subschema.Enum) > 0 {
+		_ = d.Set("enum", convertStringArrToInterface(subschema.Enum))
+	}
 	return setNonPrimitives(d, map[string]interface{}{
-		"enum":   subschema.Enum,
 		"one_of": flattenOneOf(subschema.OneOf),
 	})
 }
@@ -204,8 +205,6 @@ func syncBaseUserSchema(d *schema.ResourceData, subschema *okta.UserSchemaAttrib
 	}
 	if subschema.Pattern != nil {
 		_ = d.Set("pattern", &subschema.Pattern)
-	} else {
-		_ = d.Set("pattern", "")
 	}
 }
 
@@ -291,12 +290,6 @@ func buildUserCustomSchemaAttribute(d *schema.ResourceData) *okta.UserSchemaAttr
 		ExternalNamespace: d.Get("external_namespace").(string),
 		Unique:            d.Get("unique").(string),
 	}
-	p, ok := d.GetOk("pattern")
-	if ok {
-		userSchemaAttribute.Pattern = stringPtr(p.(string))
-	} else {
-		userSchemaAttribute.Pattern = nil
-	}
 	return userSchemaAttribute
 }
 
@@ -317,23 +310,37 @@ func buildUserBaseSchemaAttribute(d *schema.ResourceData) *okta.UserSchemaAttrib
 		p, ok := d.GetOk("pattern")
 		if ok {
 			userSchemaAttribute.Pattern = stringPtr(p.(string))
-		} else {
-			userSchemaAttribute.Pattern = nil
 		}
 	}
 	return userSchemaAttribute
 }
 
-func buildBaseUserSchema(index string, schema *okta.UserSchemaAttribute) *okta.UserSchema {
-	return &okta.UserSchema{
+func buildBaseUserSchema(d *schema.ResourceData) []byte {
+	us := &okta.UserSchema{
 		Definitions: &okta.UserSchemaDefinitions{
 			Base: &okta.UserSchemaBase{
-				Id:         "#base",
-				Properties: createUserSchemaBaseProperty(index, schema),
-				Type:       "object",
+				Id: "#base",
+				Properties: map[string]*okta.UserSchemaAttribute{
+					d.Get("index").(string): buildUserBaseSchemaAttribute(d),
+				},
+				Type: "object",
 			},
 		},
 	}
+	type localIDX okta.UserSchema
+	m, _ := json.Marshal((*localIDX)(us))
+	if d.Get("index").(string) != "login" {
+		return m
+	}
+	var a interface{}
+	_ = json.Unmarshal(m, &a)
+	b := a.(map[string]interface{})
+	p := us.Definitions.Base.Properties["login"].Pattern
+	if p == nil {
+		b["definitions"].(map[string]interface{})["base"].(map[string]interface{})["properties"].(map[string]interface{})["login"].(map[string]interface{})["pattern"] = nil
+	}
+	m, _ = json.Marshal(b)
+	return m
 }
 
 func buildCustomUserSchema(index string, schema *okta.UserSchemaAttribute) *okta.UserSchema {
@@ -361,35 +368,5 @@ func userSchemaBaseAttribute(s *okta.UserSchema, index string) *okta.UserSchemaA
 	if s == nil || s.Definitions == nil || s.Definitions.Base == nil {
 		return nil
 	}
-	t := reflect.TypeOf(*s.Definitions.Base.Properties)
-	v := reflect.ValueOf(*s.Definitions.Base.Properties)
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-		tag := field.Tag.Get("json")
-		if index != strings.TrimSuffix(tag, ",omitempty") {
-			continue
-		}
-		return v.Field(i).Interface().(*okta.UserSchemaAttribute)
-	}
-	return nil
-}
-
-func createUserSchemaBaseProperty(index string, schema *okta.UserSchemaAttribute) *okta.UserSchemaBaseProperties {
-	var p okta.UserSchemaBaseProperties
-	t := reflect.TypeOf(&p)
-	v := reflect.ValueOf(&p)
-	for i := 0; i < t.Elem().NumField(); i++ {
-		field := t.Elem().Field(i)
-		tag := field.Tag.Get("json")
-		if index != strings.TrimSuffix(tag, ",omitempty") {
-			continue
-		}
-		if v.Elem().Field(i).CanSet() {
-			v.Elem().Field(i).Set(reflect.ValueOf(schema))
-			return &p
-		} else {
-			panic("can not set")
-		}
-	}
-	return nil
+	return s.Definitions.Base.Properties[index]
 }

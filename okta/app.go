@@ -16,138 +16,151 @@ import (
 )
 
 var baseAppSchema = map[string]*schema.Schema{
-	"name": {
-		Type:        schema.TypeString,
-		Computed:    true,
-		Description: "Name of the app.",
-	},
-	"label": {
-		Type:        schema.TypeString,
-		Required:    true,
-		Description: "Pretty name of app.",
-	},
-	"sign_on_mode": {
-		Type:        schema.TypeString,
-		Computed:    true,
-		Description: "Sign on mode of application.",
-	},
-	"status": {
-		Type:             schema.TypeString,
-		Optional:         true,
-		Default:          statusActive,
-		ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
-		Description:      "Status of application.",
-	},
-	"logo": {
-		Type:             schema.TypeString,
-		Optional:         true,
-		ValidateDiagFunc: logoValid(),
-		Description:      "Logo of the application.",
-		DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-			return new == ""
+		"name": {
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Name of the app.",
 		},
-		StateFunc: func(val interface{}) string {
-			logoPath := val.(string)
-			if logoPath == "" {
-				return logoPath
-			}
-			return fmt.Sprintf("%s (%s)", logoPath, computeFileHash(logoPath))
+		"label": {
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Pretty name of app.",
 		},
-	},
-	"logo_url": {
-		Type:        schema.TypeString,
-		Computed:    true,
-		Description: "URL of the application's logo",
-	},
-}
+		"sign_on_mode": {
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Sign on mode of application.",
+		},
+		"status": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			Default:          statusActive,
+			ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
+			Description:      "Status of application.",
+		},
+		"logo": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			ValidateDiagFunc: logoValid(),
+			Description:      "Logo of the application.",
+			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+				return new == ""
+			},
+			StateFunc: func(val interface{}) string {
+				logoPath := val.(string)
+				if logoPath == "" {
+					return logoPath
+				}
+				return fmt.Sprintf("%s (%s)", logoPath, computeFileHash(logoPath))
+			},
+		},
+		"logo_url": {
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "URL of the application's logo",
+		},
+		"admin_note": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Application notes for admins.",
+		},
+		"enduser_note": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Application notes for end users.",
+		},
+	}
 
-var appVisibilitySchema = map[string]*schema.Schema{
-	"auto_submit_toolbar": {
-		Type:        schema.TypeBool,
-		Optional:    true,
-		Default:     false,
-		Description: "Display auto submit toolbar",
-	},
-	"hide_ios": {
-		Type:        schema.TypeBool,
-		Optional:    true,
-		Default:     false,
-		Description: "Do not display application icon on mobile app",
-	},
-	"hide_web": {
-		Type:        schema.TypeBool,
-		Optional:    true,
-		Default:     false,
-		Description: "Do not display application icon to users",
-	},
-}
+var	appVisibilitySchema = map[string]*schema.Schema{
+		"auto_submit_toolbar": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Display auto submit toolbar",
+		},
+		"hide_ios": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Do not display application icon on mobile app",
+		},
+		"hide_web": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Do not display application icon to users",
+		},
+	}
 
-var baseAppSwaSchema = map[string]*schema.Schema{
-	"accessibility_self_service": {
-		Type:        schema.TypeBool,
-		Optional:    true,
-		Default:     false,
-		Description: "Enable self service",
-	},
-	"accessibility_error_redirect_url": {
-		Type:        schema.TypeString,
-		Optional:    true,
-		Description: "Custom error page URL",
-	},
-	"auto_submit_toolbar": {
-		Type:        schema.TypeBool,
-		Optional:    true,
-		Default:     false,
-		Description: "Display auto submit toolbar",
-	},
-	"hide_ios": {
-		Type:        schema.TypeBool,
-		Optional:    true,
-		Default:     false,
-		Description: "Do not display application icon on mobile app",
-	},
-	"hide_web": {
-		Type:        schema.TypeBool,
-		Optional:    true,
-		Default:     false,
-		Description: "Do not display application icon to users",
-	},
-	"user_name_template": {
-		Type:        schema.TypeString,
-		Optional:    true,
-		Default:     "${source.login}",
-		Description: "Username template",
-	},
-	"user_name_template_suffix": {
-		Type:        schema.TypeString,
-		Optional:    true,
-		Description: "Username template suffix",
-	},
-	"user_name_template_type": {
-		Type:             schema.TypeString,
-		Optional:         true,
-		Default:          "BUILT_IN",
-		Description:      "Username template type",
-		ValidateDiagFunc: elemInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
-	},
-}
+var	baseAppSwaSchema = map[string]*schema.Schema{
+		"accessibility_self_service": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Enable self service",
+		},
+		"accessibility_error_redirect_url": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Custom error page URL",
+		},
+		"auto_submit_toolbar": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Display auto submit toolbar",
+		},
+		"hide_ios": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Do not display application icon on mobile app",
+		},
+		"hide_web": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Do not display application icon to users",
+		},
+		"user_name_template": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     "${source.login}",
+			Description: "Username template",
+		},
+		"user_name_template_suffix": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Username template suffix",
+		},
+		"user_name_template_type": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			Default:          "BUILT_IN",
+			Description:      "Username template type",
+			ValidateDiagFunc: elemInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
+		},
+	}
 
-var appSamlDiffSuppressFunc = func(k, old, new string, d *schema.ResourceData) bool {
-	// Conditional default
-	return new == "" && old == "http://www.okta.com/${org.externalKey}"
-}
+var	appSamlDiffSuppressFunc = func(k, old, new string, d *schema.ResourceData) bool {
+		// Conditional default
+		return new == "" && old == "http://www.okta.com/${org.externalKey}"
+	}
 
-// Wish there was some better polymorphism that could make these similarities easier to deal with
-func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *okta.ApplicationAccessibility, vis *okta.ApplicationVisibility) {
+
+func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *okta.ApplicationAccessibility, vis *okta.ApplicationVisibility, notes *okta.ApplicationSettingsNotes) {
 	_ = d.Set("name", name)
 	_ = d.Set("status", status)
 	_ = d.Set("sign_on_mode", signOn)
 	_ = d.Set("label", label)
 	_ = d.Set("accessibility_self_service", *accy.SelfService)
 	_ = d.Set("accessibility_error_redirect_url", accy.ErrorRedirectUrl)
+	_ = d.Set("accessibility_login_redirect_url", accy.LoginRedirectUrl)
 	_ = d.Set("auto_submit_toolbar", vis.AutoSubmitToolbar)
 	_ = d.Set("hide_ios", vis.Hide.IOS)
 	_ = d.Set("hide_web", vis.Hide.Web)
+	_ = d.Set("admin_note", notes.Admin)
+	_ = d.Set("enduser_note", notes.Enduser)
 }
 
 func buildAppSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
@@ -158,9 +171,12 @@ func buildAppSchemaWithVisibility(appSchema map[string]*schema.Schema) map[strin
 	return buildSchema(baseAppSchema, appVisibilitySchema, appSchema)
 }
 
-func buildSchemeCreds(d *schema.ResourceData) *okta.SchemeApplicationCredentials {
-	revealPass := d.Get("reveal_password").(bool)
+func buildAppSwaSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
+	return buildSchema(baseAppSchema, baseAppSwaSchema, appSchema)
+}
 
+func buildSchemeAppCreds(d *schema.ResourceData) *okta.SchemeApplicationCredentials {
+	revealPass := d.Get("reveal_password").(bool)
 	return &okta.SchemeApplicationCredentials{
 		RevealPassword: &revealPass,
 		Scheme:         d.Get("credentials_scheme").(string),
@@ -176,11 +192,7 @@ func buildSchemeCreds(d *schema.ResourceData) *okta.SchemeApplicationCredentials
 	}
 }
 
-func buildAppSwaSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(baseAppSchema, baseAppSwaSchema, appSchema)
-}
-
-func buildVisibility(d *schema.ResourceData) *okta.ApplicationVisibility {
+func buildAppVisibility(d *schema.ResourceData) *okta.ApplicationVisibility {
 	autoSubmit := d.Get("auto_submit_toolbar").(bool)
 	hideMobile := d.Get("hide_ios").(bool)
 	hideWeb := d.Get("hide_web").(bool)
@@ -192,6 +204,19 @@ func buildVisibility(d *schema.ResourceData) *okta.ApplicationVisibility {
 			Web: &hideWeb,
 		},
 	}
+}
+
+func buildAppNotes(d *schema.ResourceData) *okta.ApplicationSettingsNotes {
+	n := &okta.ApplicationSettingsNotes{}
+	admin, ok := d.GetOk("admin_note")
+	if ok {
+		n.Admin = stringPtr(admin.(string))
+	}
+	enduser, ok := d.GetOk("enduser_note")
+	if ok {
+		n.Enduser = stringPtr(enduser.(string))
+	}
+	return n
 }
 
 func fetchApp(ctx context.Context, d *schema.ResourceData, m interface{}, app okta.App) error {
@@ -269,6 +294,14 @@ func setAppSettings(d *schema.ResourceData, settings *okta.ApplicationSettingsAp
 	return d.Set("app_settings_json", string(payload))
 }
 
+func setAppLinks(d *schema.ResourceData, appLinks map[string]bool) error {
+	if len(appLinks) == 0 {
+		return nil
+	}
+	payload, _ := json.Marshal(appLinks)
+	return d.Set("app_links_json", string(payload))
+}
+
 func setSamlSettings(d *schema.ResourceData, signOn *okta.SamlApplicationSettingsSignOn) error {
 	_ = d.Set("default_relay_state", signOn.DefaultRelayState)
 	_ = d.Set("sso_url", signOn.SsoAcsUrl)
@@ -292,7 +325,7 @@ func setSamlSettings(d *schema.ResourceData, signOn *okta.SamlApplicationSetting
 				for i := range acsEndpointsObj {
 					acsEndpoints[i] = acsEndpointsObj[i].Url
 				}
-				_ = d.Set("acs_endpoints", convertStringSetToInterface(acsEndpoints))
+				_ = d.Set("acs_endpoints", convertStringSliceToSet(acsEndpoints))
 			}
 		} else {
 			_ = d.Set("acs_endpoints", nil)

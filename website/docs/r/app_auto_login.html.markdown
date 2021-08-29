@@ -24,6 +24,21 @@ resource "okta_app_auto_login" "example" {
 }
 ```
 
+#### Pre-configured application
+```hcl
+resource "okta_app_auto_login" "example" {
+  label             = "Google Example App"
+  status            = "ACTIVE"
+  preconfigured_app = "google"
+  app_settings_json = <<JSON
+{
+    "domain": "okta",
+    "afwOnly": false
+}
+JSON
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -66,7 +81,13 @@ The following arguments are supported:
 - `groups` - (Optional) Groups associated with the application. See `okta_app_group_assignment` for a more flexible approach.
   - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
 
-- `logo` (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+- `logo` - (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+
+- `admin_note` - (Optional) Application notes for admins.
+
+- `enduser_note` - (Optional) Application notes for end users.
+
+- `app_settings_json` - (Optional) Application settings in JSON format.
 
 ## Attributes Reference
 

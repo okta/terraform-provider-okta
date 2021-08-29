@@ -68,7 +68,7 @@ func resourceGroupRolesRead(ctx context.Context, d *schema.ResourceData, m inter
 	for i, role := range existingRoles {
 		adminRoles[i] = role.Type
 	}
-	_ = d.Set("admin_roles", convertStringSetToInterface(adminRoles))
+	_ = d.Set("admin_roles", convertStringSliceToSet(adminRoles))
 	return nil
 }
 

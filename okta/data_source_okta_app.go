@@ -78,7 +78,7 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 		}
 		app = respApp.(*okta.Application)
 	} else {
-		appList, err := listApps(ctx, m, filters, 1)
+		appList, err := listApps(ctx, getOktaClientFromMetadata(m), filters, 1)
 		if err != nil {
 			return diag.Errorf("failed to list apps: %v", err)
 		}
@@ -91,7 +91,6 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 		logger(m).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
 	}
-
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
 	_ = d.Set("name", app.Name)

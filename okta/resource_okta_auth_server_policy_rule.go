@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAuthServerPolicyRule() *schema.Resource {
@@ -111,28 +110,18 @@ func resourceAuthServerPolicyRuleCreate(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	authServerPolicyRule := buildAuthServerPolicyRule(d)
-	responseAuthServerPolicyRule, _, err := getSupplementFromMetadata(m).CreateAuthorizationServerPolicyRule(
-		ctx,
-		d.Get("auth_server_id").(string),
-		d.Get("policy_id").(string),
-		*authServerPolicyRule,
-		nil,
-	)
+	resp, _, err := getOktaClientFromMetadata(m).AuthorizationServer.CreateAuthorizationServerPolicyRule(
+		ctx, d.Get("auth_server_id").(string), d.Get("policy_id").(string), buildAuthServerPolicyRule(d))
 	if err != nil {
 		return diag.Errorf("failed to create auth server policy rule: %v", err)
 	}
-	d.SetId(responseAuthServerPolicyRule.Id)
+	d.SetId(resp.Id)
 	return resourceAuthServerPolicyRuleRead(ctx, d, m)
 }
 
 func resourceAuthServerPolicyRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	authServerPolicyRule, resp, err := getSupplementFromMetadata(m).GetAuthorizationServerPolicyRule(
-		ctx, d.Get("auth_server_id").(string),
-		d.Get("policy_id").(string),
-		d.Id(),
-		sdk.AuthorizationServerPolicyRule{},
-	)
+	authServerPolicyRule, resp, err := getOktaClientFromMetadata(m).AuthorizationServer.GetAuthorizationServerPolicyRule(
+		ctx, d.Get("auth_server_id").(string), d.Get("policy_id").(string), d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get auth server policy rule: %v", err)
 	}
@@ -144,6 +133,10 @@ func resourceAuthServerPolicyRuleRead(ctx context.Context, d *schema.ResourceDat
 	_ = d.Set("status", authServerPolicyRule.Status)
 	_ = d.Set("priority", authServerPolicyRule.Priority)
 	_ = d.Set("type", authServerPolicyRule.Type)
+	_ = d.Set("access_token_lifetime_minutes", authServerPolicyRule.Actions.Token.AccessTokenLifetimeMinutes)
+	_ = d.Set("refresh_token_lifetime_minutes", authServerPolicyRule.Actions.Token.RefreshTokenLifetimeMinutes)
+	_ = d.Set("refresh_token_window_minutes", authServerPolicyRule.Actions.Token.RefreshTokenWindowMinutes)
+
 	if authServerPolicyRule.Actions.Token.InlineHook != nil {
 		_ = d.Set("inline_hook_id", authServerPolicyRule.Actions.Token.InlineHook.Id)
 	}
@@ -166,13 +159,11 @@ func resourceAuthServerPolicyRuleUpdate(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	authServerPolicyRule := buildAuthServerPolicyRule(d)
-	_, _, err = getSupplementFromMetadata(m).UpdateAuthorizationServerPolicyRule(
+	_, _, err = getOktaClientFromMetadata(m).AuthorizationServer.UpdateAuthorizationServerPolicyRule(
 		ctx,
 		d.Get("auth_server_id").(string),
 		d.Get("policy_id").(string), d.Id(),
-		*authServerPolicyRule,
-		nil,
+		buildAuthServerPolicyRule(d),
 	)
 	if err != nil {
 		return diag.Errorf("failed to update auth server policy rule: %v", err)
@@ -206,7 +197,7 @@ func handleAuthServerPolicyRuleLifecycle(ctx context.Context, d *schema.Resource
 }
 
 func resourceAuthServerPolicyRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, err := getSupplementFromMetadata(m).DeleteAuthorizationServerPolicyRule(
+	_, err := getOktaClientFromMetadata(m).AuthorizationServer.DeleteAuthorizationServerPolicyRule(
 		ctx,
 		d.Get("auth_server_id").(string),
 		d.Get("policy_id").(string),
@@ -218,56 +209,62 @@ func resourceAuthServerPolicyRuleDelete(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func buildAuthServerPolicyRule(d *schema.ResourceData) *sdk.AuthorizationServerPolicyRule {
-	var hook *sdk.AuthServerInlineHook
-
+func buildAuthServerPolicyRule(d *schema.ResourceData) okta.AuthorizationServerPolicyRule {
+	var hook *okta.TokenAuthorizationServerPolicyRuleActionInlineHook
 	inlineHook := d.Get("inline_hook_id").(string)
-
 	if inlineHook != "" {
-		hook = &sdk.AuthServerInlineHook{
+		hook = &okta.TokenAuthorizationServerPolicyRuleActionInlineHook{
 			Id: inlineHook,
 		}
 	}
-
-	return &sdk.AuthorizationServerPolicyRule{
+	return okta.AuthorizationServerPolicyRule{
 		Name:     d.Get("name").(string),
 		Status:   d.Get("status").(string),
-		Priority: d.Get("priority").(int),
+		Priority: int64(d.Get("priority").(int)),
 		Type:     d.Get("type").(string),
-		Actions: &sdk.AuthorizationServerPolicyRuleActions{
-			Token: &sdk.TokenActions{
-				AccessTokenLifetimeMinutes:  d.Get("access_token_lifetime_minutes").(int),
-				RefreshTokenLifetimeMinutes: d.Get("refresh_token_lifetime_minutes").(int),
-				RefreshTokenWindowMinutes:   d.Get("refresh_token_window_minutes").(int),
+		Actions: &okta.AuthorizationServerPolicyRuleActions{
+			Token: &okta.TokenAuthorizationServerPolicyRuleAction{
+				AccessTokenLifetimeMinutes:  int64(d.Get("access_token_lifetime_minutes").(int)),
+				RefreshTokenLifetimeMinutes: int64(d.Get("refresh_token_lifetime_minutes").(int)),
+				RefreshTokenWindowMinutes:   int64(d.Get("refresh_token_window_minutes").(int)),
 				InlineHook:                  hook,
 			},
 		},
-		Conditions: &sdk.AuthorizationServerPolicyRuleConditions{
-			GrantTypes: &sdk.Conditions{Include: convertInterfaceToStringSet(d.Get("grant_type_whitelist"))},
-			Scopes:     &sdk.Conditions{Include: convertInterfaceToStringSet(d.Get("scope_whitelist"))},
-			People:     getPeopleConditions(d),
+		Conditions: &okta.AuthorizationServerPolicyRuleConditions{
+			GrantTypes: &okta.GrantTypePolicyRuleCondition{Include: convertInterfaceToStringSet(d.Get("grant_type_whitelist"))},
+			Scopes:     &okta.OAuth2ScopesMediationPolicyRuleCondition{Include: convertInterfaceToStringSet(d.Get("scope_whitelist"))},
+			People: &okta.PolicyPeopleCondition{
+				Groups: &okta.GroupCondition{
+					Include: convertInterfaceToStringSet(d.Get("group_whitelist")),
+					Exclude: convertInterfaceToStringSet(d.Get("group_blacklist")),
+				},
+				Users: &okta.UserCondition{
+					Include: convertInterfaceToStringSet(d.Get("user_whitelist")),
+					Exclude: convertInterfaceToStringSet(d.Get("user_blacklist")),
+				},
+			},
 		},
 	}
 }
 
-func setPeopleAssignments(d *schema.ResourceData, c *okta.GroupRulePeopleCondition) error {
+func setPeopleAssignments(d *schema.ResourceData, c *okta.PolicyPeopleCondition) error {
 	if c.Groups != nil {
 		err := setNonPrimitives(d, map[string]interface{}{
-			"group_whitelist": convertStringSetToInterface(c.Groups.Include),
-			"group_blacklist": convertStringSetToInterface(c.Groups.Exclude),
+			"group_whitelist": convertStringSliceToSet(c.Groups.Include),
+			"group_blacklist": convertStringSliceToSet(c.Groups.Exclude),
 		})
 		if err != nil {
 			return err
 		}
 	} else {
 		_ = setNonPrimitives(d, map[string]interface{}{
-			"group_whitelist": convertStringSetToInterface([]string{}),
-			"group_blacklist": convertStringSetToInterface([]string{}),
+			"group_whitelist": convertStringSliceToSet([]string{}),
+			"group_blacklist": convertStringSliceToSet([]string{}),
 		})
 	}
 	return setNonPrimitives(d, map[string]interface{}{
-		"user_whitelist": convertStringSetToInterface(c.Users.Include),
-		"user_blacklist": convertStringSetToInterface(c.Users.Exclude),
+		"user_whitelist": convertStringSliceToSet(c.Users.Include),
+		"user_blacklist": convertStringSliceToSet(c.Users.Exclude),
 	})
 }
 

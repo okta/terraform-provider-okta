@@ -181,7 +181,18 @@ func convertStringArrToInterface(stringList []string) []interface{} {
 	return arr
 }
 
-func convertStringSetToInterface(stringList []string) *schema.Set {
+func convertStringSliceToSet(stringList []string) *schema.Set {
+	arr := make([]interface{}, len(stringList))
+	for i, str := range stringList {
+		arr[i] = str
+	}
+	return schema.NewSet(schema.HashString, arr)
+}
+
+func convertStringSliceToSetNullable(stringList []string) *schema.Set {
+	if len(stringList) == 0 {
+		return nil
+	}
 	arr := make([]interface{}, len(stringList))
 	for i, str := range stringList {
 		arr[i] = str
@@ -231,14 +242,6 @@ func doesResourceExist(response *okta.Response, err error) (bool, error) {
 		return false, responseErr(response, err)
 	}
 	return true, err
-}
-
-func getNullableInt(d *schema.ResourceData, key string) *int {
-	if v, ok := d.GetOk(key); ok {
-		i := v.(int)
-		return &i
-	}
-	return nil
 }
 
 // Useful shortcut for suppressing errors from Okta's SDK when a resource does not exist. Usually used during deletion

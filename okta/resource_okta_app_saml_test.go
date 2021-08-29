@@ -1,8 +1,10 @@
 package okta
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 	"regexp"
 	"testing"
 
@@ -54,6 +56,7 @@ func TestAccAppSaml_crud(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	allFields := mgr.GetFixtures("updated.tf", ri, t)
 	importConfig := mgr.GetFixtures("import.tf", ri, t)
+	importSAML11Config := mgr.GetFixtures("import_saml_1_1.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
 	resource.Test(t, resource.TestCase{
@@ -128,8 +131,104 @@ func TestAccAppSaml_crud(t *testing.T) {
 					return nil
 				},
 			},
+			{
+				Config: importSAML11Config,
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import resource into state")
+					}
+					if s[0].Attributes["preconfigured_app"] != "sharepoint_onpremise" {
+						return errors.New("failed to set required properties when import existing infrastructure")
+					}
+					return nil
+				},
+			},
 		},
 	})
+}
+
+func TestAccAppSaml_preconfigured(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appSaml)
+	preconfigured := mgr.GetFixtures("preconfigured.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", appSaml)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: preconfigured,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "preconfigured_app", "office365"),
+					resource.TestCheckResourceAttr(resourceName, "saml_version", "1.1"),
+					testAppSamlJson(resourceName, `{
+       "wsFedConfigureType": "AUTO",
+       "windowsTransportEnabled": false,
+       "domain": "okta.com",
+       "msftTenant": "okta",
+       "domains": [],
+       "requireAdminConsent": false
+    }`, `{
+      "calendar": false,
+      "crm": false,
+      "delve": false,
+      "excel": false,
+      "forms": false,
+      "mail": false,
+      "newsfeed": false,
+      "onedrive": false,
+      "people": false,
+      "planner": false,
+      "powerbi": false,
+      "powerpoint": false,
+      "sites": false,
+      "sway": false,
+      "tasks": false,
+      "teams": false,
+      "video": false,
+      "word": false,
+      "yammer": false,
+      "login": true
+	}`),
+				),
+			},
+		},
+	})
+}
+
+func testAppSamlJson(name, expectedSettingsJSON, expectedLinksJSON string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[name]
+		if !ok {
+			return fmt.Errorf("not found: %s", name)
+		}
+		actualSettingsJSON := rs.Primary.Attributes["app_settings_json"]
+		actualLinksJSON := rs.Primary.Attributes["app_links_json"]
+		eq := areJSONStringsEqual(expectedSettingsJSON, actualSettingsJSON)
+		if !eq {
+			return fmt.Errorf("attribute 'app_settings_json' expected %q, got %q", expectedSettingsJSON, actualSettingsJSON)
+		}
+		eq = areJSONStringsEqual(expectedLinksJSON, actualLinksJSON)
+		if !eq {
+			return fmt.Errorf("attribute 'app_settings_json' expected %q, got %q", expectedSettingsJSON, actualSettingsJSON)
+		}
+		return nil
+	}
+}
+
+func areJSONStringsEqual(a, b string) bool {
+	var aM, bM map[string]interface{}
+	_ = json.Unmarshal([]byte(a), &aM)
+	_ = json.Unmarshal([]byte(b), &bM)
+	return reflect.DeepEqual(aM, bM)
 }
 
 // Add and remove groups/users

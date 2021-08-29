@@ -7,11 +7,7 @@ import (
 )
 
 func deleteTestApps(client *testClient) error {
-	c, err := oktaConfig()
-	if err != nil {
-		return err
-	}
-	appList, err := listApps(context.Background(), c, &appFilters{LabelPrefix: testResourcePrefix}, defaultPaginationLimit)
+	appList, err := listApps(context.Background(), client.oktaClient, &appFilters{LabelPrefix: testResourcePrefix}, defaultPaginationLimit)
 	if err != nil {
 		return err
 	}

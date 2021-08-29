@@ -109,9 +109,14 @@ func Provider() *schema.Provider {
 				ConflictsWith: []string{"api_token"},
 			},
 			"scopes": {
-				Type:          schema.TypeSet,
-				Optional:      true,
-				Elem:          &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+					DefaultFunc: func() (interface{}, error) {
+						return "a", nil
+					},
+				},
 				DefaultFunc:   envDefaultSetFunc("OKTA_API_SCOPES", nil),
 				Description:   "API Token granting privileges to Okta API.",
 				ConflictsWith: []string{"api_token"},
@@ -170,8 +175,8 @@ func Provider() *schema.Provider {
 			"max_api_capacity": {
 				Type:             schema.TypeInt,
 				Optional:         true,
-				Default:          100,
 				ValidateDiagFunc: intBetween(1, 100),
+				DefaultFunc:      schema.EnvDefaultFunc("MAX_API_CAPACITY", 100),
 				Description: "(Experimental) sets what percentage of capacity the provider can use of the total rate limit " +
 					"capacity while making calls to the Okta management API endpoints. Okta API operates in one minute buckets. " +
 					"See Okta Management API Rate Limits: https://developer.okta.com/docs/reference/rl-global-mgmt/",
@@ -308,7 +313,7 @@ func deprecateIncorrectNaming(d *schema.Resource, newResource string) *schema.Re
 	return d
 }
 
-func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	log.Printf("[INFO] Initializing Okta client")
 	config := Config{
 		orgName:        d.Get("org_name").(string),
@@ -326,8 +331,11 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 		requestTimeout: d.Get("request_timeout").(int),
 		maxAPICapacity: d.Get("max_api_capacity").(int),
 	}
-	if err := config.loadAndValidate(); err != nil {
-		return nil, diag.Errorf("[ERROR] Error initializing the Okta SDK clients: %v", err)
+	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(config.scopes) == 0 {
+		config.scopes = strings.Split(v, ",")
+	}
+	if err := config.loadAndValidate(ctx); err != nil {
+		return nil, diag.Errorf("[ERROR] invalid configuration: %v", err)
 	}
 	return &config, nil
 }
@@ -335,7 +343,12 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 func envDefaultSetFunc(k string, dv interface{}) schema.SchemaDefaultFunc {
 	return func() (interface{}, error) {
 		if v := os.Getenv(k); v != "" {
-			return convertStringSetToInterface(strings.Split(v, ",")), nil
+			stringList := strings.Split(v, ",")
+			arr := make([]interface{}, len(stringList))
+			for i := range stringList {
+				arr[i] = stringList[i]
+			}
+			return arr, nil
 		}
 		return dv, nil
 	}

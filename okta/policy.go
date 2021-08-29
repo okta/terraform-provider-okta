@@ -129,19 +129,6 @@ func setDefaultPolicy(ctx context.Context, d *schema.ResourceData, m interface{}
 	return policy, nil
 }
 
-func getPeopleConditions(d *schema.ResourceData) *okta.GroupRulePeopleCondition {
-	return &okta.GroupRulePeopleCondition{
-		Groups: &okta.GroupRuleGroupCondition{
-			Include: convertInterfaceToStringSet(d.Get("group_whitelist")),
-			Exclude: convertInterfaceToStringSet(d.Get("group_blacklist")),
-		},
-		Users: &okta.GroupRuleUserCondition{
-			Include: convertInterfaceToStringSet(d.Get("user_whitelist")),
-			Exclude: convertInterfaceToStringSet(d.Get("user_blacklist")),
-		},
-	}
-}
-
 func buildDefaultPolicySchema(target map[string]*schema.Schema) map[string]*schema.Schema {
 	return buildSchema(defaultPolicySchema, target)
 }
@@ -257,6 +244,6 @@ func syncPolicyFromUpstream(d *schema.ResourceData, policy *sdk.Policy) error {
 	_ = d.Set("status", policy.Status)
 	_ = d.Set("priority", policy.Priority)
 	return setNonPrimitives(d, map[string]interface{}{
-		"groups_included": convertStringSetToInterface(policy.Conditions.People.Groups.Include),
+		"groups_included": convertStringSliceToSet(policy.Conditions.People.Groups.Include),
 	})
 }

@@ -15,20 +15,28 @@ import (
 const (
 	postBinding     = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
 	redirectBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+	saml11          = "1.1"
+	saml20          = "2.0"
 )
 
-// Fields required if preconfigured_app is not provided
-var customAppSamlRequiredFields = []string{
-	"sso_url",
-	"recipient",
-	"destination",
-	"audience",
-	"subject_name_id_template",
-	"subject_name_id_format",
-	"signature_algorithm",
-	"digest_algorithm",
-	"authn_context_class_ref",
-}
+var (
+	// Fields required if preconfigured_app is not provided
+	customAppSamlRequiredFields = []string{
+		"sso_url",
+		"recipient",
+		"destination",
+		"audience",
+		"subject_name_id_template",
+		"subject_name_id_format",
+		"signature_algorithm",
+		"digest_algorithm",
+		"authn_context_class_ref",
+	}
+	samlVersions = map[string]string{
+		saml11: "SAML_1_1",
+		saml20: "SAML_2_0",
+	}
+)
 
 func resourceAppSaml() *schema.Resource {
 	return &schema.Resource{
@@ -348,6 +356,23 @@ func resourceAppSaml() *schema.Resource {
 				Description:  "x509 encoded certificate that the Service Provider uses to sign Single Logout requests",
 				RequiredWith: []string{"single_logout_issuer", "single_logout_url"},
 			},
+			"saml_version": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Default:          saml20,
+				Description:      "SAML version for the app's sign-on mode",
+				ValidateDiagFunc: elemInSlice([]string{saml20, saml11}),
+			},
+			"app_links_json": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Application settings in JSON format",
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
+			},
 		}),
 	}
 }
@@ -402,7 +427,11 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 			return diag.Errorf("failed to set SAML app settings: %v", err)
 		}
 	}
-	_ = d.Set("features", convertStringSetToInterface(app.Features))
+	err = setAppLinks(d, app.Visibility.AppLinks)
+	if err != nil {
+		return diag.Errorf("failed to set SAML app links: %v", err)
+	}
+	_ = d.Set("features", convertStringSliceToSetNullable(app.Features))
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
@@ -430,7 +459,12 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		_ = d.Set("entity_key", key)
 		_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
 	}
-	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
+	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
+	if app.SignOnMode == "SAML_1_1" {
+		_ = d.Set("saml_version", saml11)
+	} else {
+		_ = d.Set("saml_version", saml20)
+	}
 	return nil
 }
 
@@ -480,6 +514,7 @@ func resourceAppSamlDelete(ctx context.Context, d *schema.ResourceData, m interf
 func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewSamlApplication()
+	app.SignOnMode = samlVersions[d.Get("saml_version").(string)]
 	app.Label = d.Get("label").(string)
 	responseSigned := d.Get("response_signed").(bool)
 	assertionSigned := d.Get("assertion_signed").(bool)
@@ -506,13 +541,18 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	hideMobile := d.Get("hide_ios").(bool)
 	hideWeb := d.Get("hide_web").(bool)
 	a11ySelfService := d.Get("accessibility_self_service").(bool)
-	app.Settings = &okta.SamlApplicationSettings{}
+	app.Settings = &okta.SamlApplicationSettings{
+		Notes: buildAppNotes(d),
+	}
 	app.Visibility = &okta.ApplicationVisibility{
 		AutoSubmitToolbar: &autoSubmit,
 		Hide: &okta.ApplicationVisibilityHide{
 			IOS: &hideMobile,
 			Web: &hideWeb,
 		},
+	}
+	if appLinks, ok := d.GetOk("app_links_json"); ok {
+		_ = json.Unmarshal([]byte(appLinks.(string)), &app.Visibility.AppLinks)
 	}
 	if appSettings, ok := d.GetOk("app_settings_json"); ok {
 		payload := map[string]interface{}{}
@@ -641,7 +681,6 @@ func tryCreateCertificate(ctx context.Context, d *schema.ResourceData, m interfa
 		// Set ID and the read done at the end of update and create will do the GET on metadata
 		_ = d.Set("key_id", key.Kid)
 	}
-
 	return nil
 }
 

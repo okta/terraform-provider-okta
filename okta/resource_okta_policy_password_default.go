@@ -210,7 +210,7 @@ func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceDa
 	if policy == nil {
 		return nil
 	}
-	err = d.Set("password_lockout_notification_channels", convertStringSetToInterface(policy.Settings.Password.Lockout.UserLockoutNotificationChannels))
+	err = d.Set("password_lockout_notification_channels", convertStringSliceToSet(policy.Settings.Password.Lockout.UserLockoutNotificationChannels))
 	if err != nil {
 		return diag.Errorf("error setting notification channels for resource %s: %v", d.Id(), err)
 	}

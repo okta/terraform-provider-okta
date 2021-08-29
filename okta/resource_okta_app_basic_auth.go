@@ -115,8 +115,9 @@ func buildAppBasicAuth(d *schema.ResourceData) *okta.BasicAuthApplication {
 			AuthURL: d.Get("auth_url").(string),
 			Url:     d.Get("url").(string),
 		},
+		Notes: buildAppNotes(d),
 	}
-	app.Visibility = buildVisibility(d)
+	app.Visibility = buildAppVisibility(d)
 
 	return app
 }

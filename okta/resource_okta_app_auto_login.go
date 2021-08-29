@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -66,6 +67,16 @@ func resourceAppAutoLogin() *schema.Resource {
 				Optional:    true,
 				Description: "Shared password, required for certain schemes.",
 			},
+			"app_settings_json": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Application settings in JSON format",
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
+			},
 		}),
 	}
 }
@@ -96,9 +107,15 @@ func resourceAppAutoLoginRead(ctx context.Context, d *schema.ResourceData, m int
 		d.SetId("")
 		return nil
 	}
-	if app.Settings.SignOn != nil {
-		_ = d.Set("sign_on_url", app.Settings.SignOn.LoginUrl)
-		_ = d.Set("sign_on_redirect_url", app.Settings.SignOn.RedirectUrl)
+	if app.Settings != nil {
+		if app.Settings.SignOn != nil {
+			_ = d.Set("sign_on_url", app.Settings.SignOn.LoginUrl)
+			_ = d.Set("sign_on_redirect_url", app.Settings.SignOn.RedirectUrl)
+		}
+		err = setAppSettings(d, app.Settings.App)
+		if err != nil {
+			return diag.Errorf("failed to set auto login application settings: %v", err)
+		}
 	}
 	_ = d.Set("credentials_scheme", app.Credentials.Scheme)
 	_ = d.Set("reveal_password", app.Credentials.RevealPassword)
@@ -107,7 +124,7 @@ func resourceAppAutoLoginRead(ctx context.Context, d *schema.ResourceData, m int
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
-	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
+	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 		if err != nil {
@@ -150,15 +167,24 @@ func buildAppAutoLogin(d *schema.ResourceData) *okta.AutoLoginApplication {
 	if name != "" {
 		app.Name = name
 	}
-
 	app.Settings = &okta.AutoLoginApplicationSettings{
 		SignOn: &okta.AutoLoginApplicationSettingsSignOn{
 			LoginUrl:    d.Get("sign_on_url").(string),
 			RedirectUrl: d.Get("sign_on_redirect_url").(string),
 		},
+		Notes: buildAppNotes(d),
 	}
-	app.Visibility = buildVisibility(d)
-	app.Credentials = buildSchemeCreds(d)
+	if appSettings, ok := d.GetOk("app_settings_json"); ok {
+		payload := map[string]interface{}{}
+		_ = json.Unmarshal([]byte(appSettings.(string)), &payload)
+		settings := okta.ApplicationSettingsApplication(payload)
+		app.Settings.App = &settings
+	} else {
+		settings := okta.ApplicationSettingsApplication(map[string]interface{}{})
+		app.Settings.App = &settings
+	}
+	app.Visibility = buildAppVisibility(d)
+	app.Credentials = buildSchemeAppCreds(d)
 
 	return app
 }

@@ -38,6 +38,8 @@ resource "okta_app_saml" "example" {
 }
 ```
 
+### With inline hook
+
 ```hcl
 resource "okta_inline_hook" "test" {
   name    = "testAcc_replace_with_uuid"
@@ -82,6 +84,70 @@ resource "okta_app_saml" "test" {
     filter_type  = "REGEX"
     filter_value = ".*"
   }
+}
+```
+
+### Pre-configured app with SAML 1.1 sign-on mode
+
+```hcl
+resource "okta_app_saml" "test" {
+  app_settings_json = <<JSON
+{
+    "groupFilter": "app1.*",
+    "siteURL": "http://www.okta.com"
+}
+JSON
+  label = "SharePoint (On-Premise)"
+  preconfigured_app = "sharepoint_onpremise"
+  saml_version = "1.1"
+  status = "ACTIVE"
+  user_name_template = "$${source.login}"
+  user_name_template_type = "BUILT_IN"
+}
+```
+
+### Pre-configured app with SAML 1.1 sign-on mode, `app_settings_json` and `app_links_json`
+
+```hcl
+resource "okta_app_saml" "office365" {
+  preconfigured_app = "office365"
+  label             = "Microsoft Office 365"
+  status            = "ACTIVE"
+  saml_version      = "1.1"
+  app_settings_json = <<JSON
+    {
+       "wsFedConfigureType": "AUTO",
+       "windowsTransportEnabled": false,
+       "domain": "okta.com",
+       "msftTenant": "okta",
+       "domains": [],
+       "requireAdminConsent": false
+    }
+JSON
+  app_links_json    = <<JSON
+  {
+      "calendar": false,
+      "crm": false,
+      "delve": false,
+      "excel": false,
+      "forms": false,
+      "mail": false,
+      "newsfeed": false,
+      "onedrive": false,
+      "people": false,
+      "planner": false,
+      "powerbi": false,
+      "powerpoint": false,
+      "sites": false,
+      "sway": false,
+      "tasks": false,
+      "teams": false,
+      "video": false,
+      "word": false,
+      "yammer": false,
+      "login": true
+  }
+JSON
 }
 ```
 
@@ -178,7 +244,15 @@ The following arguments are supported:
 - `single_logout_certificate` - (Optional) x509 encoded certificate that the Service Provider uses to sign Single Logout requests.
   Note: should be provided without `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`, see [official documentation](https://developer.okta.com/docs/reference/api/apps/#service-provider-certificate).
 
-- `logo` (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+- `logo` - (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+
+- `admin_note` - (Optional) Application notes for admins.
+
+- `enduser_note` - (Optional) Application notes for end users.
+
+- `saml_version` - (Optional) SAML version for the app's sign-on mode. Valid values are: `"2.0"` or `"1.1"`. Default is `"2.0"`.
+
+- `app_links_json` - (Optional) Displays specific appLinks for the app. The value for the link should be boolean.
 
 ## Attributes Reference
 

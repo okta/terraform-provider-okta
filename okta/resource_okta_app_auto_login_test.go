@@ -33,6 +33,8 @@ func TestAccAppAutoLoginApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_name_template_type", "CUSTOM"),
 					resource.TestCheckResourceAttr(resourceName, "user_name_template", "user.firstName"),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttr(resourceName, "admin_note", "admin note"),
+					resource.TestCheckResourceAttr(resourceName, "enduser_note", "enduser note"),
 				),
 			},
 			{
@@ -50,6 +52,8 @@ func TestAccAppAutoLoginApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_name_template_type", "CUSTOM"),
 					resource.TestCheckResourceAttr(resourceName, "user_name_template", "user.firstName"),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttr(resourceName, "admin_note", "admin note updated"),
+					resource.TestCheckResourceAttr(resourceName, "enduser_note", "enduser note updated"),
 				),
 			},
 		},

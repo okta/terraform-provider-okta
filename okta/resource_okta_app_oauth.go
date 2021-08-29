@@ -507,14 +507,14 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 		grantTypes[i] = string(*app.Settings.OauthClient.GrantTypes[i])
 	}
 	aggMap := map[string]interface{}{
-		"redirect_uris":             convertStringSetToInterface(app.Settings.OauthClient.RedirectUris),
-		"response_types":            convertStringSetToInterface(respTypes),
-		"grant_types":               convertStringSetToInterface(grantTypes),
-		"post_logout_redirect_uris": convertStringSetToInterface(app.Settings.OauthClient.PostLogoutRedirectUris),
+		"redirect_uris":             convertStringSliceToSet(app.Settings.OauthClient.RedirectUris),
+		"response_types":            convertStringSliceToSet(respTypes),
+		"grant_types":               convertStringSliceToSet(grantTypes),
+		"post_logout_redirect_uris": convertStringSliceToSet(app.Settings.OauthClient.PostLogoutRedirectUris),
 	}
 	if app.Settings.OauthClient.IdpInitiatedLogin != nil {
 		_ = d.Set("login_mode", app.Settings.OauthClient.IdpInitiatedLogin.Mode)
-		aggMap["login_scopes"] = convertStringSetToInterface(app.Settings.OauthClient.IdpInitiatedLogin.DefaultScope)
+		aggMap["login_scopes"] = convertStringSliceToSet(app.Settings.OauthClient.IdpInitiatedLogin.DefaultScope)
 	}
 	err = setNonPrimitives(d, aggMap)
 	if err != nil {
@@ -666,6 +666,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 			},
 			WildcardRedirect: d.Get("wildcard_redirect").(string),
 		},
+		Notes: buildAppNotes(d),
 	}
 	jwks := d.Get("jwks").([]interface{})
 	if len(jwks) > 0 {
@@ -697,7 +698,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 		app.Settings.OauthClient.RefreshToken = refresh
 	}
 
-	app.Visibility = buildVisibility(d)
+	app.Visibility = buildAppVisibility(d)
 
 	if rawAttrs, ok := d.GetOk("profile"); ok {
 		var attrs map[string]interface{}
