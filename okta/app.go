@@ -16,137 +16,136 @@ import (
 )
 
 var baseAppSchema = map[string]*schema.Schema{
-		"name": {
-			Type:        schema.TypeString,
-			Computed:    true,
-			Description: "Name of the app.",
+	"name": {
+		Type:        schema.TypeString,
+		Computed:    true,
+		Description: "Name of the app.",
+	},
+	"label": {
+		Type:        schema.TypeString,
+		Required:    true,
+		Description: "Pretty name of app.",
+	},
+	"sign_on_mode": {
+		Type:        schema.TypeString,
+		Computed:    true,
+		Description: "Sign on mode of application.",
+	},
+	"status": {
+		Type:             schema.TypeString,
+		Optional:         true,
+		Default:          statusActive,
+		ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
+		Description:      "Status of application.",
+	},
+	"logo": {
+		Type:             schema.TypeString,
+		Optional:         true,
+		ValidateDiagFunc: logoValid(),
+		Description:      "Logo of the application.",
+		DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+			return new == ""
 		},
-		"label": {
-			Type:        schema.TypeString,
-			Required:    true,
-			Description: "Pretty name of app.",
+		StateFunc: func(val interface{}) string {
+			logoPath := val.(string)
+			if logoPath == "" {
+				return logoPath
+			}
+			return fmt.Sprintf("%s (%s)", logoPath, computeFileHash(logoPath))
 		},
-		"sign_on_mode": {
-			Type:        schema.TypeString,
-			Computed:    true,
-			Description: "Sign on mode of application.",
-		},
-		"status": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          statusActive,
-			ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
-			Description:      "Status of application.",
-		},
-		"logo": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			ValidateDiagFunc: logoValid(),
-			Description:      "Logo of the application.",
-			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-				return new == ""
-			},
-			StateFunc: func(val interface{}) string {
-				logoPath := val.(string)
-				if logoPath == "" {
-					return logoPath
-				}
-				return fmt.Sprintf("%s (%s)", logoPath, computeFileHash(logoPath))
-			},
-		},
-		"logo_url": {
-			Type:        schema.TypeString,
-			Computed:    true,
-			Description: "URL of the application's logo",
-		},
-		"admin_note": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Description: "Application notes for admins.",
-		},
-		"enduser_note": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Description: "Application notes for end users.",
-		},
-	}
+	},
+	"logo_url": {
+		Type:        schema.TypeString,
+		Computed:    true,
+		Description: "URL of the application's logo",
+	},
+	"admin_note": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Application notes for admins.",
+	},
+	"enduser_note": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Application notes for end users.",
+	},
+}
 
-var	appVisibilitySchema = map[string]*schema.Schema{
-		"auto_submit_toolbar": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Description: "Display auto submit toolbar",
-		},
-		"hide_ios": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Description: "Do not display application icon on mobile app",
-		},
-		"hide_web": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Description: "Do not display application icon to users",
-		},
-	}
+var appVisibilitySchema = map[string]*schema.Schema{
+	"auto_submit_toolbar": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Default:     false,
+		Description: "Display auto submit toolbar",
+	},
+	"hide_ios": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Default:     false,
+		Description: "Do not display application icon on mobile app",
+	},
+	"hide_web": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Default:     false,
+		Description: "Do not display application icon to users",
+	},
+}
 
-var	baseAppSwaSchema = map[string]*schema.Schema{
-		"accessibility_self_service": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Description: "Enable self service",
-		},
-		"accessibility_error_redirect_url": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Description: "Custom error page URL",
-		},
-		"auto_submit_toolbar": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Description: "Display auto submit toolbar",
-		},
-		"hide_ios": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Description: "Do not display application icon on mobile app",
-		},
-		"hide_web": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Description: "Do not display application icon to users",
-		},
-		"user_name_template": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Default:     "${source.login}",
-			Description: "Username template",
-		},
-		"user_name_template_suffix": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Description: "Username template suffix",
-		},
-		"user_name_template_type": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          "BUILT_IN",
-			Description:      "Username template type",
-			ValidateDiagFunc: elemInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
-		},
-	}
+var baseAppSwaSchema = map[string]*schema.Schema{
+	"accessibility_self_service": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Default:     false,
+		Description: "Enable self service",
+	},
+	"accessibility_error_redirect_url": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Custom error page URL",
+	},
+	"auto_submit_toolbar": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Default:     false,
+		Description: "Display auto submit toolbar",
+	},
+	"hide_ios": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Default:     false,
+		Description: "Do not display application icon on mobile app",
+	},
+	"hide_web": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Default:     false,
+		Description: "Do not display application icon to users",
+	},
+	"user_name_template": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Default:     "${source.login}",
+		Description: "Username template",
+	},
+	"user_name_template_suffix": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Username template suffix",
+	},
+	"user_name_template_type": {
+		Type:             schema.TypeString,
+		Optional:         true,
+		Default:          "BUILT_IN",
+		Description:      "Username template type",
+		ValidateDiagFunc: elemInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
+	},
+}
 
-var	appSamlDiffSuppressFunc = func(k, old, new string, d *schema.ResourceData) bool {
-		// Conditional default
-		return new == "" && old == "http://www.okta.com/${org.externalKey}"
-	}
-
+var appSamlDiffSuppressFunc = func(k, old, new string, d *schema.ResourceData) bool {
+	// Conditional default
+	return new == "" && old == "http://www.okta.com/${org.externalKey}"
+}
 
 func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *okta.ApplicationAccessibility, vis *okta.ApplicationVisibility, notes *okta.ApplicationSettingsNotes) {
 	_ = d.Set("name", name)
