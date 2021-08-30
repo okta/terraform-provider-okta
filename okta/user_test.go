@@ -6,38 +6,21 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"sort"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
-type RoundTripFunc func(req *http.Request) *http.Response
-
-func (f RoundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
-	return f(req), nil
-}
-
-func NewTestHttpClient(fn RoundTripFunc) *http.Client {
-	return &http.Client{
-		Transport: fn,
-	}
-}
-
-func TestUserSetAllGroups(t *testing.T) {
-	s := dataSourceUser().Schema
-	d := schema.TestResourceDataRaw(t, s, map[string]interface{}{
-		"id": "foo",
-	})
-	ctx := context.Background()
-
+func getGroupPagesJson(t *testing.T) ([]byte, []byte) {
 	firstPageOfGroups, err := json.Marshal([]*okta.Group{
 		{Id: "foo"},
 		{Id: "bar"},
 	})
 
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("could not serialize first set of groups: %s", err)
 	}
 
 	secondPageOfGroups, err := json.Marshal([]*okta.Group{
@@ -46,10 +29,23 @@ func TestUserSetAllGroups(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("could not serialize second set of groups: %s", err)
 	}
 
-	h := NewTestHttpClient(func(req *http.Request) *http.Response {
+	return firstPageOfGroups, secondPageOfGroups
+}
+
+type userGroupFunc func(ctx context.Context, d *schema.ResourceData, c *okta.Client) error
+
+func testUserGroupFetchesAllPages(t *testing.T, fn userGroupFunc) {
+	s := dataSourceUser().Schema
+	d := schema.TestResourceDataRaw(t, s, map[string]interface{}{
+		"Id": "foo",
+	})
+
+	firstPageOfGroups, secondPageOfGroups := getGroupPagesJson(t)
+
+	ctx, c, err := newTestOktaClientWithResponse(func(req *http.Request) *http.Response {
 		q := req.URL.Query()
 
 		if q.Has("after") {
@@ -69,21 +65,14 @@ func TestUserSetAllGroups(t *testing.T) {
 		}
 	})
 
-	oktaCtx, c, err := okta.NewClient(
-		ctx,
-		okta.WithOrgUrl("https://foo.okta.com"),
-		okta.WithToken("f0oT0k3n"),
-		okta.WithHttpClientPtr(h),
-	)
-
 	if err != nil {
-		t.Fatalf("err: %s", err)
+		t.Fatalf("could not create an okta client instance: %s", err)
 	}
 
-	err = setAllGroups(oktaCtx, d, c)
+	err = fn(ctx, d, c)
 
 	if err != nil {
-		t.Fatalf("err: %s", err)
+		t.Fatalf("fetching groups failed: %s", err)
 	}
 
 	groups := convertInterfaceToStringSetNullable(d.Get("group_memberships"))
@@ -92,4 +81,25 @@ func TestUserSetAllGroups(t *testing.T) {
 		t.Fatalf("expected 4 groups; got %d", len(groups))
 	}
 
+	expected := []string{"bar", "baz", "foo", "qux"}
+	sort.Strings(groups)
+	allMatch := true
+
+	for i, group := range expected {
+		if group != groups[i] {
+			allMatch = false
+		}
+	}
+
+	if !allMatch {
+		t.Fatalf("expected %s; got %s", expected, groups)
+	}
+}
+
+func TestUserSetAllGroups(t *testing.T) {
+	testUserGroupFetchesAllPages(t, setAllGroups)
+}
+
+func TestUserSetGroups(t *testing.T) {
+	testUserGroupFetchesAllPages(t, setGroups)
 }
