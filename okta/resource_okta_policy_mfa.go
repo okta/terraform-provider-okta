@@ -133,6 +133,7 @@ func buildMFAPolicy(d *schema.ResourceData) sdk.Policy {
 
 func syncFactor(d *schema.ResourceData, k string, f *sdk.PolicyFactor) {
 	if f == nil {
+		_ = d.Set(k, nil)
 		return
 	}
 	_ = d.Set(k, map[string]interface{}{

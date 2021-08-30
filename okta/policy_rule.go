@@ -202,13 +202,13 @@ func syncRuleFromUpstream(d *schema.ResourceData, rule *sdk.PolicyRule) error {
 	_ = d.Set("network_connection", rule.Conditions.Network.Connection)
 	if rule.Conditions.Network.Connection != "ANYWHERE" {
 		return setNonPrimitives(d, map[string]interface{}{
-			"users_excluded":   convertStringSliceToSet(rule.Conditions.People.Users.Exclude),
+			"users_excluded":   convertStringSliceToSetNullable(rule.Conditions.People.Users.Exclude),
 			"network_includes": convertStringArrToInterface(rule.Conditions.Network.Include),
 			"network_excludes": convertStringArrToInterface(rule.Conditions.Network.Exclude),
 		})
 	}
 	return setNonPrimitives(d, map[string]interface{}{
-		"users_excluded": convertStringSliceToSet(rule.Conditions.People.Users.Exclude),
+		"users_excluded": convertStringSliceToSetNullable(rule.Conditions.People.Users.Exclude),
 	})
 }
 
