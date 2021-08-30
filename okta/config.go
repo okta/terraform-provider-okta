@@ -119,7 +119,7 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 	}
 	c.oktaClient = client
 	c.supplementClient = &sdk.APISupplement{
-		RequestExecutor: client.GetRequestExecutor(),
+		RequestExecutor: client.CloneRequestExecutor(),
 	}
 	return nil
 }

@@ -97,7 +97,7 @@ func resourceAdminRoleCreate(ctx context.Context, d *schema.ResourceData, m inte
 
 func resourceAdminRoleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	logger(m).Info("reading admin role targets", "role", d.Get("role_type").(string), "user", d.Get("user_id").(string))
-	role, resp, err := getSupplementFromMetadata(m).GetUserAssignedRole(ctx, d.Get("user_id").(string), d.Get("role_id").(string))
+	role, resp, err := getOktaClientFromMetadata(m).User.GetUserRole(ctx, d.Get("user_id").(string), d.Get("role_id").(string))
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get role assigned to a user: %v", err)
 	}
