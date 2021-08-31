@@ -58,6 +58,36 @@ func resourceAppThreeField() *schema.Resource {
 				Optional:    true,
 				Description: "A regex that further restricts URL to the specified regex",
 			},
+			"credentials_scheme": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "EDIT_USERNAME_AND_PASSWORD",
+				ValidateDiagFunc: elemInSlice(
+					[]string{
+						"EDIT_USERNAME_AND_PASSWORD",
+						"ADMIN_SETS_CREDENTIALS",
+						"EDIT_PASSWORD_ONLY",
+						"EXTERNAL_PASSWORD_SYNC",
+						"SHARED_USERNAME_AND_PASSWORD",
+					}),
+				Description: "Application credentials scheme",
+			},
+			"reveal_password": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Allow user to reveal password",
+			},
+			"shared_username": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Shared username, required for certain schemes.",
+			},
+			"shared_password": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Shared password, required for certain schemes.",
+			},
 		}),
 	}
 }
@@ -96,6 +126,9 @@ func resourceAppThreeFieldRead(ctx context.Context, d *schema.ResourceData, m in
 	_ = d.Set("extra_field_value", app.Settings.App.ExtraFieldValue)
 	_ = d.Set("url", app.Settings.App.TargetURL)
 	_ = d.Set("url_regex", app.Settings.App.LoginUrlRegex)
+	_ = d.Set("credentials_scheme", app.Credentials.Scheme)
+	_ = d.Set("reveal_password", app.Credentials.RevealPassword)
+	_ = d.Set("shared_username", app.Credentials.UserName)
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
@@ -151,6 +184,7 @@ func buildAppThreeField(d *schema.ResourceData) *okta.SwaThreeFieldApplication {
 		Notes: buildAppNotes(d),
 	}
 	app.Visibility = buildAppVisibility(d)
+	app.Credentials = buildSchemeAppCreds(d)
 
 	return app
 }

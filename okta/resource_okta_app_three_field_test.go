@@ -14,6 +14,7 @@ func TestAccAppThreeFieldApplication_crud(t *testing.T) {
 	mgr := newFixtureManager(appThreeField)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
+	updatedCreds := mgr.GetFixtures("updated_credentials.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", appThreeField)
 
 	resource.Test(t, resource.TestCase{
@@ -47,6 +48,24 @@ func TestAccAppThreeFieldApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "url", "http://example.com"),
 					resource.TestCheckResourceAttr(resourceName, "extra_field_selector", "mfa"),
 					resource.TestCheckResourceAttr(resourceName, "extra_field_value", "mfa"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+				),
+			},
+			{
+				Config: updatedCreds,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaThreeFieldApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
+					resource.TestCheckResourceAttr(resourceName, "button_selector", "btn1"),
+					resource.TestCheckResourceAttr(resourceName, "username_selector", "user1"),
+					resource.TestCheckResourceAttr(resourceName, "password_selector", "pass1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "http://example.com"),
+					resource.TestCheckResourceAttr(resourceName, "extra_field_selector", "mfa"),
+					resource.TestCheckResourceAttr(resourceName, "extra_field_value", "mfa"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_scheme", "SHARED_USERNAME_AND_PASSWORD"),
+					resource.TestCheckResourceAttr(resourceName, "shared_username", buildResourceName(ri)+"@example.com"),
+					resource.TestCheckResourceAttrSet(resourceName, "shared_password"),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
