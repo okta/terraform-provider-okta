@@ -173,10 +173,10 @@ func syncCustomUserSchema(d *schema.ResourceData, subschema *okta.UserSchemaAttr
 	if subschema.Items != nil {
 		_ = d.Set("array_type", subschema.Items.Type)
 		_ = d.Set("array_one_of", flattenOneOf(subschema.Items.OneOf))
-		_ = d.Set("array_enum", convertStringArrToInterface(subschema.Items.Enum))
+		_ = d.Set("array_enum", convertStringSliceToInterfaceSlice(subschema.Items.Enum))
 	}
 	if len(subschema.Enum) > 0 {
-		_ = d.Set("enum", convertStringArrToInterface(subschema.Enum))
+		_ = d.Set("enum", convertStringSliceToInterfaceSlice(subschema.Enum))
 	}
 	return setNonPrimitives(d, map[string]interface{}{
 		"one_of": flattenOneOf(subschema.OneOf),

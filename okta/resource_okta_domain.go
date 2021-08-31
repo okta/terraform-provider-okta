@@ -109,7 +109,7 @@ func resourceDomainRead(ctx context.Context, d *schema.ResourceData, m interface
 			"expiration":  domain.DnsRecords[i].Expiration,
 			"fqdn":        domain.DnsRecords[i].Fqdn,
 			"record_type": domain.DnsRecords[i].RecordType,
-			"values":      convertStringArrToInterface(domain.DnsRecords[i].Values),
+			"values":      convertStringSliceToInterfaceSlice(domain.DnsRecords[i].Values),
 		}
 	}
 	err = setNonPrimitives(d, map[string]interface{}{"dns_records": arr})
