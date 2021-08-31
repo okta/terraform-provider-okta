@@ -96,7 +96,6 @@ func newTestOktaClientWithResponse(response roundTripFunc) (context.Context, *ok
 		okta.WithToken("f0oT0k3n"),
 		okta.WithHttpClientPtr(h),
 	)
-
 	if err != nil {
 		return nil, nil, err
 	}
