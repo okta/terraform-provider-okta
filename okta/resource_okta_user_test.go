@@ -307,6 +307,45 @@ func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
 	})
 }
 
+func TestAccOktaUserHashedPassword(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(oktaUser)
+	config := mgr.GetFixtures("password_hash.tf", ri, t)
+	configUpdated := mgr.GetFixtures("password_hash_updated.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", oktaUser)
+	email := fmt.Sprintf("testAcc-%d@example.com", ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
+					resource.TestCheckResourceAttr(resourceName, "login", email),
+					resource.TestCheckResourceAttr(resourceName, "email", email),
+					resource.TestCheckResourceAttr(resourceName, "status", userStatusStaged),
+					resource.TestCheckResourceAttr(resourceName, "password_hash.0.algorithm", "SHA-512"),
+				),
+			},
+			{
+				Config: configUpdated,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
+					resource.TestCheckResourceAttr(resourceName, "login", email),
+					resource.TestCheckResourceAttr(resourceName, "email", email),
+					resource.TestCheckResourceAttr(resourceName, "status", userStatusStaged),
+					resource.TestCheckResourceAttr(resourceName, "password_hash.0.algorithm", "BCRYPT"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(oktaUser)
