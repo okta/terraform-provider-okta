@@ -61,12 +61,15 @@ func resourceUser() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				// Supporting id and email based imports
-				client := getOktaClientFromMetadata(m)
-				user, _, err := client.User.GetUser(ctx, d.Id())
+				user, _, err := getOktaClientFromMetadata(m).User.GetUser(ctx, d.Id())
 				if err != nil {
 					return nil, err
 				}
 				d.SetId(user.Id)
+				err = setAdminRoles(ctx, d, m)
+				if err != nil {
+					return nil, fmt.Errorf("failed to set user's roles: %v", err)
+				}
 				return []*schema.ResourceData{d}, nil
 			},
 		},

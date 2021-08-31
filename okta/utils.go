@@ -173,7 +173,10 @@ func createCustomNestedResourceImporter(fields []string, errMessage string) *sch
 	}
 }
 
-func convertStringArrToInterface(stringList []string) []interface{} {
+func convertStringSliceToInterfaceSlice(stringList []string) []interface{} {
+	if len(stringList) == 0 {
+		return nil
+	}
 	arr := make([]interface{}, len(stringList))
 	for i, str := range stringList {
 		arr[i] = str
