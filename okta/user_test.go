@@ -18,7 +18,6 @@ func getGroupPagesJson(t *testing.T) ([]byte, []byte) {
 		{Id: "foo"},
 		{Id: "bar"},
 	})
-
 	if err != nil {
 		t.Fatalf("could not serialize first set of groups: %s", err)
 	}
@@ -27,7 +26,6 @@ func getGroupPagesJson(t *testing.T) ([]byte, []byte) {
 		{Id: "baz"},
 		{Id: "qux"},
 	})
-
 	if err != nil {
 		t.Fatalf("could not serialize second set of groups: %s", err)
 	}
@@ -52,7 +50,9 @@ func testUserGroupFetchesAllPages(t *testing.T, fn userGroupFunc) {
 			return &http.Response{
 				StatusCode: 200,
 				Body:       io.NopCloser(bytes.NewReader(secondPageOfGroups)),
-				Header:     make(http.Header),
+				Header: http.Header{
+					"Content-Type": []string{"application/json"},
+				},
 			}
 		}
 
@@ -60,11 +60,11 @@ func testUserGroupFetchesAllPages(t *testing.T, fn userGroupFunc) {
 			StatusCode: 200,
 			Body:       io.NopCloser(bytes.NewReader(firstPageOfGroups)),
 			Header: http.Header{
-				"Link": []string{"<https://foo.okta.com?limit=2&after=0>; rel=\"next\""},
+				"Link":         []string{"<https://foo.okta.com?limit=2&after=0>; rel=\"next\""},
+				"Content-Type": []string{"application/json"},
 			},
 		}
 	})
-
 	if err != nil {
 		t.Fatalf("could not create an okta client instance: %s", err)
 	}
