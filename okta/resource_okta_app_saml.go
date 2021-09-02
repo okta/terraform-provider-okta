@@ -2,7 +2,6 @@ package okta
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -522,17 +521,7 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	}
 	app.Visibility = buildAppVisibility(d)
 	app.Accessibility = buildAppAccessibility(d)
-	if appSettings, ok := d.GetOk("app_settings_json"); ok {
-		payload := map[string]interface{}{}
-		_ = json.Unmarshal([]byte(appSettings.(string)), &payload)
-		settings := okta.ApplicationSettingsApplication(payload)
-		app.Settings.App = &settings
-	} else {
-		// we should provide empty app, even if there are no values
-		// see https://github.com/okta/terraform-provider-okta/pull/226#issuecomment-744545051
-		settings := okta.ApplicationSettingsApplication(map[string]interface{}{})
-		app.Settings.App = &settings
-	}
+	app.Settings.App = buildAppSettings(d)
 	app.Features = convertInterfaceToStringSet(d.Get("features"))
 	app.Settings.SignOn = &okta.SamlApplicationSettingsSignOn{
 		DefaultRelayState:     d.Get("default_relay_state").(string),

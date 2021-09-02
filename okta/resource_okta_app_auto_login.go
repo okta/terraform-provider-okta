@@ -2,7 +2,6 @@ package okta
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -186,15 +185,7 @@ func buildAppAutoLogin(d *schema.ResourceData) *okta.AutoLoginApplication {
 		},
 		Notes: buildAppNotes(d),
 	}
-	if appSettings, ok := d.GetOk("app_settings_json"); ok {
-		payload := map[string]interface{}{}
-		_ = json.Unmarshal([]byte(appSettings.(string)), &payload)
-		settings := okta.ApplicationSettingsApplication(payload)
-		app.Settings.App = &settings
-	} else {
-		settings := okta.ApplicationSettingsApplication(map[string]interface{}{})
-		app.Settings.App = &settings
-	}
+	app.Settings.App = buildAppSettings(d)
 	app.Visibility = buildAppVisibility(d)
 	app.Credentials = buildSchemeAppCreds(d)
 	app.Accessibility = buildAppAccessibility(d)
