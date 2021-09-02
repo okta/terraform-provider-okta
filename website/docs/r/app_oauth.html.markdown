@@ -128,6 +128,8 @@ The following arguments are supported:
 
 - `enduser_note` - (Optional) Application notes for end users.
 
+- `app_settings_json` - (Optional) Application settings in JSON format.
+
 ## Attributes Reference
 
 - `id` - ID of the application.

@@ -1,4 +1,4 @@
-resource "okta_app_oauth" "test" {
+/*resource "okta_app_oauth" "test" {
   label                      = "testAcc_replace_with_uuid"
   type                       = "web"
   grant_types                = ["authorization_code"]
@@ -14,4 +14,4 @@ resource "okta_app_oauth" "test" {
     value       = "aa"
     name        = "bb"
   }
-}
+}*/

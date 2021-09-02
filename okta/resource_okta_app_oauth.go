@@ -330,6 +330,16 @@ func resourceAppOAuth() *schema.Resource {
 				Optional:    true,
 				Elem:        groupsClaimResource,
 			},
+			"app_settings_json": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Application settings in JSON format",
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
+			},
 		}),
 	}
 }
@@ -459,7 +469,10 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 		_ = d.Set("token_endpoint_auth_method", app.Credentials.OauthClient.TokenEndpointAuthMethod)
 		_ = d.Set("auto_key_rotation", app.Credentials.OauthClient.AutoKeyRotation)
 	}
-
+	err = setAppSettings(d, app.Settings.App)
+	if err != nil {
+		return diag.Errorf("failed to set OAuth application settings: %v", err)
+	}
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	if app.Settings.ImplicitAssignment != nil {
 		_ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
@@ -701,6 +714,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 			WildcardRedirect: d.Get("wildcard_redirect").(string),
 		},
 		Notes: buildAppNotes(d),
+		App:   buildAppSettings(d),
 	}
 	jwks := d.Get("jwks").([]interface{})
 	if len(jwks) > 0 {

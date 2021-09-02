@@ -275,6 +275,16 @@ func buildAppNotes(d *schema.ResourceData) *okta.ApplicationSettingsNotes {
 	return n
 }
 
+func buildAppSettings(d *schema.ResourceData) *okta.ApplicationSettingsApplication {
+	settings := okta.ApplicationSettingsApplication(map[string]interface{}{})
+	if appSettings, ok := d.GetOk("app_settings_json"); ok {
+		payload := map[string]interface{}{}
+		_ = json.Unmarshal([]byte(appSettings.(string)), &payload)
+		settings = okta.ApplicationSettingsApplication(payload)
+	}
+	return &settings
+}
+
 func fetchApp(ctx context.Context, d *schema.ResourceData, m interface{}, app okta.App) error {
 	return fetchAppByID(ctx, d.Id(), m, app)
 }
