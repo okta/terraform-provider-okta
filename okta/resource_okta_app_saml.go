@@ -522,9 +522,6 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	}
 	app.Visibility = buildAppVisibility(d)
 	app.Accessibility = buildAppAccessibility(d)
-	if appLinks, ok := d.GetOk("app_links_json"); ok {
-		_ = json.Unmarshal([]byte(appLinks.(string)), &app.Visibility.AppLinks)
-	}
 	if appSettings, ok := d.GetOk("app_settings_json"); ok {
 		payload := map[string]interface{}{}
 		_ = json.Unmarshal([]byte(appSettings.(string)), &payload)
