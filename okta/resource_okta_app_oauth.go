@@ -733,6 +733,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 	}
 
 	app.Visibility = buildAppVisibility(d)
+	app.Accessibility = buildAppAccessibility(d)
 
 	if rawAttrs, ok := d.GetOk("profile"); ok {
 		var attrs map[string]interface{}

@@ -197,6 +197,7 @@ func buildAppAutoLogin(d *schema.ResourceData) *okta.AutoLoginApplication {
 	}
 	app.Visibility = buildAppVisibility(d)
 	app.Credentials = buildSchemeAppCreds(d)
+	app.Accessibility = buildAppAccessibility(d)
 
 	return app
 }

@@ -186,6 +186,7 @@ func buildAppSecurePasswordStore(d *schema.ResourceData) *okta.SecurePasswordSto
 	}
 	app.Credentials = buildSchemeAppCreds(d)
 	app.Visibility = buildAppVisibility(d)
+	app.Accessibility = buildAppAccessibility(d)
 
 	return app
 }

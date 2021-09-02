@@ -521,6 +521,7 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 		Notes: buildAppNotes(d),
 	}
 	app.Visibility = buildAppVisibility(d)
+	app.Accessibility = buildAppAccessibility(d)
 	if appLinks, ok := d.GetOk("app_links_json"); ok {
 		_ = json.Unmarshal([]byte(appLinks.(string)), &app.Visibility.AppLinks)
 	}
@@ -570,12 +571,6 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 			Type:     d.Get("user_name_template_type").(string),
 			Suffix:   d.Get("user_name_template_suffix").(string),
 		},
-	}
-	a11ySelfService := d.Get("accessibility_self_service").(bool)
-	app.Accessibility = &okta.ApplicationAccessibility{
-		SelfService:      &a11ySelfService,
-		ErrorRedirectUrl: d.Get("accessibility_error_redirect_url").(string),
-		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
 	}
 
 	// Assumes that sso url is already part of the acs endpoints as part of the desired state.

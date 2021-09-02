@@ -123,5 +123,6 @@ func buildAppBookmark(d *schema.ResourceData) *okta.BookmarkApplication {
 		Notes: buildAppNotes(d),
 	}
 	app.Visibility = buildAppVisibility(d)
+	app.Accessibility = buildAppAccessibility(d)
 	return app
 }

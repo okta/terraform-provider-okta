@@ -237,6 +237,14 @@ func buildSchemeAppCreds(d *schema.ResourceData) *okta.SchemeApplicationCredenti
 	}
 }
 
+func buildAppAccessibility(d *schema.ResourceData) *okta.ApplicationAccessibility {
+	return &okta.ApplicationAccessibility{
+		SelfService:      boolPtr(d.Get("accessibility_self_service").(bool)),
+		ErrorRedirectUrl: d.Get("accessibility_error_redirect_url").(string),
+		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
+	}
+}
+
 func buildAppVisibility(d *schema.ResourceData) *okta.ApplicationVisibility {
 	autoSubmit := d.Get("auto_submit_toolbar").(bool)
 	hideMobile := d.Get("hide_ios").(bool)
