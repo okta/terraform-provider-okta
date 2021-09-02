@@ -199,11 +199,11 @@ The following arguments are supported:
 
 - `authn_context_class_ref` - (Optional) Identifies the SAML authentication context class for the assertion’s authentication statement.
 
-- `accessibility_self_service` - (Optional) Enable self-service.
-
 - `accessibility_error_redirect_url` - (Optional) Custom error page URL.
 
-- `accessibility_login_redirect_url` - (Optional) Custom login page URL.
+- `accessibility_login_redirect_url` - (Optional) Custom login page for this application.
+
+- `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
 
 - `features` - (Optional) features enabled. Notice: you can't currently configure provisioning features via the API.
 

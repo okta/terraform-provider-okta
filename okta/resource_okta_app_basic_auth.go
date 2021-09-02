@@ -68,13 +68,7 @@ func resourceAppBasicAuthRead(ctx context.Context, d *schema.ResourceData, m int
 	}
 	_ = d.Set("url", app.Settings.App.Url)
 	_ = d.Set("auth_url", app.Settings.App.AuthURL)
-	_ = d.Set("name", app.Name)
-	_ = d.Set("status", app.Status)
-	_ = d.Set("sign_on_mode", app.SignOnMode)
-	_ = d.Set("label", app.Label)
-	_ = d.Set("auto_submit_toolbar", app.Visibility.AutoSubmitToolbar)
-	_ = d.Set("hide_ios", app.Visibility.Hide.IOS)
-	_ = d.Set("hide_web", app.Visibility.Hide.Web)
+	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	err = syncGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {

@@ -19,11 +19,6 @@ func resourceAppSharedCredentials() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
-			"accessibility_login_redirect_url": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Custom login page URL",
-			},
 			"button_field": {
 				Type:        schema.TypeString,
 				Optional:    true,

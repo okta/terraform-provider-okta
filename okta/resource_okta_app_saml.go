@@ -223,24 +223,6 @@ func resourceAppSaml() *schema.Resource {
 				Optional:    true,
 				Description: "Identifies the SAML authentication context class for the assertion’s authentication statement",
 			},
-			"accessibility_self_service": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Enable self service",
-			},
-			"accessibility_error_redirect_url": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Custom error page URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
-			},
-			"accessibility_login_redirect_url": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Custom login page URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
-			},
 			"features": {
 				Type:        schema.TypeSet,
 				Optional:    true,
@@ -363,16 +345,6 @@ func resourceAppSaml() *schema.Resource {
 				Description:      "SAML version for the app's sign-on mode",
 				ValidateDiagFunc: elemInSlice([]string{saml20, saml11}),
 			},
-			"app_links_json": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Application settings in JSON format",
-				ValidateDiagFunc: stringIsJSON,
-				StateFunc:        normalizeDataJSON,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
-			},
 		}),
 	}
 }
@@ -431,10 +403,6 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 			return diag.Errorf("failed to set SAML app settings: %v", err)
 		}
 	}
-	err = setAppLinks(d, app.Visibility.AppLinks)
-	if err != nil {
-		return diag.Errorf("failed to set SAML app links: %v", err)
-	}
 	_ = d.Set("features", convertStringSliceToSetNullable(app.Features))
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
@@ -463,7 +431,6 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		_ = d.Set("entity_key", key)
 		_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
 	}
-	_ = d.Set("accessibility_login_redirect_url", app.Accessibility.LoginRedirectUrl)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	if app.SignOnMode == "SAML_1_1" {
 		_ = d.Set("saml_version", saml11)
@@ -550,20 +517,10 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	}
 
 	honorForce := d.Get("honor_force_authn").(bool)
-	autoSubmit := d.Get("auto_submit_toolbar").(bool)
-	hideMobile := d.Get("hide_ios").(bool)
-	hideWeb := d.Get("hide_web").(bool)
-	a11ySelfService := d.Get("accessibility_self_service").(bool)
 	app.Settings = &okta.SamlApplicationSettings{
 		Notes: buildAppNotes(d),
 	}
-	app.Visibility = &okta.ApplicationVisibility{
-		AutoSubmitToolbar: &autoSubmit,
-		Hide: &okta.ApplicationVisibilityHide{
-			IOS: &hideMobile,
-			Web: &hideWeb,
-		},
-	}
+	app.Visibility = buildAppVisibility(d)
 	if appLinks, ok := d.GetOk("app_links_json"); ok {
 		_ = json.Unmarshal([]byte(appLinks.(string)), &app.Visibility.AppLinks)
 	}
@@ -614,6 +571,7 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 			Suffix:   d.Get("user_name_template_suffix").(string),
 		},
 	}
+	a11ySelfService := d.Get("accessibility_self_service").(bool)
 	app.Accessibility = &okta.ApplicationAccessibility{
 		SelfService:      &a11ySelfService,
 		ErrorRedirectUrl: d.Get("accessibility_error_redirect_url").(string),

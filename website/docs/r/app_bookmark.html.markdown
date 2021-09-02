@@ -45,6 +45,12 @@ The following arguments are supported:
 
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
+- `accessibility_error_redirect_url` - (Optional) Custom error page URL.
+
+- `accessibility_login_redirect_url` - (Optional) Custom login page for this application.
+
+- `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
+
 - `logo` - (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 
 - `admin_note` - (Optional) Application notes for admins.
