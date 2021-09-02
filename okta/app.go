@@ -200,8 +200,10 @@ func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *o
 	_ = d.Set("auto_submit_toolbar", vis.AutoSubmitToolbar)
 	_ = d.Set("hide_ios", vis.Hide.IOS)
 	_ = d.Set("hide_web", vis.Hide.Web)
-	_ = d.Set("admin_note", notes.Admin)
-	_ = d.Set("enduser_note", notes.Enduser)
+	if notes != nil {
+		_ = d.Set("admin_note", notes.Admin)
+		_ = d.Set("enduser_note", notes.Enduser)
+	}
 }
 
 func buildAppSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
