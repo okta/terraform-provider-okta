@@ -451,10 +451,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 		p, _ := json.Marshal(app.Profile)
 		rawProfile = string(p)
 	}
-	_ = d.Set("name", app.Name)
-	_ = d.Set("status", app.Status)
-	_ = d.Set("sign_on_mode", app.SignOnMode)
-	_ = d.Set("label", app.Label)
+	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	_ = d.Set("profile", rawProfile)
 	// Not setting client_secret, it is only provided on create and update for auth methods that require it
 	if app.Credentials.OauthClient != nil {
@@ -462,9 +459,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 		_ = d.Set("token_endpoint_auth_method", app.Credentials.OauthClient.TokenEndpointAuthMethod)
 		_ = d.Set("auto_key_rotation", app.Credentials.OauthClient.AutoKeyRotation)
 	}
-	_ = d.Set("auto_submit_toolbar", app.Visibility.AutoSubmitToolbar)
-	_ = d.Set("hide_ios", app.Visibility.Hide.IOS)
-	_ = d.Set("hide_web", app.Visibility.Hide.Web)
+
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	if app.Settings.ImplicitAssignment != nil {
 		_ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
@@ -738,6 +733,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 	}
 
 	app.Visibility = buildAppVisibility(d)
+	app.Accessibility = buildAppAccessibility(d)
 
 	if rawAttrs, ok := d.GetOk("profile"); ok {
 		var attrs map[string]interface{}

@@ -19,11 +19,6 @@ func resourceAppSharedCredentials() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
-			"accessibility_login_redirect_url": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Custom login page URL",
-			},
 			"button_field": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -176,11 +171,7 @@ func buildAppSharedCredentials(d *schema.ResourceData) *okta.BrowserPluginApplic
 		Scheme:   "SHARED_USERNAME_AND_PASSWORD",
 		UserName: d.Get("shared_username").(string),
 	}
-	app.Accessibility = &okta.ApplicationAccessibility{
-		SelfService:      boolPtr(d.Get("accessibility_self_service").(bool)),
-		ErrorRedirectUrl: d.Get("accessibility_error_redirect_url").(string),
-		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
-	}
 	app.Visibility = buildAppVisibility(d)
+	app.Accessibility = buildAppAccessibility(d)
 	return app
 }

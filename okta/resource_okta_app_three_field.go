@@ -185,6 +185,7 @@ func buildAppThreeField(d *schema.ResourceData) *okta.SwaThreeFieldApplication {
 	}
 	app.Visibility = buildAppVisibility(d)
 	app.Credentials = buildSchemeAppCreds(d)
+	app.Accessibility = buildAppAccessibility(d)
 
 	return app
 }
