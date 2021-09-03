@@ -3,6 +3,7 @@ package okta
 import (
 	"context"
 	"fmt"
+	"reflect"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -60,12 +61,15 @@ func resourceUser() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				// Supporting id and email based imports
-				client := getOktaClientFromMetadata(m)
-				user, _, err := client.User.GetUser(ctx, d.Id())
+				user, _, err := getOktaClientFromMetadata(m).User.GetUser(ctx, d.Id())
 				if err != nil {
 					return nil, err
 				}
 				d.SetId(user.Id)
+				err = setAdminRoles(ctx, d, m)
+				if err != nil {
+					return nil, fmt.Errorf("failed to set user's roles: %v", err)
+				}
 				return []*schema.ResourceData{d}, nil
 			},
 		},
@@ -290,6 +294,56 @@ func resourceUser() *schema.Resource {
 				ValidateDiagFunc: stringLenBetween(4, 1000),
 				Description:      "User Password Recovery Answer",
 			},
+			"password_hash": {
+				Type:        schema.TypeSet,
+				MaxItems:    1,
+				Description: "Specifies a hashed password to import into Okta.",
+				Optional:    true,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					oldHash, newHash := d.GetChange("password_hash")
+					if oldHash != nil && newHash != nil && len(oldHash.(*schema.Set).List()) > 0 && len(newHash.(*schema.Set).List()) > 0 {
+						oh := oldHash.(*schema.Set).List()[0].(map[string]interface{})
+						nh := newHash.(*schema.Set).List()[0].(map[string]interface{})
+						return reflect.DeepEqual(oh, nh)
+					}
+					return new == "" || old == new
+				},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"algorithm": {
+							Description:      "The algorithm used to generate the hash using the password",
+							Type:             schema.TypeString,
+							Required:         true,
+							ValidateDiagFunc: elemInSlice([]string{"BCRYPT", "SHA-512", "SHA-256", "SHA-1", "MD5"}),
+						},
+						"work_factor": {
+							Description:      "Governs the strength of the hash and the time required to compute it. Only required for BCRYPT algorithm",
+							Type:             schema.TypeInt,
+							Optional:         true,
+							ValidateDiagFunc: intBetween(1, 20),
+						},
+						"salt": {
+							Description: "Only required for salted hashes",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"salt_order": {
+							Description:      "Specifies whether salt was pre- or postfixed to the password before hashing",
+							Type:             schema.TypeString,
+							Optional:         true,
+							ValidateDiagFunc: elemInSlice([]string{"PREFIX", "POSTFIX"}),
+						},
+						"value": {
+							Description: "For SHA-512, SHA-256, SHA-1, MD5, This is the actual base64-encoded hash of the password (and salt, if used). This is the " +
+								"Base64 encoded value of the SHA-512/SHA-256/SHA-1/MD5 digest that was computed by either pre-fixing or post-fixing the salt to the " +
+								"password, depending on the saltOrder. If a salt was not used in the source system, then this should just be the the Base64 encoded " +
+								"value of the password's SHA-512/SHA-256/SHA-1/MD5 digest. For BCRYPT, This is the actual radix64-encoded hashed password.",
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -307,6 +361,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 	uc := &okta.UserCredentials{
 		Password: &okta.PasswordCredential{
 			Value: d.Get("password").(string),
+			Hash:  buildPasswordCredentialHash(d.Get("password_hash")),
 		},
 	}
 	recoveryQuestion := d.Get("recovery_question").(string)
@@ -406,6 +461,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	groupChange := d.HasChange("group_memberships")
 	userChange := hasProfileChange(d)
 	passwordChange := d.HasChange("password")
+	passwordHashChange := d.HasChange("password_hash")
 	recoveryQuestionChange := d.HasChange("recovery_question")
 	recoveryAnswerChange := d.HasChange("recovery_answer")
 
@@ -424,9 +480,18 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 		return diag.Errorf("Only the status of a DEPROVISIONED user can be updated, we detected other change")
 	}
 
-	if userChange {
+	if userChange || passwordHashChange {
 		profile := populateUserProfile(d)
-		userBody := okta.User{Profile: profile}
+		userBody := okta.User{
+			Profile: profile,
+		}
+		if passwordHashChange {
+			userBody.Credentials = &okta.UserCredentials{
+				Password: &okta.PasswordCredential{
+					Hash: buildPasswordCredentialHash(d.Get("password_hash")),
+				},
+			}
+		}
 		_, _, err := client.User.UpdateUser(ctx, d.Id(), userBody, nil)
 		if err != nil {
 			return diag.Errorf("failed to update user: %v", err)
@@ -493,6 +558,32 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	return resourceUserRead(ctx, d, m)
 }
 
+func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	logger(m).Info("deleting user", "id", d.Id())
+	err := ensureUserDelete(ctx, d.Id(), d.Get("status").(string), getOktaClientFromMetadata(m))
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	return nil
+}
+
+func buildPasswordCredentialHash(rawPasswordHash interface{}) *okta.PasswordCredentialHash {
+	if rawPasswordHash == nil || len(rawPasswordHash.(*schema.Set).List()) == 0 {
+		return nil
+	}
+	passwordHash := rawPasswordHash.(*schema.Set).List()
+	hash := passwordHash[0].(map[string]interface{})
+	wf, _ := hash["work_factor"].(int)
+	h := &okta.PasswordCredentialHash{
+		Algorithm:  hash["algorithm"].(string),
+		Value:      hash["value"].(string),
+		WorkFactor: int64(wf),
+	}
+	h.Salt, _ = hash["salt"].(string)
+	h.SaltOrder, _ = hash["salt_order"].(string)
+	return h
+}
+
 // Checks whether any profile keys have changed, this is necessary since the profile is not nested. Also, necessary
 // to give a sensible user readable error when they attempt to update a DEPROVISIONED user. Previously
 // this error always occurred when you set a user's status to DEPROVISIONED.
@@ -503,15 +594,6 @@ func hasProfileChange(d *schema.ResourceData) bool {
 		}
 	}
 	return false
-}
-
-func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("deleting user", "id", d.Id())
-	err := ensureUserDelete(ctx, d.Id(), d.Get("status").(string), getOktaClientFromMetadata(m))
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	return nil
 }
 
 func ensureUserDelete(ctx context.Context, id, status string, client *okta.Client) error {

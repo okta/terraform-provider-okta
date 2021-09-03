@@ -111,6 +111,32 @@ var (
 			Optional:    true,
 			Description: "Application notes for end users.",
 		},
+		"app_links_json": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			Description:      "Displays specific appLinks for the app",
+			ValidateDiagFunc: stringIsJSON,
+			StateFunc:        normalizeDataJSON,
+			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+				return new == ""
+			},
+		},
+		"accessibility_login_redirect_url": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Custom login page URL",
+		},
+		"accessibility_self_service": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Enable self service",
+		},
+		"accessibility_error_redirect_url": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Custom error page URL",
+		},
 	}
 
 	appVisibilitySchema = map[string]*schema.Schema{
@@ -135,35 +161,6 @@ var (
 	}
 
 	baseAppSwaSchema = map[string]*schema.Schema{
-		"accessibility_self_service": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Description: "Enable self service",
-		},
-		"accessibility_error_redirect_url": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Description: "Custom error page URL",
-		},
-		"auto_submit_toolbar": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Description: "Display auto submit toolbar",
-		},
-		"hide_ios": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Description: "Do not display application icon on mobile app",
-		},
-		"hide_web": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Description: "Do not display application icon to users",
-		},
 		"user_name_template": {
 			Type:        schema.TypeString,
 			Optional:    true,
@@ -190,18 +187,25 @@ var (
 	}
 )
 
-func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *okta.ApplicationAccessibility, vis *okta.ApplicationVisibility, notes *okta.ApplicationSettingsNotes) {
+func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *okta.ApplicationAccessibility,
+	vis *okta.ApplicationVisibility, notes *okta.ApplicationSettingsNotes) {
 	_ = d.Set("name", name)
 	_ = d.Set("status", status)
 	_ = d.Set("sign_on_mode", signOn)
 	_ = d.Set("label", label)
-	_ = d.Set("accessibility_self_service", *accy.SelfService)
-	_ = d.Set("accessibility_error_redirect_url", accy.ErrorRedirectUrl)
+	if accy != nil {
+		_ = d.Set("accessibility_self_service", *accy.SelfService)
+		_ = d.Set("accessibility_error_redirect_url", accy.ErrorRedirectUrl)
+		_ = d.Set("accessibility_login_redirect_url", accy.LoginRedirectUrl)
+	}
 	_ = d.Set("auto_submit_toolbar", vis.AutoSubmitToolbar)
 	_ = d.Set("hide_ios", vis.Hide.IOS)
 	_ = d.Set("hide_web", vis.Hide.Web)
-	_ = d.Set("admin_note", notes.Admin)
-	_ = d.Set("enduser_note", notes.Enduser)
+	if notes != nil {
+		_ = d.Set("admin_note", notes.Admin)
+		_ = d.Set("enduser_note", notes.Enduser)
+	}
+	_ = setAppLinks(d, vis.AppLinks)
 }
 
 func buildAppSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
@@ -213,7 +217,7 @@ func buildAppSchemaWithVisibility(appSchema map[string]*schema.Schema) map[strin
 }
 
 func buildAppSwaSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(baseAppSchema, baseAppSwaSchema, appSchema)
+	return buildSchema(baseAppSchema, appVisibilitySchema, baseAppSwaSchema, appSchema)
 }
 
 func buildSchemeAppCreds(d *schema.ResourceData) *okta.SchemeApplicationCredentials {
@@ -233,18 +237,29 @@ func buildSchemeAppCreds(d *schema.ResourceData) *okta.SchemeApplicationCredenti
 	}
 }
 
+func buildAppAccessibility(d *schema.ResourceData) *okta.ApplicationAccessibility {
+	return &okta.ApplicationAccessibility{
+		SelfService:      boolPtr(d.Get("accessibility_self_service").(bool)),
+		ErrorRedirectUrl: d.Get("accessibility_error_redirect_url").(string),
+		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
+	}
+}
+
 func buildAppVisibility(d *schema.ResourceData) *okta.ApplicationVisibility {
 	autoSubmit := d.Get("auto_submit_toolbar").(bool)
 	hideMobile := d.Get("hide_ios").(bool)
 	hideWeb := d.Get("hide_web").(bool)
-
-	return &okta.ApplicationVisibility{
+	appVis := &okta.ApplicationVisibility{
 		AutoSubmitToolbar: &autoSubmit,
 		Hide: &okta.ApplicationVisibilityHide{
 			IOS: &hideMobile,
 			Web: &hideWeb,
 		},
 	}
+	if appLinks, ok := d.GetOk("app_links_json"); ok {
+		_ = json.Unmarshal([]byte(appLinks.(string)), &appVis.AppLinks)
+	}
+	return appVis
 }
 
 func buildAppNotes(d *schema.ResourceData) *okta.ApplicationSettingsNotes {
@@ -258,6 +273,16 @@ func buildAppNotes(d *schema.ResourceData) *okta.ApplicationSettingsNotes {
 		n.Enduser = stringPtr(enduser.(string))
 	}
 	return n
+}
+
+func buildAppSettings(d *schema.ResourceData) *okta.ApplicationSettingsApplication {
+	settings := okta.ApplicationSettingsApplication(map[string]interface{}{})
+	if appSettings, ok := d.GetOk("app_settings_json"); ok {
+		payload := map[string]interface{}{}
+		_ = json.Unmarshal([]byte(appSettings.(string)), &payload)
+		settings = okta.ApplicationSettingsApplication(payload)
+	}
+	return &settings
 }
 
 func fetchApp(ctx context.Context, d *schema.ResourceData, m interface{}, app okta.App) error {
@@ -555,7 +580,7 @@ func setSamlSettings(d *schema.ResourceData, signOn *okta.SamlApplicationSetting
 				for i := range acsEndpointsObj {
 					acsEndpoints[i] = acsEndpointsObj[i].Url
 				}
-				_ = d.Set("acs_endpoints", convertStringSliceToSet(acsEndpoints))
+				_ = d.Set("acs_endpoints", convertStringSliceToSetNullable(acsEndpoints))
 			}
 		} else {
 			_ = d.Set("acs_endpoints", nil)

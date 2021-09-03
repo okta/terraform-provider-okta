@@ -52,9 +52,11 @@ The following arguments are supported:
 
 - `status` - (Optional) Status of application. By default, it is `"ACTIVE"`.
 
-- `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
-
 - `accessibility_error_redirect_url` - (Optional) Custom error page URL.
+
+- `accessibility_login_redirect_url` - (Optional) Custom login page for this application.
+
+- `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
 
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
@@ -67,6 +69,14 @@ The following arguments are supported:
 - `admin_note` - (Optional) Application notes for admins.
 
 - `enduser_note` - (Optional) Application notes for end users.
+
+- `credentials_scheme` - (Optional) Application credentials scheme. Can be set to `"EDIT_USERNAME_AND_PASSWORD"`, `"ADMIN_SETS_CREDENTIALS"`, `"EDIT_PASSWORD_ONLY"`, `"EXTERNAL_PASSWORD_SYNC"`, or `"SHARED_USERNAME_AND_PASSWORD"`.
+
+- `reveal_password` - (Optional) Allow user to reveal password. It can not be set to `true` if `credentials_scheme` is `"ADMIN_SETS_CREDENTIALS"`, `"SHARED_USERNAME_AND_PASSWORD"` or `"EXTERNAL_PASSWORD_SYNC"`.
+
+- `shared_username` - (Optional) Shared username, required for certain schemes.
+
+- `shared_password` - (Optional) Shared password, required for certain schemes.
 
 ## Attributes Reference
 

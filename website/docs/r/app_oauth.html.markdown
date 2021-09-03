@@ -98,6 +98,12 @@ The following arguments are supported:
 
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
+- `accessibility_error_redirect_url` - (Optional) Custom error page URL.
+
+- `accessibility_login_redirect_url` - (Optional) Custom login page for this application.
+
+- `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
+
 - `hide_ios` - (Optional) Do not display application icon on mobile app.
 
 - `hide_web` - (Optional) Do not display application icon to users.
@@ -121,6 +127,8 @@ The following arguments are supported:
 - `admin_note` - (Optional) Application notes for admins.
 
 - `enduser_note` - (Optional) Application notes for end users.
+
+- `app_settings_json` - (Optional) Application settings in JSON format.
 
 ## Attributes Reference
 

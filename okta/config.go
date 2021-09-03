@@ -100,7 +100,7 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
 		okta.WithRequestTimeout(int64(c.requestTimeout)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
-		okta.WithUserAgentExtra("okta-terraform/3.13.7"),
+		okta.WithUserAgentExtra("okta-terraform/3.13.8"),
 	}
 	if c.apiToken == "" {
 		setters = append(setters, okta.WithAuthorizationMode("PrivateKey"))
@@ -119,7 +119,7 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 	}
 	c.oktaClient = client
 	c.supplementClient = &sdk.APISupplement{
-		RequestExecutor: client.GetRequestExecutor(),
+		RequestExecutor: client.CloneRequestExecutor(),
 	}
 	return nil
 }

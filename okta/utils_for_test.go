@@ -1,11 +1,14 @@
 package okta
 
 import (
+	"context"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 type checkUpstream func(string) (bool, error)
@@ -68,4 +71,34 @@ func condenseError(errorList []error) error {
 		}
 	}
 	return fmt.Errorf("series of errors occurred: %s", strings.Join(msgList, ", "))
+}
+
+type roundTripFunc func(req *http.Request) *http.Response
+
+func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
+	return f(req), nil
+}
+
+func newTestHttpClient(fn roundTripFunc) *http.Client {
+	return &http.Client{
+		Transport: fn,
+	}
+}
+
+func newTestOktaClientWithResponse(response roundTripFunc) (context.Context, *okta.Client, error) {
+	ctx := context.Background()
+
+	h := newTestHttpClient(response)
+
+	oktaCtx, c, err := okta.NewClient(
+		ctx,
+		okta.WithOrgUrl("https://foo.okta.com"),
+		okta.WithToken("f0oT0k3n"),
+		okta.WithHttpClientPtr(h),
+	)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return oktaCtx, c, nil
 }

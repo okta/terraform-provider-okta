@@ -2,7 +2,6 @@ package okta
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -223,24 +222,6 @@ func resourceAppSaml() *schema.Resource {
 				Optional:    true,
 				Description: "Identifies the SAML authentication context class for the assertion’s authentication statement",
 			},
-			"accessibility_self_service": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Enable self service",
-			},
-			"accessibility_error_redirect_url": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Custom error page URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
-			},
-			"accessibility_login_redirect_url": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Custom login page URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
-			},
 			"features": {
 				Type:        schema.TypeSet,
 				Optional:    true,
@@ -363,16 +344,6 @@ func resourceAppSaml() *schema.Resource {
 				Description:      "SAML version for the app's sign-on mode",
 				ValidateDiagFunc: elemInSlice([]string{saml20, saml11}),
 			},
-			"app_links_json": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Application settings in JSON format",
-				ValidateDiagFunc: stringIsJSON,
-				StateFunc:        normalizeDataJSON,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
-			},
 		}),
 	}
 }
@@ -430,10 +401,6 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		if err != nil {
 			return diag.Errorf("failed to set SAML app settings: %v", err)
 		}
-	}
-	err = setAppLinks(d, app.Visibility.AppLinks)
-	if err != nil {
-		return diag.Errorf("failed to set SAML app links: %v", err)
 	}
 	_ = d.Set("features", convertStringSliceToSetNullable(app.Features))
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
@@ -549,34 +516,12 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	}
 
 	honorForce := d.Get("honor_force_authn").(bool)
-	autoSubmit := d.Get("auto_submit_toolbar").(bool)
-	hideMobile := d.Get("hide_ios").(bool)
-	hideWeb := d.Get("hide_web").(bool)
-	a11ySelfService := d.Get("accessibility_self_service").(bool)
 	app.Settings = &okta.SamlApplicationSettings{
 		Notes: buildAppNotes(d),
 	}
-	app.Visibility = &okta.ApplicationVisibility{
-		AutoSubmitToolbar: &autoSubmit,
-		Hide: &okta.ApplicationVisibilityHide{
-			IOS: &hideMobile,
-			Web: &hideWeb,
-		},
-	}
-	if appLinks, ok := d.GetOk("app_links_json"); ok {
-		_ = json.Unmarshal([]byte(appLinks.(string)), &app.Visibility.AppLinks)
-	}
-	if appSettings, ok := d.GetOk("app_settings_json"); ok {
-		payload := map[string]interface{}{}
-		_ = json.Unmarshal([]byte(appSettings.(string)), &payload)
-		settings := okta.ApplicationSettingsApplication(payload)
-		app.Settings.App = &settings
-	} else {
-		// we should provide empty app, even if there are no values
-		// see https://github.com/okta/terraform-provider-okta/pull/226#issuecomment-744545051
-		settings := okta.ApplicationSettingsApplication(map[string]interface{}{})
-		app.Settings.App = &settings
-	}
+	app.Visibility = buildAppVisibility(d)
+	app.Accessibility = buildAppAccessibility(d)
+	app.Settings.App = buildAppSettings(d)
 	app.Features = convertInterfaceToStringSet(d.Get("features"))
 	app.Settings.SignOn = &okta.SamlApplicationSettingsSignOn{
 		DefaultRelayState:     d.Get("default_relay_state").(string),
@@ -612,11 +557,6 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 			Type:     d.Get("user_name_template_type").(string),
 			Suffix:   d.Get("user_name_template_suffix").(string),
 		},
-	}
-	app.Accessibility = &okta.ApplicationAccessibility{
-		SelfService:      &a11ySelfService,
-		ErrorRedirectUrl: d.Get("accessibility_error_redirect_url").(string),
-		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
 	}
 
 	// Assumes that sso url is already part of the acs endpoints as part of the desired state.

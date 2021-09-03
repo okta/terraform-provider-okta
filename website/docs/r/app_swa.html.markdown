@@ -50,9 +50,11 @@ The following arguments are supported:
 
 - `status` - (Optional) Status of application. By default, it is `"ACTIVE"`.
 
-- `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
-
 - `accessibility_error_redirect_url` - (Optional) Custom error page URL.
+
+- `accessibility_login_redirect_url` - (Optional) Custom login page for this application.
+
+- `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
 
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 

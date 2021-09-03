@@ -123,7 +123,10 @@ func (m *APISupplement) GetIdpDiscoveryRule(ctx context.Context, policyID, id st
 	if err != nil {
 		return nil, nil, err
 	}
-	rule := &IdpDiscoveryRule{}
-	resp, err := m.RequestExecutor.Do(ctx, req, rule)
-	return rule, resp, err
+	var rule *IdpDiscoveryRule
+	resp, err := m.RequestExecutor.Do(ctx, req, &rule)
+	if err != nil {
+		return nil, resp, err
+	}
+	return rule, resp, nil
 }

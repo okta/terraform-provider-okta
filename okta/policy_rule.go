@@ -200,15 +200,20 @@ func syncRuleFromUpstream(d *schema.ResourceData, rule *sdk.PolicyRule) error {
 	_ = d.Set("status", rule.Status)
 	_ = d.Set("priority", rule.Priority)
 	_ = d.Set("network_connection", rule.Conditions.Network.Connection)
+	m := map[string]interface{}{
+		"users_excluded": convertStringSliceToSetNullable(rule.Conditions.People.Users.Exclude),
+	}
+	if len(rule.Conditions.Network.Include) > 0 {
+		m["network_includes"] = convertStringSliceToInterfaceSlice(rule.Conditions.Network.Include)
+	}
+	if len(rule.Conditions.Network.Exclude) > 0 {
+		m["network_excludes"] = convertStringSliceToInterfaceSlice(rule.Conditions.Network.Exclude)
+	}
 	if rule.Conditions.Network.Connection != "ANYWHERE" {
-		return setNonPrimitives(d, map[string]interface{}{
-			"users_excluded":   convertStringSliceToSet(rule.Conditions.People.Users.Exclude),
-			"network_includes": convertStringArrToInterface(rule.Conditions.Network.Include),
-			"network_excludes": convertStringArrToInterface(rule.Conditions.Network.Exclude),
-		})
+		return setNonPrimitives(d, m)
 	}
 	return setNonPrimitives(d, map[string]interface{}{
-		"users_excluded": convertStringSliceToSet(rule.Conditions.People.Users.Exclude),
+		"users_excluded": convertStringSliceToSetNullable(rule.Conditions.People.Users.Exclude),
 	})
 }
 

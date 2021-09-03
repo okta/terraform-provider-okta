@@ -18,14 +18,12 @@ func resourceAppGroupAssignments() *schema.Resource {
 		DeleteContext: resourceAppGroupAssignmentsDelete,
 		UpdateContext: resourceAppGroupAssignmentsUpdate,
 		Importer:      &schema.ResourceImporter{},
-
 		Schema: map[string]*schema.Schema{
 			"app_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-
 			"group": {
 				Type:        schema.TypeSet,
 				Required:    true,

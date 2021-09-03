@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.13.8 (September 1, 2021)
+
+ENHANCEMENTS:
+* Add `credentials_scheme`, `reveal_password`, `shared_username` and `shared_password` to the `okta_app_three_field` resource [#619](https://github.com/okta/terraform-provider-okta/pull/619). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Add `password_hash` to the `okta_user` resource [#622](https://github.com/okta/terraform-provider-okta/pull/622). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+* Fix import of `accessibility_login_redirect_url` field in the `okta_app_saml` resource [#613](https://github.com/okta/terraform-provider-okta/pull/613). Thanks, [@Philipp](https://github.com/phi1ipp)!
+* Fix create/update operations for the `okta_app_user_custom_schema_property` resource [#606](https://github.com/okta/terraform-provider-okta/pull/606). Thanks, [@Philipp](https://github.com/phi1ipp)!
+* Fix provider crash when importing `okta_app_oauth` resource [#616](https://github.com/okta/terraform-provider-okta/pull/616). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fix `group_memberships` field setup for `okta_user` data source [#615](https://github.com/okta/terraform-provider-okta/pull/615). Thanks, [@BrentSouza](https://github.com/BrentSouza)!
+* Fix provider crash when `okta_policy_rule_idp_discovery` does not exist [#622](https://github.com/okta/terraform-provider-okta/pull/622). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.13.7 (Aug 23, 2021)
 
 ENHANCEMENTS:
