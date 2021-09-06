@@ -37,7 +37,7 @@ require (
 	github.com/hashicorp/terraform-exec v0.14.0 // indirect
 	github.com/hashicorp/terraform-json v0.12.0 // indirect
 	github.com/hashicorp/terraform-plugin-go v0.3.0 // indirect
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.7.0
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.7.1
 	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jonboulle/clockwork v0.2.1 // indirect
