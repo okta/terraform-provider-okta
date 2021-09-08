@@ -78,6 +78,10 @@ The following arguments are supported:
 
 - `shared_password` - (Optional) Shared password, required for certain schemes.
 
+- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it's also can be provided during import). Default is `false`.
+
+- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it's also can be provided during import). Default is `false`.
+
 ## Attributes Reference
 
 - `name` - Name assigned to the application by Okta.
@@ -96,4 +100,14 @@ A Three Field App can be imported via the Okta ID.
 
 ```
 $ terraform import okta_app_three_field.example <app id>
+```
+
+It's also possible to import app without groups or/and users. In this case ID may look like this:
+
+```
+$ terraform import okta_app_basic_auth.example <app id>/skip_users
+
+$ terraform import okta_app_basic_auth.example <app id>/skip_users/skip_groups
+
+$ terraform import okta_app_basic_auth.example <app id>/skip_groups
 ```

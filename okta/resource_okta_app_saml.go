@@ -37,6 +37,10 @@ var (
 	}
 )
 
+func isValidSkipArg(s string) bool {
+	return s == "skip_users" || s == "skip_groups"
+}
+
 func resourceAppSaml() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppSamlCreate,
@@ -44,7 +48,7 @@ func resourceAppSaml() *schema.Resource {
 		UpdateContext: resourceAppSamlUpdate,
 		DeleteContext: resourceAppSamlDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: appImporter,
 		},
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation

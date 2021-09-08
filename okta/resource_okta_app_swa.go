@@ -16,7 +16,7 @@ func resourceAppSwa() *schema.Resource {
 		UpdateContext: resourceAppSwaUpdate,
 		DeleteContext: resourceAppSwaDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: appImporter,
 		},
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
 			"preconfigured_app": {

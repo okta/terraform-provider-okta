@@ -16,7 +16,7 @@ func resourceAppBookmark() *schema.Resource {
 		UpdateContext: resourceAppBookmarkUpdate,
 		DeleteContext: resourceAppBookmarkDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: appImporter,
 		},
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation

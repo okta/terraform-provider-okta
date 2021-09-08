@@ -16,7 +16,7 @@ func resourceAppSecurePasswordStore() *schema.Resource {
 		UpdateContext: resourceAppSecurePasswordStoreUpdate,
 		DeleteContext: resourceAppSecurePasswordStoreDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: appImporter,
 		},
 
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
@@ -111,6 +111,14 @@ func resourceAppSecurePasswordStoreCreate(ctx context.Context, d *schema.Resourc
 		return diag.Errorf("failed to create secure password store application: %v", err)
 	}
 	d.SetId(app.Id)
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
+	if err != nil {
+		return diag.Errorf("failed to handle groups and users for secure password store application: %v", err)
+	}
+	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	if err != nil {
+		return diag.Errorf("failed to upload logo for secure password store application: %v", err)
+	}
 	return resourceAppSecurePasswordStoreRead(ctx, d, m)
 }
 
@@ -140,6 +148,10 @@ func resourceAppSecurePasswordStoreRead(ctx context.Context, d *schema.ResourceD
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
+	err = syncGroupsAndUsers(ctx, app.Id, d, m)
+	if err != nil {
+		return diag.Errorf("failed to sync groups and users for secure password store application: %v", err)
+	}
 	return nil
 }
 
@@ -153,6 +165,18 @@ func resourceAppSecurePasswordStoreUpdate(ctx context.Context, d *schema.Resourc
 	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
 		return diag.Errorf("failed to set secure password store application status: %v", err)
+	}
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
+	if err != nil {
+		return diag.Errorf("failed to handle groups and users for secure password store application: %v", err)
+	}
+	if d.HasChange("logo") {
+		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		if err != nil {
+			o, _ := d.GetChange("logo")
+			_ = d.Set("logo", o)
+			return diag.Errorf("failed to upload logo for secure password store application: %v", err)
+		}
 	}
 	return resourceAppSecurePasswordStoreRead(ctx, d, m)
 }
