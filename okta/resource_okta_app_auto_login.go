@@ -16,7 +16,7 @@ func resourceAppAutoLogin() *schema.Resource {
 		UpdateContext: resourceAppAutoLoginUpdate,
 		DeleteContext: resourceAppAutoLoginDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: appImporter,
 		},
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
 			"preconfigured_app": {
@@ -132,14 +132,6 @@ func resourceAppAutoLoginRead(ctx context.Context, d *schema.ResourceData, m int
 	if err != nil {
 		return diag.Errorf("failed to sync groups and users for auto login application: %v", err)
 	}
-	if d.HasChange("logo") {
-		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
-		if err != nil {
-			o, _ := d.GetChange("logo")
-			_ = d.Set("logo", o)
-			return diag.Errorf("failed to upload logo for basic auth application: %v", err)
-		}
-	}
 	return nil
 }
 
@@ -157,6 +149,14 @@ func resourceAppAutoLoginUpdate(ctx context.Context, d *schema.ResourceData, m i
 	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
 		return diag.Errorf("failed to handle groups and users for auto login application: %v", err)
+	}
+	if d.HasChange("logo") {
+		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		if err != nil {
+			o, _ := d.GetChange("logo")
+			_ = d.Set("logo", o)
+			return diag.Errorf("failed to upload logo for auto login application: %v", err)
+		}
 	}
 	return resourceAppAutoLoginRead(ctx, d, m)
 }

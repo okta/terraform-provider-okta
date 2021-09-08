@@ -16,7 +16,7 @@ func resourceAppBasicAuth() *schema.Resource {
 		UpdateContext: resourceAppBasicAuthUpdate,
 		DeleteContext: resourceAppBasicAuthDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: appImporter,
 		},
 		Schema: buildAppSchemaWithVisibility(map[string]*schema.Schema{
 			"auth_url": {
