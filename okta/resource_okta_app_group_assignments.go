@@ -20,32 +20,6 @@ func resourceAppGroupAssignments() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				_ = d.Set("app_id", d.Id())
-
-				client := getOktaClientFromMetadata(m)
-
-				assignments, err := listApplicationGroupAssignments(
-					ctx,
-					client,
-					d.Get("app_id").(string),
-				)
-				if err != nil {
-					return nil, err
-				}
-
-				tfFlattenedAssignments := make([]interface{}, len(assignments))
-				for i, assignment := range assignments {
-					tfAssignment, err := groupAssignmentToTFGroup(assignment)
-					if err != nil {
-						return nil, err
-					}
-					tfFlattenedAssignments[i] = tfAssignment
-				}
-
-				err = d.Set("group", tfFlattenedAssignments)
-				if err != nil {
-					return nil, err
-				}
-
 				return []*schema.ResourceData{d}, nil
 			},
 		},
