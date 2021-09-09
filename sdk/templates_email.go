@@ -36,8 +36,11 @@ func (m *APISupplement) CreateEmailTemplate(ctx context.Context, body EmailTempl
 		return nil, nil, err
 	}
 
-	temp := &EmailTemplate{}
-	resp, err := m.RequestExecutor.Do(ctx, req, temp)
+	var temp *EmailTemplate
+	resp, err := m.RequestExecutor.Do(ctx, req, &temp)
+	if err != nil {
+		return nil, resp, err
+	}
 	return temp, resp, err
 }
 
@@ -51,8 +54,11 @@ func (m *APISupplement) UpdateEmailTemplate(ctx context.Context, id string, body
 		return nil, nil, err
 	}
 
-	temp := &EmailTemplate{}
-	resp, err := m.RequestExecutor.Do(ctx, req, temp)
+	var temp *EmailTemplate
+	resp, err := m.RequestExecutor.Do(ctx, req, &temp)
+	if err != nil {
+		return nil, resp, err
+	}
 	return temp, resp, err
 }
 
@@ -62,8 +68,11 @@ func (m *APISupplement) GetEmailTemplate(ctx context.Context, id string) (*Email
 	if err != nil {
 		return nil, nil, err
 	}
-	temp := &EmailTemplate{}
-	resp, err := m.RequestExecutor.Do(ctx, req, temp)
+	var temp *EmailTemplate
+	resp, err := m.RequestExecutor.Do(ctx, req, &temp)
+	if err != nil {
+		return nil, resp, err
+	}
 	return temp, resp, err
 }
 
@@ -73,6 +82,5 @@ func (m *APISupplement) DeleteEmailTemplate(ctx context.Context, id string) (*ok
 	if err != nil {
 		return nil, err
 	}
-	resp, err := m.RequestExecutor.Do(ctx, req, nil)
-	return resp, err
+	return m.RequestExecutor.Do(ctx, req, nil)
 }

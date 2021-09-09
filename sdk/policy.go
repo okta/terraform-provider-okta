@@ -169,12 +169,12 @@ func (m *APISupplement) GetPolicy(ctx context.Context, policyID string) (*Policy
 	if err != nil {
 		return nil, nil, err
 	}
-	var policy Policy
+	var policy *Policy
 	resp, err := m.RequestExecutor.Do(ctx, req, &policy)
 	if err != nil {
 		return nil, resp, err
 	}
-	return &policy, resp, nil
+	return policy, resp, nil
 }
 
 // UpdatePolicy updates a policy.
@@ -184,12 +184,12 @@ func (m *APISupplement) UpdatePolicy(ctx context.Context, policyID string, body 
 	if err != nil {
 		return nil, nil, err
 	}
-	var policy Policy
+	var policy *Policy
 	resp, err := m.RequestExecutor.Do(ctx, req, &policy)
 	if err != nil {
 		return nil, resp, err
 	}
-	return &policy, resp, nil
+	return policy, resp, nil
 }
 
 // CreatePolicy creates a policy.
@@ -199,10 +199,10 @@ func (m *APISupplement) CreatePolicy(ctx context.Context, body Policy) (*Policy,
 	if err != nil {
 		return nil, nil, err
 	}
-	var policy Policy
+	var policy *Policy
 	resp, err := m.RequestExecutor.Do(ctx, req, &policy)
 	if err != nil {
 		return nil, resp, err
 	}
-	return &policy, resp, nil
+	return policy, resp, nil
 }
