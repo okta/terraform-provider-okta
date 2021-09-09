@@ -17,7 +17,12 @@ func resourceAppGroupAssignments() *schema.Resource {
 		ReadContext:   resourceAppGroupAssignmentsRead,
 		DeleteContext: resourceAppGroupAssignmentsDelete,
 		UpdateContext: resourceAppGroupAssignmentsUpdate,
-		Importer:      &schema.ResourceImporter{},
+		Importer: &schema.ResourceImporter{
+			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+				_ = d.Set("app_id", d.Id())
+				return []*schema.ResourceData{d}, nil
+			},
+		},
 		Schema: map[string]*schema.Schema{
 			"app_id": {
 				Type:     schema.TypeString,
