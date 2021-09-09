@@ -36,7 +36,10 @@ func (m *APISupplement) GetAppOauthGroupsClaim(ctx context.Context, appID string
 	if err != nil {
 		return nil, nil, err
 	}
-	gc := &AppOauthGroupClaim{}
-	resp, err := m.RequestExecutor.Do(ctx, req, gc)
+	var gc *AppOauthGroupClaim
+	resp, err := m.RequestExecutor.Do(ctx, req, &gc)
+	if err != nil {
+		return nil, resp, err
+	}
 	return gc, resp, err
 }

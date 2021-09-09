@@ -24,8 +24,8 @@ own Okta infrastructure. Provider's official documentation is located in the
 
 ## Requirements
 
-- [Terraform](https://www.terraform.io/downloads.html) 0.12.26+ (to run acceptance tests)
-- [Go](https://golang.org/doc/install) 1.15 (to build the provider plugin)
+- [Terraform](https://www.terraform.io/downloads.html) 0.13.0 or newer (to run acceptance tests)
+- [Go](https://golang.org/doc/install) 1.17 (to build the provider plugin)
 
 ## Quick Start
 
@@ -78,7 +78,7 @@ To use a released provider in your Terraform environment, run [`terraform init`]
 
 To instead use a custom-built provider in your Terraform environment (e.g. the provider binary from the build instructions above), follow the instructions to [install it as a plugin.](https://www.terraform.io/docs/plugins/basics.html#installing-plugins) After placing the custom-built provider into your plugins directory, run `terraform init` to initialize it.
 
-For either installation method, documentation about the provider specific configuration options can be found on the [provider's website](https://www.terraform.io/docs/providers/okta/index.html).
+For either installation method, documentation about the provider specific configuration options can be found on the [provider's website](https://registry.terraform.io/providers/okta/okta/latest/docs).
 
 ## Contributing
 
