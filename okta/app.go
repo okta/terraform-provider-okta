@@ -98,7 +98,7 @@ var (
 			Type:             schema.TypeString,
 			Optional:         true,
 			ValidateDiagFunc: logoValid(),
-			Description:      "Logo of the application.",
+			Description:      "Local path to logo of the application.",
 			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 				return new == ""
 			},
