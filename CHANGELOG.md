@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.13.9 (September 10, 2021) 
+
+ENHANCEMENTS:
+* Added `app_settings_json` to the `okta_app_oauth` resource [#627](https://github.com/okta/terraform-provider-okta/pull/627). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added `skip_users` and `skip_groups` to the `okta_app_*` resources (check latest documentation for the usage of these fields) [#633](https://github.com/okta/terraform-provider-okta/pull/633). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+* Fixed resource import of the `okta_app_group_assignments` [#630](https://github.com/okta/terraform-provider-okta/pull/630). Thanks, [@Philipp](https://github.com/phi1ipp)!
+* Fixed creation of multiple app user schema properties for new (recently created) apps. [#634](https://github.com/okta/terraform-provider-okta/pull/634). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fixed description for the app logo field [#639](https://github.com/okta/terraform-provider-okta/pull/639). Thanks, [@sklarsa](https://github.com/sklarsa)!
+
 ## 3.13.8 (September 1, 2021)
 
 ENHANCEMENTS:
