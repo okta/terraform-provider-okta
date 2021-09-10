@@ -52,7 +52,7 @@ The following arguments are supported:
 
 - `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
 
-- `logo` - (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+- `logo` - (Optional) Local path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 
 - `admin_note` - (Optional) Application notes for admins.
 

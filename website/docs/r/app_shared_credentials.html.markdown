@@ -59,7 +59,7 @@ The following arguments are supported:
 
 - `label` - (Required) The Application's display name.
 
-- `logo` - (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+- `logo` - (Optional) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 
 - `password_field` - (Optional) CSS selector for the Password field in the sign-in form.
 
