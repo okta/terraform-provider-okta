@@ -23,11 +23,12 @@ type (
 
 // I wish the SDK provided these
 const (
-	authorizationCode string = "authorization_code"
-	implicit          string = "implicit"
-	password          string = "password"
-	refreshToken      string = "refresh_token"
-	clientCredentials string = "client_credentials"
+	authorizationCode   string = "authorization_code"
+	implicit            string = "implicit"
+	password            string = "password"
+	refreshToken        string = "refresh_token"
+	clientCredentials   string = "client_credentials"
+	deviceAuthorization string = "urn:ietf:params:oauth:grant-type:device_code"
 )
 
 // Building out structure for the conditional validation logic. It looks like customizing the diff
@@ -56,6 +57,7 @@ var appGrantTypeMap = map[string]*applicationMap{
 			implicit,
 			refreshToken,
 			password,
+			deviceAuthorization,
 		},
 	},
 	"browser": {
@@ -220,7 +222,7 @@ func resourceAppOAuth() *schema.Resource {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, refreshToken, clientCredentials}),
+					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, refreshToken, clientCredentials, deviceAuthorization}),
 				},
 				Optional:    true,
 				Description: "List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.",
