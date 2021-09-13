@@ -91,7 +91,7 @@ func (m *APISupplement) CreatePolicyRule(ctx context.Context, policyID string, b
 		return nil, nil, err
 	}
 	var policyRule *PolicyRule
-	resp, err := m.RequestExecutor.Do(ctx, req, policyRule)
+	resp, err := m.RequestExecutor.Do(ctx, req, &policyRule)
 	if err != nil {
 		return nil, resp, err
 	}
