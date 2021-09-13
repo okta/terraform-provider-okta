@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.13.10 (September 13, 2021)
+
+BUGS:
+* Fixed the way `okta_policy_mfa` resource store its factors in the state [#641](https://github.com/okta/terraform-provider-okta/pull/641). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fixed provider crash when using policy rules resources [#641](https://github.com/okta/terraform-provider-okta/pull/641). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.13.9 (September 10, 2021) 
 
 ENHANCEMENTS:
