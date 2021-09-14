@@ -367,25 +367,25 @@ func handleAppGroups(ctx context.Context, id string, d *schema.ResourceData, cli
 	return asyncActionList
 }
 
-func listApplicationGroupAssignments(ctx context.Context, client *okta.Client, id string) ([]*okta.ApplicationGroupAssignment, error) {
+func listApplicationGroupAssignments(ctx context.Context, client *okta.Client, id string) ([]*okta.ApplicationGroupAssignment, *okta.Response, error) {
 	var resGroups []*okta.ApplicationGroupAssignment
 	groups, resp, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 	for {
 		resGroups = append(resGroups, groups...)
 		if resp.HasNextPage() {
 			resp, err = resp.Next(ctx, &groups)
 			if err != nil {
-				return nil, err
+				return nil, resp, err
 			}
 			continue
 		} else {
 			break
 		}
 	}
-	return resGroups, nil
+	return resGroups, resp, nil
 }
 
 func containsAppUser(userList []*okta.AppUser, id string) bool {
@@ -571,7 +571,7 @@ func syncGroupsAndUsers(ctx context.Context, id string, d *schema.ResourceData, 
 		}
 	}
 	if ignoreGroups := d.Get("skip_groups").(bool); !ignoreGroups {
-		appGroups, err := listApplicationGroupAssignments(ctx, getOktaClientFromMetadata(m), id)
+		appGroups, _, err := listApplicationGroupAssignments(ctx, getOktaClientFromMetadata(m), id)
 		if err != nil {
 			return err
 		}
@@ -686,7 +686,7 @@ func listAppUsersIDsAndGroupsIDs(ctx context.Context, client *okta.Client, id st
 	if err != nil {
 		return nil, nil, err
 	}
-	appGroups, err := listApplicationGroupAssignments(ctx, client, id)
+	appGroups, _, err := listApplicationGroupAssignments(ctx, client, id)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -67,6 +67,7 @@ func resourceAppGroupAssignments() *schema.Resource {
 							DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 								return new == ""
 							},
+							Default: "{}",
 						},
 					},
 				},
@@ -101,16 +102,18 @@ func resourceAppGroupAssignmentsCreate(ctx context.Context, d *schema.ResourceDa
 
 func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-
-	assignments, err := listApplicationGroupAssignments(
+	assignments, resp, err := listApplicationGroupAssignments(
 		ctx,
 		client,
 		d.Get("app_id").(string),
 	)
-	if err != nil {
+	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to fetch group assignments: %v", err)
 	}
-
+	if assignments == nil {
+		d.SetId("")
+		return nil
+	}
 	tfFlattenedAssignments := make([]interface{}, len(assignments))
 	for i, assignment := range assignments {
 		tfAssignment, err := groupAssignmentToTFGroup(assignment)
@@ -129,16 +132,14 @@ func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData
 
 func resourceAppGroupAssignmentsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-
 	for _, rawGroup := range d.Get("group").(*schema.Set).List() {
 		group := rawGroup.(map[string]interface{})
-
-		_, err := client.Application.DeleteApplicationGroupAssignment(
+		resp, err := client.Application.DeleteApplicationGroupAssignment(
 			ctx,
 			d.Get("app_id").(string),
 			group["id"].(string),
 		)
-		if err != nil {
+		if err := suppressErrorOn404(resp, err); err != nil {
 			return diag.Errorf("failed to delete application group assignment: %v", err)
 		}
 	}
