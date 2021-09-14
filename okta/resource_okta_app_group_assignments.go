@@ -67,6 +67,7 @@ func resourceAppGroupAssignments() *schema.Resource {
 							DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 								return new == ""
 							},
+							Default: "{}",
 						},
 					},
 				},
@@ -129,16 +130,14 @@ func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData
 
 func resourceAppGroupAssignmentsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-
 	for _, rawGroup := range d.Get("group").(*schema.Set).List() {
 		group := rawGroup.(map[string]interface{})
-
-		_, err := client.Application.DeleteApplicationGroupAssignment(
+		resp, err := client.Application.DeleteApplicationGroupAssignment(
 			ctx,
 			d.Get("app_id").(string),
 			group["id"].(string),
 		)
-		if err != nil {
+		if err := suppressErrorOn404(resp, err); err != nil {
 			return diag.Errorf("failed to delete application group assignment: %v", err)
 		}
 	}
