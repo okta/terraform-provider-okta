@@ -12,11 +12,11 @@ Creates an Application User.
 
 This resource allows you to create and configure an Application User.
 
-**When using this resource, make sure to add the following `lifefycle` argument to the application resource you are assigning to:**
+**When using this resource, make sure to add the following `lifecycle` argument to the application resource you are assigning to:**
 
 ```hcl
 lifecycle {
-  ignore_changes = ["users"]
+  ignore_changes = [users]
 }
 ```
 
