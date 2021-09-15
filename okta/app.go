@@ -212,7 +212,7 @@ func appImporter(_ context.Context, d *schema.ResourceData, m interface{}) ([]*s
 	d.SetId(importID[0])
 	for _, v := range importID[1:] {
 		if !isValidSkipArg(v) {
-			return nil, fmt.Errorf("'%s' is invalid value to be used as port of import ID, it must be either 'skip_users' or 'skip_groups'", v)
+			return nil, fmt.Errorf("'%s' is invalid value to be used as part of import ID, it must be either 'skip_users' or 'skip_groups'", v)
 		}
 		_ = d.Set(v, true)
 	}
