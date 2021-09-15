@@ -145,11 +145,11 @@ func updateGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}
 	newSet := newGM.(*schema.Set)
 	usersToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
 	usersToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
-	err := addUserToGroups(ctx, client, d.Id(), usersToAdd)
+	err := addGroupMembers(ctx, client, d.Id(), usersToAdd)
 	if err != nil {
 		return err
 	}
-	return removeUserFromGroups(ctx, client, d.Id(), usersToRemove)
+	return removeGroupMembers(ctx, client, d.Id(), usersToRemove)
 }
 
 func containsUser(users []*okta.User, id string) bool {
