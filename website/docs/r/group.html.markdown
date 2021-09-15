@@ -41,7 +41,7 @@ The following arguments are supported:
 - `users` - (Optional) The users associated with the group. This can also be done per user.
 `DEPRECATED`: Please replace usage with the `okta_group_memberships` resource.
 
-- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it's also can be provided during import). Default is `false`.
+- `skip_users` - (Optional) Indicator that allows a group to skip `users` sync (it's also can be provided during import). Default is `false`.
 
 ## Attributes Reference
 
