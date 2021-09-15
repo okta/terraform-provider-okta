@@ -20,7 +20,7 @@ func resourceGroupRole() *schema.Resource {
 		ReadContext:   resourceGroupRoleRead,
 		UpdateContext: resourceGroupRoleUpdate,
 		DeleteContext: resourceGroupRoleDelete,
-		Importer:      &schema.ResourceImporter{StateContext: resourceGroupRoleImporter},
+		Importer:      createNestedResourceImporter([]string{"group_id", "id"}),
 		CustomizeDiff: customdiff.All(
 			customdiff.ForceNewIf("target_group_list", func(_ context.Context, d *schema.ResourceDiff, m interface{}) bool {
 				if d.HasChange("target_group_list") {
@@ -127,41 +127,38 @@ func resourceGroupRoleCreate(ctx context.Context, d *schema.ResourceData, m inte
 
 func resourceGroupRoleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	groupID := d.Get("group_id").(string)
-	client := getOktaClientFromMetadata(m)
-	rolesAssigned, resp, err := client.Group.ListGroupAssignedRoles(ctx, groupID, nil)
-	exists, err := doesResourceExist(resp, err)
-	if err != nil {
-		return diag.Errorf("failed to list roles assigned to group %s: %v", groupID, err)
-	} else if !exists {
-		logger(m).Warn("group (%s) which had these resources assigned no longer exists", groupID)
-		d.SetId("")
-		return nil
+	role, resp, err := getOktaClientFromMetadata(m).Group.GetRole(ctx, groupID, d.Id())
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get role '%s' assigned to group '%s': %v", d.Id(), groupID, err)
 	}
-	for i := range rolesAssigned {
-		if rolesAssigned[i].Id == d.Id() {
-			if supportsGroupTargets(rolesAssigned[i].Type) {
-				groupIDs, err := listGroupTargetsIDs(ctx, m, groupID, rolesAssigned[i].Id)
-				if err != nil {
-					return diag.Errorf("unable to list group targets for role %s and group %s: %v", rolesAssigned[i].Id, groupID, err)
-				}
-				if len(groupIDs) != 0 {
-					_ = d.Set("target_group_list", groupIDs)
-				}
-			} else if rolesAssigned[i].Type == "APP_ADMIN" {
-				apps, err := listGroupAppsTargets(ctx, d, m)
-				if err != nil {
-					return diag.Errorf("unable to list app targets for role %s and group %s: %v", rolesAssigned[i].Id, groupID, err)
-				}
-				if len(apps) != 0 {
-					_ = d.Set("target_app_list", apps)
-				}
-			}
-			_ = d.Set("role_type", rolesAssigned[i].Type)
+	if role == nil {
+		role, err = findRole(ctx, d, m)
+		if err != nil {
+			return diag.Errorf("failed to get role '%s' assigned to group '%s': %v", d.Id(), groupID, err)
+		}
+		if role == nil {
+			d.SetId("")
 			return nil
 		}
 	}
-	logger(m).Info("no roles found assigned to group", "group_id", groupID)
-	d.SetId("")
+	if supportsGroupTargets(role.Type) {
+		groupIDs, err := listGroupTargetsIDs(ctx, m, groupID, role.Id)
+		if err != nil {
+			return diag.Errorf("unable to list group targets for role %s and group %s: %v", role.Id, groupID, err)
+		}
+		if len(groupIDs) != 0 {
+			_ = d.Set("target_group_list", groupIDs)
+		}
+	} else if role.Type == "APP_ADMIN" {
+		apps, err := listGroupAppsTargets(ctx, d, m)
+		if err != nil {
+			return diag.Errorf("unable to list app targets for role %s and group %s: %v", role.Id, groupID, err)
+		}
+		if len(apps) != 0 {
+			_ = d.Set("target_app_list", apps)
+		}
+	}
+	_ = d.Set("role_type", role.Type)
 	return nil
 }
 
@@ -215,39 +212,6 @@ func resourceGroupRoleDelete(ctx context.Context, d *schema.ResourceData, m inte
 		return diag.Errorf("failed to remove role %s assigned to group %s: %v", roleType, groupID, err)
 	}
 	return nil
-}
-
-func resourceGroupRoleImporter(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-	importID := strings.Split(d.Id(), "/")
-	if len(importID) != 2 {
-		err := fmt.Errorf("invalid format used for import ID, format must be group_id/role_assignment_id")
-		return nil, err
-	}
-	groupID := importID[0]
-	roleID := importID[1]
-	client := getOktaClientFromMetadata(m)
-	rolesAssigned, _, err := client.Group.ListGroupAssignedRoles(ctx, groupID, nil)
-	if err != nil {
-		return nil, err
-	}
-	for _, role := range rolesAssigned {
-		if role.Id != roleID {
-			continue
-		}
-		d.SetId(roleID)
-		_ = d.Set("group_id", groupID)
-		_ = d.Set("role_type", role.Type)
-		if supportsGroupTargets(role.Type) {
-			groupIDs, err := listGroupTargetsIDs(ctx, m, groupID, role.Id)
-			if err != nil {
-				return nil, fmt.Errorf("unable to get admin assignment %s for group %s: %v", role.Id, groupID, err)
-			}
-			_ = d.Set("target_group_list", groupIDs)
-		}
-		return []*schema.ResourceData{d}, nil
-	}
-	err = fmt.Errorf("unable to find the role ID %s assigned to the group %s", roleID, groupID)
-	return nil, err
 }
 
 func listGroupTargetsIDs(ctx context.Context, m interface{}, groupID, roleID string) ([]string, error) {
@@ -371,6 +335,29 @@ func removeGroupAppTargets(ctx context.Context, client *okta.Client, groupID, ro
 		}
 	}
 	return nil
+}
+
+func findRole(ctx context.Context, d *schema.ResourceData, m interface{}) (*okta.Role, error) {
+	rt := d.Get("role_type").(string)
+	if rt == "" {
+		return nil, nil
+	}
+	groupID := d.Get("group_id").(string)
+	roles, resp, err := getOktaClientFromMetadata(m).Group.ListGroupAssignedRoles(ctx, groupID, nil)
+	exists, err := doesResourceExist(resp, err)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list roles assigned to group %s: %v", groupID, err)
+	} else if !exists {
+		logger(m).Error("group (%s) which had these resources assigned no longer exists", groupID)
+		return nil, nil
+	}
+	for i := range roles {
+		if roles[i].Type == rt {
+			d.SetId(roles[i].Id)
+			return roles[i], nil
+		}
+	}
+	return nil, nil
 }
 
 func supportsGroupTargets(roleType string) bool {

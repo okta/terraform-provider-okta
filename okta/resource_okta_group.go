@@ -2,7 +2,9 @@ package okta
 
 import (
 	"context"
-	"net/http"
+	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,11 +19,18 @@ func resourceGroup() *schema.Resource {
 		DeleteContext: resourceGroupDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-				userIDList, err := listGroupUserIDs(ctx, m, d.Id())
-				if err != nil {
-					return nil, err
+				importID := strings.Split(d.Id(), "/")
+				if len(importID) == 1 {
+					return []*schema.ResourceData{d}, nil
 				}
-				_ = d.Set("users", convertStringSliceToSet(userIDList))
+				if len(importID) > 2 {
+					return nil, errors.New("invalid format used for import ID, format must be 'group_id' or 'group_id/skip_users'")
+				}
+				d.SetId(importID[0])
+				if !isValidSkipArg(importID[1]) {
+					return nil, fmt.Errorf("'%s' is invalid value to be used as part of import ID, it can only be 'skip_users'", importID[1])
+				}
+				_ = d.Set(importID[1], true)
 				return []*schema.ResourceData{d}, nil
 			},
 		},
@@ -42,6 +51,12 @@ func resourceGroup() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "Users associated with the group. This can also be done per user.",
 				Deprecated:  "The `users` field is now deprecated for the resource `okta_group`, please replace all uses of this with: `okta_group_memberships`",
+			},
+			"skip_users": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Ignore users sync. This is a temporary solution until 'users' field is supported in this resource",
+				Default:     false,
 			},
 		},
 	}
@@ -105,8 +120,8 @@ func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 func syncGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	// Only sync when the user opts in by outlining users in the group config
-	if _, exists := d.GetOk("users"); !exists {
+	// temp solution until 'users' field is supported
+	if d.Get("skip_users").(bool) {
 		return nil
 	}
 	userIDList, err := listGroupUserIDs(ctx, m, d.Id())
@@ -117,44 +132,24 @@ func syncGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}) 
 }
 
 func updateGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	// Only sync when the user opts in by outlining users in the group config
-	// To remove all users, define an empty set
-	arr, exists := d.GetOk("users")
-	if !exists {
+	if !d.HasChange("users") {
 		return nil
 	}
-	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusNotFound})
+	// temp solution until 'users' field is supported
+	if d.Get("skip_users").(bool) {
+		return nil
+	}
 	client := getOktaClientFromMetadata(m)
-	existingUserList, _, err := client.Group.ListGroupUsers(ctx, d.Id(), nil)
+	oldGM, newGM := d.GetChange("users")
+	oldSet := oldGM.(*schema.Set)
+	newSet := newGM.(*schema.Set)
+	usersToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
+	usersToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
+	err := addGroupMembers(ctx, client, d.Id(), usersToAdd)
 	if err != nil {
 		return err
 	}
-
-	rawArr := arr.(*schema.Set).List()
-	userIDList := make([]string, len(rawArr))
-
-	for i, ifaceID := range rawArr {
-		userID := ifaceID.(string)
-		userIDList[i] = userID
-
-		if !containsUser(existingUserList, userID) {
-			resp, err := client.Group.AddUserToGroup(ctx, d.Id(), userID)
-			if err != nil {
-				return responseErr(resp, err)
-			}
-		}
-	}
-
-	for _, user := range existingUserList {
-		if !contains(userIDList, user.Id) {
-			err := suppressErrorOn404(client.Group.RemoveUserFromGroup(ctx, d.Id(), user.Id))
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
+	return removeGroupMembers(ctx, client, d.Id(), usersToRemove)
 }
 
 func containsUser(users []*okta.User, id string) bool {
