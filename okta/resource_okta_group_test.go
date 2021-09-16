@@ -26,7 +26,7 @@ func sweepGroups(client *testClient) error {
 	return condenseError(errorList)
 }
 
-func TestAccOktaGroups_crud(t *testing.T) {
+func TestAccOktaGroup_crud(t *testing.T) {
 	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", oktaGroup)
 	mgr := newFixtureManager("okta_group")

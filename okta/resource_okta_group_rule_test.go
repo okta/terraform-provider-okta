@@ -78,6 +78,7 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name2),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
+					resource.TestCheckResourceAttr(resourceName, "users_excluded.#", "1"),
 				),
 			},
 		},
