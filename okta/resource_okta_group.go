@@ -5,6 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
+
+	"github.com/cenkalti/backoff/v4"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -68,6 +71,22 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interfac
 	responseGroup, _, err := getOktaClientFromMetadata(m).Group.CreateGroup(ctx, *group)
 	if err != nil {
 		return diag.Errorf("failed to create group: %v", err)
+	}
+	bOff := backoff.NewExponentialBackOff()
+	bOff.MaxElapsedTime = time.Second * 10
+	bOff.InitialInterval = time.Second
+	err = backoff.Retry(func() error {
+		g, resp, err := getOktaClientFromMetadata(m).Group.GetGroup(ctx, responseGroup.Id)
+		if err := suppressErrorOn404(resp, err); err != nil {
+			return backoff.Permanent(err)
+		}
+		if g == nil {
+			return fmt.Errorf("group '%s' hasn't been created after multiple checks", responseGroup.Id)
+		}
+		return nil
+	}, bOff)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 	d.SetId(responseGroup.Id)
 	err = updateGroupUsers(ctx, d, m)
