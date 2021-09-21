@@ -10,7 +10,7 @@ resource "okta_app_saml" "test" {
 JSON
 
   lifecycle {
-    ignore_changes = ["users", "groups"]
+    ignore_changes = [users, groups]
   }
 }
 

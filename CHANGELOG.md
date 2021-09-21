@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.13.11 (September 21, 2021)
+
+ENHANCEMENTS:
+* Added `skip_users` to the `okta_group` resource (check latest documentation for the usage of these fields) [#646](https://github.com/okta/terraform-provider-okta/pull/646). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `users_excluded` field to the `okta_group_rule` resource [#651](https://github.com/okta/terraform-provider-okta/pull/651). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+* Fixed constant change-loops in the `okta_app_group_assignments` resource [#644](https://github.com/okta/terraform-provider-okta/pull/644). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fixed typo and deprecation warning in the documentation for `okta_app_user` resource [#645](https://github.com/okta/terraform-provider-okta/pull/645). Thanks, [@SaffatHasan](https://github.com/SaffatHasan)!
+* Fixed `okta_group_role` resource update in case of several roles are being updated [#646](https://github.com/okta/terraform-provider-okta/pull/646). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Terraform will attempt to remove `okta_user_schema_property` resource several times in case the resource still exists in the organization [#656](https://github.com/okta/terraform-provider-okta/pull/656). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.13.10 (September 13, 2021)
 
 BUGS:
