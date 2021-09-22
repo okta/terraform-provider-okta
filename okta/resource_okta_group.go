@@ -139,6 +139,10 @@ func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 func syncGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	// Only sync when the user opts in by outlining users in the group config
+	if _, exists := d.GetOk("users"); !exists {
+		return nil
+	}
 	// temp solution until 'users' field is supported
 	if d.Get("skip_users").(bool) {
 		return nil
@@ -169,15 +173,6 @@ func updateGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}
 		return err
 	}
 	return removeGroupMembers(ctx, client, d.Id(), usersToRemove)
-}
-
-func containsUser(users []*okta.User, id string) bool {
-	for _, user := range users {
-		if user.Id == id {
-			return true
-		}
-	}
-	return false
 }
 
 func buildGroup(d *schema.ResourceData) *okta.Group {
