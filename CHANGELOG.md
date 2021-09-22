@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.13.12 (September 22, 2021)
+
+BUGS:
+* Fixed false users sync for `okta_group` resource [#661](https://github.com/okta/terraform-provider-okta/pull/661). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.13.11 (September 21, 2021)
 
 ENHANCEMENTS:
