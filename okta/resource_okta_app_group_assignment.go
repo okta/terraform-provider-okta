@@ -150,9 +150,9 @@ func buildAppGroupAssignment(d *schema.ResourceData) okta.ApplicationGroupAssign
 	var profile interface{}
 	rawProfile := d.Get("profile").(string)
 	_ = json.Unmarshal([]byte(rawProfile), &profile)
-	priority := d.Get("priority").(int)
+	priority := int64(d.Get("priority").(int))
 	return okta.ApplicationGroupAssignment{
 		Profile:  profile,
-		Priority: int64(priority),
+		Priority: &priority,
 	}
 }

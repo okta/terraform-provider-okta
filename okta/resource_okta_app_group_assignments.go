@@ -179,7 +179,9 @@ func syncGroups(d *schema.ResourceData, groups []interface{}, assignments []*okt
 		for _, assignment := range assignments {
 			if assignment.Id == d.Get(fmt.Sprintf("group.%d.id", i)).(string) {
 				present = true
-				groups[i].(map[string]interface{})["priority"] = int(assignment.Priority)
+				if assignment.Priority != nil {
+					groups[i].(map[string]interface{})["priority"] = int(*assignment.Priority)
+				}
 				jsonProfile, _ := json.Marshal(assignment.Profile)
 				if string(jsonProfile) != "" {
 					groups[i].(map[string]interface{})["profile"] = string(jsonProfile)
@@ -218,8 +220,10 @@ func containsAssignment(assignments []*okta.ApplicationGroupAssignment, assignme
 
 func containsEqualAssignment(assignments []*okta.ApplicationGroupAssignment, assignment *okta.ApplicationGroupAssignment) bool {
 	for i := range assignments {
-		if assignments[i].Id == assignment.Id && assignments[i].Priority == assignment.Priority &&
-			reflect.DeepEqual(assignments[i].Profile, assignment.Profile) {
+		if assignments[i].Id == assignment.Id && reflect.DeepEqual(assignments[i].Profile, assignment.Profile) {
+			if assignment.Priority != nil {
+				return reflect.DeepEqual(assignments[i].Priority, assignment.Priority)
+			}
 			return true
 		}
 	}
@@ -245,11 +249,16 @@ func tfGroupsToGroupAssignments(d *schema.ResourceData) []*okta.ApplicationGroup
 		rawProfile := d.Get(fmt.Sprintf("group.%d.profile", i))
 		var profile interface{}
 		_ = json.Unmarshal([]byte(rawProfile.(string)), &profile)
-		assignments[i] = &okta.ApplicationGroupAssignment{
-			Id:       d.Get(fmt.Sprintf("group.%d.id", i)).(string),
-			Priority: int64(d.Get(fmt.Sprintf("group.%d.priority", i)).(int)),
-			Profile:  profile,
+		a := &okta.ApplicationGroupAssignment{
+			Id:      d.Get(fmt.Sprintf("group.%d.id", i)).(string),
+			Profile: profile,
 		}
+		priority, ok := d.GetOk(fmt.Sprintf("group.%d.priority", i))
+		if ok {
+			p := int64(priority.(int))
+			a.Priority = &p
+		}
+		assignments[i] = a
 	}
 	return assignments
 }
