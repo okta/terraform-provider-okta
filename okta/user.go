@@ -319,7 +319,7 @@ func setAllGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) e
 }
 
 // set groups attached to the user that can be changed
-func setGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
+func setGroupUserMemberships(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
 	groups, response, err := c.User.ListUserGroups(ctx, d.Id())
 	if err != nil {
 		return fmt.Errorf("failed to list user groups: %v", err)
