@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.13.13 (September 23, 2021)
+
+BUGS:
+* Another attempt to fix constant change-loops in the `okta_app_group_assignments` resource [#664](https://github.com/okta/terraform-provider-okta/pull/664). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.13.12 (September 22, 2021)
 
 BUGS:
