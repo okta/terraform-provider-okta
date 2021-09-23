@@ -439,7 +439,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	}
 	// Only sync when it is outlined, an empty list will remove all membership
 	if _, exists := d.GetOk("group_memberships"); exists {
-		err = setGroups(ctx, d, client)
+		err = setGroupUserMemberships(ctx, d, client)
 		if err != nil {
 			return diag.Errorf("failed to set user's groups: %v", err)
 		}

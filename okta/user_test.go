@@ -101,5 +101,5 @@ func TestUserSetAllGroups(t *testing.T) {
 }
 
 func TestUserSetGroups(t *testing.T) {
-	testUserGroupFetchesAllPages(t, setGroups)
+	testUserGroupFetchesAllPages(t, setGroupUserMemberships)
 }
