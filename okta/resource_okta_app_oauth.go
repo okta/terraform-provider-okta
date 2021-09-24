@@ -488,11 +488,13 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 			return diag.Errorf("failed to sync groups and users for OAuth application: %v", err)
 		}
 	}
-	gc, err := flattenGroupsClaim(ctx, d, m)
-	if err != nil {
-		return diag.FromErr(err)
+	if _, exists := d.GetOk("groups_claim"); exists {
+		gc, err := flattenGroupsClaim(ctx, d, m)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		_ = d.Set("groups_claim", gc)
 	}
-	_ = d.Set("groups_claim", gc)
 	return setOAuthClientSettings(d, app.Settings.OauthClient)
 }
 
