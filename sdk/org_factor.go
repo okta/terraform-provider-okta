@@ -37,12 +37,12 @@ const (
 // GetOrgFactor gets a factor by ID.
 func (m *APISupplement) GetOrgFactor(ctx context.Context, id string) (*OrgFactor, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/org/factors/%s", id)
-	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
+	req, err := m.RequestExecutor().NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	var factor *OrgFactor
-	resp, err := m.RequestExecutor.Do(ctx, req, &factor)
+	resp, err := m.RequestExecutor().Do(ctx, req, &factor)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -61,7 +61,7 @@ func (m *APISupplement) DeactivateOrgFactor(ctx context.Context, id string) (*Or
 
 func (m *APISupplement) lifecycleChangeOrgFactor(ctx context.Context, id, action string) (*OrgFactor, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/org/factors/%s/lifecycle/%s", id, action)
-	req, err := m.RequestExecutor.
+	req, err := m.RequestExecutor().
 		WithAccept("application/json").
 		WithContentType("application/json").
 		NewRequest(http.MethodPost, url, nil)
@@ -69,7 +69,7 @@ func (m *APISupplement) lifecycleChangeOrgFactor(ctx context.Context, id, action
 		return nil, nil, err
 	}
 	var factor *OrgFactor
-	resp, err := m.RequestExecutor.Do(ctx, req, factor)
+	resp, err := m.RequestExecutor().Do(ctx, req, factor)
 	if err != nil {
 		return nil, resp, err
 	}

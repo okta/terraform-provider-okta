@@ -95,18 +95,16 @@ func Provider() *schema.Provider {
 				Description: "The organization to manage in Okta.",
 			},
 			"api_token": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_TOKEN", nil),
-				Description:   "API Token granting privileges to Okta API.",
-				ConflictsWith: []string{"client_id", "scopes", "private_key"},
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("OKTA_API_TOKEN", nil),
+				Description: "API Token granting privileges to Okta API.",
 			},
 			"client_id": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_CLIENT_ID", nil),
-				Description:   "API Token granting privileges to Okta API.",
-				ConflictsWith: []string{"api_token"},
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("OKTA_API_CLIENT_ID", nil),
+				Description: "Client ID for obtaining the API Bearer token",
 			},
 			"scopes": {
 				Type:     schema.TypeSet,
@@ -117,16 +115,14 @@ func Provider() *schema.Provider {
 						return "a", nil
 					},
 				},
-				DefaultFunc:   envDefaultSetFunc("OKTA_API_SCOPES", nil),
-				Description:   "API Token granting privileges to Okta API.",
-				ConflictsWith: []string{"api_token"},
+				DefaultFunc: envDefaultSetFunc("OKTA_API_SCOPES", nil),
+				Description: "List of scopes for obtaining the API Bearer token",
 			},
 			"private_key": {
-				Optional:      true,
-				Type:          schema.TypeString,
-				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_PRIVATE_KEY", nil),
-				Description:   "API Token granting privileges to Okta API.",
-				ConflictsWith: []string{"api_token"},
+				Optional:    true,
+				Type:        schema.TypeString,
+				DefaultFunc: schema.EnvDefaultFunc("OKTA_API_PRIVATE_KEY", nil),
+				Description: "Private key for obtaining the API Bearer token",
 			},
 			"base_url": {
 				Type:        schema.TypeString,
@@ -187,6 +183,13 @@ func Provider() *schema.Provider {
 				Default:          0,
 				ValidateDiagFunc: intBetween(0, 300),
 				Description:      "Timeout for single request (in seconds) which is made to Okta, the default is `0` (means no limit is set). The maximum value can be `300`.",
+			},
+			"primary_client": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: elemInSlice([]string{"access_token_client", "api_token_client"}),
+				Description: "Which client to use as a primary one. This can be used in case provider should use Bearer token for most of the API calls, " +
+					"and service token for ones that are only reachable with service token",
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
@@ -330,6 +333,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		logLevel:       d.Get("log_level").(int),
 		requestTimeout: d.Get("request_timeout").(int),
 		maxAPICapacity: d.Get("max_api_capacity").(int),
+		primaryClient:  d.Get("primary_client").(string),
 	}
 	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(config.scopes) == 0 {
 		config.scopes = strings.Split(v, ",")

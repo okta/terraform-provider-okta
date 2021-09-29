@@ -25,7 +25,7 @@ func (m *APISupplement) GetSAMLIdpMetadata(ctx context.Context, id string) ([]by
 
 func (m *APISupplement) getXML(ctx context.Context, url string) ([]byte, *saml.EntityDescriptor, error) {
 	re := &okta.RequestExecutor{}
-	*re = *m.RequestExecutor
+	*re = *m.RequestExecutor()
 	re = re.WithAccept("application/xml")
 	req, err := re.NewRequest(http.MethodGet, url, nil)
 	if err != nil {

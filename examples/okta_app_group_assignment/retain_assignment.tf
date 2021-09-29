@@ -5,6 +5,8 @@ resource "okta_app_oauth" "test" {
   redirect_uris  = ["http://d.com/"]
   response_types = ["code", "token", "id_token"]
   issuer_mode    = "ORG_URL"
+  skip_groups    = true
+  skip_users     = true
 
   lifecycle {
     ignore_changes = [users, groups]

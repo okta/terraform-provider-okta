@@ -261,7 +261,10 @@ func getParallelismFromMetadata(meta interface{}) int {
 }
 
 func getOktaClientFromMetadata(meta interface{}) *okta.Client {
-	return meta.(*Config).oktaClient
+	if meta.(*Config).primaryClient == "api_token_client" {
+		return meta.(*Config).apiTokenClient
+	}
+	return meta.(*Config).accessTokenClient
 }
 
 func getSupplementFromMetadata(meta interface{}) *sdk.APISupplement {
@@ -269,7 +272,7 @@ func getSupplementFromMetadata(meta interface{}) *sdk.APISupplement {
 }
 
 func getRequestExecutor(m interface{}) *okta.RequestExecutor {
-	return getOktaClientFromMetadata(m).GetRequestExecutor()
+	return getOktaClientFromMetadata(m).CloneRequestExecutor()
 }
 
 func is404(resp *okta.Response) bool {

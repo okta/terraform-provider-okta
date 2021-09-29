@@ -68,7 +68,7 @@ func buildResourceName(testID int) string {
 	return testResourcePrefix + "_" + strconv.Itoa(testID)
 }
 
-// sharedClient returns a common Okta Client for sweepers, which currently requires the original SDK and the official beta SDK
+// sharedClient returns a common Okta and Interlan API Client for sweepers
 func sharedClient() (*okta.Client, *sdk.APISupplement, error) {
 	err := accPreCheck()
 	if err != nil {
@@ -88,7 +88,5 @@ func sharedClient() (*okta.Client, *sdk.APISupplement, error) {
 	if err != nil {
 		return client, nil, err
 	}
-	api := &sdk.APISupplement{RequestExecutor: client.GetRequestExecutor()}
-
-	return client, api, nil
+	return client, sdk.NewAPISupplement(client, nil, "api_token_client"), nil
 }

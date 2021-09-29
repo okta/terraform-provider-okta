@@ -21,23 +21,31 @@ type AppOauthGroupClaim struct {
 
 // UpdateAppOauthGroupsClaim updated OAuth app group claim
 func (m *APISupplement) UpdateAppOauthGroupsClaim(ctx context.Context, appID string, gc *AppOauthGroupClaim) (*okta.Response, error) {
+	if m.apiTokenClient == nil {
+		return nil, errMissingAPITokenClient
+	}
+	re := m.apiTokenClient.CloneRequestExecutor()
 	url := fmt.Sprintf("/api/v1/internal/apps/%s/settings/oauth/idToken", appID)
-	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, gc)
+	req, err := re.NewRequest(http.MethodPost, url, gc)
 	if err != nil {
 		return nil, err
 	}
-	return m.RequestExecutor.Do(ctx, req, nil)
+	return re.Do(ctx, req, nil)
 }
 
 // GetAppOauthGroupsClaim gets OAuth app group claim
 func (m *APISupplement) GetAppOauthGroupsClaim(ctx context.Context, appID string) (*AppOauthGroupClaim, *okta.Response, error) {
+	if m.apiTokenClient == nil {
+		return nil, nil, errMissingAPITokenClient
+	}
+	re := m.apiTokenClient.CloneRequestExecutor()
 	url := fmt.Sprintf("/api/v1/internal/apps/%s/settings/oauth/idToken", appID)
-	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
+	req, err := re.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	var gc *AppOauthGroupClaim
-	resp, err := m.RequestExecutor.Do(ctx, req, &gc)
+	resp, err := re.Do(ctx, req, &gc)
 	if err != nil {
 		return nil, resp, err
 	}

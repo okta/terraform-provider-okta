@@ -31,23 +31,25 @@ type (
 
 	// Config contains our provider schema values and Okta clients
 	Config struct {
-		orgName          string
-		domain           string
-		apiToken         string
-		clientID         string
-		privateKey       string
-		scopes           []string
-		retryCount       int
-		parallelism      int
-		backoff          bool
-		minWait          int
-		maxWait          int
-		logLevel         int
-		requestTimeout   int
-		maxAPICapacity   int // experimental
-		oktaClient       *okta.Client
-		supplementClient *sdk.APISupplement
-		logger           hclog.Logger
+		orgName           string
+		domain            string
+		apiToken          string
+		clientID          string
+		privateKey        string
+		scopes            []string
+		retryCount        int
+		parallelism       int
+		backoff           bool
+		minWait           int
+		maxWait           int
+		logLevel          int
+		requestTimeout    int
+		maxAPICapacity    int // experimental
+		apiTokenClient    *okta.Client
+		accessTokenClient *okta.Client
+		supplementClient  *sdk.APISupplement
+		logger            hclog.Logger
+		primaryClient     string
 	}
 )
 
@@ -91,10 +93,6 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 
 	setters := []okta.ConfigSetter{
 		okta.WithOrgUrl(fmt.Sprintf("https://%v.%v", c.orgName, c.domain)),
-		okta.WithToken(c.apiToken),
-		okta.WithClientId(c.clientID),
-		okta.WithPrivateKey(c.privateKey),
-		okta.WithScopes(c.scopes),
 		okta.WithCache(false),
 		okta.WithHttpClientPtr(httpClient),
 		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
@@ -102,25 +100,52 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
 		okta.WithUserAgentExtra("okta-terraform/3.13.13"),
 	}
-	if c.apiToken == "" {
-		setters = append(setters, okta.WithAuthorizationMode("PrivateKey"))
-	}
-	_, client, err := okta.NewClient(
-		context.Background(),
-		setters...,
-	)
-	if err != nil {
-		return err
-	}
+	var err error
 	if c.apiToken != "" {
-		if _, _, err := client.User.GetUser(ctx, "me"); err != nil {
+		_, c.apiTokenClient, err = okta.NewClient(
+			context.Background(),
+			append(setters,
+				okta.WithToken(c.apiToken))...,
+		)
+		if err != nil {
 			return err
 		}
 	}
-	c.oktaClient = client
-	c.supplementClient = &sdk.APISupplement{
-		RequestExecutor: client.CloneRequestExecutor(),
+	if c.clientID != "" {
+		_, c.accessTokenClient, err = okta.NewClient(
+			context.Background(),
+			append(setters,
+				okta.WithAuthorizationMode("PrivateKey"),
+				okta.WithClientId(c.clientID),
+				okta.WithPrivateKey(c.privateKey),
+				okta.WithScopes(c.scopes))...,
+		)
+		if err != nil {
+			return err
+		}
 	}
+	if c.apiTokenClient == nil && c.accessTokenClient == nil {
+		return errors.New("please set either 'api_token' or 'client_id', 'privateKey' and 'scopes' (or both) in order to use the provider")
+	}
+	if c.primaryClient == "api_token_client" && c.apiTokenClient == nil {
+		return errors.New("please set 'api_token' in order to use 'api_token_client' as a primary client")
+	}
+	if c.primaryClient == "access_token_client" && c.accessTokenClient == nil {
+		return errors.New("please set 'client_id', 'privateKey' and 'scopes' in order to use 'access_token_client' as a primary client")
+	}
+	if c.primaryClient == "" {
+		if c.apiTokenClient != nil {
+			c.primaryClient = "api_token_client"
+		} else {
+			c.primaryClient = "access_token_client"
+		}
+	}
+	if c.apiTokenClient != nil {
+		if _, _, err := c.apiTokenClient.User.GetUser(ctx, "me"); err != nil {
+			return err
+		}
+	}
+	c.supplementClient = sdk.NewAPISupplement(c.apiTokenClient, c.accessTokenClient, c.primaryClient)
 	return nil
 }
 

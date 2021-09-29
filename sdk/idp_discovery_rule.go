@@ -92,12 +92,12 @@ func (m *APISupplement) CreateIdpDiscoveryRule(ctx context.Context, policyID str
 	if qp != nil {
 		url += qp.String()
 	}
-	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, body)
+	req, err := m.RequestExecutor().NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 	rule := body
-	resp, err := m.RequestExecutor.Do(ctx, req, &rule)
+	resp, err := m.RequestExecutor().Do(ctx, req, &rule)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -109,12 +109,12 @@ func (m *APISupplement) UpdateIdpDiscoveryRule(ctx context.Context, policyID, id
 	if qp != nil {
 		url += qp.String()
 	}
-	req, err := m.RequestExecutor.NewRequest(http.MethodPut, url, body)
+	req, err := m.RequestExecutor().NewRequest(http.MethodPut, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 	rule := body
-	resp, err := m.RequestExecutor.Do(ctx, req, &rule)
+	resp, err := m.RequestExecutor().Do(ctx, req, &rule)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -123,12 +123,12 @@ func (m *APISupplement) UpdateIdpDiscoveryRule(ctx context.Context, policyID, id
 
 func (m *APISupplement) GetIdpDiscoveryRule(ctx context.Context, policyID, id string) (*IdpDiscoveryRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%s/rules/%s", policyID, id)
-	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
+	req, err := m.RequestExecutor().NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	var rule *IdpDiscoveryRule
-	resp, err := m.RequestExecutor.Do(ctx, req, &rule)
+	resp, err := m.RequestExecutor().Do(ctx, req, &rule)
 	if err != nil {
 		return nil, resp, err
 	}

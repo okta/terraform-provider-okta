@@ -5,6 +5,8 @@ resource "okta_app_oauth" "test" {
   redirect_uris  = ["http://d.com/"]
   response_types = ["code", "token", "id_token"]
   issuer_mode    = "ORG_URL"
+  skip_groups    = true
+  skip_users     = true
 
   lifecycle {
     ignore_changes = [users, groups]
@@ -24,14 +26,14 @@ resource "okta_group" "test3" {
 }
 
 resource "okta_app_group_assignments" "test" {
-  app_id   = okta_app_oauth.test.id
+  app_id = okta_app_oauth.test.id
 
   group {
-    id = okta_group.test1.id
+    id       = okta_group.test1.id
     priority = 2
   }
   group {
-    id = okta_group.test2.id
+    id       = okta_group.test2.id
     priority = 1
   }
 }

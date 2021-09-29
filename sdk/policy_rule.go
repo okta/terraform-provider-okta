@@ -71,12 +71,12 @@ type SignOnPolicyRuleSignOnActionsChallengeChainNext struct {
 // ListPolicyRules enumerates all policy rules.
 func (m *APISupplement) ListPolicyRules(ctx context.Context, policyID string) ([]PolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules", policyID)
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodGet, url, nil)
+	req, err := m.RequestExecutor().WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	var policyRule []PolicyRule
-	resp, err := m.RequestExecutor.Do(ctx, req, &policyRule)
+	resp, err := m.RequestExecutor().Do(ctx, req, &policyRule)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -86,12 +86,12 @@ func (m *APISupplement) ListPolicyRules(ctx context.Context, policyID string) ([
 // CreatePolicyRule creates a policy rule.
 func (m *APISupplement) CreatePolicyRule(ctx context.Context, policyID string, body PolicyRule) (*PolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules", policyID)
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
+	req, err := m.RequestExecutor().WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 	var policyRule *PolicyRule
-	resp, err := m.RequestExecutor.Do(ctx, req, &policyRule)
+	resp, err := m.RequestExecutor().Do(ctx, req, &policyRule)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -101,12 +101,12 @@ func (m *APISupplement) CreatePolicyRule(ctx context.Context, policyID string, b
 // GetPolicyRule gets a policy rule.
 func (m *APISupplement) GetPolicyRule(ctx context.Context, policyID, ruleId string) (*PolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyID, ruleId)
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodGet, url, nil)
+	req, err := m.RequestExecutor().WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	var policyRule *PolicyRule
-	resp, err := m.RequestExecutor.Do(ctx, req, &policyRule)
+	resp, err := m.RequestExecutor().Do(ctx, req, &policyRule)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -116,12 +116,12 @@ func (m *APISupplement) GetPolicyRule(ctx context.Context, policyID, ruleId stri
 // UpdatePolicyRule updates a policy rule.
 func (m *APISupplement) UpdatePolicyRule(ctx context.Context, policyID, ruleId string, body PolicyRule) (*PolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyID, ruleId)
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
+	req, err := m.RequestExecutor().WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 	var policyRule *PolicyRule
-	resp, err := m.RequestExecutor.Do(ctx, req, &policyRule)
+	resp, err := m.RequestExecutor().Do(ctx, req, &policyRule)
 	if err != nil {
 		return nil, resp, err
 	}

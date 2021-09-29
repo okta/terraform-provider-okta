@@ -23,12 +23,12 @@ func (m *APISupplement) ListBehaviors(ctx context.Context, qp *query.Params) ([]
 	if qp != nil {
 		url += qp.String()
 	}
-	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
+	req, err := m.RequestExecutor().NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	var behaviors []*Behavior
-	resp, err := m.RequestExecutor.Do(ctx, req, &behaviors)
+	resp, err := m.RequestExecutor().Do(ctx, req, &behaviors)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -38,12 +38,12 @@ func (m *APISupplement) ListBehaviors(ctx context.Context, qp *query.Params) ([]
 // GetBehavior gets behavior by ID
 func (m *APISupplement) GetBehavior(ctx context.Context, id string) (*Behavior, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/behaviors/%s", id)
-	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
+	req, err := m.RequestExecutor().NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	var behavior *Behavior
-	resp, err := m.RequestExecutor.Do(ctx, req, &behavior)
+	resp, err := m.RequestExecutor().Do(ctx, req, &behavior)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -53,12 +53,12 @@ func (m *APISupplement) GetBehavior(ctx context.Context, id string) (*Behavior, 
 // CreateBehavior creates behavior
 func (m *APISupplement) CreateBehavior(ctx context.Context, body Behavior) (*Behavior, *okta.Response, error) {
 	url := "/api/v1/behaviors"
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
+	req, err := m.RequestExecutor().WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 	var behavior *Behavior
-	resp, err := m.RequestExecutor.Do(ctx, req, &behavior)
+	resp, err := m.RequestExecutor().Do(ctx, req, &behavior)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -68,12 +68,12 @@ func (m *APISupplement) CreateBehavior(ctx context.Context, body Behavior) (*Beh
 // UpdateBehavior updates behavior
 func (m *APISupplement) UpdateBehavior(ctx context.Context, id string, body Behavior) (*Behavior, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/behaviors/%s", id)
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
+	req, err := m.RequestExecutor().WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 	var behavior *Behavior
-	resp, err := m.RequestExecutor.Do(ctx, req, &behavior)
+	resp, err := m.RequestExecutor().Do(ctx, req, &behavior)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -83,11 +83,11 @@ func (m *APISupplement) UpdateBehavior(ctx context.Context, id string, body Beha
 // DeleteBehavior deletes behavior by ID
 func (m *APISupplement) DeleteBehavior(ctx context.Context, id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/behaviors/%s", id)
-	req, err := m.RequestExecutor.NewRequest(http.MethodDelete, url, nil)
+	req, err := m.RequestExecutor().NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		return nil, err
 	}
-	return m.RequestExecutor.Do(ctx, req, nil)
+	return m.RequestExecutor().Do(ctx, req, nil)
 }
 
 func (m *APISupplement) ActivateBehavior(ctx context.Context, id string) (*okta.Response, error) {
@@ -100,11 +100,11 @@ func (m *APISupplement) DeactivateBehavior(ctx context.Context, id string) (*okt
 
 func (m *APISupplement) changeBehaviorLifecycle(ctx context.Context, id, action string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/behaviors/%s/lifecycle/%s", id, action)
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, nil)
+	req, err := m.RequestExecutor().WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, nil)
 	if err != nil {
 		return nil, err
 	}
-	resp, err := m.RequestExecutor.Do(ctx, req, nil)
+	resp, err := m.RequestExecutor().Do(ctx, req, nil)
 	if err != nil {
 		return resp, err
 	}

@@ -25,26 +25,40 @@ terraform {
     }
   }
 }
-
-# Configure the Okta Provider
-provider "okta" {
-  org_name  = "dev-123456"
-  base_url  = "oktapreview.com"
-  api_token = "xxxx"
-}
 ```
 
-Terraform 0.12 and earlier:
+### Configure the Okta Provider 
+
+Using API token:
 
 ```hcl
-
-# Configure the Okta Provider
 provider "okta" {
-  org_name  = "dev-123456"
-  base_url  = "oktapreview.com"
-  api_token = "xxxx"
+  org_name       = "dev-123456"
+  base_url       = "oktapreview.com"
+  api_token      = "xxxx"
+  primary_client = "api_token_client"
 }
 ```
+
+Using `client_id`, `scopes` and `private_key`:
+
+```hcl
+provider "okta" {
+  org_name    = "dev-123456"
+  base_url    = "oktapreview.com"
+  private_key = file("service_app_private_key.pem")
+  client_id   = "service_app_client_id"
+  scopes      = [
+    "okta.apps.manage", "okta.users.read", "okta.users.manage", "okta.policies.manage", "okta.groups.manage",
+    "okta.roles.manage", "okta.authorizationServers.manage", "okta.idps.manage", "okta.schemas.manage",
+  ]
+  primary_client = "access_token_client"
+}
+```
+
+It's currently possible to set the provider using both `api_token` option and `client_id`, `scopes` and `private_key` option.
+The property `primary_client` can be set to indicate which client will be primary one. Read more info about this option 
+in Argument Reference section.
 
 ## Authentication
 
@@ -84,13 +98,13 @@ In addition to [generic `provider` arguments](https://www.terraform.io/docs/conf
 
 - `base_url` - (Optional) This is the domain of your Okta account, for example `dev-123456.oktapreview.com` would have a base url of `oktapreview.com`. It must be provided, but it can also be sourced from the `OKTA_BASE_URL` environment variable.
 
-- `api_token` - (Optional) This is the API token to interact with your Okta org (either `"api_token"` or `"client_id"`, `"scopesv` and `"private_key"` must be provided). It can also be sourced from the `OKTA_API_TOKEN` environment variable.
+- `api_token` - (Optional) This is the API token to interact with your Okta org. It can also be sourced from the `OKTA_API_TOKEN` environment variable.
 
-- `client_id` - (Optional) This is the client ID for obtaining the API token. It can also be sourced from the `OKTA_API_CLIENT_ID` environment variable. 
+- `client_id` - (Optional) This is the client ID for obtaining the API Bearer token. It can also be sourced from the `OKTA_API_CLIENT_ID` environment variable. 
 
-- `scopes` - (Optional) These are scopes for obtaining the API token in form of a comma separated list. It can also be sourced from the `OKTA_API_SCOPES` environment variable.
+- `scopes` - (Optional) These are scopes for obtaining the API Bearer token in form of a comma separated list. It can also be sourced from the `OKTA_API_SCOPES` environment variable.
 
-- `private_key` - (Optional) This is the private key for obtaining the API token (can be represented by a filepath, or the key itself). It can also be sourced from the `OKTA_API_PRIVATE_KEY` environment variable.
+- `private_key` - (Optional) This is the private key for obtaining the API Bearer token (can be represented by a filepath, or the key itself). It can also be sourced from the `OKTA_API_PRIVATE_KEY` environment variable.
 
 - `backoff` - (Optional) Whether to use exponential back off strategy for rate limits, the default is `true`.
 
@@ -105,3 +119,8 @@ In addition to [generic `provider` arguments](https://www.terraform.io/docs/conf
 - `max_api_capacity` - (Optional, experimental) sets what percentage of capacity the provider can use of the total 
   rate limit capacity while making calls to the Okta management API endpoints. Okta API operates in one minute buckets. 
   See Okta Management API Rate Limits: https://developer.okta.com/docs/reference/rl-global-mgmt. Can be set to a value between 1 and 100.
+
+- `primary_client` - (Optional) Name of the primary client to be used for the majority API calls. Valid values are `"api_token_client"`
+  (created based on `api_token`) and `"access_token_client"` (created based on `client_id`, `scopes` and `private_key`).
+  This can be used in case provider should use Bearer token for most of the API calls and service token for ones that are 
+  only reachable with service token.

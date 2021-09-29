@@ -26,12 +26,12 @@ type HotpFactorProfileSettings struct {
 
 func (m *APISupplement) GetHotpFactorProfile(ctx context.Context, id string) (*HotpFactorProfile, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/org/factors/hotp/profiles/%v", id)
-	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
+	req, err := m.RequestExecutor().NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	var profile *HotpFactorProfile
-	resp, err := m.RequestExecutor.Do(ctx, req, &profile)
+	resp, err := m.RequestExecutor().Do(ctx, req, &profile)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -40,12 +40,12 @@ func (m *APISupplement) GetHotpFactorProfile(ctx context.Context, id string) (*H
 
 func (m *APISupplement) CreateHotpFactorProfile(ctx context.Context, body HotpFactorProfile) (*HotpFactorProfile, *okta.Response, error) {
 	url := "/api/v1/org/factors/hotp/profiles"
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
+	req, err := m.RequestExecutor().WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 	var profile *HotpFactorProfile
-	resp, err := m.RequestExecutor.Do(ctx, req, &profile)
+	resp, err := m.RequestExecutor().Do(ctx, req, &profile)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -54,12 +54,12 @@ func (m *APISupplement) CreateHotpFactorProfile(ctx context.Context, body HotpFa
 
 func (m *APISupplement) UpdateHotpFactorProfile(ctx context.Context, id string, body HotpFactorProfile) (*HotpFactorProfile, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/org/factors/hotp/profiles/%v", id)
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
+	req, err := m.RequestExecutor().WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 	var profile *HotpFactorProfile
-	resp, err := m.RequestExecutor.Do(ctx, req, &profile)
+	resp, err := m.RequestExecutor().Do(ctx, req, &profile)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -68,9 +68,9 @@ func (m *APISupplement) UpdateHotpFactorProfile(ctx context.Context, id string, 
 
 func (m *APISupplement) DeleteHotpFactorProfile(ctx context.Context, id string) (*okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/org/factors/hotp/profiles/%v", id)
-	req, err := m.RequestExecutor.NewRequest(http.MethodDelete, url, nil)
+	req, err := m.RequestExecutor().NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		return nil, err
 	}
-	return m.RequestExecutor.Do(ctx, req, nil)
+	return m.RequestExecutor().Do(ctx, req, nil)
 }

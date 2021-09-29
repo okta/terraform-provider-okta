@@ -30,13 +30,17 @@ type (
 )
 
 func (m *APISupplement) GetProfileMappingBySourceId(ctx context.Context, sourceId, targetId string) (*Mapping, *okta.Response, error) {
+	if m.apiTokenClient == nil {
+		return nil, nil, errMissingAPITokenClient
+	}
+	re := m.apiTokenClient.CloneRequestExecutor()
 	url := fmt.Sprintf("/api/v1/mappings?sourceId=%s&targetId=%s", sourceId, targetId)
-	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
+	req, err := re.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	var mappings []*Mapping
-	resp, err := m.RequestExecutor.Do(ctx, req, &mappings)
+	resp, err := re.Do(ctx, req, &mappings)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -49,13 +53,17 @@ func (m *APISupplement) GetProfileMappingBySourceId(ctx context.Context, sourceI
 }
 
 func (m *APISupplement) GetProfileMapping(ctx context.Context, mappingId string) (*Mapping, *okta.Response, error) {
+	if m.apiTokenClient == nil {
+		return nil, nil, errMissingAPITokenClient
+	}
+	re := m.apiTokenClient.CloneRequestExecutor()
 	url := fmt.Sprintf("/api/v1/mappings/%s", mappingId)
-	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
+	req, err := re.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	var mapping *Mapping
-	resp, err := m.RequestExecutor.Do(ctx, req, &mapping)
+	resp, err := re.Do(ctx, req, &mapping)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -63,16 +71,20 @@ func (m *APISupplement) GetProfileMapping(ctx context.Context, mappingId string)
 }
 
 func (m *APISupplement) UpdateMapping(ctx context.Context, mappingId string, body Mapping, qp *query.Params) (*Mapping, *okta.Response, error) {
+	if m.apiTokenClient == nil {
+		return nil, nil, errMissingAPITokenClient
+	}
+	re := m.apiTokenClient.CloneRequestExecutor()
 	url := fmt.Sprintf("/api/v1/mappings/%s", mappingId)
 	if qp != nil {
 		url += qp.String()
 	}
-	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, body)
+	req, err := re.NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 	mapping := body
-	resp, err := m.RequestExecutor.Do(ctx, req, &mapping)
+	resp, err := re.Do(ctx, req, &mapping)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -81,16 +93,20 @@ func (m *APISupplement) UpdateMapping(ctx context.Context, mappingId string, bod
 
 // FindProfileMappingSource retrieves profile mapping source/target via name
 func (m *APISupplement) FindProfileMappingSource(ctx context.Context, name, typ string, qp *query.Params) (*MappingSource, error) {
+	if m.apiTokenClient == nil {
+		return nil, errMissingAPITokenClient
+	}
+	re := m.apiTokenClient.CloneRequestExecutor()
 	uri := "/api/v1/mappings"
 	if qp != nil {
 		uri += qp.String()
 	}
-	req, err := m.RequestExecutor.NewRequest(http.MethodGet, uri, nil)
+	req, err := re.NewRequest(http.MethodGet, uri, nil)
 	if err != nil {
 		return nil, err
 	}
 	var mappings []*Mapping
-	resp, err := m.RequestExecutor.Do(ctx, req, &mappings)
+	resp, err := re.Do(ctx, req, &mappings)
 	if err != nil {
 		return nil, err
 	}

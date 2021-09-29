@@ -165,12 +165,12 @@ type Enroll struct {
 // GetPolicy gets a policy by ID
 func (m *APISupplement) GetPolicy(ctx context.Context, policyID string) (*Policy, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v", policyID)
-	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
+	req, err := m.RequestExecutor().NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	var policy *Policy
-	resp, err := m.RequestExecutor.Do(ctx, req, &policy)
+	resp, err := m.RequestExecutor().Do(ctx, req, &policy)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -180,12 +180,12 @@ func (m *APISupplement) GetPolicy(ctx context.Context, policyID string) (*Policy
 // UpdatePolicy updates a policy.
 func (m *APISupplement) UpdatePolicy(ctx context.Context, policyID string, body Policy) (*Policy, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v", policyID)
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
+	req, err := m.RequestExecutor().WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 	var policy *Policy
-	resp, err := m.RequestExecutor.Do(ctx, req, &policy)
+	resp, err := m.RequestExecutor().Do(ctx, req, &policy)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -195,12 +195,12 @@ func (m *APISupplement) UpdatePolicy(ctx context.Context, policyID string, body 
 // CreatePolicy creates a policy.
 func (m *APISupplement) CreatePolicy(ctx context.Context, body Policy) (*Policy, *okta.Response, error) {
 	url := "/api/v1/policies"
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
+	req, err := m.RequestExecutor().WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
 	var policy *Policy
-	resp, err := m.RequestExecutor.Do(ctx, req, &policy)
+	resp, err := m.RequestExecutor().Do(ctx, req, &policy)
 	if err != nil {
 		return nil, resp, err
 	}

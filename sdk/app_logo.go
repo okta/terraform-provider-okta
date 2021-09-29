@@ -31,9 +31,9 @@ func (m *APISupplement) UploadAppLogo(ctx context.Context, appID, filename strin
 	}
 	_ = writer.Close()
 	url := fmt.Sprintf("/api/v1/apps/%s/logo", appID)
-	req, err := m.RequestExecutor.WithContentType(writer.FormDataContentType()).NewRequest(http.MethodPost, url, body)
+	req, err := m.RequestExecutor().WithContentType(writer.FormDataContentType()).NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, err
 	}
-	return m.RequestExecutor.Do(ctx, req, nil)
+	return m.RequestExecutor().Do(ctx, req, nil)
 }

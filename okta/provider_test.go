@@ -47,7 +47,6 @@ func oktaConfig() (*Config, error) {
 		retryCount:     10,
 		maxWait:        30,
 		requestTimeout: 60,
-		maxAPICapacity: 80,
 	}
 	if err := config.loadAndValidate(context.Background()); err != nil {
 		return config, fmt.Errorf("error initializing Okta client: %v", err)
