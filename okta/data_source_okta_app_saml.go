@@ -15,7 +15,7 @@ import (
 func dataSourceAppSaml() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppSamlRead,
-		Schema: map[string]*schema.Schema{
+		Schema: buildAppSchema(map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
 				Optional:      true,
@@ -298,7 +298,7 @@ func dataSourceAppSaml() *schema.Resource {
 				Description: "Users associated with the application",
 				Deprecated:  "The `users` field is now deprecated for the data source `okta_app_saml`, please replace all uses of this with: `okta_app_user_assignments`",
 			},
-		},
+		}),
 	}
 }
 
@@ -335,12 +335,12 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 		logger(m).Info("found multiple SAML applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
 	}
-	users, groups, err := listAppUsersIDsAndGroupsIDs(ctx, getOktaClientFromMetadata(m), app.Id)
+
+	err = syncGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
-		return diag.Errorf("failed to list SAML's app groups and users: %v", err)
+		return diag.Errorf("failed to sync groups and users for SAML application: %v", err)
 	}
-	_ = d.Set("groups", convertStringSliceToSet(groups))
-	_ = d.Set("users", convertStringSliceToSet(users))
+
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
 	_ = d.Set("name", app.Name)
