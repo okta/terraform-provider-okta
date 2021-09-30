@@ -64,7 +64,7 @@ func dataSourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m int
 		return diag.Errorf("failed to find auth server '%s': %v", name, err)
 	}
 	if len(servers) < 1 || servers[0].Name != name {
-		diag.Errorf("authorization server with name '%s' does not exist", name)
+		return diag.Errorf("authorization server with name '%s' does not exist", name)
 	}
 	authServer := servers[0]
 	d.SetId(authServer.Id)
