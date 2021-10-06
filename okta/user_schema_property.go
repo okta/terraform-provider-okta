@@ -268,7 +268,7 @@ func flattenOneOf(oneOf []*okta.UserSchemaAttributeEnum) []interface{} {
 }
 
 func buildUserCustomSchemaAttribute(d *schema.ResourceData) *okta.UserSchemaAttribute {
-	userSchemaAttribute := &okta.UserSchemaAttribute{
+	return &okta.UserSchemaAttribute{
 		Title:       d.Get("title").(string),
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
@@ -290,7 +290,6 @@ func buildUserCustomSchemaAttribute(d *schema.ResourceData) *okta.UserSchemaAttr
 		ExternalNamespace: d.Get("external_namespace").(string),
 		Unique:            d.Get("unique").(string),
 	}
-	return userSchemaAttribute
 }
 
 func buildUserBaseSchemaAttribute(d *schema.ResourceData) *okta.UserSchemaAttribute {

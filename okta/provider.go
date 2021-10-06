@@ -50,6 +50,7 @@ const (
 	groupRole                 = "okta_group_role"
 	groupRoles                = "okta_group_roles"
 	groupRule                 = "okta_group_rule"
+	groupSchemaProperty       = "okta_group_schema_property"
 	idpOidc                   = "okta_idp_oidc"
 	idpSaml                   = "okta_idp_saml"
 	idpSamlKey                = "okta_idp_saml_key"
@@ -221,6 +222,7 @@ func Provider() *schema.Provider {
 			groupRole:                 resourceGroupRole(),
 			groupRoles:                resourceGroupRoles(),
 			groupRule:                 resourceGroupRule(),
+			groupSchemaProperty:       resourceGroupCustomSchemaProperty(),
 			idpOidc:                   resourceIdpOidc(),
 			idpSaml:                   resourceIdpSaml(),
 			idpSamlKey:                resourceIdpSigningKey(),
@@ -244,7 +246,7 @@ func Provider() *schema.Provider {
 			templateEmail:             resourceTemplateEmail(),
 			templateSms:               resourceTemplateSms(),
 			trustedOrigin:             resourceTrustedOrigin(),
-			userSchemaProperty:        resourceUserSchemaProperty(),
+			userSchemaProperty:        resourceUserCustomSchemaProperty(),
 			userBaseSchemaProperty:    resourceUserBaseSchemaProperty(),
 			userType:                  resourceUserType(),
 			userGroupMemberships:      resourceUserGroupMemberships(),
@@ -272,7 +274,7 @@ func Provider() *schema.Provider {
 			"okta_mfa_policy_rule":           deprecateIncorrectNaming(resourcePolicyMfaRule(), policyRuleMfa),
 			"okta_app_user_schema":           deprecateIncorrectNaming(resourceAppUserSchemaProperty(), appUserSchemaProperty),
 			"okta_app_user_base_schema":      deprecateIncorrectNaming(resourceAppUserBaseSchemaProperty(), appUserBaseSchemaProperty),
-			"okta_user_schema":               deprecateIncorrectNaming(resourceUserSchemaProperty(), userSchemaProperty),
+			"okta_user_schema":               deprecateIncorrectNaming(resourceUserCustomSchemaProperty(), userSchemaProperty),
 			"okta_user_base_schema":          deprecateIncorrectNaming(resourceUserBaseSchemaProperty(), userBaseSchemaProperty),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
