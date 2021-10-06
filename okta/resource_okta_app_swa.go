@@ -50,6 +50,16 @@ func resourceAppSwa() *schema.Resource {
 				Optional:    true,
 				Description: "A regex that further restricts URL to the specified regex",
 			},
+			"app_settings_json": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Application settings in JSON format",
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
+			},
 		}),
 	}
 }
@@ -143,7 +153,7 @@ func buildAppSwa(d *schema.ResourceData) *okta.SwaApplication {
 	name := d.Get("preconfigured_app").(string)
 	if name != "" {
 		app.Name = name
-		app.SignOnMode = "AUTO_LOGIN" // in case pre-configured app has more then one sign-on modes
+		app.SignOnMode = "AUTO_LOGIN" // in case pre-configured app has more than one sign-on modes
 	}
 	app.Settings = &okta.SwaApplicationSettings{
 		App: &okta.SwaApplicationSettingsApplication{
