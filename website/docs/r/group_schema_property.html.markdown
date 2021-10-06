@@ -1,28 +1,27 @@
 ---
 layout: 'okta'
-page_title: 'Okta: okta_user_schema_property'
-sidebar_current: 'docs-okta-resource-user-schema-property'
+page_title: 'Okta: okta_group_schema_property'
+sidebar_current: 'docs-okta-resource-group-schema-property'
 description: |-
-  Creates a User Schema property.
+  Creates a Group Schema property.
 ---
 
-# okta_user_schema_property
+# okta_group_schema_property
 
-Creates a User Schema property.
+Creates a Group Schema property.
 
-This resource allows you to create and configure a custom user schema property.
+This resource allows you to create and configure a custom group schema property.
 
 ## Example Usage
 
 ```hcl
-resource "okta_user_schema_property" "example" {
+resource "okta_group_schema_property" "example" {
   index       = "customPropertyName"
   title       = "customPropertyName"
   type        = "string"
   description = "My custom property name"
   master      = "OKTA"
   scope       = "SELF"
-  user_type   = "${data.okta_user_type.example.id}"
 }
 ```
 
@@ -43,13 +42,13 @@ The following arguments are supported:
   - `const` - (Required) value mapping to member of `enum`.
   - `title` - (Required) display name for the enum value.
 
-- `description` - (Optional) The description of the user schema property.
+- `description` - (Optional) The description of the group schema property.
 
-- `required` - (Optional) Whether the property is required for these users.
+- `required` - (Optional) Whether the property is required for this group.
 
-- `min_length` - (Optional) The minimum length of the user property value. Only applies to type `"string"`.
+- `min_length` - (Optional) The minimum length of the group property value. Only applies to type `"string"`.
 
-- `max_length` - (Optional) The maximum length of the user property value. Only applies to type `"string"`.
+- `max_length` - (Optional) The maximum length of the group property value. Only applies to type `"string"`.
 
 - `scope` - (Optional) determines whether an app user attribute can be set at the Individual or Group Level.
 
@@ -64,34 +63,26 @@ The following arguments are supported:
 
 - `permissions` - (Optional) Access control permissions for the property. It can be set to `"READ_WRITE"`, `"READ_ONLY"`, `"HIDE"`.
 
-- `master` - (Optional) Master priority for the user schema property. It can be set to `"PROFILE_MASTER"`, `"OVERRIDE"` or `"OKTA"`.
+- `master` - (Optional) Master priority for the group schema property. It can be set to `"PROFILE_MASTER"`, `"OVERRIDE"` or `"OKTA"`.
 
 - `master_override_priority` - (Optional) Prioritized list of profile sources (required when `master` is `"OVERRIDE"`).
   - `type` - (Optional) - Type of profile source.
   - `value` - (Required) - ID of profile source.
 
-- `external_name` - (Optional) External name of the user schema property.
+- `external_name` - (Optional) External name of the group schema property.
 
-- `external_namespace` - (Optional) External name of the user schema property.
+- `external_namespace` - (Optional) External name of the group schema property.
 
 - `unique` - (Optional) Whether the property should be unique. It can be set to `"UNIQUE_VALIDATED"` or `"NOT_UNIQUE"`.
 
-- `user_type` - (Optional) User type ID
-
 ## Attributes Reference
 
-- `index` - ID of the user schema property.
+- `index` - ID of the group schema property.
 
 ## Import
 
-User schema property of default user type can be imported via the property index.
+Group schema property can be imported via the property index.
 
 ```
-$ terraform import okta_user_schema_property.example <index>
-```
-
-User schema property of custom user type can be imported via user type id and property index
-
-```
-$ terraform import okta_user_schema_property.example <user type id>.<index>
+$ terraform import okta_group_schema_property.example <index>
 ```

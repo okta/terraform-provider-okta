@@ -13,7 +13,7 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
-func resourceUserSchemaProperty() *schema.Resource {
+func resourceUserCustomSchemaProperty() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceUserSchemaCreateOrUpdate,
 		ReadContext:   resourceUserSchemaRead,
