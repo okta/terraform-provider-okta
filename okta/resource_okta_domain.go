@@ -30,6 +30,7 @@ func resourceDomain() *schema.Resource {
 				Optional:    true,
 				Description: "Indicates whether the domain should be verified during creation",
 				Default:     false,
+				Deprecated:  "The direct validation for the domain resource is deprecated, please use the `okta_domain_verification` resource for this functionality.",
 			},
 			"validation_status": {
 				Type:        schema.TypeString,

@@ -42,6 +42,8 @@ const (
 	behavior                  = "okta_behavior"
 	behaviors                 = "okta_behaviors"
 	domain                    = "okta_domain"
+	domainVerification        = "okta_domain_verification"
+	domainCertificate         = "okta_domain_certificate"
 	eventHook                 = "okta_event_hook"
 	factor                    = "okta_factor"
 	factorTotp                = "okta_factor_totp"
@@ -109,14 +111,9 @@ func Provider() *schema.Provider {
 				ConflictsWith: []string{"api_token"},
 			},
 			"scopes": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-					DefaultFunc: func() (interface{}, error) {
-						return "a", nil
-					},
-				},
+				Type:          schema.TypeSet,
+				Optional:      true,
+				Elem:          &schema.Schema{Type: schema.TypeString},
 				DefaultFunc:   envDefaultSetFunc("OKTA_API_SCOPES", nil),
 				Description:   "API Token granting privileges to Okta API.",
 				ConflictsWith: []string{"api_token"},
@@ -216,6 +213,8 @@ func Provider() *schema.Provider {
 			authServerScope:           resourceAuthServerScope(),
 			behavior:                  resourceBehavior(),
 			domain:                    resourceDomain(),
+			domainCertificate:         resourceDomainCertificate(),
+			domainVerification:        resourceDomainVerification(),
 			eventHook:                 resourceEventHook(),
 			factor:                    resourceFactor(),
 			factorTotp:                resourceFactorTOTP(),
