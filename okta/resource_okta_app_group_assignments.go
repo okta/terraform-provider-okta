@@ -182,10 +182,7 @@ func syncGroups(d *schema.ResourceData, groups []interface{}, assignments []*okt
 				if assignment.Priority != nil {
 					groups[i].(map[string]interface{})["priority"] = int(*assignment.Priority)
 				}
-				jsonProfile, _ := json.Marshal(assignment.Profile)
-				if string(jsonProfile) != "" {
-					groups[i].(map[string]interface{})["profile"] = string(jsonProfile)
-				}
+				groups[i].(map[string]interface{})["profile"] = buildProfile(d, i, assignment)
 			}
 		}
 		if present {
@@ -193,6 +190,26 @@ func syncGroups(d *schema.ResourceData, groups []interface{}, assignments []*okt
 		}
 	}
 	return newGroups
+}
+
+func buildProfile(d *schema.ResourceData, i int, assignment *okta.ApplicationGroupAssignment) string {
+	oldProfile := d.Get(fmt.Sprintf("group.%d.profile", i)).(string)
+	opm := make(map[string]interface{})
+	_ = json.Unmarshal([]byte(oldProfile), &opm)
+	ap, ok := assignment.Profile.(map[string]interface{})
+	if ok {
+		for k, v := range ap {
+			if _, ok := opm[k]; ok {
+				opm[k] = v
+				continue
+			}
+			if v != nil {
+				opm[k] = v
+			}
+		}
+	}
+	jsonProfile, _ := json.Marshal(&opm)
+	return string(jsonProfile)
 }
 
 func splitAssignmentsTargets(expectedAssignments, existingAssignments []*okta.ApplicationGroupAssignment) (toAssign, toRemove []*okta.ApplicationGroupAssignment) {
