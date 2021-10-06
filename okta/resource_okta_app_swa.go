@@ -50,16 +50,6 @@ func resourceAppSwa() *schema.Resource {
 				Optional:    true,
 				Description: "A regex that further restricts URL to the specified regex",
 			},
-			"app_settings_json": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Application settings in JSON format",
-				ValidateDiagFunc: stringIsJSON,
-				StateFunc:        normalizeDataJSON,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
-			},
 		}),
 	}
 }
