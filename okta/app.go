@@ -68,24 +68,12 @@ var (
 			Description: "Users associated with the application",
 			Deprecated:  "The direct configuration of users in this app resource is deprecated, please ensure you use the resource `okta_app_user` for this functionality.",
 		},
-		"skip_users": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Description: "Ignore users sync. This is a temporary solution until 'users' field is supported in all the app-like resources",
-			Default:     false,
-		},
 		"groups": {
 			Type:        schema.TypeSet,
 			Optional:    true,
 			Elem:        &schema.Schema{Type: schema.TypeString},
 			Description: "Groups associated with the application",
 			Deprecated:  "The direct configuration of groups in this app resource is deprecated, please ensure you use the resource `okta_app_group_assignments` for this functionality.",
-		},
-		"skip_groups": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Description: "Ignore groups sync. This is a temporary solution until 'groups' field is supported in all the app-like resources",
-			Default:     false,
 		},
 		"status": {
 			Type:             schema.TypeString,
@@ -150,6 +138,21 @@ var (
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "Custom error page URL",
+		},
+	}
+
+	skipUsersAndGroupsSchema = map[string]*schema.Schema{
+		"skip_users": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Ignore users sync. This is a temporary solution until 'users' field is supported in all the app-like resources",
+			Default:     false,
+		},
+		"skip_groups": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Ignore groups sync. This is a temporary solution until 'groups' field is supported in all the app-like resources",
+			Default:     false,
 		},
 	}
 
@@ -241,15 +244,15 @@ func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *o
 }
 
 func buildAppSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(baseAppSchema, appSchema)
+	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, appSchema)
 }
 
 func buildAppSchemaWithVisibility(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(baseAppSchema, appVisibilitySchema, appSchema)
+	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, appVisibilitySchema, appSchema)
 }
 
 func buildAppSwaSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(baseAppSchema, appVisibilitySchema, baseAppSwaSchema, appSchema)
+	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, appVisibilitySchema, baseAppSwaSchema, appSchema)
 }
 
 func buildSchemeAppCreds(d *schema.ResourceData) *okta.SchemeApplicationCredentials {
@@ -541,7 +544,7 @@ func syncGroupsAndUsers(ctx context.Context, id string, d *schema.ResourceData, 
 		"skip_groups", d.Get("skip_groups").(bool))
 
 	flatMap := map[string]interface{}{}
-	if ignoreUsers := d.Get("skip_users").(bool); !ignoreUsers {
+	if skipUsers := d.Get("skip_users").(bool); !skipUsers {
 		appUsers, err := listApplicationUsers(ctx, getOktaClientFromMetadata(m), id)
 		if err != nil {
 			return err
@@ -570,7 +573,7 @@ func syncGroupsAndUsers(ctx context.Context, id string, d *schema.ResourceData, 
 			flatMap["users"] = schema.NewSet(schema.HashResource(appUserResource), flattenedUserList)
 		}
 	}
-	if ignoreGroups := d.Get("skip_groups").(bool); !ignoreGroups {
+	if skipGroups := d.Get("skip_groups").(bool); !skipGroups {
 		appGroups, _, err := listApplicationGroupAssignments(ctx, getOktaClientFromMetadata(m), id)
 		if err != nil {
 			return err
@@ -681,24 +684,30 @@ func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{
 	return err
 }
 
-func listAppUsersIDsAndGroupsIDs(ctx context.Context, client *okta.Client, id string) (usersIDs, groupsIDs []string, err error) {
-	appUsers, err := listApplicationUsers(ctx, client, id)
-	if err != nil {
-		return nil, nil, err
+func setAppUsersIDsAndGroupsIDs(ctx context.Context, d *schema.ResourceData, client *okta.Client, id string) error {
+	if skipGroups := d.Get("skip_groups").(bool); !skipGroups {
+		groups, _, err := listApplicationGroupAssignments(ctx, client, id)
+		if err != nil {
+			return err
+		}
+		groupsIDs := make([]string, len(groups))
+		for i := range groups {
+			groupsIDs[i] = groups[i].Id
+		}
+		_ = d.Set("groups", convertStringSliceToSet(groupsIDs))
 	}
-	appGroups, _, err := listApplicationGroupAssignments(ctx, client, id)
-	if err != nil {
-		return nil, nil, err
+	if skipUsers := d.Get("skip_users").(bool); !skipUsers {
+		users, err := listApplicationUsers(ctx, client, id)
+		if err != nil {
+			return err
+		}
+		usersIDs := make([]string, len(users))
+		for i := range users {
+			usersIDs[i] = users[i].Id
+		}
+		_ = d.Set("users", convertStringSliceToSet(usersIDs))
 	}
-	usersIDs = make([]string, len(appUsers))
-	groupsIDs = make([]string, len(appGroups))
-	for i := range appUsers {
-		usersIDs[i] = appUsers[i].Id
-	}
-	for i := range appGroups {
-		groupsIDs[i] = appGroups[i].Id
-	}
-	return
+	return nil
 }
 
 func computeFileHash(filename string) string {
