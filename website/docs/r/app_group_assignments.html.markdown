@@ -24,7 +24,7 @@ resource "okta_app_group_assignments" "example" {
   group {
     id = "<another group id>"
     priority = 2
-    profile = jsonencode({<application profile field>: <application profile value>})
+    profile = jsonencode({"application profile field": "application profile value"})
   }
 }
 
