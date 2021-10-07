@@ -315,7 +315,7 @@ func buildAppSettings(d *schema.ResourceData) *okta.ApplicationSettingsApplicati
 	if appSettings, ok := d.GetOk("app_settings_json"); ok {
 		payload := map[string]interface{}{}
 		_ = json.Unmarshal([]byte(appSettings.(string)), &payload)
-		settings = okta.ApplicationSettingsApplication(payload)
+		settings = payload
 	}
 	return &settings
 }

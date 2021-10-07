@@ -8,8 +8,6 @@ description: |-
 
 # okta_app_bookmark
 
-Creates a Bookmark Application.
-
 This resource allows you to create and configure a Bookmark Application.
 
 ## Example Usage

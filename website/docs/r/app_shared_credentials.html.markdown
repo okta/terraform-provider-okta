@@ -8,8 +8,6 @@ description: |-
 
 # okta_app_shared_credentials
 
-Creates a SWA shared credentials app.
-
 This resource allows you to create and configure SWA shared credentials app.
 
 ## Example Usage

@@ -8,8 +8,6 @@ description: |-
 
 # okta_app_secure_password_store
 
-Creates a Secure Password Store Application.
-
 This resource allows you to create and configure a Secure Password Store Application.
 
 ## Example Usage
