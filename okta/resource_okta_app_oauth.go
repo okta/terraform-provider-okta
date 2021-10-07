@@ -21,13 +21,15 @@ type (
 	}
 )
 
-// I wish the SDK provided these
 const (
-	authorizationCode string = "authorization_code"
-	implicit          string = "implicit"
-	password          string = "password"
-	refreshToken      string = "refresh_token"
-	clientCredentials string = "client_credentials"
+	authorizationCode = "authorization_code"
+	implicit          = "implicit"
+	password          = "password"
+	refreshToken      = "refresh_token"
+	clientCredentials = "client_credentials"
+	tokenExchange     = "urn:ietf:params:oauth:grant-type:token-exchange"
+	saml2Bearer       = "urn:ietf:params:oauth:grant-type:saml2-bearer"
+	deviceCode        = "urn:ietf:params:oauth:grant-type:device_code"
 )
 
 // Building out structure for the conditional validation logic. It looks like customizing the diff
@@ -44,6 +46,8 @@ var appGrantTypeMap = map[string]*applicationMap{
 			implicit,
 			refreshToken,
 			clientCredentials,
+			saml2Bearer,
+			tokenExchange,
 		},
 	},
 	"native": {
@@ -56,6 +60,8 @@ var appGrantTypeMap = map[string]*applicationMap{
 			implicit,
 			refreshToken,
 			password,
+			saml2Bearer,
+			tokenExchange,
 		},
 	},
 	"browser": {
@@ -63,12 +69,16 @@ var appGrantTypeMap = map[string]*applicationMap{
 			implicit,
 			authorizationCode,
 			refreshToken,
+			saml2Bearer,
+			tokenExchange,
 		},
 	},
 	"service": {
 		ValidGrantTypes: []string{
 			clientCredentials,
 			implicit,
+			saml2Bearer,
+			tokenExchange,
 		},
 		RequiredGrantTypes: []string{
 			clientCredentials,
@@ -220,7 +230,7 @@ func resourceAppOAuth() *schema.Resource {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, refreshToken, clientCredentials}),
+					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, refreshToken, clientCredentials, saml2Bearer, tokenExchange}),
 				},
 				Optional:    true,
 				Description: "List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.",
@@ -653,7 +663,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 		}
 	}
 
-	// Letting users override response types as well but we properly default them when missing.
+	// Letting users override response types as well, but we properly default them when missing.
 	if len(responseTypes) < 1 {
 		responseTypes = []string{}
 
