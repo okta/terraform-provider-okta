@@ -9,7 +9,7 @@ description: |-
 # okta_domain_verification
 
 Verifies the Domain. This is replacement for the `verify` field from the `okta_domain` resource. The resource won't be 
-created if the domain could not be verified. The provided will make several requests to verify the domain until 
+created if the domain could not be verified. The provider will make several requests to verify the domain until 
 the API returns `VERIFIED` verification status. 
 
 ## Example Usage

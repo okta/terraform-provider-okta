@@ -8,8 +8,6 @@ description: |-
 
 # okta_app_oauth
 
-Creates an OIDC Application.
-
 This resource allows you to create and configure an OIDC Application.
 
 ## Example Usage

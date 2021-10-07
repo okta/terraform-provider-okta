@@ -3,14 +3,12 @@ layout: 'okta'
 page_title: 'Okta: okta_app_saml'
 sidebar_current: 'docs-okta-resource-app-saml'
 description: |-
-  Creates an SAML Application.
+  Creates a SAML Application.
 ---
 
 # okta_app_saml
 
-Creates an SAML Application.
-
-This resource allows you to create and configure an SAML Application.
+This resource allows you to create and configure a SAML Application.
 
 ## Example Usage
 

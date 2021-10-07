@@ -8,8 +8,6 @@ description: |-
 
 # okta_app_three_field
 
-Creates a Three Field Application.
-
 This resource allows you to create and configure a Three Field Application.
 
 ## Example Usage

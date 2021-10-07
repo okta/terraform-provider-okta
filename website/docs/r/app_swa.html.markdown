@@ -3,14 +3,12 @@ layout: 'okta'
 page_title: 'Okta: okta_app_swa'
 sidebar_current: 'docs-okta-resource-app-swa'
 description: |-
-  Creates an SWA Application.
+  Creates a SWA Application.
 ---
 
 # okta_app_swa
 
-Creates an SWA Application.
-
-This resource allows you to create and configure an SWA Application.
+This resource allows you to create and configure a SWA Application.
 
 ## Example Usage
 

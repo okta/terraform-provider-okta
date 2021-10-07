@@ -8,8 +8,6 @@ description: |-
 
 # okta_app_auto_login
 
-Creates an Auto Login Okta Application.
-
 This resource allows you to create and configure an Auto Login Okta Application.
 
 ## Example Usage
