@@ -15,7 +15,7 @@ import (
 func dataSourceAppSaml() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppSamlRead,
-		Schema: buildAppSchema(map[string]*schema.Schema{
+		Schema: buildSchema(skipUsersAndGroupsSchema, map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
 				Optional:      true,
@@ -335,12 +335,10 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 		logger(m).Info("found multiple SAML applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
 	}
-
-	err = syncGroupsAndUsers(ctx, app.Id, d, m)
+	err = setAppUsersIDsAndGroupsIDs(ctx, d, getOktaClientFromMetadata(m), app.Id)
 	if err != nil {
-		return diag.Errorf("failed to sync groups and users for SAML application: %v", err)
+		return diag.Errorf("failed to list SAML's app groups and users: %v", err)
 	}
-
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
 	_ = d.Set("name", app.Name)

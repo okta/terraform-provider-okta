@@ -12,7 +12,7 @@ import (
 func dataSourceApp() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppRead,
-		Schema: map[string]*schema.Schema{
+		Schema: buildSchema(skipUsersAndGroupsSchema, map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
 				Optional:      true,
@@ -61,7 +61,7 @@ func dataSourceApp() *schema.Resource {
 				Description: "Users associated with the application",
 				Deprecated:  "The `users` field is now deprecated for the data source `okta_app`, please replace all uses of this with: `okta_app_user_assignments`",
 			},
-		},
+		}),
 	}
 }
 
@@ -91,12 +91,10 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 		logger(m).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
 	}
-	users, groups, err := listAppUsersIDsAndGroupsIDs(ctx, getOktaClientFromMetadata(m), app.Id)
+	err = setAppUsersIDsAndGroupsIDs(ctx, d, getOktaClientFromMetadata(m), app.Id)
 	if err != nil {
 		return diag.Errorf("failed to list app's groups and users: %v", err)
 	}
-	_ = d.Set("groups", convertStringSliceToSet(groups))
-	_ = d.Set("users", convertStringSliceToSet(users))
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
 	_ = d.Set("name", app.Name)
