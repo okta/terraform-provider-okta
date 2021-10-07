@@ -306,12 +306,7 @@ func deleteGroupAssignments(
 	for i := range assignments {
 		_, err := delete(ctx, appID, assignments[i].Id)
 		if err != nil {
-			return fmt.Errorf(
-				"could not delete assignment for group %s, to application %s: %w",
-				assignments[i].Id,
-				appID,
-				err,
-			)
+			return fmt.Errorf("could not delete assignment for group %s, to application %s: %w", assignments[i].Id, appID, err)
 		}
 	}
 	return nil
