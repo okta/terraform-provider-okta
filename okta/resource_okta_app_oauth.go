@@ -28,7 +28,7 @@ const (
 	password          string = "password"
 	refreshToken      string = "refresh_token"
 	clientCredentials string = "client_credentials"
-	saml2Bearer              = "urn:ietf:params:oauth:grant-type:saml2-bearer"
+	saml2Bearer       string = "urn:ietf:params:oauth:grant-type:saml2-bearer"
 )
 
 // Building out structure for the conditional validation logic. It looks like customizing the diff
