@@ -151,7 +151,27 @@ func resourceProfileMappingUpdate(ctx context.Context, d *schema.ResourceData, m
 	return resourceProfileMappingRead(ctx, d, m)
 }
 
-func resourceProfileMappingDelete(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
+func resourceProfileMappingDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	client := getSupplementFromMetadata(m)
+	sourceID := d.Get("source_id").(string)
+	targetID := d.Get("target_id").(string)
+	mapping, resp, err := client.GetProfileMappingBySourceId(ctx, sourceID, targetID)
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get profile mapping: %v", err)
+	}
+	if mapping == nil {
+		return diag.Errorf("no profile mappings found for source ID '%s' and target ID '%s'", sourceID, targetID)
+	}
+	for k := range mapping.Properties {
+		if k == "login" {
+			continue
+		}
+		mapping.Properties[k] = nil
+	}
+	_, _, err = client.UpdateMapping(ctx, mapping.ID, *mapping, nil)
+	if err != nil {
+		return diag.Errorf("failed to delete profile mapping: %v", err)
+	}
 	return nil
 }
 

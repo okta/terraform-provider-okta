@@ -178,7 +178,7 @@ func resourceAppUserSchemaPropertyDelete(ctx context.Context, d *schema.Resource
 	_, _, err := getOktaClientFromMetadata(m).UserSchema.
 		UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
 	if err != nil {
-		return diag.Errorf("failed to delete application user schema property")
+		return diag.Errorf("failed to delete application user schema property: %v", err)
 	}
 	return nil
 }
