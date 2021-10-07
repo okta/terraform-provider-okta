@@ -31,6 +31,10 @@ data "okta_app_saml" "example" {
 
 - `active_only` - (Optional) tells the provider to query for only `ACTIVE` applications.
 
+- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync. Default is `false`.
+
+- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync. Default is `false`.
+
 ## Attributes Reference
 
 - `id` - id of application.

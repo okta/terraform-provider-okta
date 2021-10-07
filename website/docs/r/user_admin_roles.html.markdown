@@ -41,7 +41,7 @@ resource "okta_user_admin_roles" "test" {
 
 The following arguments are supported:
 
-- `user_id` - (Required) ID of a Okta User.
+- `user_id` - (Required) Okta user ID.
 - `admin_roles` - (Required) The list of Okta user admin roles, e.g. `["APP_ADMIN", "USER_ADMIN"]`
 
 ## Attributes Reference

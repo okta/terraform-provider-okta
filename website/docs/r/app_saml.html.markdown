@@ -17,10 +17,10 @@ This resource allows you to create and configure an SAML Application.
 ```hcl
 resource "okta_app_saml" "example" {
   label                    = "example"
-  sso_url                  = "http://example.com"
-  recipient                = "http://example.com"
-  destination              = "http://example.com"
-  audience                 = "http://example.com/audience"
+  sso_url                  = "https://example.com"
+  recipient                = "https://example.com"
+  destination              = "https://example.com"
+  audience                 = "https://example.com/audience"
   subject_name_id_template = "$${user.userName}"
   subject_name_id_format   = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
   response_signed          = true
@@ -62,10 +62,10 @@ resource "okta_inline_hook" "test" {
 
 resource "okta_app_saml" "test" {
   label                     = "testAcc_replace_with_uuid"
-  sso_url                   = "http://google.com"
-  recipient                 = "http://here.com"
-  destination               = "http://its-about-the-journey.com"
-  audience                  = "http://audience.com"
+  sso_url                   = "https://google.com"
+  recipient                 = "https://here.com"
+  destination               = "https://its-about-the-journey.com"
+  audience                  = "https://audience.com"
   subject_name_id_template  = "$${user.userName}"
   subject_name_id_format    = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
   response_signed           = true
@@ -94,7 +94,7 @@ resource "okta_app_saml" "test" {
   app_settings_json = <<JSON
 {
     "groupFilter": "app1.*",
-    "siteURL": "http://www.okta.com"
+    "siteURL": "https://www.okta.com"
 }
 JSON
   label = "SharePoint (On-Premise)"

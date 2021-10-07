@@ -8,7 +8,7 @@ description: |-
 
 # okta_auth_server_policy
 
-Use this data source to retrieve a authorization server policy from Okta.
+Use this data source to retrieve an authorization server policy from Okta.
 
 ## Example Usage
 
