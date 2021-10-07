@@ -7,6 +7,7 @@ ENHANCEMENTS:
 * Added new `okta_domain_verification` and `okta_domain_certificate` resources [#687](https://github.com/okta/terraform-provider-okta/pull/687). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 * Added new `okta_group_schema_property` resource [#688](https://github.com/okta/terraform-provider-okta/pull/688). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 * Added `skip_users` and `skip_groups` fields to the app-related data sources [#677](https://github.com/okta/terraform-provider-okta/pull/677). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta) and [@Philipp](https://github.com/phi1ipp)!
+* Added new grant type values to the `okta_app_oauth` and `okta_auth_server_policy_rule` resources [#691](https://github.com/okta/terraform-provider-okta/pull/691). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 
 BUGS:
 * `okta_app_oauth.groups_claim` field won't be requested if it's not set in the config [#668](https://github.com/okta/terraform-provider-okta/pull/668). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
