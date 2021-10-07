@@ -28,6 +28,7 @@ const (
 	password          string = "password"
 	refreshToken      string = "refresh_token"
 	clientCredentials string = "client_credentials"
+	saml2Bearer              = "urn:ietf:params:oauth:grant-type:saml2-bearer"
 )
 
 // Building out structure for the conditional validation logic. It looks like customizing the diff
@@ -44,6 +45,7 @@ var appGrantTypeMap = map[string]*applicationMap{
 			implicit,
 			refreshToken,
 			clientCredentials,
+			saml2Bearer,
 		},
 	},
 	"native": {
@@ -56,6 +58,7 @@ var appGrantTypeMap = map[string]*applicationMap{
 			implicit,
 			refreshToken,
 			password,
+			saml2Bearer,
 		},
 	},
 	"browser": {
@@ -63,12 +66,14 @@ var appGrantTypeMap = map[string]*applicationMap{
 			implicit,
 			authorizationCode,
 			refreshToken,
+			saml2Bearer,
 		},
 	},
 	"service": {
 		ValidGrantTypes: []string{
 			clientCredentials,
 			implicit,
+			saml2Bearer,
 		},
 		RequiredGrantTypes: []string{
 			clientCredentials,
@@ -220,7 +225,7 @@ func resourceAppOAuth() *schema.Resource {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, refreshToken, clientCredentials}),
+					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, refreshToken, clientCredentials, saml2Bearer}),
 				},
 				Optional:    true,
 				Description: "List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.",
@@ -653,7 +658,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 		}
 	}
 
-	// Letting users override response types as well but we properly default them when missing.
+	// Letting users override response types as well, but we properly default them when missing.
 	if len(responseTypes) < 1 {
 		responseTypes = []string{}
 
