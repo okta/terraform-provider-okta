@@ -115,7 +115,7 @@ func resourceDomainRead(ctx context.Context, d *schema.ResourceData, m interface
 	}
 	err = setNonPrimitives(d, map[string]interface{}{"dns_records": arr})
 	if err != nil {
-		return diag.Errorf("failed to set OAuth application properties: %v", err)
+		return diag.Errorf("failed to set DNS records: %v", err)
 	}
 	if domain.ValidationStatus == "IN_PROGRESS" || domain.ValidationStatus == "VERIFIED" || domain.ValidationStatus == "COMPLETED" {
 		return nil

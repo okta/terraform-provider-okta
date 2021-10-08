@@ -117,7 +117,7 @@ The following arguments are supported:
 
 - `logo` - (Optional) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 
-- `groups_claim` - (Optional) Groups claim for an OpenID Connect client application.
+- `groups_claim` - (Optional) Groups claim for an OpenID Connect client application. **Important Note**: available only when using api token in the provider config.
   - `type` - (Required) Groups claim type. Valid values: `"FILTER"`, `"EXPRESSION"`.
   - `filter_type` - (Optional) Groups claim filter. Can only be set if type is `"FILTER"`. Valid values: `"EQUALS"`, `"STARTS_WITH"`, `"CONTAINS"`, `"REGEX"`.
   - `name` - (Required) Name of the claim that will be used in the token.
