@@ -121,13 +121,16 @@ func resourceEmailSenderDelete(ctx context.Context, d *schema.ResourceData, m in
 		return nil
 	}
 	if sender.Status == "VERIFIED" {
-		_, err = getSupplementFromMetadata(m).DisableVerifiedEmailSender(ctx, sdk.DisableActiveEmailSender{ActiveID: sender.ID})
+		resp, err = getSupplementFromMetadata(m).DisableVerifiedEmailSender(ctx, sdk.DisableActiveEmailSender{ActiveID: sender.ID})
 	} else {
-		_, err = getSupplementFromMetadata(m).DisableUnverifiedEmailSender(ctx, sdk.DisableInactiveEmailSender{
+		resp, err = getSupplementFromMetadata(m).DisableUnverifiedEmailSender(ctx, sdk.DisableInactiveEmailSender{
 			PendingID: sender.ID,
 		})
 	}
-	return diag.FromErr(err)
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to delete custom email sender: %v", err)
+	}
+	return nil
 }
 
 func buildEmailSender(d *schema.ResourceData) sdk.EmailSender {
