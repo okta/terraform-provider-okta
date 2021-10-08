@@ -25,15 +25,6 @@ const (
 	OTHER_KEY     = "other"
 )
 
-var reAppId *regexp.Regexp
-var reGroupId *regexp.Regexp
-
-func init() {
-	reAppId = regexp.MustCompile("/api/v1/apps/[^/]+$")
-	reGroupId = regexp.MustCompile("/api/v1/groups/[^/]+$")
-
-}
-
 // APIMutex synchronizes keeping account of current known rate limit values
 // from Okta management endpoints. Specifically apps, users, and other, see:
 // https://developer.okta.com/docs/reference/rl-global-mgmt/ The Okta Terraform
@@ -130,6 +121,9 @@ func (m *APIMutex) Update(method, endPoint string, limit, remaining int, reset i
 func (m *APIMutex) Status(method, endPoint string) *APIStatus {
 	return m.get(method, endPoint)
 }
+
+var reAppId = regexp.MustCompile("/api/v1/apps/[^/]+$")
+var reGroupId = regexp.MustCompile("/api/v1/groups/[^/]+$")
 
 func (m *APIMutex) normalizeKey(method, endPoint string) string {
 	var result string
