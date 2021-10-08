@@ -124,10 +124,10 @@ func (m *APIMutex) Status(method, endPoint string) *APIStatus {
 func (m *APIMutex) normalizeKey(method, endPoint string) string {
 	var result string
 	switch {
-	case endPoint == "/api/v1/apps":
-		result = APPS_KEY
-	case strings.HasPrefix(endPoint, "/api/v1/apps/"):
+	case regexp.MustCompile("/api/v1/apps/[^/]+$").MatchString(endPoint):
 		result = APPID_KEY
+	case strings.Contains(endPoint, "/api/v1/apps"):
+		result = APPS_KEY
 	case endPoint == "/api/v1/certificateAuthorities":
 		result = CAS_KEY
 	case endPoint == "/oauth2/v1/clients":
