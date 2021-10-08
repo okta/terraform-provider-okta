@@ -106,33 +106,85 @@ func TestGet(t *testing.T) {
 }
 
 func TestNormalizeKey(t *testing.T) {
+	// Attempts to cover the rules listed at:
+	// https://developer.okta.com/docs/reference/rl-global-mgmt/
 	tests := []struct {
 		method   string
 		endPoint string
 		expected string
 	}{
+		// Create or list applications:
+		// /api/v1/apps except /api/v1/apps/${id}
 		{method: http.MethodGet, endPoint: "/api/v1/apps", expected: "apps"},
-		{method: http.MethodGet, endPoint: "/api/v1/apps/foo", expected: "app-id"},
-		{method: http.MethodGet, endPoint: "/api/v1/certificateAuthorities", expected: "cas-id"},
-		{method: http.MethodGet, endPoint: "/oauth2/v1/clients", expected: "clients"},
-		{method: http.MethodGet, endPoint: "/api/v1/devices", expected: "devices"},
-		{method: http.MethodGet, endPoint: "/api/v1/events", expected: "events"},
+		{method: http.MethodPost, endPoint: "/api/v1/apps", expected: "apps"},
+
+		// Get, update, or delete an application by ID:
+		// /api/v1/apps/${id} only
+		{method: http.MethodGet, endPoint: "/api/v1/apps/XXX", expected: "app-id"},
+		{method: http.MethodPut, endPoint: "/api/v1/apps/XXX", expected: "app-id"},
+		{method: http.MethodPost, endPoint: "/api/v1/apps/XXX", expected: "app-id"},
+		{method: http.MethodDelete, endPoint: "/api/v1/apps/XXX", expected: "app-id"},
+
+		// Create or list groups:
+		// /api/v1/groups except /api/v1/groups/${id}
 		{method: http.MethodGet, endPoint: "/api/v1/groups", expected: "groups"},
-		{method: http.MethodGet, endPoint: "/api/v1/groups/foo", expected: "group-id"},
-		{method: http.MethodGet, endPoint: "/api/v1/logs", expected: "logs"},
+		{method: http.MethodPost, endPoint: "/api/v1/groups", expected: "groups"},
+
+		// Get, update, or delete a group by ID:
+		// /api/v1/groups/${id} only
+		{method: http.MethodGet, endPoint: "/api/v1/groups/XXX", expected: "group-id"},
+		{method: http.MethodPost, endPoint: "/api/v1/groups/XXX", expected: "group-id"},
+		{method: http.MethodPut, endPoint: "/api/v1/groups/XXX", expected: "group-id"},
+		{method: http.MethodDelete, endPoint: "/api/v1/groups/XXX", expected: "group-id"},
+
+		// Create or list users:
+		// Only GET or POST to /api/v1/users
 		{method: http.MethodGet, endPoint: "/api/v1/users", expected: "users"},
+		{method: http.MethodPost, endPoint: "/api/v1/users", expected: "users"},
+
+		// Update or delete a user by ID:
+		// Only POST, PUT or DELETE to /api/v1/users/${id}
 		{method: http.MethodPost, endPoint: "/api/v1/users/foo", expected: "user-id"},
+		{method: http.MethodPut, endPoint: "/api/v1/users/foo", expected: "user-id"},
+		{method: http.MethodDelete, endPoint: "/api/v1/users/foo", expected: "user-id"},
+
+		// Get System Log data:
+		// /api/v1/logs
+		{method: http.MethodGet, endPoint: "/api/v1/logs", expected: "logs"},
+
+		// Get event data:
+		// /api/v1/events
+		{method: http.MethodGet, endPoint: "/api/v1/events", expected: "events"},
+
+		// OAuth2 client configuration requests:
+		// /oauth2/v1/clients
+		{method: http.MethodGet, endPoint: "/oauth2/v1/clients", expected: "clients"},
+
+		// Get a user by ID or sign in
+		// Only GET to /api/v1/users/${idOrLogin}
 		{method: http.MethodGet, endPoint: "/api/v1/users/foo", expected: "user-id-get"},
+
+		// /api/v1/certificateAuthorities
+		{method: http.MethodGet, endPoint: "/api/v1/certificateAuthorities", expected: "cas-id"},
+
+		// /api/v1/devices
+		{method: http.MethodGet, endPoint: "/api/v1/devices", expected: "devices"},
+
+		// Most other API actions:
+		// /api/v1
+		{method: http.MethodGet, endPoint: "/api/v1/apps/XXX/users", expected: "other"},
 		{method: http.MethodGet, endPoint: "/api/v1/authorizationServers", expected: "other"},
-		{method: http.MethodGet, endPoint: "/api/v1/authorizationServers/foo", expected: "other"},
+		{method: http.MethodGet, endPoint: "/api/v1/authorizationServers/XXX", expected: "other"},
 		{method: http.MethodGet, endPoint: "/api/v1/behaviors", expected: "other"},
-		{method: http.MethodGet, endPoint: "/api/v1/behaviors/foo", expected: "other"},
+		{method: http.MethodGet, endPoint: "/api/v1/behaviors/XXX", expected: "other"},
 		{method: http.MethodGet, endPoint: "/api/v1/domains", expected: "other"},
-		{method: http.MethodGet, endPoint: "/api/v1/domains/foo", expected: "other"},
+		{method: http.MethodGet, endPoint: "/api/v1/domains/XXX", expected: "other"},
+		{method: http.MethodGet, endPoint: "/api/v1/groups/rules/XXX", expected: "other"},
+		{method: http.MethodGet, endPoint: "/api/v1/groups/XXX/roles/XXX", expected: "other"},
 		{method: http.MethodGet, endPoint: "/api/v1/idps", expected: "other"},
-		{method: http.MethodGet, endPoint: "/api/v1/idps/foo", expected: "other"},
+		{method: http.MethodGet, endPoint: "/api/v1/idps/XXX", expected: "other"},
 		{method: http.MethodGet, endPoint: "/api/v1/internal", expected: "other"},
-		{method: http.MethodGet, endPoint: "/api/v1/internal/foo", expected: "other"},
+		{method: http.MethodGet, endPoint: "/api/v1/internal/XXX", expected: "other"},
 		{method: http.MethodGet, endPoint: "/api/v1/mappings", expected: "other"},
 		{method: http.MethodGet, endPoint: "/api/v1/mappings/foo", expected: "other"},
 		{method: http.MethodGet, endPoint: "/api/v1/meta", expected: "other"},
@@ -143,6 +195,7 @@ func TestNormalizeKey(t *testing.T) {
 		{method: http.MethodGet, endPoint: "/api/v1/policies/foo", expected: "other"},
 		{method: http.MethodGet, endPoint: "/api/v1/templates", expected: "other"},
 		{method: http.MethodGet, endPoint: "/api/v1/templates/foo", expected: "other"},
+		{method: http.MethodGet, endPoint: "/api/v1/trustedOrigins/foo", expected: "other"},
 	}
 
 	amu, err := NewAPIMutex(100)

@@ -3,6 +3,7 @@ package apimutex
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -23,6 +24,15 @@ const (
 	USERIDGET_KEY = "user-id-get"
 	OTHER_KEY     = "other"
 )
+
+var reAppId *regexp.Regexp
+var reGroupId *regexp.Regexp
+
+func init() {
+	reAppId = regexp.MustCompile("/api/v1/apps/[^/]+$")
+	reGroupId = regexp.MustCompile("/api/v1/groups/[^/]+$")
+
+}
 
 // APIMutex synchronizes keeping account of current known rate limit values
 // from Okta management endpoints. Specifically apps, users, and other, see:
@@ -126,7 +136,7 @@ func (m *APIMutex) normalizeKey(method, endPoint string) string {
 	switch {
 	case endPoint == "/api/v1/apps":
 		result = APPS_KEY
-	case strings.HasPrefix(endPoint, "/api/v1/apps/"):
+	case reAppId.MatchString(endPoint):
 		result = APPID_KEY
 	case endPoint == "/api/v1/certificateAuthorities":
 		result = CAS_KEY
@@ -138,7 +148,7 @@ func (m *APIMutex) normalizeKey(method, endPoint string) string {
 		result = EVENTS_KEY
 	case endPoint == "/api/v1/groups":
 		result = GROUPS_KEY
-	case strings.HasPrefix(endPoint, "/api/v1/groups/"):
+	case reGroupId.MatchString(endPoint):
 		result = GROUPID_KEY
 	case endPoint == "/api/v1/logs":
 		result = LOGS_KEY
