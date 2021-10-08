@@ -180,18 +180,12 @@ func getIdpByNameAndType(ctx context.Context, m interface{}, name, providerType 
 }
 
 func resourceIdpDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceDeleteAnyIdp(ctx, d, m, d.Get("status").(string) == statusActive)
-}
-
-func resourceDeleteAnyIdp(ctx context.Context, d *schema.ResourceData, m interface{}, active bool) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-	if active {
-		_, resp, err := client.IdentityProvider.DeactivateIdentityProvider(ctx, d.Id())
-		if err := suppressErrorOn404(resp, err); err != nil {
-			return diag.Errorf("failed to deactivate identity provider: %v", err)
-		}
+	_, resp, err := client.IdentityProvider.DeactivateIdentityProvider(ctx, d.Id())
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to deactivate identity provider: %v", err)
 	}
-	resp, err := client.IdentityProvider.DeleteIdentityProvider(ctx, d.Id())
+	resp, err = client.IdentityProvider.DeleteIdentityProvider(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete identity provider: %v", err)
 	}
