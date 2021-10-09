@@ -126,6 +126,9 @@ func setAppUserSchemaProperty(ctx context.Context, d *schema.ResourceData, m int
 	bOff.InitialInterval = time.Second
 	err = backoff.Retry(func() error {
 		if err := updateAppUserSubSchemaProperty(ctx, d, m); err != nil {
+			if errors.Is(err, errInvalidElemFormat) {
+				return backoff.Permanent(err)
+			}
 			return err
 		}
 		us, resp, err := getOktaClientFromMetadata(m).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
@@ -184,7 +187,10 @@ func resourceAppUserSchemaPropertyDelete(ctx context.Context, d *schema.Resource
 }
 
 func updateAppUserSubSchemaProperty(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	subSchema := buildUserCustomSchemaAttribute(d)
+	subSchema, err := buildUserCustomSchemaAttribute(d)
+	if err != nil {
+		return err
+	}
 	if d.Get("union").(bool) {
 		subSchema.Union = "ENABLE"
 	} else {
@@ -194,7 +200,7 @@ func updateAppUserSubSchemaProperty(ctx context.Context, d *schema.ResourceData,
 	bOff := backoff.NewExponentialBackOff()
 	bOff.MaxElapsedTime = time.Second * 10
 	bOff.InitialInterval = time.Second
-	err := backoff.Retry(func() error {
+	err = backoff.Retry(func() error {
 		_, _, err := getOktaClientFromMetadata(m).UserSchema.
 			UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
 		if err == nil {

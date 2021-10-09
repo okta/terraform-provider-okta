@@ -2,7 +2,9 @@ package okta
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -173,7 +175,7 @@ func syncCustomUserSchema(d *schema.ResourceData, subschema *okta.UserSchemaAttr
 	if subschema.Items != nil {
 		_ = d.Set("array_type", subschema.Items.Type)
 		_ = d.Set("array_one_of", flattenOneOf(subschema.Items.OneOf))
-		_ = d.Set("array_enum", convertStringSliceToInterfaceSlice(subschema.Items.Enum))
+		_ = d.Set("array_enum", subschema.Items.Enum)
 	}
 	if len(subschema.Enum) > 0 {
 		_ = d.Set("enum", convertStringSliceToInterfaceSlice(subschema.Enum))
@@ -244,16 +246,72 @@ func getNullableMaster(d *schema.ResourceData) *okta.UserSchemaAttributeMaster {
 	return usm
 }
 
-func getNullableItem(d *schema.ResourceData) *okta.UserSchemaAttributeItems {
-	if v, ok := d.GetOk("array_type"); ok {
-		return &okta.UserSchemaAttributeItems{
-			Type:  v.(string),
-			OneOf: getNullableOneOf(d, "array_one_of"),
-			Enum:  convertInterfaceToStringArrNullable(d.Get("array_enum")),
+var errInvalidElemFormat = errors.New("element type does not match the value provided in 'array_type'")
+
+func getNullableItems(d *schema.ResourceData) (*okta.UserSchemaAttributeItems, error) {
+	at, ok := d.GetOk("array_type")
+	if !ok {
+		return nil, nil
+	}
+	arrayOneOf, okArrayOneOf := d.GetOk("array_one_of")
+	arrayEnum, okArrayEnum := d.GetOk("array_enum")
+
+	u := &okta.UserSchemaAttributeItems{
+		Type: at.(string),
+	}
+	if !okArrayOneOf && !okArrayEnum {
+		return u, nil
+	}
+	if okArrayEnum {
+		ae := arrayEnum.([]interface{})
+		u.Enum = make([]interface{}, len(ae))
+		for i := range ae {
+			switch u.Type {
+			case "number":
+				f, err := strconv.ParseFloat(ae[i].(string), 64)
+				if err != nil {
+					return nil, errInvalidElemFormat
+				}
+				u.Enum[i] = f
+			case "integer":
+				f, err := strconv.Atoi(ae[i].(string))
+				if err != nil {
+					return nil, errInvalidElemFormat
+				}
+				u.Enum[i] = f
+			default:
+				u.Enum[i] = ae[i].(string)
+			}
 		}
 	}
-
-	return nil
+	if okArrayOneOf {
+		ae := arrayOneOf.([]interface{})
+		u.OneOf = make([]*okta.UserSchemaAttributeEnum, len(ae))
+		for i := range ae {
+			valueMap := ae[i].(map[string]interface{})
+			u.OneOf[i] = &okta.UserSchemaAttributeEnum{
+				Title: valueMap["title"].(string),
+			}
+			c := valueMap["const"].(string)
+			switch u.Type {
+			case "number":
+				f, err := strconv.ParseFloat(c, 64)
+				if err != nil {
+					return nil, errInvalidElemFormat
+				}
+				u.OneOf[i].Const = f
+			case "integer":
+				f, err := strconv.Atoi(c)
+				if err != nil {
+					return nil, errInvalidElemFormat
+				}
+				u.OneOf[i].Const = f
+			default:
+				u.OneOf[i].Const = c
+			}
+		}
+	}
+	return u, nil
 }
 
 func flattenOneOf(oneOf []*okta.UserSchemaAttributeEnum) []interface{} {
@@ -267,7 +325,11 @@ func flattenOneOf(oneOf []*okta.UserSchemaAttributeEnum) []interface{} {
 	return result
 }
 
-func buildUserCustomSchemaAttribute(d *schema.ResourceData) *okta.UserSchemaAttribute {
+func buildUserCustomSchemaAttribute(d *schema.ResourceData) (*okta.UserSchemaAttribute, error) {
+	items, err := getNullableItems(d)
+	if err != nil {
+		return nil, err
+	}
 	return &okta.UserSchemaAttribute{
 		Title:       d.Get("title").(string),
 		Type:        d.Get("type").(string),
@@ -282,14 +344,14 @@ func buildUserCustomSchemaAttribute(d *schema.ResourceData) *okta.UserSchemaAttr
 		Scope:             d.Get("scope").(string),
 		Enum:              convertInterfaceToStringArrNullable(d.Get("enum")),
 		Master:            getNullableMaster(d),
-		Items:             getNullableItem(d),
+		Items:             items,
 		MinLength:         int64(d.Get("min_length").(int)),
 		MaxLength:         int64(d.Get("max_length").(int)),
 		OneOf:             getNullableOneOf(d, "one_of"),
 		ExternalName:      d.Get("external_name").(string),
 		ExternalNamespace: d.Get("external_namespace").(string),
 		Unique:            d.Get("unique").(string),
-	}
+	}, nil
 }
 
 func buildUserBaseSchemaAttribute(d *schema.ResourceData) *okta.UserSchemaAttribute {

@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cenkalti/backoff/v4"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -108,7 +110,11 @@ func resourceUserSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	custom := buildCustomUserSchema(d.Get("index").(string), buildUserCustomSchemaAttribute(d))
+	userCustomSchemaAttribute, err := buildUserCustomSchemaAttribute(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	custom := buildCustomUserSchema(d.Get("index").(string), userCustomSchemaAttribute)
 	subSchema, err := alterCustomUserSchema(ctx, m, d.Get("user_type").(string), d.Get("index").(string), custom, false)
 	if err != nil {
 		return diag.Errorf("failed to create or update user custom schema property %s: %v", d.Get("index").(string), err)
@@ -149,40 +155,38 @@ func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index s
 		return nil, err
 	}
 	var schemaAttribute *okta.UserSchemaAttribute
-	timer := time.NewTimer(time.Second * 60) // sometimes it takes some time (several attempts) to recreate/delete user schema property
-	ticker := time.NewTicker(time.Second * 5)
-loop:
-	for {
-		select {
-		case <-ctx.Done():
-			return nil, ctx.Err()
-		case <-timer.C:
-			return nil, errors.New("no more attempts left")
-		case <-ticker.C:
-			updated, resp, err := getOktaClientFromMetadata(m).UserSchema.UpdateUserProfile(ctx, typeSchemaID, *schema)
-			if err != nil {
-				if resp != nil && resp.StatusCode == 500 {
-					logger(m).Debug("updating user custom schema property caused 500 error", err)
-					continue
-				}
-				if strings.Contains(err.Error(), "Wait until the data clean up process finishes and then try again") {
-					continue
-				}
-				return nil, err
+
+	bOff := backoff.NewExponentialBackOff()
+	bOff.MaxElapsedTime = time.Second * 120
+	bOff.InitialInterval = time.Second
+	bc := backoff.WithContext(bOff, ctx)
+
+	err = backoff.Retry(func() error {
+		updated, resp, err := getOktaClientFromMetadata(m).UserSchema.UpdateUserProfile(ctx, typeSchemaID, *schema)
+		if err != nil {
+			logger(m).Error(err.Error())
+			if resp != nil && resp.StatusCode == 500 {
+				return fmt.Errorf("updating user custom schema property caused 500 error: %w", err)
 			}
-			s, _, err := getOktaClientFromMetadata(m).UserSchema.GetUserSchema(ctx, typeSchemaID)
-			if err != nil {
-				return nil, fmt.Errorf("failed to get user custom schema property: %v", err)
+			if strings.Contains(err.Error(), "Wait until the data clean up process finishes and then try again") {
+				return err
 			}
-			schemaAttribute = userSchemaCustomAttribute(s, index)
-			if isDeleteOperation && schemaAttribute == nil {
-				break loop
-			} else if schemaAttribute != nil && reflect.DeepEqual(schemaAttribute, updated.Definitions.Custom.Properties[index]) {
-				break loop
-			}
+			return backoff.Permanent(err)
 		}
-	}
-	return schemaAttribute, nil
+		s, _, err := getOktaClientFromMetadata(m).UserSchema.GetUserSchema(ctx, typeSchemaID)
+		if err != nil {
+			return backoff.Permanent(fmt.Errorf("failed to get user custom schema property: %v", err))
+		}
+		schemaAttribute = userSchemaCustomAttribute(s, index)
+		if isDeleteOperation && schemaAttribute == nil {
+			return nil
+		} else if schemaAttribute != nil && reflect.DeepEqual(schemaAttribute, updated.Definitions.Custom.Properties[index]) {
+			return nil
+		}
+		logger(m).Error("failed to apply changes after several retries")
+		return errors.New("failed to apply changes after several retries")
+	}, bc)
+	return schemaAttribute, err
 }
 
 func resourceUserSchemaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
