@@ -142,6 +142,7 @@ func TestAccOktaUserSchema_arrayString(t *testing.T) {
 	config := mgr.GetFixtures("array_string.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("array_string_updated.tf", ri, t)
 	arrayEnum := mgr.GetFixtures("array_enum.tf", ri, t)
+	arrayNumber := mgr.GetFixtures("array_number.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -191,6 +192,24 @@ func TestAccOktaUserSchema_arrayString(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "test"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.1", "1"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.2", "2"),
+					resource.TestCheckResourceAttr(resourceName, "array_one_of.#", "3"),
+				),
+			},
+			{
+				Config: arrayNumber,
+				Check: resource.ComposeTestCheckFunc(
+					testOktaUserSchemasExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
+					resource.TestCheckResourceAttr(resourceName, "type", "array"),
+					resource.TestCheckResourceAttr(resourceName, "array_type", "number"),
+					resource.TestCheckResourceAttr(resourceName, "description", "testing"),
+					resource.TestCheckResourceAttr(resourceName, "required", "false"),
+					resource.TestCheckResourceAttr(resourceName, "master", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "scope", "SELF"),
+					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "0.01"),
+					resource.TestCheckResourceAttr(resourceName, "array_enum.1", "0.02"),
+					resource.TestCheckResourceAttr(resourceName, "array_enum.2", "0.03"),
 					resource.TestCheckResourceAttr(resourceName, "array_one_of.#", "3"),
 				),
 			},

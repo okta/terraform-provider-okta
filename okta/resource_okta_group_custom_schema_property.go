@@ -180,10 +180,10 @@ func syncCustomGroupSchema(d *schema.ResourceData, subschema *okta.GroupSchemaAt
 	if subschema.Items != nil {
 		_ = d.Set("array_type", subschema.Items.Type)
 		_ = d.Set("array_one_of", flattenOneOf(subschema.Items.OneOf))
-		_ = d.Set("array_enum", subschema.Items.Enum)
+		_ = d.Set("array_enum", flattenEnum(subschema.Items.Enum))
 	}
 	if len(subschema.Enum) > 0 {
-		_ = d.Set("enum", convertStringSliceToInterfaceSlice(subschema.Enum))
+		_ = d.Set("enum", flattenEnum(subschema.Enum))
 	}
 	return setNonPrimitives(d, map[string]interface{}{
 		"one_of": flattenOneOf(subschema.OneOf),
@@ -213,9 +213,23 @@ func syncBaseGroupSchema(d *schema.ResourceData, subschema *okta.GroupSchemaAttr
 }
 
 func buildGroupCustomSchemaAttribute(d *schema.ResourceData) (*okta.GroupSchemaAttribute, error) {
-	items, err := getNullableItems(d)
+	items, err := buildNullableItems(d)
 	if err != nil {
 		return nil, err
+	}
+	var oneOf []*okta.UserSchemaAttributeEnum
+	if rawOneOf, ok := d.GetOk("one_of"); ok {
+		oneOf, err = buildOneOf(rawOneOf.([]interface{}), d.Get("type").(string))
+		if err != nil {
+			return nil, err
+		}
+	}
+	var enum []interface{}
+	if rawEnum, ok := d.GetOk("enum"); ok {
+		enum, err = buildEnum(rawEnum.([]interface{}), d.Get("type").(string))
+		if err != nil {
+			return nil, err
+		}
 	}
 	return &okta.GroupSchemaAttribute{
 		Title:       d.Get("title").(string),
@@ -229,12 +243,12 @@ func buildGroupCustomSchemaAttribute(d *schema.ResourceData) (*okta.GroupSchemaA
 			},
 		},
 		Scope:             d.Get("scope").(string),
-		Enum:              convertInterfaceToStringArrNullable(d.Get("enum")),
+		Enum:              enum,
 		Master:            getNullableMaster(d),
 		Items:             items,
 		MinLength:         int64(d.Get("min_length").(int)),
 		MaxLength:         int64(d.Get("max_length").(int)),
-		OneOf:             getNullableOneOf(d, "one_of"),
+		OneOf:             oneOf,
 		ExternalName:      d.Get("external_name").(string),
 		ExternalNamespace: d.Get("external_namespace").(string),
 		Unique:            d.Get("unique").(string),
