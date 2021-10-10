@@ -335,7 +335,6 @@ func TestAccAppOauth_federationBroker(t *testing.T) {
 	})
 }
 
-
 func buildTestSamlConfigMissingFields(rInt int) string {
 	name := buildResourceName(rInt)
 

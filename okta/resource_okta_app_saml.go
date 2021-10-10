@@ -133,11 +133,11 @@ func resourceAppSaml() *schema.Resource {
 				Description: "Do not display application icon to users",
 			},
 			"implicit_assignment": {
-            	Type:          schema.TypeBool,
-            	Optional:      true,
-            	Description:   "*Early Access Property*. Enable Federation Broker Mode.",
-            	ConflictsWith: []string{"groups", "users"},
-            },
+				Type:          schema.TypeBool,
+				Optional:      true,
+				Description:   "*Early Access Property*. Enable Federation Broker Mode.",
+				ConflictsWith: []string{"groups", "users"},
+			},
 			"default_relay_state": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -376,13 +376,13 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interf
 	// Make sure to track in terraform prior to the creation of cert in case there is an error.
 	d.SetId(app.Id)
 	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-    // So Skip setting assignments while this is on
-    if !d.Get("implicit_assignment").(bool) {
-    	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-    	if err != nil {
-    		return diag.Errorf("failed to handle groups and users for SAML application: %v", err)
-    	}
-    }
+	// So Skip setting assignments while this is on
+	if !d.Get("implicit_assignment").(bool) {
+		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
+		if err != nil {
+			return diag.Errorf("failed to handle groups and users for SAML application: %v", err)
+		}
+	}
 	err = tryCreateCertificate(ctx, d, m, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to create new certificate for SAML application: %v", err)
@@ -427,8 +427,8 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	_ = d.Set("preconfigured_app", app.Name)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	if app.Settings.ImplicitAssignment != nil {
-    	    _ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
-    }
+		_ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
+	}
 	if app.Credentials.Signing.Kid != "" && app.Status != statusInactive {
 		keyID := app.Credentials.Signing.Kid
 		_ = d.Set("key_id", keyID)
@@ -458,12 +458,12 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		_ = d.Set("saml_version", saml20)
 	}
 	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-    // So Skip setting assignments while this is on
-    if !d.Get("implicit_assignment").(bool) {
-    	if err = syncGroupsAndUsers(ctx, app.Id, d, m); err != nil {
-    		return diag.Errorf("failed to sync groups and users for OAuth application: %v", err)
-    	}
-    }
+	// So Skip setting assignments while this is on
+	if !d.Get("implicit_assignment").(bool) {
+		if err = syncGroupsAndUsers(ctx, app.Id, d, m); err != nil {
+			return diag.Errorf("failed to sync groups and users for OAuth application: %v", err)
+		}
+	}
 	return nil
 }
 
@@ -492,13 +492,13 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 		}
 	}
 	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-    // So Skip setting assignments while this is on
-    if !d.Get("implicit_assignment").(bool) {
-    	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-    	if err != nil {
-    		return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
-    	}
-    }
+	// So Skip setting assignments while this is on
+	if !d.Get("implicit_assignment").(bool) {
+		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
+		if err != nil {
+			return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
+		}
+	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 		if err != nil {
@@ -545,8 +545,8 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 
 	honorForce := d.Get("honor_force_authn").(bool)
 	app.Settings = &okta.SamlApplicationSettings{
-	    ImplicitAssignment: boolPtr(d.Get("implicit_assignment").(bool)),
-		Notes: buildAppNotes(d),
+		ImplicitAssignment: boolPtr(d.Get("implicit_assignment").(bool)),
+		Notes:              buildAppNotes(d),
 	}
 	app.Visibility = buildAppVisibility(d)
 	app.Accessibility = buildAppAccessibility(d)
