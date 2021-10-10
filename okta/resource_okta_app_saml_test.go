@@ -294,6 +294,48 @@ func TestAccAppSaml_inlineHook(t *testing.T) {
 	})
 }
 
+// Tests creation of service app and updates it to turn on federated broker
+func TestAccAppOauth_federationBroker(t *testing.T) {
+	// TODO: This is an "Early Access Feature" and needs to be enabled by Okta
+	//       Skipping for now assuming that the okta account doesn't have this feature enabled.
+	//       If this feature is enabled or Okta releases this to all this test should be enabled.
+	//       SEE https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm
+	t.Skip("This is an 'Early Access Feature' and needs to be enabled by Okta, skipping this test as it fails when this feature is not available")
+
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appSaml)
+	config := mgr.GetFixtures("federation_broker_off.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("federation_broker_on.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", appSaml)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "false"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "true"),
+				),
+			},
+		},
+	})
+}
+
+
 func buildTestSamlConfigMissingFields(rInt int) string {
 	name := buildResourceName(rInt)
 
