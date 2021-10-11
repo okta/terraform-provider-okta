@@ -165,6 +165,8 @@ The following arguments are supported:
 
 - `hide_web` - (Optional) Do not display application icon to users
 
+- `implicit_assignment` - (Optional) *Early Access Property*. Enables [Federation Broker Mode]( https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm). When this mode is enabled, `users` and `groups` arguments are ignored.
+
 - `default_relay_state` - (Optional) Identifies a specific application resource in an IDP initiated SSO scenario.
 
 - `sso_url` - (Optional) Single Sign-on Url.
