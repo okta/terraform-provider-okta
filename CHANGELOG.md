@@ -7,7 +7,7 @@ ENHANCEMENTS:
 * Added new `okta_app_saml_app_settings` resource [#692](https://github.com/okta/terraform-provider-okta/pull/692). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 * Added new `okta_email_sender` and `okta_email_sender_verification` resources [#697](https://github.com/okta/terraform-provider-okta/pull/697). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 * Resource `okta_idp_saml_key` is now updatable [#698](https://github.com/okta/terraform-provider-okta/pull/698). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
-* Addede `implicit_assignment` field to the `okta_app_saml` resource [#703](https://github.com/okta/terraform-provider-okta/pull/703). Thanks, [@ashwini-desai](https://github.com/ashwini-desai)!
+* Added `implicit_assignment` field to the `okta_app_saml` resource [#703](https://github.com/okta/terraform-provider-okta/pull/703). Thanks, [@ashwini-desai](https://github.com/ashwini-desai)!
 
 BUGS:
 
