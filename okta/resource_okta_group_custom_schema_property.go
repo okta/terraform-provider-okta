@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cenkalti/backoff/v4"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -72,7 +74,11 @@ func resourceGroupSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	custom := buildCustomGroupSchema(d.Get("index").(string), buildGroupCustomSchemaAttribute(d))
+	groupCustomSchemaAttribute, err := buildGroupCustomSchemaAttribute(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	custom := buildCustomGroupSchema(d.Get("index").(string), groupCustomSchemaAttribute)
 	subSchema, err := alterCustomGroupSchema(ctx, m, d.Get("index").(string), custom, false)
 	if err != nil {
 		return diag.Errorf("failed to create or update group custom schema property %s: %v", d.Get("index").(string), err)
@@ -105,40 +111,38 @@ func resourceGroupSchemaRead(ctx context.Context, d *schema.ResourceData, m inte
 
 func alterCustomGroupSchema(ctx context.Context, m interface{}, index string, schema *okta.GroupSchema, isDeleteOperation bool) (*okta.GroupSchemaAttribute, error) {
 	var schemaAttribute *okta.GroupSchemaAttribute
-	timer := time.NewTimer(time.Second * 120) // sometimes it takes some time (several attempts) to recreate/delete group schema property
-	ticker := time.NewTicker(time.Second * 5)
-loop:
-	for {
-		select {
-		case <-ctx.Done():
-			return nil, ctx.Err()
-		case <-timer.C:
-			return nil, errors.New("no more attempts left")
-		case <-ticker.C:
-			updated, resp, err := getOktaClientFromMetadata(m).GroupSchema.UpdateGroupSchema(ctx, *schema)
-			if err != nil {
-				if resp != nil && resp.StatusCode == 500 {
-					logger(m).Debug("updating group custom schema property caused 500 error", err)
-					continue
-				}
-				if strings.Contains(err.Error(), "Wait until the data clean up process finishes and then try again") {
-					continue
-				}
-				return nil, err
+
+	bOff := backoff.NewExponentialBackOff()
+	bOff.MaxElapsedTime = time.Second * 120
+	bOff.InitialInterval = time.Second
+	bc := backoff.WithContext(bOff, ctx)
+
+	err := backoff.Retry(func() error {
+		updated, resp, err := getOktaClientFromMetadata(m).GroupSchema.UpdateGroupSchema(ctx, *schema)
+		if err != nil {
+			logger(m).Error(err.Error())
+			if resp != nil && resp.StatusCode == 500 {
+				return fmt.Errorf("updating group custom schema property caused 500 error: %w", err)
 			}
-			s, _, err := getOktaClientFromMetadata(m).GroupSchema.GetGroupSchema(ctx)
-			if err != nil {
-				return nil, fmt.Errorf("failed to get group custom schema property: %v", err)
+			if strings.Contains(err.Error(), "Wait until the data clean up process finishes and then try again") {
+				return err
 			}
-			schemaAttribute = groupSchemaCustomAttribute(s, index)
-			if isDeleteOperation && schemaAttribute == nil {
-				break loop
-			} else if schemaAttribute != nil && reflect.DeepEqual(schemaAttribute, updated.Definitions.Custom.Properties[index]) {
-				break loop
-			}
+			return backoff.Permanent(err)
 		}
-	}
-	return schemaAttribute, nil
+		s, _, err := getOktaClientFromMetadata(m).GroupSchema.GetGroupSchema(ctx)
+		if err != nil {
+			return backoff.Permanent(fmt.Errorf("failed to get group custom schema property: %v", err))
+		}
+		schemaAttribute = groupSchemaCustomAttribute(s, index)
+		if isDeleteOperation && schemaAttribute == nil {
+			return nil
+		} else if schemaAttribute != nil && reflect.DeepEqual(schemaAttribute, updated.Definitions.Custom.Properties[index]) {
+			return nil
+		}
+		logger(m).Error("failed to apply changes after several retries")
+		return errors.New("failed to apply changes after several retries")
+	}, bc)
+	return schemaAttribute, err
 }
 
 func resourceGroupSchemaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -176,10 +180,10 @@ func syncCustomGroupSchema(d *schema.ResourceData, subschema *okta.GroupSchemaAt
 	if subschema.Items != nil {
 		_ = d.Set("array_type", subschema.Items.Type)
 		_ = d.Set("array_one_of", flattenOneOf(subschema.Items.OneOf))
-		_ = d.Set("array_enum", convertStringSliceToInterfaceSlice(subschema.Items.Enum))
+		_ = d.Set("array_enum", flattenEnum(subschema.Items.Enum))
 	}
 	if len(subschema.Enum) > 0 {
-		_ = d.Set("enum", convertStringSliceToInterfaceSlice(subschema.Enum))
+		_ = d.Set("enum", flattenEnum(subschema.Enum))
 	}
 	return setNonPrimitives(d, map[string]interface{}{
 		"one_of": flattenOneOf(subschema.OneOf),
@@ -208,7 +212,25 @@ func syncBaseGroupSchema(d *schema.ResourceData, subschema *okta.GroupSchemaAttr
 	}
 }
 
-func buildGroupCustomSchemaAttribute(d *schema.ResourceData) *okta.GroupSchemaAttribute {
+func buildGroupCustomSchemaAttribute(d *schema.ResourceData) (*okta.GroupSchemaAttribute, error) {
+	items, err := buildNullableItems(d)
+	if err != nil {
+		return nil, err
+	}
+	var oneOf []*okta.UserSchemaAttributeEnum
+	if rawOneOf, ok := d.GetOk("one_of"); ok {
+		oneOf, err = buildOneOf(rawOneOf.([]interface{}), d.Get("type").(string))
+		if err != nil {
+			return nil, err
+		}
+	}
+	var enum []interface{}
+	if rawEnum, ok := d.GetOk("enum"); ok {
+		enum, err = buildEnum(rawEnum.([]interface{}), d.Get("type").(string))
+		if err != nil {
+			return nil, err
+		}
+	}
 	return &okta.GroupSchemaAttribute{
 		Title:       d.Get("title").(string),
 		Type:        d.Get("type").(string),
@@ -221,16 +243,16 @@ func buildGroupCustomSchemaAttribute(d *schema.ResourceData) *okta.GroupSchemaAt
 			},
 		},
 		Scope:             d.Get("scope").(string),
-		Enum:              convertInterfaceToStringArrNullable(d.Get("enum")),
+		Enum:              enum,
 		Master:            getNullableMaster(d),
-		Items:             getNullableItem(d),
+		Items:             items,
 		MinLength:         int64(d.Get("min_length").(int)),
 		MaxLength:         int64(d.Get("max_length").(int)),
-		OneOf:             getNullableOneOf(d, "one_of"),
+		OneOf:             oneOf,
 		ExternalName:      d.Get("external_name").(string),
 		ExternalNamespace: d.Get("external_namespace").(string),
 		Unique:            d.Get("unique").(string),
-	}
+	}, nil
 }
 
 func groupSchemaCustomAttribute(s *okta.GroupSchema, index string) *okta.GroupSchemaAttribute {
