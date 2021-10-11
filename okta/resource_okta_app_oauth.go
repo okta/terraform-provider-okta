@@ -490,6 +490,8 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	if app.Settings.ImplicitAssignment != nil {
 		_ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
+	} else {
+		_ = d.Set("implicit_assignment", false)
 	}
 	// If this is ever changed omit it.
 	if d.Get("omit_secret").(bool) {

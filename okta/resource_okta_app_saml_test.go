@@ -295,7 +295,7 @@ func TestAccAppSaml_inlineHook(t *testing.T) {
 }
 
 // Tests creation of service app and updates it to turn on federated broker
-func TestAccAppOauth_federationBroker(t *testing.T) {
+func TestAccAppSaml_federationBroker(t *testing.T) {
 	// TODO: This is an "Early Access Feature" and needs to be enabled by Okta
 	//       Skipping for now assuming that the okta account doesn't have this feature enabled.
 	//       If this feature is enabled or Okta releases this to all this test should be enabled.
