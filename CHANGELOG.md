@@ -1,5 +1,21 @@
 # Changelog
 
+## 3.15.0 (October 11, 2021)
+
+ENHANCEMENTS:
+
+* Added new `okta_app_saml_app_settings` resource [#692](https://github.com/okta/terraform-provider-okta/pull/692). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `okta_email_sender` and `okta_email_sender_verification` resources [#697](https://github.com/okta/terraform-provider-okta/pull/697). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Resource `okta_idp_saml_key` is now updatable [#698](https://github.com/okta/terraform-provider-okta/pull/698). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added `implicit_assignment` field to the `okta_app_saml` resource [#703](https://github.com/okta/terraform-provider-okta/pull/703). Thanks, [@ashwini-desai](https://github.com/ashwini-desai)!
+
+BUGS:
+
+* Fixed delete operation for `okta_profile_mapping` resource [#693](https://github.com/okta/terraform-provider-okta/pull/693). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Included `404` check for `okta_app_user` resource in case app no longer exists [#695](https://github.com/okta/terraform-provider-okta/pull/695). Thanks, [@ymylei](https://github.com/ymylei)!
+* Minor fix for API rate limiting [#700](https://github.com/okta/terraform-provider-okta/pull/700). Thanks, [@monde](https://github.com/monde) and [@phi1ipp](https://github.com/phi1ipp)!
+* Fixed schema-related resources to handle numeric arrays properly [#702](https://github.com/okta/terraform-provider-okta/pull/702). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.14.0 (October 7, 2021)
 
 ENHANCEMENTS:
