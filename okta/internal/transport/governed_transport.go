@@ -64,7 +64,16 @@ func (t *GovernedTransport) preRequestHook(ctx context.Context, method, path str
 	now := time.Now().Unix()
 	timeToSleep := status.Reset() - now
 
-	t.logger.Info(fmt.Sprintf("Throttling API requests, sleeping for %d seconds until rate limit reset (%q:%d/%d)", timeToSleep, status.Class(), status.Remaining(), status.Limit()))
+	line := fmt.Sprintf("Throttling API requests; sleeping for %d seconds until rate limit reset (path class %q: %d remaining of %d total); current request \"%s %s\"",
+		timeToSleep,
+		status.Class(),
+		status.Remaining(),
+		status.Limit(),
+		method,
+		path,
+	)
+	t.logger.Info(line)
+
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
