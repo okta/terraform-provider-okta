@@ -60,6 +60,7 @@ const (
 	idpSocial                 = "okta_idp_social"
 	inlineHook                = "okta_inline_hook"
 	networkZone               = "okta_network_zone"
+	oktaAuthenticator         = "okta_authenticator"
 	oktaGroup                 = "okta_group"
 	oktaGroups                = "okta_groups"
 	oktaGroupMembership       = "okta_group_membership"
@@ -235,6 +236,7 @@ func Provider() *schema.Provider {
 			idpSocial:                 resourceIdpSocial(),
 			inlineHook:                resourceInlineHook(),
 			networkZone:               resourceNetworkZone(),
+			oktaAuthenticator:         resourceAuthenticator(),
 			oktaGroup:                 resourceGroup(),
 			oktaGroupMembership:       resourceGroupMembership(),
 			oktaGroupMemberships:      resourceGroupMemberships(),
@@ -295,6 +297,7 @@ func Provider() *schema.Provider {
 			"okta_everyone_group":              dataSourceEveryoneGroup(),
 			behavior:                           dataSourceBehavior(),
 			behaviors:                          dataSourceBehaviors(),
+			oktaAuthenticator:                  dataSourceAuthenticator(),
 			oktaGroup:                          dataSourceGroup(),
 			oktaGroups:                         dataSourceGroups(),
 			"okta_idp_metadata_saml":           dataSourceIdpMetadataSaml(),
