@@ -128,10 +128,10 @@ var reGroupId = regexp.MustCompile("/api/v1/groups/[^/]+$")
 func (m *APIMutex) normalizeKey(method, endPoint string) string {
 	var result string
 	switch {
-	case endPoint == "/api/v1/apps":
-		result = APPS_KEY
 	case reAppId.MatchString(endPoint):
 		result = APPID_KEY
+	case strings.Contains(endPoint, "/api/v1/apps"):
+		result = APPS_KEY
 	case endPoint == "/api/v1/certificateAuthorities":
 		result = CAS_KEY
 	case endPoint == "/oauth2/v1/clients":
@@ -140,10 +140,10 @@ func (m *APIMutex) normalizeKey(method, endPoint string) string {
 		result = DEVICES_KEY
 	case endPoint == "/api/v1/events":
 		result = EVENTS_KEY
-	case endPoint == "/api/v1/groups":
-		result = GROUPS_KEY
 	case reGroupId.MatchString(endPoint):
 		result = GROUPID_KEY
+	case strings.Contains(endPoint, "/api/v1/groups"):
+		result = GROUPS_KEY
 	case endPoint == "/api/v1/logs":
 		result = LOGS_KEY
 	case endPoint == "/api/v1/users":
