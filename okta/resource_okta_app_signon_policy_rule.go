@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -17,14 +18,15 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 		DeleteContext: resourceAppSignOnPolicyRuleDelete,
 		Importer:      createPolicyRuleImporter(),
 		Schema: map[string]*schema.Schema{
-			"policy_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Policy Rule Name",
+			},
+			"policy_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "ID of the policy",
 			},
 			"priority": {
 				Type:     schema.TypeInt,
@@ -83,6 +85,16 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "If the device is registered. A device is registered if the User enrolls with Okta Verify that is installed on the device.",
+				ValidateDiagFunc: func(i interface{}, path cty.Path) diag.Diagnostics {
+					if i == nil {
+						return nil
+					}
+					v := i.(bool)
+					if !v {
+						return diag.Errorf("'device_is_registered' can either be set to 'true' or should not be present in the configuration")
+					}
+					return nil
+				},
 			},
 			"device_is_managed": {
 				Type:         schema.TypeBool,
