@@ -562,7 +562,8 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	app.Visibility = buildAppVisibility(d)
 	app.Accessibility = buildAppAccessibility(d)
 	app.Settings.App = buildAppSettings(d)
-	app.Features = convertInterfaceToStringSet(d.Get("features"))
+	// Note: You can't currently configure provisioning features via the API. Use the administrator UI.
+	// app.Features = convertInterfaceToStringSet(d.Get("features"))
 	app.Settings.SignOn = &okta.SamlApplicationSettingsSignOn{
 		DefaultRelayState:     d.Get("default_relay_state").(string),
 		SsoAcsUrl:             d.Get("sso_url").(string),
