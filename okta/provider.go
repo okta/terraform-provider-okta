@@ -26,6 +26,8 @@ const (
 	appOAuthAPIScope          = "okta_app_oauth_api_scope"
 	appOAuthRedirectURI       = "okta_app_oauth_redirect_uri"
 	appSaml                   = "okta_app_saml"
+	appSignOnPolicy           = "okta_app_signon_policy"
+	appSignOnPolicyRule       = "okta_app_signon_policy_rule"
 	appSamlAppSettings        = "okta_app_saml_app_settings"
 	appSecurePasswordStore    = "okta_app_secure_password_store"
 	appSwa                    = "okta_app_swa"
@@ -204,6 +206,7 @@ func Provider() *schema.Provider {
 			appSaml:                   resourceAppSaml(),
 			appSamlAppSettings:        resourceAppSamlAppSettings(),
 			appSecurePasswordStore:    resourceAppSecurePasswordStore(),
+			appSignOnPolicyRule:       resourceAppSignOnPolicyRule(),
 			appSwa:                    resourceAppSwa(),
 			appSharedCredentials:      resourceAppSharedCredentials(),
 			appThreeField:             resourceAppThreeField(),
@@ -287,6 +290,7 @@ func Provider() *schema.Provider {
 			"okta_app":                         dataSourceApp(),
 			appGroupAssignments:                dataSourceAppGroupAssignments(),
 			appSaml:                            dataSourceAppSaml(),
+			appSignOnPolicy:                    dataSourceAppSignOnPolicy(),
 			appOAuth:                           dataSourceAppOauth(),
 			"okta_app_metadata_saml":           dataSourceAppMetadataSaml(),
 			"okta_app_user_assignments":        dataSourceAppUserAssignments(),

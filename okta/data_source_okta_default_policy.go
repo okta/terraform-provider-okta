@@ -21,6 +21,7 @@ func dataSourceDefaultPolicies() *schema.Resource {
 					sdk.PasswordPolicyType,
 					sdk.MfaPolicyType,
 					sdk.IdpDiscoveryType,
+					sdk.AccessPolicyType,
 				}),
 				Description: fmt.Sprintf("Policy type: %s, %s, %s, or %s", sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.IdpDiscoveryType),
 				Required:    true,

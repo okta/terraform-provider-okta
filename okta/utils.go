@@ -118,7 +118,11 @@ func convertInterfaceToStringSet(purportedSet interface{}) []string {
 }
 
 func convertInterfaceToStringSetNullable(purportedSet interface{}) []string {
-	return convertInterfaceToStringArrNullable(purportedSet.(*schema.Set).List())
+	set, ok := purportedSet.(*schema.Set)
+	if ok {
+		return convertInterfaceToStringArrNullable(set.List())
+	}
+	return nil
 }
 
 func convertInterfaceToStringArr(purportedList interface{}) []string {
