@@ -8,6 +8,8 @@ description: |-
 
 # okta_app_signon_policy_rule
 
+~> **IMPORTANT NOTE:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
+
 This resource allows you to create and configure a sign-on policy rule for the application.
 
 A default or `Catch-all Rule` sign-on policy rule can be imported and managed as a custom rule.
