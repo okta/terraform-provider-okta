@@ -82,13 +82,11 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 			"device_is_registered": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Default:     false,
 				Description: "If the device is registered. A device is registered if the User enrolls with Okta Verify that is installed on the device.",
 			},
 			"device_is_managed": {
 				Type:         schema.TypeBool,
 				Optional:     true,
-				Default:      false,
 				RequiredWith: []string{"device_is_registered"},
 				Description:  "If the device is managed. A device is managed if it's managed by a device management system. When managed is passed, registered must also be included and must be set to true.",
 			},
@@ -278,18 +276,33 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 				},
 			},
 		},
-		Conditions: &okta.AccessPolicyRuleConditions{
-			Network: buildPolicyNetworkCondition(d),
-			Platform: &okta.PlatformPolicyRuleCondition{
-				Include: buildAccessPolicyPlatformInclude(d),
-			},
-			ElCondition: &okta.AccessPolicyRuleCustomCondition{
-				Condition: d.Get("custom_expression").(string),
-			},
-		},
 		Name:     d.Get("name").(string),
 		Priority: int64(d.Get("priority").(int)),
 		Type:     "ACCESS_POLICY",
+	}
+	var constraints []*okta.AccessPolicyConstraints
+	v, ok := d.GetOk("constraints")
+	if ok {
+		valueList := v.([]interface{})
+		for _, item := range valueList {
+			var constraint okta.AccessPolicyConstraints
+			_ = json.Unmarshal([]byte(item.(string)), &constraint)
+			constraints = append(constraints, &constraint)
+		}
+	}
+	rule.Actions.AppSignOn.VerificationMethod.Constraints = constraints
+	// if this is a default rule, the conditions attribute is read-only.
+	if d.Get("name") == "Catch-all Rule" {
+		return rule
+	}
+	rule.Conditions = &okta.AccessPolicyRuleConditions{
+		Network: buildPolicyNetworkCondition(d),
+		Platform: &okta.PlatformPolicyRuleCondition{
+			Include: buildAccessPolicyPlatformInclude(d),
+		},
+		ElCondition: &okta.AccessPolicyRuleCustomCondition{
+			Condition: d.Get("custom_expression").(string),
+		},
 	}
 	isRegistered, ok := d.GetOk("device_is_registered")
 	if ok && isRegistered.(bool) {
@@ -327,17 +340,6 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 			Include: convertInterfaceToStringSetNullable(userTypesIncluded),
 		}
 	}
-	var constraints []*okta.AccessPolicyConstraints
-	v, ok := d.GetOk("constraints")
-	if ok {
-		valueList := v.([]interface{})
-		for _, item := range valueList {
-			var constraint okta.AccessPolicyConstraints
-			_ = json.Unmarshal([]byte(item.(string)), &constraint)
-			constraints = append(constraints, &constraint)
-		}
-	}
-	rule.Actions.AppSignOn.VerificationMethod.Constraints = constraints
 	return rule
 }
 
