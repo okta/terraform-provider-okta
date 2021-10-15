@@ -14,6 +14,8 @@ const (
 	SignOnPolicyType             = "OKTA_SIGN_ON"
 	SignOnPolicyRuleType         = "SIGN_ON"
 	MfaPolicyType                = "MFA_ENROLL"
+	AccessPolicyType             = "ACCESS_POLICY"
+	ProfileEnrollmentPolicyType  = "PROFILE_ENROLLMENT"
 	IdpDiscoveryType             = "IDP_DISCOVERY"
 	OauthAuthorizationPolicyType = "OAUTH_AUTHORIZATION_POLICY"
 )

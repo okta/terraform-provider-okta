@@ -145,7 +145,7 @@ func ensureNotDefaultRule(d *schema.ResourceData) error {
 	return ensureNotDefault(d, "Rule")
 }
 
-func getNetwork(d *schema.ResourceData) *okta.PolicyNetworkCondition {
+func buildPolicyNetworkCondition(d *schema.ResourceData) *okta.PolicyNetworkCondition {
 	return &okta.PolicyNetworkCondition{
 		Connection: d.Get("network_connection").(string),
 		Exclude:    convertInterfaceToStringArrNullable(d.Get("network_excludes")),
@@ -184,10 +184,10 @@ func getPolicyRule(ctx context.Context, d *schema.ResourceData, m interface{}) (
 func getUsers(d *schema.ResourceData) *okta.PolicyPeopleCondition {
 	var people *okta.PolicyPeopleCondition
 
-	if include, ok := d.GetOk("users_excluded"); ok {
+	if exclude, ok := d.GetOk("users_excluded"); ok {
 		people = &okta.PolicyPeopleCondition{
 			Users: &okta.UserCondition{
-				Exclude: convertInterfaceToStringSet(include),
+				Exclude: convertInterfaceToStringSet(exclude),
 			},
 		}
 	}
