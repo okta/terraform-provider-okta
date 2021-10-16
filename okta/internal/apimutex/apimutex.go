@@ -26,10 +26,11 @@ const (
 )
 
 // APIMutex synchronizes keeping account of current known rate limit values
-// from Okta management endpoints. Specifically apps, users, and other, see:
-// https://developer.okta.com/docs/reference/rl-global-mgmt/ The Okta Terraform
-// Provider can not account for all other kinds of clients utilization of API
-// limits but it can account for its own usage and attempt to preemptively
+// from Okta management endpoints. See:
+// https://developer.okta.com/docs/reference/rl-global-mgmt/
+//
+// The Okta Terraform Provider can not account for other clients consumption of
+// API limits but it can account for its own usage and attempt to preemptively
 // react appropriately.
 type APIMutex struct {
 	lock     sync.Mutex
@@ -122,36 +123,79 @@ func (m *APIMutex) Status(method, endPoint string) *APIStatus {
 	return m.get(method, endPoint)
 }
 
-var reAppId = regexp.MustCompile("/api/v1/apps/[^/]+$")
-var reGroupId = regexp.MustCompile("/api/v1/groups/[^/]+$")
+var (
+	reAppId   = regexp.MustCompile("/api/v1/apps/[^/]+$")
+	reGroupId = regexp.MustCompile("/api/v1/groups/[^/]+$")
+	reUserId  = regexp.MustCompile("/api/v1/users/[^/]+$")
+)
 
 func (m *APIMutex) normalizeKey(method, endPoint string) string {
+	// Okta internal: see rate-limit-mappings-CLASSIC-DEFAULT.txt file in core
+	// repo.  It corresponds to:
+	// https://developer.okta.com/docs/reference/rl-best-practices/
+	//
+	// TODO: API rate limits can be overwritten by the org admin, we should come
+	//       up with a way to accommodate for that.  Perhaps caching an APIStatus
+	//       struct on the SHA of http method + URI path.
+
+	getPutDelete := (http.MethodGet == method) ||
+		(http.MethodPut == method) ||
+		(http.MethodDelete == method)
+	postPutDelete := (http.MethodPost == method) ||
+		(http.MethodPut == method) ||
+		(http.MethodDelete == method)
 	var result string
+
 	switch {
-	case endPoint == "/api/v1/apps":
-		result = APPS_KEY
-	case reAppId.MatchString(endPoint):
+	//  1. [GET|PUT|DELETE] /api/v1/apps/${id}
+	case reAppId.MatchString(endPoint) && getPutDelete:
 		result = APPID_KEY
-	case endPoint == "/api/v1/certificateAuthorities":
-		result = CAS_KEY
-	case endPoint == "/oauth2/v1/clients":
-		result = CLIENTS_KEY
-	case endPoint == "/api/v1/devices":
-		result = DEVICES_KEY
-	case endPoint == "/api/v1/events":
-		result = EVENTS_KEY
-	case endPoint == "/api/v1/groups":
-		result = GROUPS_KEY
-	case reGroupId.MatchString(endPoint):
+
+	//  2. starts with /api/v1/apps
+	case strings.HasPrefix(endPoint, "/api/v1/apps"):
+		result = APPS_KEY
+
+	//  3. [GET|PUT|DELETE] /api/v1/groups/${id}
+	case reGroupId.MatchString(endPoint) && getPutDelete:
 		result = GROUPID_KEY
-	case endPoint == "/api/v1/logs":
-		result = LOGS_KEY
-	case endPoint == "/api/v1/users":
-		result = USERS_KEY
-	case method == http.MethodGet && strings.HasPrefix(endPoint, "/api/v1/users/"):
-		result = USERIDGET_KEY
-	case strings.HasPrefix(endPoint, "/api/v1/users/"):
+
+	//  4. starts with /api/v1/groups
+	case strings.HasPrefix(endPoint, "/api/v1/groups"):
+		result = GROUPS_KEY
+
+	//  5. [POST|PUT|DELETE] /api/v1/users/${id}
+	case reUserId.MatchString(endPoint) && postPutDelete:
 		result = USERID_KEY
+
+	//  6. [GET] /api/v1/users/${idOrLogin}
+	case reUserId.MatchString(endPoint) && method == http.MethodGet:
+		result = USERIDGET_KEY
+
+	//  7. starts with /api/v1/users
+	case strings.HasPrefix(endPoint, "/api/v1/users"):
+		result = USERS_KEY
+
+	//  8. GET /api/v1/logs
+	case endPoint == "/api/v1/logs" && method == http.MethodGet:
+		result = LOGS_KEY
+
+	//  9. GET /api/v1/events
+	case endPoint == "/api/v1/events" && method == http.MethodGet:
+		result = EVENTS_KEY
+
+	// 10. GET /oauth2/v1/clients
+	case endPoint == "/oauth2/v1/clients" && method == http.MethodGet:
+		result = CLIENTS_KEY
+
+	// 11. GET /api/v1/certificateAuthorities
+	case endPoint == "/api/v1/certificateAuthorities" && method == http.MethodGet:
+		result = CAS_KEY
+
+	// 12. GET /api/v1/devices
+	case endPoint == "/api/v1/devices" && method == http.MethodGet:
+		result = DEVICES_KEY
+
+	// 13. GET /api/v1
 	default:
 		result = "other"
 	}
