@@ -21,6 +21,7 @@ const (
 	LOGS_KEY      = "logs"
 	USERS_KEY     = "users"
 	USERID_KEY    = "user-id"
+	USERME_KEY    = "user-me"
 	USERIDGET_KEY = "user-id-get"
 	OTHER_KEY     = "other"
 )
@@ -66,6 +67,7 @@ func NewAPIMutex(capacity int) (*APIMutex, error) {
 		OTHER_KEY:     {class: OTHER_KEY},
 		USERS_KEY:     {class: USERS_KEY},
 		USERID_KEY:    {class: USERID_KEY},
+		USERME_KEY:    {class: USERME_KEY},
 		USERIDGET_KEY: {class: USERIDGET_KEY},
 	}
 	return &APIMutex{
@@ -163,39 +165,44 @@ func (m *APIMutex) normalizeKey(method, endPoint string) string {
 	case strings.HasPrefix(endPoint, "/api/v1/groups"):
 		result = GROUPS_KEY
 
-	//  5. [POST|PUT|DELETE] /api/v1/users/${id}
+	// 5. GET /api/v1/users/me
+	// NOTE: this is not documented in the devex docs
+	case endPoint == "/api/v1/users/me" && method == http.MethodGet:
+		result = USERME_KEY
+
+	//  6. [POST|PUT|DELETE] /api/v1/users/${id}
 	case reUserId.MatchString(endPoint) && postPutDelete:
 		result = USERID_KEY
 
-	//  6. [GET] /api/v1/users/${idOrLogin}
+	//  7. [GET] /api/v1/users/${idOrLogin}
 	case reUserId.MatchString(endPoint) && method == http.MethodGet:
 		result = USERIDGET_KEY
 
-	//  7. starts with /api/v1/users
+	//  8. starts with /api/v1/users
 	case strings.HasPrefix(endPoint, "/api/v1/users"):
 		result = USERS_KEY
 
-	//  8. GET /api/v1/logs
+	//  9. GET /api/v1/logs
 	case endPoint == "/api/v1/logs" && method == http.MethodGet:
 		result = LOGS_KEY
 
-	//  9. GET /api/v1/events
+	// 10. GET /api/v1/events
 	case endPoint == "/api/v1/events" && method == http.MethodGet:
 		result = EVENTS_KEY
 
-	// 10. GET /oauth2/v1/clients
+	// 11. GET /oauth2/v1/clients
 	case endPoint == "/oauth2/v1/clients" && method == http.MethodGet:
 		result = CLIENTS_KEY
 
-	// 11. GET /api/v1/certificateAuthorities
+	// 12. GET /api/v1/certificateAuthorities
 	case endPoint == "/api/v1/certificateAuthorities" && method == http.MethodGet:
 		result = CAS_KEY
 
-	// 12. GET /api/v1/devices
+	// 13. GET /api/v1/devices
 	case endPoint == "/api/v1/devices" && method == http.MethodGet:
 		result = DEVICES_KEY
 
-	// 13. GET /api/v1
+	// 14. GET /api/v1
 	default:
 		result = "other"
 	}

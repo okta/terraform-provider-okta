@@ -131,34 +131,37 @@ func TestNormalizeKey(t *testing.T) {
 		{method: http.MethodGet, endPoint: "/api/v1/groups", expected: "groups"},
 		{method: http.MethodGet, endPoint: "/api/v1/groups/TESTID/apps", expected: "groups"},
 
-		//  5. [POST|PUT|DELETE] /api/v1/users/${id}
+		//  5. GET /api/v1/users/me
+		{method: http.MethodGet, endPoint: "/api/v1/users/me", expected: "user-me"},
+
+		//  6. [POST|PUT|DELETE] /api/v1/users/${id}
 		{method: http.MethodPost, endPoint: "/api/v1/users/TESTID", expected: "user-id"},
 		{method: http.MethodPut, endPoint: "/api/v1/users/TESTID", expected: "user-id"},
 		{method: http.MethodDelete, endPoint: "/api/v1/users/TESTID", expected: "user-id"},
 
-		//  6. [GET] /api/v1/users/${idOrLogin}
+		//  7. [GET] /api/v1/users/${idOrLogin}
 		{method: http.MethodGet, endPoint: "/api/v1/users/TESTID", expected: "user-id-get"},
 
-		//  7. starts with /api/v1/users
+		//  8. starts with /api/v1/users
 		{method: http.MethodGet, endPoint: "/api/v1/users", expected: "users"},
 		{method: http.MethodGet, endPoint: "/api/v1/users/TESTID/devices", expected: "users"},
 
-		//  8. GET /api/v1/logs
+		//  9. GET /api/v1/logs
 		{method: http.MethodGet, endPoint: "/api/v1/logs", expected: "logs"},
 
-		//  9. GET /api/v1/events
+		// 10. GET /api/v1/events
 		{method: http.MethodGet, endPoint: "/api/v1/events", expected: "events"},
 
-		// 10. GET /oauth2/v1/clients
+		// 11. GET /oauth2/v1/clients
 		{method: http.MethodGet, endPoint: "/oauth2/v1/clients", expected: "clients"},
 
-		// 11. GET /api/v1/certificateAuthorities
+		// 12. GET /api/v1/certificateAuthorities
 		{method: http.MethodGet, endPoint: "/api/v1/certificateAuthorities", expected: "cas-id"},
 
-		// 12. GET /api/v1/devices
+		// 13. GET /api/v1/devices
 		{method: http.MethodGet, endPoint: "/api/v1/devices", expected: "devices"},
 
-		// 13. GET /api/v1
+		// 14. GET /api/v1
 		{method: http.MethodGet, endPoint: "/api/v1/authorizationServers", expected: "other"},
 		{method: http.MethodGet, endPoint: "/api/v1/authorizationServers/TESTID", expected: "other"},
 		{method: http.MethodGet, endPoint: "/api/v1/behaviors", expected: "other"},
