@@ -314,6 +314,7 @@ func Provider() *schema.Provider {
 			"okta_auth_server_scopes":          dataSourceAuthServerScopes(),
 			userType:                           dataSourceUserType(),
 			userSecurityQuestions:              dataSourceUserSecurityQuestions(),
+			networkZone:                        dataSourceNetworkZone(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
