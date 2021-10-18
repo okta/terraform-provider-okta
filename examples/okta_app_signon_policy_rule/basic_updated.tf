@@ -59,7 +59,7 @@ data "okta_user_type" "default" {
 }
 
 resource "okta_app_signon_policy_rule" "test" {
-  name                                   = "testAcc_replace_with_uuid"
+  name                                   = "testAcc_replace_with_uuid_updated"
   policy_id                              = data.okta_app_signon_policy.test.id
   access                                 = "ALLOW"
   custom_expression                      = "user.status == \"ACTIVE\""

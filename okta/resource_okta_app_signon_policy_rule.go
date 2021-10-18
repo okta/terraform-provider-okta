@@ -28,6 +28,13 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				Required:    true,
 				Description: "ID of the policy",
 			},
+			"status": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
+				Description:      "Status of the rule",
+				Default:          statusActive,
+			},
 			"priority": {
 				Type:     schema.TypeInt,
 				Optional: true,
@@ -200,6 +207,7 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 	}
 	_ = d.Set("name", rule.Name)
 	_ = d.Set("priority", int(rule.Priority))
+	_ = d.Set("status", rule.Status)
 	if rule.Actions.AppSignOn != nil {
 		_ = d.Set("access", rule.Actions.AppSignOn.Access)
 		if rule.Actions.AppSignOn.VerificationMethod != nil {
@@ -272,6 +280,14 @@ func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceAppSignOnPolicyRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if d.Get("name") == "Catch-all Rule" {
+		// You cannot delete a default rule in a policy
+		return nil
+	}
+	_, err := getSupplementFromMetadata(m).DeleteAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+	if err != nil {
+		return diag.Errorf("failed to delete app sign-on policy rule: %v", err)
+	}
 	return nil
 }
 

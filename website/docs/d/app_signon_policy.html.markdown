@@ -8,7 +8,7 @@ description: |-
 
 # okta_app_signon_policy
 
-~> **IMPORTANT NOTE:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
+~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
 
 Use this data source to retrieve a sign-on policy for the application.
 
