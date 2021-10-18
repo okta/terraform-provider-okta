@@ -19,6 +19,11 @@ func resourceAppSharedCredentials() *schema.Resource {
 			StateContext: appImporter,
 		},
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
+			"preconfigured_app": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Preconfigured app name",
+			},
 			"button_field": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -158,6 +163,10 @@ func resourceAppSharedCredentialsDelete(ctx context.Context, d *schema.ResourceD
 func buildAppSharedCredentials(d *schema.ResourceData) *okta.BrowserPluginApplication {
 	app := okta.NewBrowserPluginApplication()
 	app.Name = "template_swa"
+	name := d.Get("preconfigured_app").(string)
+	if name != "" {
+		app.Name = name
+	}
 	app.Label = d.Get("label").(string)
 	app.Settings = &okta.ApplicationSettings{
 		App: &okta.ApplicationSettingsApplication{
