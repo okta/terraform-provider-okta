@@ -268,12 +268,14 @@ func resourceAppOAuth() *schema.Resource {
 			"refresh_token_rotation": {
 				Type:             schema.TypeString,
 				Optional:         true,
+				Computed:         true,
 				ValidateDiagFunc: elemInSlice([]string{"STATIC", "ROTATE"}),
 				Description:      "*Early Access Property* Refresh token rotation behavior",
 			},
 			"refresh_token_leeway": {
 				Type:             schema.TypeInt,
 				Optional:         true,
+				Computed:         true,
 				ValidateDiagFunc: intBetween(0, 60),
 				Description:      "*Early Access Property* Grace period for token rotation",
 			},
@@ -789,11 +791,6 @@ func validateGrantTypes(d *schema.ResourceData) error {
 }
 
 func validateAppOAuth(d *schema.ResourceData) error {
-	rtr := d.Get("refresh_token_rotation")
-	rtl := d.Get("refresh_token_leeway")
-	if rtr.(string) == "STATIC" && rtl.(int) != 0 {
-		return errors.New("you can not set 'refresh_token_leeway' when 'refresh_token_rotation' is static")
-	}
 	raw, ok := d.GetOk("groups_claim")
 	if ok {
 		groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
