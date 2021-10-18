@@ -59,25 +59,24 @@ data "okta_user_type" "default" {
 }
 
 resource "okta_app_signon_policy_rule" "test" {
-  name                                   = "testAcc_replace_with_uuid_updated"
-  policy_id                              = data.okta_app_signon_policy.test.id
-  access                                 = "ALLOW"
-  custom_expression                      = "user.status == \"ACTIVE\""
-  device_is_managed                      = false
-  device_is_registered                   = true
-  factor_mode                            = "2FA"
-  groups_excluded                        = [
+  name                        = "testAcc_replace_with_uuid_updated"
+  policy_id                   = data.okta_app_signon_policy.test.id
+  access                      = "ALLOW"
+  custom_expression           = "user.status == \"ACTIVE\""
+  device_is_managed           = false
+  device_is_registered        = true
+  factor_mode                 = "2FA"
+  groups_excluded             = [
     okta_group.this[2].id,
     okta_group.this[3].id,
     okta_group.this[4].id
   ]
-  groups_included                        = [
+  groups_included             = [
     okta_group.this[0].id,
     okta_group.this[1].id
   ]
-  inactivity_re_authentication_frequency = "PT10H"
-  network_connection                     = "ZONE"
-  network_includes                       = [
+  network_connection          = "ZONE"
+  network_includes            = [
     okta_network_zone.test.id
   ]
   platform_include {
@@ -104,25 +103,25 @@ resource "okta_app_signon_policy_rule" "test" {
     os_type = "WINDOWS"
     type    = "DESKTOP"
   }
-  priority                               = 98
-  re_authentication_frequency            = "PT43800H"
-  type                                   = "ASSURANCE"
-  user_types_excluded                    = [
+  priority                    = 98
+  re_authentication_frequency = "PT43800H"
+  type                        = "ASSURANCE"
+  user_types_excluded         = [
     okta_user_type.test.id
   ]
-  user_types_included                    = [
+  user_types_included         = [
     data.okta_user_type.default.id
   ]
-  users_excluded                         = [
+  users_excluded              = [
     okta_user.test[2].id,
     okta_user.test[3].id,
     okta_user.test[4].id
   ]
-  users_included                         = [
+  users_included              = [
     okta_user.test[0].id,
     okta_user.test[1].id
   ]
-  constraints                            = [
+  constraints                 = [
     jsonencode({
       "knowledge" : {
         "reauthenticateIn" : "PT2H",

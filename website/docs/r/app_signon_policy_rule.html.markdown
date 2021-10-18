@@ -201,7 +201,6 @@ resource "okta_app_signon_policy_rule" "test" {
     okta_group.this[0].id,
     okta_group.this[1].id
   ]
-  inactivity_re_authentication_frequency = "PT10H"
   network_connection                     = "ZONE"
   network_includes                       = [
     okta_network_zone.test.id
@@ -317,8 +316,6 @@ The following arguments are supported:
 - `type` - (Optional) The Verification Method type. It can be set to `"ASSURANCE"`. Default is `"ASSURANCE"`.
 
 - `re_authentication_frequency` - (Optional) The duration after which the end user must re-authenticate, regardless of user activity. Use the ISO 8601 Period format for recurring time intervals. `"PT0S"` - every sign-in attempt, `"PT43800H"` - once per session. Default is `"PT2H"`.
-
-- `inactivity_re_authentication_frequency` - (Optional) The inactivity duration after which the end user must re-authenticate. Use the ISO 8601 Period format for recurring time intervals.
 
 - `constraints` - (Optional) - An array that contains nested Authenticator Constraint objects that are organized by the Authenticator class. Each element should be in JSON format.
 
