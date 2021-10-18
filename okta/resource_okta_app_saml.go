@@ -2,7 +2,6 @@ package okta
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -38,6 +37,10 @@ var (
 	}
 )
 
+func isValidSkipArg(s string) bool {
+	return s == "skip_users" || s == "skip_groups"
+}
+
 func resourceAppSaml() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppSamlCreate,
@@ -45,7 +48,7 @@ func resourceAppSaml() *schema.Resource {
 		UpdateContext: resourceAppSamlUpdate,
 		DeleteContext: resourceAppSamlDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: appImporter,
 		},
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
@@ -128,6 +131,12 @@ func resourceAppSaml() *schema.Resource {
 				Optional:    true,
 				Default:     false,
 				Description: "Do not display application icon to users",
+			},
+			"implicit_assignment": {
+				Type:          schema.TypeBool,
+				Optional:      true,
+				Description:   "*Early Access Property*. Enable Federation Broker Mode.",
+				ConflictsWith: []string{"groups", "users"},
 			},
 			"default_relay_state": {
 				Type:        schema.TypeString,
@@ -222,24 +231,6 @@ func resourceAppSaml() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Identifies the SAML authentication context class for the assertion’s authentication statement",
-			},
-			"accessibility_self_service": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Enable self service",
-			},
-			"accessibility_error_redirect_url": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Custom error page URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
-			},
-			"accessibility_login_redirect_url": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Custom login page URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"features": {
 				Type:        schema.TypeSet,
@@ -384,6 +375,14 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interf
 	}
 	// Make sure to track in terraform prior to the creation of cert in case there is an error.
 	d.SetId(app.Id)
+	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
+	// So Skip setting assignments while this is on
+	if !d.Get("implicit_assignment").(bool) {
+		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
+		if err != nil {
+			return diag.Errorf("failed to handle groups and users for SAML application: %v", err)
+		}
+	}
 	err = tryCreateCertificate(ctx, d, m, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to create new certificate for SAML application: %v", err)
@@ -421,12 +420,17 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 			return diag.Errorf("failed to set SAML app settings: %v", err)
 		}
 	}
-	_ = d.Set("features", convertStringSetToInterface(app.Features))
+	_ = d.Set("features", convertStringSliceToSetNullable(app.Features))
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	_ = d.Set("preconfigured_app", app.Name)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
+	if app.Settings.ImplicitAssignment != nil {
+		_ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
+	} else {
+		_ = d.Set("implicit_assignment", false)
+	}
 	if app.Credentials.Signing.Kid != "" && app.Status != statusInactive {
 		keyID := app.Credentials.Signing.Kid
 		_ = d.Set("key_id", keyID)
@@ -455,9 +459,12 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	} else {
 		_ = d.Set("saml_version", saml20)
 	}
-	err = syncGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to sync groups and users for SAML application: %v", err)
+	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
+	// So Skip setting assignments while this is on
+	if !d.Get("implicit_assignment").(bool) {
+		if err = syncGroupsAndUsers(ctx, app.Id, d, m); err != nil {
+			return diag.Errorf("failed to sync groups and users for OAuth application: %v", err)
+		}
 	}
 	return nil
 }
@@ -472,13 +479,13 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	if err != nil {
 		return diag.Errorf("failed to create SAML application: %v", err)
 	}
-	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
-	if err != nil {
-		return diag.Errorf("failed to update SAML application: %v", err)
-	}
 	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
 		return diag.Errorf("failed to set SAML application status: %v", err)
+	}
+	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
+	if err != nil {
+		return diag.Errorf("failed to update SAML application: %v", err)
 	}
 	if d.HasChange("key_name") {
 		err = tryCreateCertificate(ctx, d, m, app.Id)
@@ -486,9 +493,13 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 			return diag.Errorf("failed to create new certificate for SAML application: %v", err)
 		}
 	}
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for SAML application: %v", err)
+	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
+	// So Skip setting assignments while this is on
+	if !d.Get("implicit_assignment").(bool) {
+		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
+		if err != nil {
+			return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
+		}
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
@@ -496,6 +507,15 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 			o, _ := d.GetChange("logo")
 			_ = d.Set("logo", o)
 			return diag.Errorf("failed to upload logo for SAML application: %v", err)
+		}
+	}
+	isStatusChaged := d.HasChange("status")
+	if isStatusChaged {
+		s := d.Get("status").(string)
+		if s == "ACTIVE" {
+			// activate
+		} else {
+			// deactivate
 		}
 	}
 	return resourceAppSamlRead(ctx, d, m)
@@ -535,32 +555,15 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	}
 
 	honorForce := d.Get("honor_force_authn").(bool)
-	autoSubmit := d.Get("auto_submit_toolbar").(bool)
-	hideMobile := d.Get("hide_ios").(bool)
-	hideWeb := d.Get("hide_web").(bool)
-	a11ySelfService := d.Get("accessibility_self_service").(bool)
 	app.Settings = &okta.SamlApplicationSettings{
-		Notes: buildAppNotes(d),
+		ImplicitAssignment: boolPtr(d.Get("implicit_assignment").(bool)),
+		Notes:              buildAppNotes(d),
 	}
-	app.Visibility = &okta.ApplicationVisibility{
-		AutoSubmitToolbar: &autoSubmit,
-		Hide: &okta.ApplicationVisibilityHide{
-			IOS: &hideMobile,
-			Web: &hideWeb,
-		},
-	}
-	if appSettings, ok := d.GetOk("app_settings_json"); ok {
-		payload := map[string]interface{}{}
-		_ = json.Unmarshal([]byte(appSettings.(string)), &payload)
-		settings := okta.ApplicationSettingsApplication(payload)
-		app.Settings.App = &settings
-	} else {
-		// we should provide empty app, even if there are no values
-		// see https://github.com/okta/terraform-provider-okta/pull/226#issuecomment-744545051
-		settings := okta.ApplicationSettingsApplication(map[string]interface{}{})
-		app.Settings.App = &settings
-	}
-	app.Features = convertInterfaceToStringSet(d.Get("features"))
+	app.Visibility = buildAppVisibility(d)
+	app.Accessibility = buildAppAccessibility(d)
+	app.Settings.App = buildAppSettings(d)
+	// Note: You can't currently configure provisioning features via the API. Use the administrator UI.
+	// app.Features = convertInterfaceToStringSet(d.Get("features"))
 	app.Settings.SignOn = &okta.SamlApplicationSettingsSignOn{
 		DefaultRelayState:     d.Get("default_relay_state").(string),
 		SsoAcsUrl:             d.Get("sso_url").(string),
@@ -595,11 +598,6 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 			Type:     d.Get("user_name_template_type").(string),
 			Suffix:   d.Get("user_name_template_suffix").(string),
 		},
-	}
-	app.Accessibility = &okta.ApplicationAccessibility{
-		SelfService:      &a11ySelfService,
-		ErrorRedirectUrl: d.Get("accessibility_error_redirect_url").(string),
-		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
 	}
 
 	// Assumes that sso url is already part of the acs endpoints as part of the desired state.

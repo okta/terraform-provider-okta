@@ -3,8 +3,9 @@ resource "okta_app_saml" "test" {
   label             = "testAcc_replace_with_uuid"
 
   app_settings_json = <<JSON
-{
-  "subdomain": "articulate"
-}
+  {
+    "subdomain": "articulate",
+    "baseUrl": "https://example.com"
+  }
 JSON
 }

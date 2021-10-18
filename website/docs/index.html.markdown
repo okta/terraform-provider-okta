@@ -21,7 +21,7 @@ terraform {
   required_providers {
     okta = {
       source = "okta/okta"
-      version = "~> 3.10"
+      version = "~> 3.14"
     }
   }
 }
@@ -84,7 +84,7 @@ In addition to [generic `provider` arguments](https://www.terraform.io/docs/conf
 
 - `base_url` - (Optional) This is the domain of your Okta account, for example `dev-123456.oktapreview.com` would have a base url of `oktapreview.com`. It must be provided, but it can also be sourced from the `OKTA_BASE_URL` environment variable.
 
-- `api_token` - (Optional) This is the API token to interact with your Okta org (either `"api_token"` or `"client_id"`, `"scopesv` and `"private_key"` must be provided). It can also be sourced from the `OKTA_API_TOKEN` environment variable.
+- `api_token` - (Optional) This is the API token to interact with your Okta org (either `"api_token"` or `"client_id"`, `"scopes"` and `"private_key"` must be provided). It can also be sourced from the `OKTA_API_TOKEN` environment variable.
 
 - `client_id` - (Optional) This is the client ID for obtaining the API token. It can also be sourced from the `OKTA_API_CLIENT_ID` environment variable. 
 

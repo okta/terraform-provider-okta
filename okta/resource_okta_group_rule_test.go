@@ -14,7 +14,7 @@ import (
 func sweepGroupRules(client *testClient) error {
 	var errorList []error
 	// Should never need to deal with pagination
-	rules, _, err := client.oktaClient.Group.ListGroupRules(context.Background(), &query.Params{Limit: 300})
+	rules, _, err := client.oktaClient.Group.ListGroupRules(context.Background(), &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return err
 	}
@@ -78,6 +78,7 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name2),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
+					resource.TestCheckResourceAttr(resourceName, "users_excluded.#", "1"),
 				),
 			},
 		},

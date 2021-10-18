@@ -118,7 +118,11 @@ func convertInterfaceToStringSet(purportedSet interface{}) []string {
 }
 
 func convertInterfaceToStringSetNullable(purportedSet interface{}) []string {
-	return convertInterfaceToStringArrNullable(purportedSet.(*schema.Set).List())
+	set, ok := purportedSet.(*schema.Set)
+	if ok {
+		return convertInterfaceToStringArrNullable(set.List())
+	}
+	return nil
 }
 
 func convertInterfaceToStringArr(purportedList interface{}) []string {
@@ -173,7 +177,10 @@ func createCustomNestedResourceImporter(fields []string, errMessage string) *sch
 	}
 }
 
-func convertStringArrToInterface(stringList []string) []interface{} {
+func convertStringSliceToInterfaceSlice(stringList []string) []interface{} {
+	if len(stringList) == 0 {
+		return nil
+	}
 	arr := make([]interface{}, len(stringList))
 	for i, str := range stringList {
 		arr[i] = str
@@ -181,7 +188,18 @@ func convertStringArrToInterface(stringList []string) []interface{} {
 	return arr
 }
 
-func convertStringSetToInterface(stringList []string) *schema.Set {
+func convertStringSliceToSet(stringList []string) *schema.Set {
+	arr := make([]interface{}, len(stringList))
+	for i, str := range stringList {
+		arr[i] = str
+	}
+	return schema.NewSet(schema.HashString, arr)
+}
+
+func convertStringSliceToSetNullable(stringList []string) *schema.Set {
+	if len(stringList) == 0 {
+		return nil
+	}
 	arr := make([]interface{}, len(stringList))
 	for i, str := range stringList {
 		arr[i] = str

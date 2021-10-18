@@ -15,16 +15,16 @@ import (
 
 func resourceAppUserSchemaProperty() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceAppUserSchemaCreate,
-		ReadContext:   resourceAppUserSchemaRead,
-		UpdateContext: resourceAppUserSchemaUpdate,
-		DeleteContext: resourceAppUserSchemaDelete,
+		CreateContext: resourceAppUserSchemaPropertyCreate,
+		ReadContext:   resourceAppUserSchemaPropertyRead,
+		UpdateContext: resourceAppUserSchemaPropertyUpdate,
+		DeleteContext: resourceAppUserSchemaPropertyDelete,
 		Importer:      createNestedResourceImporter([]string{"app_id", "index"}),
 		Schema: buildSchema(
 			userSchemaSchema,
 			userBaseSchemaSchema,
 			userTypeSchema,
-			userPatternSchema,
+			// userPatternSchema,
 			map[string]*schema.Schema{
 				"app_id": {
 					Type:     schema.TypeString,
@@ -107,32 +107,44 @@ func resourceAppUserSchemaResourceV0() *schema.Resource {
 	}, userSchemaSchema, userBaseSchemaSchema)}
 }
 
-func resourceAppUserSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := validateAppUserSchema(d)
+func resourceAppUserSchemaPropertyCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := setAppUserSchemaProperty(ctx, d, m)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if err := updateAppUserSubschema(ctx, d, m); err != nil {
-		return err
-	}
 	d.SetId(fmt.Sprintf("%s/%s", d.Get("app_id").(string), d.Get("index").(string)))
-	bOff := backoff.NewExponentialBackOff()
-	bOff.MaxElapsedTime = time.Second * 10
-	bOff.InitialInterval = time.Second
-	err = backoff.Retry(func() error {
-		err := resourceAppUserSchemaRead(ctx, d, m)
-		if err != nil {
-			return backoff.Permanent(fmt.Errorf("%s", err[0].Summary))
-		}
-		if d.Id() != "" {
-			return nil
-		}
-		return fmt.Errorf("application user schema property %s was not created in app %s", d.Get("index").(string), d.Get("app_id").(string))
-	}, bOff)
-	return diag.FromErr(err)
+	return resourceAppUserSchemaPropertyRead(ctx, d, m)
 }
 
-func resourceAppUserSchemaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func setAppUserSchemaProperty(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	err := validateAppUserSchemaProperty(d)
+	if err != nil {
+		return err
+	}
+	bOff := backoff.NewExponentialBackOff()
+	bOff.MaxElapsedTime = time.Second * 30
+	bOff.InitialInterval = time.Second
+	err = backoff.Retry(func() error {
+		if err := updateAppUserSubSchemaProperty(ctx, d, m); err != nil {
+			if errors.Is(err, errInvalidElemFormat) {
+				return backoff.Permanent(err)
+			}
+			return err
+		}
+		us, resp, err := getOktaClientFromMetadata(m).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
+		if err := suppressErrorOn404(resp, err); err != nil {
+			return err
+		}
+		subSchema := userSchemaCustomAttribute(us, d.Get("index").(string))
+		if subSchema == nil {
+			return fmt.Errorf("application user schema property '%s' was not created/updated for '%s' app", d.Get("index").(string), d.Get("app_id").(string))
+		}
+		return nil
+	}, bOff)
+	return err
+}
+
+func resourceAppUserSchemaPropertyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	us, resp, err := getOktaClientFromMetadata(m).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get application user schema property: %v", err)
@@ -156,42 +168,29 @@ func resourceAppUserSchemaRead(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func resourceAppUserSchemaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := validateAppUserSchema(d)
+func resourceAppUserSchemaPropertyUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := setAppUserSchemaProperty(ctx, d, m)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if err := updateAppUserSubschema(ctx, d, m); err != nil {
-		return err
-	}
-	bOff := backoff.NewExponentialBackOff()
-	bOff.MaxElapsedTime = time.Second * 10
-	bOff.InitialInterval = time.Second
-	err = backoff.Retry(func() error {
-		err := resourceAppUserSchemaRead(ctx, d, m)
-		if err != nil {
-			return backoff.Permanent(fmt.Errorf("%s", err[0].Summary))
-		}
-		if d.Id() != "" {
-			return nil
-		}
-		return fmt.Errorf("application user schema property %s was not created in the app %s", d.Get("index").(string), d.Get("app_id").(string))
-	}, bOff)
-	return diag.FromErr(err)
+	return resourceAppUserSchemaPropertyRead(ctx, d, m)
 }
 
-func resourceAppUserSchemaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppUserSchemaPropertyDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	custom := buildCustomUserSchema(d.Get("index").(string), nil)
 	_, _, err := getOktaClientFromMetadata(m).UserSchema.
 		UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
 	if err != nil {
-		return diag.Errorf("failed to delete application user schema property")
+		return diag.Errorf("failed to delete application user schema property: %v", err)
 	}
 	return nil
 }
 
-func updateAppUserSubschema(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	subSchema := buildUserCustomSchemaAttribute(d)
+func updateAppUserSubSchemaProperty(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	subSchema, err := buildUserCustomSchemaAttribute(d)
+	if err != nil {
+		return err
+	}
 	if d.Get("union").(bool) {
 		subSchema.Union = "ENABLE"
 	} else {
@@ -201,29 +200,29 @@ func updateAppUserSubschema(ctx context.Context, d *schema.ResourceData, m inter
 	bOff := backoff.NewExponentialBackOff()
 	bOff.MaxElapsedTime = time.Second * 10
 	bOff.InitialInterval = time.Second
-	err := backoff.Retry(func() error {
+	err = backoff.Retry(func() error {
 		_, _, err := getOktaClientFromMetadata(m).UserSchema.
 			UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
-		if err != nil {
-			var oktaErr *okta.Error
-			if errors.As(err, &oktaErr) {
-				for i := range oktaErr.ErrorCauses {
-					for _, sum := range oktaErr.ErrorCauses[i] {
-						if strings.Contains(sum.(string), "deletion process for an attribute with the same variable name is incomplete") {
-							return err
-						}
+		if err == nil {
+			return nil
+		}
+		var oktaErr *okta.Error
+		if errors.As(err, &oktaErr) {
+			for i := range oktaErr.ErrorCauses {
+				for _, sum := range oktaErr.ErrorCauses[i] {
+					if strings.Contains(sum.(string), "deletion process for an attribute with the same variable name is incomplete") {
+						return err
 					}
 				}
-				return backoff.Permanent(fmt.Errorf("failed to update custom app user schema property: %w", err))
 			}
 			return backoff.Permanent(fmt.Errorf("failed to update custom app user schema property: %w", err))
 		}
-		return nil
+		return backoff.Permanent(fmt.Errorf("failed to update custom app user schema property: %w", err))
 	}, bOff)
-	return diag.FromErr(err)
+	return err
 }
 
-func validateAppUserSchema(d *schema.ResourceData) error {
+func validateAppUserSchemaProperty(d *schema.ResourceData) error {
 	if scope, ok := d.GetOk("scope"); ok {
 		if union, ok := d.GetOk("union"); ok {
 			if scope == "SELF" && union.(bool) {

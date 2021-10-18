@@ -15,7 +15,7 @@ import (
 func dataSourceAppOauth() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppOauthRead,
-		Schema: map[string]*schema.Schema{
+		Schema: buildSchema(skipUsersAndGroupsSchema, map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
 				Optional:      true,
@@ -148,7 +148,7 @@ func dataSourceAppOauth() *schema.Resource {
 				Computed:    true,
 				Description: "Indicates if the client is allowed to use wildcard matching of redirect_uris",
 			},
-		},
+		}),
 	}
 }
 
@@ -185,12 +185,10 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 		logger(m).Info("found multiple OAuth applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
 	}
-	users, groups, err := listAppUsersIDsAndGroupsIDs(ctx, getOktaClientFromMetadata(m), app.Id)
+	err = setAppUsersIDsAndGroupsIDs(ctx, d, getOktaClientFromMetadata(m), app.Id)
 	if err != nil {
 		return diag.Errorf("failed to list OAuth's app groups and users: %v", err)
 	}
-	_ = d.Set("groups", convertStringSetToInterface(groups))
-	_ = d.Set("users", convertStringSetToInterface(users))
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
 	_ = d.Set("name", app.Name)
@@ -214,14 +212,14 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 		grantTypes[i] = string(*app.Settings.OauthClient.GrantTypes[i])
 	}
 	aggMap := map[string]interface{}{
-		"redirect_uris":             convertStringSetToInterface(app.Settings.OauthClient.RedirectUris),
-		"response_types":            convertStringSetToInterface(respTypes),
-		"grant_types":               convertStringSetToInterface(grantTypes),
-		"post_logout_redirect_uris": convertStringSetToInterface(app.Settings.OauthClient.PostLogoutRedirectUris),
+		"redirect_uris":             convertStringSliceToSet(app.Settings.OauthClient.RedirectUris),
+		"response_types":            convertStringSliceToSet(respTypes),
+		"grant_types":               convertStringSliceToSet(grantTypes),
+		"post_logout_redirect_uris": convertStringSliceToSet(app.Settings.OauthClient.PostLogoutRedirectUris),
 	}
 	if app.Settings.OauthClient.IdpInitiatedLogin != nil {
 		_ = d.Set("login_mode", app.Settings.OauthClient.IdpInitiatedLogin.Mode)
-		aggMap["login_scopes"] = convertStringSetToInterface(app.Settings.OauthClient.IdpInitiatedLogin.DefaultScope)
+		aggMap["login_scopes"] = convertStringSliceToSet(app.Settings.OauthClient.IdpInitiatedLogin.DefaultScope)
 	}
 	err = setNonPrimitives(d, aggMap)
 	if err != nil {

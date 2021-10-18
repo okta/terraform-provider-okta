@@ -118,14 +118,14 @@ func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m interf
 	}
 
 	setMap := map[string]interface{}{
-		"scopes": convertStringSetToInterface(idp.Protocol.Scopes),
+		"scopes": convertStringSliceToSet(idp.Protocol.Scopes),
 	}
 
 	if idp.Policy.AccountLink != nil {
 		_ = d.Set("account_link_action", idp.Policy.AccountLink.Action)
 
 		if idp.Policy.AccountLink.Filter != nil {
-			setMap["account_link_group_include"] = convertStringSetToInterface(idp.Policy.AccountLink.Filter.Groups.Include)
+			setMap["account_link_group_include"] = convertStringSliceToSet(idp.Policy.AccountLink.Filter.Groups.Include)
 		}
 	}
 	err = setNonPrimitives(d, setMap)

@@ -1,5 +1,98 @@
 # Changelog
 
+## 3.15.0 (October 11, 2021)
+
+ENHANCEMENTS:
+
+* Added new `okta_app_saml_app_settings` resource [#692](https://github.com/okta/terraform-provider-okta/pull/692). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `okta_email_sender` and `okta_email_sender_verification` resources [#697](https://github.com/okta/terraform-provider-okta/pull/697). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Resource `okta_idp_saml_key` is now updatable [#698](https://github.com/okta/terraform-provider-okta/pull/698). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added `implicit_assignment` field to the `okta_app_saml` resource [#703](https://github.com/okta/terraform-provider-okta/pull/703). Thanks, [@ashwini-desai](https://github.com/ashwini-desai)!
+
+BUGS:
+
+* Fixed delete operation for `okta_profile_mapping` resource [#693](https://github.com/okta/terraform-provider-okta/pull/693). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Included `404` check for `okta_app_user` resource in case app no longer exists [#695](https://github.com/okta/terraform-provider-okta/pull/695). Thanks, [@ymylei](https://github.com/ymylei)!
+* Minor fix for API rate limiting [#700](https://github.com/okta/terraform-provider-okta/pull/700). Thanks, [@monde](https://github.com/monde) and [@phi1ipp](https://github.com/phi1ipp)!
+* Fixed schema-related resources to handle numeric arrays properly [#702](https://github.com/okta/terraform-provider-okta/pull/702). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.14.0 (October 7, 2021)
+
+ENHANCEMENTS:
+
+* Added new `okta_domain_verification` and `okta_domain_certificate` resources [#687](https://github.com/okta/terraform-provider-okta/pull/687). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `okta_group_schema_property` resource [#688](https://github.com/okta/terraform-provider-okta/pull/688). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added `skip_users` and `skip_groups` fields to the app-related data sources [#677](https://github.com/okta/terraform-provider-okta/pull/677). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta) and [@Philipp](https://github.com/phi1ipp)!
+* Added new grant type values to the `okta_app_oauth` and `okta_auth_server_policy_rule` resources [#691](https://github.com/okta/terraform-provider-okta/pull/691). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+* `okta_app_oauth.groups_claim` field won't be requested if it's not set in the config [#668](https://github.com/okta/terraform-provider-okta/pull/668). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fixed panic in `okta_auth_server` data source [#679](https://github.com/okta/terraform-provider-okta/pull/679). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fixed false positive `profile` field set in `okta_app_group_assignments` resource [#689](https://github.com/okta/terraform-provider-okta/pull/689). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.13.13 (September 23, 2021)
+
+BUGS:
+* Another attempt to fix constant change-loops in the `okta_app_group_assignments` resource [#664](https://github.com/okta/terraform-provider-okta/pull/664). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.13.12 (September 22, 2021)
+
+BUGS:
+* Fixed false users sync for `okta_group` resource [#661](https://github.com/okta/terraform-provider-okta/pull/661). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.13.11 (September 21, 2021)
+
+ENHANCEMENTS:
+* Added `skip_users` to the `okta_group` resource (check latest documentation for the usage of these fields) [#646](https://github.com/okta/terraform-provider-okta/pull/646). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `users_excluded` field to the `okta_group_rule` resource [#651](https://github.com/okta/terraform-provider-okta/pull/651). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+* Fixed constant change-loops in the `okta_app_group_assignments` resource [#644](https://github.com/okta/terraform-provider-okta/pull/644). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fixed typo and deprecation warning in the documentation for `okta_app_user` resource [#645](https://github.com/okta/terraform-provider-okta/pull/645). Thanks, [@SaffatHasan](https://github.com/SaffatHasan)!
+* Fixed `okta_group_role` resource update in case of several roles are being updated [#646](https://github.com/okta/terraform-provider-okta/pull/646). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Terraform will attempt to remove `okta_user_schema_property` resource several times in case the resource still exists in the organization [#656](https://github.com/okta/terraform-provider-okta/pull/656). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.13.10 (September 13, 2021)
+
+BUGS:
+* Fixed the way `okta_policy_mfa` resource store its factors in the state [#641](https://github.com/okta/terraform-provider-okta/pull/641). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fixed provider crash when using policy rules resources [#641](https://github.com/okta/terraform-provider-okta/pull/641). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.13.9 (September 10, 2021) 
+
+ENHANCEMENTS:
+* Added `app_settings_json` to the `okta_app_oauth` resource [#627](https://github.com/okta/terraform-provider-okta/pull/627). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added `skip_users` and `skip_groups` to the `okta_app_*` resources (check latest documentation for the usage of these fields) [#633](https://github.com/okta/terraform-provider-okta/pull/633). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+* Fixed resource import of the `okta_app_group_assignments` [#630](https://github.com/okta/terraform-provider-okta/pull/630). Thanks, [@Philipp](https://github.com/phi1ipp)!
+* Fixed creation of multiple app user schema properties for new (recently created) apps. [#634](https://github.com/okta/terraform-provider-okta/pull/634). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fixed description for the app logo field [#639](https://github.com/okta/terraform-provider-okta/pull/639). Thanks, [@sklarsa](https://github.com/sklarsa)!
+
+## 3.13.8 (September 1, 2021)
+
+ENHANCEMENTS:
+* Add `credentials_scheme`, `reveal_password`, `shared_username` and `shared_password` to the `okta_app_three_field` resource [#619](https://github.com/okta/terraform-provider-okta/pull/619). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Add `password_hash` to the `okta_user` resource [#622](https://github.com/okta/terraform-provider-okta/pull/622). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+* Fix import of `accessibility_login_redirect_url` field in the `okta_app_saml` resource [#613](https://github.com/okta/terraform-provider-okta/pull/613). Thanks, [@Philipp](https://github.com/phi1ipp)!
+* Fix create/update operations for the `okta_app_user_custom_schema_property` resource [#606](https://github.com/okta/terraform-provider-okta/pull/606). Thanks, [@Philipp](https://github.com/phi1ipp)!
+* Fix provider crash when importing `okta_app_oauth` resource [#616](https://github.com/okta/terraform-provider-okta/pull/616). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fix `group_memberships` field setup for `okta_user` data source [#615](https://github.com/okta/terraform-provider-okta/pull/615). Thanks, [@BrentSouza](https://github.com/BrentSouza)!
+* Fix provider crash when `okta_policy_rule_idp_discovery` does not exist [#622](https://github.com/okta/terraform-provider-okta/pull/622). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.13.7 (Aug 23, 2021)
+
+ENHANCEMENTS:
+* Add `asns` field to the `okta_network_zone` resource [#599](https://github.com/okta/terraform-provider-okta/pull/599). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Add `app_links_json` to the `okta_app_saml` resource [#601](https://github.com/okta/terraform-provider-okta/pull/601). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Add `app_settings_json` to the `okta_app_auto_login` resource [#602](https://github.com/okta/terraform-provider-okta/pull/602). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+* Fix `*_token_*` fields setup when importing `okta_auth_server_policy_rule` resource [#600](https://github.com/okta/terraform-provider-okta/pull/600). Thanks, [@Philipp](https://github.com/phi1ipp)!
+* Governed Transport is now handling nil response in `postRequestHook` func [#603](https://github.com/okta/terraform-provider-okta/pull/603). Thanks, [@Mike](https://github.com/monde)!
+
 ## 3.13.6 (Aug 18, 2021)
 
 ENHANCEMENTS:

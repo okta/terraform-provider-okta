@@ -35,19 +35,16 @@ func (m *APISupplement) GetProfileMappingBySourceId(ctx context.Context, sourceI
 	if err != nil {
 		return nil, nil, err
 	}
-
 	var mappings []*Mapping
 	resp, err := m.RequestExecutor.Do(ctx, req, &mappings)
 	if err != nil {
 		return nil, resp, err
 	}
-
 	for _, mapping := range mappings {
 		if mapping.Source.ID == sourceId {
 			return m.GetProfileMapping(ctx, mapping.ID)
 		}
 	}
-
 	return nil, resp, err
 }
 
@@ -57,9 +54,11 @@ func (m *APISupplement) GetProfileMapping(ctx context.Context, mappingId string)
 	if err != nil {
 		return nil, nil, err
 	}
-
-	mapping := &Mapping{}
-	resp, err := m.RequestExecutor.Do(ctx, req, mapping)
+	var mapping *Mapping
+	resp, err := m.RequestExecutor.Do(ctx, req, &mapping)
+	if err != nil {
+		return nil, resp, err
+	}
 	return mapping, resp, err
 }
 
@@ -72,7 +71,6 @@ func (m *APISupplement) UpdateMapping(ctx context.Context, mappingId string, bod
 	if err != nil {
 		return nil, nil, err
 	}
-
 	mapping := body
 	resp, err := m.RequestExecutor.Do(ctx, req, &mapping)
 	if err != nil {

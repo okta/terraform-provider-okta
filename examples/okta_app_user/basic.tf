@@ -7,7 +7,7 @@ resource "okta_app_oauth" "test" {
   issuer_mode    = "ORG_URL"
 
   lifecycle {
-    ignore_changes = ["users", "groups"]
+    ignore_changes = [users, groups]
   }
 }
 

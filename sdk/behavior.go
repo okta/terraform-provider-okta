@@ -42,12 +42,12 @@ func (m *APISupplement) GetBehavior(ctx context.Context, id string) (*Behavior, 
 	if err != nil {
 		return nil, nil, err
 	}
-	var behavior Behavior
+	var behavior *Behavior
 	resp, err := m.RequestExecutor.Do(ctx, req, &behavior)
 	if err != nil {
 		return nil, resp, err
 	}
-	return &behavior, resp, nil
+	return behavior, resp, nil
 }
 
 // CreateBehavior creates behavior
@@ -57,12 +57,12 @@ func (m *APISupplement) CreateBehavior(ctx context.Context, body Behavior) (*Beh
 	if err != nil {
 		return nil, nil, err
 	}
-	var behavior Behavior
+	var behavior *Behavior
 	resp, err := m.RequestExecutor.Do(ctx, req, &behavior)
 	if err != nil {
 		return nil, resp, err
 	}
-	return &behavior, resp, nil
+	return behavior, resp, nil
 }
 
 // UpdateBehavior updates behavior
@@ -72,12 +72,12 @@ func (m *APISupplement) UpdateBehavior(ctx context.Context, id string, body Beha
 	if err != nil {
 		return nil, nil, err
 	}
-	var behavior Behavior
+	var behavior *Behavior
 	resp, err := m.RequestExecutor.Do(ctx, req, &behavior)
 	if err != nil {
 		return nil, resp, err
 	}
-	return &behavior, resp, nil
+	return behavior, resp, nil
 }
 
 // DeleteBehavior deletes behavior by ID

@@ -15,7 +15,7 @@ import (
 func dataSourceAppSaml() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppSamlRead,
-		Schema: map[string]*schema.Schema{
+		Schema: buildSchema(skipUsersAndGroupsSchema, map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
 				Optional:      true,
@@ -298,7 +298,7 @@ func dataSourceAppSaml() *schema.Resource {
 				Description: "Users associated with the application",
 				Deprecated:  "The `users` field is now deprecated for the data source `okta_app_saml`, please replace all uses of this with: `okta_app_user_assignments`",
 			},
-		},
+		}),
 	}
 }
 
@@ -335,12 +335,10 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 		logger(m).Info("found multiple SAML applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
 	}
-	users, groups, err := listAppUsersIDsAndGroupsIDs(ctx, getOktaClientFromMetadata(m), app.Id)
+	err = setAppUsersIDsAndGroupsIDs(ctx, d, getOktaClientFromMetadata(m), app.Id)
 	if err != nil {
 		return diag.Errorf("failed to list SAML's app groups and users: %v", err)
 	}
-	_ = d.Set("groups", convertStringSetToInterface(groups))
-	_ = d.Set("users", convertStringSetToInterface(users))
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
 	_ = d.Set("name", app.Name)
@@ -358,7 +356,7 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 			return diag.Errorf("failed to read SAML app: failed to set SAML app settings: %v", err)
 		}
 	}
-	_ = d.Set("features", convertStringSetToInterface(app.Features))
+	_ = d.Set("features", convertStringSliceToSetNullable(app.Features))
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)

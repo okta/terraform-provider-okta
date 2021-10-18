@@ -4,14 +4,31 @@ page_title: 'Okta: okta_app_user_schema'
 sidebar_current: 'docs-okta-resource-app-user-schema'
 description: |-
   Creates an Application User Schema property.
-  **DEPRECATED** use `okta_app_user_schema_property` instead.
 ---
 
 # okta_app_user_schema
 
+**DEPRECATED** use `okta_app_user_schema_property` instead.
+
 Creates an Application User Schema property.
 
 This resource allows you to create and configure a custom user schema property and associate it with an application.
+
+## Migrating to a renamed resource
+
+To migrate from `okta_app_user_schema.{my_name}` to `okta_app_user_schema_property.{my_name}` please follow these steps:
+
+1. Import the ` okta_app_user_schema_property.{my_name}`, but keep intact `okta_app_user_schema.{my_name}` (the old one).
+```
+terraform import okta_app_user_schema_property.{my_name} appID/myPropertyName
+````
+2. Copy-paste all the fields from `okta_app_user_schema.{my_name}` to `okta_app_user_schema_property.{my_name}`
+3. Remove resource with deprecated name from the state
+```
+terraform state rm okta_app_user_schema.{my_name}
+```
+4. Remove `okta_app_user_schema.{my_name}` resource from the `.tf` file manually.
+5. Run `terraform apply` to apply the default fields.
 
 ## Example Usage
 

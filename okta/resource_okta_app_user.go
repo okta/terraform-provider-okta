@@ -150,7 +150,11 @@ func resourceAppUserUpdate(ctx context.Context, d *schema.ResourceData, m interf
 
 func resourceAppUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var app *okta.AutoLoginApplication
-	respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), okta.NewAutoLoginApplication(), nil)
+	respApp, resp, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), okta.NewAutoLoginApplication(), nil)
+	if is404(resp) {
+		d.SetId("")
+		return nil
+	}
 	if err != nil {
 		return diag.Errorf("failed to get application by ID: %v", err)
 	}

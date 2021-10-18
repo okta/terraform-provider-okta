@@ -44,7 +44,7 @@ resource "okta_user_group_memberships" "test" {
 
 The following arguments are supported:
 
-- `user_id` - (Required) ID of a Okta User.
+- `user_id` - (Required) Okta user ID.
 - `groups` - (Required) The list of Okta group IDs which the user should have membership managed for.
 
 ## Attributes Reference

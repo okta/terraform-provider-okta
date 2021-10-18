@@ -97,7 +97,7 @@ func buildPolicyRulePassword(d *schema.ResourceData) sdk.PolicyRule {
 		template.Priority = int64(priority.(int))
 	}
 	template.Conditions = &okta.PolicyRuleConditions{
-		Network: getNetwork(d),
+		Network: buildPolicyNetworkCondition(d),
 		People:  getUsers(d),
 	}
 	template.Actions = sdk.PolicyRuleActions{

@@ -69,7 +69,6 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enum.2", "L"),
 					resource.TestCheckResourceAttr(resourceName, "enum.3", "XL"),
 					resource.TestCheckResourceAttr(resourceName, "one_of.#", "4"),
-					// resource.TestCheckResourceAttr(resourceName, "pattern", ""),
 					resource.TestCheckResourceAttr(resourceName, "scope", "SELF"),
 				),
 			},
@@ -109,7 +108,6 @@ func TestAccOktaUserSchema_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "permissions", "READ_WRITE"),
 					resource.TestCheckResourceAttr(resourceName, "master", "OKTA"),
 					resource.TestCheckResourceAttr(resourceName, "unique", "UNIQUE_VALIDATED"),
-					// resource.TestCheckResourceAttr(resourceName, "pattern", ""),
 				),
 			},
 			{
@@ -144,6 +142,7 @@ func TestAccOktaUserSchema_arrayString(t *testing.T) {
 	config := mgr.GetFixtures("array_string.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("array_string_updated.tf", ri, t)
 	arrayEnum := mgr.GetFixtures("array_enum.tf", ri, t)
+	arrayNumber := mgr.GetFixtures("array_number.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -197,6 +196,24 @@ func TestAccOktaUserSchema_arrayString(t *testing.T) {
 				),
 			},
 			{
+				Config: arrayNumber,
+				Check: resource.ComposeTestCheckFunc(
+					testOktaUserSchemasExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
+					resource.TestCheckResourceAttr(resourceName, "type", "array"),
+					resource.TestCheckResourceAttr(resourceName, "array_type", "number"),
+					resource.TestCheckResourceAttr(resourceName, "description", "testing"),
+					resource.TestCheckResourceAttr(resourceName, "required", "false"),
+					resource.TestCheckResourceAttr(resourceName, "master", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "scope", "SELF"),
+					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "0.01"),
+					resource.TestCheckResourceAttr(resourceName, "array_enum.1", "0.02"),
+					resource.TestCheckResourceAttr(resourceName, "array_enum.2", "0.03"),
+					resource.TestCheckResourceAttr(resourceName, "array_one_of.#", "3"),
+				),
+			},
+			{
 				ResourceName: resourceName,
 				ImportState:  true,
 				ImportStateCheck: func(s []*terraform.InstanceState) error {
@@ -218,7 +235,7 @@ func checkOktaUserSchemasDestroy() resource.TestCheckFunc {
 			if rs.Primary.Attributes["user_type"] != "" {
 				schemaUserType = rs.Primary.Attributes["user_type"]
 			}
-			exists, _ := testSchemaPropertyExists(schemaUserType, rs.Primary.ID, customSchema)
+			exists, _ := testUserSchemaPropertyExists(schemaUserType, rs.Primary.ID, customSchema)
 			if exists {
 				return fmt.Errorf("resource still exists, ID: %s", rs.Primary.ID)
 			}
@@ -239,18 +256,18 @@ func testOktaUserSchemasExists(name string) resource.TestCheckFunc {
 		if rs.Primary.Attributes["user_type"] != "" {
 			schemaUserType = rs.Primary.Attributes["user_type"]
 		}
-		exists, err := testSchemaPropertyExists(schemaUserType, rs.Primary.ID, customSchema)
+		exists, err := testUserSchemaPropertyExists(schemaUserType, rs.Primary.ID, customSchema)
 		if err != nil {
 			return fmt.Errorf("failed to find: %v", err)
 		}
 		if !exists {
-			return fmt.Errorf("custom property %s does not exist in a profile subschema", rs.Primary.ID)
+			return fmt.Errorf("custom property %s does not exist in a user profile subschema", rs.Primary.ID)
 		}
 		return nil
 	}
 }
 
-func testSchemaPropertyExists(schemaUserType, index, resolutionScope string) (bool, error) {
+func testUserSchemaPropertyExists(schemaUserType, index, resolutionScope string) (bool, error) {
 	typeSchemaID, err := getUserTypeSchemaID(context.Background(), getOktaClientFromMetadata(testAccProvider.Meta()), schemaUserType)
 	if err != nil {
 		return false, err
@@ -264,8 +281,8 @@ func testSchemaPropertyExists(schemaUserType, index, resolutionScope string) (bo
 		bp := userSchemaBaseAttribute(us, index)
 		return bp != nil, nil
 	case customSchema:
-		_, ok := us.Definitions.Custom.Properties[index]
-		return ok, nil
+		bp := userSchemaCustomAttribute(us, index)
+		return bp != nil, nil
 	default:
 		return false, fmt.Errorf("resolution scope can be only 'base' or 'custom'")
 	}

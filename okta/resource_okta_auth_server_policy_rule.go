@@ -50,7 +50,7 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 				Required: true,
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, clientCredentials}),
+					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, clientCredentials, saml2Bearer, tokenExchange, deviceCode}),
 				},
 				Description: "Accepted grant type values: authorization_code, implicit, password, client_credentials",
 			},
@@ -133,6 +133,10 @@ func resourceAuthServerPolicyRuleRead(ctx context.Context, d *schema.ResourceDat
 	_ = d.Set("status", authServerPolicyRule.Status)
 	_ = d.Set("priority", authServerPolicyRule.Priority)
 	_ = d.Set("type", authServerPolicyRule.Type)
+	_ = d.Set("access_token_lifetime_minutes", authServerPolicyRule.Actions.Token.AccessTokenLifetimeMinutes)
+	_ = d.Set("refresh_token_lifetime_minutes", authServerPolicyRule.Actions.Token.RefreshTokenLifetimeMinutes)
+	_ = d.Set("refresh_token_window_minutes", authServerPolicyRule.Actions.Token.RefreshTokenWindowMinutes)
+
 	if authServerPolicyRule.Actions.Token.InlineHook != nil {
 		_ = d.Set("inline_hook_id", authServerPolicyRule.Actions.Token.InlineHook.Id)
 	}
@@ -246,21 +250,21 @@ func buildAuthServerPolicyRule(d *schema.ResourceData) okta.AuthorizationServerP
 func setPeopleAssignments(d *schema.ResourceData, c *okta.PolicyPeopleCondition) error {
 	if c.Groups != nil {
 		err := setNonPrimitives(d, map[string]interface{}{
-			"group_whitelist": convertStringSetToInterface(c.Groups.Include),
-			"group_blacklist": convertStringSetToInterface(c.Groups.Exclude),
+			"group_whitelist": convertStringSliceToSet(c.Groups.Include),
+			"group_blacklist": convertStringSliceToSet(c.Groups.Exclude),
 		})
 		if err != nil {
 			return err
 		}
 	} else {
 		_ = setNonPrimitives(d, map[string]interface{}{
-			"group_whitelist": convertStringSetToInterface([]string{}),
-			"group_blacklist": convertStringSetToInterface([]string{}),
+			"group_whitelist": convertStringSliceToSet([]string{}),
+			"group_blacklist": convertStringSliceToSet([]string{}),
 		})
 	}
 	return setNonPrimitives(d, map[string]interface{}{
-		"user_whitelist": convertStringSetToInterface(c.Users.Include),
-		"user_blacklist": convertStringSetToInterface(c.Users.Exclude),
+		"user_whitelist": convertStringSliceToSet(c.Users.Include),
+		"user_blacklist": convertStringSliceToSet(c.Users.Exclude),
 	})
 }
 

@@ -55,7 +55,7 @@ func dataSourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceDa
 	for _, assignment := range groupAssignments {
 		groups = append(groups, assignment.Id)
 	}
-	_ = d.Set("groups", convertStringSetToInterface(groups))
+	_ = d.Set("groups", convertStringSliceToSet(groups))
 	d.SetId(id)
 	return nil
 }

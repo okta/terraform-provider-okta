@@ -95,7 +95,7 @@ func resourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m inter
 		return nil
 	}
 
-	_ = d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
+	_ = d.Set("audiences", convertStringSliceToSet(authServer.Audiences))
 
 	if authServer.Credentials != nil && authServer.Credentials.Signing != nil {
 		_ = d.Set("kid", authServer.Credentials.Signing.Kid)

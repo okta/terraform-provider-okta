@@ -166,7 +166,7 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 		}
 		if rule.Conditions.Risk != nil {
 			err = setNonPrimitives(d, map[string]interface{}{
-				"behaviors": convertStringSetToInterface(rule.Conditions.Risk.Behaviors),
+				"behaviors": convertStringSliceToSet(rule.Conditions.Risk.Behaviors),
 			})
 			if err != nil {
 				return diag.Errorf("failed to set sign-on policy rule behaviors: %v", err)
@@ -237,7 +237,7 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 		AuthContext: &okta.PolicyRuleAuthContextCondition{
 			AuthType: d.Get("authtype").(string),
 		},
-		Network: getNetwork(d),
+		Network: buildPolicyNetworkCondition(d),
 		People:  getUsers(d),
 	}
 	bi, ok := d.GetOk("behaviors")

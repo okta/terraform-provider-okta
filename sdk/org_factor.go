@@ -41,12 +41,12 @@ func (m *APISupplement) GetOrgFactor(ctx context.Context, id string) (*OrgFactor
 	if err != nil {
 		return nil, nil, err
 	}
-	var factor OrgFactor
+	var factor *OrgFactor
 	resp, err := m.RequestExecutor.Do(ctx, req, &factor)
 	if err != nil {
 		return nil, resp, err
 	}
-	return &factor, resp, nil
+	return factor, resp, nil
 }
 
 // ActivateOrgFactor allows multifactor authentication to use provided factor type

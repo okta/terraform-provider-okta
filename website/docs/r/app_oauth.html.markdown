@@ -8,8 +8,6 @@ description: |-
 
 # okta_app_oauth
 
-Creates an OIDC Application.
-
 This resource allows you to create and configure an OIDC Application.
 
 ## Example Usage
@@ -82,7 +80,8 @@ The following arguments are supported:
 - `response_types` - (Optional) List of OAuth 2.0 response type strings.
 
 - `grant_types` - (Optional) List of OAuth 2.0 grant types. Conditional validation params found [here](https://developer.okta.com/docs/api/resources/apps#credentials-settings-details). 
-  Defaults to minimum requirements per app type. Valid values: `"authorization_code"`, `"implicit"`, `"password"`, `"refresh_token"`, `"client_credentials"`. 
+  Defaults to minimum requirements per app type. Valid values: `"authorization_code"`, `"implicit"`, `"password"`, `"refresh_token"`, `"client_credentials"`, 
+  `"urn:ietf:params:oauth:grant-type:saml2-bearer"` (*Early Access Property*), `"urn:ietf:params:oauth:grant-type:token-exchange"` (*Early Access Property*)
 
 - `tos_uri` - (Optional) URI to web page providing client tos (terms of service).
 
@@ -98,6 +97,12 @@ The following arguments are supported:
 
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
+- `accessibility_error_redirect_url` - (Optional) Custom error page URL.
+
+- `accessibility_login_redirect_url` - (Optional) Custom login page for this application.
+
+- `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
+
 - `hide_ios` - (Optional) Do not display application icon on mobile app.
 
 - `hide_web` - (Optional) Do not display application icon to users.
@@ -110,9 +115,9 @@ The following arguments are supported:
 
 - `login_scopes` - (Optional) List of scopes to use for the request. Valid values: `"openid"`, `"profile"`, `"email"`, `"address"`, `"phone"`. Required when `login_mode` is NOT `DISABLED`.
 
-- `logo` - (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+- `logo` - (Optional) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 
-- `groups_claim` - (Optional) Groups claim for an OpenID Connect client application.
+- `groups_claim` - (Optional) Groups claim for an OpenID Connect client application. **Important Note**: available only when using api token in the provider config.
   - `type` - (Required) Groups claim type. Valid values: `"FILTER"`, `"EXPRESSION"`.
   - `filter_type` - (Optional) Groups claim filter. Can only be set if type is `"FILTER"`. Valid values: `"EQUALS"`, `"STARTS_WITH"`, `"CONTAINS"`, `"REGEX"`.
   - `name` - (Required) Name of the claim that will be used in the token.
@@ -121,6 +126,12 @@ The following arguments are supported:
 - `admin_note` - (Optional) Application notes for admins.
 
 - `enduser_note` - (Optional) Application notes for end users.
+
+- `app_settings_json` - (Optional) Application settings in JSON format.
+
+- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it's also can be provided during import). Default is `false`.
+
+- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it's also can be provided during import). Default is `false`.
 
 ## Attributes Reference
 
@@ -142,4 +153,14 @@ An OIDC Application can be imported via the Okta ID.
 
 ```
 $ terraform import okta_app_oauth.example <app id>
+```
+
+It's also possible to import app without groups or/and users. In this case ID may look like this:
+
+```
+$ terraform import okta_app_basic_auth.example <app id>/skip_users
+
+$ terraform import okta_app_basic_auth.example <app id>/skip_users/skip_groups
+
+$ terraform import okta_app_basic_auth.example <app id>/skip_groups
 ```

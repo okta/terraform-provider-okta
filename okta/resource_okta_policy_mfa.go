@@ -133,6 +133,10 @@ func buildMFAPolicy(d *schema.ResourceData) sdk.Policy {
 
 func syncFactor(d *schema.ResourceData, k string, f *sdk.PolicyFactor) {
 	if f == nil {
+		_ = d.Set(k, map[string]interface{}{
+			"consent_type": "NONE",
+			"enroll":       "NOT_ALLOWED",
+		})
 		return
 	}
 	_ = d.Set(k, map[string]interface{}{

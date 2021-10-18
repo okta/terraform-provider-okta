@@ -26,6 +26,9 @@ const (
 	appOAuthAPIScope          = "okta_app_oauth_api_scope"
 	appOAuthRedirectURI       = "okta_app_oauth_redirect_uri"
 	appSaml                   = "okta_app_saml"
+	appSignOnPolicy           = "okta_app_signon_policy"
+	appSignOnPolicyRule       = "okta_app_signon_policy_rule"
+	appSamlAppSettings        = "okta_app_saml_app_settings"
 	appSecurePasswordStore    = "okta_app_secure_password_store"
 	appSwa                    = "okta_app_swa"
 	appSharedCredentials      = "okta_app_shared_credentials"
@@ -42,12 +45,17 @@ const (
 	behavior                  = "okta_behavior"
 	behaviors                 = "okta_behaviors"
 	domain                    = "okta_domain"
+	domainVerification        = "okta_domain_verification"
+	domainCertificate         = "okta_domain_certificate"
 	eventHook                 = "okta_event_hook"
+	emailSender               = "okta_email_sender"
+	emailSenderVerification   = "okta_email_sender_verification"
 	factor                    = "okta_factor"
 	factorTotp                = "okta_factor_totp"
 	groupRole                 = "okta_group_role"
 	groupRoles                = "okta_group_roles"
 	groupRule                 = "okta_group_rule"
+	groupSchemaProperty       = "okta_group_schema_property"
 	idpOidc                   = "okta_idp_oidc"
 	idpSaml                   = "okta_idp_saml"
 	idpSamlKey                = "okta_idp_saml_key"
@@ -109,14 +117,9 @@ func Provider() *schema.Provider {
 				ConflictsWith: []string{"api_token"},
 			},
 			"scopes": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-					DefaultFunc: func() (interface{}, error) {
-						return "a", nil
-					},
-				},
+				Type:          schema.TypeSet,
+				Optional:      true,
+				Elem:          &schema.Schema{Type: schema.TypeString},
 				DefaultFunc:   envDefaultSetFunc("OKTA_API_SCOPES", nil),
 				Description:   "API Token granting privileges to Okta API.",
 				ConflictsWith: []string{"api_token"},
@@ -201,7 +204,9 @@ func Provider() *schema.Provider {
 			appOAuthAPIScope:          resourceAppOAuthAPIScope(),
 			appOAuthRedirectURI:       resourceAppOAuthRedirectURI(),
 			appSaml:                   resourceAppSaml(),
+			appSamlAppSettings:        resourceAppSamlAppSettings(),
 			appSecurePasswordStore:    resourceAppSecurePasswordStore(),
+			appSignOnPolicyRule:       resourceAppSignOnPolicyRule(),
 			appSwa:                    resourceAppSwa(),
 			appSharedCredentials:      resourceAppSharedCredentials(),
 			appThreeField:             resourceAppThreeField(),
@@ -216,12 +221,17 @@ func Provider() *schema.Provider {
 			authServerScope:           resourceAuthServerScope(),
 			behavior:                  resourceBehavior(),
 			domain:                    resourceDomain(),
+			domainCertificate:         resourceDomainCertificate(),
+			domainVerification:        resourceDomainVerification(),
 			eventHook:                 resourceEventHook(),
+			emailSender:               resourceEmailSender(),
+			emailSenderVerification:   resourceEmailSenderVerification(),
 			factor:                    resourceFactor(),
 			factorTotp:                resourceFactorTOTP(),
 			groupRole:                 resourceGroupRole(),
 			groupRoles:                resourceGroupRoles(),
 			groupRule:                 resourceGroupRule(),
+			groupSchemaProperty:       resourceGroupCustomSchemaProperty(),
 			idpOidc:                   resourceIdpOidc(),
 			idpSaml:                   resourceIdpSaml(),
 			idpSamlKey:                resourceIdpSigningKey(),
@@ -245,7 +255,7 @@ func Provider() *schema.Provider {
 			templateEmail:             resourceTemplateEmail(),
 			templateSms:               resourceTemplateSms(),
 			trustedOrigin:             resourceTrustedOrigin(),
-			userSchemaProperty:        resourceUserSchemaProperty(),
+			userSchemaProperty:        resourceUserCustomSchemaProperty(),
 			userBaseSchemaProperty:    resourceUserBaseSchemaProperty(),
 			userType:                  resourceUserType(),
 			userGroupMemberships:      resourceUserGroupMemberships(),
@@ -273,13 +283,14 @@ func Provider() *schema.Provider {
 			"okta_mfa_policy_rule":           deprecateIncorrectNaming(resourcePolicyMfaRule(), policyRuleMfa),
 			"okta_app_user_schema":           deprecateIncorrectNaming(resourceAppUserSchemaProperty(), appUserSchemaProperty),
 			"okta_app_user_base_schema":      deprecateIncorrectNaming(resourceAppUserBaseSchemaProperty(), appUserBaseSchemaProperty),
-			"okta_user_schema":               deprecateIncorrectNaming(resourceUserSchemaProperty(), userSchemaProperty),
+			"okta_user_schema":               deprecateIncorrectNaming(resourceUserCustomSchemaProperty(), userSchemaProperty),
 			"okta_user_base_schema":          deprecateIncorrectNaming(resourceUserBaseSchemaProperty(), userBaseSchemaProperty),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"okta_app":                         dataSourceApp(),
 			appGroupAssignments:                dataSourceAppGroupAssignments(),
 			appSaml:                            dataSourceAppSaml(),
+			appSignOnPolicy:                    dataSourceAppSignOnPolicy(),
 			appOAuth:                           dataSourceAppOauth(),
 			"okta_app_metadata_saml":           dataSourceAppMetadataSaml(),
 			"okta_app_user_assignments":        dataSourceAppUserAssignments(),
@@ -303,6 +314,7 @@ func Provider() *schema.Provider {
 			"okta_auth_server_scopes":          dataSourceAuthServerScopes(),
 			userType:                           dataSourceUserType(),
 			userSecurityQuestions:              dataSourceUserSecurityQuestions(),
+			networkZone:                        dataSourceNetworkZone(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

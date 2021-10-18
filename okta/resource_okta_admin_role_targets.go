@@ -97,7 +97,7 @@ func resourceAdminRoleCreate(ctx context.Context, d *schema.ResourceData, m inte
 
 func resourceAdminRoleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	logger(m).Info("reading admin role targets", "role", d.Get("role_type").(string), "user", d.Get("user_id").(string))
-	role, resp, err := getSupplementFromMetadata(m).GetUserAssignedRole(ctx, d.Get("user_id").(string), d.Get("role_id").(string))
+	role, resp, err := getOktaClientFromMetadata(m).User.GetUserRole(ctx, d.Get("user_id").(string), d.Get("role_id").(string))
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get role assigned to a user: %v", err)
 	}
@@ -110,13 +110,13 @@ func resourceAdminRoleRead(ctx context.Context, d *schema.ResourceData, m interf
 		if err != nil {
 			return diag.Errorf("failed to read app targets: %v", err)
 		}
-		_ = d.Set("apps", convertStringSetToInterface(apps))
+		_ = d.Set("apps", convertStringSliceToSet(apps))
 	} else {
 		groups, err := listUserGroupTargets(ctx, d, m)
 		if err != nil {
 			return diag.Errorf("failed to read group targets: %v", err)
 		}
-		_ = d.Set("groups", convertStringSetToInterface(groups))
+		_ = d.Set("groups", convertStringSliceToSet(groups))
 	}
 	return nil
 }

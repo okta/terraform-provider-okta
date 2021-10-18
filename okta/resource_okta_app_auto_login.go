@@ -16,7 +16,7 @@ func resourceAppAutoLogin() *schema.Resource {
 		UpdateContext: resourceAppAutoLoginUpdate,
 		DeleteContext: resourceAppAutoLoginDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: appImporter,
 		},
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
 			"preconfigured_app": {
@@ -66,6 +66,16 @@ func resourceAppAutoLogin() *schema.Resource {
 				Optional:    true,
 				Description: "Shared password, required for certain schemes.",
 			},
+			"app_settings_json": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Application settings in JSON format",
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
+			},
 		}),
 	}
 }
@@ -100,9 +110,15 @@ func resourceAppAutoLoginRead(ctx context.Context, d *schema.ResourceData, m int
 		d.SetId("")
 		return nil
 	}
-	if app.Settings.SignOn != nil {
-		_ = d.Set("sign_on_url", app.Settings.SignOn.LoginUrl)
-		_ = d.Set("sign_on_redirect_url", app.Settings.SignOn.RedirectUrl)
+	if app.Settings != nil {
+		if app.Settings.SignOn != nil {
+			_ = d.Set("sign_on_url", app.Settings.SignOn.LoginUrl)
+			_ = d.Set("sign_on_redirect_url", app.Settings.SignOn.RedirectUrl)
+		}
+		err = setAppSettings(d, app.Settings.App)
+		if err != nil {
+			return diag.Errorf("failed to set auto login application settings: %v", err)
+		}
 	}
 	_ = d.Set("credentials_scheme", app.Credentials.Scheme)
 	_ = d.Set("reveal_password", app.Credentials.RevealPassword)
@@ -115,14 +131,6 @@ func resourceAppAutoLoginRead(ctx context.Context, d *schema.ResourceData, m int
 	err = syncGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
 		return diag.Errorf("failed to sync groups and users for auto login application: %v", err)
-	}
-	if d.HasChange("logo") {
-		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
-		if err != nil {
-			o, _ := d.GetChange("logo")
-			_ = d.Set("logo", o)
-			return diag.Errorf("failed to upload logo for basic auth application: %v", err)
-		}
 	}
 	return nil
 }
@@ -141,6 +149,14 @@ func resourceAppAutoLoginUpdate(ctx context.Context, d *schema.ResourceData, m i
 	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
 		return diag.Errorf("failed to handle groups and users for auto login application: %v", err)
+	}
+	if d.HasChange("logo") {
+		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		if err != nil {
+			o, _ := d.GetChange("logo")
+			_ = d.Set("logo", o)
+			return diag.Errorf("failed to upload logo for auto login application: %v", err)
+		}
 	}
 	return resourceAppAutoLoginRead(ctx, d, m)
 }
@@ -162,7 +178,6 @@ func buildAppAutoLogin(d *schema.ResourceData) *okta.AutoLoginApplication {
 	if name != "" {
 		app.Name = name
 	}
-
 	app.Settings = &okta.AutoLoginApplicationSettings{
 		SignOn: &okta.AutoLoginApplicationSettingsSignOn{
 			LoginUrl:    d.Get("sign_on_url").(string),
@@ -170,8 +185,10 @@ func buildAppAutoLogin(d *schema.ResourceData) *okta.AutoLoginApplication {
 		},
 		Notes: buildAppNotes(d),
 	}
+	app.Settings.App = buildAppSettings(d)
 	app.Visibility = buildAppVisibility(d)
 	app.Credentials = buildSchemeAppCreds(d)
+	app.Accessibility = buildAppAccessibility(d)
 
 	return app
 }

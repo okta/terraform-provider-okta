@@ -43,6 +43,8 @@ The following arguments are supported:
 - `remove_assigned_users` - (Optional) This tells the provider to remove users added by this rule from the assigned
   group after destroying this resource. Default is `false`.
 
+- `users_excluded` - (Optional) The list of user IDs that would be excluded when rules are processed.
+
 ## Attributes Reference
 
 - `id` - The ID of the Group Rule.

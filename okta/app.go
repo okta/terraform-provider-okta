@@ -5,11 +5,13 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -84,7 +86,7 @@ var (
 			Type:             schema.TypeString,
 			Optional:         true,
 			ValidateDiagFunc: logoValid(),
-			Description:      "Logo of the application.",
+			Description:      "Local path to logo of the application.",
 			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 				return new == ""
 			},
@@ -111,6 +113,47 @@ var (
 			Optional:    true,
 			Description: "Application notes for end users.",
 		},
+		"app_links_json": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			Description:      "Displays specific appLinks for the app",
+			ValidateDiagFunc: stringIsJSON,
+			StateFunc:        normalizeDataJSON,
+			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+				return new == ""
+			},
+		},
+		"accessibility_login_redirect_url": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Custom login page URL",
+		},
+		"accessibility_self_service": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Enable self service",
+		},
+		"accessibility_error_redirect_url": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Custom error page URL",
+		},
+	}
+
+	skipUsersAndGroupsSchema = map[string]*schema.Schema{
+		"skip_users": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Ignore users sync. This is a temporary solution until 'users' field is supported in all the app-like resources",
+			Default:     false,
+		},
+		"skip_groups": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Ignore groups sync. This is a temporary solution until 'groups' field is supported in all the app-like resources",
+			Default:     false,
+		},
 	}
 
 	appVisibilitySchema = map[string]*schema.Schema{
@@ -135,35 +178,6 @@ var (
 	}
 
 	baseAppSwaSchema = map[string]*schema.Schema{
-		"accessibility_self_service": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Description: "Enable self service",
-		},
-		"accessibility_error_redirect_url": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Description: "Custom error page URL",
-		},
-		"auto_submit_toolbar": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Description: "Display auto submit toolbar",
-		},
-		"hide_ios": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Description: "Do not display application icon on mobile app",
-		},
-		"hide_web": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-			Description: "Do not display application icon to users",
-		},
 		"user_name_template": {
 			Type:        schema.TypeString,
 			Optional:    true,
@@ -190,30 +204,55 @@ var (
 	}
 )
 
-func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *okta.ApplicationAccessibility, vis *okta.ApplicationVisibility, notes *okta.ApplicationSettingsNotes) {
+func appImporter(_ context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	importID := strings.Split(d.Id(), "/")
+	if len(importID) == 1 {
+		return []*schema.ResourceData{d}, nil
+	}
+	if len(importID) > 3 {
+		return nil, errors.New("invalid format used for import ID, format must be 'app_id' or 'app_id/skip_users' or 'app_id/skip_users/skip_groups'")
+	}
+	d.SetId(importID[0])
+	for _, v := range importID[1:] {
+		if !isValidSkipArg(v) {
+			return nil, fmt.Errorf("'%s' is invalid value to be used as part of import ID, it must be either 'skip_users' or 'skip_groups'", v)
+		}
+		_ = d.Set(v, true)
+	}
+	return []*schema.ResourceData{d}, nil
+}
+
+func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *okta.ApplicationAccessibility,
+	vis *okta.ApplicationVisibility, notes *okta.ApplicationSettingsNotes) {
 	_ = d.Set("name", name)
 	_ = d.Set("status", status)
 	_ = d.Set("sign_on_mode", signOn)
 	_ = d.Set("label", label)
-	_ = d.Set("accessibility_self_service", *accy.SelfService)
-	_ = d.Set("accessibility_error_redirect_url", accy.ErrorRedirectUrl)
+	if accy != nil {
+		_ = d.Set("accessibility_self_service", *accy.SelfService)
+		_ = d.Set("accessibility_error_redirect_url", accy.ErrorRedirectUrl)
+		_ = d.Set("accessibility_login_redirect_url", accy.LoginRedirectUrl)
+	}
 	_ = d.Set("auto_submit_toolbar", vis.AutoSubmitToolbar)
 	_ = d.Set("hide_ios", vis.Hide.IOS)
 	_ = d.Set("hide_web", vis.Hide.Web)
-	_ = d.Set("admin_note", notes.Admin)
-	_ = d.Set("enduser_note", notes.Enduser)
+	if notes != nil {
+		_ = d.Set("admin_note", notes.Admin)
+		_ = d.Set("enduser_note", notes.Enduser)
+	}
+	_ = setAppLinks(d, vis.AppLinks)
 }
 
 func buildAppSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(baseAppSchema, appSchema)
+	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, appSchema)
 }
 
 func buildAppSchemaWithVisibility(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(baseAppSchema, appVisibilitySchema, appSchema)
+	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, appVisibilitySchema, appSchema)
 }
 
 func buildAppSwaSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(baseAppSchema, baseAppSwaSchema, appSchema)
+	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, appVisibilitySchema, baseAppSwaSchema, appSchema)
 }
 
 func buildSchemeAppCreds(d *schema.ResourceData) *okta.SchemeApplicationCredentials {
@@ -233,18 +272,29 @@ func buildSchemeAppCreds(d *schema.ResourceData) *okta.SchemeApplicationCredenti
 	}
 }
 
+func buildAppAccessibility(d *schema.ResourceData) *okta.ApplicationAccessibility {
+	return &okta.ApplicationAccessibility{
+		SelfService:      boolPtr(d.Get("accessibility_self_service").(bool)),
+		ErrorRedirectUrl: d.Get("accessibility_error_redirect_url").(string),
+		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
+	}
+}
+
 func buildAppVisibility(d *schema.ResourceData) *okta.ApplicationVisibility {
 	autoSubmit := d.Get("auto_submit_toolbar").(bool)
 	hideMobile := d.Get("hide_ios").(bool)
 	hideWeb := d.Get("hide_web").(bool)
-
-	return &okta.ApplicationVisibility{
+	appVis := &okta.ApplicationVisibility{
 		AutoSubmitToolbar: &autoSubmit,
 		Hide: &okta.ApplicationVisibilityHide{
 			IOS: &hideMobile,
 			Web: &hideWeb,
 		},
 	}
+	if appLinks, ok := d.GetOk("app_links_json"); ok {
+		_ = json.Unmarshal([]byte(appLinks.(string)), &appVis.AppLinks)
+	}
+	return appVis
 }
 
 func buildAppNotes(d *schema.ResourceData) *okta.ApplicationSettingsNotes {
@@ -258,6 +308,16 @@ func buildAppNotes(d *schema.ResourceData) *okta.ApplicationSettingsNotes {
 		n.Enduser = stringPtr(enduser.(string))
 	}
 	return n
+}
+
+func buildAppSettings(d *schema.ResourceData) *okta.ApplicationSettingsApplication {
+	settings := okta.ApplicationSettingsApplication(map[string]interface{}{})
+	if appSettings, ok := d.GetOk("app_settings_json"); ok {
+		payload := map[string]interface{}{}
+		_ = json.Unmarshal([]byte(appSettings.(string)), &payload)
+		settings = payload
+	}
+	return &settings
 }
 
 func fetchApp(ctx context.Context, d *schema.ResourceData, m interface{}, app okta.App) error {
@@ -279,6 +339,10 @@ func updateAppByID(ctx context.Context, id string, m interface{}, app okta.App) 
 
 func handleAppGroups(ctx context.Context, id string, d *schema.ResourceData, client *okta.Client) []func() error {
 	if !d.HasChange("groups") {
+		return nil
+	}
+	// temp solution until 'groups' field is supported
+	if d.Get("skip_groups").(bool) {
 		return nil
 	}
 	var asyncActionList []func() error
@@ -306,25 +370,25 @@ func handleAppGroups(ctx context.Context, id string, d *schema.ResourceData, cli
 	return asyncActionList
 }
 
-func listApplicationGroupAssignments(ctx context.Context, client *okta.Client, id string) ([]*okta.ApplicationGroupAssignment, error) {
+func listApplicationGroupAssignments(ctx context.Context, client *okta.Client, id string) ([]*okta.ApplicationGroupAssignment, *okta.Response, error) {
 	var resGroups []*okta.ApplicationGroupAssignment
 	groups, resp, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 	for {
 		resGroups = append(resGroups, groups...)
 		if resp.HasNextPage() {
 			resp, err = resp.Next(ctx, &groups)
 			if err != nil {
-				return nil, err
+				return nil, resp, err
 			}
 			continue
 		} else {
 			break
 		}
 	}
-	return resGroups, nil
+	return resGroups, resp, nil
 }
 
 func containsAppUser(userList []*okta.AppUser, id string) bool {
@@ -374,6 +438,10 @@ func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, a
 
 func handleAppUsers(ctx context.Context, id string, d *schema.ResourceData, client *okta.Client) []func() error {
 	if !d.HasChange("users") {
+		return nil
+	}
+	// temp solution until 'users' field is supported
+	if d.Get("skip_users").(bool) {
 		return nil
 	}
 	existingUsers, err := listApplicationUsers(ctx, client, id)
@@ -470,39 +538,53 @@ func setAppStatus(ctx context.Context, d *schema.ResourceData, client *okta.Clie
 
 func syncGroupsAndUsers(ctx context.Context, id string, d *schema.ResourceData, m interface{}) error {
 	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusNotFound})
-	appUsers, appGroups, err := listAppUsersAndGroups(ctx, getOktaClientFromMetadata(m), id)
-	if err != nil {
-		return err
-	}
-	flatGroupList := make([]interface{}, len(appGroups))
-	for i := range appGroups {
-		flatGroupList[i] = appGroups[i].Id
-	}
-	var flattenedUserList []interface{}
-	for _, user := range appUsers {
-		if user.Scope != userScope {
-			continue
-		}
-		var un, up string
-		if user.Credentials != nil {
-			un = user.Credentials.UserName
-			if user.Credentials.Password != nil {
-				up = user.Credentials.Password.Value
-			}
-		}
-		flattenedUserList = append(flattenedUserList, map[string]interface{}{
-			"id":       user.Id,
-			"username": un,
-			"scope":    user.Scope,
-			"password": up,
-		})
-	}
+
+	logger(m).Info("skip values",
+		"skip_users", d.Get("skip_users").(bool),
+		"skip_groups", d.Get("skip_groups").(bool))
+
 	flatMap := map[string]interface{}{}
-	if len(flattenedUserList) > 0 {
-		flatMap["users"] = schema.NewSet(schema.HashResource(appUserResource), flattenedUserList)
+	if skipUsers := d.Get("skip_users").(bool); !skipUsers {
+		appUsers, err := listApplicationUsers(ctx, getOktaClientFromMetadata(m), id)
+		if err != nil {
+			return err
+		}
+		var flattenedUserList []interface{}
+		for _, user := range appUsers {
+			if user.Scope != userScope {
+				continue
+			}
+			var un, up string
+			if user.Credentials != nil {
+				getOktaClientFromMetadata(m)
+				un = user.Credentials.UserName
+				if user.Credentials.Password != nil {
+					up = user.Credentials.Password.Value
+				}
+			}
+			flattenedUserList = append(flattenedUserList, map[string]interface{}{
+				"id":       user.Id,
+				"username": un,
+				"scope":    user.Scope,
+				"password": up,
+			})
+		}
+		if len(flattenedUserList) > 0 {
+			flatMap["users"] = schema.NewSet(schema.HashResource(appUserResource), flattenedUserList)
+		}
 	}
-	if len(flatGroupList) > 0 {
-		flatMap["groups"] = schema.NewSet(schema.HashString, flatGroupList)
+	if skipGroups := d.Get("skip_groups").(bool); !skipGroups {
+		appGroups, _, err := listApplicationGroupAssignments(ctx, getOktaClientFromMetadata(m), id)
+		if err != nil {
+			return err
+		}
+		flatGroupList := make([]interface{}, len(appGroups))
+		for i := range appGroups {
+			flatGroupList[i] = appGroups[i].Id
+		}
+		if len(flatGroupList) > 0 {
+			flatMap["groups"] = schema.NewSet(schema.HashString, flatGroupList)
+		}
 	}
 	return setNonPrimitives(d, flatMap)
 }
@@ -522,6 +604,14 @@ func setAppSettings(d *schema.ResourceData, settings *okta.ApplicationSettingsAp
 	}
 	payload, _ := json.Marshal(flatMap)
 	return d.Set("app_settings_json", string(payload))
+}
+
+func setAppLinks(d *schema.ResourceData, appLinks map[string]bool) error {
+	if len(appLinks) == 0 {
+		return nil
+	}
+	payload, _ := json.Marshal(appLinks)
+	return d.Set("app_links_json", string(payload))
 }
 
 func setSamlSettings(d *schema.ResourceData, signOn *okta.SamlApplicationSettingsSignOn) error {
@@ -547,7 +637,7 @@ func setSamlSettings(d *schema.ResourceData, signOn *okta.SamlApplicationSetting
 				for i := range acsEndpointsObj {
 					acsEndpoints[i] = acsEndpointsObj[i].Url
 				}
-				_ = d.Set("acs_endpoints", convertStringSetToInterface(acsEndpoints))
+				_ = d.Set("acs_endpoints", convertStringSliceToSetNullable(acsEndpoints))
 			}
 		} else {
 			_ = d.Set("acs_endpoints", nil)
@@ -594,29 +684,30 @@ func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{
 	return err
 }
 
-func listAppUsersAndGroups(ctx context.Context, client *okta.Client, id string) (users []*okta.AppUser, groups []*okta.ApplicationGroupAssignment, err error) {
-	users, err = listApplicationUsers(ctx, client, id)
-	if err != nil {
-		return
+func setAppUsersIDsAndGroupsIDs(ctx context.Context, d *schema.ResourceData, client *okta.Client, id string) error {
+	if skipGroups := d.Get("skip_groups").(bool); !skipGroups {
+		groups, _, err := listApplicationGroupAssignments(ctx, client, id)
+		if err != nil {
+			return err
+		}
+		groupsIDs := make([]string, len(groups))
+		for i := range groups {
+			groupsIDs[i] = groups[i].Id
+		}
+		_ = d.Set("groups", convertStringSliceToSet(groupsIDs))
 	}
-	groups, err = listApplicationGroupAssignments(ctx, client, id)
-	return
-}
-
-func listAppUsersIDsAndGroupsIDs(ctx context.Context, client *okta.Client, id string) (users []string, groups []string, err error) {
-	appUsers, appGroups, err := listAppUsersAndGroups(ctx, client, id)
-	if err != nil {
-		return nil, nil, err
+	if skipUsers := d.Get("skip_users").(bool); !skipUsers {
+		users, err := listApplicationUsers(ctx, client, id)
+		if err != nil {
+			return err
+		}
+		usersIDs := make([]string, len(users))
+		for i := range users {
+			usersIDs[i] = users[i].Id
+		}
+		_ = d.Set("users", convertStringSliceToSet(usersIDs))
 	}
-	users = make([]string, len(appUsers))
-	groups = make([]string, len(appGroups))
-	for i := range appUsers {
-		users[i] = appUsers[i].Id
-	}
-	for i := range appGroups {
-		groups[i] = appGroups[i].Id
-	}
-	return
+	return nil
 }
 
 func computeFileHash(filename string) string {

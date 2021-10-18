@@ -16,7 +16,7 @@ func resourceAppSwa() *schema.Resource {
 		UpdateContext: resourceAppSwaUpdate,
 		DeleteContext: resourceAppSwaDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: appImporter,
 		},
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
 			"preconfigured_app": {
@@ -143,7 +143,7 @@ func buildAppSwa(d *schema.ResourceData) *okta.SwaApplication {
 	name := d.Get("preconfigured_app").(string)
 	if name != "" {
 		app.Name = name
-		app.SignOnMode = "AUTO_LOGIN" // in case pre-configured app has more then one sign-on modes
+		app.SignOnMode = "AUTO_LOGIN" // in case pre-configured app has more than one sign-on modes
 	}
 	app.Settings = &okta.SwaApplicationSettings{
 		App: &okta.SwaApplicationSettingsApplication{
@@ -156,7 +156,8 @@ func buildAppSwa(d *schema.ResourceData) *okta.SwaApplication {
 		Notes: buildAppNotes(d),
 	}
 	app.Visibility = buildAppVisibility(d)
-	app.Credentials = &okta.ApplicationCredentials{
+	app.Accessibility = buildAppAccessibility(d)
+	app.Credentials = &okta.SchemeApplicationCredentials{
 		UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
 			Suffix:   d.Get("user_name_template_suffix").(string),
 			Template: d.Get("user_name_template").(string),

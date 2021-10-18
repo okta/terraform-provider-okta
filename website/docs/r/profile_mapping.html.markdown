@@ -8,9 +8,9 @@ description: |-
 
 # okta_profile_mapping
 
-Manages a profile mapping.
+This resource allows you to manage a profile mapping by source and target IDs. 
 
-This resource allows you to manage a profile mapping by source id.
+**Important Note**: available only when using api token in the provider config.
 
 ## Example Usage
 

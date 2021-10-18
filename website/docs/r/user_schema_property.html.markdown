@@ -45,7 +45,7 @@ The following arguments are supported:
 
 - `description` - (Optional) The description of the user schema property.
 
-- `required` - (Optional) Whether the property is required for this application's users.
+- `required` - (Optional) Whether the property is required for these users.
 
 - `min_length` - (Optional) The minimum length of the user property value. Only applies to type `"string"`.
 

@@ -8,8 +8,6 @@ description: |-
 
 # okta_app_auto_login
 
-Creates an Auto Login Okta Application.
-
 This resource allows you to create and configure an Auto Login Okta Application.
 
 ## Example Usage
@@ -21,6 +19,21 @@ resource "okta_app_auto_login" "example" {
   sign_on_redirect_url = "https://example.com"
   reveal_password      = true
   credentials_scheme   = "EDIT_USERNAME_AND_PASSWORD"
+}
+```
+
+#### Pre-configured application
+```hcl
+resource "okta_app_auto_login" "example" {
+  label             = "Google Example App"
+  status            = "ACTIVE"
+  preconfigured_app = "google"
+  app_settings_json = <<JSON
+{
+    "domain": "okta",
+    "afwOnly": false
+}
+JSON
 }
 ```
 
@@ -56,9 +69,11 @@ The following arguments are supported:
 
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
-- `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
-
 - `accessibility_error_redirect_url` - (Optional) Custom error page URL.
+
+- `accessibility_login_redirect_url` - (Optional) Custom login page for this application.
+
+- `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
 
 - `users` - (Optional) The users assigned to the application. See `okta_app_user` for a more flexible approach.
   - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
@@ -66,11 +81,17 @@ The following arguments are supported:
 - `groups` - (Optional) Groups associated with the application. See `okta_app_group_assignment` for a more flexible approach.
   - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
 
-- `logo` - (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+- `logo` - (Optional) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 
 - `admin_note` - (Optional) Application notes for admins.
 
 - `enduser_note` - (Optional) Application notes for end users.
+
+- `app_settings_json` - (Optional) Application settings in JSON format.
+
+- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it's also can be provided during import). Default is `false`.
+
+- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it's also can be provided during import). Default is `false`.
 
 ## Attributes Reference
 
@@ -86,4 +107,14 @@ Okta Auto Login App can be imported via the Okta ID.
 
 ```
 $ terraform import okta_app_auto_login.example <app id>
+```
+
+It's also possible to import app without groups or/and users. In this case ID may look like this:
+
+```
+$ terraform import okta_app_basic_auth.example <app id>/skip_users
+
+$ terraform import okta_app_basic_auth.example <app id>/skip_users/skip_groups
+
+$ terraform import okta_app_basic_auth.example <app id>/skip_groups
 ```

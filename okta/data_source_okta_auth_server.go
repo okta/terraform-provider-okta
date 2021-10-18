@@ -64,13 +64,13 @@ func dataSourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m int
 		return diag.Errorf("failed to find auth server '%s': %v", name, err)
 	}
 	if len(servers) < 1 || servers[0].Name != name {
-		diag.Errorf("authorization server with name '%s' does not exist", name)
+		return diag.Errorf("authorization server with name '%s' does not exist", name)
 	}
 	authServer := servers[0]
 	d.SetId(authServer.Id)
 	_ = d.Set("name", authServer.Name)
 	_ = d.Set("description", authServer.Description)
-	_ = d.Set("audiences", convertStringSetToInterface(authServer.Audiences))
+	_ = d.Set("audiences", convertStringSliceToSet(authServer.Audiences))
 	if authServer.Credentials != nil && authServer.Credentials.Signing != nil {
 		_ = d.Set("kid", authServer.Credentials.Signing.Kid)
 		_ = d.Set("credentials_rotation_mode", authServer.Credentials.Signing.RotationMode)

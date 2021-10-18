@@ -3,24 +3,22 @@ layout: 'okta'
 page_title: 'Okta: okta_app_saml'
 sidebar_current: 'docs-okta-resource-app-saml'
 description: |-
-  Creates an SAML Application.
+  Creates a SAML Application.
 ---
 
 # okta_app_saml
 
-Creates an SAML Application.
-
-This resource allows you to create and configure an SAML Application.
+This resource allows you to create and configure a SAML Application.
 
 ## Example Usage
 
 ```hcl
 resource "okta_app_saml" "example" {
   label                    = "example"
-  sso_url                  = "http://example.com"
-  recipient                = "http://example.com"
-  destination              = "http://example.com"
-  audience                 = "http://example.com/audience"
+  sso_url                  = "https://example.com"
+  recipient                = "https://example.com"
+  destination              = "https://example.com"
+  audience                 = "https://example.com/audience"
   subject_name_id_template = "$${user.userName}"
   subject_name_id_format   = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
   response_signed          = true
@@ -62,10 +60,10 @@ resource "okta_inline_hook" "test" {
 
 resource "okta_app_saml" "test" {
   label                     = "testAcc_replace_with_uuid"
-  sso_url                   = "http://google.com"
-  recipient                 = "http://here.com"
-  destination               = "http://its-about-the-journey.com"
-  audience                  = "http://audience.com"
+  sso_url                   = "https://google.com"
+  recipient                 = "https://here.com"
+  destination               = "https://its-about-the-journey.com"
+  audience                  = "https://audience.com"
   subject_name_id_template  = "$${user.userName}"
   subject_name_id_format    = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
   response_signed           = true
@@ -94,7 +92,7 @@ resource "okta_app_saml" "test" {
   app_settings_json = <<JSON
 {
     "groupFilter": "app1.*",
-    "siteURL": "http://www.okta.com"
+    "siteURL": "https://www.okta.com"
 }
 JSON
   label = "SharePoint (On-Premise)"
@@ -103,6 +101,51 @@ JSON
   status = "ACTIVE"
   user_name_template = "$${source.login}"
   user_name_template_type = "BUILT_IN"
+}
+```
+
+### Pre-configured app with SAML 1.1 sign-on mode, `app_settings_json` and `app_links_json`
+
+```hcl
+resource "okta_app_saml" "office365" {
+  preconfigured_app = "office365"
+  label             = "Microsoft Office 365"
+  status            = "ACTIVE"
+  saml_version      = "1.1"
+  app_settings_json = <<JSON
+    {
+       "wsFedConfigureType": "AUTO",
+       "windowsTransportEnabled": false,
+       "domain": "okta.com",
+       "msftTenant": "okta",
+       "domains": [],
+       "requireAdminConsent": false
+    }
+JSON
+  app_links_json    = <<JSON
+  {
+      "calendar": false,
+      "crm": false,
+      "delve": false,
+      "excel": false,
+      "forms": false,
+      "mail": false,
+      "newsfeed": false,
+      "onedrive": false,
+      "people": false,
+      "planner": false,
+      "powerbi": false,
+      "powerpoint": false,
+      "sites": false,
+      "sway": false,
+      "tasks": false,
+      "teams": false,
+      "video": false,
+      "word": false,
+      "yammer": false,
+      "login": true
+  }
+JSON
 }
 ```
 
@@ -121,6 +164,8 @@ The following arguments are supported:
 - `hide_ios` - (Optional) Do not display application icon on mobile app.
 
 - `hide_web` - (Optional) Do not display application icon to users
+
+- `implicit_assignment` - (Optional) *Early Access Property*. Enables [Federation Broker Mode]( https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm). When this mode is enabled, `users` and `groups` arguments are ignored.
 
 - `default_relay_state` - (Optional) Identifies a specific application resource in an IDP initiated SSO scenario.
 
@@ -154,11 +199,11 @@ The following arguments are supported:
 
 - `authn_context_class_ref` - (Optional) Identifies the SAML authentication context class for the assertion’s authentication statement.
 
-- `accessibility_self_service` - (Optional) Enable self-service.
-
 - `accessibility_error_redirect_url` - (Optional) Custom error page URL.
 
-- `accessibility_login_redirect_url` - (Optional) Custom login page URL.
+- `accessibility_login_redirect_url` - (Optional) Custom login page for this application.
+
+- `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
 
 - `features` - (Optional) features enabled. Notice: you can't currently configure provisioning features via the API.
 
@@ -199,13 +244,19 @@ The following arguments are supported:
 - `single_logout_certificate` - (Optional) x509 encoded certificate that the Service Provider uses to sign Single Logout requests.
   Note: should be provided without `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`, see [official documentation](https://developer.okta.com/docs/reference/api/apps/#service-provider-certificate).
 
-- `logo` - (Optional) Application logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+- `logo` - (Optional) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 
 - `admin_note` - (Optional) Application notes for admins.
 
 - `enduser_note` - (Optional) Application notes for end users.
 
 - `saml_version` - (Optional) SAML version for the app's sign-on mode. Valid values are: `"2.0"` or `"1.1"`. Default is `"2.0"`.
+
+- `app_links_json` - (Optional) Displays specific appLinks for the app. The value for the link should be boolean.
+
+- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it's also can be provided during import). Default is `false`.
+
+- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it's also can be provided during import). Default is `false`.
 
 ## Attributes Reference
 
@@ -241,4 +292,14 @@ A SAML App can be imported via the Okta ID.
 
 ```
 $ terraform import okta_app_saml.example <app id>
+```
+
+It's also possible to import app without groups or/and users. In this case ID may look like this:
+
+```
+$ terraform import okta_app_basic_auth.example <app id>/skip_users
+
+$ terraform import okta_app_basic_auth.example <app id>/skip_users/skip_groups
+
+$ terraform import okta_app_basic_auth.example <app id>/skip_groups
 ```

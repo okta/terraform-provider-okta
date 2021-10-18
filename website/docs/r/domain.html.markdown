@@ -15,7 +15,6 @@ Manages custom domain for your organization.
 ```hcl
 resource "okta_domain" "example" {
   name = "www.example.com"
-  verify = true
 }
 ```
 
@@ -25,7 +24,8 @@ The following arguments are supported:
 
 - `name` - (Required) Custom Domain name.
 
-- `verify` - (Optional) Indicates whether the domain should be verified.
+- `verify` - (Optional) Indicates whether the domain should be verified. 
+  - `DEPRECATED`: Please use `okta_domain_verification` resource instead.
 
 ## Attributes Reference
 

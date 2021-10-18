@@ -109,15 +109,20 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 	_ = d.Set("priority", rule.Priority)
 	_ = d.Set("user_identifier_attribute", rule.Conditions.UserIdentifier.Attribute)
 	_ = d.Set("user_identifier_type", rule.Conditions.UserIdentifier.Type)
-	_ = d.Set("network_connection", rule.Conditions.Network.Connection)
-	err = setNonPrimitives(d, map[string]interface{}{
-		"network_includes":         convertStringArrToInterface(rule.Conditions.Network.Include),
-		"network_excludes":         convertStringArrToInterface(rule.Conditions.Network.Exclude),
+	mm := map[string]interface{}{
 		"platform_include":         flattenPlatformInclude(rule.Conditions.Platform),
-		"user_identifier_patterns": flattenUserIDPatterns(rule.Conditions.UserIdentifier.Patterns),
 		"app_include":              flattenAppInclude(rule.Conditions.App),
 		"app_exclude":              flattenAppExclude(rule.Conditions.App),
-	})
+		"user_identifier_patterns": flattenUserIDPatterns(rule.Conditions.UserIdentifier.Patterns),
+	}
+	_ = d.Set("network_connection", rule.Conditions.Network.Connection)
+	if len(rule.Conditions.Network.Include) > 0 {
+		mm["network_includes"] = convertStringSliceToInterfaceSlice(rule.Conditions.Network.Include)
+	}
+	if len(rule.Conditions.Network.Exclude) > 0 {
+		mm["network_excludes"] = convertStringSliceToInterfaceSlice(rule.Conditions.Network.Exclude)
+	}
+	err = setNonPrimitives(d, mm)
 	if err != nil {
 		return diag.Errorf("failed to set IDP discovery policy rule properties: %v", err)
 	}
@@ -236,7 +241,7 @@ var (
 				Type:             schema.TypeString,
 				Optional:         true,
 				Default:          "ANY",
-				ValidateDiagFunc: elemInSlice([]string{"ANY", "IOS", "WINDOWS", "ANDROID", "OTHER", "OSX"}),
+				ValidateDiagFunc: elemInSlice([]string{"ANY", "IOS", "WINDOWS", "ANDROID", "OTHER", "OSX", "MACOS"}),
 			},
 			"os_expression": {
 				Type:        schema.TypeString,

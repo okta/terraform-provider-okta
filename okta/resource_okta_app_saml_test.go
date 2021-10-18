@@ -1,8 +1,10 @@
 package okta
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 	"regexp"
 	"testing"
 
@@ -149,6 +151,86 @@ func TestAccAppSaml_crud(t *testing.T) {
 	})
 }
 
+func TestAccAppSaml_preconfigured(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appSaml)
+	preconfigured := mgr.GetFixtures("preconfigured.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", appSaml)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: preconfigured,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "preconfigured_app", "office365"),
+					resource.TestCheckResourceAttr(resourceName, "saml_version", "1.1"),
+					testAppSamlJson(resourceName, `{
+       "wsFedConfigureType": "AUTO",
+       "windowsTransportEnabled": false,
+       "domain": "okta.com",
+       "msftTenant": "okta",
+       "domains": [],
+       "requireAdminConsent": false
+    }`, `{
+      "calendar": false,
+      "crm": false,
+      "delve": false,
+      "excel": false,
+      "forms": false,
+      "mail": false,
+      "newsfeed": false,
+      "onedrive": false,
+      "people": false,
+      "planner": false,
+      "powerbi": false,
+      "powerpoint": false,
+      "sites": false,
+      "sway": false,
+      "tasks": false,
+      "teams": false,
+      "video": false,
+      "word": false,
+      "yammer": false,
+      "login": true
+	}`),
+				),
+			},
+		},
+	})
+}
+
+func testAppSamlJson(name, expectedSettingsJSON, expectedLinksJSON string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[name]
+		if !ok {
+			return fmt.Errorf("not found: %s", name)
+		}
+		actualSettingsJSON := rs.Primary.Attributes["app_settings_json"]
+		actualLinksJSON := rs.Primary.Attributes["app_links_json"]
+		eq := areJSONStringsEqual(expectedSettingsJSON, actualSettingsJSON)
+		if !eq {
+			return fmt.Errorf("attribute 'app_settings_json' expected %q, got %q", expectedSettingsJSON, actualSettingsJSON)
+		}
+		eq = areJSONStringsEqual(expectedLinksJSON, actualLinksJSON)
+		if !eq {
+			return fmt.Errorf("attribute 'app_settings_json' expected %q, got %q", expectedSettingsJSON, actualSettingsJSON)
+		}
+		return nil
+	}
+}
+
+func areJSONStringsEqual(a, b string) bool {
+	var aM, bM map[string]interface{}
+	_ = json.Unmarshal([]byte(a), &aM)
+	_ = json.Unmarshal([]byte(b), &bM)
+	return reflect.DeepEqual(aM, bM)
+}
+
 // Add and remove groups/users
 func TestAccAppSaml_userGroups(t *testing.T) {
 	ri := acctest.RandInt()
@@ -206,6 +288,47 @@ func TestAccAppSaml_inlineHook(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttrSet(resourceName, "inline_hook_id"),
+				),
+			},
+		},
+	})
+}
+
+// Tests creation of service app and updates it to turn on federated broker
+func TestAccAppSaml_federationBroker(t *testing.T) {
+	// TODO: This is an "Early Access Feature" and needs to be enabled by Okta
+	//       Skipping for now assuming that the okta account doesn't have this feature enabled.
+	//       If this feature is enabled or Okta releases this to all this test should be enabled.
+	//       SEE https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm
+	t.Skip("This is an 'Early Access Feature' and needs to be enabled by Okta, skipping this test as it fails when this feature is not available")
+
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appSaml)
+	config := mgr.GetFixtures("federation_broker_off.tf", ri, t)
+	updatedConfig := mgr.GetFixtures("federation_broker_on.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", appSaml)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "false"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "true"),
 				),
 			},
 		},

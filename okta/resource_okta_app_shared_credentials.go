@@ -16,13 +16,13 @@ func resourceAppSharedCredentials() *schema.Resource {
 		UpdateContext: resourceAppSharedCredentialsUpdate,
 		DeleteContext: resourceAppSharedCredentialsDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: appImporter,
 		},
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
-			"accessibility_login_redirect_url": {
+			"preconfigured_app": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Custom login page URL",
+				Description: "Preconfigured app name",
 			},
 			"button_field": {
 				Type:        schema.TypeString,
@@ -83,6 +83,10 @@ func resourceAppSharedCredentialsCreate(ctx context.Context, d *schema.ResourceD
 		return diag.Errorf("failed to create SWA shared credentials application: %v", err)
 	}
 	d.SetId(app.Id)
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
+	if err != nil {
+		return diag.Errorf("failed to handle groups and users for SWA shared credentials application: %v", err)
+	}
 	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for SWA shared credentials application: %v", err)
@@ -113,7 +117,12 @@ func resourceAppSharedCredentialsRead(ctx context.Context, d *schema.ResourceDat
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
+	_ = d.Set("accessibility_login_redirect_url", app.Accessibility.LoginRedirectUrl)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
+	err = syncGroupsAndUsers(ctx, app.Id, d, m)
+	if err != nil {
+		return diag.Errorf("failed to sync groups and users for SWA shared credentials application: %v", err)
+	}
 	return nil
 }
 
@@ -127,6 +136,10 @@ func resourceAppSharedCredentialsUpdate(ctx context.Context, d *schema.ResourceD
 	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
 		return diag.Errorf("failed to set SWA shared credentials application status: %v", err)
+	}
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
+	if err != nil {
+		return diag.Errorf("failed to handle groups and users for SWA shared credentials application: %v", err)
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
@@ -150,6 +163,10 @@ func resourceAppSharedCredentialsDelete(ctx context.Context, d *schema.ResourceD
 func buildAppSharedCredentials(d *schema.ResourceData) *okta.BrowserPluginApplication {
 	app := okta.NewBrowserPluginApplication()
 	app.Name = "template_swa"
+	name := d.Get("preconfigured_app").(string)
+	if name != "" {
+		app.Name = name
+	}
 	app.Label = d.Get("label").(string)
 	app.Settings = &okta.ApplicationSettings{
 		App: &okta.ApplicationSettingsApplication{
@@ -175,11 +192,7 @@ func buildAppSharedCredentials(d *schema.ResourceData) *okta.BrowserPluginApplic
 		Scheme:   "SHARED_USERNAME_AND_PASSWORD",
 		UserName: d.Get("shared_username").(string),
 	}
-	app.Accessibility = &okta.ApplicationAccessibility{
-		SelfService:      boolPtr(d.Get("accessibility_self_service").(bool)),
-		ErrorRedirectUrl: d.Get("accessibility_error_redirect_url").(string),
-		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
-	}
 	app.Visibility = buildAppVisibility(d)
+	app.Accessibility = buildAppAccessibility(d)
 	return app
 }

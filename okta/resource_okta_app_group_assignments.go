@@ -1,10 +1,10 @@
 package okta
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"reflect"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,30 +17,23 @@ func resourceAppGroupAssignments() *schema.Resource {
 		ReadContext:   resourceAppGroupAssignmentsRead,
 		DeleteContext: resourceAppGroupAssignmentsDelete,
 		UpdateContext: resourceAppGroupAssignmentsUpdate,
-		Importer:      &schema.ResourceImporter{},
-
+		Importer: &schema.ResourceImporter{
+			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+				_ = d.Set("app_id", d.Id())
+				return []*schema.ResourceData{d}, nil
+			},
+		},
 		Schema: map[string]*schema.Schema{
 			"app_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-
 			"group": {
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				Required:    true,
 				Description: "A group to assign to this application",
 				MinItems:    1,
-				Set: func(v interface{}) int {
-					buf := bytes.NewBuffer(nil)
-					group := v.(map[string]interface{})
-
-					buf.WriteString(fmt.Sprintf("%s-", group["id"].(string)))
-					buf.WriteString(fmt.Sprintf("%s-", normalizeDataJSON(group["profile"])))
-					buf.WriteString(fmt.Sprintf("%d-", group["priority"].(int)))
-
-					return schema.HashString(buf.String())
-				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
@@ -60,9 +53,12 @@ func resourceAppGroupAssignments() *schema.Resource {
 							Type:             schema.TypeString,
 							ValidateDiagFunc: stringIsJSON,
 							StateFunc:        normalizeDataJSON,
-							Optional:         true,
+							Required:         true,
 							DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 								return new == ""
+							},
+							DefaultFunc: func() (interface{}, error) {
+								return "{}", nil
 							},
 						},
 					},
@@ -73,18 +69,16 @@ func resourceAppGroupAssignments() *schema.Resource {
 }
 
 func resourceAppGroupAssignmentsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	groups := d.Get("group").(*schema.Set).List()
 	client := getOktaClientFromMetadata(m)
-
-	assignments := tfGroupsToGroupAssignments(groups...)
+	assignments := tfGroupsToGroupAssignments(d)
 
 	// run through all groups in the set and create an assignment
-	for groupID, assignment := range assignments {
+	for i := range assignments {
 		_, _, err := client.Application.CreateApplicationGroupAssignment(
 			ctx,
 			d.Get("app_id").(string),
-			groupID,
-			assignment,
+			assignments[i].Id,
+			*assignments[i],
 		)
 		if err != nil {
 			return diag.Errorf("failed to create application group assignment: %v", err)
@@ -98,45 +92,32 @@ func resourceAppGroupAssignmentsCreate(ctx context.Context, d *schema.ResourceDa
 
 func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-
-	assignments, err := listApplicationGroupAssignments(
+	assignments, resp, err := listApplicationGroupAssignments(
 		ctx,
 		client,
 		d.Get("app_id").(string),
 	)
-	if err != nil {
+	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to fetch group assignments: %v", err)
 	}
-
-	tfFlattenedAssignments := make([]interface{}, len(assignments))
-	for i, assignment := range assignments {
-		tfAssignment, err := groupAssignmentToTFGroup(assignment)
+	if assignments == nil {
+		d.SetId("")
+		return nil
+	}
+	g, ok := d.GetOk("group")
+	if ok {
+		err := setNonPrimitives(d, map[string]interface{}{"group": syncGroups(d, g.([]interface{}), assignments)})
 		if err != nil {
-			return diag.Errorf("failed to marshal group profile: %v", err)
+			return diag.Errorf("failed to set OAuth application properties: %v", err)
 		}
-		tfFlattenedAssignments[i] = tfAssignment
-	}
-
-	err = d.Set("group", tfFlattenedAssignments)
-	if err != nil {
-		return diag.Errorf("failed to set groups in tf state: %v", err)
-	}
-	return nil
-}
-
-func resourceAppGroupAssignmentsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
-
-	for _, rawGroup := range d.Get("group").(*schema.Set).List() {
-		group := rawGroup.(map[string]interface{})
-
-		_, err := client.Application.DeleteApplicationGroupAssignment(
-			ctx,
-			d.Get("app_id").(string),
-			group["id"].(string),
-		)
+	} else {
+		arr := make([]map[string]interface{}, len(assignments))
+		for i := range assignments {
+			arr[i] = groupAssignmentToTFGroup(assignments[i])
+		}
+		err := setNonPrimitives(d, map[string]interface{}{"group": arr})
 		if err != nil {
-			return diag.Errorf("failed to delete application group assignment: %v", err)
+			return diag.Errorf("failed to set OAuth application properties: %v", err)
 		}
 	}
 	return nil
@@ -145,19 +126,16 @@ func resourceAppGroupAssignmentsDelete(ctx context.Context, d *schema.ResourceDa
 func resourceAppGroupAssignmentsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
 	appID := d.Get("app_id").(string)
-
-	old, new := d.GetChange("group")
-	oldSet := old.(*schema.Set)
-	newSet := new.(*schema.Set)
-
-	toAdd := tfGroupsToGroupAssignments(
-		newSet.Difference(oldSet).List()...,
+	assignments, _, err := listApplicationGroupAssignments(
+		ctx,
+		client,
+		d.Get("app_id").(string),
 	)
-	toRemove := tfGroupsToGroupAssignments(
-		oldSet.Difference(newSet).List()...,
-	)
-
-	err := deleteGroupAssignments(
+	if err != nil {
+		return diag.Errorf("failed to fetch group assignments: %v", err)
+	}
+	toAssign, toRemove := splitAssignmentsTargets(tfGroupsToGroupAssignments(d), assignments)
+	err = deleteGroupAssignments(
 		client.Application.DeleteApplicationGroupAssignment,
 		ctx,
 		appID,
@@ -166,61 +144,138 @@ func resourceAppGroupAssignmentsUpdate(ctx context.Context, d *schema.ResourceDa
 	if err != nil {
 		return diag.Errorf("failed to delete group assignment: %v", err)
 	}
-
 	err = addGroupAssignments(
 		client.Application.CreateApplicationGroupAssignment,
 		ctx,
 		appID,
-		toAdd,
+		toAssign,
 	)
 	if err != nil {
-		return diag.Errorf("failed to add group assignment: %v", err)
+		return diag.Errorf("failed to add/update group assignment: %v", err)
 	}
 	return resourceAppGroupAssignmentsRead(ctx, d, m)
 }
 
-// groupAssignmentToTFGroup
-func groupAssignmentToTFGroup(assignment *okta.ApplicationGroupAssignment) (map[string]interface{}, error) {
-	profile := "{}"
-
-	jsonProfile, err := json.Marshal(assignment.Profile)
-	if err != nil {
-		return nil, err
+func resourceAppGroupAssignmentsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(m)
+	for _, rawGroup := range d.Get("group").([]interface{}) {
+		group := rawGroup.(map[string]interface{})
+		resp, err := client.Application.DeleteApplicationGroupAssignment(
+			ctx,
+			d.Get("app_id").(string),
+			group["id"].(string),
+		)
+		if err := suppressErrorOn404(resp, err); err != nil {
+			return diag.Errorf("failed to delete application group assignment: %v", err)
+		}
 	}
+	return nil
+}
+
+func syncGroups(d *schema.ResourceData, groups []interface{}, assignments []*okta.ApplicationGroupAssignment) []interface{} {
+	var newGroups []interface{}
+	for i := range groups {
+		present := false
+		for _, assignment := range assignments {
+			if assignment.Id == d.Get(fmt.Sprintf("group.%d.id", i)).(string) {
+				present = true
+				if assignment.Priority != nil {
+					groups[i].(map[string]interface{})["priority"] = int(*assignment.Priority)
+				}
+				groups[i].(map[string]interface{})["profile"] = buildProfile(d, i, assignment)
+			}
+		}
+		if present {
+			newGroups = append(newGroups, groups[i])
+		}
+	}
+	return newGroups
+}
+
+func buildProfile(d *schema.ResourceData, i int, assignment *okta.ApplicationGroupAssignment) string {
+	oldProfile := d.Get(fmt.Sprintf("group.%d.profile", i)).(string)
+	opm := make(map[string]interface{})
+	_ = json.Unmarshal([]byte(oldProfile), &opm)
+	ap, ok := assignment.Profile.(map[string]interface{})
+	if ok {
+		for k, v := range ap {
+			if _, ok := opm[k]; ok {
+				opm[k] = v
+				continue
+			}
+			if v != nil {
+				opm[k] = v
+			}
+		}
+	}
+	jsonProfile, _ := json.Marshal(&opm)
+	return string(jsonProfile)
+}
+
+func splitAssignmentsTargets(expectedAssignments, existingAssignments []*okta.ApplicationGroupAssignment) (toAssign, toRemove []*okta.ApplicationGroupAssignment) {
+	for i := range expectedAssignments {
+		if !containsEqualAssignment(existingAssignments, expectedAssignments[i]) {
+			toAssign = append(toAssign, expectedAssignments[i])
+		}
+	}
+	for i := range existingAssignments {
+		if !containsAssignment(expectedAssignments, existingAssignments[i]) {
+			toRemove = append(toRemove, existingAssignments[i])
+		}
+	}
+	return
+}
+
+func containsAssignment(assignments []*okta.ApplicationGroupAssignment, assignment *okta.ApplicationGroupAssignment) bool {
+	for i := range assignments {
+		if assignments[i].Id == assignment.Id {
+			return true
+		}
+	}
+	return false
+}
+
+func containsEqualAssignment(assignments []*okta.ApplicationGroupAssignment, assignment *okta.ApplicationGroupAssignment) bool {
+	for i := range assignments {
+		if assignments[i].Id == assignment.Id && reflect.DeepEqual(assignments[i].Profile, assignment.Profile) {
+			if assignment.Priority != nil {
+				return reflect.DeepEqual(assignments[i].Priority, assignment.Priority)
+			}
+			return true
+		}
+	}
+	return false
+}
+
+func groupAssignmentToTFGroup(assignment *okta.ApplicationGroupAssignment) map[string]interface{} {
+	jsonProfile, _ := json.Marshal(assignment.Profile)
+	profile := "{}"
 	if string(jsonProfile) != "" {
 		profile = string(jsonProfile)
 	}
-
-	tfAssignment := map[string]interface{}{
+	return map[string]interface{}{
 		"id":       assignment.Id,
 		"priority": assignment.Priority,
 		"profile":  profile,
 	}
-	return tfAssignment, nil
 }
 
-func tfGroupsToGroupAssignments(groups ...interface{}) map[string]okta.ApplicationGroupAssignment {
-	assignments := map[string]okta.ApplicationGroupAssignment{}
-	// run through all groups in the set and create an assignment
-	for _, untypedGroup := range groups {
-		group := untypedGroup.(map[string]interface{})
-
-		id := group["id"].(string)
-		// skip empty groups with no id
-		if id == "" {
-			continue
-		}
-		priority := group["priority"].(int)
-
-		rawProfile := group["profile"]
+func tfGroupsToGroupAssignments(d *schema.ResourceData) []*okta.ApplicationGroupAssignment {
+	assignments := make([]*okta.ApplicationGroupAssignment, len(d.Get("group").([]interface{})))
+	for i := range d.Get("group").([]interface{}) {
+		rawProfile := d.Get(fmt.Sprintf("group.%d.profile", i))
 		var profile interface{}
 		_ = json.Unmarshal([]byte(rawProfile.(string)), &profile)
-
-		assignments[id] = okta.ApplicationGroupAssignment{
-			Profile:  profile,
-			Priority: int64(priority),
-			Id:       id,
+		a := &okta.ApplicationGroupAssignment{
+			Id:      d.Get(fmt.Sprintf("group.%d.id", i)).(string),
+			Profile: profile,
 		}
+		priority, ok := d.GetOk(fmt.Sprintf("group.%d.priority", i))
+		if ok {
+			p := int64(priority.(int))
+			a.Priority = &p
+		}
+		assignments[i] = a
 	}
 	return assignments
 }
@@ -230,10 +285,10 @@ func addGroupAssignments(
 	add func(context.Context, string, string, okta.ApplicationGroupAssignment) (*okta.ApplicationGroupAssignment, *okta.Response, error),
 	ctx context.Context,
 	appID string,
-	assignments map[string]okta.ApplicationGroupAssignment,
+	assignments []*okta.ApplicationGroupAssignment,
 ) error {
-	for groupID, assignment := range assignments {
-		_, _, err := add(ctx, appID, groupID, assignment)
+	for _, assignment := range assignments {
+		_, _, err := add(ctx, appID, assignment.Id, *assignment)
 		if err != nil {
 			return err
 		}
@@ -246,17 +301,12 @@ func deleteGroupAssignments(
 	delete func(context.Context, string, string) (*okta.Response, error),
 	ctx context.Context,
 	appID string,
-	assignments map[string]okta.ApplicationGroupAssignment,
+	assignments []*okta.ApplicationGroupAssignment,
 ) error {
-	for groupID := range assignments {
-		_, err := delete(ctx, appID, groupID)
+	for i := range assignments {
+		_, err := delete(ctx, appID, assignments[i].Id)
 		if err != nil {
-			return fmt.Errorf(
-				"could not delete assignment for group %s, to application %s: %w",
-				groupID,
-				appID,
-				err,
-			)
+			return fmt.Errorf("could not delete assignment for group %s, to application %s: %w", assignments[i].Id, appID, err)
 		}
 	}
 	return nil

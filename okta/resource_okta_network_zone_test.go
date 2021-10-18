@@ -64,6 +64,7 @@ func TestAccOktaNetworkZone_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(dynamicResourceName, "name", fmt.Sprintf("testAcc_%d Dynamic Updated", ri)),
 					resource.TestCheckResourceAttr(dynamicResourceName, "type", "DYNAMIC"),
 					resource.TestCheckResourceAttr(dynamicResourceName, "dynamic_locations.#", "3"),
+					resource.TestCheckResourceAttr(dynamicResourceName, "asns.#", "1"),
 				),
 			},
 		},

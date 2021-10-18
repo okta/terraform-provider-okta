@@ -134,7 +134,7 @@ func testOktaUserBaseSchemasExists(name string) resource.TestCheckFunc {
 		if rs.Primary.Attributes["user_type"] != "" {
 			schemaUserType = rs.Primary.Attributes["user_type"]
 		}
-		exists, err := testSchemaPropertyExists(schemaUserType, rs.Primary.ID, baseSchema)
+		exists, err := testUserSchemaPropertyExists(schemaUserType, rs.Primary.ID, baseSchema)
 		if err != nil {
 			return fmt.Errorf("failed to find: %v", err)
 		}

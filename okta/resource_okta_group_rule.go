@@ -50,6 +50,12 @@ func resourceGroupRule() *schema.Resource {
 				Optional:    true,
 				Description: "Remove users added by this rule from the assigned group after deleting this resource",
 			},
+			"users_excluded": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "The list of user IDs that would be excluded when rules are processed",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 		},
 		CustomizeDiff: customdiff.ForceNewIf("status", func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
 			g, _, _ := getOktaClientFromMetadata(meta).Group.GetGroupRule(ctx, d.Id(), nil)
@@ -89,12 +95,17 @@ func resourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, m interf
 	_ = d.Set("name", g.Name)
 	_ = d.Set("status", g.Status)
 	// Just for the sake of safety, should never be nil
-	if g.Conditions != nil && g.Conditions.Expression != nil {
-		_ = d.Set("expression_type", g.Conditions.Expression.Type)
-		_ = d.Set("expression_value", g.Conditions.Expression.Value)
+	if g.Conditions != nil {
+		if g.Conditions.Expression != nil {
+			_ = d.Set("expression_type", g.Conditions.Expression.Type)
+			_ = d.Set("expression_value", g.Conditions.Expression.Value)
+		}
+		if g.Conditions.People != nil && g.Conditions.People.Users != nil {
+			_ = d.Set("users_excluded", convertStringSliceToSet(g.Conditions.People.Users.Exclude))
+		}
 	}
 	err = setNonPrimitives(d, map[string]interface{}{
-		"group_assignments": convertStringSetToInterface(g.Actions.AssignUserToGroups.GroupIds),
+		"group_assignments": convertStringSliceToSet(g.Actions.AssignUserToGroups.GroupIds),
 	})
 	if err != nil {
 		return diag.Errorf("failed to set group rule properties: %v", err)
@@ -139,7 +150,7 @@ func resourceGroupRuleUpdate(ctx context.Context, d *schema.ResourceData, m inte
 }
 
 func hasGroupRuleChange(d *schema.ResourceData) bool {
-	for _, k := range []string{"expression_type", "expression_value", "name", "group_assignments"} {
+	for _, k := range []string{"expression_type", "expression_value", "name", "group_assignments", "users_excluded"} {
 		if d.HasChange(k) {
 			return true
 		}
@@ -175,6 +186,11 @@ func buildGroupRule(d *schema.ResourceData) *okta.GroupRule {
 			Expression: &okta.GroupRuleExpression{
 				Type:  d.Get("expression_type").(string),
 				Value: d.Get("expression_value").(string),
+			},
+			People: &okta.GroupRulePeopleCondition{
+				Users: &okta.GroupRuleUserCondition{
+					Exclude: convertInterfaceToStringSet(d.Get("users_excluded")),
+				},
 			},
 		},
 		Name: d.Get("name").(string),

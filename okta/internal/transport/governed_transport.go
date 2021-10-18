@@ -64,7 +64,16 @@ func (t *GovernedTransport) preRequestHook(ctx context.Context, method, path str
 	now := time.Now().Unix()
 	timeToSleep := status.Reset() - now
 
-	t.logger.Info(fmt.Sprintf("Throttling API requests, sleeping for %d seconds until rate limit reset (%q:%d/%d)", timeToSleep, status.Class(), status.Remaining(), status.Limit()))
+	line := fmt.Sprintf("Throttling API requests; sleeping for %d seconds until rate limit reset (path class %q: %d remaining of %d total); current request \"%s %s\"",
+		timeToSleep,
+		status.Class(),
+		status.Remaining(),
+		status.Limit(),
+		method,
+		path,
+	)
+	t.logger.Info(line)
+
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
@@ -74,6 +83,9 @@ func (t *GovernedTransport) preRequestHook(ctx context.Context, method, path str
 }
 
 func (t *GovernedTransport) postRequestHook(method, path string, resp *http.Response) {
+	if resp == nil {
+		return
+	}
 	reset, err := strconv.ParseInt(resp.Header.Get(X_RATE_LIMIT_RESET), 10, 64)
 	if err != nil {
 		t.logger.Warn(fmt.Sprintf("%q response header is missing or invalid, skipping postRequestHook: %+v", X_RATE_LIMIT_RESET, err))

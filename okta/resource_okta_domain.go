@@ -30,6 +30,7 @@ func resourceDomain() *schema.Resource {
 				Optional:    true,
 				Description: "Indicates whether the domain should be verified during creation",
 				Default:     false,
+				Deprecated:  "The direct validation for the domain resource is deprecated, please use the `okta_domain_verification` resource for this functionality.",
 			},
 			"validation_status": {
 				Type:        schema.TypeString,
@@ -109,12 +110,12 @@ func resourceDomainRead(ctx context.Context, d *schema.ResourceData, m interface
 			"expiration":  domain.DnsRecords[i].Expiration,
 			"fqdn":        domain.DnsRecords[i].Fqdn,
 			"record_type": domain.DnsRecords[i].RecordType,
-			"values":      convertStringArrToInterface(domain.DnsRecords[i].Values),
+			"values":      convertStringSliceToInterfaceSlice(domain.DnsRecords[i].Values),
 		}
 	}
 	err = setNonPrimitives(d, map[string]interface{}{"dns_records": arr})
 	if err != nil {
-		return diag.Errorf("failed to set OAuth application properties: %v", err)
+		return diag.Errorf("failed to set DNS records: %v", err)
 	}
 	if domain.ValidationStatus == "IN_PROGRESS" || domain.ValidationStatus == "VERIFIED" || domain.ValidationStatus == "COMPLETED" {
 		return nil

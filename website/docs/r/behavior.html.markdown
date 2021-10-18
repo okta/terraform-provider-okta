@@ -8,8 +8,6 @@ description: |-
 
 # okta_behavior
 
-Creates different types of behavior.
-
 This resource allows you to create and configure a behavior.
 
 ## Example Usage

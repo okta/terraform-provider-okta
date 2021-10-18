@@ -30,12 +30,12 @@ func (m *APISupplement) GetHotpFactorProfile(ctx context.Context, id string) (*H
 	if err != nil {
 		return nil, nil, err
 	}
-	var profile HotpFactorProfile
+	var profile *HotpFactorProfile
 	resp, err := m.RequestExecutor.Do(ctx, req, &profile)
 	if err != nil {
 		return nil, resp, err
 	}
-	return &profile, resp, nil
+	return profile, resp, nil
 }
 
 func (m *APISupplement) CreateHotpFactorProfile(ctx context.Context, body HotpFactorProfile) (*HotpFactorProfile, *okta.Response, error) {
@@ -44,12 +44,12 @@ func (m *APISupplement) CreateHotpFactorProfile(ctx context.Context, body HotpFa
 	if err != nil {
 		return nil, nil, err
 	}
-	var profile HotpFactorProfile
+	var profile *HotpFactorProfile
 	resp, err := m.RequestExecutor.Do(ctx, req, &profile)
 	if err != nil {
 		return nil, resp, err
 	}
-	return &profile, resp, nil
+	return profile, resp, nil
 }
 
 func (m *APISupplement) UpdateHotpFactorProfile(ctx context.Context, id string, body HotpFactorProfile) (*HotpFactorProfile, *okta.Response, error) {
@@ -58,12 +58,12 @@ func (m *APISupplement) UpdateHotpFactorProfile(ctx context.Context, id string, 
 	if err != nil {
 		return nil, nil, err
 	}
-	var profile HotpFactorProfile
+	var profile *HotpFactorProfile
 	resp, err := m.RequestExecutor.Do(ctx, req, &profile)
 	if err != nil {
 		return nil, resp, err
 	}
-	return &profile, resp, nil
+	return profile, resp, nil
 }
 
 func (m *APISupplement) DeleteHotpFactorProfile(ctx context.Context, id string) (*okta.Response, error) {
