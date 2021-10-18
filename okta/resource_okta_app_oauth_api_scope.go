@@ -10,7 +10,7 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
-# validScopes is a list of supported scopes as per https://developer.okta.com/docs/guides/implement-oauth-for-okta/scopes/.
+// validScopes is a list of supported scopes as per https://developer.okta.com/docs/guides/implement-oauth-for-okta/scopes/.
 var validScopes = []string{
 	"okta.apps.manage", "okta.apps.read",
 	"okta.authorizationServers.manage", "okta.authorizationServers.read",
