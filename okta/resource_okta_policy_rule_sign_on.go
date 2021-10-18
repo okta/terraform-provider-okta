@@ -237,7 +237,7 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 		AuthContext: &okta.PolicyRuleAuthContextCondition{
 			AuthType: d.Get("authtype").(string),
 		},
-		Network: getNetwork(d),
+		Network: buildPolicyNetworkCondition(d),
 		People:  getUsers(d),
 	}
 	bi, ok := d.GetOk("behaviors")

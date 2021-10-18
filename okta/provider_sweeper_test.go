@@ -42,7 +42,6 @@ func TestMain(m *testing.M) {
 	setupSweeper(userType, sweepUserTypes)
 	setupSweeper(behavior, sweepBehaviors)
 
-	// add zones sweeper
 	resource.TestMain(m)
 }
 
