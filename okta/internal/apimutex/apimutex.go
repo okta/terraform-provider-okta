@@ -122,8 +122,10 @@ func (m *APIMutex) Status(method, endPoint string) *APIStatus {
 	return m.get(method, endPoint)
 }
 
-var reAppId = regexp.MustCompile("/api/v1/apps/[^/]+$")
-var reGroupId = regexp.MustCompile("/api/v1/groups/[^/]+$")
+var (
+	reAppId   = regexp.MustCompile("/api/v1/apps/[^/]+$")
+	reGroupId = regexp.MustCompile("/api/v1/groups/[^/]+$")
+)
 
 func (m *APIMutex) normalizeKey(method, endPoint string) string {
 	var result string

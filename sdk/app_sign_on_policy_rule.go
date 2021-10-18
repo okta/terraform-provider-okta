@@ -53,6 +53,16 @@ func (m *APISupplement) UpdateAppSignOnPolicyRule(ctx context.Context, policyID,
 	return appSignOnPolicyRule, resp, nil
 }
 
+// DeleteAppSignOnPolicyRule deletes app sign on policy rule by ID
+func (m *APISupplement) DeleteAppSignOnPolicyRule(ctx context.Context, policyID, ruleId string) (*okta.Response, error) {
+	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyID, ruleId)
+	req, err := m.RequestExecutor.NewRequest(http.MethodDelete, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	return m.RequestExecutor.Do(ctx, req, nil)
+}
+
 // ActivateAppSignOnPolicyRule activates the app sign on policy rule.
 func (m *APISupplement) ActivateAppSignOnPolicyRule(ctx context.Context, policyID, ruleID string) (*okta.Response, error) {
 	return m.lifecycleChangeAppSignOnPolicyRule(ctx, policyID, ruleID, "activate")
