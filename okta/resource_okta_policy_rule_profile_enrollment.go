@@ -66,7 +66,7 @@ func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 			"profile_attributes": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "A group to assign to this application",
+				Description: "A list of attributes to prompt the user during registration or progressive profiling",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"label": {
@@ -83,6 +83,7 @@ func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Description: "Indicates if this property is required for enrollment",
+							Default:     false,
 						},
 					},
 				},
