@@ -23,10 +23,10 @@ resource "okta_user_schema_property" "test_number" {
 }
 
 resource "okta_user" "test" {
-  first_name  = "TestAcc"
-  last_name   = "Smith"
-  login       = "testAcc-replace_with_uuid@example.com"
-  email       = "testAcc-replace_with_uuid@example.com"
+  first_name = "TestAcc"
+  last_name  = "Smith"
+  login      = "testAcc-replace_with_uuid@example.com"
+  email      = "testAcc-replace_with_uuid@example.com"
 
   custom_profile_attributes = <<JSON
   {

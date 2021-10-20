@@ -21,6 +21,10 @@ func MfaPolicyRule() PolicyRule {
 	return PolicyRule{Type: MfaPolicyType}
 }
 
+func ProfileEnrollmentPolicyRule() PolicyRule {
+	return PolicyRule{Type: ProfileEnrollmentPolicyType}
+}
+
 type PolicyRule struct {
 	Id          string                     `json:"id,omitempty"`
 	Type        string                     `json:"type,omitempty"`
@@ -30,13 +34,13 @@ type PolicyRule struct {
 	System      *bool                      `json:"system,omitempty"`
 	Created     *time.Time                 `json:"created,omitempty"`
 	LastUpdated *time.Time                 `json:"lastUpdated,omitempty"`
-	Conditions  *okta.PolicyRuleConditions `json:"conditions,omitempty"`
+	Conditions  *okta.PolicyRuleConditions `json:"conditions"`
 	Actions     PolicyRuleActions          `json:"actions,omitempty"`
 }
 
 type PolicyRuleActions struct {
-	Enroll *Enroll                        `json:"enroll,omitempty"`
-	SignOn *SignOnPolicyRuleSignOnActions `json:"signon,omitempty"`
+	SignOn            *SignOnPolicyRuleSignOnActions          `json:"signon,omitempty"`
+	ProfileEnrollment *okta.ProfileEnrollmentPolicyRuleAction `json:"profileEnrollment,omitempty"`
 	*okta.PasswordPolicyRuleActions
 }
 

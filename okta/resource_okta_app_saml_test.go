@@ -193,7 +193,6 @@ func TestAccAppSaml_preconfigured(t *testing.T) {
       "sway": false,
       "tasks": false,
       "teams": false,
-      "video": false,
       "word": false,
       "yammer": false,
       "login": true
@@ -218,7 +217,7 @@ func testAppSamlJson(name, expectedSettingsJSON, expectedLinksJSON string) resou
 		}
 		eq = areJSONStringsEqual(expectedLinksJSON, actualLinksJSON)
 		if !eq {
-			return fmt.Errorf("attribute 'app_settings_json' expected %q, got %q", expectedSettingsJSON, actualSettingsJSON)
+			return fmt.Errorf("attribute 'app_links_json' expected %q, got %q", expectedSettingsJSON, actualSettingsJSON)
 		}
 		return nil
 	}

@@ -20,7 +20,7 @@ var (
 		"name": {
 			Type:        schema.TypeString,
 			Required:    true,
-			Description: "name of idp",
+			Description: "Name of the IdP",
 		},
 		"status": statusSchema,
 		"account_link_action": {

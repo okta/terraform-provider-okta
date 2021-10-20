@@ -10,8 +10,8 @@ resource "okta_app_oauth" "test" {
   consent_method             = "TRUSTED"
   wildcard_redirect          = "DISABLED"
   groups_claim {
-    type        = "EXPRESSION"
-    value       = "aa"
-    name        = "bb"
+    type  = "EXPRESSION"
+    value = "aa"
+    name  = "bb"
   }
 }

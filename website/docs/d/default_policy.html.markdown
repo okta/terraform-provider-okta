@@ -21,6 +21,7 @@ data "okta_default_policy" "example" {
 ## Arguments Reference
 
 - `type` - (Required) Type of policy to retrieve.  Valid values: `OKTA_SIGN_ON`, `PASSWORD`, `MFA_ENROLL`, `IDP_DISCOVERY`
+`"IDP_DISCOVERY"`, `"ACCESS_POLICY"` (**only available as a part of the Identity Engine**), `"PROFILE_ENROLLMENT"` (**only available as a part of the Identity Engine**)
 
 ## Attributes Reference
 

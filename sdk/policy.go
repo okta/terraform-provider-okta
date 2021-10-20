@@ -20,20 +20,25 @@ const (
 	OauthAuthorizationPolicyType = "OAUTH_AUTHORIZATION_POLICY"
 )
 
-// Return the PasswordPolicy object. Used to create & update the password policy
+// PasswordPolicy returns policy of PASSWORD type
 func PasswordPolicy() Policy {
 	// Initialize a policy with password data
 	return Policy{Type: PasswordPolicyType}
 }
 
-// Return the SignOnPolicy object. Used to create & update the signon policy
+// SignOnPolicy returns policy of OKTA_SIGN_ON type
 func SignOnPolicy() Policy {
 	return Policy{Type: SignOnPolicyType}
 }
 
-// Return the MfaPolicy object. Used to create & update the mfa policy
+// MfaPolicy returns policy of MFA_ENROLL type
 func MfaPolicy() Policy {
 	return Policy{Type: MfaPolicyType}
+}
+
+// ProfileEnrollmentPolicy returns policy of PROFILE_ENROLLMENT type
+func ProfileEnrollmentPolicy() Policy {
+	return Policy{Type: ProfileEnrollmentPolicyType}
 }
 
 type Policy struct {
