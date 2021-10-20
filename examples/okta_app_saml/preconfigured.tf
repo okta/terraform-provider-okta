@@ -31,7 +31,6 @@ JSON
       "sway": false,
       "tasks": false,
       "teams": false,
-      "video": false,
       "word": false,
       "yammer": false,
       "login": true

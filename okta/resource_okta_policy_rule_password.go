@@ -16,7 +16,6 @@ func resourcePolicyPasswordRule() *schema.Resource {
 		UpdateContext: resourcePolicyPasswordRuleUpdate,
 		DeleteContext: resourcePolicyPasswordRuleDelete,
 		Importer:      createPolicyRuleImporter(),
-
 		Schema: buildRuleSchema(map[string]*schema.Schema{
 			"password_change": {
 				Type:             schema.TypeString,

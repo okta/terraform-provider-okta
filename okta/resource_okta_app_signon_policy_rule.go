@@ -26,6 +26,7 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 			"policy_id": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "ID of the policy",
 			},
 			"status": {

@@ -83,8 +83,10 @@ func buildMfaPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 	}
 	if enroll, ok := d.GetOk("enroll"); ok {
 		rule.Actions = sdk.PolicyRuleActions{
-			Enroll: &sdk.Enroll{
-				Self: enroll.(string),
+			PasswordPolicyRuleActions: &okta.PasswordPolicyRuleActions{
+				Enroll: &okta.PolicyRuleActionsEnroll{
+					Self: enroll.(string),
+				},
 			},
 		}
 	}
