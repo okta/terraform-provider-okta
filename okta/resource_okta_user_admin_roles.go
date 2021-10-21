@@ -37,6 +37,12 @@ func resourceUserAdminRoles() *schema.Resource {
 					ValidateDiagFunc: elemInSlice(validAdminRoles),
 				},
 			},
+			"disable_notifications": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "When this setting is enabled, the admins won't receive any of the default Okta administrator emails",
+				Default:     false,
+			},
 		},
 	}
 }
@@ -45,7 +51,7 @@ func resourceUserAdminRolesCreate(ctx context.Context, d *schema.ResourceData, m
 	userId := d.Get("user_id").(string)
 	roles := convertInterfaceToStringSetNullable(d.Get("admin_roles"))
 	client := getOktaClientFromMetadata(m)
-	err := assignAdminRolesToUser(ctx, userId, roles, client)
+	err := assignAdminRolesToUser(ctx, userId, roles, d.Get("disable_notifications").(bool), client)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -64,7 +70,7 @@ func resourceUserAdminRolesRead(ctx context.Context, d *schema.ResourceData, m i
 func resourceUserAdminRolesDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
 	client := getOktaClientFromMetadata(m)
-	err := updateAdminRolesOnUser(ctx, userId, nil, client)
+	err := updateAdminRolesOnUser(ctx, userId, nil, false, client)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -74,10 +80,11 @@ func resourceUserAdminRolesDelete(ctx context.Context, d *schema.ResourceData, m
 func resourceUserAdminRolesUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
 	client := getOktaClientFromMetadata(m)
-
-	roles := convertInterfaceToStringSet(d.Get("admin_roles"))
-	if err := updateAdminRolesOnUser(ctx, userId, roles, client); err != nil {
-		return diag.Errorf("failed to update user admin roles: %v", err)
+	if d.HasChanges("admin_roles", "disable_notifications") {
+		roles := convertInterfaceToStringSet(d.Get("admin_roles"))
+		if err := updateAdminRolesOnUser(ctx, userId, roles, d.Get("disable_notifications").(bool), client); err != nil {
+			return diag.Errorf("failed to update user admin roles: %v", err)
+		}
 	}
 	return nil
 }
