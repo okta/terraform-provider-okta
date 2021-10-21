@@ -54,7 +54,7 @@ require (
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/oklog/run v1.0.0 // indirect
-	github.com/okta/okta-sdk-golang/v2 v2.8.1-0.20211020121156-f32f9deee04f
+	github.com/okta/okta-sdk-golang/v2 v2.8.1-0.20211021184856-4c2c9f4e4be5
 	github.com/patrickmn/go-cache v0.0.0-20180815053127-5633e0862627 // indirect
 	github.com/russellhaering/goxmldsig v1.1.0 // indirect
 	github.com/ulikunitz/xz v0.5.8 // indirect
