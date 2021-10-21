@@ -28,7 +28,7 @@ func sweepGroups(client *testClient) error {
 
 func TestAccOktaGroup_crud(t *testing.T) {
 	ri := acctest.RandInt()
-	resourceName := fmt.Sprintf("%s.test", oktaGroup)
+	resourceName := fmt.Sprintf("%s.test", group)
 	mgr := newFixtureManager("okta_group")
 	config := mgr.GetFixtures("okta_group.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("okta_group_updated.tf", ri, t)
@@ -37,7 +37,7 @@ func TestAccOktaGroup_crud(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(oktaGroup, doesGroupExist),
+		CheckDestroy:      createCheckResourceDestroy(group, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

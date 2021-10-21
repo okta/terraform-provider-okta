@@ -11,8 +11,8 @@ import (
 
 func TestAccOktaProfileMapping_crud(t *testing.T) {
 	ri := acctest.RandInt()
-	resourceName := fmt.Sprintf("%s.test", oktaProfileMapping)
-	mgr := newFixtureManager(oktaProfileMapping)
+	resourceName := fmt.Sprintf("%s.test", profileMapping)
+	mgr := newFixtureManager(profileMapping)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
 	preventDelete := mgr.GetFixtures("prevent_delete.tf", ri, t)
@@ -20,7 +20,7 @@ func TestAccOktaProfileMapping_crud(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(oktaProfileMapping, doesOktaProfileExist),
+		CheckDestroy:      createCheckResourceDestroy(profileMapping, doesOktaProfileExist),
 		Steps: []resource.TestStep{
 			{
 				Config: preventDelete,

@@ -98,7 +98,7 @@ func TestAccAppGroupAssignment_retain(t *testing.T) {
 	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", appGroupAssignment)
 	appName := fmt.Sprintf("%s.test", appOAuth)
-	groupName := fmt.Sprintf("%s.test", oktaGroup)
+	groupName := fmt.Sprintf("%s.test", group)
 	mgr := newFixtureManager(appGroupAssignment)
 	retainAssignment := mgr.GetFixtures("retain_assignment.tf", ri, t)
 	retainAssignmentDestroy := mgr.GetFixtures("retain_assignment_destroy.tf", ri, t)

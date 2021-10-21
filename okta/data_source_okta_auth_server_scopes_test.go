@@ -9,7 +9,7 @@ import (
 
 func TestAccOktaDataSourceAuthServerScopes(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager("okta_auth_server_scopes")
+	mgr := newFixtureManager(authServerScopes)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
