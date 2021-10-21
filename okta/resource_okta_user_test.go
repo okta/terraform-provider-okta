@@ -33,12 +33,12 @@ func sweepUsers(client *testClient) error {
 
 func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(oktaUser)
+	mgr := newFixtureManager(user)
 	config := mgr.GetFixtures("custom_attributes.tf", ri, t)
 	arrayAttrConfig := mgr.GetFixtures("custom_attributes_array.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("remove_custom_attributes.tf", ri, t)
 	importConfig := mgr.GetFixtures("import.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.test", oktaUser)
+	resourceName := fmt.Sprintf("%s.test", user)
 	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
@@ -103,10 +103,10 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 
 func TestAccOktaUser_groupMembership(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(oktaUser)
+	mgr := newFixtureManager(user)
 	config := mgr.GetFixtures("group_assigned.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("group_unassigned.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.test", oktaUser)
+	resourceName := fmt.Sprintf("%s.test", user)
 	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
@@ -166,11 +166,11 @@ func TestAccOktaUser_invalidCustomProfileAttribute(t *testing.T) {
 
 func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(oktaUser)
+	mgr := newFixtureManager(user)
 	config := mgr.GetFixtures("staged.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("all_attributes.tf", ri, t)
 	minimalConfig := mgr.GetFixtures("basic.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.test", oktaUser)
+	resourceName := fmt.Sprintf("%s.test", user)
 	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
@@ -238,10 +238,10 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 
 func TestAccOktaUser_updateCredentials(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(oktaUser)
+	mgr := newFixtureManager(user)
 	config := mgr.GetFixtures("basic_with_credentials.tf", ri, t)
 	minimalConfigWithCredentials := mgr.GetFixtures("basic_with_credentials_updated.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.test", oktaUser)
+	resourceName := fmt.Sprintf("%s.test", user)
 	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
@@ -277,10 +277,10 @@ func TestAccOktaUser_updateCredentials(t *testing.T) {
 
 func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(oktaUser)
+	mgr := newFixtureManager(user)
 	statusChanged := mgr.GetFixtures("deprovisioned.tf", ri, t)
 	config := mgr.GetFixtures("staged.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.test", oktaUser)
+	resourceName := fmt.Sprintf("%s.test", user)
 	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
@@ -307,10 +307,10 @@ func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
 
 func TestAccOktaUserHashedPassword(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(oktaUser)
+	mgr := newFixtureManager(user)
 	config := mgr.GetFixtures("password_hash.tf", ri, t)
 	configUpdated := mgr.GetFixtures("password_hash_updated.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.test", oktaUser)
+	resourceName := fmt.Sprintf("%s.test", user)
 	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
 	resource.Test(t, resource.TestCase{
@@ -346,7 +346,7 @@ func TestAccOktaUserHashedPassword(t *testing.T) {
 
 func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(oktaUser)
+	mgr := newFixtureManager(user)
 	config := mgr.GetFixtures("deprovisioned.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
@@ -367,11 +367,11 @@ func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
 
 func TestAccOktaUser_loginUpdates(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(oktaUser)
+	mgr := newFixtureManager(user)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedLogin := mgr.GetFixtures("login_changed.tf", ri, t)
 
-	resourceName := fmt.Sprintf("%s.test", oktaUser)
+	resourceName := fmt.Sprintf("%s.test", user)
 	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 	updatedEmail := fmt.Sprintf("testAccUpdated-%d@example.com", ri)
 

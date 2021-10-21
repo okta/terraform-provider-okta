@@ -10,7 +10,7 @@ import (
 func TestAccOktaGroupMemberships_crud(t *testing.T) {
 	ri := acctest.RandInt()
 
-	mgr := newFixtureManager(oktaGroupMemberships)
+	mgr := newFixtureManager(groupMemberships)
 	start := mgr.GetFixtures("basic.tf", ri, t)
 	update := mgr.GetFixtures("basic_update.tf", ri, t)
 	remove := mgr.GetFixtures("basic_removal.tf", ri, t)

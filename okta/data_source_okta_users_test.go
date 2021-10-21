@@ -9,7 +9,7 @@ import (
 
 func TestAccOktaDataSourceUsers_read(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager("okta_users")
+	mgr := newFixtureManager(users)
 	users := mgr.GetFixtures("users.tf", ri, t)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 

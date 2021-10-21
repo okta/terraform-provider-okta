@@ -18,7 +18,7 @@ func TestAccOktaGroupAdminRoles_crud(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(oktaGroup, doesGroupExist),
+		CheckDestroy:      createCheckResourceDestroy(group, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
