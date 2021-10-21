@@ -9,10 +9,9 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 const (
