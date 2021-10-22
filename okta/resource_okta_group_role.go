@@ -176,7 +176,7 @@ func resourceGroupRoleUpdate(ctx context.Context, d *schema.ResourceData, m inte
 		_, _, err := client.Group.AssignRoleToGroup(ctx, groupID, nil,
 			&query.Params{DisableNotifications: boolPtr(d.Get("disable_notifications").(bool))})
 		if err != nil {
-			return diag.Errorf("failed to update group's notification settings: %v", groupID, err)
+			return diag.Errorf("failed to update group's '%s' notification settings: %v", groupID, err)
 		}
 	}
 	if d.HasChange("target_group_list") && supportsGroupTargets(roleType) {
