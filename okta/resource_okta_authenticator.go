@@ -96,7 +96,7 @@ func resourceAuthenticator() *schema.Resource {
 	}
 }
 
-// authenticator API is immutable, create is just a read of the type set on the resource
+// authenticator API is immutable, create is just a read of the key set on the resource
 func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	authenticator, err := findAuthenticator(ctx, m, "", d.Get("key").(string))
 	if err != nil {
