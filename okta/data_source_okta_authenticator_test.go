@@ -1,7 +1,7 @@
 package okta
 
 import (
-	"regexp"
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
@@ -10,9 +10,10 @@ import (
 
 func TestAccOktaDataSourceAuthenticator_read(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(oktaAuthenticator)
+	mgr := newFixtureManager(authenticator)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
-	configInvalid := mgr.GetFixtures("datasource_not_found.tf", ri, t)
+	resourceName := fmt.Sprintf("data.%s.test", authenticator)
+	resourceName1 := fmt.Sprintf("data.%s.test_1", authenticator)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -23,19 +24,23 @@ func TestAccOktaDataSourceAuthenticator_read(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_authenticator.test", "id"),
-					resource.TestCheckResourceAttrSet("data.okta_authenticator.test", "key"),
-					resource.TestCheckResourceAttrSet("data.okta_authenticator.test", "name"),
-					resource.TestCheckResourceAttrSet("data.okta_authenticator.test", "status"),
-					resource.TestCheckResourceAttrSet("data.okta_authenticator.test", "settings"),
-					resource.TestCheckResourceAttr("data.okta_authenticator.test", "type", "security_question"),
-					resource.TestCheckResourceAttr("data.okta_authenticator.test", "key", "security_question"),
-					resource.TestCheckResourceAttr("data.okta_authenticator.test", "name", "Security Question"),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "key"),
+					resource.TestCheckResourceAttrSet(resourceName, "name"),
+					resource.TestCheckResourceAttrSet(resourceName, "status"),
+					resource.TestCheckResourceAttrSet(resourceName, "settings"),
+					resource.TestCheckResourceAttr(resourceName, "type", "security_question"),
+					resource.TestCheckResourceAttr(resourceName, "key", "security_question"),
+					resource.TestCheckResourceAttr(resourceName, "name", "Security Question"),
+					resource.TestCheckResourceAttrSet(resourceName1, "id"),
+					resource.TestCheckResourceAttrSet(resourceName1, "key"),
+					resource.TestCheckResourceAttrSet(resourceName1, "name"),
+					resource.TestCheckResourceAttrSet(resourceName1, "status"),
+					resource.TestCheckResourceAttrSet(resourceName1, "settings"),
+					resource.TestCheckResourceAttr(resourceName1, "type", "app"),
+					resource.TestCheckResourceAttr(resourceName1, "key", "okta_verify"),
+					resource.TestCheckResourceAttr(resourceName1, "name", "Okta Verify"),
 				),
-			},
-			{
-				Config:      configInvalid,
-				ExpectError: regexp.MustCompile(`\bdoes not exist`),
 			},
 		},
 	})

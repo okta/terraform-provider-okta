@@ -3,10 +3,11 @@ package okta
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAuthenticator() *schema.Resource {
@@ -17,15 +18,19 @@ func resourceAuthenticator() *schema.Resource {
 		DeleteContext: resourceAuthenticatorDelete,
 		Schema: map[string]*schema.Schema{
 			"key": {
-				Type:     schema.TypeString,
-				Optional: true,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return true
-				},
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "A human-readable string that identifies the Authenticator",
+				ValidateDiagFunc: elemInSlice([]string{
+					"okta_email", "google_otp", "okta_verify", "onprem_mfa", "okta_password",
+					"phone_number", "rsa_token", "security_question", "duo",
+				}),
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Display name of the Authenticator",
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return true
 				},
@@ -37,100 +42,173 @@ func resourceAuthenticator() *schema.Resource {
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					// TODO implement settings diff when we are able to update settings.
-					return true
+					return new == ""
 				},
 			},
 			"status": {
-				Type:     schema.TypeString,
-				Optional: true,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					if new == "" {
-						return true
-					}
-					return old == new
-				},
+				Type:             schema.TypeString,
+				Optional:         true,
+				Default:          statusActive,
+				ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
+				Description:      "Authenticator status: ACTIVE or INACTIVE",
 			},
 			"type": {
 				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Type of the authenticator. When specified in the terraform resource, will act as a filter when searching for the authenticator",
+				Computed:    true,
+				Description: "The type of Authenticator",
+			},
+			"provider_hostname": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "localhost",
+				Description: "Server host name or IP address",
+			},
+			"provider_auth_port": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      9000,
+				Description:  "The RADIUS server port (for example 1812). This is defined when the On-Prem RADIUS server is configured",
+				RequiredWith: []string{"provider_hostname"},
+			},
+			"provider_shared_secret": {
+				Type:         schema.TypeString,
+				Sensitive:    true,
+				Optional:     true,
+				Description:  "An authentication key that must be defined when the RADIUS server is configured, and must be the same on both the RADIUS client and server.",
+				RequiredWith: []string{"provider_hostname"},
+			},
+			"provider_instance_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"provider_type": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"provider_user_name_template": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      "global.assign.userName.login",
+				Description:  "Format expected by the provider",
+				RequiredWith: []string{"provider_hostname"},
 			},
 		},
 	}
 }
 
+// authenticator API is immutable, create is just a read of the type set on the resource
 func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	// authenticator API is immutable, create is just a read of the type set on the resource
+	authenticator, err := findAuthenticator(ctx, m, "", d.Get("key").(string))
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	d.SetId(authenticator.ID)
+	if status, ok := d.GetOk("status"); ok {
+		if status.(string) == statusInactive {
+			_, _, err = getSupplementFromMetadata(m).DeactivateAuthenticator(ctx, d.Id())
+			if err != nil {
+				return diag.Errorf("failed to deactivate app sign on policy rule: %v", err)
+			}
+		}
+	}
 	return resourceAuthenticatorRead(ctx, d, m)
 }
 
 func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_type, ok := d.GetOk("type")
-	if !ok {
-		return diag.Errorf("`type` not present on authenticator resource")
+	authenticator, resp, err := getSupplementFromMetadata(m).GetAuthenticator(ctx, d.Id())
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get authenticator: %v", err)
 	}
-	return findDataSourceAuthenticator(ctx, _type.(string), d, m)
+	_ = d.Set("key", authenticator.Key)
+	_ = d.Set("name", authenticator.Name)
+	_ = d.Set("status", authenticator.Status)
+	_ = d.Set("type", authenticator.Type)
+	if authenticator.Settings != nil {
+		b, _ := json.Marshal(authenticator.Settings)
+		_ = d.Set("settings", string(b))
+	}
+	if authenticator.Provider != nil {
+		_ = d.Set("provider_type", authenticator.Provider.Type)
+		_ = d.Set("provider_hostname", authenticator.Provider.Configuration.HostName)
+		_ = d.Set("provider_auth_port", authenticator.Provider.Configuration.AuthPort)
+		_ = d.Set("provider_instance_id", authenticator.Provider.Configuration.InstanceID)
+		if authenticator.Provider.Configuration.UserNameTemplate != nil {
+			_ = d.Set("provider_user_name_template", authenticator.Provider.Configuration.UserNameTemplate.Template)
+		}
+	}
+	return nil
 }
 
 func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	// TODO handle updating settings when the okta-sdk-golang package adds
-	// support for updating settings.
-
-	_type, ok := d.GetOk("type")
-	if !ok {
-		return diag.Errorf("`type` not present on authenticator resource")
-	}
-	_status, ok := d.GetOk("status")
-	if !ok {
-		return diag.Errorf("`status` not present on authenticator resource")
-	}
-
-	authenticator, err := findOktaAuthenticator(ctx, _type.(string), m)
+	err := validateAuthenticator(d)
 	if err != nil {
-		return diag.Errorf("error finding authenticator resource: %+v", err)
+		return diag.FromErr(err)
 	}
+	_, _, err = getSupplementFromMetadata(m).UpdateAuthenticator(ctx, d.Id(), buildAuthenticator(d))
+	if err != nil {
+		return diag.Errorf("failed to update authenticator: %v", err)
+	}
+	oldStatus, newStatus := d.GetChange("status")
+	if oldStatus != newStatus {
+		if newStatus == statusActive {
+			_, _, err = getSupplementFromMetadata(m).ActivateAuthenticator(ctx, d.Id())
+		} else {
+			_, _, err = getSupplementFromMetadata(m).DeactivateAuthenticator(ctx, d.Id())
+		}
+		if err != nil {
+			return diag.Errorf("failed to change authenticator status: %v", err)
+		}
+	}
+	return resourceAuthenticatorRead(ctx, d, m)
+}
 
-	// NOOP if current authenticator status is the same as the resource
-	status := _status.(string)
-	if status == authenticator.Status {
-		setAuthenticatorValuesOnResourceData(authenticator, d)
+// delete is NOOP, authenticators are immutable for create and delete
+func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return nil
+}
+
+func buildAuthenticator(d *schema.ResourceData) sdk.Authenticator {
+	authenticator := sdk.Authenticator{
+		Type: d.Get("type").(string),
+		ID:   d.Id(),
+		Key:  d.Get("key").(string),
+		Name: d.Get("name").(string),
+	}
+	if d.Get("type").(string) == "security_key" {
+		authenticator.Provider = &sdk.AuthenticatorProvider{
+			Type: d.Get("provider_type").(string),
+			Configuration: &sdk.AuthenticatorProviderConfiguration{
+				HostName:     d.Get("provider_hostname").(string),
+				AuthPort:     d.Get("provider_auth_port").(int),
+				InstanceID:   d.Get("provider_instance_id").(string),
+				SharedSecret: d.Get("provider_shared_secret").(string),
+				UserNameTemplate: &sdk.AuthenticatorProviderConfigurationUserNameTemplate{
+					Template: "",
+				},
+			},
+		}
+	} else {
+		var settings sdk.AuthenticatorSettings
+		if s, ok := d.GetOk("settings"); ok {
+			_ = json.Unmarshal([]byte(s.(string)), &settings)
+		}
+		authenticator.Settings = &settings
+	}
+	return authenticator
+}
+
+func validateAuthenticator(d *schema.ResourceData) error {
+	typ := d.Get("type").(string)
+	if typ != "security_key" {
 		return nil
 	}
-
-	switch status {
-	case "ACTIVE":
-		authenticator, _, err = getOktaClientFromMetadata(m).Authenticator.ActivateAuthenticator(ctx, authenticator.Id)
-		if err != nil {
-			return diag.Errorf("error activating authenticator resource: %+v", err)
-		}
-	case "INACTIVE":
-		authenticator, _, err = getOktaClientFromMetadata(m).Authenticator.DeactivateAuthenticator(ctx, authenticator.Id)
-		if err != nil {
-			return diag.Errorf("error deactivating authenticator resource: %+v", err)
-		}
-	default:
-		return diag.Errorf("`status=%q` is invalid for resource", status)
+	h := d.Get("provider_hostname").(string)
+	_, pok := d.GetOk("provider_auth_port")
+	s := d.Get("provider_shared_secret").(string)
+	templ := d.Get("provider_user_name_template").(string)
+	if h == "" || s == "" || templ == "" || !pok {
+		return fmt.Errorf("for authenticator type '%s' fields 'provider_hostname', "+
+			"'provider_auth_port', 'provider_shared_secret' and 'provider_user_name_template' are required", typ)
 	}
-
-	setAuthenticatorValuesOnResourceData(authenticator, d)
-
 	return nil
-}
-
-func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	// delete is NOOP, authenticators are immutable for create and delete
-	return nil
-}
-
-func setAuthenticatorValuesOnResourceData(authenticator *okta.Authenticator, d *schema.ResourceData) {
-	d.SetId(authenticator.Id)
-	_ = d.Set("key", authenticator.Key)
-	_ = d.Set("name", authenticator.Name)
-	b, err := json.Marshal(authenticator.Settings)
-	if err != nil {
-		_ = d.Set("settings", string(b))
-	}
-	_ = d.Set("status", authenticator.Status)
-	_ = d.Set("type", authenticator.Type)
 }

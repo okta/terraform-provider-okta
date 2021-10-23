@@ -1,3 +1,7 @@
 data "okta_authenticator" "test" {
-  type = "security_question"
+  key = "security_question"
+}
+
+data "okta_authenticator" "test_1" {
+  name = "Okta Verify"
 }

@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func dataSourceAuthenticator() *schema.Resource {
@@ -15,77 +15,116 @@ func dataSourceAuthenticator() *schema.Resource {
 		ReadContext: dataSourceAuthenticatorRead,
 		Schema: map[string]*schema.Schema{
 			"id": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"key", "name"},
 			},
 			"key": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"id", "name"},
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"id", "key"},
 			},
 			"settings": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Authenticator settings in JSON format",
-				ValidateDiagFunc: stringIsJSON,
-				StateFunc:        normalizeDataJSON,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Authenticator settings in JSON format",
 			},
 			"status": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"type": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Type of the authenticator. When specified in the terraform resource, will act as a filter when searching for the authenticator",
+				Computed:    true,
+				Description: "Type of the authenticator",
+			},
+			"provider_hostname": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Server host name or IP address",
+			},
+			"provider_auth_port": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "The RADIUS server port (for example 1812). This is defined when the On-Prem RADIUS server is configured",
+			},
+			"provider_instance_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"provider_type": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"provider_user_name_template": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Format expected by the provider",
 			},
 		},
 	}
 }
 
 func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return findDataSourceAuthenticator(ctx, d.Get("type").(string), d, m)
-}
-
-func findDataSourceAuthenticator(ctx context.Context, _type string, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	authenticator, err := findOktaAuthenticator(ctx, _type, m)
-
-	if err != nil {
-		return diag.Errorf("failed to list authenticators: %+v", err)
+	id := d.Get("id").(string)
+	name := d.Get("name").(string)
+	key := d.Get("key").(string)
+	if id == "" && name == "" && key == "" {
+		return diag.Errorf("config must provide either 'id', 'name' or 'key' to retrieve the authenticator")
 	}
-
-	d.SetId(authenticator.Id)
+	var (
+		authenticator *sdk.Authenticator
+		err           error
+	)
+	if id != "" {
+		authenticator, _, err = getSupplementFromMetadata(m).GetAuthenticator(ctx, id)
+	} else {
+		authenticator, err = findAuthenticator(ctx, m, name, key)
+	}
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	d.SetId(authenticator.ID)
 	_ = d.Set("key", authenticator.Key)
 	_ = d.Set("name", authenticator.Name)
-	b, err := json.Marshal(authenticator.Settings)
-	if err == nil {
-		_ = d.Set("settings", string(b))
-	}
 	_ = d.Set("status", authenticator.Status)
 	_ = d.Set("type", authenticator.Type)
-
+	if authenticator.Settings != nil {
+		b, _ := json.Marshal(authenticator.Settings)
+		_ = d.Set("settings", string(b))
+	}
+	if authenticator.Provider != nil {
+		_ = d.Set("provider_type", authenticator.Provider.Type)
+		_ = d.Set("provider_hostname", authenticator.Provider.Configuration.HostName)
+		_ = d.Set("provider_auth_port", authenticator.Provider.Configuration.AuthPort)
+		_ = d.Set("provider_instance_id", authenticator.Provider.Configuration.InstanceID)
+		if authenticator.Provider.Configuration.UserNameTemplate != nil {
+			_ = d.Set("provider_user_name_template", authenticator.Provider.Configuration.UserNameTemplate.Template)
+		}
+	}
 	return nil
-
 }
 
-func findOktaAuthenticator(ctx context.Context, _type string, m interface{}) (*okta.Authenticator, error) {
-	// NOTE when okta-sdk-golang supports getting authenticator by ID search by
-	// ID or search by Type such as is done in data_source_okta_group.go
-
-	authenticators, _, err := getOktaClientFromMetadata(m).Authenticator.ListAuthenticators(ctx)
+func findAuthenticator(ctx context.Context, m interface{}, name, key string) (*sdk.Authenticator, error) {
+	authenticators, _, err := getSupplementFromMetadata(m).ListAuthenticators(ctx)
 	if err != nil {
 		return nil, err
 	}
 	for _, authenticator := range authenticators {
-		if authenticator.Type == _type {
+		if authenticator.Name == name {
+			return authenticator, nil
+		}
+		if authenticator.Key == key {
 			return authenticator, nil
 		}
 	}
-	return nil, fmt.Errorf("authenticator with type %q does not exist", _type)
+	if key != "" {
+		return nil, fmt.Errorf("authenticator with key '%s' does not exist", key)
+	}
+	return nil, fmt.Errorf("authenticator with name '%s' does not exist", name)
 }
