@@ -9,7 +9,7 @@ import (
 
 func TestAccOktaDataSourceIdpMetadataSaml_read(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager("okta_idp_metadata_saml")
+	mgr := newFixtureManager(idpMetadataSaml)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 	resourceName := "data.okta_idp_metadata_saml.test"
 

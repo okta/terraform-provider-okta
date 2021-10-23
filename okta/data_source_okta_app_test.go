@@ -10,7 +10,7 @@ import (
 
 func TestAccOktaDataSourceApp_read(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager("okta_app")
+	mgr := newFixtureManager(app)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 	appCreate := buildTestApp(ri)
 

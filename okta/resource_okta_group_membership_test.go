@@ -13,7 +13,7 @@ import (
 func TestAccOktaGroupMembership_crud(t *testing.T) {
 	ri := acctest.RandInt()
 
-	mgr := newFixtureManager(oktaGroupMembership)
+	mgr := newFixtureManager(groupMembership)
 	config := mgr.GetFixtures("okta_group_membership.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("okta_group_membership_updated.tf", ri, t)
 	removedConfig := mgr.GetFixtures("okta_group_membership_removed.tf", ri, t)
@@ -21,7 +21,7 @@ func TestAccOktaGroupMembership_crud(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(oktaGroupMembership, checkMembershipState),
+		CheckDestroy:      createCheckResourceDestroy(groupMembership, checkMembershipState),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

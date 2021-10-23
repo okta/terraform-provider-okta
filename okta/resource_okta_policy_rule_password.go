@@ -16,7 +16,6 @@ func resourcePolicyPasswordRule() *schema.Resource {
 		UpdateContext: resourcePolicyPasswordRuleUpdate,
 		DeleteContext: resourcePolicyPasswordRuleDelete,
 		Importer:      createPolicyRuleImporter(),
-
 		Schema: buildRuleSchema(map[string]*schema.Schema{
 			"password_change": {
 				Type:             schema.TypeString,
@@ -97,7 +96,7 @@ func buildPolicyRulePassword(d *schema.ResourceData) sdk.PolicyRule {
 		template.Priority = int64(priority.(int))
 	}
 	template.Conditions = &okta.PolicyRuleConditions{
-		Network: getNetwork(d),
+		Network: buildPolicyNetworkCondition(d),
 		People:  getUsers(d),
 	}
 	template.Actions = sdk.PolicyRuleActions{

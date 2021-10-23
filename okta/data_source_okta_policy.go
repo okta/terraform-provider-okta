@@ -15,7 +15,7 @@ func dataSourcePolicy() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
-				Description: "Name of policy",
+				Description: "Name of the policy",
 				Required:    true,
 			},
 			"type": {
@@ -25,9 +25,15 @@ func dataSourcePolicy() *schema.Resource {
 					sdk.PasswordPolicyType,
 					sdk.MfaPolicyType,
 					sdk.IdpDiscoveryType,
+					sdk.AccessPolicyType,
+					sdk.ProfileEnrollmentPolicyType,
 				}),
 				Description: fmt.Sprintf("Policy type: %s, %s, %s, or %s", sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.IdpDiscoveryType),
 				Required:    true,
+			},
+			"status": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 		},
 	}
@@ -39,5 +45,6 @@ func dataSourcePolicyRead(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.FromErr(err)
 	}
 	d.SetId(policy.Id)
+	_ = d.Set("status", policy.Status)
 	return nil
 }

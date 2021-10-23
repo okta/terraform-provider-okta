@@ -390,7 +390,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 	if _, exists := d.GetOk("admin_roles"); exists {
 		roles := convertInterfaceToStringSetNullable(d.Get("admin_roles"))
 		if roles != nil {
-			err = assignAdminRolesToUser(ctx, user.Id, roles, client)
+			err = assignAdminRolesToUser(ctx, user.Id, roles, false, client)
 			if err != nil {
 				return diag.FromErr(err)
 			}
@@ -500,7 +500,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 
 	if roleChange {
 		roles := convertInterfaceToStringSet(d.Get("admin_roles"))
-		if err := updateAdminRolesOnUser(ctx, d.Id(), roles, client); err != nil {
+		if err := updateAdminRolesOnUser(ctx, d.Id(), roles, false, client); err != nil {
 			return diag.Errorf("failed to update user: %v", err)
 		}
 		_ = d.Set("admin_roles", roles)

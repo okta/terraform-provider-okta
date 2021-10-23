@@ -10,10 +10,13 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
+// validScopes is a list of supported scopes as per https://developer.okta.com/docs/guides/implement-oauth-for-okta/scopes/.
 var validScopes = []string{
 	"okta.apps.manage", "okta.apps.read",
 	"okta.authorizationServers.manage", "okta.authorizationServers.read",
 	"okta.clients.manage", "okta.clients.read", "okta.clients.register",
+	"okta.devices.manage", "okta.devices.read",
+	"okta.domains.manage", "okta.domains.read",
 	"okta.eventHooks.manage", "okta.eventHooks.read",
 	"okta.events.read",
 	"okta.factors.manage", "okta.factors.read",
@@ -71,7 +74,7 @@ func resourceAppOAuthAPIScope() *schema.Resource {
 				Description: "The issuer of your Org Authorization Server, your Org URL.",
 			},
 			"scopes": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Required: true,
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
@@ -84,17 +87,12 @@ func resourceAppOAuthAPIScope() *schema.Resource {
 }
 
 func resourceAppOAuthAPIScopeCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	scopes := make([]string, 0)
-
-	for _, scope := range d.Get("scopes").([]interface{}) {
-		scopes = append(scopes, scope.(string))
-	}
+	scopes := convertInterfaceToStringSetNullable(d.Get("scopes"))
 	grantScopeList := getOAuthApiScopeList(scopes, d.Get("issuer").(string))
 	err := grantOAuthApiScopes(ctx, d, m, grantScopeList)
 	if err != nil {
 		return diag.Errorf("failed to create application scope consent grant: %v", err)
 	}
-
 	return resourceAppOAuthAPIScopeRead(ctx, d, m)
 }
 
@@ -152,10 +150,10 @@ func resourceAppOAuthAPIScopeDelete(ctx context.Context, d *schema.ResourceData,
 	if err != nil {
 		return diag.Errorf("failed to get application scope consent grant: %v", err)
 	}
-
 	revokeListIds := make([]string, 0)
-	for _, scope := range d.Get("scopes").([]interface{}) {
-		revokeListIds = append(revokeListIds, scopeMap[scope.(string)])
+	scopes := convertInterfaceToStringSetNullable(d.Get("scopes"))
+	for _, scope := range scopes {
+		revokeListIds = append(revokeListIds, scopeMap[scope])
 	}
 	err = revokeOAuthApiScope(ctx, d, m, revokeListIds)
 	if err != nil {
@@ -203,8 +201,7 @@ func setOAuthApiScopes(d *schema.ResourceData, to []*okta.OAuth2ScopeConsentGran
 		scopes[i] = scope.ScopeId
 	}
 	d.SetId(d.Get("app_id").(string))
-	_ = d.Set("issuer", d.Get("issuer").(string))
-	_ = d.Set("scopes", scopes)
+	_ = d.Set("scopes", convertStringSliceToSet(scopes))
 	return nil
 }
 
@@ -235,9 +232,9 @@ func getOAuthApiScopeUpdateLists(d *schema.ResourceData, from []*okta.OAuth2Scop
 	desiredScopes := make([]string, 0)
 	currentScopes := make([]string, 0)
 
-	// cast list of interface{} to strings
-	for _, scope := range d.Get("scopes").([]interface{}) {
-		desiredScopes = append(desiredScopes, scope.(string))
+	scopes := convertInterfaceToStringSetNullable(d.Get("scopes"))
+	for _, scope := range scopes {
+		desiredScopes = append(desiredScopes, scope)
 	}
 
 	// extract scope list form []okta.OAuth2ScopeConsentGrant

@@ -42,7 +42,11 @@ resource "okta_user_admin_roles" "test" {
 The following arguments are supported:
 
 - `user_id` - (Required) Okta user ID.
+
 - `admin_roles` - (Required) The list of Okta user admin roles, e.g. `["APP_ADMIN", "USER_ADMIN"]`
+
+- `disable_notifications` - (Optional) When this setting is enabled, the admins won't receive any of the default Okta 
+administrator emails. These admins also won't have access to contact Okta Support and open support cases on behalf of your org.
 
 ## Attributes Reference
 

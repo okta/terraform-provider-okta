@@ -78,13 +78,15 @@ func buildMfaPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 		rule.Priority = int64(priority.(int))
 	}
 	rule.Conditions = &okta.PolicyRuleConditions{
-		Network: getNetwork(d),
+		Network: buildPolicyNetworkCondition(d),
 		People:  getUsers(d),
 	}
 	if enroll, ok := d.GetOk("enroll"); ok {
 		rule.Actions = sdk.PolicyRuleActions{
-			Enroll: &sdk.Enroll{
-				Self: enroll.(string),
+			PasswordPolicyRuleActions: &okta.PasswordPolicyRuleActions{
+				Enroll: &okta.PolicyRuleActionsEnroll{
+					Self: enroll.(string),
+				},
 			},
 		}
 	}

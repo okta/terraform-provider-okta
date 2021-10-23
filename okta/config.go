@@ -47,6 +47,7 @@ type (
 		maxAPICapacity   int // experimental
 		oktaClient       *okta.Client
 		supplementClient *sdk.APISupplement
+		client           *http.Client
 		logger           hclog.Logger
 	}
 )
@@ -100,7 +101,7 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
 		okta.WithRequestTimeout(int64(c.requestTimeout)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
-		okta.WithUserAgentExtra("okta-terraform/3.15.0"),
+		okta.WithUserAgentExtra("okta-terraform/3.16.0"),
 	}
 	if c.apiToken == "" {
 		setters = append(setters, okta.WithAuthorizationMode("PrivateKey"))
@@ -121,6 +122,7 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 	c.supplementClient = &sdk.APISupplement{
 		RequestExecutor: client.CloneRequestExecutor(),
 	}
+	c.client = httpClient
 	return nil
 }
 

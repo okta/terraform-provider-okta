@@ -17,9 +17,9 @@ func TestAccAppGroupAssignments_crud(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
 
-	group1 := fmt.Sprintf("%s.test1", oktaGroup)
-	group2 := fmt.Sprintf("%s.test2", oktaGroup)
-	group3 := fmt.Sprintf("%s.test3", oktaGroup)
+	group1 := fmt.Sprintf("%s.test1", group)
+	group2 := fmt.Sprintf("%s.test2", group)
+	group3 := fmt.Sprintf("%s.test3", group)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

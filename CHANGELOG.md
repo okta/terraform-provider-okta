@@ -1,5 +1,26 @@
 # Changelog
 
+## 3.16.0 (October 22, 2021)
+
+**IMPORTANT NOTE:** This release contains resources that are only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
+
+ENHANCEMENTS:
+
+* Updated the list of supported scopes [#712](https://github.com/okta/terraform-provider-okta/pull/712). Thanks, [@boekkooi-lengoo](https://github.com/boekkooi-lengoo)!
+* Added new `okta_app_signon_policy` and `okta_app_sign_on_policy_rule` resources [#714](https://github.com/okta/terraform-provider-okta/pull/714). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added `preconfigured_app` field to the `okta_app_shared_credentials` resource [#723](https://github.com/okta/terraform-provider-okta/pull/723). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `okta_network_zone` datasource [#726](https://github.com/okta/terraform-provider-okta/pull/726). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `okta_security_notification_emails` and `okta_threat_insight_settings` resources [#728](https://github.com/okta/terraform-provider-okta/pull/728). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `okta_policy_rule_profile_enrollment` and `okta_policy_profile_enrollment` resources [#731](https://github.com/okta/terraform-provider-okta/pull/731). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `okta_auth_server_claims` and `okta_auth_server_claim` data sources [#734](https://github.com/okta/terraform-provider-okta/pull/734). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added `disable_notifications` field to the `okta_user_admin_roles` and `okta_group_role` resources [#735](https://github.com/okta/terraform-provider-okta/pull/735). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+
+* Fixed concurrent app logo upload [#716](https://github.com/okta/terraform-provider-okta/pull/716). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fixed scopes diff bug [#737](https://github.com/okta/terraform-provider-okta/pull/737). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Minor tweaks to the provider's rate limiter [#719](https://github.com/okta/terraform-provider-okta/pull/719). Thanks, [@monde](https://github.com/monde) and [@phi1ipp](https://github.com/phi1ipp)!
+
 ## 3.15.0 (October 11, 2021)
 
 ENHANCEMENTS:

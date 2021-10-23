@@ -87,7 +87,7 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 
 func TestAccOktaGroupRule_invalidHandle(t *testing.T) {
 	ri := acctest.RandInt()
-	groupResource := fmt.Sprintf("%s.test", oktaGroup)
+	groupResource := fmt.Sprintf("%s.test", group)
 	ruleResource := fmt.Sprintf("%s.inval", groupRule)
 	testName := buildResourceName(ri)
 	testSetup := buildInvalidSetup(testName)

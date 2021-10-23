@@ -10,7 +10,7 @@ import (
 )
 
 // data source to retrieve information on a Default Policy
-func dataSourceDefaultPolicies() *schema.Resource {
+func dataSourceDefaultPolicy() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceDefaultPolicyRead,
 		Schema: map[string]*schema.Schema{
@@ -21,6 +21,8 @@ func dataSourceDefaultPolicies() *schema.Resource {
 					sdk.PasswordPolicyType,
 					sdk.MfaPolicyType,
 					sdk.IdpDiscoveryType,
+					sdk.AccessPolicyType,
+					sdk.ProfileEnrollmentPolicyType,
 				}),
 				Description: fmt.Sprintf("Policy type: %s, %s, %s, or %s", sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.IdpDiscoveryType),
 				Required:    true,

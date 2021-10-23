@@ -11,6 +11,6 @@ resource "okta_policy_signon" "test" {
 
 resource "okta_policy_rule_signon" "test" {
   policy_id = okta_policy_signon.test.id
-  name     = "testAcc_replace_with_uuid"
-  status   = "ACTIVE"
+  name      = "testAcc_replace_with_uuid"
+  status    = "ACTIVE"
 }

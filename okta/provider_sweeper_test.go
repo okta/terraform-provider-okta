@@ -33,8 +33,8 @@ func TestMain(m *testing.M) {
 	setupSweeper(policyRuleMfa, deleteMfaPolicyRules)
 	setupSweeper(authServer, deleteAuthServers)
 	setupSweeper(groupRule, sweepGroupRules)
-	setupSweeper(oktaGroup, sweepGroups)
-	setupSweeper(oktaUser, sweepUsers)
+	setupSweeper(group, sweepGroups)
+	setupSweeper(user, sweepUsers)
 	setupSweeper(userSchemaProperty, sweepUserCustomSchema)
 	setupSweeper(groupSchemaProperty, sweepGroupCustomSchema)
 	setupSweeper(networkZone, sweepNetworkZones)
@@ -42,7 +42,6 @@ func TestMain(m *testing.M) {
 	setupSweeper(userType, sweepUserTypes)
 	setupSweeper(behavior, sweepBehaviors)
 
-	// add zones sweeper
 	resource.TestMain(m)
 }
 

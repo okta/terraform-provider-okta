@@ -167,35 +167,34 @@ func stringAtLeast(min int) schema.SchemaValidateDiagFunc {
 	}
 }
 
-// regex lovingly lifted from: http://www.golangprograms.com/regular-expression-to-validate-email-address.html
-var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+var (
+	emailRegex   = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+	versionRegex = regexp.MustCompile(`^(\d+)\.(\d+)\.(\d+)$`)
+	periodRegex  = regexp.MustCompile(`^P(([0-9]+Y)?([0-9]+M)?([0-9]+W)?([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+(\.?[0-9]+)?S)?))?$`)
+)
 
-func stringIsEmail(i interface{}, k cty.Path) diag.Diagnostics {
+func stringMatches(i interface{}, k cty.Path, r *regexp.Regexp, name string) diag.Diagnostics {
 	v, ok := i.(string)
 	if !ok {
 		return diag.Errorf("expected type of %s to be string", k)
 	}
 	if v == "" {
-		return diag.Errorf("expected %s email to not be empty", k)
+		return diag.Errorf("expected %s %s to not be empty", k, name)
 	}
-	if !emailRegex.MatchString(v) {
-		return diag.Errorf("%s field is not a valid email address", k)
+	if !r.MatchString(v) {
+		return diag.Errorf("%s field is not a valid %s", k, name)
 	}
 	return nil
 }
 
-var versionRegex = regexp.MustCompile(`^(\d+)\.(\d+)\.(\d+)$`)
+func stringIsEmail(i interface{}, k cty.Path) diag.Diagnostics {
+	return stringMatches(i, k, emailRegex, "email address")
+}
 
 func stringIsVersion(i interface{}, k cty.Path) diag.Diagnostics {
-	v, ok := i.(string)
-	if !ok {
-		return diag.Errorf("expected type of %s to be string", k)
-	}
-	if v == "" {
-		return diag.Errorf("expected %s version to not be empty", k)
-	}
-	if !versionRegex.MatchString(v) {
-		return diag.Errorf("%s field is not a valid version", k)
-	}
-	return nil
+	return stringMatches(i, k, versionRegex, "version")
+}
+
+func stringIsPeriod(i interface{}, k cty.Path) diag.Diagnostics {
+	return stringMatches(i, k, periodRegex, "period")
 }

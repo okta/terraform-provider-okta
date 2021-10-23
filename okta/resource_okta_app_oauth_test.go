@@ -204,24 +204,6 @@ func TestAccAppOauth_federationBroker(t *testing.T) {
 	})
 }
 
-// Tests properly errors on conditional requirements.
-func TestAccAppOauth_badGrantTypes(t *testing.T) {
-	ri := acctest.RandInt()
-	config := buildTestOAuthConfigBadGrantTypes(ri)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
-		Steps: []resource.TestStep{
-			{
-				Config:      config,
-				ExpectError: regexp.MustCompile(`failed conditional validation for field "grant_types" of type "service", it can contain client_credentials, implicit and must contain client_credentials, received implicit`),
-			},
-		},
-	})
-}
-
 // Tests an OAuth application with profile attributes. This tests with a nested JSON object as well as an array.
 func TestAccAppOauth_customProfileAttributes(t *testing.T) {
 	ri := acctest.RandInt()
@@ -402,19 +384,4 @@ resource "%s" "test" {
   custom_client_id = "%s"
   client_id        = "%s"
 }`, appOAuth, name, name, name)
-}
-
-func buildTestOAuthConfigBadGrantTypes(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  status      = "ACTIVE"
-  label       = "%s"
-  type		  = "service"
-  grant_types = [ "implicit" ]
-  redirect_uris = ["http://d.com/"]
-  response_types   = ["token"]
-}
-`, appOAuth, name, name)
 }

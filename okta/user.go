@@ -11,6 +11,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 const (
@@ -181,11 +182,11 @@ func buildUserDataSourceSchema(target map[string]*schema.Schema) map[string]*sch
 	return buildSchema(userProfileDataSchema, target)
 }
 
-func assignAdminRolesToUser(ctx context.Context, userID string, roles []string, client *okta.Client) error {
+func assignAdminRolesToUser(ctx context.Context, userID string, roles []string, disableNotifications bool, client *okta.Client) error {
 	for _, role := range roles {
 		if contains(validAdminRoles, role) {
-			roleStruct := okta.AssignRoleRequest{Type: role}
-			_, _, err := client.User.AssignRoleToUser(ctx, userID, roleStruct, nil)
+			_, _, err := client.User.AssignRoleToUser(ctx, userID, &okta.AssignRoleRequest{Type: role},
+				&query.Params{DisableNotifications: boolPtr(disableNotifications)})
 			if err != nil {
 				return fmt.Errorf("failed to assign role '%s' to user '%s': %w", role, userID, err)
 			}
@@ -398,7 +399,7 @@ func flattenUser(u *okta.User) map[string]interface{} {
 }
 
 // need to remove from all current admin roles and reassign based on terraform configs when a change is detected
-func updateAdminRolesOnUser(ctx context.Context, userID string, rolesToAssign []string, c *okta.Client) error {
+func updateAdminRolesOnUser(ctx context.Context, userID string, rolesToAssign []string, disableNotifications bool, c *okta.Client) error {
 	roles, _, err := listUserOnlyRoles(ctx, c, userID)
 	if err != nil {
 		return fmt.Errorf("failed to list user's roles: %v", err)
@@ -409,7 +410,7 @@ func updateAdminRolesOnUser(ctx context.Context, userID string, rolesToAssign []
 			return fmt.Errorf("failed to remove user's role: %v", err)
 		}
 	}
-	return assignAdminRolesToUser(ctx, userID, rolesToAssign, c)
+	return assignAdminRolesToUser(ctx, userID, rolesToAssign, disableNotifications, c)
 }
 
 // handle setting of user status based on what the current status is because okta

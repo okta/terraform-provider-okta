@@ -82,7 +82,7 @@ func TestAccOktaAppUser_retain(t *testing.T) {
 	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", appUser)
 	appName := fmt.Sprintf("%s.test", appOAuth)
-	userName := fmt.Sprintf("%s.test", oktaUser)
+	userName := fmt.Sprintf("%s.test", user)
 	mgr := newFixtureManager(appUser)
 	retain := mgr.GetFixtures("retain.tf", ri, t)
 	retainDestroy := mgr.GetFixtures("retain_destroy.tf", ri, t)

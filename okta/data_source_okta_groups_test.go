@@ -9,7 +9,7 @@ import (
 
 func TestAccOktaDataSourceGroups_read(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(oktaGroups)
+	mgr := newFixtureManager(groups)
 	groups := mgr.GetFixtures("okta_groups.tf", ri, t)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 	resource.Test(t, resource.TestCase{

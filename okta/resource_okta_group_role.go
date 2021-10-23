@@ -77,6 +77,12 @@ func resourceGroupRole() *schema.Resource {
 				Optional:    true,
 				Description: "List of apps ids for the targets of the admin role.",
 			},
+			"disable_notifications": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "When this setting is enabled, the admins won't receive any of the default Okta administrator emails",
+				Default:     false,
+			},
 		},
 	}
 }
@@ -86,9 +92,8 @@ func resourceGroupRoleCreate(ctx context.Context, d *schema.ResourceData, m inte
 	roleType := d.Get("role_type").(string)
 	client := getOktaClientFromMetadata(m)
 	logger(m).Info("assigning role to group", "group_id", groupID, "role_type", roleType)
-	role, _, err := client.Group.AssignRoleToGroup(ctx, groupID, okta.AssignRoleRequest{
-		Type: roleType,
-	}, nil)
+	role, _, err := client.Group.AssignRoleToGroup(ctx, groupID, &okta.AssignRoleRequest{Type: roleType},
+		&query.Params{DisableNotifications: boolPtr(d.Get("disable_notifications").(bool))})
 	if err != nil {
 		return diag.Errorf("failed to assign role %s to group %s: %v", roleType, groupID, err)
 	}
@@ -167,6 +172,13 @@ func resourceGroupRoleUpdate(ctx context.Context, d *schema.ResourceData, m inte
 	roleID := d.Id()
 	roleType := d.Get("role_type").(string)
 	client := getOktaClientFromMetadata(m)
+	if d.HasChange("disable_notifications") {
+		_, _, err := client.Group.AssignRoleToGroup(ctx, groupID, nil,
+			&query.Params{DisableNotifications: boolPtr(d.Get("disable_notifications").(bool))})
+		if err != nil {
+			return diag.Errorf("failed to update group's '%s' notification settings: %v", groupID, err)
+		}
+	}
 	if d.HasChange("target_group_list") && supportsGroupTargets(roleType) {
 		expectedGroupIDs := convertInterfaceToStringSet(d.Get("target_group_list"))
 		existingGroupIDs, err := listGroupTargetsIDs(ctx, m, groupID, roleID)
