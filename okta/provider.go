@@ -38,7 +38,7 @@ const (
 	appUserAssignments          = "okta_app_user_assignments"
 	appUserBaseSchemaProperty   = "okta_app_user_base_schema_property"
 	appUserSchemaProperty       = "okta_app_user_schema_property"
-	authenticator         = "okta_authenticator"
+	authenticator               = "okta_authenticator"
 	authServer                  = "okta_auth_server"
 	authServerClaim             = "okta_auth_server_claim"
 	authServerClaimDefault      = "okta_auth_server_claim_default"
@@ -229,6 +229,7 @@ func Provider() *schema.Provider {
 			appUser:                     resourceAppUser(),
 			appUserBaseSchemaProperty:   resourceAppUserBaseSchemaProperty(),
 			appUserSchemaProperty:       resourceAppUserSchemaProperty(),
+			authenticator:               resourceAuthenticator(),
 			authServer:                  resourceAuthServer(),
 			authServerClaim:             resourceAuthServerClaim(),
 			authServerClaimDefault:      resourceAuthServerClaimDefault(),
