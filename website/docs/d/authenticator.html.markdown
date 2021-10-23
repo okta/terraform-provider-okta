@@ -3,7 +3,7 @@ layout: 'okta'
 page_title: 'Okta: okta_authenticator'
 sidebar_current: 'docs-okta-datasource-okta-authenticator'
 description: |-
-  Manages Okta Authenticator
+  Get an authenticator by key, name of ID.
 ---
 
 # okta_authenticator
