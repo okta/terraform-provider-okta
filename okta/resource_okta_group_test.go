@@ -29,7 +29,7 @@ func sweepGroups(client *testClient) error {
 func TestAccOktaGroup_crud(t *testing.T) {
 	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", group)
-	mgr := newFixtureManager("okta_group")
+	mgr := newFixtureManager(group)
 	config := mgr.GetFixtures("okta_group.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("okta_group_updated.tf", ri, t)
 	addUsersConfig := mgr.GetFixtures("okta_group_with_users.tf", ri, t)
