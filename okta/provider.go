@@ -94,6 +94,7 @@ const (
 	templateSms                 = "okta_template_sms"
 	threatInsightSettings       = "okta_threat_insight_settings"
 	trustedOrigin               = "okta_trusted_origin"
+	trustedOrigins              = "okta_trusted_origins"
 	user                        = "okta_user"
 	userAdminRoles              = "okta_user_admin_roles"
 	userBaseSchemaProperty      = "okta_user_base_schema_property"
@@ -335,6 +336,7 @@ func Provider() *schema.Provider {
 			idpSocial:                dataSourceIdpSocial(),
 			networkZone:              dataSourceNetworkZone(),
 			policy:                   dataSourcePolicy(),
+			trustedOrigins:           dataSourceTrustedOrigin(),
 			user:                     dataSourceUser(),
 			userProfileMappingSource: dataSourceUserProfileMappingSource(),
 			users:                    dataSourceUsers(),
