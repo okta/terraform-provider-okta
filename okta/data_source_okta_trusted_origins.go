@@ -2,6 +2,8 @@ package okta
 
 import (
 	"context"
+	"fmt"
+	"hash/crc32"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -55,11 +57,13 @@ func dataSourceTrustedOriginsRead(ctx context.Context, d *schema.ResourceData, m
 		d.SetId("")
 		return nil
 	}
-
+	var s string
 	arr := make([]map[string]interface{}, len(trustedOrigins))
 	for i := range trustedOrigins {
+		s += trustedOrigins[i].Name
 		arr[i] = flattenTrustedOrigins(trustedOrigins[i])
 	}
+	d.SetId(fmt.Sprintf("%d", crc32.ChecksumIEEE([]byte(s))))
 	_ = d.Set("trustedOrigins", arr)
 	return nil
 }
