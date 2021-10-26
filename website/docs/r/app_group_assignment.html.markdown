@@ -48,6 +48,8 @@ The following arguments are supported:
 
 - `group_id` - (Required) The ID of the group to assign the app to.
 
+- `priority` - (Optional)  Priority of group assignment.
+
 - `profile` - (Optional) JSON document containing [application profile](https://developer.okta.com/docs/reference/api/apps/#profile-object)
 
 - `retain_assignment` - (Optional) Retain the group assignment on destroy. If set to true, the resource will be removed from state but not from the Okta app.
