@@ -114,3 +114,13 @@ func (m *APISupplement) FindProfileMappingSource(ctx context.Context, name, typ 
 	}
 	return nil, fmt.Errorf("could not locate profile mapping source with name '%s' and type '%s'", name, typ)
 }
+
+func (m *APISupplement) ApplyMappings(ctx context.Context, sourceID, targetID string) (*okta.Response, error) {
+	url := fmt.Sprintf("/api/internal/v1/mappings/reapply?source=%s&target=%s", sourceID, targetID)
+	re := m.cloneRequestExecutor()
+	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	return re.Do(ctx, req, nil)
+}

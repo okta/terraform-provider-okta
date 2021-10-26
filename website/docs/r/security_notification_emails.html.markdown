@@ -10,7 +10,7 @@ description: |-
 
 This resource allows you to configure Security Notification Emails.
 
-**Important Note**: available only when using api token in the provider config.
+~> **WARNING:** This resource is available only when using api token in the provider config.
 
 ## Example Usage
 

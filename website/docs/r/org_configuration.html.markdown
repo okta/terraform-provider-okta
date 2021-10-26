@@ -10,7 +10,7 @@ description: |-
 
 This resource allows you manage org settings, logo, support and communication options.
 
-~> **IMPORTANT NOTE:** You must specify all Org Setting properties when you update an org's profile. Any property not specified in the script will be deleted.
+~> **IMPORTANT:** You must specify all Org Setting properties when you update an org's profile. Any property not specified in the script will be deleted.
 
 ## Example Usage
 

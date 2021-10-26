@@ -10,7 +10,7 @@ description: |-
 
 This resource allows you to manage a profile mapping by source and target IDs. 
 
-**Important Note**: available only when using api token in the provider config.
+~> **WARNING:** This feature available only when using api token in the provider config.
 
 ## Example Usage
 
@@ -56,6 +56,8 @@ The following arguments are supported:
   - `id` - (Required) Key of mapping.
   - `expression` - (Required) Combination or single source properties that will be mapped to the target property.
   - `push_status` - (Optional) Whether to update target properties on user create & update or just on create.
+
+- `always_apply` (Optional) Whether apply the changes to all users with this profile after updating or creating the these mappings.
 
 ## Attributes Reference
 

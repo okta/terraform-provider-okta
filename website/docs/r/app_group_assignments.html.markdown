@@ -41,7 +41,7 @@ resource "okta_app_oauth" "app" {
 }
 ```
 
-~> **Important:** When using `okta_app_group_assignments` it is expected to manage ALL group assignments for the target application.
+~> **IMPORTANT:** When using `okta_app_group_assignments` it is expected to manage ALL group assignments for the target application.
 
 ## Argument Reference
 
