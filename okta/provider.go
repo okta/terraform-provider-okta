@@ -76,6 +76,8 @@ const (
 	idpSocial                   = "okta_idp_social"
 	inlineHook                  = "okta_inline_hook"
 	networkZone                 = "okta_network_zone"
+	orgConfiguration            = "okta_org_configuration"
+	orgSupport                  = "okta_org_support"
 	policy                      = "okta_policy"
 	policyMfa                   = "okta_policy_mfa"
 	policyMfaDefault            = "okta_policy_mfa_default"
@@ -89,8 +91,8 @@ const (
 	policyRuleSignOn            = "okta_policy_rule_signon"
 	policySignOn                = "okta_policy_signon"
 	profileMapping              = "okta_profile_mapping"
-	securityNotificationEmails  = "okta_security_notification_emails"
 	roleSubscription            = "okta_role_subscription"
+	securityNotificationEmails  = "okta_security_notification_emails"
 	templateEmail               = "okta_template_email"
 	templateSms                 = "okta_template_sms"
 	threatInsightSettings       = "okta_threat_insight_settings"
@@ -260,6 +262,8 @@ func Provider() *schema.Provider {
 			idpSocial:                   resourceIdpSocial(),
 			inlineHook:                  resourceInlineHook(),
 			networkZone:                 resourceNetworkZone(),
+			orgConfiguration:            resourceOrgConfiguration(),
+			orgSupport:                  resourceOrgSupport(),
 			policyMfa:                   resourcePolicyMfa(),
 			policyMfaDefault:            resourcePolicyMfaDefault(),
 			policyPassword:              resourcePolicyPassword(),
