@@ -2,31 +2,13 @@ package okta
 
 import (
 	"context"
+	"fmt"
+	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
-
-var mappingResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"id": {
-			Type:        schema.TypeString,
-			Required:    true,
-			Description: "The mapping property key.",
-		},
-		"expression": {
-			Type:     schema.TypeString,
-			Required: true,
-		},
-		"push_status": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          dontPush,
-			ValidateDiagFunc: elemInSlice([]string{push, dontPush}),
-		},
-	},
-}
 
 const (
 	push     = "PUSH"
@@ -76,8 +58,34 @@ func resourceOktaProfileMapping() *schema.Resource {
 				Optional: true,
 				Elem:     mappingResource,
 			},
+			"always_apply": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Whether apply the changes to all users with this profile after updating or creating the these mappings.",
+				Default:     false,
+			},
 		},
 	}
+}
+
+var mappingResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"id": {
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "The mapping property key.",
+		},
+		"expression": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"push_status": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			Default:          dontPush,
+			ValidateDiagFunc: elemInSlice([]string{push, dontPush}),
+		},
+	},
 }
 
 func resourceProfileMappingCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -99,6 +107,10 @@ func resourceProfileMappingCreate(ctx context.Context, d *schema.ResourceData, m
 	_, _, err = client.UpdateMapping(ctx, mapping.ID, newMapping, nil)
 	if err != nil {
 		return diag.Errorf("failed to create profile mapping: %v", err)
+	}
+	err = applyMapping(ctx, d, m, mapping)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 	return resourceProfileMappingRead(ctx, d, m)
 }
@@ -147,6 +159,10 @@ func resourceProfileMappingUpdate(ctx context.Context, d *schema.ResourceData, m
 	_, _, err = client.UpdateMapping(ctx, mapping.ID, newMapping, nil)
 	if err != nil {
 		return diag.Errorf("failed to update profile mapping: %v", err)
+	}
+	err = applyMapping(ctx, d, m, mapping)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 	return resourceProfileMappingRead(ctx, d, m)
 }
@@ -225,4 +241,37 @@ func buildMapping(d *schema.ResourceData) sdk.Mapping {
 		ID:         d.Id(),
 		Properties: buildMappingProperties(d.Get("mappings").(*schema.Set)),
 	}
+}
+
+func applyMapping(ctx context.Context, d *schema.ResourceData, m interface{}, mapping *sdk.Mapping) error {
+	if !d.Get("always_apply").(bool) {
+		return nil
+	}
+	source := d.Get("source_id").(string)
+	target := d.Get("target_id").(string)
+	var appID string
+	if mapping.Source.Type == "appuser" {
+		appID = mapping.Source.ID
+	}
+	if mapping.Target.Type == "appuser" {
+		appID = mapping.Target.ID
+	}
+	appUserTypes, _, err := getSupplementFromMetadata(m).GetAppUserTypes(ctx, appID)
+	if err != nil {
+		return fmt.Errorf("failed to list app user types: %v", err)
+	}
+	if len(appUserTypes) == 0 || len(appUserTypes) > 2 {
+		log.Println("[WARN] mappings were not applied")
+		return nil
+	}
+	if mapping.Source.Type == "appuser" {
+		source = appUserTypes[0].Id
+	} else {
+		target = appUserTypes[0].Id
+	}
+	_, err = getSupplementFromMetadata(m).ApplyMappings(ctx, source, target)
+	if err != nil {
+		return fmt.Errorf("failed to apply mappings for source '%s' and target '%s': %v", source, target, err)
+	}
+	return nil
 }
