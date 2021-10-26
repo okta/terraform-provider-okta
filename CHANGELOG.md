@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.17.0 (October 26, 2021)
+
+**IMPORTANT NOTE:** This release contains resources that are only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
+
+ENHANCEMENTS:
+
+* Added new `okta_authenticator` resource and datasource [#708](https://github.com/okta/terraform-provider-okta/pull/708). Thanks, [@monde](https://github.com/monde) and [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `okta_role_subscription` resource and datasource [#746](https://github.com/okta/terraform-provider-okta/pull/746). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `okta_org_support` and `okta_org_configuration` resources [#749](https://github.com/okta/terraform-provider-okta/pull/749). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `always_apply` field to the `okta_profile_mapping` resource [#750](https://github.com/okta/terraform-provider-okta/pull/750). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.16.0 (October 22, 2021)
 
 **IMPORTANT NOTE:** This release contains resources that are only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
