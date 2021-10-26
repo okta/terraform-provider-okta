@@ -90,6 +90,7 @@ const (
 	policySignOn                = "okta_policy_signon"
 	profileMapping              = "okta_profile_mapping"
 	securityNotificationEmails  = "okta_security_notification_emails"
+	roleSubscription            = "okta_role_subscription"
 	templateEmail               = "okta_template_email"
 	templateSms                 = "okta_template_sms"
 	threatInsightSettings       = "okta_threat_insight_settings"
@@ -272,6 +273,7 @@ func Provider() *schema.Provider {
 			policyRuleSignOn:            resourcePolicySignOnRule(),
 			policySignOn:                resourcePolicySignOn(),
 			profileMapping:              resourceOktaProfileMapping(),
+			roleSubscription:            resourceRoleSubscription(),
 			securityNotificationEmails:  resourceSecurityNotificationEmails(),
 			templateEmail:               resourceTemplateEmail(),
 			templateSms:                 resourceTemplateSms(),
@@ -337,6 +339,7 @@ func Provider() *schema.Provider {
 			networkZone:              dataSourceNetworkZone(),
 			policy:                   dataSourcePolicy(),
 			trustedOrigins:           dataSourceTrustedOrigin(),
+			roleSubscription:         dataSourceRoleSubscription(),
 			user:                     dataSourceUser(),
 			userProfileMappingSource: dataSourceUserProfileMappingSource(),
 			users:                    dataSourceUsers(),
