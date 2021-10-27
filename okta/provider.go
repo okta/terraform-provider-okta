@@ -58,6 +58,7 @@ const (
 	emailSender                 = "okta_email_sender"
 	emailSenderVerification     = "okta_email_sender_verification"
 	eventHook                   = "okta_event_hook"
+	eventHookVerification       = "okta_event_hook_verification"
 	factor                      = "okta_factor"
 	factorTotp                  = "okta_factor_totp"
 	group                       = "okta_group"
@@ -247,6 +248,7 @@ func Provider() *schema.Provider {
 			emailSender:                 resourceEmailSender(),
 			emailSenderVerification:     resourceEmailSenderVerification(),
 			eventHook:                   resourceEventHook(),
+			eventHookVerification:       resourceEventHookVerification(),
 			factor:                      resourceFactor(),
 			factorTotp:                  resourceFactorTOTP(),
 			group:                       resourceGroup(),
