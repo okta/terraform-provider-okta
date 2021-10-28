@@ -31,6 +31,7 @@ BUGS:
 * Fixed concurrent app logo upload [#716](https://github.com/okta/terraform-provider-okta/pull/716). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 * Fixed scopes diff bug [#737](https://github.com/okta/terraform-provider-okta/pull/737). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 * Minor tweaks to the provider's rate limiter [#719](https://github.com/okta/terraform-provider-okta/pull/719). Thanks, [@monde](https://github.com/monde) and [@phi1ipp](https://github.com/phi1ipp)!
+* Made `priority` an optional parameter of `okta_app_group_assignment` [#741](https://github.com/okta/terraform-provider-okta/pull/741). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 
 ## 3.15.0 (October 11, 2021)
 
