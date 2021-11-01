@@ -100,25 +100,7 @@ func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 	if policyID == "" {
 		return fmt.Errorf("either 'policyid' or 'policy_id' field should be set")
 	}
-	client := getSupplementFromMetadata(m)
-	_, resp, err := client.GetPolicy(ctx, policyID)
-	if err != nil {
-		return fmt.Errorf("failed to get policy by ID: %v", err)
-	}
-	if is404(resp) {
-		return fmt.Errorf("policy with ID %v not found ID", policyID)
-	}
-	rules, _, err := client.ListPolicyRules(ctx, policyID)
-	if err != nil {
-		return fmt.Errorf("failed to list policy rules: %v", err)
-	}
-	ruleName := d.Get("name").(string)
-	for i := range rules {
-		if rules[i].Name == ruleName {
-			return fmt.Errorf("policy rule %v already exists in Okta. Please use 'import' to import it into terrafrom. terraform import %s.%s %s/%s", rules[i].Name, ruleType, rules[i].Name, policyID, rules[i].Id)
-		}
-	}
-	rule, _, err := client.CreatePolicyRule(ctx, policyID, template)
+	rule, _, err := getSupplementFromMetadata(m).CreatePolicyRule(ctx, policyID, template)
 	if err != nil {
 		return fmt.Errorf("failed to create policy rule: %v", err)
 	}
@@ -215,6 +197,22 @@ func syncRuleFromUpstream(d *schema.ResourceData, rule *sdk.PolicyRule) error {
 	return setNonPrimitives(d, map[string]interface{}{
 		"users_excluded": convertStringSliceToSetNullable(rule.Conditions.People.Users.Exclude),
 	})
+}
+
+func flattenAppsInclude(appObj []*okta.AppAndInstanceConditionEvaluatorAppOrInstance) *schema.Set {
+	var flattened []interface{}
+	for _, v := range appObj {
+		// skip default values
+		if v.Name == "okta" && v.Type == "APP_TYPE" {
+			continue
+		}
+		flattened = append(flattened, map[string]interface{}{
+			"id":   v.Id,
+			"name": v.Name,
+			"type": v.Type,
+		})
+	}
+	return schema.NewSet(schema.HashResource(appResource), flattened)
 }
 
 func updateRule(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.PolicyRule) error {

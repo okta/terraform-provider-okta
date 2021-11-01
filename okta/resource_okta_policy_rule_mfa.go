@@ -24,6 +24,12 @@ func resourcePolicyMfaRule() *schema.Resource {
 				Optional:         true,
 				Description:      "Should the user be enrolled the first time they LOGIN, the next time they are CHALLENGED, or NEVER?",
 			},
+			"app_include": {
+				Type:        schema.TypeSet,
+				Elem:        appResource,
+				Optional:    true,
+				Description: "Applications to include",
+			},
 		}),
 	}
 }
@@ -48,6 +54,9 @@ func resourcePolicyMfaRuleRead(ctx context.Context, d *schema.ResourceData, m in
 	err = syncRuleFromUpstream(d, rule)
 	if err != nil {
 		return diag.Errorf("failed to sync MFA policy rule: %v", err)
+	}
+	if (rule.Conditions.App) != nil && len(rule.Conditions.App.Include) != 0 {
+		_ = d.Set("app_include", flattenAppsInclude(rule.Conditions.App.Include))
 	}
 	return nil
 }
@@ -80,6 +89,7 @@ func buildMfaPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 	rule.Conditions = &okta.PolicyRuleConditions{
 		Network: buildPolicyNetworkCondition(d),
 		People:  getUsers(d),
+		App:     buildMFAPolicyAppCondition(d),
 	}
 	if enroll, ok := d.GetOk("enroll"); ok {
 		rule.Actions = sdk.PolicyRuleActions{
@@ -91,4 +101,25 @@ func buildMfaPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 		}
 	}
 	return rule
+}
+
+func buildMFAPolicyAppCondition(d *schema.ResourceData) *okta.AppAndInstancePolicyRuleCondition {
+	v, ok := d.GetOk("app_include")
+	if !ok {
+		return nil
+	}
+	valueList := v.(*schema.Set).List()
+	var includeList []*okta.AppAndInstanceConditionEvaluatorAppOrInstance
+	for _, item := range valueList {
+		if value, ok := item.(map[string]interface{}); ok {
+			includeList = append(includeList, &okta.AppAndInstanceConditionEvaluatorAppOrInstance{
+				Id:   getMapString(value, "id"),
+				Type: getMapString(value, "type"),
+				Name: getMapString(value, "name"),
+			})
+		}
+	}
+	return &okta.AppAndInstancePolicyRuleCondition{
+		Include: includeList,
+	}
 }

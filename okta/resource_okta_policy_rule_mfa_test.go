@@ -31,6 +31,7 @@ func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "app_include.#", "1"),
 				),
 			},
 			{
@@ -39,6 +40,7 @@ func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
+					resource.TestCheckResourceAttr(resourceName, "app_include.#", "2"),
 				),
 			},
 		},
