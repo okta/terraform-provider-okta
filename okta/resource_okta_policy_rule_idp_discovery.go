@@ -111,8 +111,8 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 	_ = d.Set("user_identifier_type", rule.Conditions.UserIdentifier.Type)
 	mm := map[string]interface{}{
 		"platform_include":         flattenPlatformInclude(rule.Conditions.Platform),
-		"app_include":              flattenAppInclude(rule.Conditions.App),
-		"app_exclude":              flattenAppExclude(rule.Conditions.App),
+		"app_include":              flattenDiscoveryRuleAppInclude(rule.Conditions.App),
+		"app_exclude":              flattenDiscoveryRuleAppExclude(rule.Conditions.App),
 		"user_identifier_patterns": flattenUserIDPatterns(rule.Conditions.UserIdentifier.Patterns),
 	}
 	_ = d.Set("network_connection", rule.Conditions.Network.Connection)
@@ -392,14 +392,14 @@ func flattenPlatformInclude(platform *sdk.IdpDiscoveryRulePlatform) *schema.Set 
 	return schema.NewSet(schema.HashResource(platformIncludeResource), flattened)
 }
 
-func flattenAppInclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
+func flattenDiscoveryRuleAppInclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
 	if app != nil {
 		return flattenAppObj(app.Include)
 	}
 	return flattenAppObj(nil)
 }
 
-func flattenAppExclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
+func flattenDiscoveryRuleAppExclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
 	if app != nil {
 		return flattenAppObj(app.Exclude)
 	}
