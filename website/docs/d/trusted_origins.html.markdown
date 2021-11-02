@@ -25,9 +25,8 @@ The following arguments are supported:
 
 ## Attributes Reference
 
-- `id` - The ID of the Trusted Origin.
-
 - `trusted_origins`
+  - `id` - The ID of the Trusted Origin.
   - `active` - Whether the Trusted Origin is active or not - can only be issued post-creation
   - `name` - Unique name for this trusted origin.
   - `origin` - Unique origin URL for this trusted origin.

@@ -25,6 +25,11 @@ func dataSourceTrustedOrigins() *schema.Resource {
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Unique identifier",
+						},
 						"active": {
 							Type:        schema.TypeBool,
 							Computed:    true,
@@ -71,6 +76,7 @@ func dataSourceTrustedOriginsRead(ctx context.Context, d *schema.ResourceData, m
 			scopes[j] = trustedOrigins[i].Scopes[j].Type
 		}
 		arr[i] = map[string]interface{}{
+			"id":     trustedOrigins[i].Id,
 			"active": trustedOrigins[i].Status == statusActive,
 			"name":   trustedOrigins[i].Name,
 			"origin": trustedOrigins[i].Origin,
