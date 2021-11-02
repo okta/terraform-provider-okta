@@ -30,6 +30,12 @@ func resourcePolicyMfaRule() *schema.Resource {
 				Optional:    true,
 				Description: "Applications to include",
 			},
+			"app_exclude": {
+				Type:        schema.TypeSet,
+				Elem:        appResource,
+				Optional:    true,
+				Description: "Applications to exclude",
+			},
 		}),
 	}
 }
@@ -55,8 +61,13 @@ func resourcePolicyMfaRuleRead(ctx context.Context, d *schema.ResourceData, m in
 	if err != nil {
 		return diag.Errorf("failed to sync MFA policy rule: %v", err)
 	}
-	if (rule.Conditions.App) != nil && len(rule.Conditions.App.Include) != 0 {
-		_ = d.Set("app_include", flattenAppsInclude(rule.Conditions.App.Include))
+	if (rule.Conditions.App) != nil {
+		if len(rule.Conditions.App.Include) != 0 {
+			_ = d.Set("app_include", flattenAppsInclude(rule.Conditions.App.Include))
+		}
+		if len(rule.Conditions.App.Exclude) != 0 {
+			_ = d.Set("app_exclude", flattenAppsInclude(rule.Conditions.App.Exclude))
+		}
 	}
 	return nil
 }
@@ -104,22 +115,39 @@ func buildMfaPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 }
 
 func buildMFAPolicyAppCondition(d *schema.ResourceData) *okta.AppAndInstancePolicyRuleCondition {
-	v, ok := d.GetOk("app_include")
-	if !ok {
+	incl, okInclude := d.GetOk("app_include")
+	excl, okExclude := d.GetOk("app_exclude")
+	if !okInclude && !okExclude {
 		return nil
 	}
-	valueList := v.(*schema.Set).List()
-	var includeList []*okta.AppAndInstanceConditionEvaluatorAppOrInstance
-	for _, item := range valueList {
-		if value, ok := item.(map[string]interface{}); ok {
-			includeList = append(includeList, &okta.AppAndInstanceConditionEvaluatorAppOrInstance{
-				Id:   getMapString(value, "id"),
-				Type: getMapString(value, "type"),
-				Name: getMapString(value, "name"),
-			})
+	rc := &okta.AppAndInstancePolicyRuleCondition{}
+	if okInclude {
+		valueList := incl.(*schema.Set).List()
+		var includeList []*okta.AppAndInstanceConditionEvaluatorAppOrInstance
+		for _, item := range valueList {
+			if value, ok := item.(map[string]interface{}); ok {
+				includeList = append(includeList, &okta.AppAndInstanceConditionEvaluatorAppOrInstance{
+					Id:   getMapString(value, "id"),
+					Type: getMapString(value, "type"),
+					Name: getMapString(value, "name"),
+				})
+			}
 		}
+		rc.Include = includeList
 	}
-	return &okta.AppAndInstancePolicyRuleCondition{
-		Include: includeList,
+	if okExclude {
+		valueList := excl.(*schema.Set).List()
+		var excludeList []*okta.AppAndInstanceConditionEvaluatorAppOrInstance
+		for _, item := range valueList {
+			if value, ok := item.(map[string]interface{}); ok {
+				excludeList = append(excludeList, &okta.AppAndInstanceConditionEvaluatorAppOrInstance{
+					Id:   getMapString(value, "id"),
+					Type: getMapString(value, "type"),
+					Name: getMapString(value, "name"),
+				})
+			}
+		}
+		rc.Exclude = excludeList
 	}
+	return rc
 }
