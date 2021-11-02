@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/crewjam/saml"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func (m *APISupplement) GetSAMLMetadata(ctx context.Context, id, keyID string) ([]byte, *saml.EntityDescriptor, error) {
@@ -24,10 +23,8 @@ func (m *APISupplement) GetSAMLIdpMetadata(ctx context.Context, id string) ([]by
 }
 
 func (m *APISupplement) getXML(ctx context.Context, url string) ([]byte, *saml.EntityDescriptor, error) {
-	re := &okta.RequestExecutor{}
-	*re = *m.RequestExecutor
-	re = re.WithAccept("application/xml")
-	req, err := re.NewRequest(http.MethodGet, url, nil)
+	re := m.cloneRequestExecutor()
+	req, err := re.WithAccept("application/xml").NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}

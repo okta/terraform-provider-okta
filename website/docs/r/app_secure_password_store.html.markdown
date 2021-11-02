@@ -80,7 +80,7 @@ The following arguments are supported:
 
 - `user_name_template_type` - (Optional) Username template type. Default: `"BUILT_IN"`.
 
-- `user_name_template_push_status` - (Optional) Push username on update. Valid values: `"PUSH"` and `"DONT_PUSH"`. Default: `"DONT_PUSH"`.
+- `user_name_template_push_status` - (Optional) Push username on update. Valid values: `"PUSH"` and `"DONT_PUSH"`.
 
 - `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it's also can be provided during import). Default is `false`.
 

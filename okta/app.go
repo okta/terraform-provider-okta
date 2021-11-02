@@ -199,9 +199,11 @@ var (
 		"user_name_template_push_status": {
 			Type:             schema.TypeString,
 			Optional:         true,
-			Default:          "DONT_PUSH",
 			Description:      "Push username on update",
-			ValidateDiagFunc: elemInSlice([]string{"DONT_PUSH", "PUSH"}),
+			ValidateDiagFunc: elemInSlice([]string{"DONT_PUSH", "PUSH", ""}),
+			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+				return new == ""
+			},
 		},
 	}
 
