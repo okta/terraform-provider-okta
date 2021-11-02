@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.18.0 (November 2, 2021)
+
+ENHANCEMENTS:
+
+* Added new `okta_event_hook_verification` resource [#752](https://github.com/okta/terraform-provider-okta/pull/752). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `app_include` and `app_exclude` fields to the `okta_policy_rule_mfa` resource [#762](https://github.com/okta/terraform-provider-okta/pull/762), [#771](https://github.com/okta/terraform-provider-okta/pull/771). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `okta_trusted_origins` data source [#766](https://github.com/okta/terraform-provider-okta/pull/766). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added `redirect_url` and `checkbox` fields to the `okta_app_swa` resource [#767](https://github.com/okta/terraform-provider-okta/pull/767). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `user_name_template_push_status` field to some of the `okta_app_*` related resources [#769](https://github.com/okta/terraform-provider-okta/pull/769). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `old_password` field to the `okta_user` resource [#765](https://github.com/okta/terraform-provider-okta/pull/765) and check for ability to change or set a password. Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+
+* Fixed name matching for `okta_auth_server` data source [#764](https://github.com/okta/terraform-provider-okta/pull/764). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.17.0 (October 26, 2021)
 
 **IMPORTANT NOTE:** This release contains resources that are only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
