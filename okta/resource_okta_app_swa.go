@@ -50,6 +50,16 @@ func resourceAppSwa() *schema.Resource {
 				Optional:    true,
 				Description: "A regex that further restricts URL to the specified regex",
 			},
+			"checkbox": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "CSS selector for the checkbox",
+			},
+			"redirect_url": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "If going to the login page URL redirects to another page, then enter that URL here",
+			},
 		}),
 	}
 }
@@ -90,6 +100,8 @@ func resourceAppSwaRead(ctx context.Context, d *schema.ResourceData, m interface
 	_ = d.Set("username_field", app.Settings.App.UsernameField)
 	_ = d.Set("url", app.Settings.App.Url)
 	_ = d.Set("url_regex", app.Settings.App.LoginUrlRegex)
+	_ = d.Set("checkbox", app.Settings.App.Checkbox)
+	_ = d.Set("redirect_url", app.Settings.App.RedirectUrl)
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
@@ -152,6 +164,8 @@ func buildAppSwa(d *schema.ResourceData) *okta.SwaApplication {
 			PasswordField: d.Get("password_field").(string),
 			Url:           d.Get("url").(string),
 			LoginUrlRegex: d.Get("url_regex").(string),
+			RedirectUrl:   d.Get("redirect_url").(string),
+			Checkbox:      d.Get("checkbox").(string),
 		},
 		Notes: buildAppNotes(d),
 	}
