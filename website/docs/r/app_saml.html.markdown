@@ -207,11 +207,13 @@ The following arguments are supported:
 
 - `features` - (Optional) features enabled. Notice: you can't currently configure provisioning features via the API.
 
-- `user_name_template` - (Optional) Username template.
+- `user_name_template` - (Optional) Username template. Default: `"${source.login}"`
 
 - `user_name_template_suffix` - (Optional) Username template suffix.
 
-- `user_name_template_type` - (Optional) Username template type.
+- `user_name_template_type` - (Optional) Username template type. Default: `"BUILT_IN"`.
+
+- `user_name_template_push_status` - (Optional) Push username on update. Valid values: `"PUSH"` and `"DONT_PUSH"`. Default: `"DONT_PUSH"`.
 
 - `app_settings_json` - (Optional) Application settings in JSON format.
 

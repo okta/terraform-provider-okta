@@ -196,6 +196,13 @@ var (
 			Description:      "Username template type",
 			ValidateDiagFunc: elemInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
 		},
+		"user_name_template_push_status": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			Default:          "DONT_PUSH",
+			Description:      "Push username on update",
+			ValidateDiagFunc: elemInSlice([]string{"DONT_PUSH", "PUSH"}),
+		},
 	}
 
 	appSamlDiffSuppressFunc = func(k, old, new string, d *schema.ResourceData) bool {
@@ -244,7 +251,7 @@ func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *o
 }
 
 func buildAppSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, appSchema)
+	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, baseAppSwaSchema, appSchema)
 }
 
 func buildAppSchemaWithVisibility(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
@@ -258,17 +265,22 @@ func buildAppSwaSchema(appSchema map[string]*schema.Schema) map[string]*schema.S
 func buildSchemeAppCreds(d *schema.ResourceData) *okta.SchemeApplicationCredentials {
 	revealPass := d.Get("reveal_password").(bool)
 	return &okta.SchemeApplicationCredentials{
-		RevealPassword: &revealPass,
-		Scheme:         d.Get("credentials_scheme").(string),
-		UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
-			Template: d.Get("user_name_template").(string),
-			Type:     d.Get("user_name_template_type").(string),
-			Suffix:   d.Get("user_name_template_suffix").(string),
-		},
-		UserName: d.Get("shared_username").(string),
+		RevealPassword:   &revealPass,
+		Scheme:           d.Get("credentials_scheme").(string),
+		UserNameTemplate: buildUserNameTemplate(d),
+		UserName:         d.Get("shared_username").(string),
 		Password: &okta.PasswordCredential{
 			Value: d.Get("shared_password").(string),
 		},
+	}
+}
+
+func buildUserNameTemplate(d *schema.ResourceData) *okta.ApplicationCredentialsUsernameTemplate {
+	return &okta.ApplicationCredentialsUsernameTemplate{
+		Template:   d.Get("user_name_template").(string),
+		Type:       d.Get("user_name_template_type").(string),
+		Suffix:     d.Get("user_name_template_suffix").(string),
+		PushStatus: d.Get("user_name_template_push_status").(string),
 	}
 }
 

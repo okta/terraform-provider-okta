@@ -64,6 +64,14 @@ The following arguments are supported:
 
 - `hide_web` - (Optional) Do not display application icon to users.
 
+- `user_name_template` - (Optional) Username template. Default: `"${source.login}"`
+
+- `user_name_template_suffix` - (Optional) Username template suffix.
+
+- `user_name_template_type` - (Optional) Username template type. Default: `"BUILT_IN"`.
+
+- `user_name_template_push_status` - (Optional) Push username on update. Valid values: `"PUSH"` and `"DONT_PUSH"`. Default: `"DONT_PUSH"`.
+
 - `logo` - (Optional) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 
 - `admin_note` - (Optional) Application notes for admins.
@@ -79,10 +87,6 @@ The following arguments are supported:
 - `name` - Name assigned to the application by Okta.
 
 - `sign_on_mode` - Sign-on mode of application.
-
-- `user_name_template` - The default username assigned to each user.
-
-- `user_name_template_type` - The Username template type.
 
 - `logo_url` - Direct link of application logo.
 

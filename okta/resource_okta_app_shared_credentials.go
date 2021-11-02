@@ -116,6 +116,7 @@ func resourceAppSharedCredentialsRead(ctx context.Context, d *schema.ResourceDat
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
+	_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	_ = d.Set("accessibility_login_redirect_url", app.Accessibility.LoginRedirectUrl)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
@@ -181,11 +182,7 @@ func buildAppSharedCredentials(d *schema.ResourceData) *okta.BrowserPluginApplic
 		Notes: buildAppNotes(d),
 	}
 	app.Credentials = &okta.SchemeApplicationCredentials{
-		UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
-			Template: d.Get("user_name_template").(string),
-			Type:     d.Get("user_name_template_type").(string),
-			Suffix:   d.Get("user_name_template_suffix").(string),
-		},
+		UserNameTemplate: buildUserNameTemplate(d),
 		Password: &okta.PasswordCredential{
 			Value: d.Get("shared_password").(string),
 		},
