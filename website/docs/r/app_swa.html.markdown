@@ -40,6 +40,10 @@ The following arguments are supported:
 
 - `url_regex` - (Optional) A regex that further restricts URL to the specified regex.
 
+- `redirect_url` - (Optional) If going to the login page URL redirects to another page, then enter that URL here.
+
+- `checkbox` - (Optional) CSS selector for the checkbox.
+
 - `users` - (Optional) The users assigned to the application. See `okta_app_user` for a more flexible approach.
   - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
