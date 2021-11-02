@@ -18,7 +18,7 @@ func dataSourceTrustedOrigins() *schema.Resource {
 			"filter": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Lists all Trusted Origins that match the filter criteria. Filter value will be URL-encoded by the provider",
+				Description: "Filter criteria. Filter value will be URL-encoded by the provider",
 			},
 			"trusted_origins": {
 				Type:     schema.TypeList,
