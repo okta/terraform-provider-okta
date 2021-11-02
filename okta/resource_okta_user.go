@@ -282,6 +282,12 @@ func resourceUser() *schema.Resource {
 				Sensitive:   true,
 				Description: "User Password",
 			},
+			"old_password": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Sensitive:   true,
+				Description: "Old User Password. Should be only set in case the password was not changed using the provider",
+			},
 			"recovery_question": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -465,9 +471,20 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	recoveryQuestionChange := d.HasChange("recovery_question")
 	recoveryAnswerChange := d.HasChange("recovery_answer")
 
+	client := getOktaClientFromMetadata(m)
+	if passwordChange {
+		user, _, err := client.User.GetUser(ctx, d.Id())
+		if err != nil {
+			return diag.Errorf("failed to get user: %v", err)
+		}
+		if user.Status == "PROVISIONED" {
+			return diag.Errorf("can not change password for provisioned user, the activation workflow should be " +
+				"finished first. Please, check this diagram https://developer.okta.com/docs/reference/api/users/#user-status for more clarity.")
+		}
+	}
+
 	// run the update status func first so a user that was previously deprovisioned
 	// can be updated further if it's status changed in it's terraform configs
-	client := getOktaClientFromMetadata(m)
 	if statusChange {
 		err := updateUserStatus(ctx, d.Id(), status, client)
 		if err != nil {
@@ -524,6 +541,10 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 
 	if passwordChange {
 		oldPassword, newPassword := d.GetChange("password")
+		old, ok := d.GetOk("old_password")
+		if ok {
+			oldPassword = old
+		}
 		op := &okta.PasswordCredential{
 			Value: oldPassword.(string),
 		}
