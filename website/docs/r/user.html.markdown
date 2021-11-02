@@ -127,6 +127,10 @@ The following arguments are supported:
 
 - `password` - (Optional) User password.
 
+- `old_password` - (Optional) Old user password. **IMPORTANT**: Should be ONLY set in case the password was changed 
+outside the provider. After successful password change this field should be removed and `password` field should be used 
+for further changes.
+
 - `recovery_question` - (Optional) User password recovery question.
 
 - `recovery_answer` - (Optional) User password recovery answer.
