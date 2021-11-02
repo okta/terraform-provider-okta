@@ -15,7 +15,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-var defaultPaginationLimit int64 = 200
+const defaultPaginationLimit int64 = 200
 
 func buildSchema(schemas ...map[string]*schema.Schema) map[string]*schema.Schema {
 	r := map[string]*schema.Schema{}
