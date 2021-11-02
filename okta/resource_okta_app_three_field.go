@@ -136,6 +136,7 @@ func resourceAppThreeFieldRead(ctx context.Context, d *schema.ResourceData, m in
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
+	_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	err = syncGroupsAndUsers(ctx, app.Id, d, m)

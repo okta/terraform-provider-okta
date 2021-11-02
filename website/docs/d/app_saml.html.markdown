@@ -100,6 +100,8 @@ data "okta_app_saml" "example" {
 
 - `user_name_template_type` - Username template type.
 
+- `user_name_template_push_status` - Push username on update.
+
 - `app_settings_json` - Application settings in JSON format.
 
 - `acs_endpoints` - An array of ACS endpoints. You can configure a maximum of 100 endpoints.

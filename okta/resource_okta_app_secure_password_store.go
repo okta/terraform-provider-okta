@@ -147,6 +147,7 @@ func resourceAppSecurePasswordStoreRead(ctx context.Context, d *schema.ResourceD
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
+	_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	err = syncGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {

@@ -205,6 +205,11 @@ func dataSourceAppSaml() *schema.Resource {
 				Description:      "Username template type",
 				ValidateDiagFunc: elemInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
 			},
+			"user_name_template_push_status": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Push username on update",
+			},
 			"app_settings_json": {
 				Type:             schema.TypeString,
 				Optional:         true,
@@ -360,6 +365,7 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
+	_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
 	p, _ := json.Marshal(app.Links)
 	_ = d.Set("links", string(p))
 	return nil

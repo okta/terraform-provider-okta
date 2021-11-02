@@ -242,24 +242,6 @@ func resourceAppSaml() *schema.Resource {
 					return true
 				},
 			},
-			"user_name_template": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     "${source.login}",
-				Description: "Username template",
-			},
-			"user_name_template_suffix": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Username template suffix",
-			},
-			"user_name_template_type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Default:          "BUILT_IN",
-				Description:      "Username template type",
-				ValidateDiagFunc: elemInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
-			},
 			"app_settings_json": {
 				Type:             schema.TypeString,
 				Optional:         true,
@@ -424,6 +406,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
+	_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
 	_ = d.Set("preconfigured_app", app.Name)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	if app.Settings.ImplicitAssignment != nil {
@@ -594,9 +577,10 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	}
 	app.Credentials = &okta.ApplicationCredentials{
 		UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
-			Template: d.Get("user_name_template").(string),
-			Type:     d.Get("user_name_template_type").(string),
-			Suffix:   d.Get("user_name_template_suffix").(string),
+			Template:   d.Get("user_name_template").(string),
+			Type:       d.Get("user_name_template_type").(string),
+			Suffix:     d.Get("user_name_template_suffix").(string),
+			PushStatus: d.Get("user_name_template_push_status").(string),
 		},
 	}
 
