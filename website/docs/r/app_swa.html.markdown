@@ -70,7 +70,7 @@ The following arguments are supported:
 
 - `user_name_template_type` - (Optional) Username template type. Default: `"BUILT_IN"`.
 
-- `user_name_template_push_status` - (Optional) Push username on update. Valid values: `"PUSH"` and `"DONT_PUSH"`. Default: `"DONT_PUSH"`.
+- `user_name_template_push_status` - (Optional) Push username on update. Valid values: `"PUSH"` and `"DONT_PUSH"`.
 
 - `logo` - (Optional) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 

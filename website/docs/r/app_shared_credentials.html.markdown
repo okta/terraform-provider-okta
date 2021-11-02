@@ -79,7 +79,7 @@ The following arguments are supported:
 
 - `user_name_template_type` - (Optional) Username template type. Default: `"BUILT_IN"`.
 
-- `user_name_template_push_status` - (Optional) Push username on update. Valid values: `"PUSH"` and `"DONT_PUSH"`. Default: `"DONT_PUSH"`.
+- `user_name_template_push_status` - (Optional) Push username on update. Valid values: `"PUSH"` and `"DONT_PUSH"`.
 
 - `username_field` - (Optional) CSS selector for the username field.
 
