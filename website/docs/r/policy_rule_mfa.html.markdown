@@ -69,6 +69,11 @@ The following arguments are supported:
   - `name` - (Optional) Use if the `type` is `"APP_TYPE"` to indicate the type of application(s) to include in instances where an entire group (i.e. `yahoo_mail`) of applications should be included.
   - `type` - (Required) One of: `"APP"`, `"APP_TYPE"`
 
+- `app_exlcude` - (Optional) Applications to exclude from the discovery rule. **IMPORTANT**: this field is only available in Classic Organizations.
+  - `id` - (Optional) Use if `type` is `"APP"` to indicate the application id to include.
+  - `name` - (Optional) Use if the `type` is `"APP_TYPE"` to indicate the type of application(s) to include in instances where an entire group (i.e. `yahoo_mail`) of applications should be included.
+  - `type` - (Required) One of: `"APP"`, `"APP_TYPE"`
+
 ## Attributes Reference
 
 - `id` - ID of the Rule.
