@@ -576,12 +576,7 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 		}
 	}
 	app.Credentials = &okta.ApplicationCredentials{
-		UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
-			Template:   d.Get("user_name_template").(string),
-			Type:       d.Get("user_name_template_type").(string),
-			Suffix:     d.Get("user_name_template_suffix").(string),
-			PushStatus: d.Get("user_name_template_push_status").(string),
-		},
+		UserNameTemplate: buildUserNameTemplate(d),
 	}
 
 	// Assumes that sso url is already part of the acs endpoints as part of the desired state.

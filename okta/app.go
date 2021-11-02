@@ -265,18 +265,22 @@ func buildAppSwaSchema(appSchema map[string]*schema.Schema) map[string]*schema.S
 func buildSchemeAppCreds(d *schema.ResourceData) *okta.SchemeApplicationCredentials {
 	revealPass := d.Get("reveal_password").(bool)
 	return &okta.SchemeApplicationCredentials{
-		RevealPassword: &revealPass,
-		Scheme:         d.Get("credentials_scheme").(string),
-		UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
-			Template:   d.Get("user_name_template").(string),
-			Type:       d.Get("user_name_template_type").(string),
-			Suffix:     d.Get("user_name_template_suffix").(string),
-			PushStatus: d.Get("user_name_template_push_status").(string),
-		},
-		UserName: d.Get("shared_username").(string),
+		RevealPassword:   &revealPass,
+		Scheme:           d.Get("credentials_scheme").(string),
+		UserNameTemplate: buildUserNameTemplate(d),
+		UserName:         d.Get("shared_username").(string),
 		Password: &okta.PasswordCredential{
 			Value: d.Get("shared_password").(string),
 		},
+	}
+}
+
+func buildUserNameTemplate(d *schema.ResourceData) *okta.ApplicationCredentialsUsernameTemplate {
+	return &okta.ApplicationCredentialsUsernameTemplate{
+		Template:   d.Get("user_name_template").(string),
+		Type:       d.Get("user_name_template_type").(string),
+		Suffix:     d.Get("user_name_template_suffix").(string),
+		PushStatus: d.Get("user_name_template_push_status").(string),
 	}
 }
 

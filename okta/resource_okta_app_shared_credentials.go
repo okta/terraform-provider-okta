@@ -182,12 +182,7 @@ func buildAppSharedCredentials(d *schema.ResourceData) *okta.BrowserPluginApplic
 		Notes: buildAppNotes(d),
 	}
 	app.Credentials = &okta.SchemeApplicationCredentials{
-		UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
-			Template:   d.Get("user_name_template").(string),
-			Type:       d.Get("user_name_template_type").(string),
-			Suffix:     d.Get("user_name_template_suffix").(string),
-			PushStatus: d.Get("user_name_template_push_status").(string),
-		},
+		UserNameTemplate: buildUserNameTemplate(d),
 		Password: &okta.PasswordCredential{
 			Value: d.Get("shared_password").(string),
 		},

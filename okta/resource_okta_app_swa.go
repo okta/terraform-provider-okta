@@ -173,12 +173,7 @@ func buildAppSwa(d *schema.ResourceData) *okta.SwaApplication {
 	app.Visibility = buildAppVisibility(d)
 	app.Accessibility = buildAppAccessibility(d)
 	app.Credentials = &okta.SchemeApplicationCredentials{
-		UserNameTemplate: &okta.ApplicationCredentialsUsernameTemplate{
-			Suffix:     d.Get("user_name_template_suffix").(string),
-			Template:   d.Get("user_name_template").(string),
-			Type:       d.Get("user_name_template_type").(string),
-			PushStatus: d.Get("user_name_template_push_status").(string),
-		},
+		UserNameTemplate: buildUserNameTemplate(d),
 	}
 	return app
 }
