@@ -103,12 +103,15 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 		return diag.FromErr(err)
 	}
 	d.SetId(authenticator.ID)
-	if status, ok := d.GetOk("status"); ok {
+	status, ok := d.GetOk("status")
+	if ok && authenticator.Status != status.(string) {
 		if status.(string) == statusInactive {
 			_, _, err = getSupplementFromMetadata(m).DeactivateAuthenticator(ctx, d.Id())
-			if err != nil {
-				return diag.Errorf("failed to deactivate app sign on policy rule: %v", err)
-			}
+		} else {
+			_, _, err = getSupplementFromMetadata(m).ActivateAuthenticator(ctx, d.Id())
+		}
+		if err != nil {
+			return diag.Errorf("failed to change authenticator status: %v", err)
 		}
 	}
 	return resourceAuthenticatorRead(ctx, d, m)
