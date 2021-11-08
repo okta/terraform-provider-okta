@@ -8,7 +8,7 @@ description: |-
 
 # okta_user_schema
 
-**DEPRECATED** use `okta_user_schema_property` instead.
+~> **DEPRECATED** use `okta_user_schema_property` instead.
 
 Creates a User Schema property.
 

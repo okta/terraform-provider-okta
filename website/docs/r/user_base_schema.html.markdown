@@ -4,12 +4,11 @@ page_title: 'Okta: okta_user_base_schema'
 sidebar_current: 'docs-okta-resource-user-base-schema'
 description: |-
   Manages a User Base Schema property.
-  **DEPRECATED** use `okta_user_base_schema_property` instead.
 ---
 
 # okta_user_base_schema
 
-Manages a User Base Schema property.
+~> **DEPRECATED** use `okta_user_base_schema_property` instead.
 
 This resource allows you to configure a base user schema property.
 
