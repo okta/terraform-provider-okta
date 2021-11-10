@@ -76,6 +76,7 @@ func resourceAuthServerClaimDefault() *schema.Resource {
 			},
 			"always_include_in_token": {
 				Type:     schema.TypeBool,
+				Optional: true,
 				Computed: true,
 			},
 		},
@@ -110,6 +111,13 @@ func resourceAuthServerClaimDefaultUpdate(ctx context.Context, d *schema.Resourc
 			return diag.FromErr(err)
 		}
 		d.SetId(claim.Id)
+		if d.Get("name").(string) != "sub" && d.Get("always_include_in_token").(bool) != *claim.AlwaysIncludeInToken {
+			claim.AlwaysIncludeInToken = boolPtr(d.Get("always_include_in_token").(bool))
+			claim, _, err = getOktaClientFromMetadata(m).AuthorizationServer.UpdateOAuth2Claim(ctx, d.Get("auth_server_id").(string), d.Id(), *claim)
+			if err != nil {
+				return diag.Errorf("failed to update auth server default claim: %v", err)
+			}
+		}
 		if claim.Conditions != nil && len(claim.Conditions.Scopes) > 0 {
 			_ = d.Set("scopes", convertStringSliceToSet(claim.Conditions.Scopes))
 		}
@@ -119,15 +127,20 @@ func resourceAuthServerClaimDefaultUpdate(ctx context.Context, d *schema.Resourc
 		_ = d.Set("claim_type", claim.ClaimType)
 		_ = d.Set("always_include_in_token", claim.AlwaysIncludeInToken)
 		if d.Get("name").(string) != "sub" {
-			_ = d.Set("value", claim.Value)
 			return nil // all the values are computed, so just stop here
 		}
 	}
-	if d.Get("name").(string) != "sub" {
-		// all the default claims except "sub" are immutable
+	if d.Get("name").(string) == "sub" {
+		if d.Get("value").(string) == "" {
+			return diag.Errorf("'value' is required parameter for 'sub' claim")
+		}
+		if !d.Get("always_include_in_token").(bool) {
+			return diag.Errorf("'sub' claim can not be excluded from the token")
+		}
+	}
+	if (d.Get("name").(string) != "sub" && !d.HasChange("always_include_in_token")) || // for the default claims except `sub` only `always_include_in_token` field can be updated
+		(d.Get("name").(string) == "sub" && !d.HasChange("value")) { // for the `sub` claim only `value` field can be updated
 		return resourceAuthServerClaimDefaultRead(ctx, d, m)
-	} else if d.Get("value").(string) == "" {
-		return diag.Errorf("'value' is required parameter for 'sub' claim")
 	}
 	claim := buildAuthServerClaimDefault(d)
 	_, _, err := getOktaClientFromMetadata(m).AuthorizationServer.UpdateOAuth2Claim(ctx, d.Get("auth_server_id").(string), d.Id(), claim)
