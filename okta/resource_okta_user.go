@@ -516,11 +516,27 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	}
 
 	if roleChange {
-		roles := convertInterfaceToStringSet(d.Get("admin_roles"))
-		if err := updateAdminRolesOnUser(ctx, d.Id(), roles, false, client); err != nil {
-			return diag.Errorf("failed to update user: %v", err)
+		oldRoles, newRoles := d.GetChange("admin_roles")
+		oldSet := oldRoles.(*schema.Set)
+		newSet := newRoles.(*schema.Set)
+		rolesToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
+		rolesToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
+		roles, _, err := listUserOnlyRoles(ctx, client, d.Id())
+		if err != nil {
+			return diag.Errorf("failed to list user's roles: %v", err)
 		}
-		_ = d.Set("admin_roles", roles)
+		for _, role := range roles {
+			if contains(rolesToRemove, role.Type) {
+				resp, err := client.User.RemoveRoleFromUser(ctx, d.Id(), role.Id)
+				if err := suppressErrorOn404(resp, err); err != nil {
+					return diag.Errorf("failed to remove user's role: %v", err)
+				}
+			}
+		}
+		err = assignAdminRolesToUser(ctx, d.Id(), rolesToAdd, false, client)
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	if groupChange {

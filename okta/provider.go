@@ -16,6 +16,8 @@ import (
 // Resource names, defined in place, used throughout the provider and tests
 const (
 	adminRoleTargets            = "okta_admin_role_targets"
+	adminRoleCustom             = "okta_admin_role_custom"
+	adminRoleCustomAssignments  = "okta_admin_role_custom_assignments"
 	app                         = "okta_app"
 	appAutoLogin                = "okta_app_auto_login"
 	appBasicAuth                = "okta_app_basic_auth"
@@ -92,6 +94,7 @@ const (
 	policyRuleSignOn            = "okta_policy_rule_signon"
 	policySignOn                = "okta_policy_signon"
 	profileMapping              = "okta_profile_mapping"
+	resourceSet                 = "okta_resource_set"
 	roleSubscription            = "okta_role_subscription"
 	securityNotificationEmails  = "okta_security_notification_emails"
 	templateEmail               = "okta_template_email"
@@ -216,6 +219,8 @@ func Provider() *schema.Provider {
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			adminRoleTargets:            resourceAdminRoleTargets(),
+			adminRoleCustom:             resourceAdminRoleCustom(),
+			adminRoleCustomAssignments:  resourceAdminRoleCustomAssignments(),
 			appAutoLogin:                resourceAppAutoLogin(),
 			appBasicAuth:                resourceAppBasicAuth(),
 			appBookmark:                 resourceAppBookmark(),
@@ -278,7 +283,8 @@ func Provider() *schema.Provider {
 			policyRuleProfileEnrollment: resourcePolicyProfileEnrollmentRule(),
 			policyRuleSignOn:            resourcePolicySignOnRule(),
 			policySignOn:                resourcePolicySignOn(),
-			profileMapping:              resourceOktaProfileMapping(),
+			profileMapping:              resourceProfileMapping(),
+			resourceSet:                 resourceResourceSet(),
 			roleSubscription:            resourceRoleSubscription(),
 			securityNotificationEmails:  resourceSecurityNotificationEmails(),
 			templateEmail:               resourceTemplateEmail(),

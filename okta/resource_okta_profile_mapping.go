@@ -15,7 +15,7 @@ const (
 	dontPush = "DONT_PUSH"
 )
 
-func resourceOktaProfileMapping() *schema.Resource {
+func resourceProfileMapping() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceProfileMappingCreate,
 		ReadContext:   resourceProfileMappingRead,

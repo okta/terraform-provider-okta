@@ -36,7 +36,6 @@ func resourceAdminRoleTargets() *schema.Resource {
 				}
 				_ = d.Set("user_id", parts[0])
 				_ = d.Set("role_type", parts[1])
-				d.SetId(d.Id())
 				return []*schema.ResourceData{d}, nil
 			},
 		},

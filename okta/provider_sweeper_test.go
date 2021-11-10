@@ -41,6 +41,8 @@ func TestMain(m *testing.M) {
 	setupSweeper(inlineHook, sweepInlineHooks)
 	setupSweeper(userType, sweepUserTypes)
 	setupSweeper(behavior, sweepBehaviors)
+	setupSweeper(resourceSet, sweepResourceSets)
+	setupSweeper(adminRoleCustom, sweepCustomRoles)
 
 	resource.TestMain(m)
 }
@@ -54,7 +56,6 @@ func setupSweeper(resourceType string, del func(*testClient) error) {
 			if err != nil {
 				return err
 			}
-
 			return del(&testClient{oktaClient: client, apiSupplement: apiSupplement})
 		},
 	})
