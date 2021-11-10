@@ -12,11 +12,10 @@ import (
 func resourceGroupRoles() *schema.Resource {
 	return &schema.Resource{
 		DeprecationMessage: "This resource is deprecated and will be removed in favor of using \"okta_group_role\", please migrate as soon as possible.",
-		// No point in having an exist function, since only the group has to exist
-		CreateContext: resourceGroupRolesCreate,
-		ReadContext:   resourceGroupRolesRead,
-		UpdateContext: resourceGroupRolesUpdate,
-		DeleteContext: resourceGroupRolesDelete,
+		CreateContext:      resourceGroupRolesCreate,
+		ReadContext:        resourceGroupRolesRead,
+		UpdateContext:      resourceGroupRolesUpdate,
+		DeleteContext:      resourceGroupRolesDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: func(_ context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				_ = d.Set("group_id", d.Id())

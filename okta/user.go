@@ -176,7 +176,10 @@ var userProfileDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var validAdminRoles = []string{"SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN", "HELP_DESK_ADMIN", "REPORT_ADMIN", "GROUP_MEMBERSHIP_ADMIN"}
+var validAdminRoles = []string{
+	"SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN",
+	"READ_ONLY_ADMIN", "HELP_DESK_ADMIN", "REPORT_ADMIN", "GROUP_MEMBERSHIP_ADMIN",
+}
 
 func buildUserDataSourceSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
 	return buildSchema(userProfileDataSchema, target)
@@ -184,14 +187,13 @@ func buildUserDataSourceSchema(target map[string]*schema.Schema) map[string]*sch
 
 func assignAdminRolesToUser(ctx context.Context, userID string, roles []string, disableNotifications bool, client *okta.Client) error {
 	for _, role := range roles {
-		if contains(validAdminRoles, role) {
-			_, _, err := client.User.AssignRoleToUser(ctx, userID, &okta.AssignRoleRequest{Type: role},
-				&query.Params{DisableNotifications: boolPtr(disableNotifications)})
-			if err != nil {
-				return fmt.Errorf("failed to assign role '%s' to user '%s': %w", role, userID, err)
-			}
-		} else {
-			return fmt.Errorf("'%s' is not a valid Okta role", role)
+		if role == "CUSTOM" {
+			continue
+		}
+		_, _, err := client.User.AssignRoleToUser(ctx, userID, &okta.AssignRoleRequest{Type: role},
+			&query.Params{DisableNotifications: boolPtr(disableNotifications)})
+		if err != nil {
+			return fmt.Errorf("failed to assign role '%s' to user '%s': %w", role, userID, err)
 		}
 	}
 	return nil
@@ -255,13 +257,11 @@ func listUserOnlyRoles(ctx context.Context, c *okta.Client, userID string) (user
 	if err != nil {
 		return
 	}
-
 	for _, role := range roles {
-		if role.AssignmentType == userScope {
+		if role.AssignmentType == userScope && role.Type != "CUSTOM" {
 			userOnlyRoles = append(userOnlyRoles, role)
 		}
 	}
-
 	return
 }
 
@@ -396,21 +396,6 @@ func flattenUser(u *okta.User) map[string]interface{} {
 	attrs["custom_profile_attributes"] = string(data)
 
 	return attrs
-}
-
-// need to remove from all current admin roles and reassign based on terraform configs when a change is detected
-func updateAdminRolesOnUser(ctx context.Context, userID string, rolesToAssign []string, disableNotifications bool, c *okta.Client) error {
-	roles, _, err := listUserOnlyRoles(ctx, c, userID)
-	if err != nil {
-		return fmt.Errorf("failed to list user's roles: %v", err)
-	}
-	for _, role := range roles {
-		resp, err := c.User.RemoveRoleFromUser(ctx, userID, role.Id)
-		if err := suppressErrorOn404(resp, err); err != nil {
-			return fmt.Errorf("failed to remove user's role: %v", err)
-		}
-	}
-	return assignAdminRolesToUser(ctx, userID, rolesToAssign, disableNotifications, c)
 }
 
 // handle setting of user status based on what the current status is because okta
