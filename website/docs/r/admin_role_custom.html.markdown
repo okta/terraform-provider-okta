@@ -10,6 +10,8 @@ description: |-
 
 These operations allow the creation and manipulation of custom roles as custom collections of permissions.
 
+~> **NOTE:** This an `Early Access` feature.
+
 ## Example Usage
 
 ```hcl

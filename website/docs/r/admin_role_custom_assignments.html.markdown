@@ -12,6 +12,8 @@ This resource allows the assignment and unassignment of Custom Roles. The `membe
  - Groups
  - Users
 
+~> **NOTE:** This an `Early Access` feature.
+
 ## Example Usage
 
 ```hcl

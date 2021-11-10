@@ -19,6 +19,8 @@ The `resources` field supports the following:
  - All Apps within the org
  - All Apps of the same type
 
+~> **NOTE:** This an `Early Access` feature.
+
 ## Example Usage
 
 ```hcl
