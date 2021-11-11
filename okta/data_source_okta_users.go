@@ -41,7 +41,7 @@ func dataSourceUsers() *schema.Resource {
 			},
 			"users": {
 				Type:     schema.TypeList,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: buildSchema(userProfileDataSchema,
 						map[string]*schema.Schema{

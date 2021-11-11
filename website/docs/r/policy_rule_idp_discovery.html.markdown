@@ -121,7 +121,7 @@ app_exclude {
   - `os_type` - (Optional) One of: `"ANY"`, `"IOS"`, `"WINDOWS"`, `"ANDROID"`, `"OTHER"`, `"OSX"`
 
 ```hcl
-app_exclude {
+platform_include {
   type = string
   os_expression = string
   os_type = string

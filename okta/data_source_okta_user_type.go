@@ -19,13 +19,9 @@ func dataSourceUserType() *schema.Resource {
 			},
 			"display_name": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -49,7 +45,6 @@ func dataSourceUserTypeRead(ctx context.Context, d *schema.ResourceData, m inter
 		return diag.Errorf("user type '%s' does not exist", name)
 	}
 	d.SetId(userType.Id)
-	_ = d.Set("name", userType.Name)
 	_ = d.Set("display_name", userType.DisplayName)
 	_ = d.Set("description", userType.Description)
 
