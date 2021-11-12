@@ -21,7 +21,7 @@ func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      appSignOnPolicyRuleExists(),
+		CheckDestroy:      appSignOnPolicyRuleExists,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -70,24 +70,22 @@ func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
 	})
 }
 
-func appSignOnPolicyRuleExists() func(*terraform.State) error {
-	return func(s *terraform.State) error {
-		for _, rs := range s.RootModule().Resources {
-			if rs.Type != appSignOnPolicyRule {
-				continue
-			}
-			rule, resp, err := getSupplementFromMetadata(testAccProvider.Meta()).
-				GetAppSignOnPolicyRule(context.Background(), rs.Primary.Attributes["policy_id"], rs.Primary.ID)
-			if resp != nil && resp.StatusCode == http.StatusNotFound {
-				return nil
-			} else if err != nil {
-				return err
-			}
-			if rule != nil {
-				return fmt.Errorf("app sign-on policy rule still exists, ID: %s, PolicyID: %s", rs.Primary.ID, rs.Primary.Attributes["policy_id"])
-			}
+func appSignOnPolicyRuleExists(s *terraform.State) error {
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != appSignOnPolicyRule {
+			continue
+		}
+		rule, resp, err := getSupplementFromMetadata(testAccProvider.Meta()).
+			GetAppSignOnPolicyRule(context.Background(), rs.Primary.Attributes["policy_id"], rs.Primary.ID)
+		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			return nil
+		} else if err != nil {
+			return err
+		}
+		if rule != nil {
+			return fmt.Errorf("app sign-on policy rule still exists, ID: %s, PolicyID: %s", rs.Primary.ID, rs.Primary.Attributes["policy_id"])
 		}
 		return nil
 	}
+	return nil
 }
