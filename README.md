@@ -1,8 +1,8 @@
-[![Build Status](https://img.shields.io/travis/okta/terraform-provider-okta.svg?logo=travis)](https://travis-ci.com/github/okta/terraform-provider-okta)
+![Build Status](https://github.com/okta/terraform-provider-okta/actions/workflows/release.yml/badge.svg)
 <br/><br/>
 
 <a href="https://terraform.io">
-    <img src="https://cdn.rawgit.com/hashicorp/terraform-website/master/content/source/assets/images/logo-hashicorp.svg" alt="Terraform logo" title="Terraform" height="50" />
+    <img src="https://raw.githubusercontent.com/hashicorp/terraform-website/master/content/source/assets/images/logo-text.svg" alt="Terraform logo" title="Terraform" height="50" />
 </a>
 
 <a href="https://www.okta.com/">
