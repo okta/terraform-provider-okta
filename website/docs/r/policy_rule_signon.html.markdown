@@ -8,7 +8,8 @@ description: |-
 
 # okta_policy_rule_signon
 
-Creates a Sign On Policy Rule.
+Creates a Sign On Policy Rule. In case `Invalid condition type specified: riskScore.` error is thrown, set `risc_level`
+to an empty string, since this feature is not enabled.
 
 ## Example Usage
 
@@ -136,6 +137,9 @@ The following arguments are supported:
   - `secondary_criteria` - (Optional) Additional authentication steps.
     - `provider` - (Required) Provider of the additional authentication step.
     - `factor_type` - (Required) Factor type of the additional authentication step.
+
+- `primary_factor` - (Optional) Rule's primary factor. **WARNING** Ony works as a part of the Identity Engine. Valid values: 
+`"PASSWORD_IDP_ANY_FACTOR"`, `"PASSWORD_IDP"`.
 
 ## Attributes Reference
 

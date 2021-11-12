@@ -48,6 +48,7 @@ type SignOnPolicyRuleSignOnActions struct {
 	Access                  string                                         `json:"access,omitempty"`
 	FactorLifetime          int64                                          `json:"factorLifetime,omitempty"`
 	FactorPromptMode        string                                         `json:"factorPromptMode,omitempty"`
+	PrimaryFactor           string                                         `json:"primaryFactor,omitempty"`
 	RememberDeviceByDefault *bool                                          `json:"rememberDeviceByDefault,omitempty"`
 	RequireFactor           *bool                                          `json:"requireFactor,omitempty"`
 	Session                 *okta.OktaSignOnPolicyRuleSignonSessionActions `json:"session,omitempty"`
