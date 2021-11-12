@@ -43,6 +43,7 @@ func TestMain(m *testing.M) {
 	setupSweeper(behavior, sweepBehaviors)
 	setupSweeper(resourceSet, sweepResourceSets)
 	setupSweeper(adminRoleCustom, sweepCustomRoles)
+	setupSweeper(linkDefinition, sweepLinkDefinitions)
 
 	resource.TestMain(m)
 }

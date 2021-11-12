@@ -15,9 +15,9 @@ import (
 
 // Resource names, defined in place, used throughout the provider and tests
 const (
-	adminRoleTargets            = "okta_admin_role_targets"
 	adminRoleCustom             = "okta_admin_role_custom"
 	adminRoleCustomAssignments  = "okta_admin_role_custom_assignments"
+	adminRoleTargets            = "okta_admin_role_targets"
 	app                         = "okta_app"
 	appAutoLogin                = "okta_app_auto_login"
 	appBasicAuth                = "okta_app_basic_auth"
@@ -78,6 +78,8 @@ const (
 	idpSamlKey                  = "okta_idp_saml_key"
 	idpSocial                   = "okta_idp_social"
 	inlineHook                  = "okta_inline_hook"
+	linkDefinition              = "okta_link_definition"
+	linkValue                   = "okta_link_value"
 	networkZone                 = "okta_network_zone"
 	orgConfiguration            = "okta_org_configuration"
 	orgSupport                  = "okta_org_support"
@@ -218,9 +220,9 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			adminRoleTargets:            resourceAdminRoleTargets(),
 			adminRoleCustom:             resourceAdminRoleCustom(),
 			adminRoleCustomAssignments:  resourceAdminRoleCustomAssignments(),
+			adminRoleTargets:            resourceAdminRoleTargets(),
 			appAutoLogin:                resourceAppAutoLogin(),
 			appBasicAuth:                resourceAppBasicAuth(),
 			appBookmark:                 resourceAppBookmark(),
@@ -269,6 +271,8 @@ func Provider() *schema.Provider {
 			idpSamlKey:                  resourceIdpSigningKey(),
 			idpSocial:                   resourceIdpSocial(),
 			inlineHook:                  resourceInlineHook(),
+			linkDefinition:              resourceLinkDefinition(),
+			linkValue:                   resourceLinkValue(),
 			networkZone:                 resourceNetworkZone(),
 			orgConfiguration:            resourceOrgConfiguration(),
 			orgSupport:                  resourceOrgSupport(),
