@@ -87,6 +87,13 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Description: "List of behavior IDs",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"primary_factor": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Computed:         true,
+				Description:      "Primary factor.",
+				ValidateDiagFunc: elemInSlice([]string{"PASSWORD_IDP", "PASSWORD_IDP_ANY_FACTOR"}),
+			},
 			"factor_sequence": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -159,6 +166,9 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 	_ = d.Set("session_persistent", rule.Actions.SignOn.Session.UsePersistentCookie)
 	if rule.Actions.SignOn.FactorPromptMode != "" {
 		_ = d.Set("mfa_prompt", rule.Actions.SignOn.FactorPromptMode)
+	}
+	if rule.Actions.SignOn.PrimaryFactor != "" {
+		_ = d.Set("primary_factor", rule.Actions.SignOn.PrimaryFactor)
 	}
 	if rule.Conditions != nil {
 		if rule.Conditions.RiskScore != nil {
@@ -265,6 +275,10 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 				UsePersistentCookie:       boolPtr(d.Get("session_persistent").(bool)),
 			},
 		},
+	}
+	pf, ok := d.GetOk("primary_factor")
+	if ok {
+		template.Actions.SignOn.PrimaryFactor = pf.(string)
 	}
 	factorSeq := d.Get("factor_sequence").([]interface{})
 	if len(factorSeq) == 0 {
