@@ -9,6 +9,10 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
+type ListCustomRolesResponse struct {
+	Roles []*CustomRole `json:"roles,omitempty"`
+}
+
 type CustomRole struct {
 	Id          string      `json:"id,omitempty"`
 	Label       string      `json:"label,omitempty"`
@@ -18,7 +22,7 @@ type CustomRole struct {
 }
 
 // ListCustomRoles Gets all customRoles based on the query params
-func (m *APISupplement) ListCustomRoles(ctx context.Context, qp *query.Params) ([]*CustomRole, *okta.Response, error) {
+func (m *APISupplement) ListCustomRoles(ctx context.Context, qp *query.Params) (*ListCustomRolesResponse, *okta.Response, error) {
 	url := "/api/v1/iam/roles"
 	if qp != nil {
 		url += qp.String()
@@ -28,12 +32,12 @@ func (m *APISupplement) ListCustomRoles(ctx context.Context, qp *query.Params) (
 	if err != nil {
 		return nil, nil, err
 	}
-	var customRoles []*CustomRole
-	resp, err := re.Do(ctx, req, &customRoles)
+	var response *ListCustomRolesResponse
+	resp, err := re.Do(ctx, req, &response)
 	if err != nil {
 		return nil, resp, err
 	}
-	return customRoles, resp, nil
+	return response, resp, nil
 }
 
 // GetCustomRole gets customRole by ID

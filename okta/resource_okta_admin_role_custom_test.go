@@ -17,7 +17,7 @@ func sweepCustomRoles(client *testClient) error {
 	if err != nil {
 		return err
 	}
-	for _, role := range customRoles {
+	for _, role := range customRoles.Roles {
 		if !strings.HasPrefix(role.Label, "testAcc_") {
 			if _, err := client.apiSupplement.DeleteCustomRole(context.Background(), role.Id); err != nil {
 				errorList = append(errorList, err)
