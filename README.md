@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/travis/okta/terraform-provider-okta.svg?logo=travis)](https://travis-ci.com/github/okta/terraform-provider-okta)
+![Build Status](https://github.com/okta/terraform-provider-okta/actions/workflows/release.yml/badge.svg)
 <br/><br/>
 
 <a href="https://terraform.io">
