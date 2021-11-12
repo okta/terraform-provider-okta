@@ -1,5 +1,21 @@
 # Changelog
 
+## 3.19.0 (November 12, 2021)
+
+ENHANCEMENTS:
+
+* Added new `okta_admin_role_custom`, `okta_admin_role_custom_assignments` and `okta_resource_set` resources [#789](https://github.com/okta/terraform-provider-okta/pull/789). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Field `always_include_in_token` is now editable for all the default claims except `sub` [#790](https://github.com/okta/terraform-provider-okta/pull/790). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `okta_link_definition` and `okta_link_value` resources [#794](https://github.com/okta/terraform-provider-okta/pull/794). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `primary_factor` field to the `okta_policy_rule_signon` resource [#796](https://github.com/okta/terraform-provider-okta/pull/796). **IMPORTANT NOTE:** Available only for the organizations with Identity Engine. Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+
+* Change authenticator status in case it's different from the state's one during resource creation [#782](https://github.com/okta/terraform-provider-okta/pull/782). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Numerus documentation fixes [#783](https://github.com/okta/terraform-provider-okta/pull/783), [#785](https://github.com/okta/terraform-provider-okta/pull/785) 
+and [#792](https://github.com/okta/terraform-provider-okta/pull/792). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta) and [@deepu105](https://github.com/deepu105)!
+* Fixed provider crash [#795](https://github.com/okta/terraform-provider-okta/pull/795). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.18.0 (November 2, 2021)
 
 ENHANCEMENTS:

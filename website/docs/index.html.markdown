@@ -12,6 +12,9 @@ The Okta provider is used to interact with the resources supported by Okta. The 
 
 Use the navigation to the left to read about the available resources and data sources.
 
+In case the provider configuration is still using old `"oktadeveloper/okta"` source, please change it to `"okta/okta"` and run
+`terraform state replace-provider oktadeveloper/okta okta/okta`. Okta no longer supports `"oktadeveloper/okta"`.
+
 ## Example Usage
 
 Terraform 0.13 and later:
@@ -21,22 +24,10 @@ terraform {
   required_providers {
     okta = {
       source = "okta/okta"
-      version = "~> 3.14"
+      version = "~> 3.19"
     }
   }
 }
-
-# Configure the Okta Provider
-provider "okta" {
-  org_name  = "dev-123456"
-  base_url  = "oktapreview.com"
-  api_token = "xxxx"
-}
-```
-
-Terraform 0.12 and earlier:
-
-```hcl
 
 # Configure the Okta Provider
 provider "okta" {
