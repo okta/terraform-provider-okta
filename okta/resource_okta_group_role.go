@@ -356,11 +356,11 @@ func findRole(ctx context.Context, d *schema.ResourceData, m interface{}) (*okta
 	}
 	groupID := d.Get("group_id").(string)
 	roles, resp, err := getOktaClientFromMetadata(m).Group.ListGroupAssignedRoles(ctx, groupID, nil)
-	exists, err := doesResourceExist(resp, err)
-	if err != nil {
+	if err := suppressErrorOn404(resp, err); err != nil {
 		return nil, fmt.Errorf("failed to list roles assigned to group %s: %v", groupID, err)
-	} else if !exists {
-		logger(m).Error("group (%s) which had these resources assigned no longer exists", groupID)
+	}
+	if len(roles) == 0 {
+		logger(m).Error("either group (%s) which had these roles assigned no longer exists or no roles were assigned", groupID)
 		return nil, nil
 	}
 	for i := range roles {

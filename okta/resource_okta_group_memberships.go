@@ -97,10 +97,10 @@ func resourceGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData,
 	groupId := d.Get("group_id").(string)
 	client := getOktaClientFromMetadata(m)
 
-	old, new := d.GetChange("users")
+	oldUsers, newUsers := d.GetChange("users")
 
-	oldSet := old.(*schema.Set)
-	newSet := new.(*schema.Set)
+	oldSet := oldUsers.(*schema.Set)
+	newSet := newUsers.(*schema.Set)
 
 	usersToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
 	usersToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
@@ -120,12 +120,10 @@ func resourceGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData,
 
 func checkIfGroupHasUsers(ctx context.Context, client *okta.Client, groupId string, users []string) (bool, error) {
 	groupUsers, resp, err := client.Group.ListGroupUsers(ctx, groupId, &query.Params{Limit: defaultPaginationLimit})
-	exists, err := doesResourceExist(resp, err)
-	if err != nil {
+	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, fmt.Errorf("unable to return membership for group (%s) from API", groupId)
 	}
-
-	if !exists {
+	if len(groupUsers) == 0 {
 		return false, nil
 	}
 	if resp.HasNextPage() {
