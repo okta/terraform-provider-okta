@@ -116,12 +116,10 @@ func resourceUserGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceD
 
 func checkIfUserHasGroups(ctx context.Context, client *okta.Client, userId string, groups []string) (bool, error) {
 	userGroups, resp, err := client.User.ListUserGroups(ctx, userId)
-	exists, err := doesResourceExist(resp, err)
-	if err != nil {
+	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, fmt.Errorf("unable to return groups for user (%s) from API", userId)
 	}
-
-	if !exists {
+	if len(userGroups) == 0 {
 		return false, nil
 	}
 

@@ -241,6 +241,9 @@ func stringPtr(s string) (ptr *string) {
 }
 
 func doesResourceExist(response *okta.Response, err error) (bool, error) {
+	if response == nil {
+		return false, err
+	}
 	// We don't want to consider a 404 an error in some cases and thus the delineation
 	if response.StatusCode == 404 {
 		return false, nil
@@ -248,7 +251,7 @@ func doesResourceExist(response *okta.Response, err error) (bool, error) {
 	if err != nil {
 		return false, responseErr(response, err)
 	}
-	return true, err
+	return true, nil
 }
 
 // Useful shortcut for suppressing errors from Okta's SDK when a resource does not exist. Usually used during deletion
