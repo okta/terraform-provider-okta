@@ -96,6 +96,7 @@ const (
 	policyRuleSignOn            = "okta_policy_rule_signon"
 	policySignOn                = "okta_policy_signon"
 	profileMapping              = "okta_profile_mapping"
+	rateLimiting                = "okta_rate_limiting"
 	resourceSet                 = "okta_resource_set"
 	roleSubscription            = "okta_role_subscription"
 	securityNotificationEmails  = "okta_security_notification_emails"
@@ -288,6 +289,7 @@ func Provider() *schema.Provider {
 			policyRuleSignOn:            resourcePolicySignOnRule(),
 			policySignOn:                resourcePolicySignOn(),
 			profileMapping:              resourceProfileMapping(),
+			rateLimiting:                resourceRateLimiting(),
 			resourceSet:                 resourceResourceSet(),
 			roleSubscription:            resourceRoleSubscription(),
 			securityNotificationEmails:  resourceSecurityNotificationEmails(),
