@@ -38,17 +38,13 @@ func dataSourceAppUserAssignmentsRead(ctx context.Context, d *schema.ResourceDat
 		return diag.Errorf("unable to query for users from app (%s): %s", id, err)
 	}
 
-	for {
+	for resp.HasNextPage() {
 		var moreAssignments []*okta.AppUser
-		if resp.HasNextPage() {
-			resp, err = resp.Next(ctx, &moreAssignments)
-			if err != nil {
-				return diag.Errorf("unable to query for users from app (%s): %s", id, err)
-			}
-			userAssignments = append(userAssignments, moreAssignments...)
-		} else {
-			break
+		resp, err = resp.Next(ctx, &moreAssignments)
+		if err != nil {
+			return diag.Errorf("unable to query for users from app (%s): %s", id, err)
 		}
+		userAssignments = append(userAssignments, moreAssignments...)
 	}
 
 	var users []string

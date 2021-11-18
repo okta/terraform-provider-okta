@@ -126,18 +126,13 @@ func checkIfGroupHasUsers(ctx context.Context, client *okta.Client, groupId stri
 	if len(groupUsers) == 0 {
 		return false, nil
 	}
-	if resp.HasNextPage() {
-		for {
-			var additionalUsers []*okta.User
-			resp, err := resp.Next(ctx, additionalUsers)
-			if err != nil {
-				return false, fmt.Errorf("unable to return membership for group (%s) from API", groupId)
-			}
-			groupUsers = append(groupUsers, additionalUsers...)
-			if !resp.HasNextPage() {
-				break
-			}
+	for resp.HasNextPage() {
+		var additionalUsers []*okta.User
+		resp, err = resp.Next(context.Background(), &additionalUsers)
+		if err != nil {
+			return false, fmt.Errorf("unable to return membership for group (%s) from API", groupId)
 		}
+		groupUsers = append(groupUsers, additionalUsers...)
 	}
 
 	// Create set of users
