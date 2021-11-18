@@ -385,24 +385,19 @@ func handleAppGroups(ctx context.Context, id string, d *schema.ResourceData, cli
 }
 
 func listApplicationGroupAssignments(ctx context.Context, client *okta.Client, id string) ([]*okta.ApplicationGroupAssignment, *okta.Response, error) {
-	var resGroups []*okta.ApplicationGroupAssignment
 	groups, resp, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return nil, resp, err
 	}
-	for {
-		resGroups = append(resGroups, groups...)
-		if resp.HasNextPage() {
-			resp, err = resp.Next(ctx, &groups)
-			if err != nil {
-				return nil, resp, err
-			}
-			continue
-		} else {
-			break
+	for resp.HasNextPage() {
+		var additionalGroups []*okta.ApplicationGroupAssignment
+		resp, err = resp.Next(ctx, &additionalGroups)
+		if err != nil {
+			return nil, resp, err
 		}
+		groups = append(groups, additionalGroups...)
 	}
-	return resGroups, resp, nil
+	return groups, resp, nil
 }
 
 func containsAppUser(userList []*okta.AppUser, id string) bool {
