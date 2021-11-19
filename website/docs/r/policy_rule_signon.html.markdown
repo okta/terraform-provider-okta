@@ -141,6 +141,8 @@ The following arguments are supported:
 - `primary_factor` - (Optional) Rule's primary factor. **WARNING** Ony works as a part of the Identity Engine. Valid values: 
 `"PASSWORD_IDP_ANY_FACTOR"`, `"PASSWORD_IDP"`.
 
+- `users_excluded` - (Optional) The list of user IDs that would be excluded when rules are processed.
+
 ## Attributes Reference
 
 - `id` - ID of the Rule.
