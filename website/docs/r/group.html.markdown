@@ -58,5 +58,5 @@ $ terraform import okta_group.example <group id>
 It's also possible to import group without users. In this case ID will look like this:
 
 ```
-$ terraform import okta_app_basic_auth.example <group id>/skip_users
+$ terraform import okta_group.example <group id>/skip_users
 ```
