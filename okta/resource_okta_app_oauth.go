@@ -477,6 +477,12 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 		p, _ := json.Marshal(app.Profile)
 		rawProfile = string(p)
 	}
+	if app.Credentials.UserNameTemplate != nil {
+		_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
+		_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+		_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
+		_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
+	}
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	_ = d.Set("profile", rawProfile)
 	// Not setting client_secret, it is only provided on create and update for auth methods that require it
@@ -692,6 +698,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 			ClientId:                d.Get("client_id").(string),
 			TokenEndpointAuthMethod: authMethod,
 		},
+		UserNameTemplate: buildUserNameTemplate(d),
 	}
 
 	if sec, ok := d.GetOk("client_basic_secret"); ok {

@@ -103,6 +103,14 @@ The following arguments are supported:
 
 - `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
 
+- `user_name_template` - (Optional) Username template. Default: `"${source.login}"`
+
+- `user_name_template_suffix` - (Optional) Username template suffix.
+
+- `user_name_template_type` - (Optional) Username template type. Default: `"BUILT_IN"`.
+
+- `user_name_template_push_status` - (Optional) Push username on update. Valid values: `"PUSH"` and `"DONT_PUSH"`.
+
 - `hide_ios` - (Optional) Do not display application icon on mobile app.
 
 - `hide_web` - (Optional) Do not display application icon to users.
