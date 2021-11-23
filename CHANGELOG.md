@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.20.0 (November 23, 2021)
+
+ENHANCEMENTS:
+
+* Added new `okta_rate_limit` resource [#803](https://github.com/okta/terraform-provider-okta/pull/803). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `okta_captcha` and `okta_captcha_org_wide_settings` resources [#821](https://github.com/okta/terraform-provider-okta/pull/821). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fixed example in docs for `okta_group` resource [#814](https://github.com/okta/terraform-provider-okta/pull/814).  Thanks, [@tim-fitzgerald](https://github.com/tim-fitzgerald)!
+
+BUGS:
+
+* Fixed pagination bug in `okta_group_memberships` resource [#810](https://github.com/okta/terraform-provider-okta/pull/810). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added missing fields to `okta_app_oauth` resource [#817](https://github.com/okta/terraform-provider-okta/pull/817). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.19.0 (November 12, 2021)
 
 ENHANCEMENTS:
