@@ -65,6 +65,7 @@ func resourceRateLimitingRead(ctx context.Context, d *schema.ResourceData, m int
 		return diag.Errorf("failed to get rate limiting communications: %v", err)
 	}
 	_ = d.Set("communications_enabled", *comm.RateLimitNotification)
+	d.SetId("rate_limiting")
 	return nil
 }
 
