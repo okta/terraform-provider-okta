@@ -17,14 +17,14 @@ In case the provider configuration is still using old `"oktadeveloper/okta"` sou
 
 ## Example Usage
 
-Terraform 0.13 and later:
+Terraform 0.14 and later:
 
 ```hcl
 terraform {
   required_providers {
     okta = {
       source = "okta/okta"
-      version = "~> 3.19"
+      version = "~> 3.20"
     }
   }
 }

@@ -25,7 +25,7 @@ in form of raw markdown files.
 
 ## Requirements
 
-- [Terraform](https://www.terraform.io/downloads.html) 0.13.0 or newer (to run acceptance tests)
+- [Terraform](https://www.terraform.io/downloads.html) 0.14.0 or newer (to run acceptance tests)
 - [Go](https://golang.org/doc/install) 1.17 (to build the provider plugin)
 
 ## Quick Start
