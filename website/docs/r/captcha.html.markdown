@@ -8,6 +8,8 @@ description: |-
 
 # okta_captcha
 
+~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
+
 This resource allows you to create and configure a CAPTCHA.
 
 ## Example Usage
