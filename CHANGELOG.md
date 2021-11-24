@@ -4,7 +4,7 @@
 
 ENHANCEMENTS:
 
-* Added new `okta_rate_limit` resource [#803](https://github.com/okta/terraform-provider-okta/pull/803). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `okta_rate_limiting` resource [#803](https://github.com/okta/terraform-provider-okta/pull/803). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 * Added new `okta_captcha` and `okta_captcha_org_wide_settings` resources [#821](https://github.com/okta/terraform-provider-okta/pull/821). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 * Fixed example in docs for `okta_group` resource [#814](https://github.com/okta/terraform-provider-okta/pull/814).  Thanks, [@tim-fitzgerald](https://github.com/tim-fitzgerald)!
 
