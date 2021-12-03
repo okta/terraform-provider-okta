@@ -1,12 +1,12 @@
 ---
 layout: 'okta'
-page_title: 'Okta: okta_rate_limit'
+page_title: 'Okta: okta_rate_limiting'
 sidebar_current: 'docs-okta-resource-rate-limit'
 description: |-
   Manages rate limiting.
 ---
 
-# okta_rate_limit
+# okta_rate_limiting
 
 This resource allows you to configure the client-based rate limit and rate limiting communications settings.
 
@@ -15,7 +15,7 @@ This resource allows you to configure the client-based rate limit and rate limit
 ## Example Usage
 
 ```hcl
-resource "okta_rate_limit" "example" {
+resource "okta_rate_limiting" "example" {
   login                  = "ENFORCE"
   authorize              = "ENFORCE"
   communications_enabled = true
@@ -37,5 +37,5 @@ log per client (recommended))_, `"DISABLE"` _(Do nothing (not recommended))_, `"
 Rate limit settings can be imported without any parameters.
 
 ```
-$ terraform import okta_rate_limit.example .
+$ terraform import okta_rate_limiting.example .
 ```

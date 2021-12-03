@@ -1,4 +1,4 @@
-resource "okta_rate_limit" "example" {
+resource "okta_rate_limiting" "example" {
   login                  = "ENFORCE"
   authorize              = "ENFORCE"
   communications_enabled = true
