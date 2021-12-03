@@ -99,6 +99,9 @@ func resourceDomainRead(ctx context.Context, d *schema.ResourceData, m interface
 	if err != nil {
 		return diag.FromErr(err)
 	}
+
+	d.Set("name", domain.Domain)
+
 	if vd != nil {
 		_ = d.Set("validation_status", vd.ValidationStatus)
 	} else {
