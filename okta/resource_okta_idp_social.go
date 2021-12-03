@@ -17,7 +17,6 @@ func resourceIdpSocial() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		// Note the base schema
 		Schema: buildIdpSchema(map[string]*schema.Schema{
 			"authorization_url":     optURLSchema,
 			"authorization_binding": optBindingSchema,
@@ -69,6 +68,22 @@ func resourceIdpSocial() *schema.Resource {
 				Default:          "ORG_URL",
 				Optional:         true,
 			},
+			"apple_kid": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The Key ID that you obtained from Apple when you created the private key for the client",
+			},
+			"apple_private_key": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Sensitive:   true,
+				Description: "The PKCS #8 encoded private key that you created for the client and downloaded from Apple",
+			},
+			"apple_team_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The Team ID associated with your Apple developer account",
+			},
 		}),
 	}
 }
@@ -96,6 +111,7 @@ func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m interf
 		d.SetId("")
 		return nil
 	}
+	_ = d.Set("type", idp.Type)
 	_ = d.Set("name", idp.Name)
 	_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkew)
 	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
@@ -105,8 +121,13 @@ func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m interf
 	_ = d.Set("subject_match_type", idp.Policy.Subject.MatchType)
 	_ = d.Set("subject_match_attribute", idp.Policy.Subject.MatchAttribute)
 	_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
+	_ = d.Set("protocol_type", idp.Protocol.Type)
 	_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientId)
 	_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
+	if idp.Type == "APPLE" {
+		_ = d.Set("apple_kid", idp.Protocol.Credentials.Signing.Kid)
+		_ = d.Set("apple_team_id", idp.Protocol.Credentials.Signing.TeamId)
+	}
 
 	err = syncGroupActions(d, idp.Policy.Provisioning.Groups)
 	if err != nil {
@@ -149,7 +170,7 @@ func resourceIdpSocialUpdate(ctx context.Context, d *schema.ResourceData, m inte
 }
 
 func buildIdPSocial(d *schema.ResourceData) okta.IdentityProvider {
-	return okta.IdentityProvider{
+	idp := okta.IdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       d.Get("type").(string),
 		IssuerMode: d.Get("issuer_mode").(string),
@@ -176,4 +197,15 @@ func buildIdPSocial(d *schema.ResourceData) okta.IdentityProvider {
 			},
 		},
 	}
+	if idp.Type == "APPLE" {
+		idp.Protocol.Credentials.Signing = &okta.IdentityProviderCredentialsSigning{
+			Kid:        nil,
+			PrivateKey: d.Get("apple_private_key").(string),
+			TeamId:     d.Get("apple_team_id").(string),
+		}
+		if kid, ok := d.GetOk("apple_kid"); ok {
+			idp.Protocol.Credentials.Signing.Kid = stringPtr(kid.(string))
+		}
+	}
+	return idp
 }
