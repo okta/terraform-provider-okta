@@ -97,6 +97,14 @@ The following arguments are supported:
 
 - `response_signature_scope` - (Optional) Specifies whether to verify a SAMLResponse message or Assertion element XML digital signature. It can be `"RESPONSE"`, `"ASSERTION"`, or `"ANY"`.
 
+- `apple_private_key` - (Optional, for Apple IdP only) The Key ID that you obtained from Apple when you created the private 
+key for the client. PrivateKey is required when resource is first created. For all consecutive updates, it can be empty/omitted 
+and keeps the existing value if it is empty/omitted. PrivateKey isn't returned when importing this resource.
+
+- `apple_team_id` - (Optional, for Apple IdP only) The Team ID associated with your Apple developer account.
+
+- `apple_kid` - (Optional, for Apple IdP only) The Key ID that you obtained from Apple when you created the private key for the client.
+
 ## Attributes Reference
 
 - `id` - ID of the IdP.
