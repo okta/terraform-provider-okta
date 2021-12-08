@@ -55,7 +55,7 @@ func resourceDomainCertificate() *schema.Resource {
 			},
 			"certificate_chain": {
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				Description: "Certificate chain",
 				StateFunc: func(val interface{}) string {
 					if val.(string) == "" {
