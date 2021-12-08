@@ -14,6 +14,8 @@ This resource allows you to create and configure an Okta User.
 
 ## Example Usage
 
+Full profile:
+
 ```hcl
 resource "okta_user" "example" {
   first_name         = "John"
@@ -47,6 +49,18 @@ resource "okta_user" "example" {
   title              = "Director"
   user_type          = "Employee"
   zip_code           = "11111"
+}
+```
+
+With Password Inline Hook:
+
+```hcl
+resource "okta_user" "test2" {
+  first_name           = "John"
+  last_name            = "Smith"
+  login                = "example@example.com"
+  email                = "example@example.com"
+  password_inline_hook = "default"
 }
 ```
 
@@ -130,6 +144,11 @@ The following arguments are supported:
 - `old_password` - (Optional) Old user password. **IMPORTANT**: Should be ONLY set in case the password was changed 
 outside the provider. After successful password change this field should be removed and `password` field should be used 
 for further changes.
+
+- `password_inline_hook` (Optional) Specifies that a Password Import Inline Hook should be triggered to handle verification 
+of the user's password the first time the user logs in. This allows an existing password to be imported into Okta directly 
+from some other store. When updating a user with a password hook the user must be in the `STAGED` status. The `password`
+field should not be specified when using Password Import Inline Hook. 
 
 - `recovery_question` - (Optional) User password recovery question.
 
