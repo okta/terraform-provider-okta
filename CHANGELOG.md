@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.20.2 (December 3, 2021)
+
+ENHANCEMENTS:
+
+* Added new `password_inline_hook` field to the `okta_user` resource [#849](https://github.com/okta/terraform-provider-okta/pull/849). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+
+* Fixed `okta_domain` import [#845](https://github.com/okta/terraform-provider-okta/pull/845). Thanks, [quantumew](https://github.com/quantumew)!
+* Fixed documentation [#848](https://github.com/okta/terraform-provider-okta/pull/848). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.20.1 (December 3, 2021)
 
 * Added new `apple_kid`, `apple_private_key` and `apple_team_id` fields to the `okta_idp_social` resource [#842](https://github.com/okta/terraform-provider-okta/pull/842). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
