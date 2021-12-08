@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.20.2 (December 3, 2021)
+## 3.20.2 (December 8, 2021)
 
 ENHANCEMENTS:
 
