@@ -282,6 +282,13 @@ func resourceUser() *schema.Resource {
 				Sensitive:   true,
 				Description: "User Password",
 			},
+			"password_inline_hook": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: elemInSlice([]string{"default"}),
+				Description:      "When specified, the Password Inline Hook is triggered to handle verification of the end user's password the first time the user tries to sign in",
+				ConflictsWith:    []string{"password", "password_hash"},
+			},
 			"old_password": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -369,6 +376,14 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 			Value: d.Get("password").(string),
 			Hash:  buildPasswordCredentialHash(d.Get("password_hash")),
 		},
+	}
+	pih := d.Get("password_inline_hook").(string)
+	if pih != "" {
+		uc.Password = &okta.PasswordCredential{
+			Hook: &okta.PasswordCredentialHook{
+				Type: pih,
+			},
+		}
 	}
 	recoveryQuestion := d.Get("recovery_question").(string)
 	recoveryAnswer := d.Get("recovery_answer").(string)
@@ -468,6 +483,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	userChange := hasProfileChange(d)
 	passwordChange := d.HasChange("password")
 	passwordHashChange := d.HasChange("password_hash")
+	passwordHookChange := d.HasChange("password_inline_hook")
 	recoveryQuestionChange := d.HasChange("recovery_question")
 	recoveryAnswerChange := d.HasChange("recovery_answer")
 
@@ -497,7 +513,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 		return diag.Errorf("Only the status of a DEPROVISIONED user can be updated, we detected other change")
 	}
 
-	if userChange || passwordHashChange {
+	if userChange || passwordHashChange || passwordHookChange {
 		profile := populateUserProfile(d)
 		userBody := okta.User{
 			Profile: profile,
@@ -506,6 +522,16 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 			userBody.Credentials = &okta.UserCredentials{
 				Password: &okta.PasswordCredential{
 					Hash: buildPasswordCredentialHash(d.Get("password_hash")),
+				},
+			}
+		}
+		pih := d.Get("password_inline_hook").(string)
+		if passwordHookChange && pih != "" {
+			userBody.Credentials = &okta.UserCredentials{
+				Password: &okta.PasswordCredential{
+					Hook: &okta.PasswordCredentialHook{
+						Type: pih,
+					},
 				},
 			}
 		}
