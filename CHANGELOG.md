@@ -13,6 +13,8 @@ BUGS:
 
 ## 3.20.1 (December 3, 2021)
 
+ENHANCEMENTS:
+
 * Added new `apple_kid`, `apple_private_key` and `apple_team_id` fields to the `okta_idp_social` resource [#842](https://github.com/okta/terraform-provider-okta/pull/842). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 * Fixed docs for `okta_rate_limiting` resource [#827](https://github.com/okta/terraform-provider-okta/pull/827). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 * Fixed example in docs for `okta_idp_saml_key` resource [#824](https://github.com/okta/terraform-provider-okta/pull/824). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
