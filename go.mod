@@ -10,7 +10,7 @@ require (
 	github.com/hashicorp/go-hclog v1.0.0
 	github.com/hashicorp/go-retryablehttp v0.7.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.9.0
-	github.com/okta/okta-sdk-golang/v2 v2.9.2-0.20211203080930-e7b3952536dc
+	github.com/okta/okta-sdk-golang/v2 v2.9.3-0.20211209083930-a123a8c6e20d
 )
 
 require (
