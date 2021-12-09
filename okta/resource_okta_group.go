@@ -61,6 +61,16 @@ func resourceGroup() *schema.Resource {
 				Description: "Ignore users sync. This is a temporary solution until 'users' field is supported in this resource",
 				Default:     false,
 			},
+			"custom_profile_attributes": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
+				Description:      "JSON formatted custom attributes for a group. It must be JSON due to various types Okta allows.",
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
+			},
 		},
 	}
 }
