@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -186,6 +187,14 @@ func updateGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}
 }
 
 func buildGroup(d *schema.ResourceData) *okta.Group {
+	if rawAttrs, ok := d.GetOk("custom_profile_attributes"); ok {
+		var customAttrs map[string]interface{}
+		str := rawAttrs.(string)
+
+		// We validate the JSON, no need to check error
+		_ = json.Unmarshal([]byte(str), &customAttrs)
+	}
+
 	return &okta.Group{
 		Profile: &okta.GroupProfile{
 			Name:        d.Get("name").(string),
