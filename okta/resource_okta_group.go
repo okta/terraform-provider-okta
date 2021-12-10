@@ -119,6 +119,16 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{
 	}
 	_ = d.Set("name", g.Profile.Name)
 	_ = d.Set("description", g.Profile.Description)
+
+	if g.Profile.GroupProfileMap != nil {
+		customProfile, err := json.Marshal(g.Profile.GroupProfileMap)
+		if err != nil {
+			return diag.Errorf("failed to read custom profile attributes from group: %s", g.Profile.Name)
+		}
+		customProfileStr := string(customProfile)
+		_ = d.Set("custom_profile_attributes", customProfileStr)
+	}
+
 	err = syncGroupUsers(ctx, d, m)
 	if err != nil {
 		return diag.Errorf("failed to get group users: %v", err)
@@ -187,8 +197,8 @@ func updateGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}
 }
 
 func buildGroup(d *schema.ResourceData) *okta.Group {
+	var customAttrs okta.GroupProfileMap
 	if rawAttrs, ok := d.GetOk("custom_profile_attributes"); ok {
-		var customAttrs map[string]interface{}
 		str := rawAttrs.(string)
 
 		// We validate the JSON, no need to check error
@@ -197,8 +207,9 @@ func buildGroup(d *schema.ResourceData) *okta.Group {
 
 	return &okta.Group{
 		Profile: &okta.GroupProfile{
-			Name:        d.Get("name").(string),
-			Description: d.Get("description").(string),
+			Name:            d.Get("name").(string),
+			Description:     d.Get("description").(string),
+			GroupProfileMap: customAttrs,
 		},
 	}
 }
