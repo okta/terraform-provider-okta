@@ -10,24 +10,24 @@ resource "okta_group" "test" {
 
 // Test Schema
 resource "okta_group_schema_property" "test1" {
-  index       = "testSchema1"
-  title       = "TestSchema1"
+  index       = "testSchema1_replace_with_uuid"
+  title       = "TestSchema1_replace_with_uuid"
   type        = "string"
   description = "Test string schema"
   master      = "OKTA"
 }
 
 resource "okta_group_schema_property" "test2" {
-  index       = "testSchema2"
-  title       = "TestSchema2"
+  index       = "testSchema2_replace_with_uuid"
+  title       = "TestSchema2_replace_with_uuid"
   type        = "boolean"
   description = "Test bool schema"
   master      = "OKTA"
 }
 
 resource "okta_group_schema_property" "test3" {
-  index       = "testSchema3"
-  title       = "TestSchema3"
+  index       = "testSchema3_replace_with_uuid"
+  title       = "TestSchema3_replace_with_uuid"
   type        = "number"
   description = "Test bool schema"
   master      = "OKTA"
