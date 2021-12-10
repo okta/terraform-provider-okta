@@ -68,6 +68,7 @@ func TestAccOktaGroup_customschema(t *testing.T) {
 	updated1 := mgr.GetFixtures("okta_group_custom_updated1.tf", ri, t)
 	updated2 := mgr.GetFixtures("okta_group_custom_updated2.tf", ri, t)
 	updated3 := mgr.GetFixtures("okta_group_custom_updated3.tf", ri, t)
+	cleanup := mgr.GetFixtures("okta_group_custom_cleanup.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -85,6 +86,9 @@ func TestAccOktaGroup_customschema(t *testing.T) {
 			},
 			{
 				Config: updated3,
+			},
+			{
+				Config: cleanup,
 			},
 		},
 	})
