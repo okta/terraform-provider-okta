@@ -30,6 +30,19 @@ resource "okta_group" "example_skip" {
 }
 ```
 
+Custom profile attributes
+```hcl
+resource "okta_group" "example" {
+  name        = "Example"
+  description = "My Example Group"
+  custom_profile_attributes = jsonencode({
+    "example1" = "testing1234",
+    "example2" = true,
+    "example3" = 54321
+  })
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -42,6 +55,8 @@ The following arguments are supported:
 `DEPRECATED`: Please replace usage with the `okta_group_memberships` resource.
 
 - `skip_users` - (Optional) Indicator that allows a group to skip `users` sync (it's also can be provided during import). Default is `false`.
+
+- `custom_profile_attributes` - (Optional) raw JSON containing all custom profile attributes.
 
 ## Attributes Reference
 
