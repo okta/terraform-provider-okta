@@ -15,7 +15,7 @@ resource "okta_group_schema_property" "test1" {
 resource "okta_group_schema_property" "test2" {
   index       = "testSchema2"
   title       = "TestSchema2"
-  type        = "bool"
+  type        = "boolean"
   description = "Test bool schema"
   master      = "OKTA"
 }
