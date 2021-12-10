@@ -100,6 +100,7 @@ func TestAccOktaGroup_customschema(t *testing.T) {
 				Config: updated3,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%s", strconv.Itoa(ri))),
+					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", fmt.Sprintf("{\"testSchema1_%s\":\"moretesting1234\"}", strconv.Itoa(ri))),
 				),
 			},
 			{
