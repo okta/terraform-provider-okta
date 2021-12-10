@@ -3,6 +3,7 @@ package okta
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
@@ -62,7 +63,7 @@ func TestAccOktaGroup_crud(t *testing.T) {
 
 func TestAccOktaGroup_customschema(t *testing.T) {
 	ri := acctest.RandInt()
-	// resourceName := fmt.Sprintf("%s.test", group)
+	resourceName := fmt.Sprintf("%s.test", group)
 	mgr := newFixtureManager(group)
 	base := mgr.GetFixtures("okta_group_custom_base.tf", ri, t)
 	updated1 := mgr.GetFixtures("okta_group_custom_updated1.tf", ri, t)
@@ -77,15 +78,29 @@ func TestAccOktaGroup_customschema(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: base,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%s", strconv.Itoa(ri))),
+				),
 			},
 			{
 				Config: updated1,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%s", strconv.Itoa(ri))),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("testSchema1_%s", strconv.Itoa(ri)), "testing1234"),
+				),
 			},
 			{
 				Config: updated2,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%s", strconv.Itoa(ri))),
+					resource.TestCheckResourceAttr(resourceName, fmt.Sprintf("testSchema1_%s", strconv.Itoa(ri)), "moretesting1234"),
+				),
 			},
 			{
 				Config: updated3,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%s", strconv.Itoa(ri))),
+				),
 			},
 			{
 				Config: cleanup,
