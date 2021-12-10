@@ -60,6 +60,36 @@ func TestAccOktaGroup_crud(t *testing.T) {
 	})
 }
 
+func TestAccOktaGroup_customschema(t *testing.T) {
+	ri := acctest.RandInt()
+	// resourceName := fmt.Sprintf("%s.test", group)
+	mgr := newFixtureManager(group)
+	base := mgr.GetFixtures("okta_group_custom_base.tf", ri, t)
+	updated1 := mgr.GetFixtures("okta_group_custom_updated1.tf", ri, t)
+	updated2 := mgr.GetFixtures("okta_group_custom_updated2.tf", ri, t)
+	updated3 := mgr.GetFixtures("okta_group_custom_updated3.tf", ri, t)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(group, doesGroupExist),
+		Steps: []resource.TestStep{
+			{
+				Config: base,
+			},
+			{
+				Config: updated1,
+			},
+			{
+				Config: updated2,
+			},
+			{
+				Config: updated3,
+			},
+		},
+	})
+}
+
 func doesGroupExist(id string) (bool, error) {
 	_, response, err := getOktaClientFromMetadata(testAccProvider.Meta()).Group.GetGroup(context.Background(), id)
 	return doesResourceExist(response, err)
