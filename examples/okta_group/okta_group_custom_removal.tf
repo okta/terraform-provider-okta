@@ -2,9 +2,7 @@ resource "okta_group" "test" {
   name        = "testAcc_replace_with_uuid"
   description = "testing, testing"
   custom_profile_attributes = jsonencode({
-    "testSchema1_replace_with_uuid" = "moretesting1234",
-    "testSchema2_replace_with_uuid" = false,
-    "testSchema3_replace_with_uuid" = 12345
+    "${okta_group_schema_property.test1.index}" = "moretesting1234"
   })
 }
 

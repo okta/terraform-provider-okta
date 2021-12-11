@@ -66,10 +66,8 @@ func TestAccOktaGroup_customschema(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", group)
 	mgr := newFixtureManager(group)
 	base := mgr.GetFixtures("okta_group_custom_base.tf", ri, t)
-	updated1 := mgr.GetFixtures("okta_group_custom_updated1.tf", ri, t)
-	updated2 := mgr.GetFixtures("okta_group_custom_updated2.tf", ri, t)
-	updated3 := mgr.GetFixtures("okta_group_custom_updated3.tf", ri, t)
-	cleanup := mgr.GetFixtures("okta_group_custom_cleanup.tf", ri, t)
+	updated := mgr.GetFixtures("okta_group_custom_updated.tf", ri, t)
+	removal := mgr.GetFixtures("okta_group_custom_removal.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -80,31 +78,22 @@ func TestAccOktaGroup_customschema(t *testing.T) {
 				Config: base,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%s", strconv.Itoa(ri))),
-				),
-			},
-			{
-				Config: updated1,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%s", strconv.Itoa(ri))),
 					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", fmt.Sprintf("{\"testSchema1_%s\":\"testing1234\",\"testSchema2_%s\":true,\"testSchema3_%s\":54321}", strconv.Itoa(ri), strconv.Itoa(ri), strconv.Itoa(ri))),
 				),
 			},
 			{
-				Config: updated2,
+				Config: updated,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%s", strconv.Itoa(ri))),
 					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", fmt.Sprintf("{\"testSchema1_%s\":\"moretesting1234\",\"testSchema2_%s\":false,\"testSchema3_%s\":12345}", strconv.Itoa(ri), strconv.Itoa(ri), strconv.Itoa(ri))),
 				),
 			},
 			{
-				Config: updated3,
+				Config: removal,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%s", strconv.Itoa(ri))),
 					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", fmt.Sprintf("{\"testSchema1_%s\":\"moretesting1234\"}", strconv.Itoa(ri))),
 				),
-			},
-			{
-				Config: cleanup,
 			},
 		},
 	})
