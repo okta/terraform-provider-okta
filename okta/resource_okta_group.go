@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -61,6 +62,16 @@ func resourceGroup() *schema.Resource {
 				Description: "Ignore users sync. This is a temporary solution until 'users' field is supported in this resource",
 				Default:     false,
 			},
+			"custom_profile_attributes": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
+				Description:      "JSON formatted custom attributes for a group. It must be JSON due to various types Okta allows.",
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
+			},
 		},
 	}
 }
@@ -108,6 +119,16 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{
 	}
 	_ = d.Set("name", g.Profile.Name)
 	_ = d.Set("description", g.Profile.Description)
+
+	if g.Profile.GroupProfileMap != nil {
+		customProfile, err := json.Marshal(g.Profile.GroupProfileMap)
+		if err != nil {
+			return diag.Errorf("failed to read custom profile attributes from group: %s", g.Profile.Name)
+		}
+		customProfileStr := string(customProfile)
+		_ = d.Set("custom_profile_attributes", customProfileStr)
+	}
+
 	err = syncGroupUsers(ctx, d, m)
 	if err != nil {
 		return diag.Errorf("failed to get group users: %v", err)
@@ -176,10 +197,19 @@ func updateGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}
 }
 
 func buildGroup(d *schema.ResourceData) *okta.Group {
+	var customAttrs okta.GroupProfileMap
+	if rawAttrs, ok := d.GetOk("custom_profile_attributes"); ok {
+		str := rawAttrs.(string)
+
+		// We validate the JSON, no need to check error
+		_ = json.Unmarshal([]byte(str), &customAttrs)
+	}
+
 	return &okta.Group{
 		Profile: &okta.GroupProfile{
-			Name:        d.Get("name").(string),
-			Description: d.Get("description").(string),
+			Name:            d.Get("name").(string),
+			Description:     d.Get("description").(string),
+			GroupProfileMap: customAttrs,
 		},
 	}
 }
