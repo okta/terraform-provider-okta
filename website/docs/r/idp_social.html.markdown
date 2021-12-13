@@ -39,7 +39,7 @@ The following arguments are supported:
 
 - `name` - (Required) The Application's display name.
 
-- `type` - (Required) The type of Social IdP. It can be `"FACEBOOK"`, `"LINKEDIN"`, `"MICROSOFT"`, or `"GOOGLE"`.
+- `type` - (Required) The type of Social IdP. It can be `"FACEBOOK"`, `"LINKEDIN"`, `"MICROSOFT"`, `"GOOGLE"` or `"APPLE"`.
 
 - `scopes` - (Required) The scopes of the IdP.
 
