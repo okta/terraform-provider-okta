@@ -14,6 +14,9 @@ import (
 var validScopes = []string{
 	"okta.apps.manage", "okta.apps.read",
 	"okta.authorizationServers.manage", "okta.authorizationServers.read",
+	"okta.authenticators.manage", "okta.authenticators.read",
+	"okta.brands.manage", "okta.brands.read",
+	"okta.captchas.manage", "okta.captchas.read",
 	"okta.clients.manage", "okta.clients.read", "okta.clients.register",
 	"okta.devices.manage", "okta.devices.read",
 	"okta.domains.manage", "okta.domains.read",
@@ -25,13 +28,15 @@ var validScopes = []string{
 	"okta.inlineHooks.manage", "okta.inlineHooks.read",
 	"okta.linkedObjects.manage", "okta.linkedObjects.read",
 	"okta.logs.read",
+	"okta.policies.manage", "okta.policies.read",
+	"okta.profileMappings.manage", "okta.profileMappings.read",
 	"okta.roles.manage", "okta.roles.read",
 	"okta.schemas.manage", "okta.schemas.read",
 	"okta.sessions.manage", "okta.sessions.read",
 	"okta.templates.manage", "okta.templates.read",
 	"okta.trustedOrigins.manage", "okta.trustedOrigins.read",
 	"okta.users.manage", "okta.users.read", "okta.users.manage.self", "okta.users.read.self",
-	"okta.policies.manage", "okta.policies.read",
+	"okta.userTypes.manage", "okta.userTypes.read",
 }
 
 func resourceAppOAuthAPIScope() *schema.Resource {
