@@ -32,7 +32,7 @@ func resourceRoleSubscription() *schema.Resource {
 				Type:             schema.TypeString,
 				Required:         true,
 				ForceNew:         true,
-				ValidateDiagFunc: elemInSlice(validAdminRoles),
+				ValidateDiagFunc: elemInSlice(append(validAdminRoles, "API_ADMIN")),
 				Description:      "Type of the role",
 			},
 			"notification_type": {
