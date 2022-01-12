@@ -61,9 +61,9 @@ func resourceDomainVerificationDelete(ctx context.Context, d *schema.ResourceDat
 // Status of the domain. Accepted values: NOT_STARTED, IN_PROGRESS, VERIFIED, COMPLETED
 func isDomainValidated(validationStatus string) bool {
 	switch validationStatus {
-		case "VERIFIED":
-		case "COMPLETED":
-			return true
+	case "VERIFIED":
+	case "COMPLETED":
+		return true
 	}
 	return false
 }
