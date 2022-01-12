@@ -42,9 +42,9 @@ func syncSamlCertificates(d *schema.ResourceData, descriptors []saml.KeyDescript
 	for _, desc := range descriptors {
 		switch desc.Use {
 		case "encryption":
-			_ = d.Set("encryption_certificate", desc.KeyInfo.Certificate)
+			_ = d.Set("encryption_certificate", desc.KeyInfo.X509Data.X509Certificates[0].Data)
 		case "signing":
-			_ = d.Set("signing_certificate", desc.KeyInfo.Certificate)
+			_ = d.Set("signing_certificate", desc.KeyInfo.X509Data.X509Certificates[0].Data)
 		}
 	}
 }

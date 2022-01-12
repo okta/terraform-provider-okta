@@ -64,6 +64,6 @@ func dataSourceAppMetadataSamlRead(ctx context.Context, d *schema.ResourceData, 
 	syncSamlEndpointBinding(d, desc.SingleSignOnServices)
 	_ = d.Set("entity_id", metadataRoot.EntityID)
 	_ = d.Set("want_authn_requests_signed", desc.WantAuthnRequestsSigned)
-	_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
+	_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.X509Data.X509Certificates[0].Data)
 	return nil
 }
