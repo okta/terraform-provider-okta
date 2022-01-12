@@ -36,7 +36,7 @@ func resourceDomainVerificationCreate(ctx context.Context, d *schema.ResourceDat
 		if err != nil {
 			return backoff.Permanent(fmt.Errorf("failed to verify domain: %v", err))
 		}
-		if domain.ValidationStatus != "VERIFIED" {
+		if !isDomainValidated(domain.ValidationStatus) {
 			return fmt.Errorf("failed to verify domain after several attempts, current validation status: %s", domain.ValidationStatus)
 		}
 		return nil
@@ -56,4 +56,14 @@ func resourceDomainVerificationRead(ctx context.Context, d *schema.ResourceData,
 // nothing to do here, since domain cannot be re-verified
 func resourceDomainVerificationDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	return nil
+}
+
+// Status of the domain. Accepted values: NOT_STARTED, IN_PROGRESS, VERIFIED, COMPLETED
+func isDomainValidated(validationStatus string) bool {
+	switch validationStatus {
+		case "VERIFIED":
+		case "COMPLETED":
+			return true
+	}
+	return false
 }

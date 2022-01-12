@@ -24,7 +24,11 @@ The following arguments are supported:
 
 - `name` - (Required) Custom Domain name.
 
-- `verify` - (Optional) Indicates whether the domain should be verified. 
+- `certificate_source_type` - (Optional) Certificate source type that indicates whether the certificate is provided by the user or Okta. Accepted values: `MANUAL`, `OKTA_MANAGED`. Default value = `MANUAL`
+
+  ~> **WARNING**: Use of `OKTA_MANAGED` requires a feature flag to be enabled.
+
+- `verify` - (Optional) Indicates whether the domain should be verified.
   - `DEPRECATED`: Please use `okta_domain_verification` resource instead.
 
 ## Attributes Reference

@@ -25,6 +25,12 @@ func resourceDomain() *schema.Resource {
 				Description: "Custom Domain name",
 				ForceNew:    true,
 			},
+			"certificate_source_type": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Optional. Certificate source type that indicates whether the certificate is provided by the user or Okta. Accepted values: MANUAL, OKTA_MANAGED. Warning: Use of OKTA_MANAGED requires a feature flag to be enabled. Default value = MANUAL",
+				Default:     "MANUAL",
+			},
 			"verify": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -167,6 +173,6 @@ func validateDomain(ctx context.Context, d *schema.ResourceData, m interface{}, 
 func buildDomain(d *schema.ResourceData) okta.Domain {
 	return okta.Domain{
 		Domain:                d.Get("name").(string),
-		CertificateSourceType: "MANUAL",
+		CertificateSourceType: d.Get("certificate_source_type").(string),
 	}
 }
