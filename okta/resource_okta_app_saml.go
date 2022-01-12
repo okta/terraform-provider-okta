@@ -434,7 +434,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		key := getExternalID(uri, app.Settings.SignOn.IdpIssuer)
 		_ = d.Set("entity_url", uri)
 		_ = d.Set("entity_key", key)
-		_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.Certificate)
+		_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.X509Data.X509Certificates[0].Data)
 	}
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	if app.SignOnMode == "SAML_1_1" {
