@@ -16,6 +16,9 @@ func resourceAuthenticator() *schema.Resource {
 		ReadContext:   resourceAuthenticatorRead,
 		UpdateContext: resourceAuthenticatorUpdate,
 		DeleteContext: resourceAuthenticatorDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 		Schema: map[string]*schema.Schema{
 			"key": {
 				Type:        schema.TypeString,
