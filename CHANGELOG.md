@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.20.3 (January 14, 2022)
+
+ENHANCEMENTS:
+
+* Added new `custom_profile_attributes` field to the `okta_group` resource [#851](https://github.com/okta/terraform-provider-okta/pull/851). Thanks, [@ymylei](https://github.com/ymylei)!
+* Updated list of valid Okta OAuth scopes [#897](https://github.com/okta/terraform-provider-okta/pull/897). Thanks, [@virgofx](https://github.com/virgofx)!
+* Added missing role type to the `okta_role_subscription` resource [#863](https://github.com/okta/terraform-provider-okta/pull/863). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `certificate_source_type` field to the `okta_domain` resource [#899](https://github.com/okta/terraform-provider-okta/pull/899). Thanks, [@virgofx](https://github.com/virgofx)!
+* Made `okta_authenticator` importable [#907](https://github.com/okta/terraform-provider-okta/pull/907). Thanks, [@virgofx](https://github.com/virgofx)!
+
+BUGS:
+
+* Fixed `okta_domain_verification` resource [#899](https://github.com/okta/terraform-provider-okta/pull/899). Thanks, [@virgofx](https://github.com/virgofx)!
+
 ## 3.20.2 (December 8, 2021)
 
 ENHANCEMENTS:
