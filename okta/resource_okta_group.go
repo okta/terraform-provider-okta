@@ -105,7 +105,6 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interfac
 	if err != nil {
 		return diag.Errorf("failed to update group users on group create: %v", err)
 	}
-	_ = d.Set("skip_users", skipUsers)
 
 	return resourceGroupRead(ctx, d, m)
 }
