@@ -91,12 +91,12 @@ lint: tools
 
 tools:
 	@which $(GOLINT) || curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.40.1
-	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint
+	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@latest
 	@which $(GOFMT) || go install mvdan.cc/gofumpt@v0.2.1
 
 tools-update:
 	go install mvdan.cc/gofumpt@v0.2.1
-	go install github.com/bflad/tfproviderlint/cmd/tfproviderlint
+	go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@latest
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.40.1
 
 website:
