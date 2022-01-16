@@ -40,7 +40,6 @@ vet: tools
 	@go vet ./...
 	@staticcheck ./...
 
-.PHONY: fmt
 fmt: tools # Format the code
 	@echo "formatting the code..."
 	@$(GOFMT) -l -w $$(find . -name '*.go' |grep -v vendor)
