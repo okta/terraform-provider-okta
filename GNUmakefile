@@ -6,6 +6,7 @@ PKG_NAME=okta
 GOLINT=golangci-lint
 GOFMT:=gofumpt
 TFPROVIDERLINT=tfproviderlint
+STATICCHECK=staticcheck
 
 # Expression to match against tests
 # go test -run <filter>
@@ -90,14 +91,14 @@ lint: tools
 		./$(PKG_NAME)
 
 tools:
-	@which $(GOLINT) || curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.40.1
-	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@latest
 	@which $(GOFMT) || go install mvdan.cc/gofumpt@v0.2.1
+	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.27.1
+	@which $(STATICCHECK) || go install honnef.co/go/tools/cmd/staticcheck@2021.1.2
 
 tools-update:
 	go install mvdan.cc/gofumpt@v0.2.1
-	go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@latest
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.40.1
+	go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.27.1
+	go install honnef.co/go/tools/cmd/staticcheck@2021.1.2
 
 website:
 ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
