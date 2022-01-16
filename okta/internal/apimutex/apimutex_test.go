@@ -92,10 +92,17 @@ func TestGet(t *testing.T) {
 	keys := []string{
 		"users",
 		"user-id",
+		"user-me",
+		"user-id-get",
 		"apps",
 		"app-id",
 		"groups",
 		"group-id",
+		"cas-id",
+		"clients",
+		"devices",
+		"events",
+		"logs",
 		"other",
 	}
 	for _, key := range keys {
