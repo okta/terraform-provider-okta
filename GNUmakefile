@@ -23,6 +23,9 @@ build: fmtcheck
 	go install
 
 clean:
+	go clean -cache -testcache ./...
+
+clean-all:
 	go clean -cache -testcache -modcache ./...
 
 sweep:
