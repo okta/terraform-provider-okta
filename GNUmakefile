@@ -1,6 +1,5 @@
 SWEEP?=global
 TEST?=$$(go list ./... |grep -v 'vendor')
-GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=okta
 GOFMT:=gofumpt
@@ -30,7 +29,6 @@ test: fmtcheck
 	go test -i $(TEST) || exit 1
 	echo $(TEST) | \
 		xargs -t -n4 go test $(TESTARGS) $(TEST_FILTER) -timeout=30s -parallel=4
-    test: fmtcheck
 
 testacc: fmtcheck
 	TF_ACC=1 go test $(TEST) -v $(TESTARGS) $(TEST_FILTER) -timeout 120m
@@ -41,11 +39,11 @@ vet: tools
 	@staticcheck ./...
 
 fmt: tools # Format the code
-	@echo "formatting the code..."
-	@$(GOFMT) -l -w $$(find . -name '*.go' |grep -v vendor)
+	@echo "formatting the code with $(GOFMT)..."
+	@$(GOFMT) -l -w .
 
 fmtcheck: dep
-	@sh -c "'$(CURDIR)/scripts/gofmtcheck.sh'"
+	@gofumpt -d -l .
 
 errcheck:
 	@sh -c "'$(CURDIR)/scripts/errcheck.sh'"
