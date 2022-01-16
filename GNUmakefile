@@ -36,7 +36,7 @@ testacc: fmtcheck
 	TF_ACC=1 go test $(TEST) -v $(TESTARGS) $(TEST_FILTER) -timeout 120m
 
 vet:
-	@echo "go vet ."
+	@echo "==> Checking source code against go vet and staticcheck"
 	@go vet ./...
 	@staticcheck ./...
 
