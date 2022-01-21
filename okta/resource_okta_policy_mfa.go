@@ -20,7 +20,7 @@ func resourcePolicyMfa() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Schema: buildPolicySchema(buildFactorProviders()),
+		Schema: buildMfaPolicySchema(buildFactorSchemaProviders()),
 	}
 }
 
@@ -41,21 +41,9 @@ func resourcePolicyMfaRead(ctx context.Context, d *schema.ResourceData, m interf
 	if policy == nil {
 		return nil
 	}
-	syncFactor(d, sdk.DuoFactor, policy.Settings.Factors.Duo)
-	syncFactor(d, sdk.FidoU2fFactor, policy.Settings.Factors.FidoU2f)
-	syncFactor(d, sdk.FidoWebauthnFactor, policy.Settings.Factors.FidoWebauthn)
-	syncFactor(d, sdk.GoogleOtpFactor, policy.Settings.Factors.GoogleOtp)
-	syncFactor(d, sdk.OktaCallFactor, policy.Settings.Factors.OktaCall)
-	syncFactor(d, sdk.OktaOtpFactor, policy.Settings.Factors.OktaOtp)
-	syncFactor(d, sdk.OktaPasswordFactor, policy.Settings.Factors.OktaPassword)
-	syncFactor(d, sdk.OktaPushFactor, policy.Settings.Factors.OktaPush)
-	syncFactor(d, sdk.OktaQuestionFactor, policy.Settings.Factors.OktaQuestion)
-	syncFactor(d, sdk.OktaSmsFactor, policy.Settings.Factors.OktaSms)
-	syncFactor(d, sdk.OktaEmailFactor, policy.Settings.Factors.OktaEmail)
-	syncFactor(d, sdk.RsaTokenFactor, policy.Settings.Factors.RsaToken)
-	syncFactor(d, sdk.SymantecVipFactor, policy.Settings.Factors.SymantecVip)
-	syncFactor(d, sdk.YubikeyTokenFactor, policy.Settings.Factors.YubikeyToken)
-	syncFactor(d, sdk.HotpFactor, policy.Settings.Factors.Hotp)
+
+	syncSettings(d, policy.Settings)
+
 	err = syncPolicyFromUpstream(d, policy)
 	if err != nil {
 		return diag.Errorf("failed to sync policy: %v", err)
@@ -80,6 +68,70 @@ func resourcePolicyMfaDelete(ctx context.Context, d *schema.ResourceData, m inte
 	return nil
 }
 
+// create or update a MFA policy
+func buildMFAPolicy(d *schema.ResourceData) sdk.Policy {
+	policy := sdk.MfaPolicy()
+	policy.Name = d.Get("name").(string)
+	policy.Status = d.Get("status").(string)
+	policy.Description = d.Get("description").(string)
+	if priority, ok := d.GetOk("priority"); ok {
+		policy.Priority = int64(priority.(int))
+	}
+	policy.Settings = buildSettings(d)
+	policy.Conditions = &okta.PolicyRuleConditions{
+		People: getGroups(d),
+	}
+	return policy
+}
+
+// Opposite of syncSettings(): Build the corresponding sdk.PolicySettings based on the schema.ResourceData
+func buildSettings(d *schema.ResourceData) *sdk.PolicySettings {
+	if d.Get("is_oie") == true {
+		authenticators := []*sdk.PolicyAuthenticator{}
+
+		for _, key := range remove(sdk.AuthenticatorProviders, sdk.OktaPasswordFactor) {
+			rawFactor := d.Get(key).(map[string]interface{})
+			enroll := rawFactor["enroll"]
+			if enroll == nil {
+				continue
+			}
+
+			authenticator := &sdk.PolicyAuthenticator{}
+			authenticator.Key = key
+			if enroll != nil {
+				authenticator.Enroll = &sdk.Enroll{Self: enroll.(string)}
+			}
+			authenticators = append(authenticators, authenticator)
+		}
+
+		return &sdk.PolicySettings{
+			Type:           "AUTHENTICATORS",
+			Authenticators: authenticators,
+		}
+	}
+
+	return &sdk.PolicySettings{
+		Type: "FACTORS",
+		Factors: &sdk.PolicyFactorsSettings{
+			Duo:          buildFactorProvider(d, sdk.DuoFactor),
+			FidoU2f:      buildFactorProvider(d, sdk.FidoU2fFactor),
+			FidoWebauthn: buildFactorProvider(d, sdk.FidoWebauthnFactor),
+			GoogleOtp:    buildFactorProvider(d, sdk.GoogleOtpFactor),
+			Hotp:         buildFactorProvider(d, sdk.HotpFactor),
+			OktaCall:     buildFactorProvider(d, sdk.OktaCallFactor),
+			OktaOtp:      buildFactorProvider(d, sdk.OktaOtpFactor),
+			OktaPassword: buildFactorProvider(d, sdk.OktaPasswordFactor),
+			OktaPush:     buildFactorProvider(d, sdk.OktaPushFactor),
+			OktaQuestion: buildFactorProvider(d, sdk.OktaQuestionFactor),
+			OktaSms:      buildFactorProvider(d, sdk.OktaSmsFactor),
+			OktaEmail:    buildFactorProvider(d, sdk.OktaEmailFactor),
+			RsaToken:     buildFactorProvider(d, sdk.RsaTokenFactor),
+			SymantecVip:  buildFactorProvider(d, sdk.SymantecVipFactor),
+			YubikeyToken: buildFactorProvider(d, sdk.YubikeyTokenFactor),
+		},
+	}
+}
+
 func buildFactorProvider(d *schema.ResourceData, key string) *sdk.PolicyFactor {
 	rawFactor := d.Get(key).(map[string]interface{})
 	consent := rawFactor["consent_type"]
@@ -97,76 +149,63 @@ func buildFactorProvider(d *schema.ResourceData, key string) *sdk.PolicyFactor {
 	return f
 }
 
-// create or update a MFA policy
-func buildMFAPolicy(d *schema.ResourceData) sdk.Policy {
-	policy := sdk.MfaPolicy()
-	policy.Name = d.Get("name").(string)
-	policy.Status = d.Get("status").(string)
-	policy.Description = d.Get("description").(string)
-	if priority, ok := d.GetOk("priority"); ok {
-		policy.Priority = int64(priority.(int))
+// Syncs either classic factors or OIE authenticators into the resource data.
+func syncSettings(d *schema.ResourceData, settings *sdk.PolicySettings) {
+	_ = d.Set("is_oie", settings.Type == "AUTHENTICATORS")
+
+	if settings.Type == "AUTHENTICATORS" {
+		for _, key := range remove(sdk.AuthenticatorProviders, sdk.OktaPasswordFactor) {
+			syncAuthenticator(d, key, settings.Authenticators)
+		}
+	} else {
+		syncFactor(d, sdk.DuoFactor, settings.Factors.Duo)
+		syncFactor(d, sdk.HotpFactor, settings.Factors.YubikeyToken)
+		syncFactor(d, sdk.FidoU2fFactor, settings.Factors.FidoU2f)
+		syncFactor(d, sdk.FidoWebauthnFactor, settings.Factors.FidoWebauthn)
+		syncFactor(d, sdk.GoogleOtpFactor, settings.Factors.GoogleOtp)
+		syncFactor(d, sdk.OktaCallFactor, settings.Factors.OktaCall)
+		syncFactor(d, sdk.OktaOtpFactor, settings.Factors.OktaOtp)
+		syncFactor(d, sdk.OktaPasswordFactor, settings.Factors.OktaPassword)
+		syncFactor(d, sdk.OktaPushFactor, settings.Factors.OktaPush)
+		syncFactor(d, sdk.OktaQuestionFactor, settings.Factors.OktaQuestion)
+		syncFactor(d, sdk.OktaSmsFactor, settings.Factors.OktaSms)
+		syncFactor(d, sdk.OktaEmailFactor, settings.Factors.OktaEmail)
+		syncFactor(d, sdk.RsaTokenFactor, settings.Factors.RsaToken)
+		syncFactor(d, sdk.SymantecVipFactor, settings.Factors.SymantecVip)
+		syncFactor(d, sdk.YubikeyTokenFactor, settings.Factors.YubikeyToken)
 	}
-	policy.Settings = &sdk.PolicySettings{
-		Factors: &sdk.PolicyFactorsSettings{
-			Duo:          buildFactorProvider(d, sdk.DuoFactor),
-			FidoU2f:      buildFactorProvider(d, sdk.FidoU2fFactor),
-			FidoWebauthn: buildFactorProvider(d, sdk.FidoWebauthnFactor),
-			GoogleOtp:    buildFactorProvider(d, sdk.GoogleOtpFactor),
-			OktaCall:     buildFactorProvider(d, sdk.OktaCallFactor),
-			OktaOtp:      buildFactorProvider(d, sdk.OktaOtpFactor),
-			OktaPassword: buildFactorProvider(d, sdk.OktaPasswordFactor),
-			OktaPush:     buildFactorProvider(d, sdk.OktaPushFactor),
-			OktaQuestion: buildFactorProvider(d, sdk.OktaQuestionFactor),
-			OktaSms:      buildFactorProvider(d, sdk.OktaSmsFactor),
-			OktaEmail:    buildFactorProvider(d, sdk.OktaEmailFactor),
-			RsaToken:     buildFactorProvider(d, sdk.RsaTokenFactor),
-			SymantecVip:  buildFactorProvider(d, sdk.SymantecVipFactor),
-			YubikeyToken: buildFactorProvider(d, sdk.YubikeyTokenFactor),
-			Hotp:         buildFactorProvider(d, sdk.HotpFactor),
-		},
-	}
-	policy.Conditions = &okta.PolicyRuleConditions{
-		People: getGroups(d),
-	}
-	return policy
 }
 
 func syncFactor(d *schema.ResourceData, k string, f *sdk.PolicyFactor) {
-	if f == nil {
+	if f != nil {
 		_ = d.Set(k, map[string]interface{}{
-			"consent_type": "NONE",
-			"enroll":       "NOT_ALLOWED",
+			"consent_type": f.Consent.Type,
+			"enroll":       f.Enroll.Self,
 		})
-		return
 	}
-	_ = d.Set(k, map[string]interface{}{
-		"consent_type": f.Consent.Type,
-		"enroll":       f.Enroll.Self,
-	})
 }
 
-var factorProviders = []string{
-	sdk.DuoFactor,
-	sdk.FidoU2fFactor,
-	sdk.FidoWebauthnFactor,
-	sdk.GoogleOtpFactor,
-	sdk.OktaCallFactor,
-	sdk.OktaOtpFactor,
-	sdk.OktaPasswordFactor,
-	sdk.OktaPushFactor,
-	sdk.OktaQuestionFactor,
-	sdk.OktaSmsFactor,
-	sdk.OktaEmailFactor,
-	sdk.RsaTokenFactor,
-	sdk.SymantecVipFactor,
-	sdk.YubikeyTokenFactor,
-	sdk.HotpFactor,
+func syncAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.PolicyAuthenticator) {
+	for _, authenticator := range authenticators {
+		if authenticator.Key == k {
+			// Skip OktaPassword as this should never be returned for MFA policies using authenticator.
+			// Enrollment policy changes for OIE for password
+			// https://help.okta.com/okta_help.htm?type=oie&id=ext-about-mfa-enrol-policies
+			if k != sdk.OktaPasswordFactor {
+				_ = d.Set(k, map[string]interface{}{
+					"enroll": authenticator.Enroll.Self,
+				})
+			}
+			return
+		}
+	}
 }
 
 // List of factor provider above, they all follow the same schema
-func buildFactorProviders() map[string]*schema.Schema {
+func buildFactorSchemaProviders() map[string]*schema.Schema {
 	res := make(map[string]*schema.Schema)
-	for _, key := range factorProviders {
+	// Note: It's okay to append and have duplicates as we're setting back into a map here
+	for _, key := range append(sdk.FactorProviders, sdk.AuthenticatorProviders...) {
 		res[key] = &schema.Schema{
 			Optional: true,
 			Type:     schema.TypeMap,

@@ -81,6 +81,13 @@ var (
 		Default:          statusActive,
 		ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
 	}
+
+	isOieSchema = &schema.Schema{
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Default:     false,
+		Description: "Is the policy using Okta Identity Engine (OIE) with authenticators instead of factors?",
+	}
 )
 
 func findPolicy(ctx context.Context, m interface{}, name, policyType string) (*okta.Policy, error) {
@@ -135,6 +142,20 @@ func buildDefaultPolicySchema(target map[string]*schema.Schema) map[string]*sche
 
 func buildPolicySchema(target map[string]*schema.Schema) map[string]*schema.Schema {
 	return buildSchema(basePolicySchema, target)
+}
+
+func buildDefaultMfaPolicySchema(target map[string]*schema.Schema) map[string]*schema.Schema {
+	schema := buildDefaultPolicySchema(target)
+	schema["is_oie"] = isOieSchema
+
+	return schema
+}
+
+func buildMfaPolicySchema(target map[string]*schema.Schema) map[string]*schema.Schema {
+	schema := buildPolicySchema(target)
+	schema["is_oie"] = isOieSchema
+
+	return schema
 }
 
 func createPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.Policy) error {
