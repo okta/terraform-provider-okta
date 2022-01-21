@@ -22,6 +22,12 @@ dep: # Download required dependencies
 build: fmtcheck
 	go install
 
+clean:
+	go clean -cache -testcache ./...
+
+clean-all:
+	go clean -cache -testcache -modcache ./...
+
 sweep:
 	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
 	go test $(TEST) -v -sweep=$(SWEEP) $(SWEEPARGS)
