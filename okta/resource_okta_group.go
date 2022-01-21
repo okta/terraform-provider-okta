@@ -100,10 +100,12 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interfac
 		return diag.FromErr(err)
 	}
 	d.SetId(responseGroup.Id)
-	err = updateGroupUsers(ctx, d, m)
+	skipUsers := d.Get("skip_users").(bool)
+	err = updateGroupUsers(ctx, d, m, skipUsers)
 	if err != nil {
 		return diag.Errorf("failed to update group users on group create: %v", err)
 	}
+
 	return resourceGroupRead(ctx, d, m)
 }
 
@@ -113,6 +115,8 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get group: %v", err)
 	}
+	skipUsers := d.Get("skip_users").(bool)
+
 	if g == nil {
 		d.SetId("")
 		return nil
@@ -129,10 +133,12 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{
 		_ = d.Set("custom_profile_attributes", customProfileStr)
 	}
 
-	err = syncGroupUsers(ctx, d, m)
+	err = syncGroupUsers(ctx, d, m, skipUsers)
 	if err != nil {
 		return diag.Errorf("failed to get group users: %v", err)
 	}
+	_ = d.Set("skip_users", skipUsers)
+
 	return nil
 }
 
@@ -143,7 +149,8 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 	if err != nil {
 		return diag.Errorf("failed to update group: %v", err)
 	}
-	err = updateGroupUsers(ctx, d, m)
+	skipUsers := d.Get("skip_users").(bool)
+	err = updateGroupUsers(ctx, d, m, skipUsers)
 	if err != nil {
 		return diag.Errorf("failed to update group users on group update: %v", err)
 	}
@@ -159,15 +166,17 @@ func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, m interfac
 	return nil
 }
 
-func syncGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+func syncGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}, skipUsers bool) error {
+	// temp solution until 'users' field is supported
+	if skipUsers {
+		return nil
+	}
+
 	// Only sync when the user opts in by outlining users in the group config
 	if _, exists := d.GetOk("users"); !exists {
 		return nil
 	}
-	// temp solution until 'users' field is supported
-	if d.Get("skip_users").(bool) {
-		return nil
-	}
+
 	userIDList, err := listGroupUserIDs(ctx, m, d.Id())
 	if err != nil {
 		return err
@@ -175,14 +184,16 @@ func syncGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}) 
 	return d.Set("users", convertStringSliceToSet(userIDList))
 }
 
-func updateGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	if !d.HasChange("users") {
-		return nil
-	}
+func updateGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}, skipUsers bool) error {
 	// temp solution until 'users' field is supported
 	if d.Get("skip_users").(bool) {
 		return nil
 	}
+
+	if !d.HasChange("users") {
+		return nil
+	}
+
 	client := getOktaClientFromMetadata(m)
 	oldGM, newGM := d.GetChange("users")
 	oldSet := oldGM.(*schema.Set)
