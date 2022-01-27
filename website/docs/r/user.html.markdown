@@ -43,6 +43,7 @@ resource "okta_user" "example" {
   primary_phone      = "4445556666"
   profile_url        = "https://www.example.com/profile"
   second_email       = "john.smith.fun@example.com"
+  samaccountname     = "jsmith"
   state              = "NY"
   street_address     = "5678 Testing Ave."
   timezone           = "America/New_York"
@@ -122,6 +123,8 @@ The following arguments are supported:
 - `primary_phone` - (Optional) User profile property.
 
 - `profile_url` - (Optional) User profile property.
+
+- `samaccountname` - (Optional) User samaccountname property.
 
 - `second_email` - (Optional) User profile property.
 

@@ -214,6 +214,7 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "preferred_language", "en-us"),
 					resource.TestCheckResourceAttr(resourceName, "primary_phone", "4445556666"),
 					resource.TestCheckResourceAttr(resourceName, "profile_url", "http://www.example.com/profile"),
+					resource.TestCheckResourceAttr(resourceName, "samaccountname", "jsmith"),
 					resource.TestCheckResourceAttr(resourceName, "second_email", fmt.Sprintf("test2-%d@example.com", ri)),
 					resource.TestCheckResourceAttr(resourceName, "state", "NY"),
 					resource.TestCheckResourceAttr(resourceName, "street_address", "5678 Testing Ave."),

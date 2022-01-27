@@ -59,6 +59,7 @@ data "okta_users" "example" {
   - `preferred_language` - user profile property.
   - `primary_phone` - user profile property.
   - `profile_url` - user profile property.
+  - `samaccountname` - user samaccountname property.
   - `second_email` - user profile property.
   - `state` - user profile property.
   - `status` - user profile property.

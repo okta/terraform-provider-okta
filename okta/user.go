@@ -142,6 +142,10 @@ var userProfileDataSchema = map[string]*schema.Schema{
 		Type:     schema.TypeString,
 		Computed: true,
 	},
+	"samaccountname": {
+		Type:     schema.TypeString,
+		Computed: true,
+	},
 	"second_email": {
 		Type:     schema.TypeString,
 		Computed: true,

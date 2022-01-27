@@ -97,6 +97,8 @@ data "okta_user" "example" {
 
 - `profile_url` - user profile property.
 
+- `samaccountname` - user samaccountname property.
+
 - `second_email` - user profile property.
 
 - `state` - user profile property.

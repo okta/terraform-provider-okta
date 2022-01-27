@@ -40,6 +40,7 @@ var profileKeys = []string{
 	"preferred_language",
 	"primary_phone",
 	"profile_url",
+	"samaccountname",
 	"second_email",
 	"state",
 	"street_address",
@@ -250,6 +251,11 @@ func resourceUser() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "The raw status of the User in Okta - (status is mapped)",
+			},
+			"samaccountname": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "User Samaccountname",
 			},
 			"street_address": {
 				Type:        schema.TypeString,

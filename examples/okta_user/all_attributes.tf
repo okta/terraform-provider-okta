@@ -23,6 +23,7 @@ resource "okta_user" "test" {
   preferred_language = "en-us"
   primary_phone      = "4445556666"
   profile_url        = "http://www.example.com/profile"
+  samaccountname     = "tsmith"
   second_email       = "test2-replace_with_uuid@example.com"
   state              = "NY"
   street_address     = "5678 Testing Ave."
