@@ -18,8 +18,10 @@ func resourceGroupMemberships() *schema.Resource {
 		ReadContext:   resourceGroupMembershipsRead,
 		UpdateContext: resourceGroupMembershipsUpdate,
 		DeleteContext: resourceGroupMembershipsDelete,
-		Importer:      nil,
-		Description:   "Resource to manage a set of group memberships for a specific user.",
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
+		Description: "Resource to manage a set of group memberships for a specific group.",
 		Schema: map[string]*schema.Schema{
 			"group_id": {
 				Type:        schema.TypeString,
@@ -66,20 +68,16 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	groupId := d.Get("group_id").(string)
-	users := convertInterfaceToStringSetNullable(d.Get("users"))
-	client := getOktaClientFromMetadata(m)
-	ok, err := checkIfGroupHasUsers(ctx, client, groupId, users)
+	var diags diag.Diagnostics
+
+	logger(m).Info("reading group membership", "id", d.Id())
+	userIDList, err := listGroupUserIDs(ctx, m, d.Id())
 	if err != nil {
-		return diag.Errorf("unable to complete group check for user: %v", err)
+		return diag.FromErr(err)
 	}
-	if ok {
-		return nil
-	} else {
-		d.SetId("")
-		logger(m).Info("group (%s) did not have expected memberships or did not exist", groupId)
-		return nil
-	}
+	_ = d.Set("group_id", d.Id())
+	_ = d.Set("users", convertStringSliceToSet(userIDList))
+	return diags
 }
 
 func resourceGroupMembershipsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
