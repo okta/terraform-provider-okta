@@ -86,16 +86,23 @@ func TestGet(t *testing.T) {
 	if err != nil {
 		t.Fatalf("api mutex constructor had error %+v", err)
 	}
-	if len(amu.status) != 13 {
-		t.Fatalf("amu status map should sized 13 but was sized %d", len(amu.status))
+	if len(amu.status) != 14 {
+		t.Fatalf("amu status map should sized 14 but was sized %d", len(amu.status))
 	}
 	keys := []string{
 		"users",
 		"user-id",
+		"user-me",
+		"user-id-get",
 		"apps",
 		"app-id",
 		"groups",
 		"group-id",
+		"cas-id",
+		"clients",
+		"devices",
+		"events",
+		"logs",
 		"other",
 	}
 	for _, key := range keys {
