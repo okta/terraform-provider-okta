@@ -55,7 +55,7 @@ func resourceRateLimitingCreate(ctx context.Context, d *schema.ResourceData, m i
 
 func resourceRateLimitingRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	rl, _, err := getSupplementFromMetadata(m).GetClientBasedRateLimiting(ctx)
-	if err != nil {
+	if err != nil || rl.GranularModeSettings == nil {
 		return diag.Errorf("failed to get client-based rate limiting: %v", err)
 	}
 	_ = d.Set("login", rl.GranularModeSettings.LoginPage)
