@@ -55,6 +55,7 @@ the provider, but we don't quite have the manpower yet to do so.
   Attribute Schemas.
 - [okta_user](./okta_user) Supports the management of Okta Users.
 - [okta_users](./okta_users) Data source to retrieve a group of users.
+- [okta_app_oauth_post_logout_redirect_uri](./okta_app_oauth_post_logout_redirect_uri) Supports decentralizing post logout redirect uri config. 
 - [okta_app_oauth_redirect_uri](./okta_app_oauth_redirect_uri) Supports decentralizing redirect uri config. Due to
   Okta's API not allowing this field to be null, you must set a redirect uri in your app, and ignore changes to this
   attribute. We follow TF best practices and detect config drift. The best case scenario is Okta makes this field

@@ -219,7 +219,7 @@ func resourceAppOAuth() *schema.Resource {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
-				Description: "List of URIs for redirection after logout",
+				Description: "List of URIs for redirection after logout. Note: see okta_app_oauth_post_logout_redirect_uri for appending to this list in a decentralized way.",
 			},
 			"response_types": {
 				Type: schema.TypeSet,
