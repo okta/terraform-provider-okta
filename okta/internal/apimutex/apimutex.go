@@ -126,7 +126,7 @@ func (m *APIMutex) Status(method, endPoint string) *APIStatus {
 }
 
 var (
-	reAppId   = regexp.MustCompile("/api/v1/apps/[^/]+$")
+	reAppId   = regexp.MustCompile(`/api/v1/apps/[^/]+[/\w]*$`)
 	reGroupId = regexp.MustCompile("/api/v1/groups/[^/]+$")
 	reUserId  = regexp.MustCompile("/api/v1/users/[^/]+$")
 )
