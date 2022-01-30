@@ -146,11 +146,15 @@ func (m *APIMutex) normalizeKey(method, endPoint string) string {
 	postPutDelete := (http.MethodPost == method) ||
 		(http.MethodPut == method) ||
 		(http.MethodDelete == method)
+	getPostPutDelete := (http.MethodGet == method) ||
+		(http.MethodPost == method) ||
+		(http.MethodPut == method) ||
+		(http.MethodDelete == method)
 	var result string
 
 	switch {
-	//  1. [GET|PUT|DELETE] /api/v1/apps/${id}
-	case reAppId.MatchString(endPoint) && getPutDelete:
+	//  1. [GET|POST|PUT|DELETE] /api/v1/apps/${id}
+	case reAppId.MatchString(endPoint) && getPostPutDelete:
 		result = APPID_KEY
 
 	//  2. starts with /api/v1/apps
