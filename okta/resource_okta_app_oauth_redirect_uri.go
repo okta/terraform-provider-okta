@@ -95,8 +95,8 @@ func appendRedirectURI(ctx context.Context, d *schema.ResourceData, m interface{
 	if app.Id == "" {
 		return fmt.Errorf("application with id %s does not exist", appID)
 	}
-	if contains(app.Settings.OauthClient.PostLogoutRedirectUris, d.Id()) {
-		logger(m).Info(fmt.Sprintf("application with appID %s already has post logout redirect URI %s", appID, d.Id()))
+	if contains(app.Settings.OauthClient.RedirectUris, d.Id()) {
+		logger(m).Info(fmt.Sprintf("application with appID %s already has redirect URI %s", appID, d.Id()))
 		return nil
 	}
 	uri := d.Get("uri").(string)
