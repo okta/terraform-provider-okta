@@ -131,6 +131,11 @@ func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m in
 	_ = d.Set("type", authenticator.Type)
 	if authenticator.Settings != nil {
 		b, _ := json.Marshal(authenticator.Settings)
+
+		dataMap := map[string]interface{}{}
+		_ = json.Unmarshal([]byte(string(b)), &dataMap)
+		b, _ = json.Marshal(dataMap)
+
 		_ = d.Set("settings", string(b))
 	}
 	if authenticator.Provider != nil {
