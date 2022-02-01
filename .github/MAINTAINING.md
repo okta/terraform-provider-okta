@@ -54,10 +54,6 @@ Output from acceptance testing in Okta:
 
 Almost exclusively, `github.com/okta/okta-sdk-go` updates are additive in nature. It is generally safe to only scan through them before approving and merging. If you have any concerns about any of the service client updates such as suspicious code removals in the update, or deprecations introduced, run the acceptance testing for potentially affected resources before merging.
 
-##### golangci-lint Updates
-
-Merge if CI passes.
-
 ##### Terraform Plugin SDK Updates
 
 Except for trivial changes, run the full acceptance testing suite against the pull request and verify there are no new or unexpected failures.
