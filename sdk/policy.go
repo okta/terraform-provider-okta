@@ -58,10 +58,12 @@ type Policy struct {
 }
 
 type PolicySettings struct {
-	Factors    *PolicyFactorsSettings                 `json:"factors,omitempty"`
-	Delegation *okta.PasswordPolicyDelegationSettings `json:"delegation,omitempty"`
-	Password   *PasswordPolicyPasswordSettings        `json:"password,omitempty"`
-	Recovery   *PasswordPolicyRecoverySettings        `json:"recovery,omitempty"`
+	Authenticators []*PolicyAuthenticator                 `json:"authenticators,omitempty"`
+	Delegation     *okta.PasswordPolicyDelegationSettings `json:"delegation,omitempty"`
+	Factors        *PolicyFactorsSettings                 `json:"factors,omitempty"`
+	Password       *PasswordPolicyPasswordSettings        `json:"password,omitempty"`
+	Recovery       *PasswordPolicyRecoverySettings        `json:"recovery,omitempty"`
+	Type           string                                 `json:"type,omitempty"`
 }
 
 type PasswordPolicyPasswordSettings struct {
@@ -136,6 +138,7 @@ type PolicyFactorsSettings struct {
 	Duo          *PolicyFactor `json:"duo,omitempty"`
 	FidoU2f      *PolicyFactor `json:"fido_u2f,omitempty"`
 	FidoWebauthn *PolicyFactor `json:"fido_webauthn,omitempty"`
+	Hotp         *PolicyFactor `json:"hotp,omitempty"`
 	GoogleOtp    *PolicyFactor `json:"google_otp,omitempty"`
 	OktaCall     *PolicyFactor `json:"okta_call,omitempty"`
 	OktaOtp      *PolicyFactor `json:"okta_otp,omitempty"`
@@ -147,12 +150,16 @@ type PolicyFactorsSettings struct {
 	RsaToken     *PolicyFactor `json:"rsa_token,omitempty"`
 	SymantecVip  *PolicyFactor `json:"symantec_vip,omitempty"`
 	YubikeyToken *PolicyFactor `json:"yubikey_token,omitempty"`
-	Hotp         *PolicyFactor `json:"hotp,omitempty"`
 }
 
 type PolicyFactor struct {
 	Consent *Consent `json:"consent,omitempty"`
 	Enroll  *Enroll  `json:"enroll,omitempty"`
+}
+
+type PolicyAuthenticator struct {
+	Key    string  `json:"key,omitempty"`
+	Enroll *Enroll `json:"enroll,omitempty"`
 }
 
 type Consent struct {
