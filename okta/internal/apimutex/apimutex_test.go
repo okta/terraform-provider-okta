@@ -120,14 +120,20 @@ func TestNormalizeKey(t *testing.T) {
 		endPoint string
 		expected string
 	}{
-		//  1. [GET|PUT|DELETE] /api/v1/apps/${id}
+		//  1. [GET|POST|PUT|DELETE] /api/v1/apps/${id}
 		{method: http.MethodGet, endPoint: "/api/v1/apps/TESTID", expected: "app-id"},
 		{method: http.MethodPut, endPoint: "/api/v1/apps/TESTID", expected: "app-id"},
 		{method: http.MethodDelete, endPoint: "/api/v1/apps/TESTID", expected: "app-id"},
+		{method: http.MethodGet, endPoint: "/api/v1/apps/TESTID/users", expected: "app-id"},
+		{method: http.MethodPost, endPoint: "/api/v1/apps/TESTID/users/USERID", expected: "app-id"},
+		{method: http.MethodDelete, endPoint: "/api/v1/apps/TESTID/users/USERID", expected: "app-id"},
+		{method: http.MethodGet, endPoint: "/api/v1/apps/TESTID/groups", expected: "app-id"},
+		{method: http.MethodPut, endPoint: "/api/v1/apps/TESTID/groups/GROUPID", expected: "app-id"},
+		{method: http.MethodDelete, endPoint: "/api/v1/apps/TESTID/groups/GROUPID", expected: "app-id"},
+		{method: http.MethodPost, endPoint: "/api/v1/apps/TESTID/logo", expected: "app-id"},
 
 		//  2. starts with /api/v1/apps
 		{method: http.MethodGet, endPoint: "/api/v1/apps", expected: "apps"},
-		{method: http.MethodGet, endPoint: "/api/v1/apps/TESTID/users", expected: "apps"},
 
 		//  3. [GET|PUT|DELETE] /api/v1/groups/${id}
 		{method: http.MethodGet, endPoint: "/api/v1/groups/TESTID", expected: "group-id"},
