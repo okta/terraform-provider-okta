@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.20.5 (February 2, 2022)
+
+BUGS:
+
+* Whiffed setting the user agent correctly, fixed for release.
+
+
 ## 3.20.4 (February 2, 2022)
 
 ENHANCEMENTS:
