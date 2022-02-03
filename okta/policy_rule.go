@@ -295,7 +295,5 @@ func deleteRule(ctx context.Context, d *schema.ResourceData, m interface{}, chec
 			return err
 		}
 	}
-	// remove the policy rule resource from terraform
-	d.SetId("")
 	return nil
 }
