@@ -1,5 +1,26 @@
 # Changelog
 
+## 3.20.4 (February 2, 2022)
+
+ENHANCEMENTS:
+
+* Add OIE support for MFA policies [#919](https://github.com/okta/terraform-provider-okta/pull/919). Thanks, [@virgofx](https://github.com/virgofx)!
+
+BUGS:
+
+* SAML SLO Cert Fix [#923](https://github.com/okta/terraform-provider-okta/pull/923). Thanks, [@ymylei](https://github.com/ymylei)!
+* Nil bumper on `*sdk.ClientRateLimitMode` returned from rate limiting [#929](https://github.com/okta/terraform-provider-okta/pull/929). Thanks, [@monde](https://github.com/monde)!
+* API Mutex Fix For `apps/{id}` endpoint [#933](https://github.com/okta/terraform-provider-okta/pull/933). Thanks, [@ymylei](https://github.com/ymylei)!
+* Ensure okta_authenticator settings are ordered to prevent whitespace [#936](https://github.com/okta/terraform-provider-okta/pull/936). Thanks, [@virgofx](https://github.com/virgofx)!
+* Ensure VERIFIED domains return true [#937](https://github.com/okta/terraform-provider-okta/pull/937). Thanks, [@virgofx](https://github.com/virgofx)!
+* Fixed group search in the `okta_groups` data source [#938](https://github.com/okta/terraform-provider-okta/pull/938). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+PROJECT IMPROVEMENTS:
+
+* Updated dev and build tools [#912](https://github.com/okta/terraform-provider-okta/pull/912). Thanks, [@ymylei](https://github.com/ymylei)!
+* Fixed TF logo [#918](https://github.com/okta/terraform-provider-okta/pull/918). Thanks, [@exitcode0](https://github.com/exitcode0)!
+* Update profile mapping docs with OAuth2 scopes [#928](https://github.com/okta/terraform-provider-okta/pull/928). Thanks, [@virgofx](https://github.com/virgofx)!
+
 ## 3.20.3 (January 14, 2022)
 
 ENHANCEMENTS:

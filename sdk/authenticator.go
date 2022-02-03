@@ -54,7 +54,7 @@ type AuthenticatorProviderConfigurationUserNameTemplate struct {
 }
 
 func (m *APISupplement) ListAuthenticators(ctx context.Context) ([]*Authenticator, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/authenticators")
+	url := `/api/v1/authenticators`
 
 	re := m.cloneRequestExecutor()
 
