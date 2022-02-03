@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.20.6 (February 3, 2022)
+
+ENHANCEMENTS:
+
+* Added new `identity_provider` and `identity_provider_ids` fields to the `okta_policy_rule_signon` resource [#942](https://github.com/okta/terraform-provider-okta/pull/942). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.20.5 (February 2, 2022)
 
 BUGS:
