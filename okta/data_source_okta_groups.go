@@ -66,7 +66,7 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, m interfa
 	}
 	q, ok := d.GetOk("q")
 	if ok {
-		qp.Limit = 0
+		qp.Limit = 10000
 		qp.Q = q.(string)
 	}
 	search, ok := d.GetOk("search")
