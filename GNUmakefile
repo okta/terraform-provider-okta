@@ -31,15 +31,15 @@ sweep:
 	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
 	go test $(TEST) -v -sweep=$(SWEEP) $(SWEEPARGS)
 
-test: fmtcheck
+test:
 	go test -i $(TEST) || exit 1
 	echo $(TEST) | \
 		xargs -t -n4 go test $(TESTARGS) $(TEST_FILTER) -timeout=30s -parallel=4
 
-testacc: fmtcheck
+testacc:
 	TF_ACC=1 go test $(TEST) -v $(TESTARGS) $(TEST_FILTER) -timeout 120m
 
-vet: tools
+vet:
 	@echo "==> Checking source code against go vet and staticcheck"
 	@go vet ./...
 	@staticcheck ./...
@@ -48,7 +48,7 @@ fmt: tools # Format the code
 	@echo "formatting the code with $(GOFMT)..."
 	@$(GOFMT) -l -w .
 
-fmtcheck: dep
+fmtcheck:
 	@gofumpt -d -l .
 
 errcheck:
@@ -62,7 +62,7 @@ test-compile:
 	fi
 	go test -c $(TEST) $(TESTARGS)
 
-lint: tools
+lint:
 	@echo "==> Checking source code against linters..."
 	@$(TFPROVIDERLINT) \
 		-c 1 \
