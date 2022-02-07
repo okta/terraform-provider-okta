@@ -23,6 +23,7 @@ type (
 
 const (
 	authorizationCode = "authorization_code"
+	interactionCode   = "interaction_code"
 	implicit          = "implicit"
 	password          = "password"
 	refreshToken      = "refresh_token"
@@ -49,6 +50,7 @@ var appGrantTypeMap = map[string]*applicationMap{
 			saml2Bearer,
 			tokenExchange,
 			deviceCode,
+			interactionCode,
 		},
 	},
 	"native": {
@@ -64,6 +66,7 @@ var appGrantTypeMap = map[string]*applicationMap{
 			saml2Bearer,
 			tokenExchange,
 			deviceCode,
+			interactionCode,
 		},
 	},
 	"browser": {
@@ -74,6 +77,7 @@ var appGrantTypeMap = map[string]*applicationMap{
 			saml2Bearer,
 			tokenExchange,
 			deviceCode,
+			interactionCode,
 		},
 	},
 	"service": {
@@ -83,6 +87,7 @@ var appGrantTypeMap = map[string]*applicationMap{
 			saml2Bearer,
 			tokenExchange,
 			deviceCode,
+			interactionCode,
 		},
 		RequiredGrantTypes: []string{
 			clientCredentials,
@@ -234,7 +239,7 @@ func resourceAppOAuth() *schema.Resource {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, refreshToken, clientCredentials, saml2Bearer, tokenExchange, deviceCode}),
+					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, refreshToken, clientCredentials, saml2Bearer, tokenExchange, deviceCode, interactionCode}),
 				},
 				Optional:    true,
 				Description: "List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.",
