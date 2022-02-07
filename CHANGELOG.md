@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.20.7 (February 7, 2022)
+
+
+PROJECT IMPROVEMENTS:
+
+* Added a GH CI workflow to protect master branch [#948](https://github.com/okta/terraform-provider-okta/pull/948). Thanks, [@ymylei](https://github.com/ymylei)!
+
+BUGS:
+
+* Set a high limit on `client.Group.ListGroups` query data source Okta Groups [#946](https://github.com/okta/terraform-provider-okta/pull/929). Thanks, [@monde](https://github.com/monde)!
+
 ## 3.20.6 (February 3, 2022)
 
 ENHANCEMENTS:
