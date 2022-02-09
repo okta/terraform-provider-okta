@@ -1,7 +1,14 @@
 # Changelog
 
-## 3.20.7 (February 7, 2022)
+## 3.20.8 (February 9, 2022)
 
+ENHANCEMENTS:
+
+* Removed default value for `identity_provider` field on the `okta_policy_rule_sign_on`[#955](https://github.com/okta/terraform-provider-okta/pull/955). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `expire_password_on_create` field to the `okta_user` resource [#956](https://github.com/okta/terraform-provider-okta/pull/956). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `user_type_id` field to the `okta_idp_oidc` and `okta_idp_saml` resources [#957](https://github.com/okta/terraform-provider-okta/pull/957). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.20.7 (February 7, 2022)
 
 PROJECT IMPROVEMENTS:
 
