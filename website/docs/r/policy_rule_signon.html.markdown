@@ -143,7 +143,7 @@ The following arguments are supported:
 
 - `users_excluded` - (Optional) The list of user IDs that would be excluded when rules are processed.
 
-- `identity_provider` - (Optional) Defines the identity provider for this rule. Valid values are `"ANY"`, `"OKTA"`, and `"SPECIFIC_IDP"`. Default is `"ANY"`.
+- `identity_provider` - (Optional) Defines the identity provider for this rule. Valid values are `"ANY"`, `"OKTA"`, and `"SPECIFIC_IDP"`.
   
   ~> **WARNING**: Use of `identity_provider` requires a feature flag to be enabled.
 
