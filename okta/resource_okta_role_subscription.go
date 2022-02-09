@@ -87,6 +87,10 @@ func resourceRoleSubscriptionRead(ctx context.Context, d *schema.ResourceData, m
 	if err != nil {
 		return diag.Errorf("failed get subscription: %v", err)
 	}
+	if subscription == nil {
+		d.SetId("")
+		return nil
+	}
 	_ = d.Set("status", subscription.Status)
 	return nil
 }
