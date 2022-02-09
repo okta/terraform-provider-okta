@@ -135,7 +135,6 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Optional:         true,
 				ValidateDiagFunc: elemInSlice([]string{"ANY", "OKTA", "SPECIFIC_IDP"}),
 				Description:      "Apply rule based on the IdP used: ANY, OKTA or SPECIFIC_IDP.",
-				Default:          "ANY",
 			},
 			"identity_provider_ids": { // identity_provider must be SPECIFIC_IDP
 				Type:        schema.TypeList,
@@ -269,11 +268,16 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 		},
 		Network: buildPolicyNetworkCondition(d),
 		People:  getUsers(d),
-		IdentityProvider: &okta.IdentityProviderPolicyRuleCondition{
-			Provider: d.Get("identity_provider").(string),
-			IdpIds:   convertInterfaceToStringArr(d.Get("identity_provider_ids")),
-		},
 	}
+
+	provider, ok := d.GetOk("identity_provider")
+	if ok {
+		template.Conditions.IdentityProvider = &okta.IdentityProviderPolicyRuleCondition{
+			Provider: provider.(string),
+			IdpIds:   convertInterfaceToStringArr(d.Get("identity_provider_ids")),
+		}
+	}
+
 	bi, ok := d.GetOk("behaviors")
 	if ok {
 		template.Conditions.Risk = &okta.RiskPolicyRuleCondition{
