@@ -92,7 +92,7 @@ func resourceProfileMappingCreate(ctx context.Context, d *schema.ResourceData, m
 	client := getSupplementFromMetadata(m)
 	sourceID := d.Get("source_id").(string)
 	targetID := d.Get("target_id").(string)
-	mapping, resp, err := client.GetProfileMappingBySourceId(ctx, sourceID, targetID)
+	mapping, resp, err := client.GetProfileMappingBySourceID(ctx, sourceID, targetID)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get profile mapping: %v", err)
 	}
@@ -116,7 +116,7 @@ func resourceProfileMappingCreate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceProfileMappingRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	mapping, resp, err := getSupplementFromMetadata(m).GetProfileMapping(ctx, d.Id())
+	mapping, resp, err := getSupplementFromMetadata(m).GetProfileMappingByID(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get profile mapping: %v", err)
 	}
@@ -145,7 +145,7 @@ func resourceProfileMappingUpdate(ctx context.Context, d *schema.ResourceData, m
 	client := getSupplementFromMetadata(m)
 	sourceID := d.Get("source_id").(string)
 	targetID := d.Get("target_id").(string)
-	mapping, resp, err := client.GetProfileMappingBySourceId(ctx, sourceID, targetID)
+	mapping, resp, err := client.GetProfileMappingBySourceID(ctx, sourceID, targetID)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get profile mapping: %v", err)
 	}
@@ -171,7 +171,7 @@ func resourceProfileMappingDelete(ctx context.Context, d *schema.ResourceData, m
 	client := getSupplementFromMetadata(m)
 	sourceID := d.Get("source_id").(string)
 	targetID := d.Get("target_id").(string)
-	mapping, resp, err := client.GetProfileMappingBySourceId(ctx, sourceID, targetID)
+	mapping, resp, err := client.GetProfileMappingBySourceID(ctx, sourceID, targetID)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get profile mapping: %v", err)
 	}
