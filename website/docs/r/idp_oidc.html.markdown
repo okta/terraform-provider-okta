@@ -103,6 +103,8 @@ The following arguments are supported:
 
 - `type` - Type of OIDC IdP.
 
+- `user_type_id` - User type ID. Can be used as `target_id` in the `okta_profile_mapping` resource.
+
 ## Import
 
 An OIDC IdP can be imported via the Okta ID.

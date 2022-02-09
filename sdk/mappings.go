@@ -2,6 +2,7 @@ package sdk
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -29,8 +30,18 @@ type (
 	}
 )
 
-func (m *APISupplement) GetProfileMappingBySourceId(ctx context.Context, sourceId, targetId string) (*Mapping, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/mappings?sourceId=%s&targetId=%s", sourceId, targetId)
+func (m *APISupplement) GetProfileMappingBySourceID(ctx context.Context, sourceId, targetId string) (*Mapping, *okta.Response, error) {
+	var url string
+	if sourceId != "" && targetId != "" {
+		url = fmt.Sprintf("/api/v1/mappings?sourceId=%s&targetId=%s", sourceId, targetId)
+	} else if sourceId != "" {
+		url = fmt.Sprintf("/api/v1/mappings?sourceId=%s", sourceId)
+	} else if targetId != "" {
+		url = fmt.Sprintf("/api/v1/mappings?targetId=%s", targetId)
+	} else {
+		return nil, nil, errors.New("at least targetId of sourceId should not be empty")
+	}
+
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
@@ -42,13 +53,13 @@ func (m *APISupplement) GetProfileMappingBySourceId(ctx context.Context, sourceI
 	}
 	for _, mapping := range mappings {
 		if mapping.Source.ID == sourceId {
-			return m.GetProfileMapping(ctx, mapping.ID)
+			return m.GetProfileMappingByID(ctx, mapping.ID)
 		}
 	}
 	return nil, resp, err
 }
 
-func (m *APISupplement) GetProfileMapping(ctx context.Context, mappingId string) (*Mapping, *okta.Response, error) {
+func (m *APISupplement) GetProfileMappingByID(ctx context.Context, mappingId string) (*Mapping, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/mappings/%s", mappingId)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
