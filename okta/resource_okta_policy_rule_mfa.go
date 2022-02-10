@@ -63,11 +63,14 @@ func resourcePolicyMfaRuleRead(ctx context.Context, d *schema.ResourceData, m in
 	}
 	if (rule.Conditions.App) != nil {
 		if len(rule.Conditions.App.Include) != 0 {
-			_ = d.Set("app_include", flattenAppsInclude(rule.Conditions.App.Include))
+			_ = d.Set("app_include", flattenApps(rule.Conditions.App.Include))
 		}
 		if len(rule.Conditions.App.Exclude) != 0 {
-			_ = d.Set("app_exclude", flattenAppsInclude(rule.Conditions.App.Exclude))
+			_ = d.Set("app_exclude", flattenApps(rule.Conditions.App.Exclude))
 		}
+	}
+	if rule.Actions.PasswordPolicyRuleActions != nil && rule.Actions.PasswordPolicyRuleActions.Enroll != nil {
+		_ = d.Set("enroll", rule.Actions.PasswordPolicyRuleActions.Enroll.Self)
 	}
 	return nil
 }
@@ -150,4 +153,16 @@ func buildMFAPolicyAppCondition(d *schema.ResourceData) *okta.AppAndInstancePoli
 		rc.Exclude = excludeList
 	}
 	return rc
+}
+
+func flattenApps(appObj []*okta.AppAndInstanceConditionEvaluatorAppOrInstance) *schema.Set {
+	var flattened []interface{}
+	for _, v := range appObj {
+		flattened = append(flattened, map[string]interface{}{
+			"id":   v.Id,
+			"name": v.Name,
+			"type": v.Type,
+		})
+	}
+	return schema.NewSet(schema.HashResource(appResource), flattened)
 }
