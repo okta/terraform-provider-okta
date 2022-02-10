@@ -91,6 +91,7 @@ The following arguments are supported:
 - `consent_method` - (Optional) Indicates whether user consent is required or implicit. Valid values: `"REQUIRED"`, `"TRUSTED"`. Default value is `"TRUSTED"`.
 
 - `issuer_mode` - (Optional) Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.
+Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 - `refresh_token_rotation` - (Optional) Refresh token rotation behavior. Valid values: `"STATIC"` or `"ROTATE"`.
 
