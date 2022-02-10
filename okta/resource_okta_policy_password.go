@@ -22,8 +22,8 @@ func resourcePolicyPassword() *schema.Resource {
 			"auth_provider": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"OKTA", "ACTIVE_DIRECTORY"}),
-				Description:      "Authentication Provider: OKTA or ACTIVE_DIRECTORY.",
+				ValidateDiagFunc: elemInSlice([]string{"OKTA", "ACTIVE_DIRECTORY", "LDAP"}),
+				Description:      "Authentication Provider: OKTA, ACTIVE_DIRECTORY or LDAP",
 				Default:          "OKTA",
 			},
 			"password_min_length": {
