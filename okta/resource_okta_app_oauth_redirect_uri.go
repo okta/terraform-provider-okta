@@ -58,13 +58,21 @@ func resourceAppOAuthRedirectURIUpdate(ctx context.Context, d *schema.ResourceDa
 
 func resourceAppOAuthRedirectURIDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	appID := d.Get("app_id").(string)
+
+	oktaMutexKV.Lock(appID)
+	defer oktaMutexKV.Unlock(appID)
+
 	app := okta.NewOpenIdConnectApplication()
 	err := fetchAppByID(ctx, appID, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get application: %v", err)
 	}
-	if app.Id == "" || contains(app.Settings.OauthClient.RedirectUris, d.Id()) {
+	if app.Id == "" {
 		return diag.Errorf("application with id %s does not exist", appID)
+	}
+	if !contains(app.Settings.OauthClient.RedirectUris, d.Id()) {
+		logger(m).Info(fmt.Sprintf("application with appID %s does not have redirect URI %s", appID, d.Id()))
+		return nil
 	}
 	app.Settings.OauthClient.RedirectUris = remove(app.Settings.OauthClient.RedirectUris, d.Id())
 	err = updateAppByID(ctx, appID, m, app)
@@ -76,6 +84,10 @@ func resourceAppOAuthRedirectURIDelete(ctx context.Context, d *schema.ResourceDa
 
 func appendRedirectURI(ctx context.Context, d *schema.ResourceData, m interface{}) error {
 	appID := d.Get("app_id").(string)
+
+	oktaMutexKV.Lock(appID)
+	defer oktaMutexKV.Unlock(appID)
+
 	app := okta.NewOpenIdConnectApplication()
 	if err := fetchAppByID(ctx, appID, m, app); err != nil {
 		return err
