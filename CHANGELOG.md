@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.21.0 (February 10, 2022)
+
+ENHANCEMENTS:
+
+* Added `okta_app_oauth_post_logout_redirect_uri` resource and improved request concurrency handling [#931](https://github.com/okta/terraform-provider-okta/pull/931). Thanks, [@jmaness](https://github.com/jmaness), and [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added `LDAP` option to the `auth_provider` field in the `okta_policy_password` resource [#961](https://github.com/okta/terraform-provider-okta/pull/961). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `priority` field to the `okta_auth_server_policy` data source [#965](https://github.com/okta/terraform-provider-okta/pull/965). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new option to the `issuer_mode` field in the `okta_app_oauth` resource [#966](https://github.com/okta/terraform-provider-okta/pull/966). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+PROJECT IMPROVEMENTS:
+
+* Updated docs regarding `okta_policy_rule_idp_discovery` [#964](https://github.com/okta/terraform-provider-okta/pull/964). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+
+* Fixed import for the `okta_factor` resource [#960](https://github.com/okta/terraform-provider-okta/pull/960). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fixed import for the `okta_policy_rule_mfa` resource [#962](https://github.com/okta/terraform-provider-okta/pull/962). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fixed import for the `okta_group_schema_property` resource [#963](https://github.com/okta/terraform-provider-okta/pull/963). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
 ## 3.20.8 (February 9, 2022)
 
 ENHANCEMENTS:
