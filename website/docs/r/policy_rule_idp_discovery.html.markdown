@@ -8,15 +8,19 @@ description: |-
 
 # okta_policy_rule_idp_discovery
 
-Creates an IdP Discovery Policy Rule.
-
 This resource allows you to create and configure an IdP Discovery Policy Rule.
 
 ## Example Usage
 
 ```hcl
+// All Okta orgs contain only one IdP Discovery Policy
+data "okta_policy" "idp_discovery_policy" {
+  name = "Idp Discovery Policy"
+  type = "IDP_DISCOVERY"
+}
+
 resource "okta_policy_rule_idp_discovery" "example" {
-  policy_id                  = "<policy id>"
+  policy_id                  = data.okta_policy.idp_discovery_policy.id
   name                      = "example"
   idp_id                    = "<idp id>"
   idp_type                  = "OIDC"
