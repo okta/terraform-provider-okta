@@ -58,7 +58,7 @@ func resourceFactorPut(ctx context.Context, d *schema.ResourceData, m interface{
 }
 
 func resourceFactorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	factor, resp, err := getSupplementFromMetadata(m).GetOrgFactor(ctx, d.Get("provider_id").(string))
+	factor, resp, err := getSupplementFromMetadata(m).GetOrgFactor(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to find factor: %v", err)
 	}
