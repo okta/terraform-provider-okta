@@ -69,6 +69,9 @@ func resourcePolicyMfaRuleRead(ctx context.Context, d *schema.ResourceData, m in
 			_ = d.Set("app_exclude", flattenAppsInclude(rule.Conditions.App.Exclude))
 		}
 	}
+	if rule.Actions.PasswordPolicyRuleActions != nil && rule.Actions.PasswordPolicyRuleActions.Enroll != nil {
+		_ = d.Set("enroll", rule.Actions.PasswordPolicyRuleActions.Enroll.Self)
+	}
 	return nil
 }
 
