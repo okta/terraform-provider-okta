@@ -37,6 +37,8 @@ provider "okta" {
 }
 ```
 
+For the resources and data sources examples, please check the [examples](https://github.com/okta/terraform-provider-okta/tree/master/examples) directory.
+
 ## Authentication
 
 The Okta provider offers a flexible means of providing credentials for
