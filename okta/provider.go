@@ -94,6 +94,7 @@ const (
 	policyPassword                = "okta_policy_password"
 	policyPasswordDefault         = "okta_policy_password_default"
 	policyProfileEnrollment       = "okta_policy_profile_enrollment"
+	policyProfileEnrollmentApps   = "okta_policy_profile_enrollment_apps"
 	policyRuleIdpDiscovery        = "okta_policy_rule_idp_discovery"
 	policyRuleMfa                 = "okta_policy_rule_mfa"
 	policyRulePassword            = "okta_policy_rule_password"
@@ -290,6 +291,7 @@ func Provider() *schema.Provider {
 			policyPassword:                resourcePolicyPassword(),
 			policyPasswordDefault:         resourcePolicyPasswordDefault(),
 			policyProfileEnrollment:       resourcePolicyProfileEnrollment(),
+			policyProfileEnrollmentApps:   resourcePolicyProfileEnrollmentApps(),
 			policyRuleIdpDiscovery:        resourcePolicyRuleIdpDiscovery(),
 			policyRuleMfa:                 resourcePolicyMfaRule(),
 			policyRulePassword:            resourcePolicyPasswordRule(),
