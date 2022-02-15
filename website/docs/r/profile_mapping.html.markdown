@@ -58,6 +58,8 @@ The following arguments are supported:
   - `push_status` - (Optional) Whether to update target properties on user create & update or just on create.
 
 - `always_apply` (Optional) Whether apply the changes to all users with this profile after updating or creating the these mappings.
+ 
+~> **WARNING**: `always_apply` is available only when using api token in the provider config.
 
 ## Attributes Reference
 
