@@ -77,13 +77,13 @@ In addition to [generic `provider` arguments](https://www.terraform.io/docs/conf
 
 - `base_url` - (Optional) This is the domain of your Okta account, for example `dev-123456.oktapreview.com` would have a base url of `oktapreview.com`. It must be provided, but it can also be sourced from the `OKTA_BASE_URL` environment variable.
 
-- `api_token` - (Optional) This is the API token to interact with your Okta org (either `"api_token"` or `"client_id"`, `"scopes"` and `"private_key"` must be provided). It can also be sourced from the `OKTA_API_TOKEN` environment variable.
+- `api_token` - (Optional) This is the API token to interact with your Okta org.  It can also be sourced from the `OKTA_API_TOKEN` environment variable. `api_token` conflicts with `client_id`, `scopes` and `private_key`.
 
-- `client_id` - (Optional) This is the client ID for obtaining the API token. It can also be sourced from the `OKTA_API_CLIENT_ID` environment variable. 
+- `client_id` - (Optional) This is the client ID for obtaining the API token. It can also be sourced from the `OKTA_API_CLIENT_ID` environment variable. `client_id` conflicts with `api_token`.
 
-- `scopes` - (Optional) These are scopes for obtaining the API token in form of a comma separated list. It can also be sourced from the `OKTA_API_SCOPES` environment variable.
+- `scopes` - (Optional) These are scopes for obtaining the API token in form of a comma separated list. It can also be sourced from the `OKTA_API_SCOPES` environment variable. `scopes` conflicts with `api_token`.
 
-- `private_key` - (Optional) This is the private key for obtaining the API token (can be represented by a filepath, or the key itself). It can also be sourced from the `OKTA_API_PRIVATE_KEY` environment variable.
+- `private_key` - (Optional) This is the private key for obtaining the API token (can be represented by a filepath, or the key itself). It can also be sourced from the `OKTA_API_PRIVATE_KEY` environment variable. `private_key` conflicts with `api_token`.
 
 - `backoff` - (Optional) Whether to use exponential back off strategy for rate limits, the default is `true`.
 
