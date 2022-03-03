@@ -70,6 +70,8 @@ $ terraform plan
 
 ## Argument Reference
 
+Note: `api_token` is mutually exclusive of the set `client_id`, `private_key`, and `scopes`. `api_token` is utilized for Okta's [SSWS Authorization Scheme](https://developer.okta.com/docs/reference/core-okta-api/#authentication) and applies to org level operations. `client_id`, `private_key`, and `scopes` are for [OAuth 2.0 client](https://developer.okta.com/docs/reference/api/apps/#add-oauth-2-0-client-application) authentication for application operations.
+
 In addition to [generic `provider` arguments](https://www.terraform.io/docs/configuration/providers.html)
 (e.g. `alias` and `version`), the following arguments are supported in the Okta `provider` block:
 
