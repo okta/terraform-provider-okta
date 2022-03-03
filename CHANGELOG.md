@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.22.0 (March 03, 2022)
+
+ENHANCEMENTS:
+
+* Added new `okta_policy_profile_enrollment_apps` resource [#973](https://github.com/okta/terraform-provider-okta/pull/973). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added "DYNAMIC" option to the `issuer_mode` in the `okta_auth_server` resource [#977](https://github.com/okta/terraform-provider-okta/pull/977). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Clean up provider argument conflicts documentation [#987](https://github.com/okta/terraform-provider-okta/pull/987). Thanks, [@monde](https://github.com/monde)!
+* Update all App docs to match provider schema [#995](https://github.com/okta/terraform-provider-okta/pull/995). Thanks, [@virgofx](https://github.com/virgofx)!
+
+BUGS:
+
+* Correct ipd related error messages [#985](https://github.com/okta/terraform-provider-okta/pull/985). Thanks, [@monde](https://github.com/monde)!
+
 ## 3.21.0 (February 10, 2022)
 
 ENHANCEMENTS:
