@@ -289,14 +289,13 @@ func setAdminRoles(ctx context.Context, d *schema.ResourceData, m interface{}) e
 	})
 }
 
-// set all groups currently attached to the user
-func setAllGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
-	groups, response, err := c.User.ListUserGroups(ctx, d.Id())
+func getGroupsForUser(ctx context.Context, id string, c *okta.Client) ([]string, error) {
+	groups, response, err := c.User.ListUserGroups(ctx, id)
 	if err != nil {
-		return fmt.Errorf("failed to list user groups: %v", err)
+		return nil, fmt.Errorf("failed to list user groups: %v", err)
 	}
 
-	groupIDs := make([]interface{}, 0)
+	groupIDs := make([]string, 0)
 
 	for {
 		for _, group := range groups {
@@ -310,12 +309,22 @@ func setAllGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) e
 		response, err = response.Next(ctx, &groups)
 
 		if err != nil {
-			return fmt.Errorf("failed to list user groups: %v", err)
+			return nil, fmt.Errorf("failed to list user groups: %v", err)
 		}
 	}
 
+	return groupIDs, nil
+}
+
+// set all groups currently attached to the user
+func setAllGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
+	groupIDs, err := getGroupsForUser(ctx, d.Id(), c)
+	if err != nil {
+		return err
+	}
+	gids := convertStringSliceToInterfaceSlice(groupIDs)
 	return setNonPrimitives(d, map[string]interface{}{
-		"group_memberships": schema.NewSet(schema.HashString, groupIDs),
+		"group_memberships": schema.NewSet(schema.HashString, gids),
 	})
 }
 
