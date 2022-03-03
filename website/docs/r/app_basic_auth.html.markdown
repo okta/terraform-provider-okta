@@ -24,41 +24,43 @@ resource "okta_app_basic_auth" "example" {
 
 The following arguments are supported:
 
-- `label` - (Required) The Application's display name.
-
-- `url` - (Required) The URL of the sign-in page for this app.
-
-- `auth_url` - (Required) The URL of the authenticating site for this app.
-
-- `users` - (Optional) Users associated with the application.
-  - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
-
-- `groups` - (Optional) Groups associated with the application.
-  - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
-
-- `status` - (Optional) Status of application. (`"ACTIVE"` or `"INACTIVE"`).
-
-- `hide_web` - (Optional) Do not display application icon to users.
-
-- `hide_ios` - (Optional) Do not display application icon on mobile app.
-
-- `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
-
 - `accessibility_error_redirect_url` - (Optional) Custom error page URL.
 
 - `accessibility_login_redirect_url` - (Optional) Custom login page for this application.
 
 - `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
 
-- `logo` - (Optional) Local path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
-
 - `admin_note` - (Optional) Application notes for admins.
+
+- `app_links_json` - (Optional) Displays specific appLinks for the app. The value for each application link should be boolean.
+
+- `auth_url` - (Required) The URL of the authenticating site for this app.
+
+- `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
 - `enduser_note` - (Optional) Application notes for end users.
 
-- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it's also can be provided during import). Default is `false`. 
+- `groups` - (Optional) Groups associated with the application.
+  - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
+
+- `hide_ios` - (Optional) Do not display application icon on mobile app.
+
+- `hide_web` - (Optional) Do not display application icon to users.
+
+- `label` - (Required) The Application's display name.
+
+- `logo` - (Optional) Local path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 
 - `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it's also can be provided during import). Default is `false`.
+
+- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it's also can be provided during import). Default is `false`.
+
+- `status` - (Optional) Status of application. (`"ACTIVE"` or `"INACTIVE"`).
+
+- `url` - (Required) The URL of the sign-in page for this app.
+
+- `users` - (Optional) Users associated with the application.
+  - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
 ## Attributes Reference
 

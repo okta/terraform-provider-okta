@@ -153,77 +153,21 @@ JSON
 
 The following arguments are supported:
 
-- `label` - (Required) label of application.
-
-- `preconfigured_app` - (Optional) name of application from the Okta Integration Network, if not included a custom app will be created.
-
-- `status` - (Optional) status of application.
-
-- `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
-
-- `hide_ios` - (Optional) Do not display application icon on mobile app.
-
-- `hide_web` - (Optional) Do not display application icon to users
-
-- `implicit_assignment` - (Optional) *Early Access Property*. Enables [Federation Broker Mode]( https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm). When this mode is enabled, `users` and `groups` arguments are ignored.
-
-- `default_relay_state` - (Optional) Identifies a specific application resource in an IDP initiated SSO scenario.
-
-- `sso_url` - (Optional) Single Sign-on Url.
-
-- `recipient` - (Optional) The location where the app may present the SAML assertion.
-
-- `destination` - (Optional) Identifies the location where the SAML response is intended to be sent inside the SAML assertion.
-
-- `audience` - (Optional) Audience restriction.
-
-- `idp_issuer` - (Optional) SAML issuer ID.
-
-- `sp_issuer` - (Optional) SAML service provider issuer.
-
-- `subject_name_id_template` - (Optional) Template for app user's username when a user is assigned to the app.
-
-- `subject_name_id_format` - (Optional) Identifies the SAML processing rules.
-
-- `response_signed` - (Optional) Determines whether the SAML auth response message is digitally signed.
-
-- `request_compressed` - (Optional) Denotes whether the request is compressed or not.
-
-- `assertion_signed` - (Optional) Determines whether the SAML assertion is digitally signed.
-
-- `signature_algorithm` - (Optional) Signature algorithm used ot digitally sign the assertion and response.
-
-- `digest_algorithm` - (Optional) Determines the digest algorithm used to digitally sign the SAML assertion and response.
-
-- `honor_force_authn` - (Optional) Prompt user to re-authenticate if SP asks for it.
-
-- `authn_context_class_ref` - (Optional) Identifies the SAML authentication context class for the assertion’s authentication statement.
-
 - `accessibility_error_redirect_url` - (Optional) Custom error page URL.
 
 - `accessibility_login_redirect_url` - (Optional) Custom login page for this application.
 
 - `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
 
-- `features` - (Optional) features enabled. Notice: you can't currently configure provisioning features via the API.
+- `acs_endpoints` - An array of ACS endpoints. You can configure a maximum of 100 endpoints.
 
-- `user_name_template` - (Optional) Username template. Default: `"${source.login}"`
+- `admin_note` - (Optional) Application notes for admins.
 
-- `user_name_template_suffix` - (Optional) Username template suffix.
-
-- `user_name_template_type` - (Optional) Username template type. Default: `"BUILT_IN"`.
-
-- `user_name_template_push_status` - (Optional) Push username on update. Valid values: `"PUSH"` and `"DONT_PUSH"`.
+- `app_links_json` - (Optional) Displays specific appLinks for the app. The value for each application link should be boolean.
 
 - `app_settings_json` - (Optional) Application settings in JSON format.
 
-- `acs_endpoints` - An array of ACS endpoints. You can configure a maximum of 100 endpoints.
-
-- `users` - (Optional) Users associated with the application.
-  - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
-
-- `groups` - (Optional) Groups associated with the application.
-  - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
+- `assertion_signed` - (Optional) Determines whether the SAML assertion is digitally signed.
 
 - `attribute_statements` - (Optional) List of SAML Attribute statements.
   - `name` - (Required) The name of the attribute statement.
@@ -233,32 +177,88 @@ The following arguments are supported:
   - `type` - (Optional) The type of attribute statement value. Valid values are: `"EXPRESSION"` or `"GROUP"`. Default is `"EXPRESSION"`.
   - `values` - (Optional) Array of values to use.
 
+- `audience` - (Optional) Audience restriction.
+
+- `authn_context_class_ref` - (Optional) Identifies the SAML authentication context class for the assertion’s authentication statement.
+
+- `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
+
+- `default_relay_state` - (Optional) Identifies a specific application resource in an IDP initiated SSO scenario.
+
+- `destination` - (Optional) Identifies the location where the SAML response is intended to be sent inside the SAML assertion.
+
+- `digest_algorithm` - (Optional) Determines the digest algorithm used to digitally sign the SAML assertion and response.
+
+- `enduser_note` - (Optional) Application notes for end users.
+
+- `features` - (Optional) features enabled. Notice: you can't currently configure provisioning features via the API.
+
+- `groups` - (Optional) Groups associated with the application.
+  - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
+
+- `hide_ios` - (Optional) Do not display application icon on mobile app.
+
+- `hide_web` - (Optional) Do not display application icon to users
+
+- `honor_force_authn` - (Optional) Prompt user to re-authenticate if SP asks for it.
+
+- `idp_issuer` - (Optional) SAML issuer ID.
+
+- `implicit_assignment` - (Optional) *Early Access Property*. Enables [Federation Broker Mode]( https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm). When this mode is enabled, `users` and `groups` arguments are ignored.
+
 - `inline_hook_id` - (Optional) Saml Inline Hook associated with the application.
+
+- `key_name` - (Optional) Certificate name. This modulates the rotation of keys. New name == new key. Required to be set with `key_years_valid`.
 
 - `key_years_valid` - (Optional) Number of years the certificate is valid (2 - 10 years).
 
-- `key_name` - (Optional) Certificate name. This modulates the rotation of keys. New name == new key. Required to be set with `key_years_valid`.
+- `label` - (Required) label of application.
+
+- `logo` - (Optional) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+
+- `preconfigured_app` - (Optional) name of application from the Okta Integration Network, if not included a custom app will be created.
+
+- `recipient` - (Optional) The location where the app may present the SAML assertion.
+
+- `request_compressed` - (Optional) Denotes whether the request is compressed or not.
+
+- `response_signed` - (Optional) Determines whether the SAML auth response message is digitally signed.
+
+- `saml_version` - (Optional) SAML version for the app's sign-on mode. Valid values are: `"2.0"` or `"1.1"`. Default is `"2.0"`.
+
+- `signature_algorithm` - (Optional) Signature algorithm used ot digitally sign the assertion and response.
+
+- `single_logout_certificate` - (Optional) x509 encoded certificate that the Service Provider uses to sign Single Logout requests.
+  Note: should be provided without `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`, see [official documentation](https://developer.okta.com/docs/reference/api/apps/#service-provider-certificate).
 
 - `single_logout_issuer` - (Optional) The issuer of the Service Provider that generates the Single Logout request.
 
 - `single_logout_url` - (Optional) The location where the logout response is sent.
 
-- `single_logout_certificate` - (Optional) x509 encoded certificate that the Service Provider uses to sign Single Logout requests.
-  Note: should be provided without `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`, see [official documentation](https://developer.okta.com/docs/reference/api/apps/#service-provider-certificate).
-
-- `logo` - (Optional) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
-
-- `admin_note` - (Optional) Application notes for admins.
-
-- `enduser_note` - (Optional) Application notes for end users.
-
-- `saml_version` - (Optional) SAML version for the app's sign-on mode. Valid values are: `"2.0"` or `"1.1"`. Default is `"2.0"`.
-
-- `app_links_json` - (Optional) Displays specific appLinks for the app. The value for the link should be boolean.
+- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it's also can be provided during import). Default is `false`.
 
 - `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it's also can be provided during import). Default is `false`.
 
-- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it's also can be provided during import). Default is `false`.
+- `sp_issuer` - (Optional) SAML service provider issuer.
+
+- `sso_url` - (Optional) Single Sign-on Url.
+
+- `status` - (Optional) status of application.
+
+- `subject_name_id_format` - (Optional) Identifies the SAML processing rules.
+
+- `subject_name_id_template` - (Optional) Template for app user's username when a user is assigned to the app.
+
+- `user_name_template` - (Optional) Username template. Default: `"${source.login}"`
+
+- `user_name_template_push_status` - (Optional) Push username on update. Valid values: `"PUSH"` and `"DONT_PUSH"`.
+
+- `user_name_template_suffix` - (Optional) Username template suffix.
+
+- `user_name_template_type` - (Optional) Username template type. Default: `"BUILT_IN"`.
+
+- `users` - (Optional) Users associated with the application.
+  - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
 ## Attributes Reference
 
