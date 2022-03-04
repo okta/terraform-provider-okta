@@ -12,6 +12,9 @@ Use this data source to retrieve a list of users from Okta.
 
 ## Example Usage
 
+
+### Lookup Users by Search Criteria
+
 ```hcl
 data "okta_users" "example" {
   search {
@@ -22,12 +25,30 @@ data "okta_users" "example" {
 }
 ```
 
+### Lookup Users by Group Membership
+```hcl
+resource "okta_group" "example" {
+  name = "example-group"
+}
+
+data "okta_users" "example" {
+  group_id = okta_group.example.id
+  
+  # optionally include each user's group membership
+  include_groups = true
+}
+```
+
 ## Arguments Reference
 
-- `search` - (Required) Map of search criteria to find users. It supports the following properties.
+- `search` - (Optional) Map of search criteria to find users. It supports the following properties. 
   - `name` - (Required) Name of property to search against.
   - `comparison` - (Required) Comparison to use.
   - `value` - (Required) Value to compare with.
+
+- `group_id` - (Optional) Id of group used to find users based on membership.
+
+- `include_groups` - (Optional) Fetch each user's group memberships. Defaults to `false`, in which case the `group_memberships` user attribute will be empty.
 
 ## Attributes Reference
 
