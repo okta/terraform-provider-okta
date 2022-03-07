@@ -16,9 +16,10 @@ func dataSourceUsers() *schema.Resource {
 		ReadContext: dataSourceUsersRead,
 		Schema: map[string]*schema.Schema{
 			"group_id": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Find users based on group membership using the id of the group.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				Description:   "Find users based on group membership using the id of the group.",
+				ConflictsWith: []string{"search"},
 			},
 			"include_groups": {
 				Type:        schema.TypeBool,
@@ -27,9 +28,10 @@ func dataSourceUsers() *schema.Resource {
 				Description: "Fetch group memberships for each user",
 			},
 			"search": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Description: "Filter to find a user, each filter will be concatenated with an AND clause. Please be aware profile properties must match what is in Okta, which is likely camel case",
+				Type:          schema.TypeSet,
+				Optional:      true,
+				Description:   "Filter to find a user, each filter will be concatenated with an AND clause. Please be aware profile properties must match what is in Okta, which is likely camel case",
+				ConflictsWith: []string{"group_id"},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
