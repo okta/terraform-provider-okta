@@ -30,6 +30,13 @@ data "okta_user" "example" {
     value = "Doe"
   }
 }
+
+# Search for a single user based on a raw search expression string
+data "okta_user" "example" {
+  search {
+    expression  = "profile.firstName eq \"John\""
+  }
+}
 ```
 
 ## Arguments Reference
@@ -40,6 +47,7 @@ data "okta_user" "example" {
   - `name` - (Required) Name of property to search against.
   - `comparison` - (Optional) Comparison to use.
   - `value` - (Required) Value to compare with.
+  - `expression` - (Optional) A raw search expression string.
 
 - `skip_groups` - (Optional) Additional API call to collect user's groups will not be made.
 
