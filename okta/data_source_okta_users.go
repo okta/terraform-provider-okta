@@ -36,6 +36,11 @@ func dataSourceUsers() *schema.Resource {
 							Default:          "eq",
 							ValidateDiagFunc: elemInSlice([]string{"eq", "lt", "gt", "sw"}),
 						},
+						"expression": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "A raw search expression string. This requires the search feature be on. Please see Okta documentation on their filter API for users. https://developer.okta.com/docs/api/resources/users#list-users-with-search",
+						},
 					},
 				},
 			},
