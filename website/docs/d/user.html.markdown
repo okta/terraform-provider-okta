@@ -41,6 +41,10 @@ data "okta_user" "example" {
   - `comparison` - (Optional) Comparison to use.
   - `value` - (Required) Value to compare with.
 
+- `skip_groups` - (Optional) Additional API call to collect user's groups will not be made.
+
+- `skip_roles` - (Optional) Additional API call to collect user's roles will not be made.
+
 ## Attributes Reference
 
 - `admin_roles` - Administrator roles assigned to user.
