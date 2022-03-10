@@ -30,6 +30,13 @@ data "okta_user" "example" {
     value = "Doe"
   }
 }
+
+# Search for a single user based on a raw search expression string
+data "okta_user" "example" {
+  search {
+    expression  = "profile.firstName eq \"John\""
+  }
+}
 ```
 
 ## Arguments Reference
