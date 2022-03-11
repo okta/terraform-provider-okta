@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.22.1 (March 11, 2022)
+
+ENHANCEMENTS:
+
+* Added `skip_groups` and `skip_roles` parameters to data source `okta_user` to suppress additional API calls when that data is not required. [#1011](https://github.com/okta/terraform-provider-okta/pull/1011). Thanks, [@monde](https://github.com/monde)!
+* Update email temaplate names list on resource `okta_template_email`. [#1012](https://github.com/okta/terraform-provider-okta/pull/1012). Thanks, [@monde](https://github.com/monde)!
+
 ## 3.22.0 (March 03, 2022)
 
 ENHANCEMENTS:
