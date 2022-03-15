@@ -29,13 +29,17 @@ The following arguments are supported:
 - `label` - (Required) The name given to the new Role.
 
 - `description` - (Required) A human-readable description of the new Role.
-
+ 
 - `permissions` - (Optional) The permissions that the new Role grants. At least one
-  permission must be specified when creating custom role. Valid values:`"okta.users.manage"`, 
- `"okta.users.create"`,`"okta.users.read"`,`"okta.users.credentials.manage"`,`"okta.users.userprofile.manage"`, 
- `"okta.users.lifecycle.manage"`,`"okta.users.groupMembership.manage"`,`"okta.users.appAssignment.manage"`,
- `"okta.groups.manage"`,`"okta.groups.create"`,`"okta.groups.members.manage"`,`"okta.groups.read"`,
- `"okta.groups.appAssignment.manage"`,`"okta.apps.read"`,`"okta.apps.manage"`,`"okta.apps.assignment.manage"`. 
+  permission must be specified when creating custom role. Valid values: `"okta.users.manage"`, 
+  `"okta.users.create"`, `"okta.users.read"`, `"okta.users.credentials.manage"`, `"okta.users.credentials.resetFactors"`, 
+  `"okta.users.credentials.resetPassword"`, `"okta.users.credentials.expirePassword"`, `"okta.users.userprofile.manage"`, 
+  `"okta.users.lifecycle.manage"`, `"okta.users.lifecycle.activate"`, `"okta.users.lifecycle.deactivate"`, 
+  `"okta.users.lifecycle.suspend"`, `"okta.users.lifecycle.unsuspend"`, `"okta.users.lifecycle.delete"`, 
+  `"okta.users.lifecycle.unlock"`, `"okta.users.lifecycle.clearSessions"`, `"okta.users.groupMembership.manage"`, 
+  `"okta.users.appAssignment.manage"`, `"okta.groups.manage"`, `"okta.groups.create"`,  `"okta.groups.members.manage"`, 
+  `"okta.groups.read"`, `"okta.groups.appAssignment.manage"`, `"okta.apps.read"`, `"okta.apps.manage"`, 
+  `"okta.apps.assignment.manage"`, `"okta.profilesource.import.run"`,
 
 ## Attributes Reference
 
