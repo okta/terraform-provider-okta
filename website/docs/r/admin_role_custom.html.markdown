@@ -29,7 +29,7 @@ The following arguments are supported:
 - `label` - (Required) The name given to the new Role.
 
 - `description` - (Required) A human-readable description of the new Role.
- 
+
 - `permissions` - (Optional) The permissions that the new Role grants. At least one
   permission must be specified when creating custom role. Valid values: `"okta.users.manage"`, 
   `"okta.users.create"`, `"okta.users.read"`, `"okta.users.credentials.manage"`, `"okta.users.credentials.resetFactors"`, 
