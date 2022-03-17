@@ -28,18 +28,17 @@ func dataSourceUser() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"name": {
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 							Description: "Property name to search for. This requires the search feature be on. Please see Okta documentation on their filter API for users. https://developer.okta.com/docs/api/resources/users#list-users-with-search",
 						},
 						"value": {
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 						},
 						"comparison": {
-							Type:             schema.TypeString,
-							Optional:         true,
-							Default:          "eq",
-							ValidateDiagFunc: elemInSlice([]string{"eq", "lt", "gt", "sw"}),
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "eq",
 						},
 						"expression": {
 							Type:        schema.TypeString,
@@ -60,6 +59,13 @@ func dataSourceUser() *schema.Resource {
 				Optional:    true,
 				Default:     false,
 				Description: "Do not populate user roles information (prevents additional API call)",
+			},
+			"compound_search_operator": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Default:          "and",
+				ValidateDiagFunc: elemInSlice([]string{"and", "or"}),
+				Description:      "Search operator uses when joining mulitple search clauses",
 			},
 		}),
 	}
@@ -133,5 +139,11 @@ func getSearchCriteria(d *schema.ResourceData) string {
 		}
 		filterList[i] = fmt.Sprintf(`%s %s "%s"`, fmap["name"], fmap["comparison"], fmap["value"])
 	}
-	return strings.Join(filterList, " and ")
+
+	operator := " and "
+	cso := d.Get("compound_search_operator")
+	if cso != nil && cso.(string) != "" {
+		operator = fmt.Sprintf(" %s ", cso.(string))
+	}
+	return strings.Join(filterList, operator)
 }
