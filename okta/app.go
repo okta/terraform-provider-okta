@@ -435,7 +435,7 @@ func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, a
 	if !ok {
 		return nil
 	}
-	_, err := getSupplementFromMetadata(m).UploadAppLogo(ctx, appID, l.(string))
+	_, err := getOktaClientFromMetadata(m).Application.UploadApplicationLogo(ctx, appID, l.(string))
 	return err
 }
 
