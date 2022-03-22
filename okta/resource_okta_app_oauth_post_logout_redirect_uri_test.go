@@ -52,8 +52,8 @@ func TestAccAppOAuthApplication_postLogoutRedirectCrud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					createPostLogoutRedirectURIExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "id", "https://www.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "uri", "https://www.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "id", "http://google.com"),
+					resource.TestCheckResourceAttr(resourceName, "uri", "http://google.com"),
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
 				),
 			},

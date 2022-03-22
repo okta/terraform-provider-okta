@@ -14,7 +14,7 @@ resource "okta_app_oauth" "test" {
 
   // Since Okta forces us to create it with a redirect URI we have to ignore future changes, they will be detected as config drift.
   lifecycle {
-    ignore_changes = [redirect_uris]
+    ignore_changes = [post_logout_redirect_uris]
   }
 }
 
