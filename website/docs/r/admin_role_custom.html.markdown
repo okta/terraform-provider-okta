@@ -31,11 +31,33 @@ The following arguments are supported:
 - `description` - (Required) A human-readable description of the new Role.
 
 - `permissions` - (Optional) The permissions that the new Role grants. At least one
-  permission must be specified when creating custom role. Valid values:`"okta.users.manage"`, 
- `"okta.users.create"`,`"okta.users.read"`,`"okta.users.credentials.manage"`,`"okta.users.userprofile.manage"`, 
- `"okta.users.lifecycle.manage"`,`"okta.users.groupMembership.manage"`,`"okta.users.appAssignment.manage"`,
- `"okta.groups.manage"`,`"okta.groups.create"`,`"okta.groups.members.manage"`,`"okta.groups.read"`,
- `"okta.groups.appAssignment.manage"`,`"okta.apps.read"`,`"okta.apps.manage"`,`"okta.apps.assignment.manage"`. 
+  permission must be specified when creating custom role. Valid values: `"okta.apps.assignment.manage"`,
+`"okta.apps.manage"`,
+`"okta.apps.read"`,
+`"okta.groups.appAssignment.manage"`,
+`"okta.groups.create"`,
+`"okta.groups.manage"`,
+`"okta.groups.members.manage"`,
+`"okta.groups.read"`,
+`"okta.profilesource.import.run"`,
+`"okta.users.appAssignment.manage"`,
+`"okta.users.create"`,
+`"okta.users.credentials.expirePassword"`,
+`"okta.users.credentials.manage"`,
+`"okta.users.credentials.resetFactors"`,
+`"okta.users.credentials.resetPassword"`,
+`"okta.users.groupMembership.manage"`,
+`"okta.users.lifecycle.activate"`,
+`"okta.users.lifecycle.clearSessions"`,
+`"okta.users.lifecycle.deactivate"`,
+`"okta.users.lifecycle.delete"`,
+`"okta.users.lifecycle.manage"`,
+`"okta.users.lifecycle.suspend"`,
+`"okta.users.lifecycle.unlock"`,
+`"okta.users.lifecycle.unsuspend"`,
+`"okta.users.manage"`,
+`"okta.users.read"`,
+`"okta.users.userprofile.manage"`.
 
 ## Attributes Reference
 
