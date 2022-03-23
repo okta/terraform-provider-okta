@@ -233,7 +233,7 @@ func listGroupTargetsIDs(ctx context.Context, m interface{}, groupID, roleID str
 		return nil, fmt.Errorf("unable to get admin assignment %s for group %s: %v", roleID, groupID, err)
 	}
 	for _, target := range targets {
-		resIDs = append(resIDs, target.Id)
+		resIDs = append(resIDs, strings.ToLower(target.Id))
 	}
 	for resp.HasNextPage() {
 		var additionalTargets []*okta.Group
@@ -242,7 +242,7 @@ func listGroupTargetsIDs(ctx context.Context, m interface{}, groupID, roleID str
 			return nil, err
 		}
 		for _, target := range additionalTargets {
-			resIDs = append(resIDs, target.Id)
+			resIDs = append(resIDs, strings.ToLower(target.Id))
 		}
 	}
 	return resIDs, nil
