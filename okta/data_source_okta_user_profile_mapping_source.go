@@ -30,12 +30,38 @@ func dataSourceUserProfileMappingSource() *schema.Resource {
 }
 
 func dataSourceUserProfileMappingSourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	mapping, err := getSupplementFromMetadata(m).FindProfileMappingSource(ctx, "user", "user", &query.Params{Limit: defaultPaginationLimit})
+	mappings, resp, err := getOktaClientFromMetadata(m).ProfileMapping.ListProfileMappings(ctx, &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
-		return diag.Errorf("failed to find profile mapping source: %v", err)
+		return diag.Errorf("failed to list mappings: %v", err)
 	}
-	d.SetId(mapping.ID)
-	_ = d.Set("type", mapping.Type)
-	_ = d.Set("name", mapping.Name)
+	name := "user"
+	typ := "user"
+	for {
+		for _, mapping := range mappings {
+			target := mapping.Target
+			source := mapping.Source
+			if target.Name == name && target.Type == typ {
+				d.SetId(target.Id)
+				_ = d.Set("type", target.Type)
+				_ = d.Set("name", target.Name)
+				return nil
+			} else if source.Name == name && source.Type == typ {
+				d.SetId(source.Id)
+				_ = d.Set("type", source.Type)
+				_ = d.Set("name", source.Name)
+				return nil
+			}
+		}
+		if resp.HasNextPage() {
+			resp, err = resp.Next(ctx, &mappings)
+			if err != nil {
+				return diag.Errorf("failed to find profile mapping source: %v", err)
+			}
+			continue
+		} else {
+			break
+		}
+	}
+
 	return nil
 }
