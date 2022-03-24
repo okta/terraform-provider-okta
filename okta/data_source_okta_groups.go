@@ -52,7 +52,7 @@ func dataSourceGroups() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"profile": {
+						"custom_profile_attributes": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -90,11 +90,11 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, m interfa
 			return diag.Errorf("failed to read custom profile attributes from group: %s", groups[i].Profile.Name)
 		}
 		arr[i] = map[string]interface{}{
-			"id":          groups[i].Id,
-			"name":        groups[i].Profile.Name,
-			"type":        groups[i].Type,
-			"description": groups[i].Profile.Description,
-			"profile":     string(customProfile),
+			"id":                        groups[i].Id,
+			"name":                      groups[i].Profile.Name,
+			"type":                      groups[i].Type,
+			"description":               groups[i].Profile.Description,
+			"custom_profile_attributes": string(customProfile),
 		}
 	}
 	_ = d.Set("groups", arr)
