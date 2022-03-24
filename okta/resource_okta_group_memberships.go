@@ -68,7 +68,6 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
 
 	logger(m).Info("reading group membership", "id", d.Id())
 	userIDList, err := listGroupUserIDs(ctx, m, d.Id())
@@ -77,7 +76,7 @@ func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, m
 	}
 	_ = d.Set("group_id", d.Id())
 	_ = d.Set("users", convertStringSliceToSet(userIDList))
-	return diags
+	return nil
 }
 
 func resourceGroupMembershipsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
