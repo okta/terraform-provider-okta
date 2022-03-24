@@ -33,5 +33,4 @@ data "okta_auth_server_policy" "example" {
 
 - `assigned_clients` - list of clients this policy is assigned to. `["ALL_CLIENTS"]` is a special value when policy is assigned to all clients.
 
-
-
+- `priority` - the priority of the Auth Server Policy.

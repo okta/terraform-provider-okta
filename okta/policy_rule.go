@@ -77,6 +77,24 @@ var (
 			Elem:          &schema.Schema{Type: schema.TypeString},
 		},
 	}
+
+	appResource = &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"type": {
+				Type:             schema.TypeString,
+				Required:         true,
+				ValidateDiagFunc: elemInSlice([]string{"APP", "APP_TYPE"}),
+			},
+			"name": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"id": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+		},
+	}
 )
 
 func buildBaseRuleSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
@@ -103,6 +121,13 @@ func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 	rule, _, err := getSupplementFromMetadata(m).CreatePolicyRule(ctx, policyID, template)
 	if err != nil {
 		return fmt.Errorf("failed to create policy rule: %v", err)
+	}
+	status := d.Get("status").(string)
+	if status == statusInactive {
+		_, err = getOktaClientFromMetadata(m).Policy.DeactivatePolicyRule(ctx, policyID, rule.Id)
+		if err != nil {
+			return fmt.Errorf("failed to deactivate policy rule on creation: %v", err)
+		}
 	}
 	// We want to put this under Terraform's control even if priority is invalid.
 	d.SetId(rule.Id)
@@ -199,22 +224,6 @@ func syncRuleFromUpstream(d *schema.ResourceData, rule *sdk.PolicyRule) error {
 	})
 }
 
-func flattenAppsInclude(appObj []*okta.AppAndInstanceConditionEvaluatorAppOrInstance) *schema.Set {
-	var flattened []interface{}
-	for _, v := range appObj {
-		// skip default values
-		if v.Name == "okta" && v.Type == "APP_TYPE" {
-			continue
-		}
-		flattened = append(flattened, map[string]interface{}{
-			"id":   v.Id,
-			"name": v.Name,
-			"type": v.Type,
-		})
-	}
-	return schema.NewSet(schema.HashResource(appResource), flattened)
-}
-
 func updateRule(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.PolicyRule) error {
 	logger(m).Info("updating policy rule", "name", d.Get("name").(string))
 	if err := ensureNotDefaultRule(d); err != nil {
@@ -295,7 +304,5 @@ func deleteRule(ctx context.Context, d *schema.ResourceData, m interface{}, chec
 			return err
 		}
 	}
-	// remove the policy rule resource from terraform
-	d.SetId("")
 	return nil
 }

@@ -25,27 +25,11 @@ func resourceFactor() *schema.Resource {
 		},
 		Schema: map[string]*schema.Schema{
 			"provider_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ValidateDiagFunc: elemInSlice([]string{
-					sdk.DuoFactor,
-					sdk.FidoU2fFactor,
-					sdk.FidoWebauthnFactor,
-					sdk.GoogleOtpFactor,
-					sdk.OktaCallFactor,
-					sdk.OktaOtpFactor,
-					sdk.OktaPasswordFactor,
-					sdk.OktaPushFactor,
-					sdk.OktaQuestionFactor,
-					sdk.OktaSmsFactor,
-					sdk.OktaEmailFactor,
-					sdk.RsaTokenFactor,
-					sdk.SymantecVipFactor,
-					sdk.YubikeyTokenFactor,
-					sdk.HotpFactor,
-				}),
-				Description: "Factor provider ID",
-				ForceNew:    true,
+				Type:             schema.TypeString,
+				Required:         true,
+				ValidateDiagFunc: elemInSlice(sdk.FactorProviders),
+				Description:      "Factor provider ID",
+				ForceNew:         true,
 			},
 			"active": {
 				Type:        schema.TypeBool,
@@ -74,7 +58,7 @@ func resourceFactorPut(ctx context.Context, d *schema.ResourceData, m interface{
 }
 
 func resourceFactorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	factor, resp, err := getSupplementFromMetadata(m).GetOrgFactor(ctx, d.Get("provider_id").(string))
+	factor, resp, err := getSupplementFromMetadata(m).GetOrgFactor(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to find factor: %v", err)
 	}

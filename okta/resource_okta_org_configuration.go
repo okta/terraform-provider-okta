@@ -209,9 +209,9 @@ func updateCommunicationSettings(ctx context.Context, d *schema.ResourceData, m 
 	o, ok := d.GetOk("opt_out_communication_emails")
 	if ok && *comm.OptOutEmailUsers != o.(bool) {
 		if o.(bool) {
-			comm, _, err = getOktaClientFromMetadata(m).OrgSetting.OptOutUsersFromOktaCommunicationEmails(ctx)
+			_, _, err = getOktaClientFromMetadata(m).OrgSetting.OptOutUsersFromOktaCommunicationEmails(ctx)
 		} else {
-			comm, _, err = getOktaClientFromMetadata(m).OrgSetting.OptInUsersToOktaCommunicationEmails(ctx)
+			_, _, err = getOktaClientFromMetadata(m).OrgSetting.OptInUsersToOktaCommunicationEmails(ctx)
 		}
 		if err != nil {
 			return fmt.Errorf("failed to update org communication settings: %v", err)

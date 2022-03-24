@@ -130,6 +130,18 @@ func resourcePolicySignOnRule() *schema.Resource {
 					},
 				},
 			},
+			"identity_provider": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: elemInSlice([]string{"ANY", "OKTA", "SPECIFIC_IDP"}),
+				Description:      "Apply rule based on the IdP used: ANY, OKTA or SPECIFIC_IDP.",
+			},
+			"identity_provider_ids": { // identity_provider must be SPECIFIC_IDP
+				Type:        schema.TypeList,
+				Optional:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "When identity_provider is SPECIFIC_IDP then this is the list of IdP IDs to apply the rule on",
+			},
 		}),
 	}
 }
@@ -182,7 +194,14 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 				return diag.Errorf("failed to set sign-on policy rule behaviors: %v", err)
 			}
 		}
+		if rule.Conditions.IdentityProvider != nil {
+			_ = d.Set("identity_provider", rule.Conditions.IdentityProvider.Provider)
+			if rule.Conditions.IdentityProvider.Provider == "SPECIFIC_IDP" {
+				_ = d.Set("identity_provider_ids", convertStringSliceToInterfaceSlice(rule.Conditions.IdentityProvider.IdpIds))
+			}
+		}
 	}
+
 	if rule.Actions.SignOn.Access == "CHALLENGE" {
 		chain := rule.Actions.SignOn.Challenge.Chain
 		arr := make([]map[string]interface{}, len(chain))
@@ -250,6 +269,15 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 		Network: buildPolicyNetworkCondition(d),
 		People:  getUsers(d),
 	}
+
+	provider, ok := d.GetOk("identity_provider")
+	if ok {
+		template.Conditions.IdentityProvider = &okta.IdentityProviderPolicyRuleCondition{
+			Provider: provider.(string),
+			IdpIds:   convertInterfaceToStringArr(d.Get("identity_provider_ids")),
+		}
+	}
+
 	bi, ok := d.GetOk("behaviors")
 	if ok {
 		template.Conditions.Risk = &okta.RiskPolicyRuleCondition{
@@ -326,6 +354,10 @@ func validateSignOnPolicyRule(d *schema.ResourceData) error {
 		if ok && d.(bool) {
 			return errors.New("'mfa_remember_device' can only be set when mfa_prompt='DEVICE'")
 		}
+	}
+	ip, ok := d.GetOk("identity_provider")
+	if ok && ip == "SPECIFIC_IDP" && len(convertInterfaceToStringArrNullable(d.Get("identity_provider_ids"))) < 1 {
+		return errors.New("'identity_provider_ids' should have at least one element when 'identity_provider' is 'SPECIFIC_IDP'")
 	}
 	return nil
 }

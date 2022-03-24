@@ -50,7 +50,7 @@ The following arguments are supported:
 
 - `grant_type_whitelist` - (Required) Accepted grant type values, `"authorization_code"`, `"implicit"`, `"password"`, `"client_credentials"`, 
   `"urn:ietf:params:oauth:grant-type:saml2-bearer"` (*Early Access Property*), `"urn:ietf:params:oauth:grant-type:token-exchange"` (*Early Access Property*),
-  `"urn:ietf:params:oauth:grant-type:device_code"` (*Early Access Property*). For `"implicit"` value either `user_whitelist` or `group_whitelist` should be set.
+  `"urn:ietf:params:oauth:grant-type:device_code"` (*Early Access Property*), `"interaction_code"` (*OIE only*). For `"implicit"` value either `user_whitelist` or `group_whitelist` should be set.
 
 - `scope_whitelist` - (Required) Scopes allowed for this policy rule. They can be whitelisted by name or all can be whitelisted with `"*"`.
 

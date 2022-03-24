@@ -141,6 +141,9 @@ The following arguments are supported:
 
 - `password` - (Optional) User password.
 
+- `expire_password_on_create` - (Optional) If set to `true`, the user will have to change the password at the next login. This property will be used
+  when user is being created and works only when `password` field is set. Default is `false`.
+
 - `old_password` - (Optional) Old user password. **IMPORTANT**: Should be ONLY set in case the password was changed 
 outside the provider. After successful password change this field should be removed and `password` field should be used 
 for further changes.

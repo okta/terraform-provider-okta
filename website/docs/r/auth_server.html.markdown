@@ -38,7 +38,7 @@ The following arguments are supported:
 
 - `name` - (Required) The name of the authorization server.
 
-- `issuer_mode` - (Optional) Allows you to use a custom issuer URL. It can be set to `"CUSTOM_URL"` or `"ORG_URL"`
+- `issuer_mode` - (Optional) Allows you to use a custom issuer URL. It can be set to `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`.
 
 ## Attributes Reference
 

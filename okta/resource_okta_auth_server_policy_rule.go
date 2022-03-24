@@ -50,7 +50,7 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 				Required: true,
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, clientCredentials, saml2Bearer, tokenExchange, deviceCode}),
+					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, clientCredentials, saml2Bearer, tokenExchange, deviceCode, interactionCode}),
 				},
 				Description: "Accepted grant type values: authorization_code, implicit, password, client_credentials",
 			},

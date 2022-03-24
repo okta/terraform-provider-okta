@@ -23,6 +23,7 @@ type (
 
 const (
 	authorizationCode = "authorization_code"
+	interactionCode   = "interaction_code"
 	implicit          = "implicit"
 	password          = "password"
 	refreshToken      = "refresh_token"
@@ -49,6 +50,7 @@ var appGrantTypeMap = map[string]*applicationMap{
 			saml2Bearer,
 			tokenExchange,
 			deviceCode,
+			interactionCode,
 		},
 	},
 	"native": {
@@ -64,6 +66,7 @@ var appGrantTypeMap = map[string]*applicationMap{
 			saml2Bearer,
 			tokenExchange,
 			deviceCode,
+			interactionCode,
 		},
 	},
 	"browser": {
@@ -74,6 +77,7 @@ var appGrantTypeMap = map[string]*applicationMap{
 			saml2Bearer,
 			tokenExchange,
 			deviceCode,
+			interactionCode,
 		},
 	},
 	"service": {
@@ -83,6 +87,7 @@ var appGrantTypeMap = map[string]*applicationMap{
 			saml2Bearer,
 			tokenExchange,
 			deviceCode,
+			interactionCode,
 		},
 		RequiredGrantTypes: []string{
 			clientCredentials,
@@ -219,7 +224,7 @@ func resourceAppOAuth() *schema.Resource {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
-				Description: "List of URIs for redirection after logout",
+				Description: "List of URIs for redirection after logout. Note: see okta_app_oauth_post_logout_redirect_uri for appending to this list in a decentralized way.",
 			},
 			"response_types": {
 				Type: schema.TypeSet,
@@ -234,7 +239,7 @@ func resourceAppOAuth() *schema.Resource {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, refreshToken, clientCredentials, saml2Bearer, tokenExchange, deviceCode}),
+					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, refreshToken, clientCredentials, saml2Bearer, tokenExchange, deviceCode, interactionCode}),
 				},
 				Optional:    true,
 				Description: "List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.",
@@ -261,7 +266,7 @@ func resourceAppOAuth() *schema.Resource {
 			"issuer_mode": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"CUSTOM_URL", "ORG_URL"}),
+				ValidateDiagFunc: elemInSlice([]string{"CUSTOM_URL", "ORG_URL", "DYNAMIC"}),
 				Default:          "ORG_URL",
 				Description:      "*Early Access Property*. Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.",
 			},

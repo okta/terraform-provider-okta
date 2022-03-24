@@ -282,6 +282,13 @@ func resourceUser() *schema.Resource {
 				Sensitive:   true,
 				Description: "User Password",
 			},
+			"expire_password_on_create": {
+				Type:         schema.TypeBool,
+				Optional:     true,
+				Default:      false,
+				Description:  "If set to `true`, the user will have to change the password at the next login. This property will be used when user is being created and works only when `password` field is set",
+				RequiredWith: []string{"password"},
+			},
 			"password_inline_hook": {
 				Type:             schema.TypeString,
 				Optional:         true,
@@ -434,6 +441,15 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 			return diag.Errorf("failed to update user status: %v", err)
 		}
 	}
+
+	expire, ok := d.GetOk("expire_password_on_create")
+	if ok && expire.(bool) {
+		_, _, err = getOktaClientFromMetadata(m).User.ExpirePassword(ctx, user.Id)
+		if err != nil {
+			return diag.Errorf("failed to expire user's password: %v", err)
+		}
+	}
+
 	return resourceUserRead(ctx, d, m)
 }
 

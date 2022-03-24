@@ -238,9 +238,7 @@ func getOAuthApiScopeUpdateLists(d *schema.ResourceData, from []*okta.OAuth2Scop
 	currentScopes := make([]string, 0)
 
 	scopes := convertInterfaceToStringSetNullable(d.Get("scopes"))
-	for _, scope := range scopes {
-		desiredScopes = append(desiredScopes, scope)
-	}
+	desiredScopes = append(desiredScopes, scopes...)
 
 	// extract scope list form []okta.OAuth2ScopeConsentGrant
 	for _, currentScope := range from {

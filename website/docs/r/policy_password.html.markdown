@@ -38,7 +38,7 @@ The following arguments are supported:
 
 - `groups_included` - (Optional) List of Group IDs to Include.
 
-- `auth_provider` - (Optional) Authentication Provider: `"OKTA"` or `"ACTIVE_DIRECTORY"`. Default is `"OKTA"`.
+- `auth_provider` - (Optional) Authentication Provider: `"OKTA"`, `"ACTIVE_DIRECTORY"` or `"LDAP"`. Default is `"OKTA"`.
 
 - `password_min_length` - (Optional) Minimum password length. Default is 8.
 

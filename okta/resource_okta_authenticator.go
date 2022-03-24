@@ -21,14 +21,11 @@ func resourceAuthenticator() *schema.Resource {
 		},
 		Schema: map[string]*schema.Schema{
 			"key": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: "A human-readable string that identifies the Authenticator",
-				ValidateDiagFunc: elemInSlice([]string{
-					"okta_email", "google_otp", "okta_verify", "onprem_mfa", "okta_password",
-					"phone_number", "rsa_token", "security_question", "duo",
-				}),
+				Type:             schema.TypeString,
+				Required:         true,
+				ForceNew:         true,
+				Description:      "A human-readable string that identifies the Authenticator",
+				ValidateDiagFunc: elemInSlice(sdk.AuthenticatorProviders),
 			},
 			"name": {
 				Type:        schema.TypeString,
@@ -131,6 +128,11 @@ func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m in
 	_ = d.Set("type", authenticator.Type)
 	if authenticator.Settings != nil {
 		b, _ := json.Marshal(authenticator.Settings)
+
+		dataMap := map[string]interface{}{}
+		_ = json.Unmarshal([]byte(string(b)), &dataMap)
+		b, _ = json.Marshal(dataMap)
+
 		_ = d.Set("settings", string(b))
 	}
 	if authenticator.Provider != nil {

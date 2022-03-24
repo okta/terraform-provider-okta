@@ -30,6 +30,11 @@ func dataSourceAuthServerPolicy() *schema.Resource {
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
+			"priority": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "Priority of the auth server policy",
+			},
 		},
 	}
 }
@@ -41,12 +46,14 @@ func dataSourceAuthServerPolicyRead(ctx context.Context, d *schema.ResourceData,
 	}
 	name := d.Get("name").(string)
 	for _, policy := range policies {
-		if policy.Name == name {
-			d.SetId(policy.Id)
-			_ = d.Set("description", policy.Description)
-			_ = d.Set("assigned_clients", convertStringSliceToSet(policy.Conditions.Clients.Include))
-			return nil
+		if policy.Name != name {
+			continue
 		}
+		d.SetId(policy.Id)
+		_ = d.Set("description", policy.Description)
+		_ = d.Set("assigned_clients", convertStringSliceToSet(policy.Conditions.Clients.Include))
+		_ = d.Set("priority", policy.Priority)
+		return nil
 	}
 	return diag.Errorf("auth server policy with name '%s' does not exist", name)
 }

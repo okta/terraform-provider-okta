@@ -85,7 +85,7 @@ func (m *APISupplement) GetEmailSender(ctx context.Context, id string) (*EmailSe
 }
 
 func (m *APISupplement) DisableVerifiedEmailSender(ctx context.Context, body DisableActiveEmailSender) (*okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/org/email/sender/disable")
+	url := `/api/v1/org/email/sender/disable`
 	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, err
@@ -94,7 +94,7 @@ func (m *APISupplement) DisableVerifiedEmailSender(ctx context.Context, body Dis
 }
 
 func (m *APISupplement) DisableUnverifiedEmailSender(ctx context.Context, body DisableInactiveEmailSender) (*okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/org/email/sender/disable")
+	url := `/api/v1/org/email/sender/disable`
 	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, err

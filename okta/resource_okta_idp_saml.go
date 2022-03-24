@@ -84,6 +84,10 @@ func resourceIdpSaml() *schema.Resource {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
+			"user_type_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		}),
 	}
 }
@@ -135,6 +139,13 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	}
 	if idp.IssuerMode != "" {
 		_ = d.Set("issuer_mode", idp.IssuerMode)
+	}
+	mapping, _, err := getSupplementFromMetadata(m).GetProfileMappingBySourceID(ctx, idp.Id, "")
+	if err != nil {
+		return diag.Errorf("failed to get SAML identity provider profile mapping: %v", err)
+	}
+	if mapping != nil {
+		_ = d.Set("user_type_id", mapping.Target.ID)
 	}
 	setMap := map[string]interface{}{
 		"subject_format": convertStringSliceToSet(idp.Policy.Subject.Format),

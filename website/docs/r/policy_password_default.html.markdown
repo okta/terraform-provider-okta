@@ -1,8 +1,8 @@
 ---
-layout: 'okta' 
-page_title: 'Okta: okta_policy_password_default' 
-sidebar_current: 'docs-okta-resource-policy-password-default' 
-description: |- 
+layout: 'okta'
+page_title: 'Okta: okta_policy_password_default'
+sidebar_current: 'docs-okta-resource-policy-password-default'
+description: |-
   Configures default password policy.
 ---
 

@@ -1,11 +1,10 @@
 SWEEP?=global
 TEST?=$$(go list ./... |grep -v 'vendor')
-GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=okta
-GOLINT=golangci-lint
 GOFMT:=gofumpt
 TFPROVIDERLINT=tfproviderlint
+STATICCHECK=staticcheck
 
 # Expression to match against tests
 # go test -run <filter>
@@ -32,31 +31,25 @@ sweep:
 	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
 	go test $(TEST) -v -sweep=$(SWEEP) $(SWEEPARGS)
 
-test: fmtcheck
+test:
 	go test -i $(TEST) || exit 1
 	echo $(TEST) | \
 		xargs -t -n4 go test $(TESTARGS) $(TEST_FILTER) -timeout=30s -parallel=4
-    test: fmtcheck
 
-testacc: fmtcheck
+testacc:
 	TF_ACC=1 go test $(TEST) -v $(TESTARGS) $(TEST_FILTER) -timeout 120m
 
 vet:
-	@echo "go vet ."
-	@go vet $$(go list ./... | grep -v vendor/) ; if [ $$? -eq 1 ]; then \
-		echo ""; \
-		echo "Vet found suspicious constructs. Please check the reported constructs"; \
-		echo "and fix them if necessary before submitting the code for review."; \
-		exit 1; \
-	fi
+	@echo "==> Checking source code against go vet and staticcheck"
+	@go vet ./...
+	@staticcheck ./...
 
-.PHONY: fmt
 fmt: tools # Format the code
-	@echo "formatting the code..."
-	@$(GOFMT) -l -w $$(find . -name '*.go' |grep -v vendor)
+	@echo "formatting the code with $(GOFMT)..."
+	@$(GOFMT) -l -w .
 
-fmtcheck: dep
-	@sh -c "'$(CURDIR)/scripts/gofmtcheck.sh'"
+fmtcheck:
+	@gofumpt -d -l .
 
 errcheck:
 	@sh -c "'$(CURDIR)/scripts/errcheck.sh'"
@@ -69,9 +62,8 @@ test-compile:
 	fi
 	go test -c $(TEST) $(TESTARGS)
 
-lint: tools
+lint:
 	@echo "==> Checking source code against linters..."
-	@GOGC=30 $(GOLINT) run ./$(PKG_NAME)
 	@$(TFPROVIDERLINT) \
 		-c 1 \
 		-AT001 \
@@ -96,9 +88,14 @@ lint: tools
 		./$(PKG_NAME)
 
 tools:
-	@which $(GOLINT) || curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.40.1
-	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint
-	@which $(GOFMT) || GO111MODULE=on go get mvdan.cc/gofumpt@v0.1.1
+	@which $(GOFMT) || go install mvdan.cc/gofumpt@v0.2.1
+	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.27.1
+	@which $(STATICCHECK) || go install honnef.co/go/tools/cmd/staticcheck@2021.1.2
+
+tools-update:
+	@go install mvdan.cc/gofumpt@v0.2.1
+	@go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.27.1
+	@go install honnef.co/go/tools/cmd/staticcheck@2021.1.2
 
 website:
 ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))

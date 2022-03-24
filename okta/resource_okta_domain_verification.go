@@ -62,6 +62,7 @@ func resourceDomainVerificationDelete(ctx context.Context, d *schema.ResourceDat
 func isDomainValidated(validationStatus string) bool {
 	switch validationStatus {
 	case "VERIFIED":
+		return true
 	case "COMPLETED":
 		return true
 	}

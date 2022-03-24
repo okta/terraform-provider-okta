@@ -1,8 +1,8 @@
 ---
-layout: 'okta' 
-page_title: 'Okta: okta_app_shared_credentials' 
-sidebar_current: 'docs-okta-resource-app-shared-credentials' 
-description: |- 
+layout: 'okta'
+page_title: 'Okta: okta_app_shared_credentials'
+sidebar_current: 'docs-okta-resource-app-shared-credentials'
+description: |-
     Creates a SWA shared credentials app.
 ---
 
@@ -45,15 +45,24 @@ The following arguments are supported:
 
 - `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
 
+- `admin_note` - (Optional) Application notes for admins.
+
+- `app_links_json` - (Optional) Displays specific appLinks for the app. The value for each application link should be boolean.
+
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
 - `button_field` - (Optional) CSS selector for the Sign-In button in the sign-in form.
 
 - `checkbox` - (Optional) CSS selector for the checkbox.
 
-- `hide_web` - (Optional) Do not display application icon to users.
+- `enduser_note` - (Optional) Application notes for end users.
+
+- `groups` - (Optional) Groups associated with the application. See `okta_app_group_assignment` for a more flexible approach.
+  - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
 
 - `hide_ios` - (Optional) Do not display application icon on mobile app.
+
+- `hide_web` - (Optional) Do not display application icon to users.
 
 - `label` - (Required) The Application's display name.
 
@@ -61,11 +70,17 @@ The following arguments are supported:
 
 - `password_field` - (Optional) CSS selector for the Password field in the sign-in form.
 
-- `redirect_url` - (Optional) Redirect URL.
+- `preconfigured_app` - (Optional) name of application from the Okta Integration Network, if not included a custom app will be created.
+
+- `redirect_url` - (Optional) Redirect URL. If going to the login page URL redirects to another page, then enter that URL here.
 
 - `shared_password` - (Optional) Shared password, required for certain schemes.
 
 - `shared_username` - (Optional) Shared username, required for certain schemes.
+
+- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it's also can be provided during import). Default is `false`.
+
+- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it's also can be provided during import). Default is `false`.
 
 - `status` - (Optional) The status of the application, by default, it is `"ACTIVE"`.
 
@@ -75,17 +90,16 @@ The following arguments are supported:
 
 - `user_name_template` - (Optional) Username template. Default: `"${source.login}"`
 
+- `user_name_template_push_status` - (Optional) Push username on update. Valid values: `"PUSH"` and `"DONT_PUSH"`.
+
 - `user_name_template_suffix` - (Optional) Username template suffix.
 
 - `user_name_template_type` - (Optional) Username template type. Default: `"BUILT_IN"`.
 
-- `user_name_template_push_status` - (Optional) Push username on update. Valid values: `"PUSH"` and `"DONT_PUSH"`.
-
 - `username_field` - (Optional) CSS selector for the username field.
 
-- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it's also can be provided during import). Default is `false`.
-
-- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it's also can be provided during import). Default is `false`.
+- `users` - (Optional) The users assigned to the application. See `okta_app_user` for a more flexible approach.
+  - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
 ## Attributes Reference
 

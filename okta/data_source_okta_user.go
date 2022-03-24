@@ -44,6 +44,18 @@ func dataSourceUser() *schema.Resource {
 					},
 				},
 			},
+			"skip_groups": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Do not populate user groups information (prevents additional API call)",
+			},
+			"skip_roles": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Do not populate user roles information (prevents additional API call)",
+			},
 		}),
 	}
 }
@@ -78,14 +90,29 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 	if err != nil {
 		return diag.Errorf("failed to set user's properties: %v", err)
 	}
-	err = setAdminRoles(ctx, d, m)
-	if err != nil {
-		return diag.Errorf("failed to set user's admin roles: %v", err)
+
+	skip := false
+	if val := d.Get("skip_roles"); val != nil {
+		skip = val.(bool)
 	}
-	err = setAllGroups(ctx, d, client)
-	if err != nil {
-		return diag.Errorf("failed to set user's groups: %v", err)
+	if !skip {
+		err = setAdminRoles(ctx, d, m)
+		if err != nil {
+			return diag.Errorf("failed to set user's admin roles: %v", err)
+		}
 	}
+
+	skip = false
+	if val := d.Get("skip_groups"); val != nil {
+		skip = val.(bool)
+	}
+	if !skip {
+		err = setAllGroups(ctx, d, client)
+		if err != nil {
+			return diag.Errorf("failed to set user's groups: %v", err)
+		}
+	}
+
 	return nil
 }
 

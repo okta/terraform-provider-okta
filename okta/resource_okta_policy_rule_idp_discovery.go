@@ -264,24 +264,6 @@ var (
 			},
 		},
 	}
-
-	appResource = &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"type": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: elemInSlice([]string{"APP", "APP_TYPE"}),
-			},
-			"name": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-		},
-	}
 )
 
 func buildPlatformInclude(d *schema.ResourceData) *sdk.IdpDiscoveryRulePlatform {

@@ -101,6 +101,8 @@ The following arguments are supported:
 
 - `audience` - The audience restriction for the IdP.
 
+- `user_type_id` - User type ID. Can be used as `target_id` in the `okta_profile_mapping` resource.
+
 ## Import
 
 An SAML IdP can be imported via the Okta ID.

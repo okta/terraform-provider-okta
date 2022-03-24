@@ -2,11 +2,9 @@ package okta
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceUserAdminRoles() *schema.Resource {
@@ -118,19 +116,4 @@ func resourceUserAdminRolesDelete(ctx context.Context, d *schema.ResourceData, m
 		}
 	}
 	return nil
-}
-
-// need to remove from all current admin roles and reassign based on terraform configs when a change is detected
-func updateAdminRolesOnUser(ctx context.Context, userID string, rolesToAssign []string, disableNotifications bool, c *okta.Client) error {
-	roles, _, err := listUserOnlyRoles(ctx, c, userID)
-	if err != nil {
-		return fmt.Errorf("failed to list user's roles: %v", err)
-	}
-	for _, role := range roles {
-		resp, err := c.User.RemoveRoleFromUser(ctx, userID, role.Id)
-		if err := suppressErrorOn404(resp, err); err != nil {
-			return fmt.Errorf("failed to remove user's role: %v", err)
-		}
-	}
-	return assignAdminRolesToUser(ctx, userID, rolesToAssign, disableNotifications, c)
 }

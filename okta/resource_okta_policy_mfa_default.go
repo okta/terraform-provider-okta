@@ -24,7 +24,7 @@ func resourcePolicyMfaDefault() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-		Schema: buildDefaultPolicySchema(buildFactorProviders()),
+		Schema: buildDefaultMfaPolicySchema(buildFactorSchemaProviders()),
 	}
 }
 
@@ -52,21 +52,9 @@ func resourcePolicyMfaDefaultRead(ctx context.Context, d *schema.ResourceData, m
 	if policy == nil {
 		return nil
 	}
-	syncFactor(d, sdk.DuoFactor, policy.Settings.Factors.Duo)
-	syncFactor(d, sdk.FidoU2fFactor, policy.Settings.Factors.FidoU2f)
-	syncFactor(d, sdk.FidoWebauthnFactor, policy.Settings.Factors.FidoWebauthn)
-	syncFactor(d, sdk.GoogleOtpFactor, policy.Settings.Factors.GoogleOtp)
-	syncFactor(d, sdk.OktaCallFactor, policy.Settings.Factors.OktaCall)
-	syncFactor(d, sdk.OktaOtpFactor, policy.Settings.Factors.OktaOtp)
-	syncFactor(d, sdk.OktaPasswordFactor, policy.Settings.Factors.OktaPassword)
-	syncFactor(d, sdk.OktaPushFactor, policy.Settings.Factors.OktaPush)
-	syncFactor(d, sdk.OktaQuestionFactor, policy.Settings.Factors.OktaQuestion)
-	syncFactor(d, sdk.OktaSmsFactor, policy.Settings.Factors.OktaSms)
-	syncFactor(d, sdk.OktaEmailFactor, policy.Settings.Factors.OktaEmail)
-	syncFactor(d, sdk.RsaTokenFactor, policy.Settings.Factors.RsaToken)
-	syncFactor(d, sdk.SymantecVipFactor, policy.Settings.Factors.SymantecVip)
-	syncFactor(d, sdk.YubikeyTokenFactor, policy.Settings.Factors.YubikeyToken)
-	syncFactor(d, sdk.HotpFactor, policy.Settings.Factors.YubikeyToken)
+
+	syncSettings(d, policy.Settings)
+
 	return nil
 }
 
@@ -81,25 +69,7 @@ func buildDefaultMFAPolicy(d *schema.ResourceData) sdk.Policy {
 	policy.Status = d.Get("status").(string)
 	policy.Description = d.Get("description").(string)
 	policy.Priority = int64(d.Get("priority").(int))
-	policy.Settings = &sdk.PolicySettings{
-		Factors: &sdk.PolicyFactorsSettings{
-			Duo:          buildFactorProvider(d, sdk.DuoFactor),
-			FidoU2f:      buildFactorProvider(d, sdk.FidoU2fFactor),
-			FidoWebauthn: buildFactorProvider(d, sdk.FidoWebauthnFactor),
-			GoogleOtp:    buildFactorProvider(d, sdk.GoogleOtpFactor),
-			OktaCall:     buildFactorProvider(d, sdk.OktaCallFactor),
-			OktaOtp:      buildFactorProvider(d, sdk.OktaOtpFactor),
-			OktaPassword: buildFactorProvider(d, sdk.OktaPasswordFactor),
-			OktaPush:     buildFactorProvider(d, sdk.OktaPushFactor),
-			OktaQuestion: buildFactorProvider(d, sdk.OktaQuestionFactor),
-			OktaSms:      buildFactorProvider(d, sdk.OktaSmsFactor),
-			OktaEmail:    buildFactorProvider(d, sdk.OktaEmailFactor),
-			RsaToken:     buildFactorProvider(d, sdk.RsaTokenFactor),
-			SymantecVip:  buildFactorProvider(d, sdk.SymantecVipFactor),
-			YubikeyToken: buildFactorProvider(d, sdk.YubikeyTokenFactor),
-			Hotp:         buildFactorProvider(d, sdk.HotpFactor),
-		},
-	}
+	policy.Settings = buildSettings(d)
 	policy.Conditions = &okta.PolicyRuleConditions{
 		People: &okta.PolicyPeopleCondition{
 			Groups: &okta.GroupCondition{

@@ -1,5 +1,96 @@
 # Changelog
 
+## 3.22.1 (March 11, 2022)
+
+ENHANCEMENTS:
+
+* Added `skip_groups` and `skip_roles` parameters to data source `okta_user` to suppress additional API calls when that data is not required. [#1011](https://github.com/okta/terraform-provider-okta/pull/1011). Thanks, [@monde](https://github.com/monde)!
+* Update email temaplate names list on resource `okta_template_email`. [#1012](https://github.com/okta/terraform-provider-okta/pull/1012). Thanks, [@monde](https://github.com/monde)!
+
+## 3.22.0 (March 03, 2022)
+
+ENHANCEMENTS:
+
+* Added new `okta_policy_profile_enrollment_apps` resource [#973](https://github.com/okta/terraform-provider-okta/pull/973). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added "DYNAMIC" option to the `issuer_mode` in the `okta_auth_server` resource [#977](https://github.com/okta/terraform-provider-okta/pull/977). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Clean up provider argument conflicts documentation [#987](https://github.com/okta/terraform-provider-okta/pull/987). Thanks, [@monde](https://github.com/monde)!
+* Update all App docs to match provider schema [#995](https://github.com/okta/terraform-provider-okta/pull/995). Thanks, [@virgofx](https://github.com/virgofx)!
+
+BUGS:
+
+* Correct ipd related error messages [#985](https://github.com/okta/terraform-provider-okta/pull/985). Thanks, [@monde](https://github.com/monde)!
+
+## 3.21.0 (February 10, 2022)
+
+ENHANCEMENTS:
+
+* Added `okta_app_oauth_post_logout_redirect_uri` resource and improved request concurrency handling [#931](https://github.com/okta/terraform-provider-okta/pull/931). Thanks, [@jmaness](https://github.com/jmaness), and [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added `LDAP` option to the `auth_provider` field in the `okta_policy_password` resource [#961](https://github.com/okta/terraform-provider-okta/pull/961). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `priority` field to the `okta_auth_server_policy` data source [#965](https://github.com/okta/terraform-provider-okta/pull/965). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new option to the `issuer_mode` field in the `okta_app_oauth` resource [#966](https://github.com/okta/terraform-provider-okta/pull/966). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+PROJECT IMPROVEMENTS:
+
+* Updated docs regarding `okta_policy_rule_idp_discovery` [#964](https://github.com/okta/terraform-provider-okta/pull/964). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+BUGS:
+
+* Fixed import for the `okta_factor` resource [#960](https://github.com/okta/terraform-provider-okta/pull/960). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fixed import for the `okta_policy_rule_mfa` resource [#962](https://github.com/okta/terraform-provider-okta/pull/962). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Fixed import for the `okta_group_schema_property` resource [#963](https://github.com/okta/terraform-provider-okta/pull/963). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.20.8 (February 9, 2022)
+
+ENHANCEMENTS:
+
+* Removed default value for `identity_provider` field on the `okta_policy_rule_sign_on`[#955](https://github.com/okta/terraform-provider-okta/pull/955). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `expire_password_on_create` field to the `okta_user` resource [#956](https://github.com/okta/terraform-provider-okta/pull/956). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+* Added new `user_type_id` field to the `okta_idp_oidc` and `okta_idp_saml` resources [#957](https://github.com/okta/terraform-provider-okta/pull/957). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.20.7 (February 7, 2022)
+
+PROJECT IMPROVEMENTS:
+
+* Added a GH CI workflow to protect master branch [#948](https://github.com/okta/terraform-provider-okta/pull/948). Thanks, [@ymylei](https://github.com/ymylei)!
+
+BUGS:
+
+* Set a high limit on `client.Group.ListGroups` query data source Okta Groups [#946](https://github.com/okta/terraform-provider-okta/pull/929). Thanks, [@monde](https://github.com/monde)!
+
+## 3.20.6 (February 3, 2022)
+
+ENHANCEMENTS:
+
+* Added new `identity_provider` and `identity_provider_ids` fields to the `okta_policy_rule_signon` resource [#942](https://github.com/okta/terraform-provider-okta/pull/942). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+## 3.20.5 (February 2, 2022)
+
+BUGS:
+
+* Whiffed setting the user agent correctly, fixed for release.
+
+
+## 3.20.4 (February 2, 2022)
+
+ENHANCEMENTS:
+
+* Add OIE support for MFA policies [#919](https://github.com/okta/terraform-provider-okta/pull/919). Thanks, [@virgofx](https://github.com/virgofx)!
+
+BUGS:
+
+* SAML SLO Cert Fix [#923](https://github.com/okta/terraform-provider-okta/pull/923). Thanks, [@ymylei](https://github.com/ymylei)!
+* Nil bumper on `*sdk.ClientRateLimitMode` returned from rate limiting [#929](https://github.com/okta/terraform-provider-okta/pull/929). Thanks, [@monde](https://github.com/monde)!
+* API Mutex Fix For `apps/{id}` endpoint [#933](https://github.com/okta/terraform-provider-okta/pull/933). Thanks, [@ymylei](https://github.com/ymylei)!
+* Ensure okta_authenticator settings are ordered to prevent whitespace [#936](https://github.com/okta/terraform-provider-okta/pull/936). Thanks, [@virgofx](https://github.com/virgofx)!
+* Ensure VERIFIED domains return true [#937](https://github.com/okta/terraform-provider-okta/pull/937). Thanks, [@virgofx](https://github.com/virgofx)!
+* Fixed group search in the `okta_groups` data source [#938](https://github.com/okta/terraform-provider-okta/pull/938). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
+
+PROJECT IMPROVEMENTS:
+
+* Updated dev and build tools [#912](https://github.com/okta/terraform-provider-okta/pull/912). Thanks, [@ymylei](https://github.com/ymylei)!
+* Fixed TF logo [#918](https://github.com/okta/terraform-provider-okta/pull/918). Thanks, [@exitcode0](https://github.com/exitcode0)!
+* Update profile mapping docs with OAuth2 scopes [#928](https://github.com/okta/terraform-provider-okta/pull/928). Thanks, [@virgofx](https://github.com/virgofx)!
+
 ## 3.20.3 (January 14, 2022)
 
 ENHANCEMENTS:

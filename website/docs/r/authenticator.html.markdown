@@ -12,6 +12,8 @@ description: |-
 
 This resource allows you to configure different authenticators.
 
+-> **NOTE:** An authenticator can only be deleted if it's not in use by any policy.
+
 ## Example Usage
 
 ```hcl
@@ -30,7 +32,7 @@ resource "okta_authenticator" "test" {
 
 The following arguments are supported:
 
-- `key` (Required) A human-readable string that identifies the authenticator.
+- `key` (Required) A human-readable string that identifies the authenticator. Possible values inclue: `"duo"`, `"external_idp"`, `"google_otp"`, `"okta_email"`, `"okta_password"`, `"okta_verify"`, `"onprem_mfa"`, `"phone_number"`, `"rsa_token"`, `"security_question"`, `"webauthn"`, and `"yubikey_token"`.
 
 - `name` - (Required) Name of the authenticator.
 

@@ -492,15 +492,6 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 			return diag.Errorf("failed to upload logo for SAML application: %v", err)
 		}
 	}
-	isStatusChaged := d.HasChange("status")
-	if isStatusChaged {
-		s := d.Get("status").(string)
-		if s == "ACTIVE" {
-			// activate
-		} else {
-			// deactivate
-		}
-	}
 	return resourceAppSamlRead(ctx, d, m)
 }
 

@@ -8,7 +8,9 @@ description: |-
 
 # okta_role_subscription
 
-This resource allows you to configure subscriptions of a Role with a specific type.
+This resource allows you to configure subscriptions of a Role with a specific type. 
+Check [configure email notifications](https://help.okta.com/oie/en-us/Content/Topics/Security/custom-admin-role/administrator-email-settings.htm) 
+page regarding what notifications are available for specific admin roles.
 
 ## Example Usage
 
@@ -22,13 +24,24 @@ resource "okta_role_subscription" "test" {
 
 ## Argument Reference
 
-- `role_type` - (Required) Type of the role. Valid values: `"SUPER_ADMIN"`, `"ORG_ADMIN"`, `"APP_ADMIN"`, `"USER_ADMIN"`,
-  `"HELP_DESK_ADMIN"`, `"READ_ONLY_ADMIN"`, `"MOBILE_ADMIN"`, `"API_ADMIN"`, `"REPORT_ADMIN"`,
-  `"GROUP_MEMBERSHIP_ADMIN"`.
+- `role_type` - (Required) Type of the role. Valid values: `"SUPER_ADMIN"`, `"ORG_ADMIN"`, `"API_ACCESS_MANAGEMENT_ADMIN",
+  "APP_ADMIN"`, `"USER_ADMIN"`, `"MOBILE_ADMIN"`, `"READ_ONLY_ADMIN"`, `"HELP_DESK_ADMIN"`, `"API_ADMIN".
 
-- `notification_type` - (Required) Type of the notification. Valid values: `"CONNECTOR_AGENT"`, `"USER_LOCKED_OUT"`,
-  `"APP_IMPORT"`, `"LDAP_AGENT"`, `"AD_AGENT"`, `"OKTA_ANNOUNCEMENT"`, `"OKTA_ISSUE"`, `"OKTA_UPDATE"`, `"IWA_AGENT"`,
-  `"USER_DEPROVISION"`, `"REPORT_SUSPICIOUS_ACTIVITY"`, `"RATELIMIT_NOTIFICATION"`.
+- `notification_type` - (Required) Type of the notification. Valid values: 
+
+  - `"CONNECTOR_AGENT"` -  Disconnects and reconnects: On-prem provisioning, on-prem MFA agents, and RADIUS server agent.
+  - `"USER_LOCKED_OUT"` - User lockouts.
+  - `"APP_IMPORT"` - App user import status.
+  - `"LDAP_AGENT"` - Disconnects and reconnects: LDAP agent.
+  - `"AD_AGENT"` - Disconnects and reconnects: AD agent.
+  - `"OKTA_ANNOUNCEMENT"` - Okta release notes and announcements.
+  - `"OKTA_ISSUE"` - Trust incidents and updates.
+  - `"OKTA_UPDATE"` - Scheduled system updates.
+  - `"IWA_AGENT"` - Disconnects and reconnects: IWA agent.
+  - `"USER_DEPROVISION"` - User deprovisions.
+  - `"REPORT_SUSPICIOUS_ACTIVITY"` - User reporting of suspicious activity.
+  - `"RATELIMIT_NOTIFICATION"` - Rate limit warning and violation.
+  - `"AGENT_AUTO_UPDATE_NOTIFICATION"` - Agent auto-update notifications: AD Agent.
 
 - `status` - (Optional) Subscription status. Valid values: `"subscribed"`, `"unsubscribed"`.
 

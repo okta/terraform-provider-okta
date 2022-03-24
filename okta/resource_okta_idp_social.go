@@ -105,7 +105,7 @@ func resourceIdpSocialCreate(ctx context.Context, d *schema.ResourceData, m inte
 func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	idp, resp, err := getOktaClientFromMetadata(m).IdentityProvider.GetIdentityProvider(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
-		return diag.Errorf("failed to get SAML identity provider: %v", err)
+		return diag.Errorf("failed to get identity provider: %v", err)
 	}
 	if idp == nil {
 		d.SetId("")
