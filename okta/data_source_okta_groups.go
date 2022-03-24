@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"hash/crc32"
 
@@ -51,6 +52,10 @@ func dataSourceGroups() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"profile": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 					},
 				},
 			},
@@ -80,11 +85,16 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, m interfa
 	d.SetId(fmt.Sprintf("%d", crc32.ChecksumIEEE([]byte(qp.String()))))
 	arr := make([]map[string]interface{}, len(groups))
 	for i := range groups {
+		customProfile, err := json.Marshal(groups[i].Profile.GroupProfileMap)
+		if err != nil {
+			return diag.Errorf("failed to read custom profile attributes from group: %s", groups[i].Profile.Name)
+		}
 		arr[i] = map[string]interface{}{
 			"id":          groups[i].Id,
 			"name":        groups[i].Profile.Name,
 			"type":        groups[i].Type,
 			"description": groups[i].Profile.Description,
+			"profile":     string(customProfile),
 		}
 	}
 	_ = d.Set("groups", arr)
