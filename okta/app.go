@@ -93,9 +93,9 @@ var (
 			StateFunc: func(val interface{}) string {
 				logoPath := val.(string)
 				if logoPath == "" {
-					return logoPath
+					return ""
 				}
-				return fmt.Sprintf("%s (%s)", logoPath, computeFileHash(logoPath))
+				return computeFileHash(logoPath)
 			},
 		},
 		"logo_url": {
