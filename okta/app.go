@@ -90,13 +90,7 @@ var (
 			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 				return new == ""
 			},
-			StateFunc: func(val interface{}) string {
-				logoPath := val.(string)
-				if logoPath == "" {
-					return logoPath
-				}
-				return fmt.Sprintf("%s (%s)", logoPath, computeFileHash(logoPath))
-			},
+			StateFunc: logoStateFunc,
 		},
 		"logo_url": {
 			Type:        schema.TypeString,
@@ -730,4 +724,12 @@ func computeFileHash(filename string) string {
 	}
 	_ = file.Close()
 	return hex.EncodeToString(h.Sum(nil))
+}
+
+func logoStateFunc(val interface{}) string {
+	logoPath := val.(string)
+	if logoPath == "" {
+		return ""
+	}
+	return computeFileHash(logoPath)
 }
