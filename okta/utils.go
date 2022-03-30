@@ -2,6 +2,8 @@ package okta
 
 import (
 	"context"
+	"crypto/x509"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -340,4 +342,19 @@ func validatePriority(in, out int64) error {
 		return fmt.Errorf("provided priority was not valid, got: %d, API responded with: %d. See schema for attribute details", in, out)
 	}
 	return nil
+}
+
+// Normalizes to certificate object when it's passed as a the raw b64 block instead of a full pem file
+func rawCertNormalize(certString string) (*x509.Certificate, error) {
+	certString = strings.ReplaceAll(strings.TrimSpace(certString), " ", "")
+	certDecoded, err := base64.StdEncoding.DecodeString(certString)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode b64: %s", err)
+	}
+	cert, err := x509.ParseCertificate(certDecoded)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode pem certificate: %s", err)
+	}
+
+	return cert, nil
 }
