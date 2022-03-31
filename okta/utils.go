@@ -346,9 +346,9 @@ func validatePriority(in, out int64) error {
 }
 
 // Normalizes to certificate object when it's passed as a the raw b64 block instead of a full pem file
-func rawCertNormalize(certString string) (*x509.Certificate, error) {
-	certString = strings.ReplaceAll(strings.TrimSpace(certString), " ", "")
-	certDecoded, err := base64.StdEncoding.DecodeString(certString)
+func rawCertNormalize(certContents string) (*x509.Certificate, error) {
+	certContents = strings.ReplaceAll(strings.TrimSpace(certContents), " ", "")
+	certDecoded, err := base64.StdEncoding.DecodeString(certContents)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode b64: %s", err)
 	}
