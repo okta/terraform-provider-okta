@@ -127,7 +127,7 @@ The following arguments are supported:
 
 - `state` - (Optional) User profile property.
 
-- `status` - (Optional) User profile property.
+- `status` - (Optional) User profile property. Valid values are "ACTIVE", "DEPROVISIONED", "STAGED", "SUSPENDED"
 
 - `street_address` - (Optional) User profile property.
 
