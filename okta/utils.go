@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	"net/http"
@@ -357,4 +358,20 @@ func rawCertNormalize(certString string) (*x509.Certificate, error) {
 	}
 
 	return cert, nil
+}
+
+// Normalizes to certificate object when passed as PEM formatted certificate file
+func pemCertNormalize(certContents string) (*x509.Certificate, error) {
+	certContents = strings.TrimSpace(certContents)
+	cert, rest := pem.Decode([]byte(certContents))
+	if cert == nil {
+		return nil, fmt.Errorf("failed to decode PEM file, rest: %s", rest)
+	}
+
+	parsedCert, err := x509.ParseCertificate(cert.Bytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse certificate: %s", err)
+	}
+
+	return parsedCert, nil
 }
