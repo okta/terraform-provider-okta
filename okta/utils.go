@@ -375,3 +375,15 @@ func pemCertNormalize(certContents string) (*x509.Certificate, error) {
 
 	return parsedCert, nil
 }
+
+func certNormalize(certContents string) (*x509.Certificate, error) {
+	certDecoded, err := pemCertNormalize(certContents)
+	if err == nil {
+		return certDecoded, nil
+	}
+	certDecoded, err = rawCertNormalize(certContents)
+	if err != nil {
+		return nil, err
+	}
+	return certDecoded, nil
+}
