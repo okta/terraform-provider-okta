@@ -1,29 +1,48 @@
 package okta
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 // data source to retrieve information on a Default Policy
-
-func dataSourceDefaultPolicies() *schema.Resource {
+func dataSourceDefaultPolicy() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceDefaultPolicyRead,
-
+		ReadContext: dataSourceDefaultPolicyRead,
 		Schema: map[string]*schema.Schema{
 			"type": {
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{signOnPolicyType, passwordPolicyType, "MFA_ENROLL", "OAUTH_AUTHORIZATION_POLICY"}, false),
-				Description:  fmt.Sprintf("Policy type: %s, %s, MFA_ENROLL, or OAUTH_AUTHORIZATION_POLICY", signOnPolicyType, passwordPolicyType),
-				Required:     true,
+				Type: schema.TypeString,
+				ValidateDiagFunc: elemInSlice([]string{
+					sdk.SignOnPolicyType,
+					sdk.PasswordPolicyType,
+					sdk.MfaPolicyType,
+					sdk.IdpDiscoveryType,
+					sdk.AccessPolicyType,
+					sdk.ProfileEnrollmentPolicyType,
+				}),
+				Description: fmt.Sprintf("Policy type: %s, %s, %s, or %s", sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.IdpDiscoveryType),
+				Required:    true,
 			},
 		},
 	}
 }
 
-func dataSourceDefaultPolicyRead(d *schema.ResourceData, m interface{}) error {
-	return setPolicyByName(d, m, "Default Policy")
+func dataSourceDefaultPolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	policyType := d.Get("type").(string)
+	var name string
+	if policyType == sdk.IdpDiscoveryType {
+		name = "Idp Discovery Policy"
+	} else {
+		name = "Default Policy"
+	}
+	policy, err := findPolicy(ctx, m, name, policyType)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	d.SetId(policy.Id)
+	return nil
 }

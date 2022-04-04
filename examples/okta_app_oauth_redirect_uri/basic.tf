@@ -10,11 +10,11 @@ resource "okta_app_oauth" "test" {
 
   // Since Okta forces us to create it with a redirect URI we have to ignore future changes, they will be detected as config drift.
   lifecycle {
-    ignore_changes = ["redirect_uris"]
+    ignore_changes = [redirect_uris]
   }
 }
 
 resource "okta_app_oauth_redirect_uri" "test" {
-  app_id = "${okta_app_oauth.test.id}"
+  app_id = okta_app_oauth.test.id
   uri    = "http://google.com"
 }

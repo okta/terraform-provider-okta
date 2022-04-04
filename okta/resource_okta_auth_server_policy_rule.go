@@ -1,202 +1,294 @@
 package okta
 
 import (
-	"net/http"
+	"context"
+	"errors"
+	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-okta/sdk"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceAuthServerPolicyRule() *schema.Resource {
 	return &schema.Resource{
-		Create:   resourceAuthServerPolicyRuleCreate,
-		Exists:   resourceAuthServerPolicyRuleExists,
-		Read:     resourceAuthServerPolicyRuleRead,
-		Update:   resourceAuthServerPolicyRuleUpdate,
-		Delete:   resourceAuthServerPolicyRuleDelete,
-		Importer: createNestedResourceImporter([]string{"auth_server_id", "policy_id", "id"}),
-
-		Schema: addPeopleAssignments(map[string]*schema.Schema{
-			"type": &schema.Schema{
+		CreateContext: resourceAuthServerPolicyRuleCreate,
+		ReadContext:   resourceAuthServerPolicyRuleRead,
+		UpdateContext: resourceAuthServerPolicyRuleUpdate,
+		DeleteContext: resourceAuthServerPolicyRuleDelete,
+		Importer:      createNestedResourceImporter([]string{"auth_server_id", "policy_id", "id"}),
+		Schema: map[string]*schema.Schema{
+			"type": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "RESOURCE_ACCESS",
 				Description: "Auth server policy rule type, unlikely this will be anything other then the default",
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Auth server policy rule name",
 			},
-			"auth_server_id": &schema.Schema{
+			"auth_server_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Auth server ID",
 			},
-			"policy_id": &schema.Schema{
+			"policy_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Auth server policy ID",
 			},
 			"status": statusSchema,
-			"priority": &schema.Schema{
+			"priority": {
 				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "Priority of the auth server policy rule",
 			},
-			"grant_type_whitelist": &schema.Schema{
-				Type:        schema.TypeSet,
-				Required:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "Accepted grant type values: authorization_code, implicit, password.",
+			"grant_type_whitelist": {
+				Type:     schema.TypeSet,
+				Required: true,
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, clientCredentials, saml2Bearer, tokenExchange, deviceCode, interactionCode}),
+				},
+				Description: "Accepted grant type values: authorization_code, implicit, password, client_credentials",
 			},
-			"scope_whitelist": &schema.Schema{
+			"scope_whitelist": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			"access_token_lifetime_minutes": &schema.Schema{
+			"access_token_lifetime_minutes": {
 				Type:     schema.TypeInt,
 				Optional: true,
-				// 5 mins - 1 day
-				ValidateFunc: validation.IntBetween(5, 1440),
-				Default:      60,
+				// 5 minutes - 1 day
+				ValidateDiagFunc: intBetween(5, 1440),
+				Default:          60,
 			},
-			"refresh_token_lifetime_minutes": &schema.Schema{
+			"refresh_token_lifetime_minutes": {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
-			"refresh_token_window_minutes": &schema.Schema{
+			"refresh_token_window_minutes": {
 				Type:     schema.TypeInt,
 				Optional: true,
-				// 10 mins - 5 years
-				ValidateFunc: validation.IntBetween(10, 2628000),
-				Default:      10080,
+				// 5 minutes - 5 years
+				ValidateDiagFunc: intBetween(5, 2628000),
+				Default:          10080,
 			},
-			"inline_hook_id": &schema.Schema{
+			"inline_hook_id": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-		}),
-	}
-}
-
-func buildAuthServerPolicyRule(d *schema.ResourceData) *sdk.AuthorizationServerPolicyRule {
-	var hook *sdk.AuthServerInlineHook
-
-	inlineHook := d.Get("inline_hook_id").(string)
-
-	if inlineHook != "" {
-		hook = &sdk.AuthServerInlineHook{
-			Id: inlineHook,
-		}
-	}
-
-	return &sdk.AuthorizationServerPolicyRule{
-		Name:     d.Get("name").(string),
-		Status:   d.Get("status").(string),
-		Priority: d.Get("priority").(int),
-		Type:     d.Get("type").(string),
-		Actions: &sdk.PolicyRuleActions{
-			Token: &sdk.TokenActions{
-				AccessTokenLifetimeMinutes:  d.Get("access_token_lifetime_minutes").(int),
-				RefreshTokenLifetimeMinutes: d.Get("refresh_token_lifetime_minutes").(int),
-				RefreshTokenWindowMinutes:   d.Get("refresh_token_window_minutes").(int),
-				InlineHook:                  hook,
+			"user_whitelist": {
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
+			},
+			"user_blacklist": {
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
+			},
+			"group_whitelist": {
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
+			},
+			"group_blacklist": {
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
 			},
 		},
-		Conditions: &sdk.PolicyRuleConditions{
-			GrantTypes: &sdk.Whitelist{Include: convertInterfaceToStringSet(d.Get("grant_type_whitelist"))},
-			Scopes:     &sdk.Whitelist{Include: convertInterfaceToStringSet(d.Get("scope_whitelist"))},
-			People:     getPeopleConditions(d),
-		},
 	}
 }
 
-func resourceAuthServerPolicyRuleCreate(d *schema.ResourceData, m interface{}) error {
-	authServerPolicyRule := buildAuthServerPolicyRule(d)
-	c := getSupplementFromMetadata(m)
-	authServerId := d.Get("auth_server_id").(string)
-	policyId := d.Get("policy_id").(string)
-	responseAuthServerPolicyRule, _, err := c.CreateAuthorizationServerPolicyRule(authServerId, policyId, *authServerPolicyRule, nil)
+func resourceAuthServerPolicyRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateAuthServerPolicyRule(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
-
-	d.SetId(responseAuthServerPolicyRule.Id)
-
-	return resourceAuthServerPolicyRuleRead(d, m)
+	resp, _, err := getOktaClientFromMetadata(m).AuthorizationServer.CreateAuthorizationServerPolicyRule(
+		ctx, d.Get("auth_server_id").(string), d.Get("policy_id").(string), buildAuthServerPolicyRule(d))
+	if err != nil {
+		return diag.Errorf("failed to create auth server policy rule: %v", err)
+	}
+	d.SetId(resp.Id)
+	return resourceAuthServerPolicyRuleRead(ctx, d, m)
 }
 
-func resourceAuthServerPolicyRuleExists(d *schema.ResourceData, m interface{}) (bool, error) {
-	g, err := fetchAuthServerPolicyRule(d, m)
-
-	return err == nil && g != nil, err
-}
-
-func resourceAuthServerPolicyRuleRead(d *schema.ResourceData, m interface{}) error {
-	authServerPolicyRule, err := fetchAuthServerPolicyRule(d, m)
-
+func resourceAuthServerPolicyRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	authServerPolicyRule, resp, err := getOktaClientFromMetadata(m).AuthorizationServer.GetAuthorizationServerPolicyRule(
+		ctx, d.Get("auth_server_id").(string), d.Get("policy_id").(string), d.Id())
+	if err := suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get auth server policy rule: %v", err)
+	}
 	if authServerPolicyRule == nil {
 		d.SetId("")
 		return nil
 	}
-
-	if err != nil {
-		return err
-	}
-
-	d.Set("name", authServerPolicyRule.Name)
-	d.Set("status", authServerPolicyRule.Status)
-	d.Set("priority", authServerPolicyRule.Priority)
-	d.Set("type", authServerPolicyRule.Type)
+	_ = d.Set("name", authServerPolicyRule.Name)
+	_ = d.Set("status", authServerPolicyRule.Status)
+	_ = d.Set("priority", authServerPolicyRule.Priority)
+	_ = d.Set("type", authServerPolicyRule.Type)
+	_ = d.Set("access_token_lifetime_minutes", authServerPolicyRule.Actions.Token.AccessTokenLifetimeMinutes)
+	_ = d.Set("refresh_token_lifetime_minutes", authServerPolicyRule.Actions.Token.RefreshTokenLifetimeMinutes)
+	_ = d.Set("refresh_token_window_minutes", authServerPolicyRule.Actions.Token.RefreshTokenWindowMinutes)
 
 	if authServerPolicyRule.Actions.Token.InlineHook != nil {
-		d.Set("inline_hook_id", authServerPolicyRule.Actions.Token.InlineHook.Id)
+		_ = d.Set("inline_hook_id", authServerPolicyRule.Actions.Token.InlineHook.Id)
 	}
-
 	err = setNonPrimitives(d, map[string]interface{}{
 		"grant_type_whitelist": authServerPolicyRule.Conditions.GrantTypes.Include,
 		"scope_whitelist":      authServerPolicyRule.Conditions.Scopes.Include,
 	})
 	if err != nil {
-		return err
+		return diag.Errorf("failed to read auth server rule: %v", err)
 	}
-
-	return setPeopleAssignments(d, authServerPolicyRule.Conditions.People)
-}
-
-func resourceAuthServerPolicyRuleUpdate(d *schema.ResourceData, m interface{}) error {
-	authServerPolicyRule := buildAuthServerPolicyRule(d)
-	c := getSupplementFromMetadata(m)
-	authServerId := d.Get("auth_server_id").(string)
-	policyId := d.Get("policy_id").(string)
-	_, _, err := c.UpdateAuthorizationServerPolicyRule(authServerId, policyId, d.Id(), *authServerPolicyRule, nil)
+	err = setPeopleAssignments(d, authServerPolicyRule.Conditions.People)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to read auth server rule: %v", err)
 	}
-
-	return resourceAuthServerPolicyRuleRead(d, m)
+	return nil
 }
 
-func resourceAuthServerPolicyRuleDelete(d *schema.ResourceData, m interface{}) error {
-	authServerId := d.Get("auth_server_id").(string)
-	policyId := d.Get("policy_id").(string)
-	_, err := getSupplementFromMetadata(m).DeleteAuthorizationServerPolicyRule(authServerId, policyId, d.Id())
-
-	return err
+func resourceAuthServerPolicyRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := validateAuthServerPolicyRule(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	_, _, err = getOktaClientFromMetadata(m).AuthorizationServer.UpdateAuthorizationServerPolicyRule(
+		ctx,
+		d.Get("auth_server_id").(string),
+		d.Get("policy_id").(string), d.Id(),
+		buildAuthServerPolicyRule(d),
+	)
+	if err != nil {
+		return diag.Errorf("failed to update auth server policy rule: %v", err)
+	}
+	if d.HasChange("status") {
+		err := handleAuthServerPolicyRuleLifecycle(ctx, d, m)
+		if err != nil {
+			return err
+		}
+	}
+	return resourceAuthServerPolicyRuleRead(ctx, d, m)
 }
 
-func fetchAuthServerPolicyRule(d *schema.ResourceData, m interface{}) (*sdk.AuthorizationServerPolicyRule, error) {
-	c := getSupplementFromMetadata(m)
-	authServerId := d.Get("auth_server_id").(string)
-	policyId := d.Get("policy_id").(string)
-	auth, resp, err := c.GetAuthorizationServerPolicyRule(authServerId, policyId, d.Id(), sdk.AuthorizationServerPolicyRule{})
-
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, nil
+func handleAuthServerPolicyRuleLifecycle(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var err error
+	oldStatus, newStatus := d.GetChange("status")
+	if oldStatus == newStatus {
+		return nil
 	}
+	if newStatus == statusActive {
+		_, err = getOktaClientFromMetadata(m).AuthorizationServer.ActivateAuthorizationServerPolicyRule(ctx, d.Get("auth_server_id").(string),
+			d.Get("policy_id").(string), d.Id())
+	} else {
+		_, err = getOktaClientFromMetadata(m).AuthorizationServer.DeactivateAuthorizationServerPolicyRule(ctx, d.Get("auth_server_id").(string),
+			d.Get("policy_id").(string), d.Id())
+	}
+	if err != nil {
+		return diag.Errorf("failed to change authorization server policy status: %v", err)
+	}
+	return nil
+}
 
-	return auth, err
+func resourceAuthServerPolicyRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	_, err := getOktaClientFromMetadata(m).AuthorizationServer.DeleteAuthorizationServerPolicyRule(
+		ctx,
+		d.Get("auth_server_id").(string),
+		d.Get("policy_id").(string),
+		d.Id(),
+	)
+	if err != nil {
+		return diag.Errorf("failed to delete auth server policy rule: %v", err)
+	}
+	return nil
+}
+
+func buildAuthServerPolicyRule(d *schema.ResourceData) okta.AuthorizationServerPolicyRule {
+	var hook *okta.TokenAuthorizationServerPolicyRuleActionInlineHook
+	inlineHook := d.Get("inline_hook_id").(string)
+	if inlineHook != "" {
+		hook = &okta.TokenAuthorizationServerPolicyRuleActionInlineHook{
+			Id: inlineHook,
+		}
+	}
+	return okta.AuthorizationServerPolicyRule{
+		Name:     d.Get("name").(string),
+		Status:   d.Get("status").(string),
+		Priority: int64(d.Get("priority").(int)),
+		Type:     d.Get("type").(string),
+		Actions: &okta.AuthorizationServerPolicyRuleActions{
+			Token: &okta.TokenAuthorizationServerPolicyRuleAction{
+				AccessTokenLifetimeMinutes:  int64(d.Get("access_token_lifetime_minutes").(int)),
+				RefreshTokenLifetimeMinutes: int64(d.Get("refresh_token_lifetime_minutes").(int)),
+				RefreshTokenWindowMinutes:   int64(d.Get("refresh_token_window_minutes").(int)),
+				InlineHook:                  hook,
+			},
+		},
+		Conditions: &okta.AuthorizationServerPolicyRuleConditions{
+			GrantTypes: &okta.GrantTypePolicyRuleCondition{Include: convertInterfaceToStringSet(d.Get("grant_type_whitelist"))},
+			Scopes:     &okta.OAuth2ScopesMediationPolicyRuleCondition{Include: convertInterfaceToStringSet(d.Get("scope_whitelist"))},
+			People: &okta.PolicyPeopleCondition{
+				Groups: &okta.GroupCondition{
+					Include: convertInterfaceToStringSet(d.Get("group_whitelist")),
+					Exclude: convertInterfaceToStringSet(d.Get("group_blacklist")),
+				},
+				Users: &okta.UserCondition{
+					Include: convertInterfaceToStringSet(d.Get("user_whitelist")),
+					Exclude: convertInterfaceToStringSet(d.Get("user_blacklist")),
+				},
+			},
+		},
+	}
+}
+
+func setPeopleAssignments(d *schema.ResourceData, c *okta.PolicyPeopleCondition) error {
+	if c.Groups != nil {
+		err := setNonPrimitives(d, map[string]interface{}{
+			"group_whitelist": convertStringSliceToSet(c.Groups.Include),
+			"group_blacklist": convertStringSliceToSet(c.Groups.Exclude),
+		})
+		if err != nil {
+			return err
+		}
+	} else {
+		_ = setNonPrimitives(d, map[string]interface{}{
+			"group_whitelist": convertStringSliceToSet([]string{}),
+			"group_blacklist": convertStringSliceToSet([]string{}),
+		})
+	}
+	return setNonPrimitives(d, map[string]interface{}{
+		"user_whitelist": convertStringSliceToSet(c.Users.Include),
+		"user_blacklist": convertStringSliceToSet(c.Users.Exclude),
+	})
+}
+
+func validateAuthServerPolicyRule(d *schema.ResourceData) error {
+	if w, ok := d.GetOk("grant_type_whitelist"); ok {
+		for _, v := range convertInterfaceToStringSet(w) {
+			if v != implicit {
+				continue
+			}
+			_, okUsers := d.GetOk("user_whitelist")
+			_, okGroups := d.GetOk("group_whitelist")
+			if !okUsers && !okGroups {
+				return fmt.Errorf(`at least "user_whitelist" or "group_whitelist" should be provided when using '%s' in "grant_type_whitelist"`, implicit)
+			}
+		}
+	}
+	rtlm := d.Get("refresh_token_lifetime_minutes").(int)
+	atlm := d.Get("access_token_lifetime_minutes").(int)
+	rtwm := d.Get("refresh_token_window_minutes").(int)
+	if rtlm > 0 && rtlm < atlm {
+		return errors.New("'refresh_token_lifetime_minutes' must be greater than or equal to 'access_token_lifetime_minutes'")
+	}
+	if rtlm > 0 && (atlm > rtwm || rtlm < rtwm) {
+		return errors.New("'refresh_token_window_minutes' must be between 'access_token_lifetime_minutes' and 'refresh_token_lifetime_minutes'")
+	}
+	return nil
 }

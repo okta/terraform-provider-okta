@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_policy"
-sidebar_current: "docs-okta-datasource-policy"
+layout: 'okta'
+page_title: 'Okta: okta_policy'
+sidebar_current: 'docs-okta-datasource-policy'
 description: |-
   Get a policy from Okta.
 ---
@@ -21,14 +21,15 @@ data "okta_policy" "example" {
 
 ## Arguments Reference
 
-* `name` - (Required) name of policy to retrieve.
+- `name` - (Required) Name of policy to retrieve.
 
-* `type` - (Required) type of policy to retrieve.
+- `type` - (Required) Type of policy to retrieve. Valid values: `"OKTA_SIGN_ON"`, `"PASSWORD"`, `"MFA_ENROLL"`, 
+`"IDP_DISCOVERY"`, `"ACCESS_POLICY"` (**only available as a part of the Identity Engine**), `"PROFILE_ENROLLMENT"` (**only available as a part of the Identity Engine**)
 
 ## Attributes Reference
 
-* `id` - id of policy.
+- `id` - id of policy.
 
-* `name` - name of policy.
+- `name` - name of policy.
 
-* `type` - type of policy.
+- `type` - type of policy.

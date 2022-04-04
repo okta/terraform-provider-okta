@@ -1,4 +1,4 @@
-resource okta_app_three_field test {
+resource "okta_app_three_field" "test" {
   label                = "testAcc_replace_with_uuid"
   status               = "INACTIVE"
   button_selector      = "btn1"

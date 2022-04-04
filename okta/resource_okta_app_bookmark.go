@@ -1,34 +1,32 @@
 package okta
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func resourceAppBookmark() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceAppBookmarkCreate,
-		Read:   resourceAppBookmarkRead,
-		Update: resourceAppBookmarkUpdate,
-		Delete: resourceAppBookmarkDelete,
-		Exists: resourceAppExists,
+		CreateContext: resourceAppBookmarkCreate,
+		ReadContext:   resourceAppBookmarkRead,
+		UpdateContext: resourceAppBookmarkUpdate,
+		DeleteContext: resourceAppBookmarkDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: appImporter,
 		},
-
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
 		Schema: buildAppSchemaWithVisibility(map[string]*schema.Schema{
-			"label": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+			"url": {
+				Type:             schema.TypeString,
+				Required:         true,
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
-			"url": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"request_integration": &schema.Schema{
+			"request_integration": {
 				Type:     schema.TypeBool,
 				Default:  false,
 				Optional: true,
@@ -37,87 +35,83 @@ func resourceAppBookmark() *schema.Resource {
 	}
 }
 
-func resourceAppBookmarkCreate(d *schema.ResourceData, m interface{}) error {
+func resourceAppBookmarkCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppBookmark(d, m)
-	activate := d.Get("status").(string) == "ACTIVE"
+	app := buildAppBookmark(d)
+	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(app, params)
-
+	_, _, err := client.Application.CreateApplication(ctx, app, params)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create bookmark application: %v", err)
 	}
-
 	d.SetId(app.Id)
-	err = handleAppGroupsAndUsers(app.Id, d, m)
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to handle groups and users for bookmark application: %v", err)
 	}
-
-	return resourceAppBookmarkRead(d, m)
+	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	if err != nil {
+		return diag.Errorf("failed to upload logo for bookmark application: %v", err)
+	}
+	return resourceAppBookmarkRead(ctx, d, m)
 }
 
-func resourceAppBookmarkRead(d *schema.ResourceData, m interface{}) error {
+func resourceAppBookmarkRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	app := okta.NewBookmarkApplication()
-	err := fetchApp(d, m, app)
-
-	if app == nil {
+	err := fetchApp(ctx, d, m, app)
+	if err != nil {
+		return diag.Errorf("failed to get bookmark application: %v", err)
+	}
+	if app.Id == "" {
 		d.SetId("")
 		return nil
 	}
-
+	_ = d.Set("url", app.Settings.App.Url)
+	_ = d.Set("request_integration", app.Settings.App.RequestIntegration)
+	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
+	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
+	err = syncGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to sync groups and users for bookmark application: %v", err)
 	}
-
-	d.Set("url", app.Settings.App.Url)
-	d.Set("label", app.Label)
-	d.Set("request_integration", app.Settings.App.RequestIntegration)
-
-	if err = syncGroupsAndUsers(app.Id, d, m); err != nil {
-		return err
-	}
-
-	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
-
 	return nil
 }
 
-func resourceAppBookmarkUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceAppBookmarkUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppBookmark(d, m)
-	_, _, err := client.Application.UpdateApplication(d.Id(), app)
-
+	app := buildAppBookmark(d)
+	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to update bookmark application: %v", err)
 	}
-
-	desiredStatus := d.Get("status").(string)
-	err = setAppStatus(d, client, app.Status, desiredStatus)
+	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set bookmark application status: %v", err)
 	}
-
-	if err := handleAppGroupsAndUsers(app.Id, d, m); err != nil {
-		return err
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
+	if err != nil {
+		return diag.Errorf("failed to handle groups and users for bookmark application: %v", err)
 	}
-
-	return resourceAppBookmarkRead(d, m)
+	if d.HasChange("logo") {
+		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		if err != nil {
+			o, _ := d.GetChange("logo")
+			_ = d.Set("logo", o)
+			return diag.Errorf("failed to upload logo for bookmark application: %v", err)
+		}
+	}
+	return resourceAppBookmarkRead(ctx, d, m)
 }
 
-func resourceAppBookmarkDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	_, err := client.Application.DeactivateApplication(d.Id())
+func resourceAppBookmarkDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to delete bookmark application: %v", err)
 	}
-
-	_, err = client.Application.DeleteApplication(d.Id())
-
-	return err
+	return nil
 }
 
-func buildAppBookmark(d *schema.ResourceData, m interface{}) *okta.BookmarkApplication {
+func buildAppBookmark(d *schema.ResourceData) *okta.BookmarkApplication {
 	app := okta.NewBookmarkApplication()
 	integration := d.Get("request_integration").(bool)
 	app.Label = d.Get("label").(string)
@@ -126,8 +120,9 @@ func buildAppBookmark(d *schema.ResourceData, m interface{}) *okta.BookmarkAppli
 			RequestIntegration: &integration,
 			Url:                d.Get("url").(string),
 		},
+		Notes: buildAppNotes(d),
 	}
-	app.Visibility = buildVisibility(d)
-
+	app.Visibility = buildAppVisibility(d)
+	app.Accessibility = buildAppAccessibility(d)
 	return app
 }

@@ -1,16 +1,16 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_profile_mapping"
-sidebar_current: "docs-okta-resource-profile-mapping"
+layout: 'okta'
+page_title: 'Okta: okta_profile_mapping'
+sidebar_current: 'docs-okta-resource-profile-mapping'
 description: |-
   Manages a profile mapping.
 ---
 
 # okta_profile_mapping
 
-Manages a profile mapping.
+This resource allows you to manage a profile mapping by source and target IDs.
 
-This resource allows you to manage a profile mapping by source id.
+-> **NOTE:** If using this resource with OAuth2 scopes, this resource requires `okta.profileMappings.manage` scope.
 
 ## Example Usage
 
@@ -48,31 +48,35 @@ resource "okta_profile_mapping" "example" {
 
 The following arguments are supported:
 
-* `source_id` - (Required) Source id of the profile mapping.
+- `source_id` - (Required) Source id of the profile mapping.
 
-* `delete_when_absent` - (Optional) Tells the provider whether to attempt to delete missing mappings under profile mapping.
+- `delete_when_absent` - (Optional) Tells the provider whether to attempt to delete missing mappings under profile mapping.
 
-* `mappings` - (Optional) Priority of the policy.
-  * `id` - (Required) Key of mapping.
-  * `expression` - (Required) Combination or single source properties that will be mapped to the target property.
-  * `push_status` - (Optional) Whether to update target properties on user create & update or just on create.
+- `mappings` - (Optional) Priority of the policy.
+  - `id` - (Required) Key of mapping.
+  - `expression` - (Required) Combination or single source properties that will be mapped to the target property.
+  - `push_status` - (Optional) Whether to update target properties on user create & update or just on create.
+
+- `always_apply` (Optional) Whether apply the changes to all users with this profile after updating or creating the these mappings.
+ 
+~> **WARNING**: `always_apply` is available only when using api token in the provider config.
 
 ## Attributes Reference
 
-* `id` - ID of the mappings.
+- `id` - ID of the mappings.
 
-* `target_id` - ID of the mapping target.
+- `target_id` - ID of the mapping target.
 
-* `target_name` - Name of the mapping target.
+- `target_name` - Name of the mapping target.
 
-* `target_type` - ID of the mapping target.
+- `target_type` - ID of the mapping target.
 
-* `source_id` - ID of the mapping source.
+- `source_id` - ID of the mapping source.
 
-* `source_name` - Name of the mapping source.
+- `source_name` - Name of the mapping source.
 
-* `source_type` - ID of the mapping source.
+- `source_type` - ID of the mapping source.
 
 ## Import
 
-There is no reason to import this resource. You can simply create the resource config and point it to a source ID. Once the source is deleted this resources will no longer exist.
+There is no reason to import this resource. You can simply create the resource config and point it to a source ID. Mind here, once the source is deleted this resources will no longer exist.

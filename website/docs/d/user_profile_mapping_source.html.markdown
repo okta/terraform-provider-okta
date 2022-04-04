@@ -1,7 +1,7 @@
 ---
-layout: "okta"
-page_title: "Okta: okta_user_profile_mapping_source"
-sidebar_current: "docs-okta-datasource-user-profile-mapping-source"
+layout: 'okta'
+page_title: 'Okta: okta_user_profile_mapping_source'
+sidebar_current: 'docs-okta-datasource-user-profile-mapping-source'
 description: |-
   Get the base user Profile Mapping source or target from Okta.
 ---
@@ -9,6 +9,8 @@ description: |-
 # okta_user_profile_mapping_source
 
 Use this data source to retrieve the base user Profile Mapping source or target from Okta.
+
+-> **NOTE:** If using this resource with OAuth2 scopes, this resource requires `okta.profileMappings.read` scope.
 
 ## Example Usage
 
@@ -18,8 +20,8 @@ data "okta_user_profile_mapping_source" "example" {}
 
 ## Attributes Reference
 
-* `id` - id of the source.
+- `id` - id of the source.
 
-* `name` - name of source.
+- `name` - name of source.
 
-* `type` - type of source.
+- `type` - type of source.

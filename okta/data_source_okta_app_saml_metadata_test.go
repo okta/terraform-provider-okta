@@ -3,13 +3,13 @@ package okta
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaDataSourceAppMetadataSaml_read(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager("okta_app_metadata_saml")
+	mgr := newFixtureManager(appMetadataSaml)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 	resourceName := "data.okta_app_metadata_saml.test"
 
@@ -17,7 +17,7 @@ func TestAccOktaDataSourceAppMetadataSaml_read(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		Providers: testAccProviders,
+		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

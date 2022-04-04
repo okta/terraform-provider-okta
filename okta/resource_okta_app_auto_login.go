@@ -1,156 +1,176 @@
 package okta
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func resourceAppAutoLogin() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceAppAutoLoginCreate,
-		Read:   resourceAppAutoLoginRead,
-		Update: resourceAppAutoLoginUpdate,
-		Delete: resourceAppAutoLoginDelete,
-		Exists: resourceAppExists,
+		CreateContext: resourceAppAutoLoginCreate,
+		ReadContext:   resourceAppAutoLoginRead,
+		UpdateContext: resourceAppAutoLoginUpdate,
+		DeleteContext: resourceAppAutoLoginDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: appImporter,
 		},
-
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
-			"preconfigured_app": &schema.Schema{
+			"preconfigured_app": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Preconfigured app name",
 			},
-			"sign_on_url": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Login URL",
-				ValidateFunc: validateIsURL,
+			"sign_on_url": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Login URL",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
-			"sign_on_redirect_url": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Post login redirect URL",
-				ValidateFunc: validateIsURL,
+			"sign_on_redirect_url": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Post login redirect URL",
+				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
-			"credentials_scheme": &schema.Schema{
+			"credentials_scheme": {
 				Type:     schema.TypeString,
 				Optional: true,
-				ValidateFunc: validation.StringInSlice(
+				ValidateDiagFunc: elemInSlice(
 					[]string{
 						"EDIT_USERNAME_AND_PASSWORD",
 						"ADMIN_SETS_CREDENTIALS",
 						"EDIT_PASSWORD_ONLY",
 						"EXTERNAL_PASSWORD_SYNC",
 						"SHARED_USERNAME_AND_PASSWORD",
-					},
-					false,
-				),
+					}),
 				Default:     "EDIT_USERNAME_AND_PASSWORD",
 				Description: "Application credentials scheme",
 			},
-			"reveal_password": &schema.Schema{
+			"reveal_password": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
 				Description: "Allow user to reveal password",
 			},
-			"shared_username": &schema.Schema{
+			"shared_username": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Shared username, required for certain schemes.",
 			},
-			"shared_password": &schema.Schema{
+			"shared_password": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Shared password, required for certain schemes.",
+			},
+			"app_settings_json": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Application settings in JSON format",
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
 			},
 		}),
 	}
 }
 
-func resourceAppAutoLoginCreate(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	app := buildAppAutoLogin(d, m)
-	activate := d.Get("status").(string) == "ACTIVE"
+func resourceAppAutoLoginCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	app := buildAppAutoLogin(d)
+	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(app, params)
-
+	_, _, err := getOktaClientFromMetadata(m).Application.CreateApplication(ctx, app, params)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to create auto login application: %v", err)
 	}
-
 	d.SetId(app.Id)
-
-	return resourceAppAutoLoginRead(d, m)
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
+	if err != nil {
+		return diag.Errorf("failed to handle groups and users for auto login application: %v", err)
+	}
+	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	if err != nil {
+		return diag.Errorf("failed to upload logo for auto login application: %v", err)
+	}
+	return resourceAppAutoLoginRead(ctx, d, m)
 }
 
-func resourceAppAutoLoginRead(d *schema.ResourceData, m interface{}) error {
+func resourceAppAutoLoginRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	app := okta.NewAutoLoginApplication()
-	err := fetchApp(d, m, app)
-
-	if app == nil {
+	err := fetchApp(ctx, d, m, app)
+	if err != nil {
+		return diag.Errorf("failed to get auto login application: %v", err)
+	}
+	if app.Id == "" {
 		d.SetId("")
 		return nil
 	}
-
+	if app.Settings != nil {
+		if app.Settings.SignOn != nil {
+			_ = d.Set("sign_on_url", app.Settings.SignOn.LoginUrl)
+			_ = d.Set("sign_on_redirect_url", app.Settings.SignOn.RedirectUrl)
+		}
+		err = setAppSettings(d, app.Settings.App)
+		if err != nil {
+			return diag.Errorf("failed to set auto login application settings: %v", err)
+		}
+	}
+	_ = d.Set("credentials_scheme", app.Credentials.Scheme)
+	_ = d.Set("reveal_password", app.Credentials.RevealPassword)
+	_ = d.Set("shared_username", app.Credentials.UserName) // We can sync shared username but not password from upstream
+	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
+	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
+	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
+	_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
+	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
+	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
+	err = syncGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to sync groups and users for auto login application: %v", err)
 	}
-
-	if app.Settings.SignOn != nil {
-		d.Set("sign_on_url", app.Settings.SignOn.LoginUrl)
-		d.Set("sign_on_redirect_url", app.Settings.SignOn.RedirectUrl)
-	}
-
-	d.Set("credentials_scheme", app.Credentials.Scheme)
-	d.Set("reveal_password", app.Credentials.RevealPassword)
-
-	// We can sync shared username but not password from upstream
-	d.Set("shared_username", app.Credentials.UserName)
-
-	d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
-	d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
-	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility)
-
 	return nil
 }
 
-func resourceAppAutoLoginUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceAppAutoLoginUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-	app := buildAppAutoLogin(d, m)
-	_, _, err := client.Application.UpdateApplication(d.Id(), app)
-
+	app := buildAppAutoLogin(d)
+	err := updateAppByID(ctx, d.Id(), m, app)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to update auto login application: %v", err)
 	}
-
-	desiredStatus := d.Get("status").(string)
-	err = setAppStatus(d, client, app.Status, desiredStatus)
-
+	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set auto login application status: %v", err)
 	}
-
-	return resourceAppAutoLoginRead(d, m)
+	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
+	if err != nil {
+		return diag.Errorf("failed to handle groups and users for auto login application: %v", err)
+	}
+	if d.HasChange("logo") {
+		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		if err != nil {
+			o, _ := d.GetChange("logo")
+			_ = d.Set("logo", o)
+			return diag.Errorf("failed to upload logo for auto login application: %v", err)
+		}
+	}
+	return resourceAppAutoLoginRead(ctx, d, m)
 }
 
-func resourceAppAutoLoginDelete(d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	_, err := client.Application.DeactivateApplication(d.Id())
+func resourceAppAutoLoginDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, m)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to delete auto login application: %v", err)
 	}
-
-	_, err = client.Application.DeleteApplication(d.Id())
-
-	return err
+	return nil
 }
 
-func buildAppAutoLogin(d *schema.ResourceData, m interface{}) *okta.AutoLoginApplication {
+func buildAppAutoLogin(d *schema.ResourceData) *okta.AutoLoginApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewAutoLoginApplication()
 	app.Label = d.Get("label").(string)
@@ -159,15 +179,17 @@ func buildAppAutoLogin(d *schema.ResourceData, m interface{}) *okta.AutoLoginApp
 	if name != "" {
 		app.Name = name
 	}
-
 	app.Settings = &okta.AutoLoginApplicationSettings{
 		SignOn: &okta.AutoLoginApplicationSettingsSignOn{
 			LoginUrl:    d.Get("sign_on_url").(string),
 			RedirectUrl: d.Get("sign_on_redirect_url").(string),
 		},
+		Notes: buildAppNotes(d),
 	}
-	app.Visibility = buildVisibility(d)
-	app.Credentials = buildSchemeCreds(d)
+	app.Settings.App = buildAppSettings(d)
+	app.Visibility = buildAppVisibility(d)
+	app.Credentials = buildSchemeAppCreds(d)
+	app.Accessibility = buildAppAccessibility(d)
 
 	return app
 }

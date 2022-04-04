@@ -1,95 +1,116 @@
 package okta
 
 import (
-	"errors"
+	"context"
 	"fmt"
 	"strings"
 
-	"github.com/okta/okta-sdk-golang/okta"
-	"github.com/okta/okta-sdk-golang/okta/query"
-
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func dataSourceUser() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceUserRead,
-
+		ReadContext: dataSourceUserRead,
 		Schema: buildUserDataSourceSchema(map[string]*schema.Schema{
 			"user_id": {
 				Type:        schema.TypeString,
 				Description: "Retrieve a single user based on their id",
 				Optional:    true,
 			},
-			"search": &schema.Schema{
+			"search": {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Filter to find a user, each filter will be concatenated with an AND clause. Please be aware profile properties must match what is in Okta, which is likely camel case",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": &schema.Schema{
+						"name": {
 							Type:        schema.TypeString,
 							Required:    true,
 							Description: "Property name to search for. This requires the search feature be on. Please see Okta documentation on their filter API for users. https://developer.okta.com/docs/api/resources/users#list-users-with-search",
 						},
-						"value": &schema.Schema{
+						"value": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"comparison": &schema.Schema{
-							Type:         schema.TypeString,
-							Optional:     true,
-							Default:      "eq",
-							ValidateFunc: validation.StringInSlice([]string{"eq", "lt", "gt", "sw"}, true),
+						"comparison": {
+							Type:             schema.TypeString,
+							Optional:         true,
+							Default:          "eq",
+							ValidateDiagFunc: elemInSlice([]string{"eq", "lt", "gt", "sw"}),
 						},
 					},
 				},
+			},
+			"skip_groups": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Do not populate user groups information (prevents additional API call)",
+			},
+			"skip_roles": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Do not populate user roles information (prevents additional API call)",
 			},
 		}),
 	}
 }
 
-func dataSourceUserRead(d *schema.ResourceData, m interface{}) error {
+func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-
 	var user *okta.User
 	var err error
-
-	userId, userIdOk := d.GetOk("user_id")
+	userID, ok := d.GetOk("user_id")
 	_, searchCriteriaOk := d.GetOk("search")
-
-	if userIdOk {
-		user, _, err = client.User.GetUser(userId.(string))
+	if ok {
+		logger(m).Info("reading user by ID", "id", userID.(string))
+		user, _, err = client.User.GetUser(ctx, userID.(string))
 		if err != nil {
-			return err
+			return diag.Errorf("failed to get user: %v", err)
 		}
 	} else if searchCriteriaOk {
 		var users []*okta.User
-		users, _, err := client.User.ListUsers(&query.Params{Search: getSearchCriteria(d), Limit: 1})
-
+		sc := getSearchCriteria(d)
+		logger(m).Info("reading user using search", "search", sc)
+		users, _, err = client.User.ListUsers(ctx, &query.Params{Search: sc, Limit: 1})
 		if err != nil {
-			return err
+			return diag.Errorf("failed to list users: %v", err)
 		} else if len(users) < 1 {
-			return errors.New("failed to locate user with provided parameters")
+			return diag.Errorf("no users found using search criteria: %+v", sc)
 		}
-
 		user = users[0]
 	}
-
 	d.SetId(user.Id)
-
-	rawMap, err := flattenUser(user, d)
+	rawMap := flattenUser(user)
+	err = setNonPrimitives(d, rawMap)
 	if err != nil {
-		return err
+		return diag.Errorf("failed to set user's properties: %v", err)
 	}
 
-	if err = setNonPrimitives(d, rawMap); err != nil {
-		return err
+	skip := false
+	if val := d.Get("skip_roles"); val != nil {
+		skip = val.(bool)
+	}
+	if !skip {
+		err = setAdminRoles(ctx, d, m)
+		if err != nil {
+			return diag.Errorf("failed to set user's admin roles: %v", err)
+		}
 	}
 
-	if err = setAdminRoles(d, client); err != nil {
-		return err
+	skip = false
+	if val := d.Get("skip_groups"); val != nil {
+		skip = val.(bool)
+	}
+	if !skip {
+		err = setAllGroups(ctx, d, client)
+		if err != nil {
+			return diag.Errorf("failed to set user's groups: %v", err)
+		}
 	}
 
 	return nil
@@ -102,6 +123,5 @@ func getSearchCriteria(d *schema.ResourceData) string {
 		fmap := f.(map[string]interface{})
 		filterList[i] = fmt.Sprintf(`%s %s "%s"`, fmap["name"], fmap["comparison"], fmap["value"])
 	}
-
 	return strings.Join(filterList, " and ")
 }

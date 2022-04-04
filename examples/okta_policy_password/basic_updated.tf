@@ -1,9 +1,8 @@
-
-data okta_group all {
+data "okta_group" "all" {
   name = "Everyone"
 }
 
-resource okta_policy_password test {
+resource "okta_policy_password" "test" {
   name                                   = "testAcc_replace_with_uuid"
   status                                 = "INACTIVE"
   description                            = "Terraform Acceptance Test Password Policy Updated"
@@ -26,5 +25,6 @@ resource okta_policy_password test {
   question_min_length                    = 10
   recovery_email_token                   = 20160
   sms_recovery                           = "ACTIVE"
-  groups_included                        = ["${data.okta_group.all.id}"]
+  call_recovery                          = "ACTIVE"
+  groups_included                        = [data.okta_group.all.id]
 }

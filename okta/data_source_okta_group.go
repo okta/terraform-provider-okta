@@ -1,34 +1,45 @@
 package okta
 
 import (
-	"errors"
+	"context"
 	"fmt"
 
-	"github.com/okta/okta-sdk-golang/okta/query"
-
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func dataSourceGroup() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceGroupRead,
-
+		ReadContext: dataSourceGroupRead,
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+			"id": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"name", "type"},
 			},
-			"description": &schema.Schema{
+			"name": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"type": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Type of the group. When specified in the terraform resource, will act as a filter when searching for the group",
+				ValidateDiagFunc: elemInSlice([]string{"OKTA_GROUP", "APP_GROUP", "BUILT_IN"}),
+			},
+			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"include_users": &schema.Schema{
+			"include_users": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
 				Description: "Fetch group users, having default off cuts down on API calls.",
 			},
-			"users": &schema.Schema{
+			"users": {
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -38,31 +49,53 @@ func dataSourceGroup() *schema.Resource {
 	}
 }
 
-func dataSourceGroupRead(d *schema.ResourceData, m interface{}) error {
-	return findGroup(d.Get("name").(string), d, m)
+func dataSourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return findGroup(ctx, d.Get("name").(string), d, m, false)
 }
 
-func findGroup(name string, d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
-	groups, _, err := client.Group.ListGroups(&query.Params{Q: name})
-	if err != nil {
-		return fmt.Errorf("failed to query for groups: %v", err)
-	} else if len(groups) < 1 {
-		return errors.New("Group not found")
-	}
-
-	d.SetId(groups[0].Id)
-	d.Set("description", groups[0].Profile.Description)
-
-	if d.Get("include_users").(bool) {
-		userIdList, err := listGroupUserIds(m, d.Id())
+func findGroup(ctx context.Context, name string, d *schema.ResourceData, m interface{}, isEveryone bool) diag.Diagnostics {
+	var group *okta.Group
+	groupID, ok := d.GetOk("id")
+	if ok {
+		respGroup, _, err := getOktaClientFromMetadata(m).Group.GetGroup(ctx, groupID.(string))
 		if err != nil {
-			return err
+			return diag.Errorf("failed get group by ID: %v", err)
 		}
-
-		// just user ids for now
-		return d.Set("users", convertStringSetToInterface(userIdList))
+		group = respGroup
+	} else {
+		searchParams := &query.Params{Q: name, Limit: 1}
+		t, okType := d.GetOk("type")
+		if okType {
+			searchParams.Filter = fmt.Sprintf("type eq \"%s\"", t.(string))
+		}
+		logger(m).Info("looking for data source group", "query", searchParams.String())
+		groups, _, err := getOktaClientFromMetadata(m).Group.ListGroups(ctx, searchParams)
+		switch {
+		case err != nil:
+			return diag.Errorf("failed to query for groups: %v", err)
+		case len(groups) < 1:
+			if okType {
+				return diag.Errorf("group with name '%s' and type '%s' does not exist", name, d.Get("type").(string))
+			}
+			return diag.Errorf("group with name '%s' does not exist", name)
+		case groups[0].Profile.Name != name:
+			logger(m).Warn("group with exact name match was not found: using partial match which contains name as a substring", "name", groups[0].Profile.Name)
+		}
+		group = groups[0]
 	}
-
+	d.SetId(group.Id)
+	_ = d.Set("description", group.Profile.Description)
+	if !isEveryone {
+		_ = d.Set("type", group.Type)
+		_ = d.Set("name", group.Profile.Name)
+	}
+	if !d.Get("include_users").(bool) {
+		return nil
+	}
+	userIDList, err := listGroupUserIDs(ctx, m, d.Id())
+	if err != nil {
+		return diag.Errorf("failed to list group user IDs: %v", err)
+	}
+	_ = d.Set("users", convertStringSliceToSet(userIDList))
 	return nil
 }

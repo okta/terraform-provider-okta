@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaAuthServerScope_crud(t *testing.T) {
@@ -16,9 +16,9 @@ func TestAccOktaAuthServerScope_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createCheckResourceDestroy(authServer, authServerExists),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -26,6 +26,7 @@ func TestAccOktaAuthServerScope_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "consent", "REQUIRED"),
 					resource.TestCheckResourceAttr(resourceName, "name", "test:something"),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "display_name", "test"),
 				),
 			},
 			{
@@ -34,6 +35,7 @@ func TestAccOktaAuthServerScope_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "consent", "REQUIRED"),
 					resource.TestCheckResourceAttr(resourceName, "name", "test:something"),
 					resource.TestCheckResourceAttr(resourceName, "description", "test_updated"),
+					resource.TestCheckResourceAttr(resourceName, "display_name", "test_updated"),
 				),
 			},
 		},

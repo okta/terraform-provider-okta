@@ -5,21 +5,22 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func deleteSignOnPolicyRules(client *testClient) error {
-	return deletePolicyRulesByType(signOnPolicyType, client)
+	return deletePolicyRulesByType(sdk.SignOnPolicyType, client)
 }
 
 func TestAccOktaPolicyRuleSignon_defaultErrors(t *testing.T) {
 	config := testOktaPolicyRuleSignOnDefaultErrors(acctest.RandInt())
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createRuleCheckDestroy(policyRuleSignOn),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createRuleCheckDestroy(policyRuleSignOn),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -35,27 +36,30 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
 	excludedNetwork := mgr.GetFixtures("excluded_network.tf", ri, t)
+	oktaIdentityProvider := mgr.GetFixtures("okta_identity_provider.tf", ri, t)
+	otherIdentityProvider := mgr.GetFixtures("other_identity_provider.tf", ri, t)
+	factorSequence := mgr.GetFixtures("factor_sequence.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleSignOn)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: createRuleCheckDestroy(policyRuleSignOn),
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createRuleCheckDestroy(policyRuleSignOn),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "access", "DENY"),
 					resource.TestCheckResourceAttr(resourceName, "session_idle", "240"),
 					resource.TestCheckResourceAttr(resourceName, "session_lifetime", "240"),
@@ -67,10 +71,51 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 				Config: excludedNetwork,
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "access", "DENY"),
 					resource.TestCheckResourceAttr(resourceName, "network_connection", "ZONE"),
+				),
+			},
+			{
+				Config: oktaIdentityProvider,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "mfa_required", "true"),
+					resource.TestCheckResourceAttr(resourceName, "identity_provider", "OKTA"),
+				),
+			},
+			{
+				Config: otherIdentityProvider,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "mfa_required", "false"),
+					resource.TestCheckResourceAttr(resourceName, "identity_provider", "SPECIFIC_IDP"),
+					resource.TestCheckResourceAttr(resourceName, "identity_provider_ids.#", "1"),
+				),
+			},
+			{
+				Config: factorSequence,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "access", "CHALLENGE"),
+					resource.TestCheckResourceAttr(resourceName, "behaviors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.primary_criteria_factor_type", "password"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.primary_criteria_provider", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.secondary_criteria.0.factor_type", "push"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.secondary_criteria.1.factor_type", "token:hotp"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.secondary_criteria.2.factor_type", "token:software:totp"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.secondary_criteria.0.provider", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.secondary_criteria.1.provider", "CUSTOM"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.0.secondary_criteria.2.provider", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.1.primary_criteria_factor_type", "token:hotp"),
+					resource.TestCheckResourceAttr(resourceName, "factor_sequence.1.primary_criteria_provider", "CUSTOM"),
 				),
 			},
 		},
@@ -82,7 +127,7 @@ func testOktaPolicyRuleSignOnDefaultErrors(rInt int) string {
 
 	return fmt.Sprintf(`
 resource "%s" "%s" {
-	policyid = "garbageID"
+	policy_id = "garbageID"
 	name     = "Default Rule"
 	status   = "ACTIVE"
 }
