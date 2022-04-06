@@ -43,3 +43,9 @@ data "okta_user" "test" {
 data "okta_user" "read_by_id" {
   user_id = okta_user.test.id
 }
+
+data "okta_user" "read_by_id_with_skip" {
+  user_id = okta_user.test.id
+  skip_groups = true
+  skip_roles = true
+}

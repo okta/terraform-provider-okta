@@ -28,6 +28,8 @@ func TestAccOktaDataSourceGroups_read(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_groups.test", "id"),
 					resource.TestCheckResourceAttr("data.okta_groups.test", "groups.#", "2"),
+					// the example enumeration doesn't match anything so as a string the output will be a blank string
+					resource.TestCheckOutput("special_groups", ""),
 				),
 			},
 		},
