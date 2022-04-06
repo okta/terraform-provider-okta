@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 
@@ -87,6 +88,63 @@ func TestBuildSchema(t *testing.T) {
 		if actual != test.expected {
 			t.Errorf("buildSchema test failed, test maps: %v, elements %s, expected %v, actual %v",
 				testMaps, test.element, test.expected, actual)
+		}
+	}
+}
+
+func TestBuildEnum(t *testing.T) {
+	tests := []struct {
+		name        string
+		ae          []interface{}
+		elemType    string
+		expected    []interface{}
+		shouldError bool
+	}{
+		{
+			"number slice including empty value",
+			[]interface{}{"1.1", nil},
+			"number",
+			[]interface{}{1.1, 0.0},
+			false,
+		},
+		{
+			"integer slice including empty value",
+			[]interface{}{"1", nil},
+			"integer",
+			[]interface{}{1, 0},
+			false,
+		},
+		{
+			"string slice including empty value",
+			[]interface{}{"one", nil},
+			"string",
+			[]interface{}{"one", ""},
+			false,
+		},
+		{
+			"number slice with invalid value and empty value",
+			[]interface{}{"one", nil},
+			"number",
+			nil,
+			true,
+		},
+		{
+			"integer slice with invalid value and empty value",
+			[]interface{}{"one", nil},
+			"integer",
+			nil,
+			true,
+		},
+	}
+
+	for _, test := range tests {
+		actual, err := buildEnum(test.ae, test.elemType)
+		if test.shouldError && err == nil {
+			t.Errorf("%q - buildEnum should have errored on %+v, %s, got %+v", test.name, test.ae, test.elemType, actual)
+
+		}
+		if !reflect.DeepEqual(test.expected, actual) {
+			t.Errorf("%q - buildEnum expected %+v, got %+v", test.name, test.expected, actual)
 		}
 	}
 }
