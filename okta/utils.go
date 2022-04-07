@@ -358,7 +358,10 @@ func buildEnum(ae []interface{}, elemType string) ([]interface{}, error) {
 			continue
 		}
 
-		aeStr := aeVal.(string)
+		aeStr, ok := aeVal.(string)
+		if !ok {
+			return nil, fmt.Errorf("expected %+v value to cast to string", aeVal)
+		}
 		switch elemType {
 		case "number":
 			f, err := strconv.ParseFloat(aeStr, 64)

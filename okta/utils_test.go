@@ -135,6 +135,13 @@ func TestBuildEnum(t *testing.T) {
 			nil,
 			true,
 		},
+		{
+			"ae slice is not string slice",
+			[]interface{}{1, 2, 3},
+			"integer",
+			nil,
+			true,
+		},
 	}
 
 	for _, test := range tests {
