@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"unicode"
 
@@ -340,4 +341,43 @@ func validatePriority(in, out int64) error {
 		return fmt.Errorf("provided priority was not valid, got: %d, API responded with: %d. See schema for attribute details", in, out)
 	}
 	return nil
+}
+
+func buildEnum(ae []interface{}, elemType string) ([]interface{}, error) {
+	enum := make([]interface{}, len(ae))
+	for i, aeVal := range ae {
+		if aeVal == nil {
+			switch elemType {
+			case "number":
+				enum[i] = float64(0)
+			case "integer":
+				enum[i] = 0
+			default:
+				enum[i] = ""
+			}
+			continue
+		}
+
+		aeStr, ok := aeVal.(string)
+		if !ok {
+			return nil, fmt.Errorf("expected %+v value to cast to string", aeVal)
+		}
+		switch elemType {
+		case "number":
+			f, err := strconv.ParseFloat(aeStr, 64)
+			if err != nil {
+				return nil, errInvalidElemFormat
+			}
+			enum[i] = f
+		case "integer":
+			f, err := strconv.Atoi(aeStr)
+			if err != nil {
+				return nil, errInvalidElemFormat
+			}
+			enum[i] = f
+		default:
+			enum[i] = aeStr
+		}
+	}
+	return enum, nil
 }
