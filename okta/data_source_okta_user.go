@@ -11,6 +11,37 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
+var userSearchSchemaDescription = "Filter to find " +
+	"user/users. Each filter will be concatenated with " +
+	"the compound search operator. Please be aware profile properties " +
+	"must match what is in Okta, which is likely camel case. " +
+	"Expression is a free form expression filter " +
+	"https://developer.okta.com/docs/reference/core-okta-api/#filter . " +
+	"The set name/value/comparision properties will be ignored if expression is present"
+
+var userSearchSchema = map[string]*schema.Schema{
+	"name": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Property name to search for. This requires the search feature be on. Please see Okta documentation on their filter API for users. https://developer.okta.com/docs/api/resources/users#list-users-with-search",
+	},
+	"value": {
+		Type:     schema.TypeString,
+		Optional: true,
+	},
+	"comparison": {
+		Type:             schema.TypeString,
+		Optional:         true,
+		Default:          "eq",
+		ValidateDiagFunc: elemInSlice([]string{"eq", "lt", "gt", "sw"}),
+	},
+	"expression": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "A raw search expression string. This requires the search feature be on. Please see Okta documentation on their filter API for users. https://developer.okta.com/docs/api/resources/users#list-users-with-search",
+	},
+}
+
 func dataSourceUser() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceUserRead,
@@ -23,29 +54,9 @@ func dataSourceUser() *schema.Resource {
 			"search": {
 				Type:        schema.TypeSet,
 				Optional:    true,
-				Description: "Filter to find a user, each filter will be concatenated with an AND clause. Please be aware profile properties must match what is in Okta, which is likely camel case",
+				Description: userSearchSchemaDescription,
 				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "Property name to search for. This requires the search feature be on. Please see Okta documentation on their filter API for users. https://developer.okta.com/docs/api/resources/users#list-users-with-search",
-						},
-						"value": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"comparison": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Default:  "eq",
-						},
-						"expression": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "A raw search expression string. This requires the search feature be on. Please see Okta documentation on their filter API for users. https://developer.okta.com/docs/api/resources/users#list-users-with-search",
-						},
-					},
+					Schema: userSearchSchema,
 				},
 			},
 			"skip_groups": {

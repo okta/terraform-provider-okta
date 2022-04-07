@@ -34,9 +34,9 @@ func TestAccOktaDataSourceUser_read(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("okta_user.test", "id"),
 
-					resource.TestCheckResourceAttrSet("data.okta_user.test", "id"),
-					resource.TestCheckResourceAttr("data.okta_user.test", "first_name", "TestAcc"),
-					resource.TestCheckResourceAttr("data.okta_user.test", "last_name", "Smith"),
+					resource.TestCheckResourceAttrSet("data.okta_user.first_and_last", "id"),
+					resource.TestCheckResourceAttr("data.okta_user.first_and_last", "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr("data.okta_user.first_and_last", "last_name", "Smith"),
 
 					resource.TestCheckResourceAttr("data.okta_user.read_by_id", "first_name", "TestAcc"),
 					resource.TestCheckResourceAttr("data.okta_user.read_by_id", "last_name", "Smith"),

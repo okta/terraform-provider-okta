@@ -51,7 +51,7 @@ JSON
   ]
 }
 
-data "okta_user" "test" {
+data "okta_user" "first_and_last" {
   search {
     name  = "profile.firstName"
     value = okta_user.test.first_name
