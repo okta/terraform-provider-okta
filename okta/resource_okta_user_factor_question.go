@@ -58,20 +58,18 @@ func resourceUserFactorQuestionCreate(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(err)
 	}
 	sq := buildUserFactorQuestion(d)
-	factor, _, err := getOktaClientFromMetadata(m).UserFactor.EnrollFactor(ctx, d.Get("user_id").(string), sq, nil)
+	_, _, err = getOktaClientFromMetadata(m).UserFactor.EnrollFactor(ctx, d.Get("user_id").(string), sq, nil)
 
 	if err != nil {
 		return diag.Errorf("failed to enroll user question factor: %v", err)
 	}
-	userFactor := factor.(*okta.UserFactor)
-	d.SetId(userFactor.Id)
+	d.SetId(sq.Id)
 	return resourceUserFactorQuestionRead(ctx, d, m)
 }
 
 func resourceUserFactorQuestionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var uf okta.SecurityQuestionUserFactor
-	// FIXME use getOktaClientFromMetadata(m).UserFactor.GetFactor(ctx, d.Get("user_id").(string), d.Id(), &uf) when okta-sdk-golang is true polymorphic
-	resp, err := getSupplementFromMetadata(m).GetUserFactor(ctx, d.Get("user_id").(string), d.Id(), &uf)
+	_, resp, err := getOktaClientFromMetadata(m).UserFactor.GetFactor(ctx, d.Get("user_id").(string), d.Id(), &uf)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get user question factor: %v", err)
 	}
