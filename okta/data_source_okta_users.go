@@ -18,25 +18,9 @@ func dataSourceUsers() *schema.Resource {
 			"search": {
 				Type:        schema.TypeSet,
 				Required:    true,
-				Description: "Filter to find a user, each filter will be concatenated with an AND clause. Please be aware profile properties must match what is in Okta, which is likely camel case",
+				Description: userSearchSchemaDescription,
 				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "Property name to search for. This requires the search feature be on. Please see Okta documentation on their filter API for users. https://developer.okta.com/docs/api/resources/users#list-users-with-search",
-						},
-						"value": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"comparison": {
-							Type:             schema.TypeString,
-							Optional:         true,
-							Default:          "eq",
-							ValidateDiagFunc: elemInSlice([]string{"eq", "lt", "gt", "sw"}),
-						},
-					},
+					Schema: userSearchSchema,
 				},
 			},
 			"users": {
