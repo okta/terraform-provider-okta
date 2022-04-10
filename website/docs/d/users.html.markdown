@@ -20,14 +20,23 @@ data "okta_users" "example" {
     comparison = "sw"
   }
 }
+
+# Search for multiple users based on a raw search expression string
+data "okta_users" "example" {
+  search {
+    expression = "profile.department eq \"Engineering\" and (created lt \"2014-01-01T00:00:00.000Z\" or status eq \"ACTIVE\")"
+  }
+}
 ```
 
 ## Arguments Reference
 
-- `search` - (Required) Map of search criteria to find users. It supports the following properties.
-  - `name` - (Required) Name of property to search against.
-  - `comparison` - (Required) Comparison to use.
-  - `value` - (Required) Value to compare with.
+- `search` - (Optional) Map of search criteria. It supports the following properties.
+  - `name` - (Required w/ comparison and value) Name of property to search against.
+  - `comparison` - (Required w/ name and value) Comparison to use.
+  - `value` - (Required w/ comparison and name) Value to compare with.
+  - `expression` - (Optional, but overrides name/comparison/value) A raw search expression string. If present it will override name/comparison/value.
+- `compound_search_operator` - (Optional) Given multiple search elements they will be compounded together with the op. Default is `and`, `or` is also valid.
 
 ## Attributes Reference
 

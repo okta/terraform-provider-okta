@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.23.0 (April 08, 2022)
+
+ENHANCEMENTS:
+
+* Okta User and Okta Users search can use free form filter [#1027](https://github.com/okta/terraform-provider-okta/pull/1027). Thanks, [@cbrgm](https://github.com/cbrgm)!
+* Uniqueness of logo file is by SHA only, not SHA and local file path [#1039](https://github.com/okta/terraform-provider-okta/pull/1039). Thanks, [@bobtfish](https://github.com/bobtfish)!
+* Improve Okta Groups custom profile attributes for use in Terraform expressions [#1041](https://github.com/okta/terraform-provider-okta/pull/1041). Thanks, [@exitcode0](https://github.com/exitcode0)!
+
+PROJECT IMPROVEMENTS:
+
+* Add valid options for status field in user.html.markdown documentation [#1040](https://github.com/okta/terraform-provider-okta/pull/1040). Thanks, [@exitcode0](https://github.com/exitcode0)!
+* Fix markdown typo in role_subscription.html.markdown documentation [#1049](https://github.com/okta/terraform-provider-okta/pull/1049). Thanks, [@lucascantor](https://github.com/lucascantor)!
+* Fix markdown typo in role_subscription.html.markdown documentation [#1050](https://github.com/okta/terraform-provider-okta/pull/1050). Thanks, [@lucascantor](https://github.com/lucascantor)!
+
+BUGS:
+* Add missing valid custom role permissions [#1023](https://github.com/okta/terraform-provider-okta/pull/1023). Thanks, [@lucascantor](https://github.com/lucascantor)!
+* Fix default auth server id when activate/deactivate it [#1045](https://github.com/okta/terraform-provider-okta/pull/1045). Thanks, [@peijiinsg](https://github.com/peijiinsg)!
+* Panic bumper on buildEnum helper used with schemas [#1048](https://github.com/okta/terraform-provider-okta/pull/1048). Thanks, [@monde](https://github.com/monde)!
+
 ## 3.22.1 (March 11, 2022)
 
 ENHANCEMENTS:

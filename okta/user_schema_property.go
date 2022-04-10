@@ -293,29 +293,6 @@ func buildOneOf(ae []interface{}, elemType string) ([]*okta.UserSchemaAttributeE
 	return oneOf, nil
 }
 
-func buildEnum(ae []interface{}, elemType string) ([]interface{}, error) {
-	enum := make([]interface{}, len(ae))
-	for i := range ae {
-		switch elemType {
-		case "number":
-			f, err := strconv.ParseFloat(ae[i].(string), 64)
-			if err != nil {
-				return nil, errInvalidElemFormat
-			}
-			enum[i] = f
-		case "integer":
-			f, err := strconv.Atoi(ae[i].(string))
-			if err != nil {
-				return nil, errInvalidElemFormat
-			}
-			enum[i] = f
-		default:
-			enum[i] = ae[i].(string)
-		}
-	}
-	return enum, nil
-}
-
 func flattenEnum(enum []interface{}) []interface{} {
 	result := make([]interface{}, len(enum))
 	for i := range enum {
