@@ -36,6 +36,7 @@ func TestAccOktaAuthServerDefault_crud(t *testing.T) {
 					ensureResourceExists(resourceName, authServerExists),
 					resource.TestCheckResourceAttr(resourceName, "description", "Default Authorization Server"),
 					resource.TestCheckResourceAttr(resourceName, "name", "default"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "audiences.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials_rotation_mode", "MANUAL"),
 				),

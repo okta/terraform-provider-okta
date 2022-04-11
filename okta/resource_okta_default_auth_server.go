@@ -115,13 +115,13 @@ func resourceAuthServerDefaultUpdate(ctx context.Context, d *schema.ResourceData
 	if status, ok := d.GetOk("status"); ok {
 		client := getOktaClientFromMetadata(m)
 		if status.(string) == statusActive && authServer.Status != statusActive {
-			_, err := client.AuthorizationServer.ActivateAuthorizationServer(ctx, d.Id())
+			_, err := client.AuthorizationServer.ActivateAuthorizationServer(ctx, id)
 			if err != nil {
 				return diag.Errorf("failed to activate default authorization server: %v", err)
 			}
 		}
 		if status.(string) == statusInactive && authServer.Status != statusInactive {
-			_, err := client.AuthorizationServer.DeactivateAuthorizationServer(ctx, d.Id())
+			_, err := client.AuthorizationServer.DeactivateAuthorizationServer(ctx, id)
 			if err != nil {
 				return diag.Errorf("failed to deactivate default authorization server: %v", err)
 			}
