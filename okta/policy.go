@@ -96,7 +96,8 @@ func findPolicy(ctx context.Context, m interface{}, name, policyType string) (*o
 		return nil, fmt.Errorf("failed to list policies: %v", err)
 	}
 	for {
-		for _, policy := range policies {
+		for _, _policy := range policies {
+			policy := _policy.(*okta.Policy)
 			if policy.Name == name {
 				return policy, nil
 			}

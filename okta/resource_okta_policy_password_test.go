@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
@@ -24,7 +25,8 @@ func deletePolicyByType(t string, client *testClient) error {
 	if err != nil {
 		return fmt.Errorf("failed to list policies in order to properly destroy: %v", err)
 	}
-	for _, policy := range policies {
+	for _, _policy := range policies {
+		policy := _policy.(*okta.Policy)
 		if strings.HasPrefix(policy.Name, testResourcePrefix) {
 			_, err = client.oktaClient.Policy.DeletePolicy(ctx, policy.Id)
 			if err != nil {
