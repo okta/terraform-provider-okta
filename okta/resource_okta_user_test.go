@@ -241,6 +241,7 @@ func TestAccOktaUser_updateCredentials(t *testing.T) {
 	mgr := newFixtureManager(user)
 	config := mgr.GetFixtures("basic_with_credentials.tf", ri, t)
 	minimalConfigWithCredentials := mgr.GetFixtures("basic_with_credentials_updated.tf", ri, t)
+	minimalConfigWithCredentialsOldPassword := mgr.GetFixtures("basic_with_credentials_updated_old_password.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", user)
 	email := fmt.Sprintf("testAcc-%d@example.com", ri)
 
@@ -269,6 +270,18 @@ func TestAccOktaUser_updateCredentials(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "email", email),
 					resource.TestCheckResourceAttr(resourceName, "password", "SuperSecret007"),
 					resource.TestCheckResourceAttr(resourceName, "recovery_answer", "Asterisk"),
+				),
+			},
+			{
+				Config: minimalConfigWithCredentialsOldPassword,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
+					resource.TestCheckResourceAttr(resourceName, "login", email),
+					resource.TestCheckResourceAttr(resourceName, "email", email),
+					resource.TestCheckResourceAttr(resourceName, "password", "Super#Secret@007"),
+					resource.TestCheckResourceAttr(resourceName, "old_password", "SuperSecret007"),
+					resource.TestCheckResourceAttr(resourceName, "recovery_answer", "0010"),
 				),
 			},
 		},
