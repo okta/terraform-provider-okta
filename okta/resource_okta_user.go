@@ -603,13 +603,14 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 		if oldPasswordExist {
 			oldPassword = old
 		}
-		op := &okta.PasswordCredential{
-			Value: oldPassword.(string),
-		}
-		np := &okta.PasswordCredential{
-			Value: newPassword.(string),
-		}
 		if oldPasswordExist {
+			fmt.Println("OLD/NEW pwd exist")
+			op := &okta.PasswordCredential{
+				Value: oldPassword.(string),
+			}
+			np := &okta.PasswordCredential{
+				Value: newPassword.(string),
+			}
 			npr := &okta.ChangePasswordRequest{
 				OldPassword: op,
 				NewPassword: np,
@@ -620,6 +621,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 			}
 		}
 		if !oldPasswordExist {
+			fmt.Println("Only NEW pwd exist")
 			password, _ := newPassword.(string)
 			user := okta.User{
 				Credentials: &okta.UserCredentials{
