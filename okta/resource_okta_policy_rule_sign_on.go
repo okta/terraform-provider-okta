@@ -135,6 +135,7 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Optional:         true,
 				ValidateDiagFunc: elemInSlice([]string{"ANY", "OKTA", "SPECIFIC_IDP"}),
 				Description:      "Apply rule based on the IdP used: ANY, OKTA or SPECIFIC_IDP.",
+				Default:          "ANY",
 			},
 			"identity_provider_ids": { // identity_provider must be SPECIFIC_IDP
 				Type:        schema.TypeList,

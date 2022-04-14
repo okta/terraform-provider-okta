@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
@@ -23,118 +22,54 @@ const (
 // PasswordPolicy returns policy of PASSWORD type
 func PasswordPolicy() Policy {
 	// Initialize a policy with password data
-	return Policy{Type: PasswordPolicyType}
+	p := Policy{}
+	p.Type = PasswordPolicyType
+	return p
 }
 
 // SignOnPolicy returns policy of OKTA_SIGN_ON type
 func SignOnPolicy() Policy {
-	return Policy{Type: SignOnPolicyType}
+	p := Policy{}
+	p.Type = SignOnPolicyType
+	return p
 }
 
 // MfaPolicy returns policy of MFA_ENROLL type
 func MfaPolicy() Policy {
-	return Policy{Type: MfaPolicyType}
+	p := Policy{}
+	p.Type = MfaPolicyType
+	return p
 }
 
 // ProfileEnrollmentPolicy returns policy of PROFILE_ENROLLMENT type
 func ProfileEnrollmentPolicy() Policy {
-	return Policy{Type: ProfileEnrollmentPolicyType}
+	p := Policy{}
+	p.Type = ProfileEnrollmentPolicyType
+	return p
 }
 
+// Policy wrapper over okta.Policy until all of the public properties are fully supported
 type Policy struct {
-	Embedded    interface{}                `json:"_embedded,omitempty"`
-	Links       interface{}                `json:"_links,omitempty"`
-	Conditions  *okta.PolicyRuleConditions `json:"conditions,omitempty"`
-	Created     *time.Time                 `json:"created,omitempty"`
-	Description string                     `json:"description,omitempty"`
-	Id          string                     `json:"id,omitempty"`
-	LastUpdated *time.Time                 `json:"lastUpdated,omitempty"`
-	Name        string                     `json:"name,omitempty"`
-	Priority    int64                      `json:"priority,omitempty"`
-	Status      string                     `json:"status,omitempty"`
-	System      *bool                      `json:"system,omitempty"`
-	Type        string                     `json:"type,omitempty"`
-	Settings    *PolicySettings            `json:"settings,omitempty"`
+	// TODO
+	okta.Policy
+
+	Settings *PolicySettings `json:"settings,omitempty"`
 }
 
+// PolicySettings missing from okta-sdk-golang. However, there is a subset okta.PasswordPolicySettings.
 type PolicySettings struct {
+	// TODO
 	Authenticators []*PolicyAuthenticator                 `json:"authenticators,omitempty"`
 	Delegation     *okta.PasswordPolicyDelegationSettings `json:"delegation,omitempty"`
 	Factors        *PolicyFactorsSettings                 `json:"factors,omitempty"`
-	Password       *PasswordPolicyPasswordSettings        `json:"password,omitempty"`
-	Recovery       *PasswordPolicyRecoverySettings        `json:"recovery,omitempty"`
+	Password       *okta.PasswordPolicyPasswordSettings   `json:"password,omitempty"`
+	Recovery       *okta.PasswordPolicyRecoverySettings   `json:"recovery,omitempty"`
 	Type           string                                 `json:"type,omitempty"`
 }
 
-type PasswordPolicyPasswordSettings struct {
-	Age        *PasswordPolicyPasswordSettingsAge        `json:"age,omitempty"`
-	Complexity *PasswordPolicyPasswordSettingsComplexity `json:"complexity,omitempty"`
-	Lockout    *PasswordPolicyPasswordSettingsLockout    `json:"lockout,omitempty"`
-}
-
-type PasswordPolicyPasswordSettingsAge struct {
-	ExpireWarnDays int64 `json:"expireWarnDays"`
-	HistoryCount   int64 `json:"historyCount"`
-	MaxAgeDays     int64 `json:"maxAgeDays"`
-	MinAgeMinutes  int64 `json:"minAgeMinutes"`
-}
-
-type PasswordPolicyPasswordSettingsComplexity struct {
-	Dictionary        *okta.PasswordDictionary `json:"dictionary,omitempty"`
-	ExcludeAttributes []string                 `json:"excludeAttributes,omitempty"`
-	ExcludeUsername   *bool                    `json:"excludeUsername,omitempty"`
-	MinLength         int64                    `json:"minLength"`
-	MinLowerCase      int64                    `json:"minLowerCase"`
-	MinNumber         int64                    `json:"minNumber"`
-	MinSymbol         int64                    `json:"minSymbol"`
-	MinUpperCase      int64                    `json:"minUpperCase"`
-}
-
-type PasswordPolicyRecoverySettings struct {
-	Factors *PasswordPolicyRecoveryFactors `json:"factors,omitempty"`
-}
-
-type PasswordPolicyRecoveryFactors struct {
-	OktaCall         *okta.PasswordPolicyRecoveryFactorSettings `json:"okta_call,omitempty"`
-	OktaSms          *okta.PasswordPolicyRecoveryFactorSettings `json:"okta_sms,omitempty"`
-	OktaEmail        *PasswordPolicyRecoveryEmail               `json:"okta_email,omitempty"`
-	RecoveryQuestion *PasswordPolicyRecoveryQuestion            `json:"recovery_question,omitempty"`
-}
-
-type PasswordPolicyRecoveryEmail struct {
-	Properties *PasswordPolicyRecoveryEmailProperties `json:"properties,omitempty"`
-	Status     string                                 `json:"status,omitempty"`
-}
-
-type PasswordPolicyRecoveryEmailProperties struct {
-	RecoveryToken *PasswordPolicyRecoveryEmailRecoveryToken `json:"recoveryToken,omitempty"`
-}
-
-type PasswordPolicyRecoveryEmailRecoveryToken struct {
-	TokenLifetimeMinutes int64 `json:"tokenLifetimeMinutes"`
-}
-
-type PasswordPolicyRecoveryQuestion struct {
-	Properties *PasswordPolicyRecoveryQuestionProperties `json:"properties,omitempty"`
-	Status     string                                    `json:"status,omitempty"`
-}
-
-type PasswordPolicyRecoveryQuestionProperties struct {
-	Complexity *PasswordPolicyRecoveryQuestionComplexity `json:"complexity,omitempty"`
-}
-
-type PasswordPolicyPasswordSettingsLockout struct {
-	AutoUnlockMinutes               int64    `json:"autoUnlockMinutes"`
-	MaxAttempts                     int64    `json:"maxAttempts"`
-	ShowLockoutFailures             *bool    `json:"showLockoutFailures,omitempty"`
-	UserLockoutNotificationChannels []string `json:"userLockoutNotificationChannels,omitempty"`
-}
-
-type PasswordPolicyRecoveryQuestionComplexity struct {
-	MinLength int64 `json:"minLength"`
-}
-
+// PolicyFactorsSettings is not expressed in the okta-sdk-golang yet
 type PolicyFactorsSettings struct {
+	// TODO
 	Duo          *PolicyFactor `json:"duo,omitempty"`
 	FidoU2f      *PolicyFactor `json:"fido_u2f,omitempty"`
 	FidoWebauthn *PolicyFactor `json:"fido_webauthn,omitempty"`
