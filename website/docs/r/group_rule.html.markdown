@@ -29,7 +29,7 @@ resource "okta_group_rule" "example" {
 
 The following arguments are supported:
 
-- `name` - (Required) The name of the Group Rule.
+- `name` - (Required) The name of the Group Rule (min character 1; max characters 50).
 
 - `group_assignments` - (Required) The list of group ids to assign the users to.
 
