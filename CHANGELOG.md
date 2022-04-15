@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.24.0 (April 15, 2022)
+
+ENHANCEMENTS:
+* Document group rule name max and min length [#1068](https://github.com/okta/terraform-provider-okta/pull/1068). Thanks, [@monde](https://github.com/monde)!
+
+BUGS:
+
+* Correctly change password on Okta user resource [#1060](https://github.com/okta/terraform-provider-okta/pull/1060). Thanks, [@BalaGanaparthi](https://github.com/BalaGanaparthi)!
+  * Uses change password flow if old password is present
+  * Uses set password flow if only password is present
+
 ## 3.23.0 (April 08, 2022)
 
 ENHANCEMENTS:
