@@ -13,6 +13,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -682,6 +683,10 @@ func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{
 		if err != nil {
 			return err
 		}
+	}
+	if os.Getenv("TF_ACC") != "" {
+		// slow down Okta API call deactivate and delete app if this is running in acceptance tests
+		time.Sleep(time.Second)
 	}
 	_, err := client.Application.DeleteApplication(ctx, d.Id())
 	return err
