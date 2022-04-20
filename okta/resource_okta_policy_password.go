@@ -107,10 +107,11 @@ func resourcePolicyPassword() *schema.Resource {
 				Default:     0,
 			},
 			"password_max_lockout_attempts": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "Number of unsuccessful login attempts allowed before lockout: 0 = no limit.",
-				Default:     10,
+				Type:             schema.TypeInt,
+				Optional:         true,
+				Description:      "Number of unsuccessful login attempts allowed before lockout: 0 = no limit.",
+				Default:          10,
+				DiffSuppressFunc: createValueDiffSuppression("0"), // default from Okta can be set to other than 10
 			},
 			"password_auto_unlock_minutes": {
 				Type:        schema.TypeInt,
