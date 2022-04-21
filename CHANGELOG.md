@@ -1,5 +1,28 @@
 # Changelog
 
+## 3.25.0 (April 21, 2022)
+
+ENHANCEMENTS:
+* Upgrade okta-sdk-golang to v2.12.1. [#1001](https://github.com/okta/terraform-provider-okta/pull/1001). Thanks, [@monde](https://github.com/monde)!
+  * Removing/Updating local sdk code
+    * Application.UploadApplicationLogo
+    * Authenticator
+    * EnrollFactor
+    * LinkedObjects
+    * PasswordPolicy
+    * ProfileMapping
+    * Subscription
+    * UserFactor
+  * Fixed ACC tests
+    * TestAccOktaAppSignOnPolicyRule
+    * TestAccOktaDataSourceIdpSocial_read
+    * TestAccOktaDefaultPasswordPolicy
+    * TestAccOktaIdpSocial_crud
+    * TestAccOktaPolicyPassword_crud
+    * TestAccOktaPolicySignOn_crud
+    * TestAccAppOAuthApplication_postLogoutRedirectCrud
+  * Backoff/retry on application delete
+
 ## 3.24.0 (April 15, 2022)
 
 ENHANCEMENTS:
