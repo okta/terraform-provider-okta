@@ -373,12 +373,10 @@ func buildAccessPolicyPlatformInclude(d *schema.ResourceData) []*okta.PlatformCo
 	valueList := v.(*schema.Set).List()
 	for _, item := range valueList {
 		if value, ok := item.(map[string]interface{}); ok {
-			var expr *string
+			var expr string
 			if typ := getMapString(value, "os_type"); typ == "OTHER" {
 				if v := getMapString(value, "os_expression"); v != "" {
-					expr = &v
-				} else {
-					expr = stringPtr("")
+					expr = v
 				}
 			}
 			includeList = append(includeList, &okta.PlatformConditionEvaluatorPlatform{
@@ -398,8 +396,8 @@ func flattenAccessPolicyPlatformInclude(platform *okta.PlatformPolicyRuleConditi
 	if platform != nil && platform.Include != nil {
 		for _, v := range platform.Include {
 			var expr string
-			if v.Os.Expression != nil {
-				expr = *v.Os.Expression
+			if v.Os.Expression != "" {
+				expr = v.Os.Expression
 			}
 			flattened = append(flattened, map[string]interface{}{
 				"os_expression": expr,

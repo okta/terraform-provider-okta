@@ -180,10 +180,10 @@ func syncCustomGroupSchema(d *schema.ResourceData, subschema *okta.GroupSchemaAt
 	if subschema.Items != nil {
 		_ = d.Set("array_type", subschema.Items.Type)
 		_ = d.Set("array_one_of", flattenOneOf(subschema.Items.OneOf))
-		_ = d.Set("array_enum", flattenEnum(subschema.Items.Enum))
+		_ = d.Set("array_enum", strToInterfaceSlice(subschema.Items.Enum))
 	}
 	if len(subschema.Enum) > 0 {
-		_ = d.Set("enum", flattenEnum(subschema.Enum))
+		_ = d.Set("enum", strToInterfaceSlice(subschema.Enum))
 	}
 	return setNonPrimitives(d, map[string]interface{}{
 		"one_of": flattenOneOf(subschema.OneOf),
@@ -224,12 +224,9 @@ func buildGroupCustomSchemaAttribute(d *schema.ResourceData) (*okta.GroupSchemaA
 			return nil, err
 		}
 	}
-	var enum []interface{}
+	var enum []string
 	if rawEnum, ok := d.GetOk("enum"); ok {
-		enum, err = buildEnum(rawEnum.([]interface{}), d.Get("type").(string))
-		if err != nil {
-			return nil, err
-		}
+		enum = buildStringSlice(rawEnum.([]interface{}))
 	}
 	return &okta.GroupSchemaAttribute{
 		Title:       d.Get("title").(string),

@@ -60,7 +60,7 @@ func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_includes.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_excludes.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "network_connection", "ZONE"),
-					resource.TestCheckResourceAttr(resourceName, "platform_include.#", "6"),
+					resource.TestCheckResourceAttr(resourceName, "platform_include.#", "4"),
 					resource.TestCheckResourceAttr(resourceName, "re_authentication_frequency", "PT43800H"),
 					resource.TestCheckResourceAttr(resourceName, "type", "ASSURANCE"),
 					resource.TestCheckResourceAttr(resourceName, "constraints.#", "2"),

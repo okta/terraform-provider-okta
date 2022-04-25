@@ -179,8 +179,8 @@ func syncGroups(d *schema.ResourceData, groups []interface{}, assignments []*okt
 		for _, assignment := range assignments {
 			if assignment.Id == d.Get(fmt.Sprintf("group.%d.id", i)).(string) {
 				present = true
-				if assignment.Priority != nil {
-					groups[i].(map[string]interface{})["priority"] = int(*assignment.Priority)
+				if assignment.Priority >= 0 {
+					groups[i].(map[string]interface{})["priority"] = assignment.Priority
 				}
 				groups[i].(map[string]interface{})["profile"] = buildProfile(d, i, assignment)
 			}
@@ -238,7 +238,7 @@ func containsAssignment(assignments []*okta.ApplicationGroupAssignment, assignme
 func containsEqualAssignment(assignments []*okta.ApplicationGroupAssignment, assignment *okta.ApplicationGroupAssignment) bool {
 	for i := range assignments {
 		if assignments[i].Id == assignment.Id && reflect.DeepEqual(assignments[i].Profile, assignment.Profile) {
-			if assignment.Priority != nil {
+			if assignment.Priority >= 0 {
 				return reflect.DeepEqual(assignments[i].Priority, assignment.Priority)
 			}
 			return true
@@ -272,8 +272,7 @@ func tfGroupsToGroupAssignments(d *schema.ResourceData) []*okta.ApplicationGroup
 		}
 		priority, ok := d.GetOk(fmt.Sprintf("group.%d.priority", i))
 		if ok {
-			p := int64(priority.(int))
-			a.Priority = &p
+			a.Priority = int64(priority.(int))
 		}
 		assignments[i] = a
 	}

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -175,10 +174,10 @@ func syncCustomUserSchema(d *schema.ResourceData, subschema *okta.UserSchemaAttr
 	if subschema.Items != nil {
 		_ = d.Set("array_type", subschema.Items.Type)
 		_ = d.Set("array_one_of", flattenOneOf(subschema.Items.OneOf))
-		_ = d.Set("array_enum", flattenEnum(subschema.Items.Enum))
+		_ = d.Set("array_enum", subschema.Items.Enum)
 	}
 	if len(subschema.Enum) > 0 {
-		_ = d.Set("enum", flattenEnum(subschema.Enum))
+		_ = d.Set("enum", subschema.Enum)
 	}
 	return setNonPrimitives(d, map[string]interface{}{
 		"one_of": flattenOneOf(subschema.OneOf),
@@ -249,10 +248,7 @@ func buildNullableItems(d *schema.ResourceData) (*okta.UserSchemaAttributeItems,
 		return u, nil
 	}
 	if okArrayEnum {
-		enum, err := buildEnum(arrayEnum.([]interface{}), u.Type)
-		if err != nil {
-			return nil, err
-		}
+		enum := buildStringSlice(arrayEnum.([]interface{}))
 		u.Enum = enum
 	}
 	if okArrayOneOf {
@@ -273,38 +269,25 @@ func buildOneOf(ae []interface{}, elemType string) ([]*okta.UserSchemaAttributeE
 			Title: valueMap["title"].(string),
 		}
 		c := valueMap["const"].(string)
-		switch elemType {
-		case "number":
-			f, err := strconv.ParseFloat(c, 64)
-			if err != nil {
-				return nil, errInvalidElemFormat
-			}
-			oneOf[i].Const = f
-		case "integer":
-			f, err := strconv.Atoi(c)
-			if err != nil {
-				return nil, errInvalidElemFormat
-			}
-			oneOf[i].Const = f
-		default:
-			oneOf[i].Const = c
-		}
+		oneOf[i].Const = c
 	}
 	return oneOf, nil
 }
 
-func flattenEnum(enum []interface{}) []interface{} {
+func buildStringSlice(enum []interface{}) []string {
+	result := make([]string, len(enum))
+	for i := range enum {
+		result[i] = enum[i].(string)
+	}
+	return result
+}
+
+func strToInterfaceSlice(enum []string) []interface{} {
 	result := make([]interface{}, len(enum))
 	for i := range enum {
-		switch enum[i].(type) {
-		case int:
-			result[i] = strconv.Itoa(enum[i].(int))
-		case float64:
-			result[i] = strconv.FormatFloat(enum[i].(float64), 'g', -1, 64)
-		default:
-			result[i] = enum[i]
-		}
+		result[i] = enum[i]
 	}
+
 	return result
 }
 
@@ -313,14 +296,7 @@ func flattenOneOf(oneOf []*okta.UserSchemaAttributeEnum) []interface{} {
 	for i, v := range oneOf {
 		of := map[string]interface{}{
 			"title": v.Title,
-		}
-		switch v.Const.(type) {
-		case int:
-			of["const"] = strconv.Itoa(v.Const.(int))
-		case float64:
-			of["const"] = strconv.FormatFloat(v.Const.(float64), 'g', -1, 64)
-		default:
-			of["const"] = v.Const
+			"const": v.Const,
 		}
 		result[i] = of
 	}
@@ -339,12 +315,9 @@ func buildUserCustomSchemaAttribute(d *schema.ResourceData) (*okta.UserSchemaAtt
 			return nil, err
 		}
 	}
-	var enum []interface{}
+	var enum []string
 	if rawEnum, ok := d.GetOk("enum"); ok {
-		enum, err = buildEnum(rawEnum.([]interface{}), d.Get("type").(string))
-		if err != nil {
-			return nil, err
-		}
+		enum = buildStringSlice(rawEnum.([]interface{}))
 	}
 	return &okta.UserSchemaAttribute{
 		Title:       d.Get("title").(string),

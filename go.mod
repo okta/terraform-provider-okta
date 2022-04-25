@@ -3,6 +3,7 @@ module github.com/okta/terraform-provider-okta
 go 1.17
 
 require (
+	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/cenkalti/backoff/v4 v4.1.3
 	github.com/crewjam/saml v0.4.6
 	github.com/hashicorp/go-cleanhttp v0.5.2
@@ -10,7 +11,7 @@ require (
 	github.com/hashicorp/go-hclog v1.2.0
 	github.com/hashicorp/go-retryablehttp v0.7.1
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.14.0
-	github.com/okta/okta-sdk-golang/v2 v2.9.3-0.20211209083930-a123a8c6e20d
+	github.com/okta/okta-sdk-golang/v2 v2.12.1-0.20220418232441-a4b5722f6e4f
 )
 
 require (

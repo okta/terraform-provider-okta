@@ -12,13 +12,13 @@ import (
 
 func sweepLinkDefinitions(client *testClient) error {
 	var errorList []error
-	linkedObjects, _, err := client.apiSupplement.ListLinkedObjects(context.Background())
+	linkedObjects, _, err := getOktaClientFromMetadata(testAccProvider.Meta()).LinkedObject.ListLinkedObjectDefinitions(context.Background())
 	if err != nil {
 		return err
 	}
 	for _, object := range linkedObjects {
 		if strings.HasPrefix(object.Primary.Name, testResourcePrefix) {
-			if _, err := client.apiSupplement.DeleteLinkedObject(context.Background(), object.Primary.Name); err != nil {
+			if _, err := getOktaClientFromMetadata(testAccProvider.Meta()).LinkedObject.DeleteLinkedObjectDefinition(context.Background(), object.Primary.Name); err != nil {
 				errorList = append(errorList, err)
 			}
 		}
@@ -52,6 +52,6 @@ func TestAccOktaLinkDefinition(t *testing.T) {
 }
 
 func doesLinkDefinitionExist(id string) (bool, error) {
-	_, response, err := getSupplementFromMetadata(testAccProvider.Meta()).GetLinkedObject(context.Background(), id)
+	_, response, err := getOktaClientFromMetadata(testAccProvider.Meta()).LinkedObject.GetLinkedObjectDefinition(context.Background(), id)
 	return doesResourceExist(response, err)
 }

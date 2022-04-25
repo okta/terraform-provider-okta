@@ -13,7 +13,9 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
+	"github.com/cenkalti/backoff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
@@ -435,7 +437,7 @@ func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, a
 	if !ok {
 		return nil
 	}
-	_, err := getSupplementFromMetadata(m).UploadAppLogo(ctx, appID, l.(string))
+	_, err := getOktaClientFromMetadata(m).Application.UploadApplicationLogo(ctx, appID, l.(string))
 	return err
 }
 
@@ -683,7 +685,17 @@ func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{
 			return err
 		}
 	}
-	_, err := client.Application.DeleteApplication(ctx, d.Id())
+
+	// Okta Core can have eventual consistency issues when deactivating an app
+	// which is required before deleting the app.
+	b := backoff.NewExponentialBackOff()
+	b.MaxElapsedTime = 5 * time.Second
+
+	err := backoff.Retry(func() error {
+		_, err := client.Application.DeleteApplication(ctx, d.Id())
+		return err
+	}, b)
+
 	return err
 }
 

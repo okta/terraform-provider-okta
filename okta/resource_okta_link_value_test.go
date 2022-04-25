@@ -43,15 +43,14 @@ func checkLinkValueDestroy(s *terraform.State) error {
 		if rs.Type != linkValue {
 			continue
 		}
-		client := getSupplementFromMetadata(testAccProvider.Meta())
-		lo, resp, err := client.GetLinkedObject(context.Background(), rs.Primary.Attributes["primary_name"])
+		lo, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).LinkedObject.GetLinkedObjectDefinition(context.Background(), rs.Primary.Attributes["primary_name"])
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			return nil
 		} else if err != nil {
 			return err
 		}
 		puID := rs.Primary.Attributes["primary_user_id"]
-		los, resp, err := client.GetLinkedObjectValues(context.Background(), puID, lo.Associated.Name)
+		los, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).User.GetLinkedObjectsForUser(context.Background(), puID, lo.Associated.Name, nil)
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			return nil
 		} else if err != nil {

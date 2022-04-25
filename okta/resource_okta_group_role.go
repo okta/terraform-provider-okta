@@ -92,7 +92,7 @@ func resourceGroupRoleCreate(ctx context.Context, d *schema.ResourceData, m inte
 	roleType := d.Get("role_type").(string)
 	client := getOktaClientFromMetadata(m)
 	logger(m).Info("assigning role to group", "group_id", groupID, "role_type", roleType)
-	role, _, err := client.Group.AssignRoleToGroup(ctx, groupID, &okta.AssignRoleRequest{Type: roleType},
+	role, _, err := client.Group.AssignRoleToGroup(ctx, groupID, okta.AssignRoleRequest{Type: roleType},
 		&query.Params{DisableNotifications: boolPtr(d.Get("disable_notifications").(bool))})
 	if err != nil {
 		return diag.Errorf("failed to assign role %s to group %s: %v", roleType, groupID, err)
@@ -173,7 +173,7 @@ func resourceGroupRoleUpdate(ctx context.Context, d *schema.ResourceData, m inte
 	roleType := d.Get("role_type").(string)
 	client := getOktaClientFromMetadata(m)
 	if d.HasChange("disable_notifications") {
-		_, _, err := client.Group.AssignRoleToGroup(ctx, groupID, nil,
+		_, _, err := client.Group.AssignRoleToGroup(ctx, groupID, okta.AssignRoleRequest{},
 			&query.Params{DisableNotifications: boolPtr(d.Get("disable_notifications").(bool))})
 		if err != nil {
 			return diag.Errorf("failed to update group's '%s' notification settings: %v", groupID, err)

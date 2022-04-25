@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -252,6 +253,18 @@ func doesResourceExist(response *okta.Response, err error) (bool, error) {
 	if err != nil {
 		return false, responseErr(response, err)
 	}
+
+	defer response.Body.Close()
+	b, err := io.ReadAll(response.Body)
+	if err != nil {
+		return false, responseErr(response, err)
+	}
+	// some of the API response can be 200 and return an empty object or list meaning nothing was found
+	body := string(b)
+	if body == "{}" || body == "[]" {
+		return false, nil
+	}
+
 	return true, nil
 }
 
