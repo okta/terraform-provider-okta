@@ -8,7 +8,7 @@ description: |-
 
 # okta_policy_profile_enrollment_apps
 
-~> **WARNING:** This feature does not work with orgs having the feature flag `SHARED_APP_SIGN_ON_POLICIES` which may include orgs not fully upgraded to Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
+~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
 
 This resource allows you to manage the apps in the Profile Enrollment Policy. 
 
