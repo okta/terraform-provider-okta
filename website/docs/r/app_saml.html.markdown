@@ -157,9 +157,9 @@ The following arguments are supported:
 
 - `accessibility_login_redirect_url` - (Optional) Custom login page for this application.
 
-- `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
+- `accessibility_self_service` - (Optional) Enable self-service. Default is: `false`.
 
-- `acs_endpoints` - An array of ACS endpoints. You can configure a maximum of 100 endpoints.
+- `acs_endpoints` - (Optional) An array of ACS endpoints. You can configure a maximum of 100 endpoints.
 
 - `admin_note` - (Optional) Application notes for admins.
 
@@ -181,7 +181,7 @@ The following arguments are supported:
 
 - `authn_context_class_ref` - (Optional) Identifies the SAML authentication context class for the assertion’s authentication statement.
 
-- `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
+- `auto_submit_toolbar` - (Optional) Display auto submit toolbar. Default is: `false`
 
 - `default_relay_state` - (Optional) Identifies a specific application resource in an IDP initiated SSO scenario.
 
@@ -196,11 +196,11 @@ The following arguments are supported:
 - `groups` - (Optional) Groups associated with the application.
   - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
 
-- `hide_ios` - (Optional) Do not display application icon on mobile app.
+- `hide_ios` - (Optional) Do not display application icon on mobile app. Default is: `false`
 
-- `hide_web` - (Optional) Do not display application icon to users
+- `hide_web` - (Optional) Do not display application icon to users. Default is: `false`
 
-- `honor_force_authn` - (Optional) Prompt user to re-authenticate if SP asks for it.
+- `honor_force_authn` - (Optional) Prompt user to re-authenticate if SP asks for it. Default is: `false`
 
 - `idp_issuer` - (Optional) SAML issuer ID.
 
@@ -216,7 +216,17 @@ The following arguments are supported:
 
 - `logo` - (Optional) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 
-- `preconfigured_app` - (Optional) name of application from the Okta Integration Network, if not included a custom app will be created.
+- `preconfigured_app` - (Optional) name of application from the Okta Integration Network, if not included a custom app will be created.  
+  If not provided the following arguments are required:
+  - `sso_url`
+  - `recipient`
+  - `destination`
+  - `audience`
+  - `subject_name_id_template`
+  - `subject_name_id_format`
+  - `signature_algorithm`
+  - `digest_algorithm`
+  - `authn_context_class_ref`
 
 - `recipient` - (Optional) The location where the app may present the SAML assertion.
 
@@ -235,9 +245,9 @@ The following arguments are supported:
 
 - `single_logout_url` - (Optional) The location where the logout response is sent.
 
-- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it's also can be provided during import). Default is `false`.
+- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it can also be provided during import). Default is `false`.
 
-- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it's also can be provided during import). Default is `false`.
+- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it can also be provided during import). Default is `false`.
 
 - `sp_issuer` - (Optional) SAML service provider issuer.
 
@@ -249,13 +259,13 @@ The following arguments are supported:
 
 - `subject_name_id_template` - (Optional) Template for app user's username when a user is assigned to the app.
 
-- `user_name_template` - (Optional) Username template. Default: `"${source.login}"`
+- `user_name_template` - (Optional) Username template. Default is: `"${source.login}"`
 
 - `user_name_template_push_status` - (Optional) Push username on update. Valid values: `"PUSH"` and `"DONT_PUSH"`.
 
 - `user_name_template_suffix` - (Optional) Username template suffix.
 
-- `user_name_template_type` - (Optional) Username template type. Default: `"BUILT_IN"`.
+- `user_name_template_type` - (Optional) Username template type. Default is: `"BUILT_IN"`.
 
 - `users` - (Optional) Users associated with the application.
   - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
