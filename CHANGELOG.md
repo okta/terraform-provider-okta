@@ -22,6 +22,7 @@ ENHANCEMENTS:
     * TestAccOktaPolicySignOn_crud
     * TestAccAppOAuthApplication_postLogoutRedirectCrud
   * Backoff/retry on application delete
+* Update okta_app_saml resource documentation. [#1076](https://github.com/okta/terraform-provider-okta/pull/1076). Thanks, [@jphuynh](https://github.com/jphuynh)!
 
 ## 3.24.0 (April 15, 2022)
 
