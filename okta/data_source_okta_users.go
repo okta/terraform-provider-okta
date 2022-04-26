@@ -36,6 +36,13 @@ func dataSourceUsers() *schema.Resource {
 						}),
 				},
 			},
+			"compound_search_operator": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Default:          "and",
+				ValidateDiagFunc: elemInSlice([]string{"and", "or"}),
+				Description:      "Search operator used when joining mulitple search clauses",
+			},
 		},
 	}
 }
