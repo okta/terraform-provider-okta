@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.25.1 (April 26, 2022)
+
+BUGS:
+
+ * Fix incomplete `compound_search_operator` on data source `okta_users`.  [#1077](https://github.com/okta/terraform-provider-okta/issues/1077). Thanks, [@monde](https://github.com/monde)!
+ * Fix default value regression on `okta_policy_rule_sign_on` for `identity_provider` attribute.  [#1079](https://github.com/okta/terraform-provider-okta/issues/1079). Thanks, [@monde](https://github.com/monde)!
+
 ## 3.25.0 (April 21, 2022)
 
 ENHANCEMENTS:
