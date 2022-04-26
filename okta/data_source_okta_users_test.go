@@ -12,6 +12,7 @@ func TestAccOktaDataSourceUsers_read(t *testing.T) {
 	mgr := newFixtureManager(users)
 	users := mgr.GetFixtures("users.tf", ri, t)
 	config := mgr.GetFixtures("basic.tf", ri, t)
+	dataSource := mgr.GetFixtures("datasource.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -34,6 +35,15 @@ func TestAccOktaDataSourceUsers_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_users.test", "users.#"),
+				),
+			},
+			{
+				Config: dataSource,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet("data.okta_users.compound_search", "compound_search_operator"),
+					resource.TestCheckResourceAttr("data.okta_users.compound_search", "compound_search_operator", "and"),
+					resource.TestCheckResourceAttrSet("data.okta_users.compound_search", "users.#"),
+					resource.TestCheckResourceAttr("data.okta_users.compound_search", "users.#", "1"),
 				),
 			},
 		},
