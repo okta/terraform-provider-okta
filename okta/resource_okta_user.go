@@ -599,23 +599,39 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 
 	if passwordChange {
 		oldPassword, newPassword := d.GetChange("password")
-		old, ok := d.GetOk("old_password")
-		if ok {
+		old, oldPasswordExist := d.GetOk("old_password")
+		if oldPasswordExist {
 			oldPassword = old
 		}
-		op := &okta.PasswordCredential{
-			Value: oldPassword.(string),
+		if oldPasswordExist {
+			op := &okta.PasswordCredential{
+				Value: oldPassword.(string),
+			}
+			np := &okta.PasswordCredential{
+				Value: newPassword.(string),
+			}
+			npr := &okta.ChangePasswordRequest{
+				OldPassword: op,
+				NewPassword: np,
+			}
+			_, _, err := client.User.ChangePassword(ctx, d.Id(), *npr, nil)
+			if err != nil {
+				return diag.Errorf("failed to update user's password: %v", err)
+			}
 		}
-		np := &okta.PasswordCredential{
-			Value: newPassword.(string),
-		}
-		npr := &okta.ChangePasswordRequest{
-			OldPassword: op,
-			NewPassword: np,
-		}
-		_, _, err := client.User.ChangePassword(ctx, d.Id(), *npr, nil)
-		if err != nil {
-			return diag.Errorf("failed to update user's password: %v", err)
+		if !oldPasswordExist {
+			password, _ := newPassword.(string)
+			user := okta.User{
+				Credentials: &okta.UserCredentials{
+					Password: &okta.PasswordCredential{
+						Value: password,
+					},
+				},
+			}
+			_, _, err := client.User.UpdateUser(ctx, d.Id(), user, nil)
+			if err != nil {
+				return diag.Errorf("failed to set user's password: %v", err)
+			}
 		}
 	}
 

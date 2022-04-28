@@ -36,3 +36,4 @@ data "okta_groups" "example" {
     - `name` - Group name.
     - `description` - Group description.
     - `type` - Group type.
+    - `custom_profile_attributes` - raw JSON containing all custom profile attributes. Likely only useful on groups of type `APP_GROUP`.

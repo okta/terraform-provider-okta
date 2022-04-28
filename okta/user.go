@@ -190,7 +190,7 @@ func assignAdminRolesToUser(ctx context.Context, userID string, roles []string, 
 		if role == "CUSTOM" {
 			continue
 		}
-		_, _, err := client.User.AssignRoleToUser(ctx, userID, &okta.AssignRoleRequest{Type: role},
+		_, _, err := client.User.AssignRoleToUser(ctx, userID, okta.AssignRoleRequest{Type: role},
 			&query.Params{DisableNotifications: boolPtr(disableNotifications)})
 		if err != nil {
 			return fmt.Errorf("failed to assign role '%s' to user '%s': %w", role, userID, err)
