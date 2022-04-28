@@ -120,9 +120,9 @@ func checkIfGroupHasUsers(ctx context.Context, client *okta.Client, groupId stri
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, fmt.Errorf("unable to return membership for group (%s) from API", groupId)
 	}
-	if len(groupUsers) == 0 {
-		return false, nil
-	}
+	// if len(groupUsers) == 0 {
+	// 	return false, nil
+	// }
 	for resp.HasNextPage() {
 		var additionalUsers []*okta.User
 		resp, err = resp.Next(context.Background(), &additionalUsers)
