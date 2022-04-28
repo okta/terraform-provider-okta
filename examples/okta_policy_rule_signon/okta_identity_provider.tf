@@ -18,7 +18,6 @@ resource "okta_policy_rule_signon" "test" {
   mfa_required      = true
   mfa_lifetime      = 15
   mfa_prompt        = "SESSION"
-  identity_provider = "OKTA"
 }
 
 resource "okta_network_zone" "test" {

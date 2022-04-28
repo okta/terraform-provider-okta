@@ -64,15 +64,15 @@ func resourceRoleSubscriptionCreate(ctx context.Context, d *schema.ResourceData,
 	if !ok {
 		return resourceRoleSubscriptionRead(ctx, d, m)
 	}
-	subscription, _, err := getSupplementFromMetadata(m).GetRoleTypeSubscription(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
+	subscription, _, err := getOktaClientFromMetadata(m).Subscription.GetRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
 	if err != nil {
 		return diag.Errorf("failed get subscription: %v", err)
 	}
 	if subscription.Status != status.(string) {
 		if status == "subscribed" {
-			_, err = getSupplementFromMetadata(m).RoleTypeSubscribe(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
+			_, err = getOktaClientFromMetadata(m).Subscription.SubscribeRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
 		} else {
-			_, err = getSupplementFromMetadata(m).RoleTypeUnsubscribe(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
+			_, err = getOktaClientFromMetadata(m).Subscription.UnsubscribeRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
 		}
 		if err != nil {
 			return diag.Errorf("failed to change subscription: %v", err)
@@ -83,7 +83,7 @@ func resourceRoleSubscriptionCreate(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceRoleSubscriptionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	subscription, _, err := getSupplementFromMetadata(m).GetRoleTypeSubscription(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
+	subscription, _, err := getOktaClientFromMetadata(m).Subscription.GetRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
 	if err != nil {
 		return diag.Errorf("failed get subscription: %v", err)
 	}
@@ -105,9 +105,9 @@ func resourceRoleSubscriptionUpdate(ctx context.Context, d *schema.ResourceData,
 		return nil
 	}
 	if newStatus == "subscribed" {
-		_, err = getSupplementFromMetadata(m).RoleTypeSubscribe(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
+		_, err = getOktaClientFromMetadata(m).Subscription.SubscribeRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
 	} else {
-		_, err = getSupplementFromMetadata(m).RoleTypeUnsubscribe(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
+		_, err = getOktaClientFromMetadata(m).Subscription.UnsubscribeRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
 	}
 	if err != nil {
 		return diag.Errorf("failed to change subscription: %v", err)

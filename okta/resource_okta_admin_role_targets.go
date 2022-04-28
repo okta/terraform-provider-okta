@@ -211,7 +211,7 @@ func removeAllTargets(ctx context.Context, d *schema.ResourceData, m interface{}
 	}
 	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusConflict, http.StatusBadRequest})
 	role, _, err := getOktaClientFromMetadata(m).User.AssignRoleToUser(ctx, d.Get("user_id").(string),
-		&okta.AssignRoleRequest{Type: d.Get("role_type").(string)}, nil)
+		okta.AssignRoleRequest{Type: d.Get("role_type").(string)}, nil)
 	if err != nil {
 		d.SetId("")
 		return "", fmt.Errorf("failed to assign '%s' role back to user: %v", d.Get("role_type").(string), err)

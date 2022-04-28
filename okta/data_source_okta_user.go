@@ -17,7 +17,7 @@ var userSearchSchemaDescription = "Filter to find " +
 	"must match what is in Okta, which is likely camel case. " +
 	"Expression is a free form expression filter " +
 	"https://developer.okta.com/docs/reference/core-okta-api/#filter . " +
-	"The set name/value/comparision properties will be ignored if expression is present"
+	"The set name/value/comparison properties will be ignored if expression is present"
 
 var userSearchSchema = map[string]*schema.Schema{
 	"name": {
@@ -30,10 +30,9 @@ var userSearchSchema = map[string]*schema.Schema{
 		Optional: true,
 	},
 	"comparison": {
-		Type:             schema.TypeString,
-		Optional:         true,
-		Default:          "eq",
-		ValidateDiagFunc: elemInSlice([]string{"eq", "lt", "gt", "sw"}),
+		Type:     schema.TypeString,
+		Optional: true,
+		Default:  "eq",
 	},
 	"expression": {
 		Type:        schema.TypeString,
@@ -76,7 +75,7 @@ func dataSourceUser() *schema.Resource {
 				Optional:         true,
 				Default:          "and",
 				ValidateDiagFunc: elemInSlice([]string{"and", "or"}),
-				Description:      "Search operator uses when joining mulitple search clauses",
+				Description:      "Search operator used when joining mulitple search clauses",
 			},
 		}),
 	}
@@ -148,7 +147,15 @@ func getSearchCriteria(d *schema.ResourceData) string {
 			filterList[i] = fmt.Sprintf(`%s`, fmap["expression"])
 			continue
 		}
-		filterList[i] = fmt.Sprintf(`%s %s "%s"`, fmap["name"], fmap["comparison"], fmap["value"])
+
+		// Need to set up the filter clause to allow comparions that do not
+		// accept a right hand argument and those that do.
+		// profile.email pr
+		filterList[i] = fmt.Sprintf(`%s %s`, fmap["name"], fmap["comparison"])
+		if fmap["value"] != "" {
+			// profile.email eq "example@example.com"
+			filterList[i] = fmt.Sprintf(`%s "%s"`, filterList[i], fmap["value"])
+		}
 	}
 
 	operator := " and "

@@ -37,10 +37,12 @@ func dataSourceAppSignOnPolicyRead(ctx context.Context, d *schema.ResourceData, 
 	if accessPolicy == "" {
 		return diag.Errorf("app does not support sign-on policy or this feature is not available")
 	}
-	policy, _, err := getOktaClientFromMetadata(m).Policy.GetPolicy(ctx, path.Base(accessPolicy), nil)
+	policy := &okta.Policy{}
+	_policy, _, err := getOktaClientFromMetadata(m).Policy.GetPolicy(ctx, path.Base(accessPolicy), policy, nil)
 	if err != nil {
 		return diag.Errorf("failed get policy by ID: %v", err)
 	}
+	policy = _policy.(*okta.Policy)
 	d.SetId(policy.Id)
 	_ = d.Set("name", policy.Name)
 	return nil
