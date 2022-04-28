@@ -68,15 +68,25 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	groupId := d.Get("group_id").(string)
+	users := convertInterfaceToStringSetNullable(d.Get("users"))
+	client := getOktaClientFromMetadata(m)
+	ok, err := checkIfGroupHasUsers(ctx, client, groupId, users)
 
 	logger(m).Info("reading group membership", "id", d.Id())
-	userIDList, err := listGroupUserIDs(ctx, m, d.Id())
 	if err != nil {
-		return diag.FromErr(err)
+		return diag.Errorf("unable to complete group check for user: %v", err)
 	}
-	_ = d.Set("group_id", d.Id())
-	_ = d.Set("users", convertStringSliceToSet(userIDList))
-	return nil
+	if ok {
+		d.Set("group_id", d.Id())
+		userIDList, _ := listGroupUserIDs(ctx, m, d.Id())
+		d.Set("users", convertStringSliceToSet(userIDList))
+		return nil
+	} else {
+		d.SetId("")
+		logger(m).Info("group (%s) did not have expected memberships or did not exist", groupId)
+		return nil
+	}
 }
 
 func resourceGroupMembershipsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
