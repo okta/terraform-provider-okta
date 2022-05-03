@@ -36,10 +36,10 @@ func dataSourceBrandsRead(ctx context.Context, d *schema.ResourceData, m interfa
 		rawMap["id"] = brand.Id
 		arr[i] = rawMap
 	}
-	brandResource := &schema.Resource{
+	brandDataSource := &schema.Resource{
 		Schema: brandResourceSchema,
 	}
-	_ = d.Set("brands", schema.NewSet(schema.HashResource(brandResource), arr))
+	_ = d.Set("brands", schema.NewSet(schema.HashResource(brandDataSource), arr))
 
 	return nil
 }
