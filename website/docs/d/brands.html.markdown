@@ -24,4 +24,4 @@ No arguments.
 
 ## Attribute Reference
 
-- `brands` - List of `okta_brand` belonging to the organization.
+- `brands` - List of `okta_brand` belonging to the organization

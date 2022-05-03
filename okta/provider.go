@@ -55,6 +55,7 @@ const (
 	authServerScopes              = "okta_auth_server_scopes"
 	behavior                      = "okta_behavior"
 	behaviors                     = "okta_behaviors"
+	brand                         = "okta_brand"
 	brands                        = "okta_brands"
 	captcha                       = "okta_captcha"
 	captchaOrgWideSettings        = "okta_captcha_org_wide_settings"
@@ -259,6 +260,7 @@ func Provider() *schema.Provider {
 			authServerPolicyRule:          resourceAuthServerPolicyRule(),
 			authServerScope:               resourceAuthServerScope(),
 			behavior:                      resourceBehavior(),
+			brand:                         resourceBrand(),
 			captcha:                       resourceCaptcha(),
 			captchaOrgWideSettings:        resourceCaptchaOrgWideSettings(),
 			domain:                        resourceDomain(),
@@ -356,6 +358,7 @@ func Provider() *schema.Provider {
 			authServerScopes:         dataSourceAuthServerScopes(),
 			behavior:                 dataSourceBehavior(),
 			behaviors:                dataSourceBehaviors(),
+			brand:                    dataSourceBrand(),
 			brands:                   dataSourceBrands(),
 			defaultPolicies:          deprecatedPolicies,
 			defaultPolicy:            dataSourceDefaultPolicy(),

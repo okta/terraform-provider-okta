@@ -12,18 +12,11 @@ func dataSourceBrands() *schema.Resource {
 		ReadContext: dataSourceBrandsRead,
 		Schema: map[string]*schema.Schema{
 			"brands": {
-				Type:     schema.TypeList,
-				Computed: true,
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Description: "List of `okta_brand` belonging to the organization",
 				Elem: &schema.Resource{
-					Schema: buildSchema(
-						brandDataSchema,
-						map[string]*schema.Schema{
-							"id": {
-								Type:        schema.TypeString,
-								Computed:    true,
-								Description: "Brand ID",
-							},
-						}),
+					Schema: brandsDataSourceSchema,
 				},
 			},
 		},
@@ -36,14 +29,17 @@ func dataSourceBrandsRead(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.Errorf("failed to list brands: %v", err)
 	}
 
-	d.SetId("brands") // there is only one brands list on the org
-	arr := make([]map[string]interface{}, len(brands))
+	d.SetId("brands")
+	arr := make([]interface{}, len(brands))
 	for i, brand := range brands {
 		rawMap := flattenBrand(brand)
 		rawMap["id"] = brand.Id
 		arr[i] = rawMap
 	}
-	_ = d.Set("brands", arr)
+	brandResource := &schema.Resource{
+		Schema: brandResourceSchema,
+	}
+	_ = d.Set("brands", schema.NewSet(schema.HashResource(brandResource), arr))
 
 	return nil
 }
