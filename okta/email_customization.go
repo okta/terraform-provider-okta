@@ -32,6 +32,11 @@ var emailCustomizationsDataSourceSchema = map[string]*schema.Schema{
 }
 
 var emailCustomizationDataSourceSchema = map[string]*schema.Schema{
+	"customization_id": {
+		Type:        schema.TypeString,
+		Required:    true,
+		Description: "The ID of the customization",
+	},
 	"id": {
 		Type:        schema.TypeString,
 		Computed:    true,
@@ -76,6 +81,7 @@ var emailCustomizationDataSourceSchema = map[string]*schema.Schema{
 
 func flattenEmailCustomization(brandId, templateName string, emailCustomization *okta.EmailTemplateCustomization) map[string]interface{} {
 	attrs := map[string]interface{}{}
+	attrs["customization_id"] = emailCustomization.Id
 	attrs["id"] = emailCustomization.Id
 	attrs["brand_id"] = brandId
 	attrs["template_name"] = templateName
@@ -96,7 +102,8 @@ func hashEmailCustomization(v interface{}) int {
 	var buf bytes.Buffer
 	m := v.(map[string]interface{})
 	buf.WriteString(fmt.Sprintf(
-		"%s-%s-%s-%s-",
+		"%s-%s-%s-%s-%s-",
+		m["customization_id"].(string),
 		m["brand_id"].(string),
 		m["template_name"].(string),
 		m["language"].(string),
