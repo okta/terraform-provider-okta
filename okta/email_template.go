@@ -24,9 +24,14 @@ var emailTemplatesDataSourceSchema = map[string]*schema.Schema{
 }
 
 var emailTemplateDataSourceSchema = map[string]*schema.Schema{
+	"brand_id": {
+		Type:        schema.TypeString,
+		Required:    true,
+		Description: "Brand ID",
+	},
 	"name": {
 		Type:        schema.TypeString,
-		Computed:    true,
+		Required:    true,
 		Description: "The name of the email template",
 	},
 	"links": {

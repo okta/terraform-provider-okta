@@ -26,6 +26,8 @@ func dataSourceEmailTemplatesRead(ctx context.Context, d *schema.ResourceData, m
 		if err != nil {
 			return diag.Errorf("failed to get brand for email templates: %v", err)
 		}
+	} else {
+		return diag.Errorf("brand_id required for email templates: %v", err)
 	}
 
 	templates, _, err := getOktaClientFromMetadata(m).Brand.ListEmailTemplates(ctx, brand.Id, nil)

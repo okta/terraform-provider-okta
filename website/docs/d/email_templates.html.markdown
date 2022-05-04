@@ -9,7 +9,9 @@ Get the email templates belonging to a brand in an Okta organization.
 
 # okta_email_templates
 
-Use this data source to retrieve the email templates of a brand in an Okta organization.
+Use this data source to retrieve the [email
+templates](https://developer.okta.com/docs/reference/api/brands/#email-template)
+of a brand in an Okta organization.
 
 ## Example Usage
 
