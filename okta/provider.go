@@ -66,8 +66,8 @@ const (
 	domainVerification            = "okta_domain_verification"
 	emailSender                   = "okta_email_sender"
 	emailSenderVerification       = "okta_email_sender_verification"
-	email_template                = "okta_email_template"
-	email_templates               = "okta_email_templates"
+	emailTemplate                 = "okta_email_template"
+	emailTemplates                = "okta_email_templates"
 	eventHook                     = "okta_event_hook"
 	eventHookVerification         = "okta_event_hook_verification"
 	factor                        = "okta_factor"
@@ -362,8 +362,8 @@ func Provider() *schema.Provider {
 			behaviors:                dataSourceBehaviors(),
 			brand:                    dataSourceBrand(),
 			brands:                   dataSourceBrands(),
-			email_template:           dataSourceEmailTemplate(),
-			email_templates:          dataSourceEmailTemplates(),
+			emailTemplate:            dataSourceEmailTemplate(),
+			emailTemplates:           dataSourceEmailTemplates(),
 			defaultPolicies:          deprecatedPolicies,
 			defaultPolicy:            dataSourceDefaultPolicy(),
 			group:                    dataSourceGroup(),

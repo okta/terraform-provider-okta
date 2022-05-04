@@ -1,7 +1,7 @@
 ---
 layout: 'okta'
 page_title: 'Okta: okta_email_template'
-sidebar_current: 'docs-okta-datasource-email_template'
+sidebar_current: 'docs-okta-datasource-email-template'
 description: |-
   Get a single Email Template for a Brand belonging to an Okta organization.
 ---

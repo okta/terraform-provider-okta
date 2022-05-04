@@ -9,7 +9,7 @@ import (
 
 func TestAccDataSourceOktaEmailTemplates_read(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(email_templates)
+	mgr := newFixtureManager(emailTemplates)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
