@@ -23,6 +23,8 @@ func TestAccDataSourceOktaEmailTemplates_read(t *testing.T) {
 					resource.TestCheckResourceAttr("data.okta_email_templates.test", "email_templates.#", "10"),
 					resource.TestCheckResourceAttrSet("data.okta_email_templates.test", "email_templates.0.name"),
 					resource.TestCheckResourceAttrSet("data.okta_email_templates.test", "email_templates.0.links"),
+					resource.TestCheckResourceAttrSet("data.okta_email_templates.test", "email_templates.1.name"),
+					resource.TestCheckResourceAttrSet("data.okta_email_templates.test", "email_templates.1.links"),
 				),
 			},
 		},
