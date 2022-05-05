@@ -21,6 +21,10 @@ func TestAccResourceOktaBrand_import_update(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy: func(s *terraform.State) error {
+			// brand api doens't have real delete for a brand
+			return nil
+		},
 		Steps: []resource.TestStep{
 			{
 				// this is set up only for import state test, ignore check as import.tf is for testing

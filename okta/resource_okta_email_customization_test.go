@@ -1,10 +1,14 @@
 package okta
 
 import (
+	"context"
+	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
@@ -16,6 +20,7 @@ func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceEmailCustomizationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -55,4 +60,23 @@ func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
 			},
 		},
 	})
+}
+
+func createCheckResourceEmailCustomizationDestroy(s *terraform.State) error {
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != emailCustomization {
+			continue
+		}
+		ID := rs.Primary.ID
+		brandID := rs.Primary.Attributes["brand_id"]
+		templateName := rs.Primary.Attributes["template_name"]
+
+		_, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).Brand.GetEmailTemplateCustomization(context.Background(), brandID, templateName, ID)
+		if err != nil || resp.StatusCode == http.StatusNotFound {
+			return nil
+		}
+
+		return fmt.Errorf("email customization still exists, ID %q, brandID %q, templateName: %q", ID, brandID, templateName)
+	}
+	return nil
 }
