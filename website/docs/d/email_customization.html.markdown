@@ -38,7 +38,7 @@ data "okta_email_customization" "forgot_password_en" {
 
 ## Attributes Reference
 
-- `id` - (Required) Customization ID
+- `id` - Customization ID
 - `links` - Link relations for this object - JSON HAL - Discoverable resources related to the email template
 - `language` - The language supported by the customization
 - `is_default` - Whether the customization is the default

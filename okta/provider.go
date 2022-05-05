@@ -270,6 +270,7 @@ func Provider() *schema.Provider {
 			domain:                        resourceDomain(),
 			domainCertificate:             resourceDomainCertificate(),
 			domainVerification:            resourceDomainVerification(),
+			emailCustomization:            resourceEmailCustomization(),
 			emailSender:                   resourceEmailSender(),
 			emailSenderVerification:       resourceEmailSenderVerification(),
 			eventHook:                     resourceEventHook(),

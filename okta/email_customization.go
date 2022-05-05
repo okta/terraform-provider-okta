@@ -79,9 +79,54 @@ var emailCustomizationDataSourceSchema = map[string]*schema.Schema{
 	},
 }
 
-func flattenEmailCustomization(brandId, templateName string, emailCustomization *okta.EmailTemplateCustomization) map[string]interface{} {
+var emailCustomizationResourceSchema = map[string]*schema.Schema{
+	"id": {
+		Type:        schema.TypeString,
+		Computed:    true,
+		Description: "The ID of the customization",
+	},
+	"brand_id": {
+		Type:        schema.TypeString,
+		Required:    true,
+		Description: "Brand ID",
+	},
+	"template_name": {
+		Type:        schema.TypeString,
+		Required:    true,
+		Description: "Template Name",
+	},
+	"links": {
+		Type:        schema.TypeString,
+		Computed:    true,
+		Description: "Link relations for this object - JSON HAL - Discoverable resources related to the email template",
+	},
+	"language": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "The language supported by the customization",
+	},
+	"is_default": {
+		Type:        schema.TypeBool,
+		Optional:    true,
+		Description: "Whether the customization is the default",
+	},
+	"subject": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "The subject of the customization",
+	},
+	"body": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "The body of the customization",
+	},
+}
+
+func flattenEmailCustomization(brandId, templateName string, isDataSource bool, emailCustomization *okta.EmailTemplateCustomization) map[string]interface{} {
 	attrs := map[string]interface{}{}
-	attrs["customization_id"] = emailCustomization.Id
+	if isDataSource {
+		attrs["customization_id"] = emailCustomization.Id
+	}
 	attrs["id"] = emailCustomization.Id
 	attrs["brand_id"] = brandId
 	attrs["template_name"] = templateName

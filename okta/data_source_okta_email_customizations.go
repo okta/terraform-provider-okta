@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func dataSourceEmailCustomizations() *schema.Resource {
@@ -17,16 +16,9 @@ func dataSourceEmailCustomizations() *schema.Resource {
 }
 
 func dataSourceEmailCustomizationsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var brand *okta.Brand
 	var err error
 	brandID, ok := d.GetOk("brand_id")
-	if ok {
-		logger(m).Info("reading brand by ID", "id", brandID.(string))
-		brand, _, err = getOktaClientFromMetadata(m).Brand.GetBrand(ctx, brandID.(string))
-		if err != nil {
-			return diag.Errorf("failed to get brand for email customizations: %v", err)
-		}
-	} else {
+	if !ok {
 		return diag.Errorf("brand_id required for email customizations: %v", err)
 	}
 
@@ -35,15 +27,15 @@ func dataSourceEmailCustomizationsRead(ctx context.Context, d *schema.ResourceDa
 		return diag.Errorf("template name required for email customizations: %v", err)
 	}
 
-	customizations, _, err := getOktaClientFromMetadata(m).Brand.ListEmailTemplateCustomizations(ctx, brand.Id, templateName.(string))
+	customizations, _, err := getOktaClientFromMetadata(m).Brand.ListEmailTemplateCustomizations(ctx, brandID.(string), templateName.(string))
 	if err != nil {
 		return diag.Errorf("failed to list email customizations: %v", err)
 	}
 
-	d.SetId(fmt.Sprintf("email_customizations-%s-%s", templateName, brand.Id))
+	d.SetId(fmt.Sprintf("email_customizations-%s-%s", templateName, brandID.(string)))
 	arr := make([]interface{}, len(customizations))
 	for i, customization := range customizations {
-		rawMap := flattenEmailCustomization(brand.Id, templateName.(string), customization)
+		rawMap := flattenEmailCustomization(brandID.(string), templateName.(string), true, customization)
 		arr[i] = rawMap
 	}
 
