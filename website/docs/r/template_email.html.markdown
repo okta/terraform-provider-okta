@@ -8,6 +8,8 @@ description: |-
 
 # okta_template_email
 
+** This resource is deprecated. Swith over to the email_customization resource.
+
 Creates an Okta Email Template.
 
 This resource allows you to create and configure an Okta Email Template.
