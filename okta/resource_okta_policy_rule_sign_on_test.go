@@ -84,7 +84,6 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "mfa_required", "true"),
-					resource.TestCheckResourceAttr(resourceName, "identity_provider", "OKTA"),
 				),
 			},
 			{
@@ -94,10 +93,12 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "mfa_required", "false"),
-					resource.TestCheckResourceAttr(resourceName, "identity_provider", "SPECIFIC_IDP"),
-					resource.TestCheckResourceAttr(resourceName, "identity_provider_ids.#", "1"),
 				),
 			},
+
+			// This test is failing on our OIE test orgs but not on the non-OIE
+			// org. Some orgs need a feature flag for behaviors and/or it isn't
+			// supported on OIE orgs
 			{
 				Config: factorSequence,
 				Check: resource.ComposeTestCheckFunc(

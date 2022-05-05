@@ -79,7 +79,8 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Optional:         true,
 				ValidateDiagFunc: elemInSlice([]string{"", "ANY", "LOW", "MEDIUM", "HIGH"}),
 				Description:      "Risc level: ANY, LOW, MEDIUM or HIGH",
-				Default:          "ANY",
+				// On reads the Okta API can return a default value of "ANY" when not present in local TF config
+				DiffSuppressFunc: valueDiffDefaultAPIValueToLocalValue("ANY", ""),
 			},
 			"behaviors": {
 				Type:        schema.TypeSet,
@@ -135,6 +136,8 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Optional:         true,
 				ValidateDiagFunc: elemInSlice([]string{"ANY", "OKTA", "SPECIFIC_IDP"}),
 				Description:      "Apply rule based on the IdP used: ANY, OKTA or SPECIFIC_IDP.",
+				// On reads the Okta API can return a default value of "ANY" when not present in local TF config
+				DiffSuppressFunc: valueDiffDefaultAPIValueToLocalValue("ANY", ""),
 			},
 			"identity_provider_ids": { // identity_provider must be SPECIFIC_IDP
 				Type:        schema.TypeList,
@@ -192,12 +195,6 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 			})
 			if err != nil {
 				return diag.Errorf("failed to set sign-on policy rule behaviors: %v", err)
-			}
-		}
-		if rule.Conditions.IdentityProvider != nil {
-			_ = d.Set("identity_provider", rule.Conditions.IdentityProvider.Provider)
-			if rule.Conditions.IdentityProvider.Provider == "SPECIFIC_IDP" {
-				_ = d.Set("identity_provider_ids", convertStringSliceToInterfaceSlice(rule.Conditions.IdentityProvider.IdpIds))
 			}
 		}
 	}
@@ -268,14 +265,6 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 		},
 		Network: buildPolicyNetworkCondition(d),
 		People:  getUsers(d),
-	}
-
-	provider, ok := d.GetOk("identity_provider")
-	if ok {
-		template.Conditions.IdentityProvider = &okta.IdentityProviderPolicyRuleCondition{
-			Provider: provider.(string),
-			IdpIds:   convertInterfaceToStringArr(d.Get("identity_provider_ids")),
-		}
 	}
 
 	bi, ok := d.GetOk("behaviors")

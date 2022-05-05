@@ -41,3 +41,11 @@ The following arguments are supported:
 ## Attributes Reference
 
 N/A
+
+## Import
+
+an Okta Group's memberships can be imported via the Okta group ID.
+
+```
+$ terraform import okta_group_memberships.test <group id>
+```

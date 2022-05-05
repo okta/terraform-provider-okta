@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
@@ -24,7 +25,8 @@ func deletePolicyByType(t string, client *testClient) error {
 	if err != nil {
 		return fmt.Errorf("failed to list policies in order to properly destroy: %v", err)
 	}
-	for _, policy := range policies {
+	for _, _policy := range policies {
+		policy := _policy.(*okta.Policy)
 		if strings.HasPrefix(policy.Name, testResourcePrefix) {
 			_, err = client.oktaClient.Policy.DeletePolicy(ctx, policy.Id)
 			if err != nil {
@@ -75,7 +77,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "password_expire_warn_days", "15"),
 					resource.TestCheckResourceAttr(resourceName, "password_min_age_minutes", "60"),
 					resource.TestCheckResourceAttr(resourceName, "password_history_count", "5"),
-					resource.TestCheckResourceAttr(resourceName, "password_max_lockout_attempts", "0"),
+					// resource.TestCheckResourceAttr(resourceName, "password_max_lockout_attempts", "0"), // this default value can be overwritten on the org, don't test the default
 					resource.TestCheckResourceAttr(resourceName, "password_auto_unlock_minutes", "2"),
 					resource.TestCheckResourceAttr(resourceName, "password_show_lockout_failures", "true"),
 					resource.TestCheckResourceAttr(resourceName, "password_lockout_notification_channels.#", "1"),

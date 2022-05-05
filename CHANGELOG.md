@@ -1,5 +1,47 @@
 # Changelog
 
+## 3.25.1 (April 26, 2022)
+
+BUGS:
+
+ * Fix incomplete `compound_search_operator` on data source `okta_users`.  [#1077](https://github.com/okta/terraform-provider-okta/issues/1077). Thanks, [@monde](https://github.com/monde)!
+ * Fix default value regression on `okta_policy_rule_sign_on` for `identity_provider` attribute.  [#1079](https://github.com/okta/terraform-provider-okta/issues/1079). Thanks, [@monde](https://github.com/monde)!
+
+## 3.25.0 (April 21, 2022)
+
+ENHANCEMENTS:
+* Upgrade okta-sdk-golang to v2.12.1. [#1001](https://github.com/okta/terraform-provider-okta/pull/1001). Thanks, [@monde](https://github.com/monde)!
+  * Removing/Updating local sdk code
+    * Application.UploadApplicationLogo
+    * Authenticator
+    * EnrollFactor
+    * LinkedObjects
+    * PasswordPolicy
+    * ProfileMapping
+    * Subscription
+    * UserFactor
+  * Fixed ACC tests
+    * TestAccOktaAppSignOnPolicyRule
+    * TestAccOktaDataSourceIdpSocial_read
+    * TestAccOktaDefaultPasswordPolicy
+    * TestAccOktaIdpSocial_crud
+    * TestAccOktaPolicyPassword_crud
+    * TestAccOktaPolicySignOn_crud
+    * TestAccAppOAuthApplication_postLogoutRedirectCrud
+  * Backoff/retry on application delete
+* Update okta_app_saml resource documentation. [#1076](https://github.com/okta/terraform-provider-okta/pull/1076). Thanks, [@jphuynh](https://github.com/jphuynh)!
+
+## 3.24.0 (April 15, 2022)
+
+ENHANCEMENTS:
+* Document group rule name max and min length [#1068](https://github.com/okta/terraform-provider-okta/pull/1068). Thanks, [@monde](https://github.com/monde)!
+
+BUGS:
+
+* Correctly change password on Okta user resource [#1060](https://github.com/okta/terraform-provider-okta/pull/1060). Thanks, [@BalaGanaparthi](https://github.com/BalaGanaparthi)!
+  * Uses change password flow if old password is present
+  * Uses set password flow if only password is present
+
 ## 3.23.0 (April 08, 2022)
 
 ENHANCEMENTS:

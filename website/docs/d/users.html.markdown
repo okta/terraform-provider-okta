@@ -50,7 +50,7 @@ data "okta_users" "example" {
 
 - `search` - (Optional) Map of search criteria. It supports the following properties.
   - `name` - (Required w/ comparison and value) Name of property to search against.
-  - `comparison` - (Required w/ name and value) Comparison to use.
+  - `comparison` - (Required w/ name and value) Comparison to use. Comparitors for strings: [`eq`, `ge`, `gt`, `le`, `lt`, `ne`, `pr`, `sw`](https://developer.okta.com/docs/reference/core-okta-api/#operators).
   - `value` - (Required w/ comparison and name) Value to compare with.
   - `expression` - (Optional, but overrides name/comparison/value) A raw search expression string. If present it will override name/comparison/value.
 - `compound_search_operator` - (Optional) Given multiple search elements they will be compounded together with the op. Default is `and`, `or` is also valid.

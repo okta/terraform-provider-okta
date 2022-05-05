@@ -107,10 +107,11 @@ func resourcePolicyPassword() *schema.Resource {
 				Default:     0,
 			},
 			"password_max_lockout_attempts": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "Number of unsuccessful login attempts allowed before lockout: 0 = no limit.",
-				Default:     10,
+				Type:             schema.TypeInt,
+				Optional:         true,
+				Description:      "Number of unsuccessful login attempts allowed before lockout: 0 = no limit.",
+				Default:          10,
+				DiffSuppressFunc: createValueDiffSuppression("0"), // default from Okta can be set to other than 10
 			},
 			"password_auto_unlock_minutes": {
 				Type:        schema.TypeInt,
@@ -289,14 +290,14 @@ func buildPasswordPolicy(d *schema.ResourceData) sdk.Policy {
 	// Okta defaults
 	// we add the defaults here & not in the schema map to avoid defaults appearing in the terraform plan diff
 	template.Settings = &sdk.PolicySettings{
-		Password: &sdk.PasswordPolicyPasswordSettings{
-			Age: &sdk.PasswordPolicyPasswordSettingsAge{
+		Password: &okta.PasswordPolicyPasswordSettings{
+			Age: &okta.PasswordPolicyPasswordSettingsAge{
 				ExpireWarnDays: int64(d.Get("password_expire_warn_days").(int)),
 				HistoryCount:   int64(d.Get("password_history_count").(int)),
 				MaxAgeDays:     int64(d.Get("password_max_age_days").(int)),
 				MinAgeMinutes:  int64(d.Get("password_min_age_minutes").(int)),
 			},
-			Complexity: &sdk.PasswordPolicyPasswordSettingsComplexity{
+			Complexity: &okta.PasswordPolicyPasswordSettingsComplexity{
 				Dictionary: &okta.PasswordDictionary{
 					Common: &okta.PasswordDictionaryCommon{
 						Exclude: boolPtr(d.Get("password_dictionary_lookup").(bool)),
@@ -310,32 +311,32 @@ func buildPasswordPolicy(d *schema.ResourceData) sdk.Policy {
 				MinSymbol:         int64(d.Get("password_min_symbol").(int)),
 				MinUpperCase:      int64(d.Get("password_min_uppercase").(int)),
 			},
-			Lockout: &sdk.PasswordPolicyPasswordSettingsLockout{
+			Lockout: &okta.PasswordPolicyPasswordSettingsLockout{
 				AutoUnlockMinutes:               int64(d.Get("password_auto_unlock_minutes").(int)),
 				MaxAttempts:                     int64(d.Get("password_max_lockout_attempts").(int)),
 				ShowLockoutFailures:             boolPtr(d.Get("password_show_lockout_failures").(bool)),
 				UserLockoutNotificationChannels: convertInterfaceToStringSet(d.Get("password_lockout_notification_channels")),
 			},
 		},
-		Recovery: &sdk.PasswordPolicyRecoverySettings{
-			Factors: &sdk.PasswordPolicyRecoveryFactors{
+		Recovery: &okta.PasswordPolicyRecoverySettings{
+			Factors: &okta.PasswordPolicyRecoveryFactors{
 				OktaCall: &okta.PasswordPolicyRecoveryFactorSettings{
 					Status: d.Get("call_recovery").(string),
 				},
 				OktaSms: &okta.PasswordPolicyRecoveryFactorSettings{
 					Status: d.Get("sms_recovery").(string),
 				},
-				OktaEmail: &sdk.PasswordPolicyRecoveryEmail{
-					Properties: &sdk.PasswordPolicyRecoveryEmailProperties{
-						RecoveryToken: &sdk.PasswordPolicyRecoveryEmailRecoveryToken{
+				OktaEmail: &okta.PasswordPolicyRecoveryEmail{
+					Properties: &okta.PasswordPolicyRecoveryEmailProperties{
+						RecoveryToken: &okta.PasswordPolicyRecoveryEmailRecoveryToken{
 							TokenLifetimeMinutes: int64(d.Get("recovery_email_token").(int)),
 						},
 					},
 					Status: d.Get("email_recovery").(string),
 				},
-				RecoveryQuestion: &sdk.PasswordPolicyRecoveryQuestion{
-					Properties: &sdk.PasswordPolicyRecoveryQuestionProperties{
-						Complexity: &sdk.PasswordPolicyRecoveryQuestionComplexity{
+				RecoveryQuestion: &okta.PasswordPolicyRecoveryQuestion{
+					Properties: &okta.PasswordPolicyRecoveryQuestionProperties{
+						Complexity: &okta.PasswordPolicyRecoveryQuestionComplexity{
 							MinLength: int64(d.Get("question_min_length").(int)),
 						},
 					},

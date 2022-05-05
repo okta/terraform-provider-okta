@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -214,6 +215,16 @@ func createValueDiffSuppression(newValueToIgnore string) schema.SchemaDiffSuppre
 	}
 }
 
+// ignore schema diff change if value changes from default value (TF old) to local value (TF new)
+func valueDiffDefaultAPIValueToLocalValue(defaultAPIValue, localValue string) schema.SchemaDiffSuppressFunc {
+	return func(k, old, new string, d *schema.ResourceData) bool {
+		if old == defaultAPIValue && new == localValue {
+			return true
+		}
+		return false
+	}
+}
+
 func ensureNotDefault(d *schema.ResourceData, t string) error {
 	thing := fmt.Sprintf("Default %s", t)
 
@@ -252,6 +263,18 @@ func doesResourceExist(response *okta.Response, err error) (bool, error) {
 	if err != nil {
 		return false, responseErr(response, err)
 	}
+
+	defer response.Body.Close()
+	b, err := io.ReadAll(response.Body)
+	if err != nil {
+		return false, responseErr(response, err)
+	}
+	// some of the API response can be 200 and return an empty object or list meaning nothing was found
+	body := string(b)
+	if body == "{}" || body == "[]" {
+		return false, nil
+	}
+
 	return true, nil
 }
 

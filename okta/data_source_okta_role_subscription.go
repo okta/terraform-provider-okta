@@ -34,7 +34,7 @@ func dataSourceRoleSubscription() *schema.Resource {
 }
 
 func dataSourceRoleSubscriptionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	subscription, _, err := getSupplementFromMetadata(m).GetRoleTypeSubscription(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
+	subscription, _, err := getOktaClientFromMetadata(m).Subscription.GetRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
 	if err != nil {
 		return diag.Errorf("failed get subscription: %v", err)
 	}
