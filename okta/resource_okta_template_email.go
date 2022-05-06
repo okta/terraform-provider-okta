@@ -77,10 +77,11 @@ var (
 
 func resourceTemplateEmail() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceTemplateEmailCreate,
-		ReadContext:   resourceTemplateEmailRead,
-		UpdateContext: resourceTemplateEmailUpdate,
-		DeleteContext: resourceTemplateEmailDelete,
+		DeprecationMessage: "Resource okta_template_email utilizes a private Okta API whose behavior may change or even removed. Resource okta_template_emal has been replaced by resource okta_email_customization which is supported by public Okta API.",
+		CreateContext:      resourceTemplateEmailCreate,
+		ReadContext:        resourceTemplateEmailRead,
+		UpdateContext:      resourceTemplateEmailUpdate,
+		DeleteContext:      resourceTemplateEmailDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},

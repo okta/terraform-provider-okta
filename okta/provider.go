@@ -55,6 +55,8 @@ const (
 	authServerScopes              = "okta_auth_server_scopes"
 	behavior                      = "okta_behavior"
 	behaviors                     = "okta_behaviors"
+	brand                         = "okta_brand"
+	brands                        = "okta_brands"
 	captcha                       = "okta_captcha"
 	captchaOrgWideSettings        = "okta_captcha_org_wide_settings"
 	defaultPolicies               = "okta_default_policies"
@@ -64,6 +66,10 @@ const (
 	domainVerification            = "okta_domain_verification"
 	emailSender                   = "okta_email_sender"
 	emailSenderVerification       = "okta_email_sender_verification"
+	emailCustomization            = "okta_email_customization"
+	emailCustomizations           = "okta_email_customizations"
+	emailTemplate                 = "okta_email_template"
+	emailTemplates                = "okta_email_templates"
 	eventHook                     = "okta_event_hook"
 	eventHookVerification         = "okta_event_hook_verification"
 	factor                        = "okta_factor"
@@ -258,11 +264,13 @@ func Provider() *schema.Provider {
 			authServerPolicyRule:          resourceAuthServerPolicyRule(),
 			authServerScope:               resourceAuthServerScope(),
 			behavior:                      resourceBehavior(),
+			brand:                         resourceBrand(),
 			captcha:                       resourceCaptcha(),
 			captchaOrgWideSettings:        resourceCaptchaOrgWideSettings(),
 			domain:                        resourceDomain(),
 			domainCertificate:             resourceDomainCertificate(),
 			domainVerification:            resourceDomainVerification(),
+			emailCustomization:            resourceEmailCustomization(),
 			emailSender:                   resourceEmailSender(),
 			emailSenderVerification:       resourceEmailSenderVerification(),
 			eventHook:                     resourceEventHook(),
@@ -355,6 +363,12 @@ func Provider() *schema.Provider {
 			authServerScopes:         dataSourceAuthServerScopes(),
 			behavior:                 dataSourceBehavior(),
 			behaviors:                dataSourceBehaviors(),
+			brand:                    dataSourceBrand(),
+			brands:                   dataSourceBrands(),
+			emailCustomization:       dataSourceEmailCustomization(),
+			emailCustomizations:      dataSourceEmailCustomizations(),
+			emailTemplate:            dataSourceEmailTemplate(),
+			emailTemplates:           dataSourceEmailTemplates(),
 			defaultPolicies:          deprecatedPolicies,
 			defaultPolicy:            dataSourceDefaultPolicy(),
 			group:                    dataSourceGroup(),
