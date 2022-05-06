@@ -8,16 +8,14 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
-func listGroupUserIDs(ctx context.Context, m interface{}, id string) ([]string, error) {
-	var resUsers []string
+func listGroupUsers(ctx context.Context, m interface{}, id string) ([]*okta.User, error) {
+	var resUsers []*okta.User
 	users, resp, err := getOktaClientFromMetadata(m).Group.ListGroupUsers(ctx, id, &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return nil, err
 	}
 	for {
-		for _, user := range users {
-			resUsers = append(resUsers, user.Id)
-		}
+		resUsers = append(resUsers, users...)
 		if resp.HasNextPage() {
 			resp, err = resp.Next(ctx, &users)
 			if err != nil {
@@ -27,6 +25,18 @@ func listGroupUserIDs(ctx context.Context, m interface{}, id string) ([]string, 
 		} else {
 			break
 		}
+	}
+	return resUsers, nil
+}
+
+func listGroupUserIDs(ctx context.Context, m interface{}, id string) ([]string, error) {
+	var resUsers []string
+	users, err := listGroupUsers(ctx, m, id)
+	if err != nil {
+		return nil, err
+	}
+	for _, user := range users {
+		resUsers = append(resUsers, user.Id)
 	}
 	return resUsers, nil
 }
