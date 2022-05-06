@@ -135,7 +135,7 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 - `tos_uri` - (Optional) URI to web page providing client tos (terms of service).
 
-- `type` - (Required) The type of OAuth application. Valid values: `"web"`, `"native"`, `"browser"`, `"service"`.
+- `type` - (Required) The type of OAuth application. Valid values: `"web"`, `"native"`, `"browser"`, `"service"`. For SPA apps use `browser`.
 
 - `user_name_template` - (Optional) Username template. Default: `"${source.login}"`
 
