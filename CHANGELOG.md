@@ -1,5 +1,27 @@
 # Changelog
 
+## 3.26.0 (May 06, 2022)
+
+ENHANCEMENTS:
+
+* Data sources and resources for branded email customization [#1089](https://github.com/okta/terraform-provider-okta/pull/1089). Thanks, [@monde](https://github.com/monde)!
+  * Data Sources
+    * `okta_brands`
+    * `okta_brand`
+    * `okta_email_customizations`
+    * `okta_email_customization`
+    * `okta_email_templates`
+    * `okta_email_template`
+  * Resources
+    * `okta_brand`
+    * `okta_email_customization`
+* Allow user lookup by group membership; data source `okta_users` gets `group_id` property. [#998](https://github.com/okta/terraform-provider-okta/pull/998). Thanks, [@BrentSouza](https://github.com/BrentSouza)!
+
+PROJECT IMPROVEMENTS:
+
+* Note `browser` type for SPA apps in app_oauth.html.markdown documentation [#580](https://github.com/okta/terraform-provider-okta/issues/580). Thanks, [@monde](https://github.com/monde)!
+* Add docs to represent USER_ADMIN in group_role.html.markdown documentation [#1075](https://github.com/okta/terraform-provider-okta/pull/1075). Thanks, [@naveen-vijay](https://github.com/naveen-vijay)!
+
 ## 3.25.1 (April 26, 2022)
 
 BUGS:
