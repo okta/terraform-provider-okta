@@ -54,5 +54,5 @@ The following arguments are supported:
 An Okta Group Rule can be imported via the Okta ID.
 
 ```
-$ terraform import okta_group_rule.example <group rule id>
+$ terraform import okta_group_rule.example &#60;group rule id&#62;
 ```

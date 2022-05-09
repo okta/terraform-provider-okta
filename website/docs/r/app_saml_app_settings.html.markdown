@@ -50,5 +50,5 @@ The following arguments are supported:
 A settings for the SAML App can be imported via the Okta ID.
 
 ```
-$ terraform import okta_app_saml_app_settings.example <app id>
+$ terraform import okta_app_saml_app_settings.example &#60;app id&#62;
 ```

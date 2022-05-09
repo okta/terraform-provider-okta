@@ -177,5 +177,5 @@ field should not be specified when using Password Import Inline Hook.
 An Okta User can be imported via the ID.
 
 ```
-$ terraform import okta_user.example <user id>
+$ terraform import okta_user.example &#60;user id&#62;
 ```

@@ -80,5 +80,5 @@ The following arguments are supported:
 Behavior can be imported via the Okta ID.
 
 ```
-$ terraform import okta_behavior.example <behavior id>
+$ terraform import okta_behavior.example &#60;behavior id&#62;
 ```

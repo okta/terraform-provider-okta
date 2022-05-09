@@ -57,5 +57,5 @@ The following arguments are supported:
 Authorization Server can be imported via the Okta ID.
 
 ```
-$ terraform import okta_auth_server.example <auth server id>
+$ terraform import okta_auth_server.example &#60;auth server id&#62;
 ```

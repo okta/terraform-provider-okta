@@ -58,5 +58,5 @@ The following arguments are supported:
 An Application User can be imported via the Okta ID.
 
 ```
-$ terraform import okta_app_user.example <app id>/<user id>
+$ terraform import okta_app_user.example &#60;app id&#62;/&#60;user id&#62;
 ```

@@ -78,5 +78,5 @@ The following arguments are supported:
 Authorization Server Policy Rule can be imported via the Auth Server ID, Policy ID, and Policy Rule ID.
 
 ```
-$ terraform import okta_auth_server_policy_rule.example <auth server id>/<policy id>/<policy rule id>
+$ terraform import okta_auth_server_policy_rule.example &#60;auth server id&#62;/&#60;policy id&#62;/&#60;policy rule id&#62;
 ```

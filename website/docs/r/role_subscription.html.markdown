@@ -54,5 +54,5 @@ resource "okta_role_subscription" "test" {
 A role subscription can be imported via the Okta ID.
 
 ```
-$ terraform import okta_role_subscription.example <role_type>/<notification_type>
+$ terraform import okta_role_subscription.example &#60;role_type&#62;/&#60;notification_type&#62;
 ```

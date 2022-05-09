@@ -51,5 +51,5 @@ The following arguments are supported:
 An Okta SMS Template can be imported via the template type.
 
 ```
-$ terraform import okta_template_sms.example <template type>
+$ terraform import okta_template_sms.example &#60;template type&#62;
 ```

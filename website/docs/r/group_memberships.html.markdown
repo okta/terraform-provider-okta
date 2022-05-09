@@ -47,5 +47,5 @@ N/A
 an Okta Group's memberships can be imported via the Okta group ID.
 
 ```
-$ terraform import okta_group_memberships.test <group id>
+$ terraform import okta_group_memberships.test &#60;group id&#62;
 ```

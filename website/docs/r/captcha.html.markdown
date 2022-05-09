@@ -44,5 +44,5 @@ The following arguments are supported:
 Behavior can be imported via the Okta ID.
 
 ```
-$ terraform import okta_captcha.example <captcha id>
+$ terraform import okta_captcha.example &#60;captcha id&#62;
 ```

@@ -120,5 +120,5 @@ All MFA settings above have the following structure.
 An MFA Policy can be imported via the Okta ID.
 
 ```
-$ terraform import okta_policy_mfa.example <policy id>
+$ terraform import okta_policy_mfa.example &#60;policy id&#62;
 ```

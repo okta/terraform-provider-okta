@@ -42,5 +42,5 @@ resource "okta_brand" "example" {
 An Okta Brand can be imported via the ID.
 
 ```
-$ terraform import okta_brand.example <brand id>
+$ terraform import okta_brand.example &#60;brand id&#62;
 ```

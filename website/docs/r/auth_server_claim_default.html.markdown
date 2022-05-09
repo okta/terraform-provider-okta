@@ -57,11 +57,11 @@ The following arguments are supported:
 Authorization Server Claim can be imported via the Auth Server ID and Claim ID or Claim Name.
 
 ```
-$ terraform import okta_auth_server_claim_default.example <auth server id>/<claim id>
+$ terraform import okta_auth_server_claim_default.example &#60;auth server id&#62;/&#60;claim id&#62;
 ```
 
 or
 
 ```
-$ terraform import okta_auth_server_claim_default.example <auth server id>/<claim name>
+$ terraform import okta_auth_server_claim_default.example &#60;auth server id&#62;/&#60;claim name&#62;
 ```

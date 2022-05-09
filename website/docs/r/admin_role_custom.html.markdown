@@ -68,5 +68,5 @@ The following arguments are supported:
 Okta Custom Admin Role can be imported via the Okta ID.
 
 ```
-$ terraform import okta_admin_role_custom.example <custom role id>
+$ terraform import okta_admin_role_custom.example &#60;custom role id&#62;
 ```

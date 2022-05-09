@@ -56,5 +56,5 @@ The following arguments are supported:
 Individual admin role assignment can be imported by passing the group and role assignment IDs as follows:
 
 ```
-$ terraform import okta_group_role.example <group id>/<role id>
+$ terraform import okta_group_role.example &#60;group id&#62;/&#60;role id&#62;
 ```
