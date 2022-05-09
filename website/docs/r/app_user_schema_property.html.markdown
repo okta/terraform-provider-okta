@@ -84,5 +84,5 @@ The following arguments are supported:
 App user schema property can be imported via the property index and app id.
 
 ```
-$ terraform import okta_app_user_schema_property.example <app id>/<property name>
+$ terraform import okta_app_user_schema_property.example &#60;app id&#62;/&#60;property name&#62;
 ```

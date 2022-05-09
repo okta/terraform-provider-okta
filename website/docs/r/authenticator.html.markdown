@@ -63,5 +63,5 @@ The following arguments are supported:
 Okta authenticator can be imported via the Okta ID.
 
 ```
-$ terraform import okta_authenticator.example <authenticator_id>
+$ terraform import okta_authenticator.example &#60;authenticator_id&#62;
 ```

@@ -84,5 +84,5 @@ The following arguments are supported:
 Group schema property can be imported via the property index.
 
 ```
-$ terraform import okta_group_schema_property.example <index>
+$ terraform import okta_group_schema_property.example &#60;index&#62;
 ```

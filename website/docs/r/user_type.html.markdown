@@ -41,5 +41,5 @@ The following arguments are supported:
 A User Type can be imported via the Okta ID.
 
 ```
-$ terraform import okta_user_type.example <user type id>
+$ terraform import okta_user_type.example &#60;user type id&#62;
 ```

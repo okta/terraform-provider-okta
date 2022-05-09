@@ -41,5 +41,5 @@ The following arguments are supported:
 OAuth API scopes can be imported via the Okta Application ID.
 
 ```
-$ terraform import okta_app_oauth_api_scope.example <app id>
+$ terraform import okta_app_oauth_api_scope.example &#60;app id&#62;
 ```

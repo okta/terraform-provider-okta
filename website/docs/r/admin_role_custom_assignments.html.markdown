@@ -89,5 +89,5 @@ The following arguments are supported:
 Okta Custom Admin Role Assignments can be imported via the Okta ID.
 
 ```
-$ terraform import okta_admin_role_custom_assignments.example <resource_set_id>/<custom_role_id>
+$ terraform import okta_admin_role_custom_assignments.example &#60;resource_set_id&#62;/&#60;custom_role_id&#62;
 ```

@@ -46,5 +46,5 @@ The following arguments are supported:
 Custom email sender can be imported via the Okta ID.
 
 ```
-$ terraform import okta_email_sender.example <sender id>
+$ terraform import okta_email_sender.example &#60;sender id&#62;
 ```

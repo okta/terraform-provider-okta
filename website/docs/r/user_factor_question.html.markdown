@@ -63,5 +63,5 @@ The following arguments are supported:
 Security question factor for a user can be imported via the `user_id` and the `factor_id`.
 
 ```
-$ terraform import okta_user_factor_question.example <user id>/<question factor id>
+$ terraform import okta_user_factor_question.example &#60;user id&#62;/&#60;question factor id&#62;
 ```

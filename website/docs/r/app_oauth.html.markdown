@@ -169,15 +169,15 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 An OIDC Application can be imported via the Okta ID.
 
 ```
-$ terraform import okta_app_oauth.example <app id>
+$ terraform import okta_app_oauth.example &#60;app id&#62;
 ```
 
 It's also possible to import app without groups or/and users. In this case ID may look like this:
 
 ```
-$ terraform import okta_app_basic_auth.example <app id>/skip_users
+$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_users
 
-$ terraform import okta_app_basic_auth.example <app id>/skip_users/skip_groups
+$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_users/skip_groups
 
-$ terraform import okta_app_basic_auth.example <app id>/skip_groups
+$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_groups
 ```

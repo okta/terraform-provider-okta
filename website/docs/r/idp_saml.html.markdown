@@ -108,5 +108,5 @@ The following arguments are supported:
 An SAML IdP can be imported via the Okta ID.
 
 ```
-$ terraform import okta_idp_saml.example <idp id>
+$ terraform import okta_idp_saml.example &#60;idp id&#62;
 ```

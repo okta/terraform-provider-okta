@@ -49,5 +49,5 @@ resource "okta_link_definition" "example" {
 Okta Link Definition can be imported via the Okta Primary Link Name.
 
 ```
-$ terraform import okta_link_definition.example <primary_name>
+$ terraform import okta_link_definition.example &#60;primary_name&#62;
 ```

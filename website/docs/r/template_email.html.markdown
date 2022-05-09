@@ -57,5 +57,5 @@ The following arguments are supported:
 An Okta Email Template can be imported via the template type.
 
 ```
-$ terraform import okta_template_email.example <template type>
+$ terraform import okta_template_email.example &#60;template type&#62;
 ```

@@ -57,5 +57,5 @@ N/A
 Existing user admin roles can be imported via the Okta User ID.
 
 ```
-$ terraform import okta_user_admin_roles.example <user id>
+$ terraform import okta_user_admin_roles.example &#60;user id&#62;
 ```

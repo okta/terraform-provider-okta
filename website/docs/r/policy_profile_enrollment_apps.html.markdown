@@ -54,5 +54,5 @@ The following arguments are supported:
 A Profile Enrollment Policy Apps can be imported via the Okta ID.
 
 ```
-$ terraform import okta_policy_profile_enrollment_apps.example <policy id>
+$ terraform import okta_policy_profile_enrollment_apps.example &#60;policy id&#62;
 ```

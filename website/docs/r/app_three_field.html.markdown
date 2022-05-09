@@ -101,15 +101,15 @@ The following arguments are supported:
 A Three Field App can be imported via the Okta ID.
 
 ```
-$ terraform import okta_app_three_field.example <app id>
+$ terraform import okta_app_three_field.example &#60;app id&#62;
 ```
 
 It's also possible to import app without groups or/and users. In this case ID may look like this:
 
 ```
-$ terraform import okta_app_basic_auth.example <app id>/skip_users
+$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_users
 
-$ terraform import okta_app_basic_auth.example <app id>/skip_users/skip_groups
+$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_users/skip_groups
 
-$ terraform import okta_app_basic_auth.example <app id>/skip_groups
+$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_groups
 ```
