@@ -11,7 +11,21 @@ import (
 func dataSourceEmailCustomizations() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceEmailCustomizationsRead,
-		Schema:      emailCustomizationsDataSourceSchema,
+		Schema: buildSchema(
+			map[string]*schema.Schema{
+				"brand_id": {
+					Type:        schema.TypeString,
+					Required:    true,
+					Description: "Brand ID",
+				},
+				"template_name": {
+					Type:        schema.TypeString,
+					Required:    true,
+					Description: "Template Name",
+				},
+			},
+			emailCustomizationsDataSourceSchema,
+		),
 	}
 }
 
@@ -35,7 +49,7 @@ func dataSourceEmailCustomizationsRead(ctx context.Context, d *schema.ResourceDa
 	d.SetId(fmt.Sprintf("email_customizations-%s-%s", templateName, brandID.(string)))
 	arr := make([]interface{}, len(customizations))
 	for i, customization := range customizations {
-		rawMap := flattenEmailCustomization(brandID.(string), templateName.(string), true, customization)
+		rawMap := flattenEmailCustomization(customization)
 		arr[i] = rawMap
 	}
 

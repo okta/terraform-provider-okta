@@ -52,7 +52,7 @@ func resourceEmailCustomizationCreate(ctx context.Context, d *schema.ResourceDat
 	}
 
 	d.SetId(customization.Id)
-	rawMap := flattenEmailCustomization(brandID.(string), templateName.(string), false, customization)
+	rawMap := flattenEmailCustomization(customization)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {
 		return diag.Errorf("failed to set new email customization properties: %v", err)
@@ -76,7 +76,7 @@ func resourceEmailCustomizationRead(ctx context.Context, d *schema.ResourceData,
 		return nil
 	}
 
-	rawMap := flattenEmailCustomization(etcr.brandID, etcr.templateName, false, customization)
+	rawMap := flattenEmailCustomization(customization)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {
 		return diag.Errorf("failed to set email customization properties: %v", err)
@@ -111,7 +111,7 @@ func resourceEmailCustomizationUpdate(ctx context.Context, d *schema.ResourceDat
 	}
 
 	d.SetId(customization.Id)
-	rawMap := flattenEmailCustomization(etcr.brandID, etcr.templateName, false, customization)
+	rawMap := flattenEmailCustomization(customization)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {
 		return diag.Errorf("failed to set email customization properties: %v", err)
