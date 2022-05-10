@@ -11,7 +11,16 @@ import (
 func dataSourceBrand() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceBrandRead,
-		Schema:      brandDataSourceSchema,
+		Schema: buildSchema(
+			map[string]*schema.Schema{
+				"brand_id": {
+					Type:        schema.TypeString,
+					Required:    true,
+					Description: "Brand ID",
+				},
+			},
+			brandDataSourceSchema,
+		),
 	}
 }
 

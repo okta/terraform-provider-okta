@@ -10,16 +10,7 @@ import (
 func dataSourceBrands() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceBrandsRead,
-		Schema: map[string]*schema.Schema{
-			"brands": {
-				Type:        schema.TypeSet,
-				Computed:    true,
-				Description: "List of `okta_brand` belonging to the organization",
-				Elem: &schema.Resource{
-					Schema: brandsDataSourceSchema,
-				},
-			},
-		},
+		Schema:      brandsDataSourceSchema,
 	}
 }
 
@@ -37,7 +28,7 @@ func dataSourceBrandsRead(ctx context.Context, d *schema.ResourceData, m interfa
 		arr[i] = rawMap
 	}
 	brandDataSource := &schema.Resource{
-		Schema: brandResourceSchema,
+		Schema: brandDataSourceSchema,
 	}
 	_ = d.Set("brands", schema.NewSet(schema.HashResource(brandDataSource), arr))
 
