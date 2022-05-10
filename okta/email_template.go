@@ -8,11 +8,6 @@ import (
 )
 
 var emailTemplatesDataSourceSchema = map[string]*schema.Schema{
-	"brand_id": {
-		Type:        schema.TypeString,
-		Required:    true,
-		Description: "Brand ID",
-	},
 	"email_templates": {
 		Type:        schema.TypeSet,
 		Computed:    true,
@@ -24,11 +19,6 @@ var emailTemplatesDataSourceSchema = map[string]*schema.Schema{
 }
 
 var emailTemplateDataSourceSchema = map[string]*schema.Schema{
-	"brand_id": {
-		Type:        schema.TypeString,
-		Required:    true,
-		Description: "Brand ID",
-	},
 	"name": {
 		Type:        schema.TypeString,
 		Required:    true,

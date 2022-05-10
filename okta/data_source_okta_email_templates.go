@@ -12,7 +12,16 @@ import (
 func dataSourceEmailTemplates() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceEmailTemplatesRead,
-		Schema:      emailTemplatesDataSourceSchema,
+		Schema: buildSchema(
+			map[string]*schema.Schema{
+				"brand_id": {
+					Type:        schema.TypeString,
+					Required:    true,
+					Description: "Brand ID",
+				},
+			},
+			emailTemplatesDataSourceSchema,
+		),
 	}
 }
 
