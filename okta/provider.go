@@ -114,6 +114,8 @@ const (
 	securityNotificationEmails    = "okta_security_notification_emails"
 	templateEmail                 = "okta_template_email"
 	templateSms                   = "okta_template_sms"
+	theme                         = "okta_theme"
+	themes                        = "okta_themes"
 	threatInsightSettings         = "okta_threat_insight_settings"
 	trustedOrigin                 = "okta_trusted_origin"
 	trustedOrigins                = "okta_trusted_origins"
@@ -381,6 +383,8 @@ func Provider() *schema.Provider {
 			networkZone:              dataSourceNetworkZone(),
 			policy:                   dataSourcePolicy(),
 			roleSubscription:         dataSourceRoleSubscription(),
+			theme:                    dataSourceTheme(),
+			themes:                   dataSourceThemes(),
 			trustedOrigins:           dataSourceTrustedOrigins(),
 			user:                     dataSourceUser(),
 			userProfileMappingSource: dataSourceUserProfileMappingSource(),
