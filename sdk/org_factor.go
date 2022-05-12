@@ -61,7 +61,7 @@ var FactorProviders = []string{
 
 // List of factors that are applicable to Okta Identity Engine (OIE)
 var AuthenticatorProviders = []string{
-	DuoFactor,
+	// DuoFactor,
 	ExternalIdpFactor,
 	GoogleOtpFactor,
 	OktaEmailFactor,
@@ -72,7 +72,7 @@ var AuthenticatorProviders = []string{
 	RsaTokenFactor,
 	SecurityQuestionFactor,
 	WebauthnFactor,
-	YubikeyTokenFactor,
+	// YubikeyTokenFactor,
 }
 
 // GetOrgFactor gets a factor by ID.
