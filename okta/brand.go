@@ -28,7 +28,7 @@ var brandResourceSchema = map[string]*schema.Schema{
 		Type:             schema.TypeString,
 		Optional:         true,
 		Description:      "Custom privacy policy URL",
-		DiffSuppressFunc: suppressDuringCreate,
+		DiffSuppressFunc: suppressDuringCreateFunc("brand_id"),
 	},
 	"links": {
 		Type:        schema.TypeString,
@@ -40,16 +40,8 @@ var brandResourceSchema = map[string]*schema.Schema{
 		Optional:         true,
 		Default:          false,
 		Description:      `Removes "Powered by Okta" from the Okta-hosted sign-in page and "© 2021 Okta, Inc." from the Okta End-User Dashboard`,
-		DiffSuppressFunc: suppressDuringCreate,
+		DiffSuppressFunc: suppressDuringCreateFunc("brand_id"),
 	},
-}
-
-func suppressDuringCreate(k, old, new string, d *schema.ResourceData) bool {
-	// If brand_id has changed assume this is create and treat the properties as readers not caring about what would otherwise apear to be drift.
-	if d.HasChange("brand_id") {
-		return true
-	}
-	return old == new
 }
 
 var brandDataSourceSchema = map[string]*schema.Schema{
