@@ -20,9 +20,9 @@ func TestAccDataSourceOktaTheme_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_theme.test", "id"),
-					resource.TestCheckResourceAttrSet("data.okta_theme.test", "logo"),
-					resource.TestCheckResourceAttrSet("data.okta_theme.test", "favicon"),
-					// resource.TestCheckResourceAttrSet("data.okta_theme.test", "background_image"), // background image is null by default, skip check
+					resource.TestCheckResourceAttrSet("data.okta_theme.test", "logo_url"),
+					resource.TestCheckResourceAttrSet("data.okta_theme.test", "favicon_url"),
+					// resource.TestCheckResourceAttrSet("data.okta_theme.test", "background_image_url"), // background image is null on new orgs, skip check
 					resource.TestCheckResourceAttrSet("data.okta_theme.test", "primary_color_hex"),
 					resource.TestCheckResourceAttrSet("data.okta_theme.test", "primary_color_contrast_hex"),
 					resource.TestCheckResourceAttrSet("data.okta_theme.test", "secondary_color_hex"),

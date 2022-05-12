@@ -6,3 +6,7 @@ information can be found in the
 API documentation.
 
 - Example [datastore.tf](./datasource.tf)
+- Example [basic.tf](./basic.tf)
+- Example [updated.tf](./updated.tf)
+- Example [import.tf](./import.tf)
+- Example [delete-images.tf](./delete-images.tf)

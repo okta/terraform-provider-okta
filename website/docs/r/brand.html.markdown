@@ -10,10 +10,14 @@ description: |-
 
 This resource allows you to get and update an Okta [Brand](https://developer.okta.com/docs/reference/api/brands/#brand-object).
 
+Brands are can only be updated through the Okta API. Therefore this resource
+only gets and updates a brand.
+
 ## Example Usage
 
 ```hcl
 # resource has been imported into current state
+# $ terraform import okta_brand.example <brand id>
 resource "okta_brand" "example" {
   agree_to_custom_privacy_policy = true
   custom_privacy_policy_url      = "https://example.com/privacy-policy"

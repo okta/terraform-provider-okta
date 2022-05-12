@@ -47,7 +47,7 @@ func dataSourceThemeRead(ctx context.Context, d *schema.ResourceData, m interfac
 	}
 
 	d.SetId(theme.Id)
-	rawMap := flattenTheme(brandID, themeID, theme)
+	rawMap := flattenTheme(brandID, theme)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {
 		return diag.Errorf("failed to set theme properties: %v", err)

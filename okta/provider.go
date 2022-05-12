@@ -315,6 +315,7 @@ func Provider() *schema.Provider {
 			securityNotificationEmails:    resourceSecurityNotificationEmails(),
 			templateEmail:                 resourceTemplateEmail(),
 			templateSms:                   resourceTemplateSms(),
+			theme:                         resourceTheme(),
 			threatInsightSettings:         resourceThreatInsightSettings(),
 			trustedOrigin:                 resourceTrustedOrigin(),
 			user:                          resourceUser(),

@@ -30,7 +30,7 @@ func dataSourceThemesRead(ctx context.Context, d *schema.ResourceData, m interfa
 	d.SetId(fmt.Sprintf("themes-%s", brandID.(string)))
 	arr := make([]interface{}, len(themes))
 	for i, theme := range themes {
-		rawMap := flattenTheme("", "", theme)
+		rawMap := flattenTheme("", theme)
 		arr[i] = rawMap
 	}
 

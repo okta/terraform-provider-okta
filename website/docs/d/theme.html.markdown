@@ -18,13 +18,9 @@ of a brand for an Okta orgnanization.
 data "okta_brands" "test" {
 }
 
-data "okta_themes" "test" {
-  brand_id = tolist(data.okta_brands.test.brands)[0].id
-}
-
 data "okta_theme" "test" {
-  brand_id = tolist(data.okta_brands.test.brands)[0].id
-  theme_id = tolist(data.okta_themes.test.themes)[0].id
+    brand_id = tolist(data.okta_brands.test.brands)[0].id
+    theme_id = tolist(data.okta_themes.test.themes)[0].id
 }
 ```
 
@@ -38,9 +34,9 @@ data "okta_theme" "test" {
 Related Okta API [Theme Response Object](https://developer.okta.com/docs/reference/api/brands/#theme-response-object)
 
 - `id` - Theme URL
-- `logo` - Logo URL
-- `favicon` - Favicon URL
-- `background_image` - Background image URL
+- `logo_url` - Logo URL
+- `favicon_url` - Favicon URL
+- `background_image_url` - Background image URL
 - `primary_color_hex` - Primary color hex code
 - `primary_color_contrast_hex` - Primary color contrast hex code
 - `secondary_color_hex` - Secondary color hex code
