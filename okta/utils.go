@@ -2,11 +2,15 @@ package okta
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"unicode"
@@ -403,4 +407,40 @@ func buildEnum(ae []interface{}, elemType string) ([]interface{}, error) {
 		}
 	}
 	return enum, nil
+}
+
+// localFileStateFunc - helper for schema.Schema StateFunc checking if a the
+// blob of a local file has changed - is not file path dependant.
+func localFileStateFunc(val interface{}) string {
+	filePath := val.(string)
+	if filePath == "" {
+		return ""
+	}
+	return computeFileHash(filePath)
+}
+
+// computeFileHash - equivalent to  `shasum -a 256 filepath`
+func computeFileHash(filename string) string {
+	file, err := os.Open(filename)
+	if err != nil {
+		return ""
+	}
+	h := sha256.New()
+	if _, err := io.Copy(h, file); err != nil {
+		log.Fatal(err)
+	}
+	_ = file.Close()
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+// suppressDuringCreateFunc - attribute has changed assume this is a create and
+// treat the properties as readers not caring about what would otherwise apear
+// to be drift.
+func suppressDuringCreateFunc(attribute string) func(k, old, new string, d *schema.ResourceData) bool {
+	return func(k, old, new string, d *schema.ResourceData) bool {
+		if d.HasChange(attribute) {
+			return true
+		}
+		return old == new
+	}
 }
