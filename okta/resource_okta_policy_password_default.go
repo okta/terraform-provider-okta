@@ -106,10 +106,12 @@ func resourcePolicyPasswordDefault() *schema.Resource {
 				Default:     0,
 			},
 			"password_history_count": {
-				Type:             schema.TypeInt,
-				Optional:         true,
-				Description:      "Number of distinct passwords that must be created before they can be reused: 0 = none.",
-				Default:          0,
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Number of distinct passwords that must be created before they can be reused: 0 = none.",
+				Default:     4,
+				// API documentation says default is 0 but it appears in acceptance testing on different orgs to now be 4 by default
+				// historyCount -> https://developer.okta.com/docs/reference/api/policy/#age-object
 			},
 			"password_max_lockout_attempts": {
 				Type:        schema.TypeInt,
