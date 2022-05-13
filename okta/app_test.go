@@ -26,7 +26,7 @@ func TestLogoStateFunc(t *testing.T) {
 		},
 	}
 	for _, c := range cases {
-		result := logoStateFunc(c.input)
+		result := localFileStateFunc(c.input)
 		if result != c.expected {
 			t.Errorf("Error matching logo, expected %q, got %q, for file %q", c.expected, result, c.input)
 		}

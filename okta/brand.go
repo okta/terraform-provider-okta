@@ -28,7 +28,7 @@ var brandResourceSchema = map[string]*schema.Schema{
 		Type:             schema.TypeString,
 		Optional:         true,
 		Description:      "Custom privacy policy URL",
-		DiffSuppressFunc: suppressDuringCreate,
+		DiffSuppressFunc: suppressDuringCreateFunc("brand_id"),
 	},
 	"links": {
 		Type:        schema.TypeString,
@@ -40,23 +40,15 @@ var brandResourceSchema = map[string]*schema.Schema{
 		Optional:         true,
 		Default:          false,
 		Description:      `Removes "Powered by Okta" from the Okta-hosted sign-in page and "© 2021 Okta, Inc." from the Okta End-User Dashboard`,
-		DiffSuppressFunc: suppressDuringCreate,
+		DiffSuppressFunc: suppressDuringCreateFunc("brand_id"),
 	},
 }
 
-func suppressDuringCreate(k, old, new string, d *schema.ResourceData) bool {
-	// If brand_id has changed assume this is create and treat the properties as readers not caring about what would otherwise apear to be drift.
-	if d.HasChange("brand_id") {
-		return true
-	}
-	return old == new
-}
-
 var brandDataSourceSchema = map[string]*schema.Schema{
-	"brand_id": {
+	"id": {
 		Type:        schema.TypeString,
-		Required:    true,
-		Description: "Brand ID",
+		Computed:    true,
+		Description: "The ID of the Brand",
 	},
 	"custom_privacy_policy_url": {
 		Type:        schema.TypeString,
@@ -76,31 +68,20 @@ var brandDataSourceSchema = map[string]*schema.Schema{
 }
 
 var brandsDataSourceSchema = map[string]*schema.Schema{
-	"id": {
-		Type:        schema.TypeString,
+	"brands": {
+		Type:        schema.TypeSet,
 		Computed:    true,
-		Description: "Brand ID",
-	},
-	"custom_privacy_policy_url": {
-		Type:        schema.TypeString,
-		Computed:    true,
-		Description: "Custom privacy policy URL",
-	},
-	"links": {
-		Type:        schema.TypeString,
-		Computed:    true,
-		Description: "Link relations for this object - JSON HAL - Discoverable resources related to the brand",
-	},
-	"remove_powered_by_okta": {
-		Type:        schema.TypeBool,
-		Computed:    true,
-		Description: `Removes "Powered by Okta" from the Okta-hosted sign-in page and "© 2021 Okta, Inc." from the Okta End-User Dashboard`,
+		Description: "List of `okta_brand` belonging to the organization",
+		Elem: &schema.Resource{
+			Schema: brandDataSourceSchema,
+		},
 	},
 }
 
 func flattenBrand(brand *okta.Brand) map[string]interface{} {
 	attrs := map[string]interface{}{}
-	// NOTE: explicitly set defaults on brand
+
+	attrs["id"] = brand.Id
 	attrs["custom_privacy_policy_url"] = ""
 	if brand.CustomPrivacyPolicyUrl != "" {
 		attrs["custom_privacy_policy_url"] = brand.CustomPrivacyPolicyUrl

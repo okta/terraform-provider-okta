@@ -11,7 +11,26 @@ import (
 func dataSourceEmailCustomization() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceEmailCustomizationRead,
-		Schema:      emailCustomizationDataSourceSchema,
+		Schema: buildSchema(
+			map[string]*schema.Schema{
+				"brand_id": {
+					Type:        schema.TypeString,
+					Required:    true,
+					Description: "Brand ID",
+				},
+				"template_name": {
+					Type:        schema.TypeString,
+					Required:    true,
+					Description: "Template Name",
+				},
+				"customization_id": {
+					Type:        schema.TypeString,
+					Required:    true,
+					Description: "The ID of the customization",
+				},
+			},
+			emailCustomizationDataSourceSchema,
+		),
 	}
 }
 
@@ -37,7 +56,7 @@ func dataSourceEmailCustomizationRead(ctx context.Context, d *schema.ResourceDat
 	}
 
 	d.SetId(fmt.Sprintf("email_customization-%s-%s-%s", customization.Id, templateName.(string), brandID.(string)))
-	rawMap := flattenEmailCustomization(brandID.(string), templateName.(string), true, customization)
+	rawMap := flattenEmailCustomization(customization)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {
 		return diag.Errorf("failed to set email customization properties: %v", err)

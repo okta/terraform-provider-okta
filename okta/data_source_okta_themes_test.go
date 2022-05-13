@@ -7,9 +7,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDataSourceOktaBrand_read(t *testing.T) {
+func TestAccDataSourceOktaThemes_read(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(brand)
+	mgr := newFixtureManager(themes)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
@@ -17,11 +17,12 @@ func TestAccDataSourceOktaBrand_read(t *testing.T) {
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				Config:  config,
-				Destroy: false,
+				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_brand.example", "id"),
-					resource.TestCheckResourceAttrSet("data.okta_brand.example", "links"),
+					resource.TestCheckResourceAttrSet("data.okta_themes.test", "themes.#"),
+					resource.TestCheckResourceAttr("data.okta_themes.test", "themes.#", "1"),
+					resource.TestCheckResourceAttrSet("data.okta_themes.test", "themes.0.id"),
+					resource.TestCheckResourceAttrSet("data.okta_themes.test", "themes.0.links"),
 				),
 			},
 		},

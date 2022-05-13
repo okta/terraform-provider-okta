@@ -26,7 +26,7 @@ func TestAccDataSourceOktaEmailCustomizations_read(t *testing.T) {
 					resource.TestCheckResourceAttrSet("data.okta_email_customizations.forgot_password", "email_customizations.0.language"),
 					resource.TestCheckResourceAttr("data.okta_email_customizations.forgot_password", "email_customizations.0.language", "en"),
 					resource.TestCheckResourceAttrSet("data.okta_email_customizations.forgot_password", "email_customizations.0.is_default"),
-					resource.TestCheckResourceAttr("data.okta_email_customizations.forgot_password", "email_customizations.0.is_default", "false"),
+					resource.TestCheckResourceAttr("data.okta_email_customizations.forgot_password", "email_customizations.0.is_default", "true"),
 					resource.TestCheckResourceAttrSet("data.okta_email_customizations.forgot_password", "email_customizations.0.subject"),
 					resource.TestCheckResourceAttr("data.okta_email_customizations.forgot_password", "email_customizations.0.subject", "Stuff"),
 					resource.TestCheckResourceAttrSet("data.okta_email_customizations.forgot_password", "email_customizations.0.body"),

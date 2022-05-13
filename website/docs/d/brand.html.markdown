@@ -27,6 +27,8 @@ data "okta_brand" "test" {
 
 ## Attributes Reference
 
+- `id` - Brand ID
+
 - `custom_privacy_policy_url` - Custom privacy policy URL
 
 - `links` - Link relations for this object - JSON HAL - Discoverable resources related to the brand
