@@ -1,5 +1,25 @@
 # Changelog
 
+## 3.27.0 (May 13, 2022)
+
+ENHANCEMENTS:
+
+* Data sources and resources for branded themes [#1104](https://github.com/okta/terraform-provider-okta/pull/1104). Thanks, [@monde](https://github.com/monde)!
+  * Data Sources
+    * `okta_themes`
+    * `okta_theme`
+  * Resources
+    * `okta_theme`
+
+BUG FIXES:
+* Soft revert of diff suppress on `okta_policy_password` and `okta_policy_password_default` resources [#1108](https://github.com/okta/terraform-provider-okta/pull/1108). Thanks, [@monde](https://github.com/monde)!
+
+PROJECT IMPROVEMENTS:
+
+* Removed confusing and inaccurate information about Duo and Yubikey support in resource `okta_authenticator` [#1103](https://github.com/okta/terraform-provider-okta/pull/1103). Thanks, [@monde](https://github.com/monde)!
+* Fixed formatting in docs for a markdown rendering quirk of the Terraform Registry [#1096](https://github.com/okta/terraform-provider-okta/pull/1096). Thanks, [@monde](https://github.com/monde)!
+
+
 ## 3.26.0 (May 06, 2022)
 
 ENHANCEMENTS:
