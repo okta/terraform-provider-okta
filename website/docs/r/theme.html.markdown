@@ -11,8 +11,8 @@ description: |-
 This resource allows you to get and update an Okta
 [Theme](https://developer.okta.com/docs/reference/api/brands/#theme-object).
 
-Themes are can only be updated through the Okta API. Therefore this resource
-only gets and updates a theme.
+Themes can only be updated through the Okta API. Therefore this resource only
+gets and updates a theme.
 
 ## Example Usage
 
