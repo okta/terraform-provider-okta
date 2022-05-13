@@ -110,7 +110,6 @@ func resourcePolicyPasswordDefault() *schema.Resource {
 				Optional:         true,
 				Description:      "Number of distinct passwords that must be created before they can be reused: 0 = none.",
 				Default:          0,
-				DiffSuppressFunc: createValueDiffSuppression("0"), // default from Okta can be set to other than 0
 			},
 			"password_max_lockout_attempts": {
 				Type:        schema.TypeInt,
