@@ -54,6 +54,11 @@ func resourceAuthServerScope() *schema.Resource {
 				Default:     false,
 				Description: "A default scope will be returned in an access token when the client omits the scope parameter in a token request, provided this scope is allowed as part of the access policy rule.",
 			},
+			"system": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Whether Okta created the Scope",
+			},
 		},
 	}
 }
@@ -82,6 +87,7 @@ func resourceAuthServerScopeRead(ctx context.Context, d *schema.ResourceData, m 
 	_ = d.Set("display_name", scope.DisplayName)
 	_ = d.Set("metadata_publish", scope.MetadataPublish)
 	_ = d.Set("default", scope.Default)
+	_ = d.Set("system", scope.System)
 	if scope.Consent != "" {
 		_ = d.Set("consent", scope.Consent)
 	}

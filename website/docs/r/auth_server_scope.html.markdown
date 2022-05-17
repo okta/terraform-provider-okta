@@ -47,6 +47,8 @@ The following arguments are supported:
 
 - `auth_server_id` - The ID of the Auth Server.
 
+- `system` - Whether Okta created the Scope
+
 ## Import
 
 Okta Auth Server Scope can be imported via the Auth Server ID and Scope ID.
