@@ -85,11 +85,23 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 		if len(appList) < 1 {
 			return diag.Errorf("no application found with the provided filter: %+v", filters)
 		}
-		if filters.Label != "" && appList[0].Label != filters.Label {
-			return diag.Errorf("no application found with provided label: %s", filters.Label)
+
+		// Okta API for list apps uses a starts with query on label and name
+		// which could result in multiple matches on the data source's "label"
+		// property.  We need to further inspect for an exact label match.
+		if filters.Label != "" {
+			for i, _app := range appList {
+				if _app.Label == filters.Label {
+					app = appList[i]
+					break
+				}
+			}
+		} else {
+			if len(appList) > 1 {
+				logger(m).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
+			}
+			app = appList[0]
 		}
-		logger(m).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
-		app = appList[0]
 	}
 	err = setAppUsersIDsAndGroupsIDs(ctx, d, getOktaClientFromMetadata(m), app.Id)
 	if err != nil {
