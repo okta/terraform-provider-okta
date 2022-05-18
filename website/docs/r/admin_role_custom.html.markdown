@@ -39,7 +39,7 @@ The following arguments are supported:
 `"okta.groups.manage"`,
 `"okta.groups.members.manage"`,
 `"okta.groups.read"`,
-`"okta.profilesource.import.run"`,
+`"okta.profilesources.import.run"`,
 `"okta.users.appAssignment.manage"`,
 `"okta.users.create"`,
 `"okta.users.credentials.expirePassword"`,
