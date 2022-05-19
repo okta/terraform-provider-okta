@@ -28,6 +28,8 @@ data "okta_group" "example" {
 
 - `include_users` - (Optional) whether to retrieve all member ids.
 
+- `delay_read_seconds` - (Optional) Force delay of the group read N seconds. Useful when eventual consistency of group information needs to be allowed for; for instance, when group rules are know to be applied.
+
 ## Attributes Reference
 
 - `id` - ID of group.
