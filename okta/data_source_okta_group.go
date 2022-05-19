@@ -50,7 +50,7 @@ func dataSourceGroup() *schema.Resource {
 			"delay_read_seconds": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Force delay of the group read N seconds. Useful when eventual consistency of group information needs to be allowed for; for instance, when group rules are know to be applied.",
+				Description: "Force delay of the group read by N seconds. Useful when eventual consistency of group information needs to be allowed for; for instance, when group rules are known to have been applied.",
 			},
 		},
 	}
