@@ -12,6 +12,8 @@ This resource allows you to configure the client-based rate limit and rate limit
 
 ~> **WARNING:** This resource is available only when using api token in the provider config.
 
+~> **WARNING:** This resource makes use of an internal/private Okta API endpoint that could change without notice rendering this resource inoperable. 
+
 ## Example Usage
 
 ```hcl
