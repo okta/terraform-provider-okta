@@ -1,6 +1,9 @@
 package okta
 
 import (
+	"fmt"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
@@ -161,3 +164,83 @@ data "okta_group" "test_b" {
   depends_on = [okta_group_memberships.test_a_direct, okta_group_rule.group_b_to_a_rule]
 }
 `
+
+// TestAccOktaGroupMembershipsIssue1119 addresses https://github.com/okta/terraform-provider-okta/issues/1119
+func TestAccOktaGroupMembershipsIssue1119(t *testing.T) {
+	configUsers := ""
+	for i := 0; i < 250; i++ {
+		configUsers = fmt.Sprintf("%s%s", configUsers, configUser(i))
+	}
+	args := []interface{}{
+		`
+resource "okta_group" "test" {
+  name = "TestACC Group"
+  description = "Test Group"
+}
+    `,
+		configUsers,
+		configGroupMemberships(250),
+	}
+	strFmt := ""
+	for i := 0; i < len(args); i++ {
+		strFmt = fmt.Sprintf("%s%s", strFmt, "%s")
+	}
+
+	config := fmt.Sprintf(strFmt, args...)
+	if !allowLongRunningACCTest(t) {
+		t.SkipNow()
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_group_memberships.test", "users.#", "250"),
+				),
+			},
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_group_memberships.test", "users.#", "250"),
+				),
+			},
+		},
+	})
+}
+
+func allowLongRunningACCTest(t *testing.T) bool {
+	envVar := "OKTA_ALLOW_LONG_RUNNING_ACC_TEST"
+	allow := (os.Getenv(envVar) != "")
+	if !allow {
+		t.Logf("%q not present, skipping test", envVar)
+	}
+	return allow
+}
+
+func configGroupMemberships(n int) string {
+	users := []string{}
+	for i := 0; i < n; i++ {
+		users = append(users, fmt.Sprintf("okta_user.test-%03d.id", i))
+	}
+	return fmt.Sprintf(`
+resource "okta_group_memberships" "test" {
+  group_id = okta_group.test.id
+  users = [%s]
+}
+`, strings.Join(users, ", "))
+}
+
+func configUser(i int) string {
+	return fmt.Sprintf(`
+resource "okta_user" "test-%03d" {
+  first_name = "TestAcc"
+  last_name  = "Smith-%03d"
+  login      = "testAcc-%03d-replace_with_uuid@example.com"
+  email      = "testAcc-%03d-replace_with_uuid@example.com"
+}
+`, i, i, i, i)
+}
