@@ -93,6 +93,7 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d", ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "mfa_required", "false"),
+					resource.TestCheckResourceAttr(resourceName, "identity_provider", "SPECIFIC_IDP"),
 				),
 			},
 
