@@ -17,6 +17,7 @@ func listGroupUsers(ctx context.Context, m interface{}, id string) ([]*okta.User
 	for {
 		resUsers = append(resUsers, users...)
 		if resp.HasNextPage() {
+			users = []*okta.User{}
 			resp, err = resp.Next(ctx, &users)
 			if err != nil {
 				return nil, err
