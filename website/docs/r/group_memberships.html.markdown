@@ -10,9 +10,17 @@ description: |-
 
 Resource to manage a set of memberships for a specific group.
 
-This resource will allow you to bulk manage group membership in Okta for a given group. This offers an interface to pass multiple users into a single resource call, for better API resource usage. Effectively this is the same as using the `okta_group_membership` resource several times with a single group and different users. If you need a relationship of a single user to many groups, please use the `okta_user_group_memberships` resource.
+This resource will allow you to bulk manage group membership in Okta for a given
+group. This offers an interface to pass multiple users into a single resource
+call, for better API resource usage. Effectively this is the same as using the
+`okta_group_membership` resource several times with a single group and different
+users. If you need a relationship of a single user to many groups, please use
+the `okta_user_group_memberships` resource.
 
-When using this with a `okta_user` resource, you should add a lifecycle ignore for group memberships to avoid conflicts in desired state.
+**Important**: When the group memberships resource is used in an environment
+where other resources or services can add users to the group it will make this
+resource appear to drift. If that is the case make use of a lifecycle ignore for
+the `users` argument to avoid conflicts in desired state.
 
 ## Example Usage
 
@@ -28,6 +36,10 @@ resource "okta_group_memberships" "test" {
     okta_user.test1.id,
     okta_user.test2.id,
   ]
+
+  # lifecycle {
+  #   ignore_changes = [users]
+  # }
 }
 ```
 

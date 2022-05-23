@@ -50,6 +50,10 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 	bOff := backoff.NewExponentialBackOff()
 	bOff.MaxElapsedTime = time.Second * 10
 	bOff.InitialInterval = time.Second
+
+	// During create the Okta service can have eventual consistency issues when
+	// adding users to a group. Use a backoff to wait for at list one user to be
+	// associated with the group.
 	err = backoff.Retry(func() error {
 		ok, err := checkIfGroupHasUsers(ctx, client, groupId, users)
 		if err != nil {
@@ -125,7 +129,14 @@ func resourceGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
+// checkIfGroupHasUsers firstly checks if the group has users given an immediate
+// API call to list group users. It will additionally compare the current list
+// of users found in the API call with a slice of known users passed in to the
+// function. This second comparison is a stateful comparison.
 func checkIfGroupHasUsers(ctx context.Context, client *okta.Client, groupId string, users []string) (bool, error) {
+	// TODO: This method should be renamed and/or refactored. Its name implies
+	// it is only checking for users but it can return false to signal that
+	// users have changed.
 	groupUsers, resp, err := client.Group.ListGroupUsers(ctx, groupId, &query.Params{Limit: defaultPaginationLimit})
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, fmt.Errorf("unable to return membership for group (%s) from API", groupId)
@@ -140,21 +151,33 @@ func checkIfGroupHasUsers(ctx context.Context, client *okta.Client, groupId stri
 		groupUsers = append(groupUsers, additionalUsers...)
 	}
 
-	// Create set of users
+	// We need to return false if there isn't any users present. For eventual
+	// consistency issues create has a backoff/retry when we return false
+	// without an error here. Read occurs in the future and so it doesn't guard
+	// against eventual consistency.
+	if len(groupUsers) == 0 {
+		return false, nil
+	}
+
+	// Create a set to compare the  users slice passed into the check to compare
+	// with what the api returns from list group users API call.
 	expectedUserSet := make(map[string]bool)
 
+	// We train the set with false values for our previously known users.
 	for _, user := range users {
 		expectedUserSet[user] = false
 	}
 
-	// Use users pulled from user and mark set if found
+	// We confirm the latest user ids from list group users API call are still
+	// present in the set.
 	for _, user := range groupUsers {
 		if _, ok := expectedUserSet[user.Id]; ok {
 			expectedUserSet[user.Id] = true
 		}
 	}
 
-	// Check set for any missing values
+	// If one of the known users in the call to the check function is no longer
+	// in the list group users API call we return false.
 	for _, state := range expectedUserSet {
 		if !state {
 			return false, nil
