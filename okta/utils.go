@@ -219,16 +219,6 @@ func createValueDiffSuppression(newValueToIgnore string) schema.SchemaDiffSuppre
 	}
 }
 
-// ignore schema diff change if value changes from default value (TF old) to local value (TF new)
-func valueDiffDefaultAPIValueToLocalValue(defaultAPIValue, localValue string) schema.SchemaDiffSuppressFunc {
-	return func(k, old, new string, d *schema.ResourceData) bool {
-		if old == defaultAPIValue && new == localValue {
-			return true
-		}
-		return false
-	}
-}
-
 func ensureNotDefault(d *schema.ResourceData, t string) error {
 	thing := fmt.Sprintf("Default %s", t)
 
