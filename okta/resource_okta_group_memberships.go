@@ -43,6 +43,11 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 	groupId := d.Get("group_id").(string)
 	users := convertInterfaceToStringSetNullable(d.Get("users"))
 	client := getOktaClientFromMetadata(m)
+
+	if len(users) == 0 {
+		d.SetId(groupId)
+		return nil
+	}
 	err := addGroupMembers(ctx, client, groupId, users)
 	if err != nil {
 		return diag.FromErr(err)
