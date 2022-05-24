@@ -36,6 +36,32 @@ func TestAccOktaGroupMemberships_crud(t *testing.T) {
 	})
 }
 
+// TestAccOktaGroupMembershipsIssue1072 addresses https://github.com/okta/terraform-provider-okta/issues/1072
+func TestAccOktaGroupMembershipsIssue1072(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: `
+resource "okta_group" "test" {
+  name = "TestACC Group"
+  description = "Group"
+}
+resource "okta_group_memberships" "test" {
+  group_id = okta_group.test.id
+  users = []
+}
+`,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_group_memberships.test", "users.#", "0"),
+				),
+			},
+		},
+	})
+}
+
 // TestAccOktaGroupMembershipsIssue1094 addresses https://github.com/okta/terraform-provider-okta/issues/1094
 func TestAccOktaGroupMembershipsIssue1094(t *testing.T) {
 	resource.Test(t, resource.TestCase{
