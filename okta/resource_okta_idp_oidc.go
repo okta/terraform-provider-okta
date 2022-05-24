@@ -72,6 +72,8 @@ func resourceIdpOidc() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"request_signature_algorithm": oidcRequestSignatureAlgorithmSchema,
+			"request_signature_scope":     oidcRequestSignatureScopeSchema,
 		}),
 	}
 }
