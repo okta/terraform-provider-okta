@@ -258,11 +258,11 @@ func listUserOnlyRoles(ctx context.Context, c *okta.Client, userID string) (user
 		return
 	}
 	for _, role := range roles {
-		if role.AssignmentType == userScope && role.Type != "CUSTOM" {
+		if role.Type != "CUSTOM" {
 			userOnlyRoles = append(userOnlyRoles, role)
 		}
 	}
-	return
+	return userOnlyRoles, resp, err
 }
 
 func setAdminRoles(ctx context.Context, d *schema.ResourceData, m interface{}) error {
