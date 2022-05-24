@@ -92,3 +92,51 @@ func testAppUserSchemaExists(index string) (bool, error) {
 	}
 	return false, nil
 }
+
+// TestAccAppUserBaseSchemaIssue1087 addresses issue 1087 https://github.com/okta/terraform-provider-okta/issues/1087
+func TestAccAppUserBaseSchemaIssue1087(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		Steps: []resource.TestStep{
+			{
+				Config: configIssue1087,
+				Check: resource.ComposeTestCheckFunc(
+					testAppUserSchemasExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "title", "Email Aliases"),
+					resource.TestCheckResourceAttr(resourceName, "array_enum.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+var configIssue1087 = `
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "native"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://d.com/"]
+  response_types = ["code"]
+}
+
+resource "okta_app_user_schema_property" "test" {
+    app_id        = okta_app_oauth.test.id
+    array_enum    = []
+    array_type    = "string"
+    description   = "Google Email Aliases (must match domain name(s) configured in Google)"
+    external_name = "emailAliases"
+    index         = "emailAliases"
+    master        = "PROFILE_MASTER"
+    permissions   = "READ_ONLY"
+    required      = false
+    scope         = "SELF"
+    title         = "Email Aliases"
+    type          = "array"
+    union         = false
+    user_type     = "default"
+}
+`
