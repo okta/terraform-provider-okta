@@ -1,5 +1,31 @@
 # Changelog
 
+## 3.28.0 (May 24, 2022)
+
+ENHANCEMENTS:
+
+* Add `system` attribute to `okta_auth_server_scope` resource [#1112](https://github.com/okta/terraform-provider-okta/pull/1112). Thanks, [@monde](https://github.com/monde)!
+* Refine search criteria precision in `okta_app` data source [#1115](https://github.com/okta/terraform-provider-okta/pull/1115). Thanks, [@monde](https://github.com/monde)!
+* `okta_group` adds delay argument; Refine `okta_group_memberships` resource and add tests. Update documentation [#1120](https://github.com/okta/terraform-provider-okta/pull/1120). Thanks, [@monde](https://github.com/monde)!
+* Add `com.okta.telephony.provider` hook type to `okta_inline_hooks` resource [#1132](https://github.com/okta/terraform-provider-okta/pull/1132). Thanks, [@monde](https://github.com/monde)!
+
+BUG FIXES:
+
+* Fix type in custom role permissions for `okta_admin_role_custom` resource [#1116](https://github.com/okta/terraform-provider-okta/pull/1116). Thanks, [@faurel](https://github.com/faurel)!
+* Fix pagination bug in `okta_group_memberships` [#1125](https://github.com/okta/terraform-provider-okta/pull/1125). Thanks, [@monde](https://github.com/monde)!
+* Reverted commit on `okta_policy_rule_sign_on` resource that adversely affected `SPECIFIC_IDP` [#1133](https://github.com/okta/terraform-provider-okta/pull/1133). Thanks, [@monde](https://github.com/monde)!
+* Corrected signature defaults on `okta_idp_oidc`, `okta_idp_saml`, and `okta_idp_social` resources [#1134](https://github.com/okta/terraform-provider-okta/pull/1134). Thanks, [@monde](https://github.com/monde)!
+* Fixed regression on `okta_group_memberships` resource with 0 users [#1138](https://github.com/okta/terraform-provider-okta/pull/1138). Thanks, [@exitcode0](https://github.com/exitcode0)!
+ 
+PROJECT IMPROVEMENTS:
+
+* Update `okta_template_email` documentation [#1113](https://github.com/okta/terraform-provider-okta/pull/1113). Thanks, [@monde](https://github.com/monde)!
+* ACC Test for `okta_rate_limiting` resource and update documentation [#1121](https://github.com/okta/terraform-provider-okta/pull/1121). Thanks, [@monde](https://github.com/monde)!
+* Note that `okta_group_membership` is deprecated in the documentation [#1122](https://github.com/okta/terraform-provider-okta/pull/1122). Thanks, [@monde](https://github.com/monde)!
+* Update documentation on `okta_app_oauth` explaining how reset a client secret [#1127](https://github.com/okta/terraform-provider-okta/pull/1127). Thanks, [@monde](https://github.com/monde)!
+* Update deprecation notice on `okta_template_email` resource documentation [#1136](https://github.com/okta/terraform-provider-okta/pull/1136). Thanks, [@monde](https://github.com/monde)!
+* ACC Test on `okta_group_memberships` resource with 0 users [#1139](https://github.com/okta/terraform-provider-okta/pull/1139). Thanks, [@monde](https://github.com/monde)!
+
 ## 3.27.0 (May 13, 2022)
 
 ENHANCEMENTS:
