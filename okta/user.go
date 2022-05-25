@@ -262,7 +262,7 @@ func listUserOnlyRoles(ctx context.Context, c *okta.Client, userID string) (user
 			userOnlyRoles = append(userOnlyRoles, role)
 		}
 	}
-	return userOnlyRoles, resp, err
+	return
 }
 
 func setAdminRoles(ctx context.Context, d *schema.ResourceData, m interface{}) error {
