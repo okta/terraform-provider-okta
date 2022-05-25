@@ -88,6 +88,10 @@ func resourceIdpSaml() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"request_signature_algorithm":  samlRequestSignatureAlgorithmSchema,
+			"request_signature_scope":      samlRequestSignatureScopeSchema,
+			"response_signature_algorithm": samlResponseSignatureAlgorithmSchema,
+			"response_signature_scope":     samlResponseSignatureScopeSchema,
 		}),
 	}
 }

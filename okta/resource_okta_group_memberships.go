@@ -43,6 +43,11 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 	groupId := d.Get("group_id").(string)
 	users := convertInterfaceToStringSetNullable(d.Get("users"))
 	client := getOktaClientFromMetadata(m)
+
+	if len(users) == 0 {
+		d.SetId(groupId)
+		return nil
+	}
 	err := addGroupMembers(ctx, client, groupId, users)
 	if err != nil {
 		return diag.FromErr(err)
@@ -73,11 +78,22 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 
 func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	groupId := d.Get("group_id").(string)
-	users := convertInterfaceToStringSetNullable(d.Get("users"))
 	client := getOktaClientFromMetadata(m)
-	ok, err := checkIfGroupHasUsers(ctx, client, groupId, users)
+	expected_users := convertInterfaceToStringSetNullable(d.Get("users"))
 
-	logger(m).Info("reading group membership", "id", d.Id())
+	// handle import edge case
+	if len(expected_users) == 0 {
+		logger(m).Info("reading group membership", "id", d.Id())
+		userIDList, err := listGroupUserIDs(ctx, m, d.Id())
+		if err != nil {
+			return diag.Errorf("unable to return membership for group (%s) from API", d.Id())
+		}
+		d.Set("group_id", d.Id())
+		d.Set("users", convertStringSliceToSet(userIDList))
+		return nil
+	}
+
+	ok, err := checkIfGroupHasUsers(ctx, client, groupId, expected_users)
 	if err != nil {
 		return diag.Errorf("unable to complete group check for user: %v", err)
 	}
