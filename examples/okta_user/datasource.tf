@@ -25,7 +25,13 @@ resource "okta_user" "test" {
     "${okta_user_schema_property.test_array.index}": ["test"],
     "${okta_user_schema_property.test_number.index}": 1
   }
-JSON
+  JSON
+
+  lifecycle {
+    ignore_changes = [
+      admin_roles,
+    ]
+  }
 
   depends_on = [
     okta_user_schema_property.test_array,
@@ -43,7 +49,7 @@ resource "okta_user" "other" {
   {
     "${okta_user_schema_property.test_array.index}": ["cool","feature"]
   }
-JSON
+  JSON
 
   depends_on = [
     okta_user_schema_property.test_array,
@@ -51,20 +57,32 @@ JSON
   ]
 }
 
+resource "okta_user_admin_roles" "test" {
+  user_id = okta_user.test.id
+  admin_roles = [
+    "READ_ONLY_ADMIN",
+  ]
+
+  depends_on = [
+    okta_user.test
+  ]
+}
+
 data "okta_user" "first_and_last" {
   search {
-    name  = "profile.firstName"
-    value = okta_user.test.first_name
+    name       = "profile.firstName"
+    comparison = "eq"
+    value      = okta_user.test.first_name
   }
 
   search {
-    name  = "profile.lastName"
-    value = okta_user.test.last_name
+    name       = "profile.lastName"
+    comparison = "eq"
+    value      = okta_user.test.last_name
   }
 
   depends_on = [
     okta_user.test,
-    okta_user.other
   ]
 }
 
@@ -78,9 +96,9 @@ data "okta_user" "read_by_id" {
 }
 
 data "okta_user" "read_by_id_with_skip" {
-  user_id = okta_user.test.id
+  user_id     = okta_user.test.id
   skip_groups = true
-  skip_roles = true
+  skip_roles  = true
 
   depends_on = [
     okta_user.test,
@@ -92,18 +110,19 @@ data "okta_user" "compound_search" {
   compound_search_operator = "or"
 
   search {
-    name  = "profile.lastName"
-    value = "Jones"
+    name       = "profile.login"
+    comparison = "eq"
+    value      = okta_user.other.login
   }
 
   search {
-    name  = "profile.lastName"
-    value = okta_user.other.last_name
+    name       = "profile.lastName"
+    comparison = "eq"
+    value      = okta_user.other.last_name
   }
 
   depends_on = [
-    okta_user.test,
-    okta_user.other
+    okta_user.other,
   ]
 }
 

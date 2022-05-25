@@ -11,7 +11,6 @@ func TestAccOktaDataSourceUser_read(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(user)
 	baseConfig := mgr.GetFixtures("datasource.tf", ri, t)
-	createUserConfig := mgr.GetFixtures("datasource_create_user.tf", ri, t)
 
 	// NOTE: The ACC tests on the datasource.tf can flap as sometimes these
 	// tests can run faster than the Okta org becoming eventually consistent.
@@ -24,12 +23,6 @@ func TestAccOktaDataSourceUser_read(t *testing.T) {
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: createUserConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("okta_user.test", "id"),
-				),
-			},
-			{
 				Config: baseConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("okta_user.test", "id"),
@@ -38,14 +31,19 @@ func TestAccOktaDataSourceUser_read(t *testing.T) {
 					resource.TestCheckResourceAttr("data.okta_user.first_and_last", "first_name", "TestAcc"),
 					resource.TestCheckResourceAttr("data.okta_user.first_and_last", "last_name", "Smith"),
 
+					resource.TestCheckResourceAttrSet("data.okta_user.read_by_id", "user_id"),
+					resource.TestCheckResourceAttrSet("data.okta_user.read_by_id", "admin_roles.#"),
 					resource.TestCheckResourceAttr("data.okta_user.read_by_id", "first_name", "TestAcc"),
 					resource.TestCheckResourceAttr("data.okta_user.read_by_id", "last_name", "Smith"),
+					resource.TestCheckTypeSetElemAttr("data.okta_user.read_by_id", "admin_roles.*", "READ_ONLY_ADMIN"),
 
 					resource.TestCheckResourceAttrSet("data.okta_user.read_by_id_with_skip", "id"),
 					resource.TestCheckResourceAttrSet("data.okta_user.read_by_id_with_skip", "skip_groups"),
 					resource.TestCheckResourceAttrSet("data.okta_user.read_by_id_with_skip", "skip_roles"),
 					resource.TestCheckResourceAttr("data.okta_user.read_by_id_with_skip", "skip_groups", "true"),
 					resource.TestCheckResourceAttr("data.okta_user.read_by_id_with_skip", "skip_roles", "true"),
+					resource.TestCheckNoResourceAttr("data.okta_user.read_by_id_with_skip", "groups"),
+					resource.TestCheckNoResourceAttr("data.okta_user.read_by_id_with_skip", "admin_roles.#"),
 
 					resource.TestCheckResourceAttrSet("data.okta_user.compound_search", "id"),
 					resource.TestCheckResourceAttrSet("data.okta_user.compound_search", "compound_search_operator"),
