@@ -2,13 +2,18 @@ package okta
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 var (
@@ -39,6 +44,7 @@ func oktaConfig() (*Config, error) {
 	config := &Config{
 		orgName:        os.Getenv("OKTA_ORG_NAME"),
 		apiToken:       os.Getenv("OKTA_API_TOKEN"),
+		httpProxy:      os.Getenv("OKTA_HTTP_PROXY"),
 		clientID:       os.Getenv("OKTA_API_CLIENT_ID"),
 		privateKey:     os.Getenv("OKTA_API_PRIVATE_KEY"),
 		scopes:         strings.Split(os.Getenv("OKTA_API_SCOPES"), ","),
@@ -74,4 +80,51 @@ func accPreCheck() error {
 		return errors.New("either OKTA_API_TOKEN or OKTA_API_CLIENT_ID, OKTA_API_SCOPES and OKTA_API_PRIVATE_KEY must be set for acceptance tests")
 	}
 	return nil
+}
+
+func TestHTTPProxy(t *testing.T) {
+	var handledUserRequest bool
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		now := time.Now()
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("x-rate-limit-reset", "0")
+		w.Header().Set("x-rate-limit-limit", "0")
+		w.Header().Set("x-rate-limit-limit", "0")
+		w.Header().Set("x-rate-limit-remaining", "0")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(&okta.User{
+			Id:          "fake-user",
+			LastLogin:   &now,
+			LastUpdated: &now,
+		})
+		handledUserRequest = true
+	}))
+
+	defer ts.Close()
+
+	os.Setenv("OKTA_HTTP_PROXY", ts.URL)
+	os.Setenv("OKTA_ORG_NAME", "unit-testing")
+	os.Setenv("OKTA_API_TOKEN", "fake-token")
+	t.Cleanup(func() {
+		os.Unsetenv("OKTA_HTTP_PROXY")
+		os.Unsetenv("OKTA_ORG_NAME")
+		os.Unsetenv("OKTA_API_TOKEN")
+	})
+
+	err := accPreCheck()
+	if err != nil {
+		t.Fatalf("Did not expect accPreCheck() to fail: %s", err)
+	}
+
+	c, err := oktaConfig()
+	if err != nil {
+		t.Fatalf("Did not expect oktaConfig() to fail: %s", err)
+	}
+	if c.httpProxy != ts.URL {
+		t.Fatalf("Execpted httpProxy to be %q, got %q", ts.URL, c.httpProxy)
+	}
+	if !handledUserRequest {
+		t.Fatal("Expected local server to handle user request, but it didn't")
+	}
 }
