@@ -144,6 +144,13 @@ func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m in
 		if authenticator.Provider.Configuration.UserNameTemplate != nil {
 			_ = d.Set("provider_user_name_template", authenticator.Provider.Configuration.UserNameTemplate.Template)
 		}
+
+		// Duo specific setup
+		if authenticator.Provider.Type == "DUO" {
+			_ = d.Set("provider_host", authenticator.Provider.Configuration.Host)
+			_ = d.Set("provider_secret_key", authenticator.Provider.Configuration.SecretKey)
+			_ = d.Set("provider_integration_key", authenticator.Provider.Configuration.IntegrationKey)
+		}
 	}
 	return nil
 }
@@ -196,6 +203,18 @@ func buildAuthenticator(d *schema.ResourceData) *okta.Authenticator {
 				},
 			},
 		}
+	} else if d.Get("type").(string) == "DUO" {
+		authenticator.Provider = &okta.AuthenticatorProvider{
+			Type: d.Get("provider_type").(string),
+			Configuration: &okta.AuthenticatorProviderConfiguration{
+				Host:           d.Get("provider_hostname").(string),
+				SecretKey:      d.Get("provider_secret_key").(string),
+				IntegrationKey: d.Get("provider_integration_key").(string),
+				UserNameTemplate: &okta.AuthenticatorProviderConfigurationUserNamePlate{
+					Template: d.Get("provider_user_name_template").(string),
+				},
+			},
+		}
 	} else {
 		var settings okta.AuthenticatorSettings
 		if s, ok := d.GetOk("settings"); ok {
@@ -208,16 +227,25 @@ func buildAuthenticator(d *schema.ResourceData) *okta.Authenticator {
 
 func validateAuthenticator(d *schema.ResourceData) error {
 	typ := d.Get("type").(string)
-	if typ != "security_key" {
-		return nil
+	if typ == "security_key" {
+		h := d.Get("provider_hostname").(string)
+		_, pok := d.GetOk("provider_auth_port")
+		s := d.Get("provider_shared_secret").(string)
+		templ := d.Get("provider_user_name_template").(string)
+		if h == "" || s == "" || templ == "" || !pok {
+			return fmt.Errorf("for authenticator type '%s' fields 'provider_hostname', "+
+				"'provider_auth_port', 'provider_shared_secret' and 'provider_user_name_template' are required", typ)
+		}
 	}
-	h := d.Get("provider_hostname").(string)
-	_, pok := d.GetOk("provider_auth_port")
-	s := d.Get("provider_shared_secret").(string)
-	templ := d.Get("provider_user_name_template").(string)
-	if h == "" || s == "" || templ == "" || !pok {
-		return fmt.Errorf("for authenticator type '%s' fields 'provider_hostname', "+
-			"'provider_auth_port', 'provider_shared_secret' and 'provider_user_name_template' are required", typ)
+	if typ == "DUO" {
+		h := d.Get("provider_host").(string)
+		sk := d.Get("provider_secret_key").(string)
+		ik := d.Get("provider_integration_key").(string)
+		templ := d.Get("provider_user_name_template").(string)
+		if h == "" || sk == "" || ik == "" || templ == "" {
+			return fmt.Errorf("for authenticator type '%s' fields 'provider_host', "+
+				"'provider_secret_key', 'provider_integration_key' and 'provider_user_name_template' are required", typ)
+		}
 	}
 	return nil
 }
