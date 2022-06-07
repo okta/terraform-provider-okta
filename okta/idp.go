@@ -249,19 +249,6 @@ func syncGroupActions(d *schema.ResourceData, groups *okta.ProvisioningGroups) e
 	})
 }
 
-func syncAlgo(d *schema.ResourceData, alg *okta.ProtocolAlgorithms) {
-	if alg != nil {
-		if alg.Request != nil && alg.Request.Signature != nil {
-			_ = d.Set("request_signature_algorithm", alg.Request.Signature.Algorithm)
-			_ = d.Set("request_signature_scope", alg.Request.Signature.Scope)
-		}
-		if alg.Response != nil && alg.Response.Signature != nil {
-			_ = d.Set("response_signature_algorithm", alg.Response.Signature.Algorithm)
-			_ = d.Set("response_signature_scope", alg.Response.Signature.Scope)
-		}
-	}
-}
-
 func buildPolicyAccountLink(d *schema.ResourceData) *okta.PolicyAccountLink {
 	link := convertInterfaceToStringSet(d.Get("account_link_group_include"))
 	var filter *okta.PolicyAccountLinkFilter

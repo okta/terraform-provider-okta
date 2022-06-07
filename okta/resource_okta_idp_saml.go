@@ -136,7 +136,7 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	_ = d.Set("issuer", idp.Protocol.Credentials.Trust.Issuer)
 	_ = d.Set("audience", idp.Protocol.Credentials.Trust.Audience)
 	_ = d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
-	syncAlgo(d, idp.Protocol.Algorithms)
+	syncIdpSamlAlgo(d, idp.Protocol.Algorithms)
 	err = syncGroupActions(d, idp.Policy.Provisioning.Groups)
 	if err != nil {
 		return diag.Errorf("failed to set SAML identity provider properties: %v", err)
@@ -231,4 +231,17 @@ func buildIdPSaml(d *schema.ResourceData) (okta.IdentityProvider, error) {
 			},
 		},
 	}, nil
+}
+
+func syncIdpSamlAlgo(d *schema.ResourceData, alg *okta.ProtocolAlgorithms) {
+	if alg != nil {
+		if alg.Request != nil && alg.Request.Signature != nil {
+			_ = d.Set("request_signature_algorithm", alg.Request.Signature.Algorithm)
+			_ = d.Set("request_signature_scope", alg.Request.Signature.Scope)
+		}
+		if alg.Response != nil && alg.Response.Signature != nil {
+			_ = d.Set("response_signature_algorithm", alg.Response.Signature.Algorithm)
+			_ = d.Set("response_signature_scope", alg.Response.Signature.Scope)
+		}
+	}
 }
