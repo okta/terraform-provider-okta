@@ -1,5 +1,38 @@
 # Changelog
 
+## 3.29.0 (June 09, 2022)
+
+ENHANCEMENTS:
+
+* HTTP proxy feature with `OKTA_HTTP_PROXY` alternative to `OKTA_ORG_NAME`+`OKTA_BASE_URL` [#1142](https://github.com/okta/terraform-provider-okta/pull/1142). Thanks, [@ido50](https://github.com/ido50)!
+* Full support for Duo authenticator [#1146](https://github.com/okta/terraform-provider-okta/pull/1146). Thanks, [@monde](https://github.com/monde)!
+* Improve data source `okta_user` and `okta_users` and a bug fix [#1159](https://github.com/okta/terraform-provider-okta/pull/1159). Thanks, [@exitcode0](https://github.com/exitcode0), [@monde](https://github.com/monde)!
+* Update latest list of Custom Role Permission properties on resource `okta_admin_role_custom` [#1160](https://github.com/okta/terraform-provider-okta/pull/1160). Thanks, [@tim-fitzgerald](https://github.com/tim-fitzgerald)!
+
+BUG FIXES:
+
+* Remove incorrect attributes `response_signature_algorithm`, and `response_signature_scope` from resource `okta_idp_oidc` [#1156](https://github.com/okta/terraform-provider-okta/pull/1156). Thanks, [@monde](https://github.com/monde)!
+* Reestablish old behavior of `okta_group_memberships` resource, add toggle to track all users [#1161](https://github.com/okta/terraform-provider-okta/pull/1161). Thanks, [@monde](https://github.com/monde)!
+
+PROJECT IMPROVEMENTS:
+
+* Fix typo in data source `okta_email_template` documentation [#1157](https://github.com/okta/terraform-provider-okta/pull/1157). Thanks, [@monde](https://github.com/monde)!
+* ACC tests maintenance [#1158](https://github.com/okta/terraform-provider-okta/pull/1158). Thanks, [@monde](https://github.com/monde)!
+
+NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* ENV VAR
+  * `OKTA_HTTP_PROXY` alternative to `OKTA_ORG_NAME`+`OKTA_BASE_URL`
+* Data Sources
+  * `okta_user`
+    * `delay_read_seconds` property to assist dealing with data eventual consistency
+  * `okta_users`
+    * `include_roles` property to signal admin roles for each user should also be gathered
+    * `delay_read_seconds` property to assist dealing with data eventual consistency
+* Resources
+  * `okta_group_memberships`
+    * `track_all_users` track all users of group, not just those when resource was initialized
+
 ## 3.28.0 (May 24, 2022)
 
 ENHANCEMENTS:
@@ -16,7 +49,7 @@ BUG FIXES:
 * Reverted commit on `okta_policy_rule_sign_on` resource that adversely affected `SPECIFIC_IDP` [#1133](https://github.com/okta/terraform-provider-okta/pull/1133). Thanks, [@monde](https://github.com/monde)!
 * Corrected signature defaults on `okta_idp_oidc`, `okta_idp_saml`, and `okta_idp_social` resources [#1134](https://github.com/okta/terraform-provider-okta/pull/1134). Thanks, [@monde](https://github.com/monde)!
 * Fixed regression on `okta_group_memberships` resource with 0 users [#1138](https://github.com/okta/terraform-provider-okta/pull/1138). Thanks, [@exitcode0](https://github.com/exitcode0)!
- 
+
 PROJECT IMPROVEMENTS:
 
 * Update `okta_template_email` documentation [#1113](https://github.com/okta/terraform-provider-okta/pull/1113). Thanks, [@monde](https://github.com/monde)!
@@ -45,7 +78,6 @@ PROJECT IMPROVEMENTS:
 * Removed confusing and inaccurate information about Duo and Yubikey support in resource `okta_authenticator` [#1103](https://github.com/okta/terraform-provider-okta/pull/1103). Thanks, [@monde](https://github.com/monde)!
 * Fixed formatting in docs for a markdown rendering quirk of the Terraform Registry [#1096](https://github.com/okta/terraform-provider-okta/pull/1096). Thanks, [@monde](https://github.com/monde)!
 
-
 ## 3.26.0 (May 06, 2022)
 
 ENHANCEMENTS:
@@ -72,8 +104,8 @@ PROJECT IMPROVEMENTS:
 
 BUGS:
 
- * Fix incomplete `compound_search_operator` on data source `okta_users`.  [#1077](https://github.com/okta/terraform-provider-okta/issues/1077). Thanks, [@monde](https://github.com/monde)!
- * Fix default value regression on `okta_policy_rule_sign_on` for `identity_provider` attribute.  [#1079](https://github.com/okta/terraform-provider-okta/issues/1079). Thanks, [@monde](https://github.com/monde)!
+ * Fix incomplete `compound_search_operator` on data source `okta_users`. [#1077](https://github.com/okta/terraform-provider-okta/issues/1077). Thanks, [@monde](https://github.com/monde)!
+ * Fix default value regression on `okta_policy_rule_sign_on` for `identity_provider` attribute. [#1079](https://github.com/okta/terraform-provider-okta/issues/1079). Thanks, [@monde](https://github.com/monde)!
 
 ## 3.25.0 (April 21, 2022)
 
@@ -259,7 +291,7 @@ ENHANCEMENTS:
 
 * Added new `okta_rate_limiting` resource [#803](https://github.com/okta/terraform-provider-okta/pull/803). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 * Added new `okta_captcha` and `okta_captcha_org_wide_settings` resources [#821](https://github.com/okta/terraform-provider-okta/pull/821). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
-* Fixed example in docs for `okta_group` resource [#814](https://github.com/okta/terraform-provider-okta/pull/814).  Thanks, [@tim-fitzgerald](https://github.com/tim-fitzgerald)!
+* Fixed example in docs for `okta_group` resource [#814](https://github.com/okta/terraform-provider-okta/pull/814). Thanks, [@tim-fitzgerald](https://github.com/tim-fitzgerald)!
 
 BUGS:
 
@@ -278,7 +310,7 @@ ENHANCEMENTS:
 BUGS:
 
 * Change authenticator status in case it's different from the state's one during resource creation [#782](https://github.com/okta/terraform-provider-okta/pull/782). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
-* Numerus documentation fixes [#783](https://github.com/okta/terraform-provider-okta/pull/783), [#785](https://github.com/okta/terraform-provider-okta/pull/785) 
+* Numerus documentation fixes [#783](https://github.com/okta/terraform-provider-okta/pull/783), [#785](https://github.com/okta/terraform-provider-okta/pull/785)
 and [#792](https://github.com/okta/terraform-provider-okta/pull/792). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta) and [@deepu105](https://github.com/deepu105)!
 * Fixed provider crash [#795](https://github.com/okta/terraform-provider-okta/pull/795). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 
@@ -388,7 +420,7 @@ BUGS:
 * Fixed the way `okta_policy_mfa` resource store its factors in the state [#641](https://github.com/okta/terraform-provider-okta/pull/641). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 * Fixed provider crash when using policy rules resources [#641](https://github.com/okta/terraform-provider-okta/pull/641). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 
-## 3.13.9 (September 10, 2021) 
+## 3.13.9 (September 10, 2021)
 
 ENHANCEMENTS:
 * Added `app_settings_json` to the `okta_app_oauth` resource [#627](https://github.com/okta/terraform-provider-okta/pull/627). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
@@ -512,7 +544,7 @@ ENHANCEMENTS:
 * Add `risc_level`, `behaviors` and `factor_sequence` fields to the `okta_policy_rule_signon` resource [#526](https://github.com/okta/terraform-provider-okta/pull/526). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 * Add new `okta_behavior` data source [#526](https://github.com/okta/terraform-provider-okta/pull/526). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
 * Add new `okta_domain` resource [#530](https://github.com/okta/terraform-provider-okta/pull/530). Thanks, [@bogdanprodan-okta](https://github.com/bogdanprodan-okta)!
-  
+
 BUGS:
 
 * Suppress 404 in case group role was removed outside of the terraform [#417](https://github.com/okta/terraform-provider-okta/pull/417). Thanks, [@ymylei](https://github.com/ymylei)!
