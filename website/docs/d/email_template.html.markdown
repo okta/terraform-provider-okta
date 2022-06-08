@@ -6,7 +6,7 @@ description: |-
   Get a single Email Template for a Brand belonging to an Okta organization.
 ---
 
-# okta_brand
+# okta_template
 
 Use this data source to retrieve a specific [email
 template](https://developer.okta.com/docs/reference/api/brands/#email-template)

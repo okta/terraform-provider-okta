@@ -179,6 +179,12 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("OKTA_BASE_URL", "okta.com"),
 				Description: "The Okta url. (Use 'oktapreview.com' for Okta testing)",
 			},
+			"http_proxy": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("OKTA_HTTP_PROXY", ""),
+				Description: "Alternate HTTP proxy of scheme://hostname or scheme://hostname:port format",
+			},
 			"backoff": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -420,6 +426,11 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		requestTimeout: d.Get("request_timeout").(int),
 		maxAPICapacity: d.Get("max_api_capacity").(int),
 	}
+
+	if httpProxy, ok := d.Get("http_proxy").(string); ok {
+		config.httpProxy = httpProxy
+	}
+
 	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(config.scopes) == 0 {
 		config.scopes = strings.Split(v, ",")
 	}
