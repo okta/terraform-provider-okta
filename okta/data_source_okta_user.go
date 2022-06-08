@@ -3,7 +3,9 @@ package okta
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -77,11 +79,26 @@ func dataSourceUser() *schema.Resource {
 				ValidateDiagFunc: elemInSlice([]string{"and", "or"}),
 				Description:      "Search operator used when joining mulitple search clauses",
 			},
+			"delay_read_seconds": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Force delay of the user read by N seconds. Useful when eventual consistency of user information needs to be allowed for.",
+			},
 		}),
 	}
 }
 
 func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if n, ok := d.GetOk("delay_read_seconds"); ok {
+		delay, err := strconv.Atoi(n.(string))
+		if err == nil {
+			logger(m).Info("delaying user read by ", delay, " seconds")
+			time.Sleep(time.Duration(delay) * time.Second)
+		} else {
+			logger(m).Warn("user read delay value ", n, " is not an integer")
+		}
+	}
+
 	client := getOktaClientFromMetadata(m)
 	var user *okta.User
 	var err error
@@ -112,25 +129,21 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 		return diag.Errorf("failed to set user's properties: %v", err)
 	}
 
-	skip := false
 	if val := d.Get("skip_roles"); val != nil {
-		skip = val.(bool)
-	}
-	if !skip {
-		err = setAdminRoles(ctx, d, m)
-		if err != nil {
-			return diag.Errorf("failed to set user's admin roles: %v", err)
+		if skip, ok := val.(bool); ok && !skip {
+			err = setAdminRoles(ctx, d, m)
+			if err != nil {
+				return diag.Errorf("failed to set user's admin roles: %v", err)
+			}
 		}
 	}
 
-	skip = false
 	if val := d.Get("skip_groups"); val != nil {
-		skip = val.(bool)
-	}
-	if !skip {
-		err = setAllGroups(ctx, d, client)
-		if err != nil {
-			return diag.Errorf("failed to set user's groups: %v", err)
+		if skip, ok := val.(bool); ok && !skip {
+			err = setAllGroups(ctx, d, client)
+			if err != nil {
+				return diag.Errorf("failed to set user's groups: %v", err)
+			}
 		}
 	}
 
