@@ -7,12 +7,12 @@ var AuthenticatorProviders = []string{
 	ExternalIdpFactor,
 	GoogleOtpFactor,
 	OktaEmailFactor,
-	OktaPasswordFactor, // Note: Not configurable in OIE policies (Handle downstream as necessary)
+	OktaPasswordFactor, // NOTE: Not configurable in OIE policies (Handle downstream as necessary)
 	OktaVerifyFactor,
 	OnPremMfaFactor,
 	PhoneNumberFactor,
 	RsaTokenFactor,
 	SecurityQuestionFactor,
 	WebauthnFactor,
-	YubikeyTokenFactor,
+    // YubikeyTokenFactor, // NOTE: support upcoming when available in public API
 }
