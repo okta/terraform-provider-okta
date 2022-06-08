@@ -32,7 +32,7 @@ resource "okta_authenticator" "test" {
 
 The following arguments are supported:
 
-- `key` (Required) A human-readable string that identifies the authenticator. Possible values inclue: `"external_idp"`, `"google_otp"`, `"okta_email"`, `"okta_password"`, `"okta_verify"`, `"onprem_mfa"`, `"phone_number"`, `"rsa_token"`, `"security_question"`, and `"webauthn"`.
+- `key` (Required) A human-readable string that identifies the authenticator. Some authenticators are available by feature flag on the organization. Possible values inclue: `duo`, `external_idp`, `google_otp`, `okta_email`, `okta_password`, `okta_verify`, `onprem_mfa`, `phone_number`, `rsa_token`, `security_question`, `webauthn`
 
 - `name` - (Required) Name of the authenticator.
 
