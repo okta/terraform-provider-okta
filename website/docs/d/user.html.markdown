@@ -58,70 +58,70 @@ data "okta_user" "example" {
 
 - `admin_roles` - Administrator roles assigned to user.
 
-- `city` - user profile property.
+- `city` - City or locality component of user's address. 
 
-- `cost_center` - user profile property.
+- `cost_center` - Name of a cost center assigned to user.
 
-- `country_code` - user profile property.
+- `country_code` - Country name component of user's address.
 
-- `custom_profile_attributes` - raw JSON containing all custom profile attributes.
+- `custom_profile_attributes` - Raw JSON containing all custom profile attributes.
 
-- `department` - user profile property.
+- `department` - Name of user's department.
 
-- `display_name` - user profile property.
+- `display_name` - Name of the user, suitable for display to end users.
 
-- `division` - user profile property.
+- `division` - Name of user's division.
 
-- `email` - user profile property.
+- `email` - Primary email address of user.
 
-- `employee_number` - user profile property.
+- `employee_number` - Organization or company assigned unique identifier for the user.
 
-- `first_name` - user profile property.
+- `first_name` - Given name of the user.
 
-- `group_memberships` - user profile property.
+- `group_memberships` - Groups user belongs to.
 
-- `honorific_prefix` - user profile property.
+- `honorific_prefix` - Honorific prefix(es) of the user, or title in most Western languages.
 
-- `honorific_suffix` - user profile property.
+- `honorific_suffix` - Honorific suffix(es) of the user.
 
-- `last_name` - user profile property.
+- `last_name` - Family name of the user.
 
-- `locale` - user profile property.
+- `locale` - User's default location for purposes of localizing items such as currency, date time format, numerical representations, etc.
 
-- `login` - user profile property.
+- `login` - Unique identifier for the user.
 
-- `manager` - user profile property.
+- `manager` - Display name of the user's manager.
 
-- `manager_id` - user profile property.
+- `manager_id` - `id` of a user's manager.
 
-- `middle_name` - user profile property.
+- `middle_name` - Middle name(s) of the user.
 
-- `mobile_phone` - user profile property.
+- `mobile_phone` - Mobile phone number of user.
 
-- `nick_name` - user profile property.
+- `nick_name` - Casual way to address the user in real life.
 
-- `organization` - user profile property.
+- `organization` - Name of user's organization.
 
-- `postal_address` - user profile property.
+- `postal_address` - Mailing address component of user's address.
 
-- `preferred_language` - user profile property.
+- `preferred_language` - User's preferred written or spoken languages.
 
-- `primary_phone` - user profile property.
+- `primary_phone` - Primary phone number of user such as home number.
 
-- `profile_url` - user profile property.
+- `profile_url` - URL of user's online profile (e.g. a web page).
 
-- `second_email` - user profile property.
+- `second_email` - Secondary email address of user typically used for account recovery.
 
-- `state` - user profile property.
+- `state` - State or region component of user's address (region).
 
-- `status` - user profile property.
+- `status` - Current status of user.
 
-- `street_address` - user profile property.
+- `street_address` - Full street address component of user's address.
 
-- `timezone` - user profile property.
+- `timezone` - User's time zone.
 
-- `title` - user profile property.
+- `title` - User's title, such as "Vice President".
 
-- `user_type` - user profile property.
+- `user_type` - Used to describe the organization to user relationship such as "Employee" or "Contractor".
 
-- `zip_code` - user profile property.
+- `zip_code` - Zipcode or postal code component of user's address (postalCode)

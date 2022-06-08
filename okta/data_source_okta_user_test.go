@@ -1,6 +1,7 @@
 package okta
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
@@ -61,4 +62,129 @@ func TestAccOktaDataSourceUser_read(t *testing.T) {
 			},
 		},
 	})
+}
+
+// TestSkipAdminRoles pertains to https://github.com/okta/terraform-provider-okta/pull/1137
+func TestSkipAdminRoles(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: testAccProvidersFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testRolesGroupsConfig(false, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("data.okta_user.test", "admin_roles.#", "0"),       // skipped
+					resource.TestCheckResourceAttr("data.okta_user.test", "group_memberships.#", "2"), // Everyone, A Group
+				),
+			},
+		},
+	})
+}
+
+// TestSkipGroups pertains to https://github.com/okta/terraform-provider-okta/pull/1137
+func TestSkipGroups(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: testAccProvidersFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testRolesGroupsConfig(true, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("data.okta_user.test", "admin_roles.#", "1"),
+					resource.TestCheckResourceAttr("data.okta_user.test", "group_memberships.#", "0"), // skipped
+				),
+			},
+		},
+	})
+}
+
+// TestSkipGroupsSkipRoles pertains to https://github.com/okta/terraform-provider-okta/pull/1137
+func TestSkipGroupsSkipRoles(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: testAccProvidersFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testRolesGroupsConfig(true, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("data.okta_user.test", "admin_roles.#", "0"),       // skipped
+					resource.TestCheckResourceAttr("data.okta_user.test", "group_memberships.#", "0"), // skipped
+				),
+			},
+		},
+	})
+}
+
+func TestNoSkips(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: testAccProvidersFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testRolesGroupsConfig(false, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("data.okta_user.test", "admin_roles.#", "1"),
+					resource.TestCheckResourceAttr("data.okta_user.test", "group_memberships.#", "2"), // Everyone, A Group
+				),
+			},
+		},
+	})
+}
+
+func testRolesGroupsConfig(skip_groups, skip_roles bool) string {
+	prepend := `
+
+resource "okta_group" "test" {
+  name        = "Example"
+  description = "A Group"
+}
+resource "okta_user" "test" {
+  first_name = "TestAcc"
+  last_name  = "Smith"
+  login      = "testAcc-replace_with_uuid@example.com"
+  email      = "testAcc-replace_with_uuid@example.com"
+  lifecycle {
+    ignore_changes = [admin_roles]
+  }
+}
+resource "okta_user_admin_roles" "test" {
+  user_id     = okta_user.test.id
+  admin_roles = [
+    "APP_ADMIN",
+  ]
+}
+resource "okta_user_group_memberships" "test" {
+  user_id = okta_user.test.id
+  groups = [
+    okta_group.test.id,
+  ]
+}
+data "okta_user" "test" {
+  user_id = okta_user.test.id
+`
+
+	var clause string
+	if skip_groups {
+		clause = "  skip_groups = true"
+	}
+	if skip_roles {
+		clause = fmt.Sprintf("%s\nskip_roles = true\n", clause)
+	}
+
+	append := `
+  depends_on = [
+    okta_user_admin_roles.test,
+    okta_user_group_memberships.test,
+  ]
+}`
+
+	return fmt.Sprintf("%s%s%s", prepend, clause, append)
 }
