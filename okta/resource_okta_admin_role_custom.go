@@ -38,6 +38,7 @@ var validCustomRolePermissions = []string{
 	"okta.users.manage",
 	"okta.users.read",
 	"okta.users.userprofile.manage",
+	"okta.workflows.invoke",
 }
 
 func resourceAdminRoleCustom() *schema.Resource {

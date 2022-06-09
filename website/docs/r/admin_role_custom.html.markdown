@@ -57,7 +57,8 @@ The following arguments are supported:
 `"okta.users.lifecycle.unsuspend"`,
 `"okta.users.manage"`,
 `"okta.users.read"`,
-`"okta.users.userprofile.manage"`.
+`"okta.users.userprofile.manage"`,
+`"okta.workflows.invoke"`.,
 
 ## Attributes Reference
 
