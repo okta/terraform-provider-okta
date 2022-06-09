@@ -13,10 +13,10 @@ func TestMaxApiCapacity(t *testing.T) {
 	mgr := newFixtureManager(appGroupAssignments)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 
-	old := os.Getenv("MAX_API_CAPACITY")
-	defer func() {
-		_ = os.Setenv("MAX_API_CAPACITY", old)
-	}()
+	oldApiCapacity := os.Getenv("MAX_API_CAPACITY")
+	t.Cleanup(func() {
+		_ = os.Setenv("MAX_API_CAPACITY", oldApiCapacity)
+	})
 	// hack max api capacity value is enabled by env var
 	os.Setenv("MAX_API_CAPACITY", "50")
 	resource.Test(t, resource.TestCase{

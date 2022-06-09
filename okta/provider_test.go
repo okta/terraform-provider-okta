@@ -103,13 +103,16 @@ func TestHTTPProxy(t *testing.T) {
 
 	defer ts.Close()
 
+	oldHttpProxy := os.Getenv("OKTA_HTTP_PROXY")
+	oldOrgName := os.Getenv("OKTA_ORG_NAME")
+	oldApiToken := os.Getenv("OKTA_API_TOKEN")
 	os.Setenv("OKTA_HTTP_PROXY", ts.URL)
 	os.Setenv("OKTA_ORG_NAME", "unit-testing")
 	os.Setenv("OKTA_API_TOKEN", "fake-token")
 	t.Cleanup(func() {
-		os.Unsetenv("OKTA_HTTP_PROXY")
-		os.Unsetenv("OKTA_ORG_NAME")
-		os.Unsetenv("OKTA_API_TOKEN")
+		os.Setenv("OKTA_HTTP_PROXY", oldHttpProxy)
+		os.Setenv("OKTA_ORG_NAME", oldOrgName)
+		os.Setenv("OKTA_API_TOKEN", oldApiToken)
 	})
 
 	err := accPreCheck()
