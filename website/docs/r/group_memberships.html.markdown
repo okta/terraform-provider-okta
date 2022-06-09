@@ -17,10 +17,12 @@ call, for better API resource usage. Effectively this is the same as using the
 users. If you need a relationship of a single user to many groups, please use
 the `okta_user_group_memberships` resource.
 
-**Important**: When the group memberships resource is used in an environment
-where other resources or services can add users to the group it will make this
-resource appear to drift. If that is the case make use of a lifecycle ignore for
-the `users` argument to avoid conflicts in desired state.
+**Important**: The default behavior of the resource is to only maintain the
+state of user ids that are assigned it. This behavior will signal drift only if
+those users stop being part of the group. If the desired behavior is track all
+users that are added/removed from the group make use of the `track_all_users`
+argument with this resource.
+
 
 ## Example Usage
 
@@ -36,10 +38,6 @@ resource "okta_group_memberships" "test" {
     okta_user.test1.id,
     okta_user.test2.id,
   ]
-
-  # lifecycle {
-  #   ignore_changes = [users]
-  # }
 }
 ```
 
@@ -49,6 +47,7 @@ The following arguments are supported:
 
 - `group_id` - (Required) Okta group ID.
 - `users` - (Required) The list of Okta user IDs which the group should have membership managed for.
+-	`track_all_users` - (Optional) The resource will concern itself with all users added/deleted to the group; even those managed outside of the resource.
 
 ## Attributes Reference
 
