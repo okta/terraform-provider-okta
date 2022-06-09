@@ -11,9 +11,13 @@ import (
 )
 
 var validCustomRolePermissions = []string{
+	"okta.authzServers.manage",
+	"okta.authzServers.read",
 	"okta.apps.assignment.manage",
 	"okta.apps.manage",
 	"okta.apps.read",
+	"okta.customizations.manage",
+	"okta.customizations.read",
 	"okta.groups.appAssignment.manage",
 	"okta.groups.create",
 	"okta.groups.manage",
@@ -38,6 +42,7 @@ var validCustomRolePermissions = []string{
 	"okta.users.manage",
 	"okta.users.read",
 	"okta.users.userprofile.manage",
+	"okta.workflows.invoke",
 }
 
 func resourceAdminRoleCustom() *schema.Resource {
