@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"hash/crc32"
+	"strconv"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -26,6 +28,12 @@ func dataSourceUsers() *schema.Resource {
 				Optional:    true,
 				Default:     false,
 				Description: "Fetch group memberships for each user",
+			},
+			"include_roles": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Fetch user roles for each user",
 			},
 			"search": {
 				Type:          schema.TypeSet,
@@ -56,11 +64,26 @@ func dataSourceUsers() *schema.Resource {
 				ValidateDiagFunc: elemInSlice([]string{"and", "or"}),
 				Description:      "Search operator used when joining mulitple search clauses",
 			},
+			"delay_read_seconds": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Force delay of the users read by N seconds. Useful when eventual consistency of users information needs to be allowed for.",
+			},
 		},
 	}
 }
 
 func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if n, ok := d.GetOk("delay_read_seconds"); ok {
+		delay, err := strconv.Atoi(n.(string))
+		if err == nil {
+			logger(m).Info("delaying users read by ", delay, " seconds")
+			time.Sleep(time.Duration(delay) * time.Second)
+		} else {
+			logger(m).Warn("users read delay value ", n, " is not an integer")
+		}
+	}
+
 	var (
 		users []*okta.User
 		id    string
@@ -84,20 +107,29 @@ func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interfac
 		return diag.Errorf("failed to list users: %v", err)
 	}
 	d.SetId(id)
-	shouldGetGroups := d.Get("include_groups").(bool)
+	includeGroups := d.Get("include_groups").(bool)
+	includeRoles := d.Get("include_roles").(bool)
 	arr := make([]map[string]interface{}, len(users))
 	for i, user := range users {
 		rawMap := flattenUser(user)
 		rawMap["id"] = user.Id
-		if shouldGetGroups {
+		if includeGroups {
 			groups, err := getGroupsForUser(ctx, user.Id, client)
 			if err != nil {
 				return diag.Errorf("failed to list users: %v", err)
 			}
 			rawMap["group_memberships"] = groups
 		}
+		if includeRoles {
+			roles, err := getAdminRoles(ctx, user.Id, client)
+			if err != nil {
+				return diag.Errorf("failed to set user's admin roles: %v", err)
+			}
+			rawMap["admin_roles"] = roles
+		}
 		arr[i] = rawMap
 	}
+
 	_ = d.Set("users", arr)
 	return nil
 }

@@ -265,22 +265,30 @@ func listUserOnlyRoles(ctx context.Context, c *okta.Client, userID string) (user
 	return
 }
 
-func setAdminRoles(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+func getAdminRoles(ctx context.Context, id string, c *okta.Client) ([]interface{}, error) {
 	roleTypes := make([]interface{}, 0)
 
-	// set all roles currently attached to user in state
-	roles, resp, err := listUserOnlyRoles(ctx, getOktaClientFromMetadata(m), d.Id())
+	roles, resp, err := listUserOnlyRoles(ctx, c, id)
 
 	if err != nil {
 		if resp != nil && resp.StatusCode == http.StatusForbidden {
-			logger(m).Info("insufficient permissions to get Admin Roles, skipping.")
+			// no-op
 		} else {
-			return err
+			return nil, err
 		}
 	} else {
 		for _, role := range roles {
 			roleTypes = append(roleTypes, role.Type)
 		}
+	}
+
+	return roleTypes, err
+}
+
+func setAdminRoles(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	roleTypes, err := getAdminRoles(ctx, d.Id(), getOktaClientFromMetadata(m))
+	if err != nil {
+		return fmt.Errorf("failed to get admin roles: %v", err)
 	}
 
 	// set the custom_profile_attributes values
