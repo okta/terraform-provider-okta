@@ -11,11 +11,11 @@ import (
 )
 
 var validCustomRolePermissions = []string{
+	"okta.authzServers.manage",
+	"okta.authzServers.read",
 	"okta.apps.assignment.manage",
 	"okta.apps.manage",
 	"okta.apps.read",
-	"okta.authzServers.manage",
-	"okta.authzServers.read",
 	"okta.customizations.manage",
 	"okta.customizations.read",
 	"okta.groups.appAssignment.manage",

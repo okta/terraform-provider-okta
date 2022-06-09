@@ -31,11 +31,11 @@ The following arguments are supported:
 - `description` - (Required) A human-readable description of the new Role.
 
 - `permissions` - (Optional) The permissions that the new Role grants. At least one
-  permission must be specified when creating custom role. Valid values: `"okta.apps.assignment.manage"`,
+  permission must be specified when creating custom role. Valid values: `"okta.authzServers.manage"`,
+`"okta.authzServers.read"`,
+`"okta.apps.assignment.manage"`,
 `"okta.apps.manage"`,
 `"okta.apps.read"`,
-`"okta.authzServers.manage"`,
-`"okta.authzServers.read"`,
 `"okta.customizations.manage"`,
 `"okta.customizations.read"`,
 `"okta.groups.appAssignment.manage"`,
