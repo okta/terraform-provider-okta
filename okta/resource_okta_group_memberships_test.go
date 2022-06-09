@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaGroupMemberships_crud(t *testing.T) {
+func TestAccResourceOktaGroupMemberships_crud(t *testing.T) {
 	ri := acctest.RandInt()
 
 	mgr := newFixtureManager(groupMemberships)
@@ -36,8 +36,8 @@ func TestAccOktaGroupMemberships_crud(t *testing.T) {
 	})
 }
 
-// TestAccOktaGroupMembershipsIssue1072 addresses https://github.com/okta/terraform-provider-okta/issues/1072
-func TestAccOktaGroupMembershipsIssue1072(t *testing.T) {
+// TestAccResourceOktaGroupMemberships_Issue1072 addresses https://github.com/okta/terraform-provider-okta/issues/1072
+func TestAccResourceOktaGroupMemberships_Issue1072(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
@@ -62,8 +62,51 @@ resource "okta_group_memberships" "test" {
 	})
 }
 
-// TestAccOktaGroupMembershipsIssue1094 addresses https://github.com/okta/terraform-provider-okta/issues/1094
-func TestAccOktaGroupMembershipsIssue1094(t *testing.T) {
+// TestAccResourceOktaGroupMemberships_ClassicBehavior
+// https://github.com/okta/terraform-provider-okta/issues/1094
+// https://github.com/okta/terraform-provider-okta/issues/1119
+// https://github.com/okta/terraform-provider-okta/issues/1149
+// https://github.com/okta/terraform-provider-okta/issues/1155
+func TestAccResourceOktaGroupMemberships_ClassicBehavior(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Before the apply the state will be:
+				//   Group A without users.
+				//   Users 1, 2 without a group association.
+				//   Group B will have users 3, 4, 5 from their creation.
+				//   There is a group memberships that will place users 1, 2 into Group A.
+				//   There is a group rule that will assign all group B users to Group A.
+				// After the apply:
+				//   Group A has users 1, 2 by okta_group_memberships resource.
+				//   The rule that okta_group_memberships.test_a_direct
+				//   describes has been run at Okta associating users 3, 4, and 5
+				//   with Group A.
+				// Upon the next plan:
+				//   The state of okta_group_memberships.test_a_direct is unchanged (expect
+				//   empty plan) as no users it is concerned with have been removed from the
+				//   group even if other users have been added to the group.
+				ExpectNonEmptyPlan: false,
+				Config:             testOktaGroupMembershipsConfig(false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_group_memberships.test_a_direct", "users.#", "2"),
+					resource.TestCheckResourceAttr("data.okta_group.test_a", "users.#", "5"),
+					resource.TestCheckResourceAttr("data.okta_group.test_b", "users.#", "3"),
+				),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaGroupMemberships_TrackAllUsersBehavior
+// https://github.com/okta/terraform-provider-okta/issues/1094
+// https://github.com/okta/terraform-provider-okta/issues/1119
+// https://github.com/okta/terraform-provider-okta/issues/1149
+// https://github.com/okta/terraform-provider-okta/issues/1155
+func TestAccResourceOktaGroupMemberships_TrackAllUsersBehavior(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
@@ -83,24 +126,28 @@ func TestAccOktaGroupMembershipsIssue1094(t *testing.T) {
 				//   with Group A.
 				// Upon the next plan:
 				//   The state of okta_group_memberships.test_a_direct
-				//   will appear to have drifed from having only two
-				//   users to five users becuase
+				//   will appear to have drifted (expect non empty plan) from having
+				//   only two users to five users becuase
 				//   okta_group_rule.group_b_to_a_rule will have run and
 				//   associated the three users from Group B to aslo be in
 				//   Group A.
 				ExpectNonEmptyPlan: true,
-
-				Config: configIssue1094,
+				// Even with a read delay of 5 seconds it can take awhile for group rules to fire in turn causing this test to fail.
+				Config: testOktaGroupMembershipsConfig(true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.okta_group.test_b", "users.#", "3"),
-					resource.TestCheckResourceAttr("data.okta_group.test_a", "users.#", "5"),
+					resource.TestCheckResourceAttr("okta_group_memberships.test_a_direct", "users.#", "2"),
 				),
 			},
 		},
 	})
 }
 
-var configIssue1094 = `
+// testOktaGroupMembershipsConfig Creat a config that has 5 users all assigned
+// to the same group. Two users are assigned by okta_group_memberships and three
+// are assigned explicitely. trackAllUsers is a flag to add `track_all_users =
+// true` to the okta_group_memberships resource.
+func testOktaGroupMembershipsConfig(trackAllUsers bool) string {
+	prepend := `
 # Given group a, b
 resource "okta_group" "test_a" {
   name = "TestACC Group A"
@@ -156,14 +203,16 @@ resource "okta_user" "test_5" {
 }
 # Group A should have users 1, 2 assigned via okta_group_memberships
 resource "okta_group_memberships" "test_a_direct" {
+`
+	var clause string
+	if trackAllUsers {
+		clause = "  track_all_users = true\n"
+	}
+
+	append := `
   group_id = okta_group.test_a.id
   users = [okta_user.test_1.id, okta_user.test_2.id]
   depends_on = [okta_user.test_1, okta_user.test_2, okta_group.test_a]
-
-  # Ignore changes on users if group members will be changed outside of it
-  # lifecycle {
-  #   ignore_changes = [users]
-  # }
 }
 # Group A should have users 3, 4, 5 assigned via okta_group_rule
 resource "okta_group_rule" "group_b_to_a_rule" {
@@ -172,7 +221,6 @@ resource "okta_group_rule" "group_b_to_a_rule" {
   group_assignments     = [okta_group.test_a.id]
   expression_type       = "urn:okta:expression:1.0"
   expression_value      = "isMemberOfAnyGroup(\"${okta_group.test_b.id}\")"
-  remove_assigned_users = true
   depends_on = [okta_user.test_3, okta_user.test_4, okta_user.test_5, okta_group.test_a, okta_group.test_b, okta_group_memberships.test_a_direct]
 }
 # Use a data source to read back in the state of each gorup for testing
@@ -190,6 +238,9 @@ data "okta_group" "test_b" {
   depends_on = [okta_group_memberships.test_a_direct, okta_group_rule.group_b_to_a_rule]
 }
 `
+
+	return fmt.Sprintf("%s%s%s", prepend, clause, append)
+}
 
 // TestAccOktaGroupMembershipsIssue1119 addresses https://github.com/okta/terraform-provider-okta/issues/1119
 func TestAccOktaGroupMembershipsIssue1119(t *testing.T) {
