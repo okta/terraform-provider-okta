@@ -415,11 +415,11 @@ func computeFileHash(filename string) string {
 	if err != nil {
 		return ""
 	}
+	defer file.Close()
 	h := sha256.New()
 	if _, err := io.Copy(h, file); err != nil {
 		log.Fatal(err)
 	}
-	_ = file.Close()
 	return hex.EncodeToString(h.Sum(nil))
 }
 

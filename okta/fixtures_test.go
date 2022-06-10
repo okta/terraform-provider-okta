@@ -32,6 +32,7 @@ func (manager *fixtureManager) GetFixtures(fixtureName string, rInt int, t *test
 	if err != nil {
 		t.Fatalf("failed to load terraform fixtures for ACC test, err: %v", err)
 	}
+	defer file.Close()
 	rawFile, err := ioutil.ReadAll(file)
 	if err != nil {
 		t.Fatalf("failed to load terraform fixtures for ACC test, err: %v", err)
