@@ -16,7 +16,7 @@ import (
 
 // Tests a standard OAuth application with an updated type. This tests the ForceNew on type and tests creating an
 // ACTIVE and INACTIVE application via the create action.
-func TestAccAppOauth_basic(t *testing.T) {
+func TestAccResourceOktaAppOauth_basic(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appOAuth)
 	config := mgr.GetFixtures("basic.tf", ri, t)
@@ -82,8 +82,8 @@ func TestAccAppOauth_basic(t *testing.T) {
 	})
 }
 
-// TestAccAppOauth_refreshToken enables refresh token for browser type oauth app
-func TestAccAppOauth_refreshToken(t *testing.T) {
+// TestAccResourceOktaAppOauth_refreshToken enables refresh token for browser type oauth app
+func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 	// TODO: This is an "Early Access Feature" and needs to be enabled by Okta
 	//       Skipping for now assuming that the okta account doesn't have this feature enabled.
 	//       If this feature is enabled or Okta releases this to all this test should be enabled.
@@ -127,7 +127,7 @@ func TestAccAppOauth_refreshToken(t *testing.T) {
 }
 
 // Tests creation of service app and updates it to native
-func TestAccAppOauth_serviceNative(t *testing.T) {
+func TestAccResourceOktaAppOauth_serviceNative(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appOAuth)
 	config := mgr.GetFixtures("service.tf", ri, t)
@@ -162,7 +162,7 @@ func TestAccAppOauth_serviceNative(t *testing.T) {
 }
 
 // Tests creation of service app and updates it to turn on federated broker
-func TestAccAppOauth_federationBroker(t *testing.T) {
+func TestAccResourceOktaAppOauth_federationBroker(t *testing.T) {
 	// TODO: This is an "Early Access Feature" and needs to be enabled by Okta
 	//       Skipping for now assuming that the okta account doesn't have this feature enabled.
 	//       If this feature is enabled or Okta releases this to all this test should be enabled.
@@ -205,7 +205,7 @@ func TestAccAppOauth_federationBroker(t *testing.T) {
 }
 
 // Tests an OAuth application with profile attributes. This tests with a nested JSON object as well as an array.
-func TestAccAppOauth_customProfileAttributes(t *testing.T) {
+func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appOAuth)
 	config := mgr.GetFixtures("custom_attributes.tf", ri, t)
@@ -251,7 +251,7 @@ func TestAccAppOauth_customProfileAttributes(t *testing.T) {
 
 // Tests various expected properties of client_id and custom_client_id
 // TODO: remove when custom_client_id is removed
-func TestAccAppOauth_customClientID(t *testing.T) {
+func TestAccResourceOktaAppOauth_customClientID(t *testing.T) {
 	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
@@ -283,7 +283,7 @@ func TestAccAppOauth_customClientID(t *testing.T) {
 }
 
 // TODO: remove when custom_client_id is removed
-func TestAccAppOauth_customClientIDError(t *testing.T) {
+func TestAccResourceOktaAppOauth_customClientIDError(t *testing.T) {
 	ri := acctest.RandInt()
 
 	resource.Test(t, resource.TestCase{
@@ -300,7 +300,7 @@ func TestAccAppOauth_customClientIDError(t *testing.T) {
 }
 
 // Tests an OAuth application with profile attributes. This tests with a nested JSON object as well as an array.
-func TestAccAppOauth_serviceWithJWKS(t *testing.T) {
+func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appOAuth)
 	config := mgr.GetFixtures("service_with_jwks.tf", ri, t)
@@ -418,6 +418,48 @@ func TestAccResourceOktaAppOauth_redirect_uris(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "redirect_uris.0", "https://one.example.com/"),
 					resource.TestCheckResourceAttr(resourceName, "redirect_uris.1", "https://two.example.com/"),
 					resource.TestCheckResourceAttr(resourceName, "redirect_uris.2", "https://*.example.com/"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaAppOauth_groups_claim(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", appOAuth)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: `
+				resource "okta_app_oauth" "test" {
+					label                     = "Test"
+					type                      = "web"
+					grant_types                = ["authorization_code"]
+					redirect_uris              = ["https://example.com/"]
+					response_types             = ["code"]
+					issuer_mode                = "ORG_URL"
+					groups_claim {
+					  type        = "FILTER" # required
+					  filter_type = "REGEX"
+					  name        = "groups" # required
+					  value       = ".*" # required
+					}
+				  }
+				`,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", "Test"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "web"),
+					resource.TestCheckResourceAttr(resourceName, "issuer_mode", "ORG_URL"),
+					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.type", "FILTER"),
+					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.filter_type", "REGEX"),
+					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.value", ".*"),
+					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.name", "groups"),
+					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.issuer_mode", "ORG_URL"),
 				),
 			},
 		},
