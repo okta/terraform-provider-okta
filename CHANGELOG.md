@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.30.0 (June 22, 2022)
+
+BUG FIXES:
+
+* Correct issuer mode value in embedded `groups_claim` of an `okta_app_oauth` resource [#1167](https://github.com/okta/terraform-provider-okta/pull/1167). Thanks, [@monde](https://github.com/monde)!
+* Resource `okta_app_oauth` property`redirect_uris` is a list, not a set, and needs to maintain order. [#1171](https://github.com/okta/terraform-provider-okta/pull/1171). Thanks, [@monde](https://github.com/monde)!
+* Fix JSON serialization errors that group and user schemas experience when `enum` and `one_of` properties are utilized with a `type` value other than `string` [#1178](https://github.com/okta/terraform-provider-okta/pull/1178). Thanks, [@monde](https://github.com/monde)!
+
+ENHANCEMENTS:
+
+* Add `no-stalebot` label exemption for GH stalebot action [#1180](https://github.com/okta/terraform-provider-okta/pull/1180). Thanks, [@monde](https://github.com/monde)!
+
+
 ## 3.29.0 (June 09, 2022)
 
 ENHANCEMENTS:
