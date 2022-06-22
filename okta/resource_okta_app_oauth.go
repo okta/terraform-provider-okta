@@ -389,6 +389,11 @@ var groupsClaimResource = &schema.Resource{
 			Type:        schema.TypeString,
 			Required:    true,
 		},
+		"issuer_mode": {
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Issuer mode inherited from OAuth App",
+		},
 	},
 }
 
@@ -437,9 +442,11 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m inter
 	}
 	groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
 	gc := &sdk.AppOauthGroupClaim{
-		IssuerMode: "ORG_URL",
-		Name:       groupsClaim["name"].(string),
-		Value:      groupsClaim["value"].(string),
+		Name:  groupsClaim["name"].(string),
+		Value: groupsClaim["value"].(string),
+	}
+	if d.Get("issuer_mode") != nil {
+		gc.IssuerMode = d.Get("issuer_mode").(string)
 	}
 	gct := groupsClaim["type"].(string)
 	if gct == "FILTER" {
@@ -459,7 +466,7 @@ func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m in
 	}
 	if len(raw.(*schema.Set).List()) == 0 {
 		gc := &sdk.AppOauthGroupClaim{
-			IssuerMode: "ORG_URL",
+			IssuerMode: d.Get("issuer_mode").(string),
 		}
 		_, err := getSupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
 		return err
@@ -543,6 +550,7 @@ func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface
 	if gc.ValueType == "GROUPS" {
 		elem["type"] = "FILTER"
 		elem["filter_type"] = gc.GroupFilterType
+		elem["issuer_mode"] = gc.IssuerMode
 	}
 	return schema.NewSet(schema.HashResource(groupsClaimResource), []interface{}{elem}), nil
 }

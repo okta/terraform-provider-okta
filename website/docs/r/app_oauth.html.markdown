@@ -85,6 +85,7 @@ The following arguments are supported:
   - `filter_type` - (Optional) Groups claim filter. Can only be set if type is `"FILTER"`. Valid values: `"EQUALS"`, `"STARTS_WITH"`, `"CONTAINS"`, `"REGEX"`.
   - `name` - (Required) Name of the claim that will be used in the token.
   - `value` - (Required) Value of the claim. Can be an Okta Expression Language statement that evaluates at the time the token is minted.
+  - `issuer_mode` - (Read-Only) Issuer Mode is inherited from the Issuer Mode on the OAuth app itself.
 
 - `hide_ios` - (Optional) Do not display application icon on mobile app.
 
