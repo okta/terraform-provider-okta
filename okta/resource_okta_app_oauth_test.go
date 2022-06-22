@@ -385,3 +385,41 @@ resource "%s" "test" {
   client_id        = "%s"
 }`, appOAuth, name, name, name)
 }
+
+// TestAccResourceOktaAppOauth_redirect_uris relates to issue 1170
+//  Enable terraform to maintain order of redirect_uris
+// https://github.com/okta/terraform-provider-okta/issues/1170
+func TestAccResourceOktaAppOauth_redirect_uris(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", appOAuth)
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: `
+				resource "okta_app_oauth" "test" {
+					label = "example"
+					type = "web"
+					grant_types = ["authorization_code"]
+					wildcard_redirect = "SUBDOMAIN"
+					redirect_uris = [
+					  "https://one.example.com/",
+					  "https://two.example.com/",
+					  "https://*.example.com/"
+					]
+					response_types = ["code"]
+				  }				
+				`,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "redirect_uris.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "wildcard_redirect", "SUBDOMAIN"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_uris.0", "https://one.example.com/"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_uris.1", "https://two.example.com/"),
+					resource.TestCheckResourceAttr(resourceName, "redirect_uris.2", "https://*.example.com/"),
+				),
+			},
+		},
+	})
+}

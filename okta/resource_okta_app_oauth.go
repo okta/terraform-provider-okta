@@ -208,7 +208,7 @@ func resourceAppOAuth() *schema.Resource {
 				Description: "List of scopes to use for the request",
 			},
 			"redirect_uris": {
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
 				Description: "List of URIs for use in the redirect-based flow. This is required for all application types except service. Note: see okta_app_oauth_redirect_uri for appending to this list in a decentralized way.",
@@ -596,7 +596,7 @@ func setOAuthClientSettings(d *schema.ResourceData, oauthClient *okta.OpenIdConn
 		grantTypes[i] = string(*oauthClient.GrantTypes[i])
 	}
 	aggMap := map[string]interface{}{
-		"redirect_uris":             convertStringSliceToSet(oauthClient.RedirectUris),
+		"redirect_uris":             oauthClient.RedirectUris,
 		"response_types":            convertStringSliceToSet(respTypes),
 		"grant_types":               convertStringSliceToSet(grantTypes),
 		"post_logout_redirect_uris": convertStringSliceToSet(oauthClient.PostLogoutRedirectUris),
@@ -734,7 +734,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 			InitiateLoginUri:       d.Get("login_uri").(string),
 			LogoUri:                d.Get("logo_uri").(string),
 			PolicyUri:              d.Get("policy_uri").(string),
-			RedirectUris:           convertInterfaceToStringSetNullable(d.Get("redirect_uris")),
+			RedirectUris:           convertInterfaceToStringArr(d.Get("redirect_uris")),
 			PostLogoutRedirectUris: convertInterfaceToStringSetNullable(d.Get("post_logout_redirect_uris")),
 			ResponseTypes:          oktaRespTypes,
 			TosUri:                 d.Get("tos_uri").(string),
