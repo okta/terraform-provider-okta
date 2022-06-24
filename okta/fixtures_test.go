@@ -42,5 +42,9 @@ func (manager *fixtureManager) GetFixtures(fixtureName string, rInt int, t *test
 		return tfConfig
 	}
 
+	return manager.ConfigReplace(tfConfig, rInt)
+}
+
+func (manager *fixtureManager) ConfigReplace(tfConfig string, rInt int) string {
 	return strings.ReplaceAll(tfConfig, uuidPattern, fmt.Sprintf("%d", rInt))
 }

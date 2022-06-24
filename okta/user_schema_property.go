@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -14,7 +15,7 @@ var (
 		"array_type": {
 			Type:             schema.TypeString,
 			Optional:         true,
-			ValidateDiagFunc: elemInSlice([]string{"string", "number", "integer", "reference"}),
+			ValidateDiagFunc: elemInSlice([]string{"string", "number", "integer", "boolean", "reference"}),
 			Description:      "Subschema array type: string, number, integer, reference. Type field must be an array.",
 			ForceNew:         true,
 		},
@@ -171,14 +172,26 @@ func syncCustomUserSchema(d *schema.ResourceData, subschema *okta.UserSchemaAttr
 	_ = d.Set("external_name", subschema.ExternalName)
 	_ = d.Set("external_namespace", subschema.ExternalNamespace)
 	_ = d.Set("unique", subschema.Unique)
+
+	// NOTE: Enums on the schema can be typed other than string but the
+	// Terraform SDK is staticly defined at runtime for string so we need to
+	// juggle types on the fly.
+
 	if subschema.Items != nil {
+		stringifyOneOfSlice(subschema.Items.Type, &subschema.Items.OneOf)
+		stringifyEnumSlice(subschema.Items.Type, &subschema.Items.Enum)
 		_ = d.Set("array_type", subschema.Items.Type)
 		_ = d.Set("array_one_of", flattenOneOf(subschema.Items.OneOf))
 		_ = d.Set("array_enum", subschema.Items.Enum)
 	}
+
+	stringifyOneOfSlice(subschema.Type, &subschema.OneOf)
+	stringifyEnumSlice(subschema.Type, &subschema.Enum)
+
 	if len(subschema.Enum) > 0 {
 		_ = d.Set("enum", subschema.Enum)
 	}
+
 	return setNonPrimitives(d, map[string]interface{}{
 		"one_of": flattenOneOf(subschema.OneOf),
 	})
@@ -248,8 +261,8 @@ func buildNullableItems(d *schema.ResourceData) (*okta.UserSchemaAttributeItems,
 		return u, nil
 	}
 	if okArrayEnum {
-		enum := buildStringSlice(arrayEnum.([]interface{}))
-		u.Enum = enum
+		//enum := buildStringSlice(arrayEnum.([]interface{}))
+		u.Enum = arrayEnum.([]interface{})
 	}
 	if okArrayOneOf {
 		oneOf, err := buildOneOf(arrayOneOf.([]interface{}), u.Type)
@@ -315,11 +328,7 @@ func buildUserCustomSchemaAttribute(d *schema.ResourceData) (*okta.UserSchemaAtt
 			return nil, err
 		}
 	}
-	var enum []string
-	if rawEnum, ok := d.GetOk("enum"); ok {
-		enum = buildStringSlice(rawEnum.([]interface{}))
-	}
-	return &okta.UserSchemaAttribute{
+	attribute := &okta.UserSchemaAttribute{
 		Title:       d.Get("title").(string),
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
@@ -331,7 +340,6 @@ func buildUserCustomSchemaAttribute(d *schema.ResourceData) (*okta.UserSchemaAtt
 			},
 		},
 		Scope:             d.Get("scope").(string),
-		Enum:              enum,
 		Master:            getNullableMaster(d),
 		Items:             items,
 		MinLength:         int64(d.Get("min_length").(int)),
@@ -340,7 +348,11 @@ func buildUserCustomSchemaAttribute(d *schema.ResourceData) (*okta.UserSchemaAtt
 		ExternalName:      d.Get("external_name").(string),
 		ExternalNamespace: d.Get("external_namespace").(string),
 		Unique:            d.Get("unique").(string),
-	}, nil
+	}
+	if rawEnum, ok := d.GetOk("enum"); ok {
+		attribute.Enum = rawEnum.([]interface{})
+	}
+	return attribute, nil
 }
 
 func buildUserBaseSchemaAttribute(d *schema.ResourceData) *okta.UserSchemaAttribute {
@@ -419,4 +431,197 @@ func userSchemaBaseAttribute(s *okta.UserSchema, index string) *okta.UserSchemaA
 		return nil
 	}
 	return s.Definitions.Base.Properties[index]
+}
+
+// retypeSchemaPropertyEnums takes a schema and ensures the enums in its
+// UserSchemaAttribute(s) have the correct golang type values instead of the
+// strings limitation due to the TF SDK.
+func retypeSchemaPropertyEnums(schema *okta.UserSchema) {
+	if schema.Definitions != nil && schema.Definitions.Base != nil {
+		retypePropertiesEnum(schema.Definitions.Base.Properties)
+	}
+	if schema.Definitions != nil && schema.Definitions.Custom != nil {
+		retypePropertiesEnum(schema.Definitions.Custom.Properties)
+	}
+}
+
+// stringifySchemaPropertyEnums takes a schema and ensures the enums in its
+// UserSchemaAttribute(s) have string values to satisfy the TF schema
+func stringifySchemaPropertyEnums(schema *okta.UserSchema) {
+	if schema.Definitions != nil && schema.Definitions.Base != nil {
+		stringifyPropertiesEnum(schema.Definitions.Base.Properties)
+	}
+	if schema.Definitions != nil && schema.Definitions.Custom != nil {
+		stringifyPropertiesEnum(schema.Definitions.Custom.Properties)
+	}
+}
+
+func retypePropertiesEnum(properties map[string]*okta.UserSchemaAttribute) {
+	for _, val := range properties {
+		if val == nil {
+			continue
+		}
+		enum := retypeEnumSlice(val.Type, val.Enum)
+		val.Enum = enum
+		attributeEnum := retypeOneOfSlice(val.Type, val.OneOf)
+		val.OneOf = attributeEnum
+		if val.Items != nil {
+			enum := retypeEnumSlice(val.Items.Type, val.Items.Enum)
+			val.Items.Enum = enum
+			retypeOneOfSlice(val.Type, val.OneOf)
+			attributeEnum := retypeOneOfSlice(val.Items.Type, val.Items.OneOf)
+			val.Items.OneOf = attributeEnum
+		}
+
+	}
+}
+
+func stringifyPropertiesEnum(properties map[string]*okta.UserSchemaAttribute) {
+	for _, val := range properties {
+		if val != nil && val.Enum != nil {
+			stringifyEnumSlice(val.Type, &val.Enum)
+		}
+		if val != nil && val.OneOf != nil {
+			stringifyOneOfSlice(val.Type, &val.OneOf)
+		}
+		if val != nil && val.Items != nil {
+			stringifyEnumSlice(val.Items.Type, &val.Items.Enum)
+			stringifyOneOfSlice(val.Items.Type, &val.Items.OneOf)
+		}
+
+	}
+}
+
+func retypeEnumSlice(elemType string, enum []interface{}) []interface{} {
+	result := make([]interface{}, len(enum))
+	for i, val := range enum {
+		v, err := coerceCorrectTypedValue(elemType, val)
+		if err == nil {
+			result[i] = v
+		}
+	}
+	return result
+}
+
+func stringifyEnumSlice(elemType string, enum *[]interface{}) {
+	if enum == nil {
+		return
+	}
+	for i, val := range *enum {
+		v, err := coerceStringValue(elemType, val)
+		if err == nil {
+			(*enum)[i] = v
+		}
+	}
+}
+
+func retypeOneOfSlice(elemType string, enum []*okta.UserSchemaAttributeEnum) []*okta.UserSchemaAttributeEnum {
+	result := make([]*okta.UserSchemaAttributeEnum, len(enum))
+	for i, val := range enum {
+		ae := okta.UserSchemaAttributeEnum{}
+		if val != nil {
+			ae.Title = val.Title
+			if val.Const != nil {
+				v, err := coerceCorrectTypedValue(elemType, val.Const)
+				if err == nil {
+					ae.Const = v
+				}
+			}
+		}
+		result[i] = &ae
+	}
+	return result
+}
+
+func stringifyOneOfSlice(elemType string, enum *[]*okta.UserSchemaAttributeEnum) {
+	if enum == nil {
+		return
+	}
+	for _, val := range *enum {
+		if val != nil {
+			if val.Const != nil {
+				v, err := coerceStringValue(elemType, val.Const)
+				if err == nil {
+					val.Const = v
+				}
+			}
+		}
+	}
+}
+
+func coerceCorrectTypedValue(elemType string, value interface{}) (interface{}, error) {
+	switch elemType {
+	case "number":
+		return coerceFloat64(value)
+	case "integer":
+		return coerceInt(value)
+	case "boolean":
+		return coerceBool(value)
+	default:
+		if str, ok := value.(string); ok {
+			return str, nil
+		}
+		return nil, fmt.Errorf("could not coerce %+v of type %T to string", value, value)
+	}
+}
+
+func coerceFloat64(value interface{}) (float64, error) {
+	if v, ok := value.(float64); ok {
+		return v, nil
+	}
+	if str, ok := value.(string); ok {
+		return strconv.ParseFloat(str, 64)
+	}
+	return 0.0, fmt.Errorf("could not coerce %+v of type %T to float64", value, value)
+}
+
+func coerceInt(value interface{}) (int, error) {
+	if v, ok := value.(float64); ok {
+		return int(v), nil
+	}
+	if v, ok := value.(int); ok {
+		return v, nil
+	}
+	if str, ok := value.(string); ok {
+		return strconv.Atoi(str)
+	}
+	return 0, fmt.Errorf("could not coerce %+v of type %T to int", value, value)
+}
+
+func coerceBool(value interface{}) (bool, error) {
+	if v, ok := value.(bool); ok {
+		return v, nil
+	}
+	if str, ok := value.(string); ok {
+		return strconv.ParseBool(str)
+	}
+	return false, fmt.Errorf("could not coerce %+v of type %T to bool", value, value)
+}
+
+func coerceStringValue(elemType string, value interface{}) (interface{}, error) {
+	switch elemType {
+	case "number":
+		if v, ok := value.(float64); ok {
+			return fmt.Sprintf("%g", v), nil
+		}
+		return nil, fmt.Errorf("could not coerce %+v of type %T to float64", value, value)
+	case "integer":
+		if v, ok := value.(float64); ok {
+			return fmt.Sprintf("%d", int(v)), nil
+		}
+		if v, ok := value.(int); ok {
+			return fmt.Sprintf("%d", v), nil
+		}
+		return nil, fmt.Errorf("could not coerce %+v of type %T to int", value, value)
+	case "boolean":
+		if v, ok := value.(bool); ok {
+			return fmt.Sprintf("%t", v), nil
+		}
+		return nil, fmt.Errorf("could not coerce %+v of type %T to bool", value, value)
+	default:
+		if str, ok := value.(string); ok {
+			return str, nil
+		}
+		return nil, fmt.Errorf("could not coerce %+v of type %T to string", value, value)
+	}
 }
