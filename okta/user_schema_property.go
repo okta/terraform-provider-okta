@@ -433,30 +433,30 @@ func userSchemaBaseAttribute(s *okta.UserSchema, index string) *okta.UserSchemaA
 	return s.Definitions.Base.Properties[index]
 }
 
-// retypeSchemaPropertyEnums takes a schema and ensures the enums in its
+// retypeUserSchemaPropertyEnums takes a schema and ensures the enums in its
 // UserSchemaAttribute(s) have the correct golang type values instead of the
 // strings limitation due to the TF SDK.
-func retypeSchemaPropertyEnums(schema *okta.UserSchema) {
+func retypeUserSchemaPropertyEnums(schema *okta.UserSchema) {
 	if schema.Definitions != nil && schema.Definitions.Base != nil {
-		retypePropertiesEnum(schema.Definitions.Base.Properties)
+		retypeUserPropertiesEnum(schema.Definitions.Base.Properties)
 	}
 	if schema.Definitions != nil && schema.Definitions.Custom != nil {
-		retypePropertiesEnum(schema.Definitions.Custom.Properties)
+		retypeUserPropertiesEnum(schema.Definitions.Custom.Properties)
 	}
 }
 
-// stringifySchemaPropertyEnums takes a schema and ensures the enums in its
+// stringifyUserSchemaPropertyEnums takes a schema and ensures the enums in its
 // UserSchemaAttribute(s) have string values to satisfy the TF schema
-func stringifySchemaPropertyEnums(schema *okta.UserSchema) {
+func stringifyUserSchemaPropertyEnums(schema *okta.UserSchema) {
 	if schema.Definitions != nil && schema.Definitions.Base != nil {
-		stringifyPropertiesEnum(schema.Definitions.Base.Properties)
+		stringifyUserPropertiesEnum(schema.Definitions.Base.Properties)
 	}
 	if schema.Definitions != nil && schema.Definitions.Custom != nil {
-		stringifyPropertiesEnum(schema.Definitions.Custom.Properties)
+		stringifyUserPropertiesEnum(schema.Definitions.Custom.Properties)
 	}
 }
 
-func retypePropertiesEnum(properties map[string]*okta.UserSchemaAttribute) {
+func retypeUserPropertiesEnum(properties map[string]*okta.UserSchemaAttribute) {
 	for _, val := range properties {
 		if val == nil {
 			continue
@@ -476,7 +476,7 @@ func retypePropertiesEnum(properties map[string]*okta.UserSchemaAttribute) {
 	}
 }
 
-func stringifyPropertiesEnum(properties map[string]*okta.UserSchemaAttribute) {
+func stringifyUserPropertiesEnum(properties map[string]*okta.UserSchemaAttribute) {
 	for _, val := range properties {
 		if val != nil && val.Enum != nil {
 			stringifyEnumSlice(val.Type, &val.Enum)

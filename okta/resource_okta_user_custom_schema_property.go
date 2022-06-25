@@ -162,9 +162,9 @@ func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index s
 		// Terraform SDK is staticly defined at runtime for string so we need to
 		// juggle types on the fly.
 
-		retypeSchemaPropertyEnums(schema)
+		retypeUserSchemaPropertyEnums(schema)
 		updated, resp, err := getOktaClientFromMetadata(m).UserSchema.UpdateUserProfile(ctx, typeSchemaID, *schema)
-		stringifySchemaPropertyEnums(schema)
+		stringifyUserSchemaPropertyEnums(schema)
 
 		if err != nil {
 			logger(m).Error(err.Error())
