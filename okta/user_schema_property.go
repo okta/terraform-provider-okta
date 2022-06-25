@@ -261,7 +261,6 @@ func buildNullableItems(d *schema.ResourceData) (*okta.UserSchemaAttributeItems,
 		return u, nil
 	}
 	if okArrayEnum {
-		//enum := buildStringSlice(arrayEnum.([]interface{}))
 		u.Enum = arrayEnum.([]interface{})
 	}
 	if okArrayOneOf {
@@ -285,23 +284,6 @@ func buildOneOf(ae []interface{}, elemType string) ([]*okta.UserSchemaAttributeE
 		oneOf[i].Const = c
 	}
 	return oneOf, nil
-}
-
-func buildStringSlice(enum []interface{}) []string {
-	result := make([]string, len(enum))
-	for i := range enum {
-		result[i] = enum[i].(string)
-	}
-	return result
-}
-
-func strToInterfaceSlice(enum []string) []interface{} {
-	result := make([]interface{}, len(enum))
-	for i := range enum {
-		result[i] = enum[i]
-	}
-
-	return result
 }
 
 func flattenOneOf(oneOf []*okta.UserSchemaAttributeEnum) []interface{} {
