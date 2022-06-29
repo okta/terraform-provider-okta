@@ -160,6 +160,13 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				Description:      "The duration after which the end user must re-authenticate, regardless of user activity. Use the ISO 8601 Period format for recurring time intervals. PT0S - Every sign-in attempt, PT43800H - Once per session",
 				Default:          "PT2H",
 			},
+			"inactivity_period": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: stringIsPeriod,
+				Description:      "The inactivity duration after which the end user must re-authenticate. Use the ISO 8601 Period format for recurring time intervals.",
+				Default:          "PT1H",
+			},
 			"constraints": {
 				Type: schema.TypeList,
 				Elem: &schema.Schema{
@@ -209,6 +216,7 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 			_ = d.Set("type", rule.Actions.AppSignOn.VerificationMethod.Type)
 			_ = d.Set("factor_mode", rule.Actions.AppSignOn.VerificationMethod.FactorMode)
 			_ = d.Set("re_authentication_frequency", rule.Actions.AppSignOn.VerificationMethod.ReauthenticateIn)
+			_ = d.Set("inactivity_period", rule.Actions.AppSignOn.VerificationMethod.InactivityPeriod)
 			arr := make([]interface{}, len(rule.Actions.AppSignOn.VerificationMethod.Constraints))
 			for i := range rule.Actions.AppSignOn.VerificationMethod.Constraints {
 				b, _ := json.Marshal(rule.Actions.AppSignOn.VerificationMethod.Constraints[i])
@@ -293,6 +301,7 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 				VerificationMethod: &okta.VerificationMethod{
 					FactorMode:       d.Get("factor_mode").(string),
 					ReauthenticateIn: d.Get("re_authentication_frequency").(string),
+					InactivityPeriod: d.Get("inactivity_period").(string),
 					Type:             d.Get("type").(string),
 				},
 			},
