@@ -317,6 +317,8 @@ The following arguments are supported:
 
 - `re_authentication_frequency` - (Optional) The duration after which the end user must re-authenticate, regardless of user activity. Use the ISO 8601 Period format for recurring time intervals. `"PT0S"` - every sign-in attempt, `"PT43800H"` - once per session. Default is `"PT2H"`.
 
+- `inactivity_period` - (Optional) The inactivity duration after which the end user must re-authenticate. Use the ISO 8601 Period format for recurring time intervals. Default is `"PT1H"`.
+
 - `constraints` - (Optional) - An array that contains nested Authenticator Constraint objects that are organized by the Authenticator class. Each element should be in JSON format.
 
 ## Attributes Reference

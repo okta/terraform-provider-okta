@@ -109,6 +109,7 @@ resource "okta_app_signon_policy_rule" "test" {
   }
   priority                    = 98
   re_authentication_frequency = "PT43800H"
+  inactivity_period           = "PT2H"
   type                        = "ASSURANCE"
   user_types_excluded         = [
     okta_user_type.test.id
