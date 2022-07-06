@@ -20,11 +20,16 @@ type AddAppToEnrollmentPolicyResponse struct {
 	Links interface{} `json:"_links,omitempty"`
 }
 
+type AddEnrollmentPolicyToAppRequest struct {
+	Id string `json:"id"`
+}
+
 // AddAppToEnrollmentPolicy adds an app to the policy
 func (m *APISupplement) AddAppToEnrollmentPolicy(ctx context.Context, policyID string, body AddAppToEnrollmentPolicyRequest) (*AddAppToEnrollmentPolicyResponse, *okta.Response, error) {
-	url := fmt.Sprintf("/api/v1/policies/%s/mappings?forceCreate=true", policyID)
+	url := fmt.Sprintf("/api/v1/apps/%s/policies/%s", body.ResourceId, policyID)
 	re := m.cloneRequestExecutor()
-	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
+	requestBody := &AddEnrollmentPolicyToAppRequest{Id: body.ResourceId}
+	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, requestBody)
 	if err != nil {
 		return nil, nil, err
 	}
