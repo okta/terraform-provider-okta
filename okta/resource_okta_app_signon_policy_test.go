@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-
 func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appSignOnPolicy)
@@ -18,15 +17,15 @@ func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%v.test", appSignOnPolicy)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {testAccPreCheck(t)},
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: createPolicyCheckDestroy(appSignOnPolicy),
+		CheckDestroy:      createPolicyCheckDestroy(appSignOnPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("Test_App", ri)),
 					resource.TestCheckResourceAttr(resourceName, "description", "The app signon policy used by our test app."),
 				),
 			},
@@ -34,7 +33,7 @@ func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("Test_App", ri)),
 					resource.TestCheckResourceAttr(resourceName, "description", "The updated app signon policy used by our test app."),
 				),
 			},
@@ -42,7 +41,7 @@ func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
 				Config: renamedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("Test_App_Renamed_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("Test_App_Renamed", ri)),
 					resource.TestCheckResourceAttr(resourceName, "description", "The app signon policy used by our test app."),
 				),
 			},
