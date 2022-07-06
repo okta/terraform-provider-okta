@@ -29,7 +29,7 @@ func (m *APISupplement) AddAppToEnrollmentPolicy(ctx context.Context, policyID s
 	url := fmt.Sprintf("/api/v1/apps/%s/policies/%s", body.ResourceId, policyID)
 	re := m.cloneRequestExecutor()
 	requestBody := &AddEnrollmentPolicyToAppRequest{Id: body.ResourceId}
-	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, requestBody)
+	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, requestBody)
 	if err != nil {
 		return nil, nil, err
 	}
