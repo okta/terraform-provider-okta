@@ -270,6 +270,8 @@ The following arguments are supported:
 - `users` - (Optional) Users associated with the application.
   - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
+- `authentication_policy` - (Optional) The ID of the associated `app_signon_policy`. If this property is removed from the application the `default` sign-on-policy will be associated with this application.
+
 ## Attributes Reference
 
 - `id` - id of application.
