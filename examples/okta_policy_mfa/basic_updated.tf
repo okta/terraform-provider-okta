@@ -8,37 +8,30 @@ resource "okta_policy_mfa" "test" {
   description     = "Terraform Acceptance Test MFA Policy Updated"
   groups_included = [data.okta_group.all.id]
 
+  okta_email = {
+    enroll = "REQUIRED"
+  }
+
+  okta_password = {
+    enroll = "OPTIONAL"
+  }
+
   google_otp = {
     enroll = "OPTIONAL"
   }
 
-  okta_sms = {
-    enroll = "OPTIONAL"
-  }
-
-  okta_email = {
-    enroll = "OPTIONAL"
-  }
-
-  hotp = {
-    enroll = "OPTIONAL"
-  }
-
-  depends_on = [okta_factor.google_otp, okta_factor.okta_sms, okta_factor.okta_email, okta_factor.hotp]
-}
-
-resource "okta_factor" "google_otp" {
-  provider_id = "google_otp"
-}
-
-resource "okta_factor" "okta_sms" {
-  provider_id = "okta_sms"
+  depends_on = [okta_factor.google_otp, okta_factor.okta_email, okta_factor.okta_password]
 }
 
 resource "okta_factor" "okta_email" {
   provider_id = "okta_email"
 }
 
-resource "okta_factor" "hotp" {
-  provider_id = "hotp"
+resource "okta_factor" "okta_password" {
+  provider_id = "okta_password"
+}
+
+
+resource "okta_factor" "google_otp" {
+  provider_id = "google_otp"
 }
