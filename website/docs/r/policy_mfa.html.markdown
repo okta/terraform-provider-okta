@@ -12,6 +12,8 @@ Creates an MFA Policy.
 
 This resource allows you to create and configure an MFA Policy.
 
+~> Requires Org Feature Flag `OKTA_MFA_POLICY`. [Contact support](mailto:dev-inquiries@okta.com) for further information.
+
 ## Example Usage
 
 ```hcl
