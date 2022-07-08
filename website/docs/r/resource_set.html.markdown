@@ -57,5 +57,5 @@ resource "okta_resource_set" "test" {
 Okta Resource Set can be imported via the Okta ID.
 
 ```
-$ terraform import okta_resource_set.example <resource_set_id>
+$ terraform import okta_resource_set.example &#60;resource_set_id&#62;
 ```

@@ -19,7 +19,7 @@ data "okta_groups" "app_groups" {
 output "special_groups" {
   # This is an example of syntax only. Okta API only adds group of type OKTA_GROUP
   # and so the example resource groups in this example above will be of that type.
-  # OTKA_GROUP groups only have "name" and "description" properties which are
+  # OKTA_GROUP groups only have "name" and "description" properties which are
   # removed from okta-sdk-golang GroupProfileMap that is used to populate the bare
   # JSON custom_profile_attributes on the group data.
 

@@ -97,5 +97,5 @@ The following arguments are supported:
 A Password Policy can be imported via the Okta ID.
 
 ```
-$ terraform import okta_policy_password.example <policy id>
+$ terraform import okta_policy_password.example &#60;policy id&#62;
 ```

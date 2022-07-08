@@ -135,6 +135,7 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Optional:         true,
 				ValidateDiagFunc: elemInSlice([]string{"ANY", "OKTA", "SPECIFIC_IDP"}),
 				Description:      "Apply rule based on the IdP used: ANY, OKTA or SPECIFIC_IDP.",
+				Default:          "ANY",
 			},
 			"identity_provider_ids": { // identity_provider must be SPECIFIC_IDP
 				Type:        schema.TypeList,
@@ -194,11 +195,11 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 				return diag.Errorf("failed to set sign-on policy rule behaviors: %v", err)
 			}
 		}
-		if rule.Conditions.IdentityProvider != nil {
-			_ = d.Set("identity_provider", rule.Conditions.IdentityProvider.Provider)
-			if rule.Conditions.IdentityProvider.Provider == "SPECIFIC_IDP" {
-				_ = d.Set("identity_provider_ids", convertStringSliceToInterfaceSlice(rule.Conditions.IdentityProvider.IdpIds))
-			}
+	}
+	if rule.Conditions.IdentityProvider != nil {
+		_ = d.Set("identity_provider", rule.Conditions.IdentityProvider.Provider)
+		if rule.Conditions.IdentityProvider.Provider == "SPECIFIC_IDP" {
+			_ = d.Set("identity_provider_ids", convertStringSliceToInterfaceSlice(rule.Conditions.IdentityProvider.IdpIds))
 		}
 	}
 

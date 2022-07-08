@@ -64,5 +64,5 @@ The following arguments are supported:
 Okta Network Zone can be imported via the Okta ID.
 
 ```
-$ terraform import okta_network_zone.example <zone id>
+$ terraform import okta_network_zone.example &#60;zone id&#62;
 ```

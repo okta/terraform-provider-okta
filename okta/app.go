@@ -2,18 +2,15 @@ package okta
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"log"
 	"net/http"
-	"os"
 	"strings"
 	"sync"
+	"time"
 
+	"github.com/cenkalti/backoff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
@@ -90,7 +87,7 @@ var (
 			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 				return new == ""
 			},
-			StateFunc: logoStateFunc,
+			StateFunc: localFileStateFunc,
 		},
 		"logo_url": {
 			Type:        schema.TypeString,
@@ -435,7 +432,7 @@ func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, a
 	if !ok {
 		return nil
 	}
-	_, err := getSupplementFromMetadata(m).UploadAppLogo(ctx, appID, l.(string))
+	_, err := getOktaClientFromMetadata(m).Application.UploadApplicationLogo(ctx, appID, l.(string))
 	return err
 }
 
@@ -683,7 +680,17 @@ func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{
 			return err
 		}
 	}
-	_, err := client.Application.DeleteApplication(ctx, d.Id())
+
+	// Okta Core can have eventual consistency issues when deactivating an app
+	// which is required before deleting the app.
+	b := backoff.NewExponentialBackOff()
+	b.MaxElapsedTime = 5 * time.Second
+
+	err := backoff.Retry(func() error {
+		_, err := client.Application.DeleteApplication(ctx, d.Id())
+		return err
+	}, b)
+
 	return err
 }
 
@@ -711,25 +718,4 @@ func setAppUsersIDsAndGroupsIDs(ctx context.Context, d *schema.ResourceData, cli
 		_ = d.Set("users", convertStringSliceToSet(usersIDs))
 	}
 	return nil
-}
-
-func computeFileHash(filename string) string {
-	file, err := os.Open(filename)
-	if err != nil {
-		return ""
-	}
-	h := sha256.New()
-	if _, err := io.Copy(h, file); err != nil {
-		log.Fatal(err)
-	}
-	_ = file.Close()
-	return hex.EncodeToString(h.Sum(nil))
-}
-
-func logoStateFunc(val interface{}) string {
-	logoPath := val.(string)
-	if logoPath == "" {
-		return ""
-	}
-	return computeFileHash(logoPath)
 }

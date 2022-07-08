@@ -29,7 +29,7 @@ resource "okta_group_rule" "example" {
 
 The following arguments are supported:
 
-- `name` - (Required) The name of the Group Rule.
+- `name` - (Required) The name of the Group Rule (min character 1; max characters 50).
 
 - `group_assignments` - (Required) The list of group ids to assign the users to.
 
@@ -54,5 +54,5 @@ The following arguments are supported:
 An Okta Group Rule can be imported via the Okta ID.
 
 ```
-$ terraform import okta_group_rule.example <group rule id>
+$ terraform import okta_group_rule.example &#60;group rule id&#62;
 ```

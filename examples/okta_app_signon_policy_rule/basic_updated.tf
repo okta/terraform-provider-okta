@@ -91,20 +91,25 @@ resource "okta_app_signon_policy_rule" "test" {
     os_type = "MACOS"
     type    = "DESKTOP"
   }
-  platform_include {
-    os_type = "OTHER"
-    type    = "DESKTOP"
-  }
-  platform_include {
-    os_type = "OTHER"
-    type    = "MOBILE"
-  }
+# FIXME Okta API for /api/v1/policies/{policyId}/rules/{ruleId}
+# is not returning os_expression even when it has been set throwing off the TF state.
+#  platform_include {
+#    os_expression = ".*"
+#    os_type = "OTHER"
+#    type    = "DESKTOP"
+#  }
+#  platform_include {
+#    os_expression = ".*"
+#    os_type = "OTHER"
+#    type    = "MOBILE"
+#  }
   platform_include {
     os_type = "WINDOWS"
     type    = "DESKTOP"
   }
   priority                    = 98
   re_authentication_frequency = "PT43800H"
+  inactivity_period           = "PT2H"
   type                        = "ASSURANCE"
   user_types_excluded         = [
     okta_user_type.test.id

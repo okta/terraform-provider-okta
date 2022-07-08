@@ -1,7 +1,7 @@
 ---
-layout: 'okta'
-page_title: 'Provider: Okta'
-sidebar_current: 'docs-okta-index'
+layout: "okta"
+page_title: "Provider: Okta"
+sidebar_current: "docs-okta-index"
 description: |-
   The Okta provider is used to interact with the resources supported by Okta. The provider needs to be configured with the proper credentials before it can be used.
 ---
@@ -50,9 +50,9 @@ explained below:
 
 ### Environment variables
 
-You can provide your credentials via the `OKTA_ORG_NAME`, `OKTA_BASE_URL`, `OKTA_API_TOKEN`, `OKTA_API_CLIENT_ID`, 
-`OKTA_API_SCOPES` and `OKTA_API_PRIVATE_KEY` environment variables, representing your Okta Organization Name, 
-Okta Base URL (i.e. `"okta.com"` or `"oktapreview.com"`), Okta API Token, Okta Client ID, Okta API scopes 
+You can provide your credentials via the `OKTA_ORG_NAME`, `OKTA_BASE_URL`, `OKTA_API_TOKEN`, `OKTA_API_CLIENT_ID`,
+`OKTA_API_SCOPES` and `OKTA_API_PRIVATE_KEY` environment variables, representing your Okta Organization Name,
+Okta Base URL (i.e. `"okta.com"` or `"oktapreview.com"`), Okta API Token, Okta Client ID, Okta API scopes
 and Okta API private key respectively.
 
 ```hcl
@@ -79,7 +79,9 @@ In addition to [generic `provider` arguments](https://www.terraform.io/docs/conf
 
 - `base_url` - (Optional) This is the domain of your Okta account, for example `dev-123456.oktapreview.com` would have a base url of `oktapreview.com`. It must be provided, but it can also be sourced from the `OKTA_BASE_URL` environment variable.
 
-- `api_token` - (Optional) This is the API token to interact with your Okta org.  It can also be sourced from the `OKTA_API_TOKEN` environment variable. `api_token` conflicts with `client_id`, `scopes` and `private_key`.
+- `http_proxy` - (Optional) This is a custom URL endpoint that can be used for unit testing or local caching proxies. Can also be sourced from the `OKTA_HTTP_PROXY` environment variable.
+
+- `api_token` - (Optional) This is the API token to interact with your Okta org. It can also be sourced from the `OKTA_API_TOKEN` environment variable. `api_token` conflicts with `client_id`, `scopes` and `private_key`.
 
 - `client_id` - (Optional) This is the client ID for obtaining the API token. It can also be sourced from the `OKTA_API_CLIENT_ID` environment variable. `client_id` conflicts with `api_token`.
 
@@ -97,6 +99,6 @@ In addition to [generic `provider` arguments](https://www.terraform.io/docs/conf
 
 - `request_timeout` - (Optional) Timeout for single request (in seconds) which is made to Okta, the default is `0` (means no limit is set). The maximum value can be `300`.
 
-- `max_api_capacity` - (Optional, experimental) sets what percentage of capacity the provider can use of the total 
-  rate limit capacity while making calls to the Okta management API endpoints. Okta API operates in one minute buckets. 
+- `max_api_capacity` - (Optional, experimental) sets what percentage of capacity the provider can use of the total
+  rate limit capacity while making calls to the Okta management API endpoints. Okta API operates in one minute buckets.
   See Okta Management API Rate Limits: https://developer.okta.com/docs/reference/rl-global-mgmt. Can be set to a value between 1 and 100.

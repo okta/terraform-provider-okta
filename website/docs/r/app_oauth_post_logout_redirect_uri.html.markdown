@@ -51,5 +51,5 @@ resource "okta_app_oauth_post_logout_redirect_uri" "test" {
 A post logout redirect URI can be imported via the Okta ID.
 
 ```
-$ terraform import okta_app_oauth_post_logout_redirect_uri.example <app id>/<uri>
+$ terraform import okta_app_oauth_post_logout_redirect_uri.example &#60;app id&#62;/&#60;uri&#62;
 ```

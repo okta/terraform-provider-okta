@@ -114,5 +114,5 @@ and keeps the existing value if it is empty/omitted. PrivateKey isn't returned w
 A Social IdP can be imported via the Okta ID.
 
 ```
-$ terraform import okta_idp_social.example <idp id>
+$ terraform import okta_idp_social.example &#60;idp id&#62;
 ```

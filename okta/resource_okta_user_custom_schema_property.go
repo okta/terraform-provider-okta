@@ -100,9 +100,6 @@ func resourceUserSchemaResourceV0() *schema.Resource {
 	})}
 }
 
-// Sometime Okta API does not update or create custom property on the first try, thus that require running
-// `terraform apply` several times. This simple retry resolves that issue. (If) After  this issue will be resolved,
-// this retry logic will be demolished.
 func resourceUserSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	logger(m).Info("creating user custom schema property", "name", d.Get("index").(string))
 	err := validateUserSchema(d)
@@ -161,7 +158,14 @@ func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index s
 	bc := backoff.WithContext(bOff, ctx)
 
 	err = backoff.Retry(func() error {
+		// NOTE: Enums on the schema can be typed other than string but the
+		// Terraform SDK is staticly defined at runtime for string so we need to
+		// juggle types on the fly.
+
+		retypeUserSchemaPropertyEnums(schema)
 		updated, resp, err := getOktaClientFromMetadata(m).UserSchema.UpdateUserProfile(ctx, typeSchemaID, *schema)
+		stringifyUserSchemaPropertyEnums(schema)
+
 		if err != nil {
 			logger(m).Error(err.Error())
 			if resp != nil && resp.StatusCode == 500 {

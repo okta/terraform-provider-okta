@@ -31,15 +31,19 @@ The following arguments are supported:
 - `description` - (Required) A human-readable description of the new Role.
 
 - `permissions` - (Optional) The permissions that the new Role grants. At least one
-  permission must be specified when creating custom role. Valid values: `"okta.apps.assignment.manage"`,
+  permission must be specified when creating custom role. Valid values: `"okta.authzServers.manage"`,
+`"okta.authzServers.read"`,
+`"okta.apps.assignment.manage"`,
 `"okta.apps.manage"`,
 `"okta.apps.read"`,
+`"okta.customizations.manage"`,
+`"okta.customizations.read"`,
 `"okta.groups.appAssignment.manage"`,
 `"okta.groups.create"`,
 `"okta.groups.manage"`,
 `"okta.groups.members.manage"`,
 `"okta.groups.read"`,
-`"okta.profilesource.import.run"`,
+`"okta.profilesources.import.run"`,
 `"okta.users.appAssignment.manage"`,
 `"okta.users.create"`,
 `"okta.users.credentials.expirePassword"`,
@@ -57,7 +61,8 @@ The following arguments are supported:
 `"okta.users.lifecycle.unsuspend"`,
 `"okta.users.manage"`,
 `"okta.users.read"`,
-`"okta.users.userprofile.manage"`.
+`"okta.users.userprofile.manage"`,
+`"okta.workflows.invoke"`.,
 
 ## Attributes Reference
 
@@ -68,5 +73,5 @@ The following arguments are supported:
 Okta Custom Admin Role can be imported via the Okta ID.
 
 ```
-$ terraform import okta_admin_role_custom.example <custom role id>
+$ terraform import okta_admin_role_custom.example &#60;custom role id&#62;
 ```

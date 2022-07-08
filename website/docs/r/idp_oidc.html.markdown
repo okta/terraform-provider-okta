@@ -97,6 +97,10 @@ The following arguments are supported:
 
 - `profile_master` - (Optional) Determines if the IdP should act as a source of truth for user profile attributes.
 
+- `request_signature_algorithm` - (Optional) The HMAC Signature Algorithm used when signing an authorization request. It can be `"HS256"`, `"HS384"`, or `"HS512"`.
+
+- `request_signature_scope` - (Optional) Specifies whether to digitally sign an AuthnRequest messages to the IdP. It can be `"REQUEST"` or `"NONE"`.
+
 ## Attributes Reference
 
 - `id` - ID of the IdP.
@@ -110,5 +114,5 @@ The following arguments are supported:
 An OIDC IdP can be imported via the Okta ID.
 
 ```
-$ terraform import okta_idp_oidc.example <idp id>
+$ terraform import okta_idp_oidc.example &#60;idp id&#62;
 ```

@@ -8,7 +8,7 @@ description: |-
 
 # okta_user_schema
 
-~> **DEPRECATED** use `okta_user_schema_property` instead.
+~> **DEPRECATED** use `okta_user_schema_property` instead. To reiterate, development updates to `okta_user_schema` are no longer occuring and this resource may exhibit unknown or unstable behavior.
 
 Creates a User Schema property.
 
@@ -105,11 +105,11 @@ The following arguments are supported:
 User schema property of default user type can be imported via the property index.
 
 ```
-$ terraform import okta_user_schema.example <index>
+$ terraform import okta_user_schema.example &#60;index&#62;
 ```
 
 User schema property of custom user type can be imported via user type id and property index
 
 ```
-$ terraform import okta_user_schema.example <user type id>.<index>
+$ terraform import okta_user_schema.example &#60;user type id&#62;.&#60;index&#62;
 ```

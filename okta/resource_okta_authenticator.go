@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -102,13 +103,13 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(authenticator.ID)
+	d.SetId(authenticator.Id)
 	status, ok := d.GetOk("status")
 	if ok && authenticator.Status != status.(string) {
 		if status.(string) == statusInactive {
-			_, _, err = getSupplementFromMetadata(m).DeactivateAuthenticator(ctx, d.Id())
+			_, _, err = getOktaClientFromMetadata(m).Authenticator.DeactivateAuthenticator(ctx, d.Id())
 		} else {
-			_, _, err = getSupplementFromMetadata(m).ActivateAuthenticator(ctx, d.Id())
+			_, _, err = getOktaClientFromMetadata(m).Authenticator.ActivateAuthenticator(ctx, d.Id())
 		}
 		if err != nil {
 			return diag.Errorf("failed to change authenticator status: %v", err)
@@ -118,7 +119,7 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	authenticator, resp, err := getSupplementFromMetadata(m).GetAuthenticator(ctx, d.Id())
+	authenticator, resp, err := getOktaClientFromMetadata(m).Authenticator.GetAuthenticator(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get authenticator: %v", err)
 	}
@@ -139,9 +140,16 @@ func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m in
 		_ = d.Set("provider_type", authenticator.Provider.Type)
 		_ = d.Set("provider_hostname", authenticator.Provider.Configuration.HostName)
 		_ = d.Set("provider_auth_port", authenticator.Provider.Configuration.AuthPort)
-		_ = d.Set("provider_instance_id", authenticator.Provider.Configuration.InstanceID)
+		_ = d.Set("provider_instance_id", authenticator.Provider.Configuration.InstanceId)
 		if authenticator.Provider.Configuration.UserNameTemplate != nil {
 			_ = d.Set("provider_user_name_template", authenticator.Provider.Configuration.UserNameTemplate.Template)
+		}
+
+		// Duo specific setup
+		if authenticator.Provider.Type == "DUO" {
+			_ = d.Set("provider_host", authenticator.Provider.Configuration.Host)
+			_ = d.Set("provider_secret_key", authenticator.Provider.Configuration.SecretKey)
+			_ = d.Set("provider_integration_key", authenticator.Provider.Configuration.IntegrationKey)
 		}
 	}
 	return nil
@@ -152,16 +160,16 @@ func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, m 
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = getSupplementFromMetadata(m).UpdateAuthenticator(ctx, d.Id(), buildAuthenticator(d))
+	_, _, err = getOktaClientFromMetadata(m).Authenticator.UpdateAuthenticator(ctx, d.Id(), *buildAuthenticator(d))
 	if err != nil {
 		return diag.Errorf("failed to update authenticator: %v", err)
 	}
 	oldStatus, newStatus := d.GetChange("status")
 	if oldStatus != newStatus {
 		if newStatus == statusActive {
-			_, _, err = getSupplementFromMetadata(m).ActivateAuthenticator(ctx, d.Id())
+			_, _, err = getOktaClientFromMetadata(m).Authenticator.ActivateAuthenticator(ctx, d.Id())
 		} else {
-			_, _, err = getSupplementFromMetadata(m).DeactivateAuthenticator(ctx, d.Id())
+			_, _, err = getOktaClientFromMetadata(m).Authenticator.DeactivateAuthenticator(ctx, d.Id())
 		}
 		if err != nil {
 			return diag.Errorf("failed to change authenticator status: %v", err)
@@ -175,48 +183,69 @@ func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func buildAuthenticator(d *schema.ResourceData) sdk.Authenticator {
-	authenticator := sdk.Authenticator{
+func buildAuthenticator(d *schema.ResourceData) *okta.Authenticator {
+	authenticator := okta.Authenticator{
 		Type: d.Get("type").(string),
-		ID:   d.Id(),
+		Id:   d.Id(),
 		Key:  d.Get("key").(string),
 		Name: d.Get("name").(string),
 	}
 	if d.Get("type").(string) == "security_key" {
-		authenticator.Provider = &sdk.AuthenticatorProvider{
+		authenticator.Provider = &okta.AuthenticatorProvider{
 			Type: d.Get("provider_type").(string),
-			Configuration: &sdk.AuthenticatorProviderConfiguration{
+			Configuration: &okta.AuthenticatorProviderConfiguration{
 				HostName:     d.Get("provider_hostname").(string),
-				AuthPort:     d.Get("provider_auth_port").(int),
-				InstanceID:   d.Get("provider_instance_id").(string),
+				AuthPort:     d.Get("provider_auth_port").(int64),
+				InstanceId:   d.Get("provider_instance_id").(string),
 				SharedSecret: d.Get("provider_shared_secret").(string),
-				UserNameTemplate: &sdk.AuthenticatorProviderConfigurationUserNameTemplate{
+				UserNameTemplate: &okta.AuthenticatorProviderConfigurationUserNamePlate{
 					Template: "",
 				},
 			},
 		}
+	} else if d.Get("type").(string) == "DUO" {
+		authenticator.Provider = &okta.AuthenticatorProvider{
+			Type: d.Get("provider_type").(string),
+			Configuration: &okta.AuthenticatorProviderConfiguration{
+				Host:           d.Get("provider_hostname").(string),
+				SecretKey:      d.Get("provider_secret_key").(string),
+				IntegrationKey: d.Get("provider_integration_key").(string),
+				UserNameTemplate: &okta.AuthenticatorProviderConfigurationUserNamePlate{
+					Template: d.Get("provider_user_name_template").(string),
+				},
+			},
+		}
 	} else {
-		var settings sdk.AuthenticatorSettings
+		var settings okta.AuthenticatorSettings
 		if s, ok := d.GetOk("settings"); ok {
 			_ = json.Unmarshal([]byte(s.(string)), &settings)
 		}
 		authenticator.Settings = &settings
 	}
-	return authenticator
+	return &authenticator
 }
 
 func validateAuthenticator(d *schema.ResourceData) error {
 	typ := d.Get("type").(string)
-	if typ != "security_key" {
-		return nil
+	if typ == "security_key" {
+		h := d.Get("provider_hostname").(string)
+		_, pok := d.GetOk("provider_auth_port")
+		s := d.Get("provider_shared_secret").(string)
+		templ := d.Get("provider_user_name_template").(string)
+		if h == "" || s == "" || templ == "" || !pok {
+			return fmt.Errorf("for authenticator type '%s' fields 'provider_hostname', "+
+				"'provider_auth_port', 'provider_shared_secret' and 'provider_user_name_template' are required", typ)
+		}
 	}
-	h := d.Get("provider_hostname").(string)
-	_, pok := d.GetOk("provider_auth_port")
-	s := d.Get("provider_shared_secret").(string)
-	templ := d.Get("provider_user_name_template").(string)
-	if h == "" || s == "" || templ == "" || !pok {
-		return fmt.Errorf("for authenticator type '%s' fields 'provider_hostname', "+
-			"'provider_auth_port', 'provider_shared_secret' and 'provider_user_name_template' are required", typ)
+	if typ == "DUO" {
+		h := d.Get("provider_host").(string)
+		sk := d.Get("provider_secret_key").(string)
+		ik := d.Get("provider_integration_key").(string)
+		templ := d.Get("provider_user_name_template").(string)
+		if h == "" || sk == "" || ik == "" || templ == "" {
+			return fmt.Errorf("for authenticator type '%s' fields 'provider_host', "+
+				"'provider_secret_key', 'provider_integration_key' and 'provider_user_name_template' are required", typ)
+		}
 	}
 	return nil
 }

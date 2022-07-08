@@ -47,10 +47,12 @@ The following arguments are supported:
 
 - `auth_server_id` - The ID of the Auth Server.
 
+- `system` - Whether Okta created the Scope
+
 ## Import
 
 Okta Auth Server Scope can be imported via the Auth Server ID and Scope ID.
 
 ```
-$ terraform import okta_auth_server_scope.example <auth server id>/<scope id>
+$ terraform import okta_auth_server_scope.example &#60;auth server id&#62;/&#60;scope id&#62;
 ```

@@ -12,6 +12,10 @@ Creates an MFA Policy.
 
 This resource allows you to create and configure an MFA Policy.
 
+~> Requires Org Feature Flag `OKTA_MFA_POLICY`. [Contact support](mailto:dev-inquiries@okta.com) to have this feature flag ***enabled***.
+
+~> Unless Org Feature Flag `ENG_ENABLE_OPTIONAL_PASSWORD_ENROLLMENT` is ***disabled*** `okta_password` or `okta_email` must be present and its `enroll` value set to `REQUIRED`. [Contact support](mailto:dev-inquiries@okta.com) to have this feature flag ***disabled***.
+
 ## Example Usage
 
 ```hcl
@@ -20,6 +24,10 @@ resource "okta_policy_mfa" "classic_example" {
   status      = "ACTIVE"
   description = "Example MFA policy using Okta Classic engine with factors."
   is_oie      = false
+
+  okta_password = {
+    enroll = "REQUIRED"
+  }
 
   okta_otp = {
     enroll = "REQUIRED"
@@ -33,6 +41,10 @@ resource "okta_policy_mfa" "oie_example" {
   status      = "ACTIVE"
   description = "Example MFA policy that uses Okta Identity Engine (OIE) with authenticators"
   is_oie      = true
+
+  okta_password = {
+    enroll = "REQUIRED"
+  }
 
   # The following authenticator can only be used when `is_oie` is set to true
   okta_verify = {
@@ -120,5 +132,5 @@ All MFA settings above have the following structure.
 An MFA Policy can be imported via the Okta ID.
 
 ```
-$ terraform import okta_policy_mfa.example <policy id>
+$ terraform import okta_policy_mfa.example &#60;policy id&#62;
 ```

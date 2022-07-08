@@ -67,5 +67,5 @@ The following arguments are supported:
 An inline hook can be imported via the Okta ID.
 
 ```
-$ terraform import okta_inline_hook.example <hook id>
+$ terraform import okta_inline_hook.example &#60;hook id&#62;
 ```

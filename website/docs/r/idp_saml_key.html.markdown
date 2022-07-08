@@ -63,5 +63,5 @@ The following arguments are supported:
 A SAML IdP Signing Key can be imported via the key id.
 
 ```
-$ terraform import okta_idp_saml_key.example <key id>
+$ terraform import okta_idp_saml_key.example &#60;key id&#62;
 ```

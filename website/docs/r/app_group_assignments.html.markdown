@@ -67,5 +67,5 @@ The following arguments are supported:
 An application's group assignments can be imported via `app_id`.
 
 ```
-$ terraform import okta_app_group_assignments.example <app_id>
+$ terraform import okta_app_group_assignments.example &#60;app_id&#62;
 ```

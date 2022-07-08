@@ -101,6 +101,8 @@ data "okta_user" "compound_search" {
     value = okta_user.other.last_name
   }
 
+	delay_read_seconds = 2
+
   depends_on = [
     okta_user.test,
     okta_user.other
@@ -111,6 +113,8 @@ data "okta_user" "expression_search" {
   search {
     expression = "profile.array123 eq \"feature\" and (created gt \"2021-01-01T00:00:00.000Z\")"
   }
+
+	delay_read_seconds = 2
 
   depends_on = [
     okta_user.test,

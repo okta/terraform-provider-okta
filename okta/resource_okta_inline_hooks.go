@@ -45,9 +45,10 @@ func resourceInlineHook() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 				ValidateDiagFunc: elemInSlice([]string{
-					"com.okta.oauth2.tokens.transform",
 					"com.okta.import.transform",
+					"com.okta.oauth2.tokens.transform",
 					"com.okta.saml.tokens.transform",
+					"com.okta.telephony.provider",
 					"com.okta.user.pre-registration",
 					"com.okta.user.credential.password.import",
 				}),

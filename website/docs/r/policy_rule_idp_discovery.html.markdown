@@ -158,5 +158,5 @@ user_identifier_patterns {
 A Policy Rule can be imported via the Policy and Rule ID.
 
 ```
-$ terraform import okta_policy_rule_idp_discovery.example <policy id>/<rule id>
+$ terraform import okta_policy_rule_idp_discovery.example &#60;policy id&#62;/&#60;rule id&#62;
 ```

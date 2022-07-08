@@ -38,5 +38,5 @@ The following arguments are supported:
 A Profile Enrollment Policy can be imported via the Okta ID.
 
 ```
-$ terraform import okta_policy_profile_enrollment.example <policy id>
+$ terraform import okta_policy_profile_enrollment.example &#60;policy id&#62;
 ```

@@ -190,7 +190,7 @@ func assignAdminRolesToUser(ctx context.Context, userID string, roles []string, 
 		if role == "CUSTOM" {
 			continue
 		}
-		_, _, err := client.User.AssignRoleToUser(ctx, userID, &okta.AssignRoleRequest{Type: role},
+		_, _, err := client.User.AssignRoleToUser(ctx, userID, okta.AssignRoleRequest{Type: role},
 			&query.Params{DisableNotifications: boolPtr(disableNotifications)})
 		if err != nil {
 			return fmt.Errorf("failed to assign role '%s' to user '%s': %w", role, userID, err)
@@ -265,22 +265,30 @@ func listUserOnlyRoles(ctx context.Context, c *okta.Client, userID string) (user
 	return
 }
 
-func setAdminRoles(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+func getAdminRoles(ctx context.Context, id string, c *okta.Client) ([]interface{}, error) {
 	roleTypes := make([]interface{}, 0)
 
-	// set all roles currently attached to user in state
-	roles, resp, err := listUserOnlyRoles(ctx, getOktaClientFromMetadata(m), d.Id())
+	roles, resp, err := listUserOnlyRoles(ctx, c, id)
 
 	if err != nil {
 		if resp != nil && resp.StatusCode == http.StatusForbidden {
-			logger(m).Info("insufficient permissions to get Admin Roles, skipping.")
+			// no-op
 		} else {
-			return err
+			return nil, err
 		}
 	} else {
 		for _, role := range roles {
 			roleTypes = append(roleTypes, role.Type)
 		}
+	}
+
+	return roleTypes, err
+}
+
+func setAdminRoles(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	roleTypes, err := getAdminRoles(ctx, d.Id(), getOktaClientFromMetadata(m))
+	if err != nil {
+		return fmt.Errorf("failed to get admin roles: %v", err)
 	}
 
 	// set the custom_profile_attributes values
@@ -289,14 +297,13 @@ func setAdminRoles(ctx context.Context, d *schema.ResourceData, m interface{}) e
 	})
 }
 
-// set all groups currently attached to the user
-func setAllGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
-	groups, response, err := c.User.ListUserGroups(ctx, d.Id())
+func getGroupsForUser(ctx context.Context, id string, c *okta.Client) ([]string, error) {
+	groups, response, err := c.User.ListUserGroups(ctx, id)
 	if err != nil {
-		return fmt.Errorf("failed to list user groups: %v", err)
+		return nil, fmt.Errorf("failed to list user groups: %v", err)
 	}
 
-	groupIDs := make([]interface{}, 0)
+	groupIDs := make([]string, 0)
 
 	for {
 		for _, group := range groups {
@@ -310,12 +317,22 @@ func setAllGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) e
 		response, err = response.Next(ctx, &groups)
 
 		if err != nil {
-			return fmt.Errorf("failed to list user groups: %v", err)
+			return nil, fmt.Errorf("failed to list user groups: %v", err)
 		}
 	}
 
+	return groupIDs, nil
+}
+
+// set all groups currently attached to the user
+func setAllGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
+	groupIDs, err := getGroupsForUser(ctx, d.Id(), c)
+	if err != nil {
+		return err
+	}
+	gids := convertStringSliceToInterfaceSlice(groupIDs)
 	return setNonPrimitives(d, map[string]interface{}{
-		"group_memberships": schema.NewSet(schema.HashString, groupIDs),
+		"group_memberships": schema.NewSet(schema.HashString, gids),
 	})
 }
 

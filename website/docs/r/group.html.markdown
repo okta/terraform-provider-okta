@@ -67,11 +67,11 @@ The following arguments are supported:
 An Okta Group can be imported via the Okta ID.
 
 ```
-$ terraform import okta_group.example <group id>
+$ terraform import okta_group.example &#60;group id&#62;
 ```
 
 It's also possible to import group without users. In this case ID will look like this:
 
 ```
-$ terraform import okta_group.example <group id>/skip_users
+$ terraform import okta_group.example &#60;group id&#62;/skip_users
 ```

@@ -66,5 +66,5 @@ The following arguments are supported:
 An event hook can be imported via the Okta ID.
 
 ```
-$ terraform import okta_event_hook.example <hook id>
+$ terraform import okta_event_hook.example &#60;hook id&#62;
 ```

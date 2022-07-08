@@ -63,6 +63,8 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "channel.method", "POST"),
 					resource.TestCheckResourceAttr(resourceName, "auth.type", "HEADER"),
 					resource.TestCheckResourceAttr(resourceName, "auth.key", "Authorization"),
+
+					resource.TestCheckResourceAttr("okta_inline_hook.twilio", "type", "com.okta.telephony.provider"),
 				),
 			},
 			{

@@ -3,6 +3,8 @@ package okta
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -45,11 +47,26 @@ func dataSourceGroup() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "Users associated with the group. This can also be done per user.",
 			},
+			"delay_read_seconds": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Force delay of the group read by N seconds. Useful when eventual consistency of group information needs to be allowed for; for instance, when group rules are known to have been applied.",
+			},
 		},
 	}
 }
 
 func dataSourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if n, ok := d.GetOk("delay_read_seconds"); ok {
+		delay, err := strconv.Atoi(n.(string))
+		if err == nil {
+			logger(m).Info("delaying group read by ", delay, " seconds")
+			time.Sleep(time.Duration(delay) * time.Second)
+		} else {
+			logger(m).Warn("group read delay value ", n, " is not an integer")
+		}
+	}
+
 	return findGroup(ctx, d.Get("name").(string), d, m, false)
 }
 

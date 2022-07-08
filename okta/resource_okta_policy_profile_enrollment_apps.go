@@ -47,14 +47,10 @@ func resourcePolicyProfileEnrollmentAppsCreate(ctx context.Context, d *schema.Re
 	}
 	policyID := d.Get("policy_id").(string)
 	apps := convertInterfaceToStringSetNullable(d.Get("apps"))
-	client := getSupplementFromMetadata(m)
+	client := getOktaClientFromMetadata(m)
 
 	for i := range apps {
-		body := sdk.AddAppToEnrollmentPolicyRequest{
-			ResourceType: "APP",
-			ResourceId:   apps[i],
-		}
-		_, _, err := client.AddAppToEnrollmentPolicy(ctx, policyID, body)
+		_, err := client.Application.UpdateApplicationPolicy(ctx, apps[i], policyID)
 		if err != nil {
 			return diag.Errorf("failed to add an app to the policy, %v", err)
 		}
@@ -84,15 +80,11 @@ func resourcePolicyProfileEnrollmentAppsUpdate(ctx context.Context, d *schema.Re
 	appsToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
 	appsToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
 
-	client := getSupplementFromMetadata(m)
+	client := getOktaClientFromMetadata(m)
 	policyID := d.Get("policy_id").(string)
 
 	for i := range appsToAdd {
-		body := sdk.AddAppToEnrollmentPolicyRequest{
-			ResourceType: "APP",
-			ResourceId:   appsToAdd[i],
-		}
-		_, _, err := client.AddAppToEnrollmentPolicy(ctx, policyID, body)
+		_, err := client.Application.UpdateApplicationPolicy(ctx, appsToAdd[i], policyID)
 		if err != nil {
 			return diag.Errorf("failed to add an app to the policy, %v", err)
 		}
@@ -101,11 +93,7 @@ func resourcePolicyProfileEnrollmentAppsUpdate(ctx context.Context, d *schema.Re
 	defaultPolicyID := d.Get("default_policy_id").(string)
 
 	for i := range appsToRemove {
-		body := sdk.AddAppToEnrollmentPolicyRequest{
-			ResourceType: "APP",
-			ResourceId:   appsToRemove[i],
-		}
-		_, _, err := client.AddAppToEnrollmentPolicy(ctx, defaultPolicyID, body)
+		_, err := client.Application.UpdateApplicationPolicy(ctx, appsToRemove[i], defaultPolicyID)
 		if err != nil {
 			return diag.Errorf("failed to add reassign app to the default policy, %v", err)
 		}
@@ -117,14 +105,10 @@ func resourcePolicyProfileEnrollmentAppsUpdate(ctx context.Context, d *schema.Re
 func resourcePolicyProfileEnrollmentAppsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	defaultPolicyID := d.Get("default_policy_id").(string)
 	apps := convertInterfaceToStringSetNullable(d.Get("apps"))
-	client := getSupplementFromMetadata(m)
+	client := getOktaClientFromMetadata(m)
 
 	for i := range apps {
-		body := sdk.AddAppToEnrollmentPolicyRequest{
-			ResourceType: "APP",
-			ResourceId:   apps[i],
-		}
-		_, _, err := client.AddAppToEnrollmentPolicy(ctx, defaultPolicyID, body)
+		_, err := client.Application.UpdateApplicationPolicy(ctx, apps[i], defaultPolicyID)
 		if err != nil {
 			return diag.Errorf("failed to add reassign app to the default policy, %v", err)
 		}

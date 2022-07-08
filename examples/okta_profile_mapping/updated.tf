@@ -31,7 +31,7 @@ resource "okta_profile_mapping" "test" {
 
 resource "okta_idp_social" "google" {
   type          = "GOOGLE"
-  protocol_type = "OAUTH2"
+  protocol_type = "OIDC"
   name          = "testAcc_google_replace_with_uuid"
 
   scopes = [

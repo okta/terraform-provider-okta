@@ -8,6 +8,8 @@ description: |-
 
 # okta_template_email
 
+~> **DEPRECATED** This resource is deprecated. Switch over to the email_customization resource.
+
 Creates an Okta Email Template.
 
 This resource allows you to create and configure an Okta Email Template.
@@ -55,5 +57,5 @@ The following arguments are supported:
 An Okta Email Template can be imported via the template type.
 
 ```
-$ terraform import okta_template_email.example <template type>
+$ terraform import okta_template_email.example &#60;template type&#62;
 ```
