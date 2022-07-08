@@ -257,6 +257,7 @@ func Provider() *schema.Provider {
 			appSamlAppSettings:            resourceAppSamlAppSettings(),
 			appSecurePasswordStore:        resourceAppSecurePasswordStore(),
 			appSharedCredentials:          resourceAppSharedCredentials(),
+			appSignOnPolicy:               resourceAppSignOnPolicy(),
 			appSignOnPolicyRule:           resourceAppSignOnPolicyRule(),
 			appSwa:                        resourceAppSwa(),
 			appThreeField:                 resourceAppThreeField(),

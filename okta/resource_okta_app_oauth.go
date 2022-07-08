@@ -361,6 +361,11 @@ func resourceAppOAuth() *schema.Resource {
 					return new == ""
 				},
 			},
+			"authentication_policy": {
+				Type: schema.TypeString,
+				Optional: true,
+				Description: "Id of this apps authentication policy",
+			},
 		}),
 	}
 }
@@ -431,6 +436,10 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	err = setAppOauthGroupsClaim(ctx, d, m)
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
+	}
+	err = setAuthenticationPolicy(ctx, d, m, app.Id)
+	if err != nil {
+		return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
 	}
 	return resourceAppOAuthRead(ctx, d, m)
 }
@@ -659,6 +668,10 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	err = updateAppOauthGroupsClaim(ctx, d, m)
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
+	}
+	err = setAuthenticationPolicy(ctx, d, m, app.Id)
+	if err != nil {
+		return diag.Errorf("failed to set authentication policy an OAuth application: %v", err)
 	}
 	return resourceAppOAuthRead(ctx, d, m)
 }
