@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/url"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -144,18 +145,30 @@ func flattenResourceSetResources(resources []*sdk.ResourceSetResource) *schema.S
 
 func listResourceSetResources(ctx context.Context, client *sdk.APISupplement, id string) ([]*sdk.ResourceSetResource, error) {
 	var resResources []*sdk.ResourceSetResource
-	resources, resp, err := client.ListResourceSetResources(ctx, id, &query.Params{Limit: defaultPaginationLimit})
+	resources, _, err := client.ListResourceSetResources(ctx, id, &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return nil, err
 	}
+	resResources = append(resResources, resources.Resources...)
 	for {
-		resResources = append(resResources, resources.Resources...)
-		if resp.HasNextPage() {
-			resp, err = resp.Next(ctx, &resources)
+		// NOTE: The resources endpoint /api/v1/iam/resource-sets/%s/resources
+		// is not returning pagination in the headers. Make use of the _links
+		// object in the response body. Convert implemenation style back to
+		// resp.HasNextPage() if/when that endpoint starts to have pagination
+		// information in its headers and/or when this code is supported by
+		// okta-sdk-golang instead of the local SDK.
+		if nextURL := linksValue(resources.Links, "next", "href"); nextURL != "" {
+			u, err := url.Parse(nextURL)
+			if err != nil {
+				break
+			}
+			// "links": { "next": { "href": "https://host/api/v1/iam/resource-sets/{id}/resources?after={afterId}&limit=100" } }
+			after := u.Query().Get("after")
+			resources, _, err = client.ListResourceSetResources(ctx, id, &query.Params{After: after, Limit: defaultPaginationLimit})
 			if err != nil {
 				return nil, err
 			}
-			continue
+			resResources = append(resResources, resources.Resources...)
 		} else {
 			break
 		}
