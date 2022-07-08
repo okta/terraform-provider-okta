@@ -47,5 +47,4 @@ func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
 			},
 		},
 	})
-
 }

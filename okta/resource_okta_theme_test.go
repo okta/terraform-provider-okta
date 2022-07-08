@@ -54,7 +54,6 @@ func TestAccResourceOktaTheme_import_update(t *testing.T) {
 					// simple check
 					if len(s[0].Attributes["links"]) <= 2 {
 						return fmt.Errorf("there should more than two attributes set on the instance %+v", s[0].Attributes)
-
 					}
 					return nil
 				},
@@ -91,7 +90,7 @@ func TestAccResourceOktaTheme_import_update(t *testing.T) {
 					resource.TestCheckResourceAttrSet("okta_theme.example", "id"),
 					resource.TestCheckResourceAttrSet("okta_theme.example", "logo_url"),
 					resource.TestCheckResourceAttrSet("okta_theme.example", "favicon_url"),
-					//resource.TestCheckResourceAttrSet("okta_theme.example", "background_image_url"), // background_image_url not present when dashboard is OKTA_DEFAULT
+					// resource.TestCheckResourceAttrSet("okta_theme.example", "background_image_url"), // background_image_url not present when dashboard is OKTA_DEFAULT
 					resource.TestCheckResourceAttrSet("okta_theme.example", "primary_color_hex"),
 					resource.TestCheckResourceAttr("okta_theme.example", "primary_color_hex", "#1662ff"),
 					resource.TestCheckResourceAttrSet("okta_theme.example", "primary_color_contrast_hex"),

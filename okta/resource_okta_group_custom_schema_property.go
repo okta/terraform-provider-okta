@@ -118,7 +118,6 @@ func alterCustomGroupSchema(ctx context.Context, m interface{}, index string, sc
 	bc := backoff.WithContext(bOff, ctx)
 
 	err := backoff.Retry(func() error {
-
 		// NOTE: Enums on the schema can be typed other than string but the
 		// Terraform SDK is staticly defined at runtime for string so we need to
 		// juggle types on the fly.

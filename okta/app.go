@@ -223,7 +223,8 @@ func appImporter(_ context.Context, d *schema.ResourceData, m interface{}) ([]*s
 }
 
 func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *okta.ApplicationAccessibility,
-	vis *okta.ApplicationVisibility, notes *okta.ApplicationSettingsNotes) {
+	vis *okta.ApplicationVisibility, notes *okta.ApplicationSettingsNotes,
+) {
 	_ = d.Set("name", name)
 	_ = d.Set("status", status)
 	_ = d.Set("sign_on_mode", signOn)
