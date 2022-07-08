@@ -65,7 +65,7 @@ func resourceAuthServerDefault() *schema.Resource {
 				Optional:         true,
 				Description:      "*Early Access Property*. Indicates which value is specified in the issuer of the tokens that a Custom Authorization Server returns: the original Okta org domain URL or a custom domain URL",
 				Default:          "ORG_URL",
-				ValidateDiagFunc: elemInSlice([]string{"CUSTOM_URL", "ORG_URL"}),
+				ValidateDiagFunc: elemInSlice([]string{"CUSTOM_URL", "ORG_URL", "DYNAMIC"}),
 			},
 		},
 	}
