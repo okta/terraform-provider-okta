@@ -1,5 +1,22 @@
 # Changelog
 
+## 3.31.0 (July 08, 2022)
+
+NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* New resource `okta_app_signon_policy` [#1193](https://github.com/okta/terraform-provider-okta/pull/1193). Thanks, [@felixcolaci](https://github.com/felixcolaci)!
+* Added property `inactivity_period` to resource `okta_app_signon_policy_rule` [#1184](https://github.com/okta/terraform-provider-okta/pull/1181). Thanks, [@monde](https://github.com/monde)!
+* Property `issuer_mode` can be `"CUSTOM_URL"`, `"ORG_URL"`, or `"DYNAMIC"` on resource `okta_auth_server_default` [#1197](https://github.com/okta/terraform-provider-okta/pull/1197). Thanks, [@monde](https://github.com/monde)!
+
+BUG FIXES:
+
+* Correct API endpoint and call for resource `okta_policy_profile_enrollment_apps` [#1191](https://github.com/okta/terraform-provider-okta/pull/1191). Thanks, [@felixcolaci](https://github.com/felixcolaci)!
+* Fix resources pagination in resource `okta_resource_set` for resource items greater than 100 [#1196](https://github.com/okta/terraform-provider-okta/pull/1196). Thanks, [@monde](https://github.com/monde)!
+
+ENHANCEMENTS:
+
+* Update documentation on resource `okta_policy_mfa` and `okta_policy_mfa_default` for required FF `OKTA_MFA_POLICY` and when FF `ENG_ENABLE_OPTIONAL_PASSWORD_ENROLLMENT` is enabled [#1176](https://github.com/okta/terraform-provider-okta/pull/1176). Thanks, [@monde](https://github.com/monde)!
+
 ## 3.30.0 (June 22, 2022)
 
 BUG FIXES:
