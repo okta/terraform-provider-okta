@@ -282,6 +282,8 @@ The following arguments are supported:
 
 - `key_name` - Certificate name. This modulates the rotation of keys. New name == new key.
 
+- `keys` - All valid key credentials for the application.
+
 - `certificate` - The raw signing certificate.
 
 - `metadata` - The raw SAML metadata in XML.

@@ -719,3 +719,37 @@ func setAppUsersIDsAndGroupsIDs(ctx context.Context, d *schema.ResourceData, cli
 	}
 	return nil
 }
+
+// fetchAppKeys returns the keys from `/api/v1/apps/${applicationId}/credentials/keys` for a given app. Not all fields on the JsonWebKey
+// will be set, please consult the documentation (https://developer.okta.com/docs/reference/api/apps/#list-key-credentials-for-application)
+// for more information.
+func fetchAppKeys(ctx context.Context, m interface{}, appID string) ([]*okta.JsonWebKey, error) {
+	keys, _, err := getOktaClientFromMetadata(m).Application.ListApplicationKeys(ctx, appID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return keys, nil
+}
+
+// setAppKeys sets the JWKs return by fetchAppKeys on the given resource.
+func setAppKeys(d *schema.ResourceData, keys []*okta.JsonWebKey) error {
+	arr := make([]map[string]interface{}, len(keys))
+
+	for i, key := range keys {
+		arr[i] = map[string]interface{}{
+			"kty":        key.Kty,
+			"kid":        key.Kid,
+			"e":          key.E,
+			"n":          key.N,
+			"created":    key.Created.String(),
+			"expires_at": key.ExpiresAt.String(),
+			"use":        key.Use,
+			"x5c":        key.X5c,
+			"x5t_s256":   key.X5tS256,
+		}
+	}
+
+	return d.Set("keys", arr)
+}

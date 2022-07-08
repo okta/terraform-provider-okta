@@ -261,6 +261,7 @@ func TestAccAppSaml_userGroups(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttrSet(resourceName, "key_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "keys"),
 					resource.TestCheckResourceAttr(resourceName, "groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "users.#", "1"),
 				),
