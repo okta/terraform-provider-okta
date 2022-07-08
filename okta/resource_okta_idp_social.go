@@ -199,12 +199,12 @@ func buildIdPSocial(d *schema.ResourceData) okta.IdentityProvider {
 	}
 	if idp.Type == "APPLE" {
 		idp.Protocol.Credentials.Signing = &okta.IdentityProviderCredentialsSigning{
-			Kid:        nil,
+			Kid:        "",
 			PrivateKey: d.Get("apple_private_key").(string),
 			TeamId:     d.Get("apple_team_id").(string),
 		}
 		if kid, ok := d.GetOk("apple_kid"); ok {
-			idp.Protocol.Credentials.Signing.Kid = stringPtr(kid.(string))
+			idp.Protocol.Credentials.Signing.Kid = kid.(string)
 		}
 	}
 	return idp

@@ -51,3 +51,56 @@ resource "okta_app_oauth" "test" {
   consent_method = "TRUSTED"
 }`, i)
 }
+
+func TestAccOktaDataSourceAppLabelTest_read(t *testing.T) {
+	ri := acctest.RandInt()
+	config := testLabelConfig(ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		ProviderFactories: testAccProvidersFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("data.okta_app.test", "label", buildResourceName(ri)),
+				),
+			},
+		},
+	})
+}
+
+func testLabelConfig(i int) string {
+	return fmt.Sprintf(`
+resource "okta_app_oauth" "test-dev" {
+  label          = "testAcc_%d-dev"
+  type           = "web"
+  grant_types    = ["implicit", "authorization_code"]
+  redirect_uris  = ["http://d.com/"]
+  response_types = ["code", "token", "id_token"]
+  issuer_mode    = "ORG_URL"
+  consent_method = "TRUSTED"
+}
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_%d"
+  type           = "web"
+  grant_types    = ["implicit", "authorization_code"]
+  redirect_uris  = ["http://d.com/"]
+  response_types = ["code", "token", "id_token"]
+  issuer_mode    = "ORG_URL"
+  consent_method = "TRUSTED"
+}
+# before bug fix for #1111 data.okta_app.test wouldn't find okta_app_oauth.test
+# correctly when it a had sibling with the same lable but additional information
+# such as "myapp", and "myapp-dev"
+data "okta_app" "test" {
+  label = "testAcc_%d"
+  depends_on = [
+    okta_app_oauth.test-dev,
+    okta_app_oauth.test
+  ]
+}
+`, i, i, i)
+}

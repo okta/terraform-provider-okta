@@ -46,5 +46,5 @@ The following arguments are supported:
 A Sign On Policy can be imported via the Okta ID.
 
 ```
-$ terraform import okta_policy_signon.example <policy id>
+$ terraform import okta_policy_signon.example &#60;policy id&#62;
 ```

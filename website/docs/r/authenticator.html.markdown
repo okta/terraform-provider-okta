@@ -32,7 +32,7 @@ resource "okta_authenticator" "test" {
 
 The following arguments are supported:
 
-- `key` (Required) A human-readable string that identifies the authenticator. Possible values inclue: `"duo"`, `"external_idp"`, `"google_otp"`, `"okta_email"`, `"okta_password"`, `"okta_verify"`, `"onprem_mfa"`, `"phone_number"`, `"rsa_token"`, `"security_question"`, `"webauthn"`, and `"yubikey_token"`.
+- `key` (Required) A human-readable string that identifies the authenticator. Some authenticators are available by feature flag on the organization. Possible values inclue: `duo`, `external_idp`, `google_otp`, `okta_email`, `okta_password`, `okta_verify`, `onprem_mfa`, `phone_number`, `rsa_token`, `security_question`, `webauthn`
 
 - `name` - (Required) Name of the authenticator.
 
@@ -63,5 +63,5 @@ The following arguments are supported:
 Okta authenticator can be imported via the Okta ID.
 
 ```
-$ terraform import okta_authenticator.example <authenticator_id>
+$ terraform import okta_authenticator.example &#60;authenticator_id&#62;
 ```

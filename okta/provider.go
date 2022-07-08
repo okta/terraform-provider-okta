@@ -55,6 +55,8 @@ const (
 	authServerScopes              = "okta_auth_server_scopes"
 	behavior                      = "okta_behavior"
 	behaviors                     = "okta_behaviors"
+	brand                         = "okta_brand"
+	brands                        = "okta_brands"
 	captcha                       = "okta_captcha"
 	captchaOrgWideSettings        = "okta_captcha_org_wide_settings"
 	defaultPolicies               = "okta_default_policies"
@@ -64,6 +66,10 @@ const (
 	domainVerification            = "okta_domain_verification"
 	emailSender                   = "okta_email_sender"
 	emailSenderVerification       = "okta_email_sender_verification"
+	emailCustomization            = "okta_email_customization"
+	emailCustomizations           = "okta_email_customizations"
+	emailTemplate                 = "okta_email_template"
+	emailTemplates                = "okta_email_templates"
 	eventHook                     = "okta_event_hook"
 	eventHookVerification         = "okta_event_hook_verification"
 	factor                        = "okta_factor"
@@ -108,6 +114,8 @@ const (
 	securityNotificationEmails    = "okta_security_notification_emails"
 	templateEmail                 = "okta_template_email"
 	templateSms                   = "okta_template_sms"
+	theme                         = "okta_theme"
+	themes                        = "okta_themes"
 	threatInsightSettings         = "okta_threat_insight_settings"
 	trustedOrigin                 = "okta_trusted_origin"
 	trustedOrigins                = "okta_trusted_origins"
@@ -170,6 +178,12 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OKTA_BASE_URL", "okta.com"),
 				Description: "The Okta url. (Use 'oktapreview.com' for Okta testing)",
+			},
+			"http_proxy": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("OKTA_HTTP_PROXY", ""),
+				Description: "Alternate HTTP proxy of scheme://hostname or scheme://hostname:port format",
 			},
 			"backoff": {
 				Type:        schema.TypeBool,
@@ -243,6 +257,7 @@ func Provider() *schema.Provider {
 			appSamlAppSettings:            resourceAppSamlAppSettings(),
 			appSecurePasswordStore:        resourceAppSecurePasswordStore(),
 			appSharedCredentials:          resourceAppSharedCredentials(),
+			appSignOnPolicy:               resourceAppSignOnPolicy(),
 			appSignOnPolicyRule:           resourceAppSignOnPolicyRule(),
 			appSwa:                        resourceAppSwa(),
 			appThreeField:                 resourceAppThreeField(),
@@ -258,11 +273,13 @@ func Provider() *schema.Provider {
 			authServerPolicyRule:          resourceAuthServerPolicyRule(),
 			authServerScope:               resourceAuthServerScope(),
 			behavior:                      resourceBehavior(),
+			brand:                         resourceBrand(),
 			captcha:                       resourceCaptcha(),
 			captchaOrgWideSettings:        resourceCaptchaOrgWideSettings(),
 			domain:                        resourceDomain(),
 			domainCertificate:             resourceDomainCertificate(),
 			domainVerification:            resourceDomainVerification(),
+			emailCustomization:            resourceEmailCustomization(),
 			emailSender:                   resourceEmailSender(),
 			emailSenderVerification:       resourceEmailSenderVerification(),
 			eventHook:                     resourceEventHook(),
@@ -305,6 +322,7 @@ func Provider() *schema.Provider {
 			securityNotificationEmails:    resourceSecurityNotificationEmails(),
 			templateEmail:                 resourceTemplateEmail(),
 			templateSms:                   resourceTemplateSms(),
+			theme:                         resourceTheme(),
 			threatInsightSettings:         resourceThreatInsightSettings(),
 			trustedOrigin:                 resourceTrustedOrigin(),
 			user:                          resourceUser(),
@@ -355,6 +373,12 @@ func Provider() *schema.Provider {
 			authServerScopes:         dataSourceAuthServerScopes(),
 			behavior:                 dataSourceBehavior(),
 			behaviors:                dataSourceBehaviors(),
+			brand:                    dataSourceBrand(),
+			brands:                   dataSourceBrands(),
+			emailCustomization:       dataSourceEmailCustomization(),
+			emailCustomizations:      dataSourceEmailCustomizations(),
+			emailTemplate:            dataSourceEmailTemplate(),
+			emailTemplates:           dataSourceEmailTemplates(),
 			defaultPolicies:          deprecatedPolicies,
 			defaultPolicy:            dataSourceDefaultPolicy(),
 			group:                    dataSourceGroup(),
@@ -367,6 +391,8 @@ func Provider() *schema.Provider {
 			networkZone:              dataSourceNetworkZone(),
 			policy:                   dataSourcePolicy(),
 			roleSubscription:         dataSourceRoleSubscription(),
+			theme:                    dataSourceTheme(),
+			themes:                   dataSourceThemes(),
 			trustedOrigins:           dataSourceTrustedOrigins(),
 			user:                     dataSourceUser(),
 			userProfileMappingSource: dataSourceUserProfileMappingSource(),
@@ -401,6 +427,11 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		requestTimeout: d.Get("request_timeout").(int),
 		maxAPICapacity: d.Get("max_api_capacity").(int),
 	}
+
+	if httpProxy, ok := d.Get("http_proxy").(string); ok {
+		config.httpProxy = httpProxy
+	}
+
 	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(config.scopes) == 0 {
 		config.scopes = strings.Split(v, ",")
 	}

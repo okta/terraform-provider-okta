@@ -59,22 +59,6 @@ var FactorProviders = []string{
 	YubikeyTokenFactor,
 }
 
-// List of factors that are applicable to Okta Identity Engine (OIE)
-var AuthenticatorProviders = []string{
-	DuoFactor,
-	ExternalIdpFactor,
-	GoogleOtpFactor,
-	OktaEmailFactor,
-	OktaPasswordFactor, // Note: Not configurable in OIE policies (Handle downstream as necessary)
-	OktaVerifyFactor,
-	OnPremMfaFactor,
-	PhoneNumberFactor,
-	RsaTokenFactor,
-	SecurityQuestionFactor,
-	WebauthnFactor,
-	YubikeyTokenFactor,
-}
-
 // GetOrgFactor gets a factor by ID.
 func (m *APISupplement) GetOrgFactor(ctx context.Context, id string) (*OrgFactor, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/org/factors/%s", id)

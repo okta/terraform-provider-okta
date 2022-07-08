@@ -54,5 +54,5 @@ The following arguments are supported:
 Okta Admin Role Targets can be imported via the Okta ID.
 
 ```
-$ terraform import okta_admin_role_targets.example <user id>/<role type>
+$ terraform import okta_admin_role_targets.example &#60;user id&#62;/&#60;role type&#62;
 ```

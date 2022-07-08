@@ -85,6 +85,7 @@ The following arguments are supported:
   - `filter_type` - (Optional) Groups claim filter. Can only be set if type is `"FILTER"`. Valid values: `"EQUALS"`, `"STARTS_WITH"`, `"CONTAINS"`, `"REGEX"`.
   - `name` - (Required) Name of the claim that will be used in the token.
   - `value` - (Required) Value of the claim. Can be an Okta Expression Language statement that evaluates at the time the token is minted.
+  - `issuer_mode` - (Read-Only) Issuer Mode is inherited from the Issuer Mode on the OAuth app itself.
 
 - `hide_ios` - (Optional) Do not display application icon on mobile app.
 
@@ -109,7 +110,7 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 - `logo_uri` - (Optional) URI that references a logo for the client.
 
-- `omit_secret` - (Optional) This tells the provider not to persist the application's secret to state. Your app will be recreated if this ever changes from true => false.
+- `omit_secret` - (Optional) This tells the provider not to persist the application's secret to state. Your app's `client_secret` will be recreated if this ever changes from true => false.
 
 - `policy_uri` - (Optional) URI to web page providing client policy document.
 
@@ -135,7 +136,7 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 - `tos_uri` - (Optional) URI to web page providing client tos (terms of service).
 
-- `type` - (Required) The type of OAuth application. Valid values: `"web"`, `"native"`, `"browser"`, `"service"`.
+- `type` - (Required) The type of OAuth application. Valid values: `"web"`, `"native"`, `"browser"`, `"service"`. For SPA apps use `browser`.
 
 - `user_name_template` - (Optional) Username template. Default: `"${source.login}"`
 
@@ -149,6 +150,8 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
   - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
 - `wildcard_redirect` - (Optional) *Early Access Property*. Indicates if the client is allowed to use wildcard matching of `redirect_uris`. Valid values: `"DISABLED"`, `"SUBDOMAIN"`. Default value is `"DISABLED"`.
+
+- `authentication_policy` - (Optional) The ID of the associated `app_signon_policy`. If this property is removed from the application the `default` sign-on-policy will be associated with this application.
 
 ## Attributes Reference
 
@@ -169,15 +172,19 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 An OIDC Application can be imported via the Okta ID.
 
 ```
-$ terraform import okta_app_oauth.example <app id>
+$ terraform import okta_app_oauth.example &#60;app id&#62;
 ```
 
 It's also possible to import app without groups or/and users. In this case ID may look like this:
 
 ```
-$ terraform import okta_app_basic_auth.example <app id>/skip_users
+$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_users
 
-$ terraform import okta_app_basic_auth.example <app id>/skip_users/skip_groups
+$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_users/skip_groups
 
-$ terraform import okta_app_basic_auth.example <app id>/skip_groups
+$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_groups
 ```
+
+## Etc.
+### Resetting client secret
+If the client secret needs to be reset run an apply with `omit_secret` set to true in the resource. This causes `client_secret` to be set to blank. Remove `omit_secret` and run apply again. The resource will set a new `client_secret` for the app.

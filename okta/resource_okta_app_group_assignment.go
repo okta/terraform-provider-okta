@@ -155,8 +155,7 @@ func buildAppGroupAssignment(d *schema.ResourceData) okta.ApplicationGroupAssign
 	}
 	p, ok := d.GetOk("priority")
 	if ok {
-		priority := int64(p.(int))
-		assignment.Priority = &priority
+		assignment.Priority = int64(p.(int))
 	}
 	return assignment
 }

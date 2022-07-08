@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func resourceLinkDefinition() *schema.Resource {
@@ -56,21 +56,21 @@ func resourceLinkDefinition() *schema.Resource {
 }
 
 func resourceLinkDefinitionCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	linkedObject := sdk.LinkedObject{
-		Primary: &sdk.LinkedObjectPart{
+	linkedObject := okta.LinkedObject{
+		Primary: &okta.LinkedObjectDetails{
 			Name:        d.Get("primary_name").(string),
 			Title:       d.Get("primary_title").(string),
 			Description: d.Get("primary_description").(string),
 			Type:        "USER",
 		},
-		Associated: &sdk.LinkedObjectPart{
+		Associated: &okta.LinkedObjectDetails{
 			Name:        d.Get("associated_name").(string),
 			Title:       d.Get("associated_title").(string),
 			Description: d.Get("associated_description").(string),
 			Type:        "USER",
 		},
 	}
-	_, _, err := getSupplementFromMetadata(m).CreateLinkedObject(ctx, linkedObject)
+	_, _, err := getOktaClientFromMetadata(m).LinkedObject.AddLinkedObjectDefinition(ctx, linkedObject)
 	if err != nil {
 		return diag.Errorf("failed to create linked object: %v", err)
 	}
@@ -79,7 +79,7 @@ func resourceLinkDefinitionCreate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceLinkDefinitionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	linkedObject, resp, err := getSupplementFromMetadata(m).GetLinkedObject(ctx, d.Id())
+	linkedObject, resp, err := getOktaClientFromMetadata(m).LinkedObject.GetLinkedObjectDefinition(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get linked object: %v", err)
 	}
@@ -100,7 +100,7 @@ func resourceLinkDefinitionRead(ctx context.Context, d *schema.ResourceData, m i
 }
 
 func resourceLinkDefinitionDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	resp, err := getSupplementFromMetadata(m).DeleteLinkedObject(ctx, d.Id())
+	resp, err := getOktaClientFromMetadata(m).LinkedObject.DeleteLinkedObjectDefinition(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to remove linked object: %v", err)
 	}

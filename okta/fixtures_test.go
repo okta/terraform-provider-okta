@@ -32,6 +32,7 @@ func (manager *fixtureManager) GetFixtures(fixtureName string, rInt int, t *test
 	if err != nil {
 		t.Fatalf("failed to load terraform fixtures for ACC test, err: %v", err)
 	}
+	defer file.Close()
 	rawFile, err := ioutil.ReadAll(file)
 	if err != nil {
 		t.Fatalf("failed to load terraform fixtures for ACC test, err: %v", err)
@@ -41,5 +42,9 @@ func (manager *fixtureManager) GetFixtures(fixtureName string, rInt int, t *test
 		return tfConfig
 	}
 
+	return manager.ConfigReplace(tfConfig, rInt)
+}
+
+func (manager *fixtureManager) ConfigReplace(tfConfig string, rInt int) string {
 	return strings.ReplaceAll(tfConfig, uuidPattern, fmt.Sprintf("%d", rInt))
 }

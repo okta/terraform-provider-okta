@@ -11,6 +11,12 @@ description: |-
 This resource allows you to create and configure a custom user schema property and associate it with an application.
 Make sure that the app instance is `active` before creating the schema property, because in some cases API might return `404` error.
 
+**IMPORTANT:** With `enum`, list its values as strings even though the `type`
+may be something other than string. This is a limitation of the schema defintion
+in the Terraform Plugin SDK runtime and we juggle the type correctly when making
+Okta API calls. Same holds for the `const` value of `one_of` as well as the
+`array_*` variation of `enum` and `one_of`.
+
 ## Example Usage
 
 ```hcl
@@ -84,5 +90,5 @@ The following arguments are supported:
 App user schema property can be imported via the property index and app id.
 
 ```
-$ terraform import okta_app_user_schema_property.example <app id>/<property name>
+$ terraform import okta_app_user_schema_property.example &#60;app id&#62;/&#60;property name&#62;
 ```

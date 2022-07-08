@@ -85,11 +85,11 @@ The following arguments are supported:
 
 - `profile_master` - (Optional) Determines if the IdP should act as a source of truth for user profile attributes.
 
-- `request_signature_algorithm` - (Optional) The XML digital signature algorithm used when signing an AuthnRequest message.
+- `request_signature_algorithm` - (Optional) The XML digital signature algorithm used when signing an AuthnRequest message. It can be `"SHA-256"` or `"SHA-1"`.
 
 - `request_signature_scope` - (Optional) Specifies whether to digitally sign an AuthnRequest messages to the IdP. It can be `"REQUEST"` or `"NONE"`.
 
-- `response_signature_algorithm` - (Optional) The minimum XML digital signature algorithm allowed when verifying a SAMLResponse message or Assertion element.
+- `response_signature_algorithm` - (Optional) The minimum XML digital signature algorithm allowed when verifying a SAMLResponse message or Assertion element. It can be `"SHA-256"` or `"SHA-1"`.
 
 - `response_signature_scope` - (Optional) Specifies whether to verify a SAMLResponse message or Assertion element XML digital signature. It can be `"RESPONSE"`, `"ASSERTION"`, or `"ANY"`.
 
@@ -108,5 +108,5 @@ The following arguments are supported:
 An SAML IdP can be imported via the Okta ID.
 
 ```
-$ terraform import okta_idp_saml.example <idp id>
+$ terraform import okta_idp_saml.example &#60;idp id&#62;
 ```

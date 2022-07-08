@@ -32,6 +32,10 @@ The following arguments are supported:
   , `"ORG_ADMIN"`, `"APP_ADMIN"`, `"USER_ADMIN"`, `"HELP_DESK_ADMIN"`, `"READ_ONLY_ADMIN"`
   , `"MOBILE_ADMIN"`, `"API_ACCESS_MANAGEMENT_ADMIN"`, `"REPORT_ADMIN"`, `"GROUP_MEMBERSHIP_ADMIN"`.
 
+
+  - `"USER_ADMIN"` is the Group Administrator.
+
+
 - `target_group_list` - (Optional) A list of group IDs you would like as the targets of the admin role.
     - Only supported when used with the role types: `GROUP_MEMBERSHIP_ADMIN`, `HELP_DESK_ADMIN`, or `USER_ADMIN`.
 
@@ -52,5 +56,5 @@ The following arguments are supported:
 Individual admin role assignment can be imported by passing the group and role assignment IDs as follows:
 
 ```
-$ terraform import okta_group_role.example <group id>/<role id>
+$ terraform import okta_group_role.example &#60;group id&#62;/&#60;role id&#62;
 ```

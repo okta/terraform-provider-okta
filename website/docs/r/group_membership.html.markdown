@@ -8,6 +8,8 @@ description: |-
 
 # okta_group_membership
 
+~> **DEPRECATED** resource `okta_group_membership` is now deprecated, please use `okta_group_memberships` or `okta_user_group_memberships` based on applicable needs.
+
 Manage an individual instance of group membership.
 
 This resource allows you to manage group membership for a given user and group at an individual level. This allows you

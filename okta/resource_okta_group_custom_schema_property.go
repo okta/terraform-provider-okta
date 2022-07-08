@@ -118,7 +118,15 @@ func alterCustomGroupSchema(ctx context.Context, m interface{}, index string, sc
 	bc := backoff.WithContext(bOff, ctx)
 
 	err := backoff.Retry(func() error {
+
+		// NOTE: Enums on the schema can be typed other than string but the
+		// Terraform SDK is staticly defined at runtime for string so we need to
+		// juggle types on the fly.
+
+		retypeGroupSchemaPropertyEnums(schema)
 		updated, resp, err := getOktaClientFromMetadata(m).GroupSchema.UpdateGroupSchema(ctx, *schema)
+		stringifyGroupSchemaPropertyEnums(schema)
+
 		if err != nil {
 			logger(m).Error(err.Error())
 			if resp != nil && resp.StatusCode == 500 {
@@ -177,14 +185,26 @@ func syncCustomGroupSchema(d *schema.ResourceData, subschema *okta.GroupSchemaAt
 	_ = d.Set("external_name", subschema.ExternalName)
 	_ = d.Set("external_namespace", subschema.ExternalNamespace)
 	_ = d.Set("unique", subschema.Unique)
+
+	// NOTE: Enums on the schema can be typed other than string but the
+	// Terraform SDK is staticly defined at runtime for string so we need to
+	// juggle types on the fly.
+
 	if subschema.Items != nil {
+		stringifyOneOfSlice(subschema.Items.Type, &subschema.Items.OneOf)
+		stringifyEnumSlice(subschema.Items.Type, &subschema.Items.Enum)
 		_ = d.Set("array_type", subschema.Items.Type)
 		_ = d.Set("array_one_of", flattenOneOf(subschema.Items.OneOf))
-		_ = d.Set("array_enum", flattenEnum(subschema.Items.Enum))
+		_ = d.Set("array_enum", subschema.Items.Enum)
 	}
+
+	stringifyOneOfSlice(subschema.Type, &subschema.OneOf)
+	stringifyEnumSlice(subschema.Type, &subschema.Enum)
+
 	if len(subschema.Enum) > 0 {
-		_ = d.Set("enum", flattenEnum(subschema.Enum))
+		_ = d.Set("enum", subschema.Enum)
 	}
+
 	return setNonPrimitives(d, map[string]interface{}{
 		"one_of": flattenOneOf(subschema.OneOf),
 	})
@@ -226,10 +246,7 @@ func buildGroupCustomSchemaAttribute(d *schema.ResourceData) (*okta.GroupSchemaA
 	}
 	var enum []interface{}
 	if rawEnum, ok := d.GetOk("enum"); ok {
-		enum, err = buildEnum(rawEnum.([]interface{}), d.Get("type").(string))
-		if err != nil {
-			return nil, err
-		}
+		enum = rawEnum.([]interface{})
 	}
 	return &okta.GroupSchemaAttribute{
 		Title:       d.Get("title").(string),
@@ -260,4 +277,63 @@ func groupSchemaCustomAttribute(s *okta.GroupSchema, index string) *okta.GroupSc
 		return nil
 	}
 	return s.Definitions.Custom.Properties[index]
+}
+
+// retypeGroupSchemaPropertyEnums takes a schema and ensures the enums in its
+// GroupSchemaAttribute(s) have the correct golang type values instead of the
+// strings limitation due to the TF SDK.
+func retypeGroupSchemaPropertyEnums(schema *okta.GroupSchema) {
+	if schema.Definitions != nil && schema.Definitions.Base != nil {
+		retypeGroupPropertiesEnum(schema.Definitions.Base.Properties)
+	}
+	if schema.Definitions != nil && schema.Definitions.Custom != nil {
+		retypeGroupPropertiesEnum(schema.Definitions.Custom.Properties)
+	}
+}
+
+// stringifyGroupSchemaPropertyEnums takes a schema and ensures the enums in its
+// GroupSchemaAttribute(s) have string values to satisfy the TF schema
+func stringifyGroupSchemaPropertyEnums(schema *okta.GroupSchema) {
+	if schema.Definitions != nil && schema.Definitions.Base != nil {
+		stringifyGroupPropertiesEnum(schema.Definitions.Base.Properties)
+	}
+	if schema.Definitions != nil && schema.Definitions.Custom != nil {
+		stringifyGroupPropertiesEnum(schema.Definitions.Custom.Properties)
+	}
+}
+
+func retypeGroupPropertiesEnum(properties map[string]*okta.GroupSchemaAttribute) {
+	for _, val := range properties {
+		if val == nil {
+			continue
+		}
+		enum := retypeEnumSlice(val.Type, val.Enum)
+		val.Enum = enum
+		attributeEnum := retypeOneOfSlice(val.Type, val.OneOf)
+		val.OneOf = attributeEnum
+		if val.Items != nil {
+			enum := retypeEnumSlice(val.Items.Type, val.Items.Enum)
+			val.Items.Enum = enum
+			retypeOneOfSlice(val.Type, val.OneOf)
+			attributeEnum := retypeOneOfSlice(val.Items.Type, val.Items.OneOf)
+			val.Items.OneOf = attributeEnum
+		}
+
+	}
+}
+
+func stringifyGroupPropertiesEnum(properties map[string]*okta.GroupSchemaAttribute) {
+	for _, val := range properties {
+		if val != nil && val.Enum != nil {
+			stringifyEnumSlice(val.Type, &val.Enum)
+		}
+		if val != nil && val.OneOf != nil {
+			stringifyOneOfSlice(val.Type, &val.OneOf)
+		}
+		if val != nil && val.Items != nil {
+			stringifyEnumSlice(val.Items.Type, &val.Items.Enum)
+			stringifyOneOfSlice(val.Items.Type, &val.Items.OneOf)
+		}
+
+	}
 }

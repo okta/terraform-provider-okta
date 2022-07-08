@@ -72,6 +72,8 @@ func resourceIdpOidc() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"request_signature_algorithm": oidcRequestSignatureAlgorithmSchema,
+			"request_signature_scope":     oidcRequestSignatureScopeSchema,
 		}),
 	}
 }
@@ -118,7 +120,7 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, m interface{})
 	syncEndpoint("token", idp.Protocol.Endpoints.Token, d)
 	syncEndpoint("user_info", idp.Protocol.Endpoints.UserInfo, d)
 	syncEndpoint("jwks", idp.Protocol.Endpoints.Jwks, d)
-	syncAlgo(d, idp.Protocol.Algorithms)
+	syncIdpOidcAlgo(d, idp.Protocol.Algorithms)
 	err = syncGroupActions(d, idp.Policy.Provisioning.Groups)
 	if err != nil {
 		return diag.Errorf("failed to set OIDC identity provider properties: %v", err)
@@ -126,12 +128,12 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, m interface{})
 	if idp.IssuerMode != "" {
 		_ = d.Set("issuer_mode", idp.IssuerMode)
 	}
-	mapping, _, err := getSupplementFromMetadata(m).GetProfileMappingBySourceID(ctx, idp.Id, "")
+	mapping, _, err := getProfileMappingBySourceID(ctx, idp.Id, "", m)
 	if err != nil {
 		return diag.Errorf("failed to get identity provider profile mapping: %v", err)
 	}
 	if mapping != nil {
-		_ = d.Set("user_type_id", mapping.Target.ID)
+		_ = d.Set("user_type_id", mapping.Target.Id)
 	}
 	setMap := map[string]interface{}{
 		"scopes": convertStringSliceToSet(idp.Protocol.Scopes),
@@ -202,4 +204,13 @@ func buildIdPOidc(d *schema.ResourceData) (okta.IdentityProvider, error) {
 			},
 		},
 	}, nil
+}
+
+func syncIdpOidcAlgo(d *schema.ResourceData, alg *okta.ProtocolAlgorithms) {
+	if alg != nil {
+		if alg.Request != nil && alg.Request.Signature != nil {
+			_ = d.Set("request_signature_algorithm", alg.Request.Signature.Algorithm)
+			_ = d.Set("request_signature_scope", alg.Request.Signature.Scope)
+		}
+	}
 }

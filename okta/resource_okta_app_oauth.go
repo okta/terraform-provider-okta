@@ -208,7 +208,7 @@ func resourceAppOAuth() *schema.Resource {
 				Description: "List of scopes to use for the request",
 			},
 			"redirect_uris": {
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
 				Description: "List of URIs for use in the redirect-based flow. This is required for all application types except service. Note: see okta_app_oauth_redirect_uri for appending to this list in a decentralized way.",
@@ -361,6 +361,11 @@ func resourceAppOAuth() *schema.Resource {
 					return new == ""
 				},
 			},
+			"authentication_policy": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Id of this apps authentication policy",
+			},
 		}),
 	}
 }
@@ -388,6 +393,11 @@ var groupsClaimResource = &schema.Resource{
 			Description: "Value of the claim. Can be an Okta Expression Language statement that evaluates at the time the token is minted.",
 			Type:        schema.TypeString,
 			Required:    true,
+		},
+		"issuer_mode": {
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "Issuer mode inherited from OAuth App",
 		},
 	},
 }
@@ -427,6 +437,10 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
+	err = setAuthenticationPolicy(ctx, d, m, app.Id)
+	if err != nil {
+		return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
+	}
 	return resourceAppOAuthRead(ctx, d, m)
 }
 
@@ -437,9 +451,11 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m inter
 	}
 	groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
 	gc := &sdk.AppOauthGroupClaim{
-		IssuerMode: "ORG_URL",
-		Name:       groupsClaim["name"].(string),
-		Value:      groupsClaim["value"].(string),
+		Name:  groupsClaim["name"].(string),
+		Value: groupsClaim["value"].(string),
+	}
+	if d.Get("issuer_mode") != nil {
+		gc.IssuerMode = d.Get("issuer_mode").(string)
 	}
 	gct := groupsClaim["type"].(string)
 	if gct == "FILTER" {
@@ -459,7 +475,7 @@ func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m in
 	}
 	if len(raw.(*schema.Set).List()) == 0 {
 		gc := &sdk.AppOauthGroupClaim{
-			IssuerMode: "ORG_URL",
+			IssuerMode: d.Get("issuer_mode").(string),
 		}
 		_, err := getSupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
 		return err
@@ -543,6 +559,7 @@ func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface
 	if gc.ValueType == "GROUPS" {
 		elem["type"] = "FILTER"
 		elem["filter_type"] = gc.GroupFilterType
+		elem["issuer_mode"] = gc.IssuerMode
 	}
 	return schema.NewSet(schema.HashResource(groupsClaimResource), []interface{}{elem}), nil
 }
@@ -596,7 +613,7 @@ func setOAuthClientSettings(d *schema.ResourceData, oauthClient *okta.OpenIdConn
 		grantTypes[i] = string(*oauthClient.GrantTypes[i])
 	}
 	aggMap := map[string]interface{}{
-		"redirect_uris":             convertStringSliceToSet(oauthClient.RedirectUris),
+		"redirect_uris":             oauthClient.RedirectUris,
 		"response_types":            convertStringSliceToSet(respTypes),
 		"grant_types":               convertStringSliceToSet(grantTypes),
 		"post_logout_redirect_uris": convertStringSliceToSet(oauthClient.PostLogoutRedirectUris),
@@ -651,6 +668,10 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	err = updateAppOauthGroupsClaim(ctx, d, m)
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
+	}
+	err = setAuthenticationPolicy(ctx, d, m, app.Id)
+	if err != nil {
+		return diag.Errorf("failed to set authentication policy an OAuth application: %v", err)
 	}
 	return resourceAppOAuthRead(ctx, d, m)
 }
@@ -734,7 +755,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 			InitiateLoginUri:       d.Get("login_uri").(string),
 			LogoUri:                d.Get("logo_uri").(string),
 			PolicyUri:              d.Get("policy_uri").(string),
-			RedirectUris:           convertInterfaceToStringSetNullable(d.Get("redirect_uris")),
+			RedirectUris:           convertInterfaceToStringArr(d.Get("redirect_uris")),
 			PostLogoutRedirectUris: convertInterfaceToStringSetNullable(d.Get("post_logout_redirect_uris")),
 			ResponseTypes:          oktaRespTypes,
 			TosUri:                 d.Get("tos_uri").(string),

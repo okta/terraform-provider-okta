@@ -162,5 +162,5 @@ The following arguments are supported:
 A Policy Rule can be imported via the Policy and Rule ID.
 
 ```
-$ terraform import okta_policy_rule_signon.example <policy id>/<rule id>
+$ terraform import okta_policy_rule_signon.example &#60;policy id&#62;/&#60;rule id&#62;
 ```

@@ -80,20 +80,6 @@ var (
 			Type:     schema.TypeBool,
 			Optional: true,
 		},
-		"request_signature_algorithm": algorithmSchema,
-		"request_signature_scope": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Description:      "algorithm to use to sign response",
-			ValidateDiagFunc: elemInSlice([]string{"REQUEST", ""}),
-		},
-		"response_signature_algorithm": algorithmSchema,
-		"response_signature_scope": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Description:      "algorithm to use to sign response",
-			ValidateDiagFunc: elemInSlice([]string{"RESPONSE", "ANY", ""}),
-		},
 	}
 
 	actionSchema = &schema.Schema{
@@ -102,12 +88,50 @@ var (
 		Default:  "NONE",
 	}
 
-	algorithmSchema = &schema.Schema{
+	samlRequestSignatureAlgorithmSchema = &schema.Schema{
 		Type:             schema.TypeString,
 		Optional:         true,
-		Description:      "algorithm to use to sign requests",
+		Description:      "The XML digital Signature Algorithm used when signing an <AuthnRequest> message",
 		ValidateDiagFunc: elemInSlice([]string{"SHA-256", "SHA-1"}),
 		Default:          "SHA-256",
+	}
+	samlRequestSignatureScopeSchema = &schema.Schema{
+		Type:             schema.TypeString,
+		Optional:         true,
+		Description:      "Specifies whether to digitally sign <AuthnRequest> messages to the IdP",
+		ValidateDiagFunc: elemInSlice([]string{"REQUEST", "NONE"}),
+		Default:          "REQUEST",
+	}
+
+	samlResponseSignatureAlgorithmSchema = &schema.Schema{
+		Type:             schema.TypeString,
+		Optional:         true,
+		Description:      "The minimum XML digital Signature Algorithm allowed when verifying a <SAMLResponse> message or <Assertion> element",
+		ValidateDiagFunc: elemInSlice([]string{"SHA-256", "SHA-1"}),
+		Default:          "SHA-256",
+	}
+	samlResponseSignatureScopeSchema = &schema.Schema{
+		Type:             schema.TypeString,
+		Optional:         true,
+		Description:      "Specifies whether to verify a <SAMLResponse> message or <Assertion> element XML digital signature",
+		ValidateDiagFunc: elemInSlice([]string{"RESPONSE", "ASSERTION", "ANY"}),
+		Default:          "ANY",
+	}
+
+	oidcRequestSignatureAlgorithmSchema = &schema.Schema{
+		Type:             schema.TypeString,
+		Optional:         true,
+		Description:      "The HMAC Signature Algorithm used when signing an authorization request",
+		ValidateDiagFunc: elemInSlice([]string{"HS256", "HS384", "HS512"}),
+		Default:          "HS256",
+	}
+
+	oidcRequestSignatureScopeSchema = &schema.Schema{
+		Type:             schema.TypeString,
+		Optional:         true,
+		Description:      "Specifies whether to digitally sign an authorization request to the IdP",
+		ValidateDiagFunc: elemInSlice([]string{"REQUEST", "NONE"}),
+		Default:          "REQUEST",
 	}
 
 	optBindingSchema = &schema.Schema{
@@ -225,19 +249,6 @@ func syncGroupActions(d *schema.ResourceData, groups *okta.ProvisioningGroups) e
 	})
 }
 
-func syncAlgo(d *schema.ResourceData, alg *okta.ProtocolAlgorithms) {
-	if alg != nil {
-		if alg.Request != nil && alg.Request.Signature != nil {
-			_ = d.Set("request_signature_algorithm", alg.Request.Signature.Algorithm)
-			_ = d.Set("request_signature_scope", alg.Request.Signature.Scope)
-		}
-		if alg.Response != nil && alg.Response.Signature != nil {
-			_ = d.Set("response_signature_algorithm", alg.Response.Signature.Algorithm)
-			_ = d.Set("response_signature_scope", alg.Response.Signature.Scope)
-		}
-	}
-}
-
 func buildPolicyAccountLink(d *schema.ResourceData) *okta.PolicyAccountLink {
 	link := convertInterfaceToStringSet(d.Get("account_link_group_include"))
 	var filter *okta.PolicyAccountLinkFilter
@@ -285,14 +296,14 @@ func buildAlgorithms(d *schema.ResourceData) *okta.ProtocolAlgorithms {
 
 func buildProtocolAlgorithmType(d *schema.ResourceData, key string) *okta.ProtocolAlgorithmType {
 	scopeKey := fmt.Sprintf("%s_signature_scope", key)
-	scope := d.Get(scopeKey).(string)
-	if scope == "" {
+	scope, ok := d.GetOk(scopeKey)
+	if !ok || scope.(string) == "" {
 		return nil
 	}
 	return &okta.ProtocolAlgorithmType{
 		Signature: &okta.ProtocolAlgorithmTypeSignature{
 			Algorithm: d.Get(fmt.Sprintf("%s_signature_algorithm", key)).(string),
-			Scope:     scope,
+			Scope:     scope.(string),
 		},
 	}
 }

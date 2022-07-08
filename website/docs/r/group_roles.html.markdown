@@ -38,5 +38,5 @@ The following arguments are supported:
 Group Role Assignment can be imported via the Okta Group ID.
 
 ```
-$ terraform import okta_group_roles.example <group id>
+$ terraform import okta_group_roles.example &#60;group id&#62;
 ```

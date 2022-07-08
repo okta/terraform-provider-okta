@@ -42,7 +42,7 @@ func TestAccOktaIdpSocial_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(microName, "groups_assignment.#", "1"),
 
 					resource.TestCheckResourceAttr(googleName, "type", "GOOGLE"),
-					resource.TestCheckResourceAttr(googleName, "protocol_type", "OAUTH2"),
+					resource.TestCheckResourceAttr(googleName, "protocol_type", "OIDC"),
 					resource.TestCheckResourceAttr(googleName, "name", fmt.Sprintf("testAcc_google_%d", ri)),
 					resource.TestCheckResourceAttr(googleName, "client_id", "abcd123"),
 					resource.TestCheckResourceAttr(googleName, "client_secret", "abcd123"),
@@ -53,7 +53,7 @@ func TestAccOktaIdpSocial_crud(t *testing.T) {
 				Config: disabledConf,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(googleName, "type", "GOOGLE"),
-					resource.TestCheckResourceAttr(googleName, "protocol_type", "OAUTH2"),
+					resource.TestCheckResourceAttr(googleName, "protocol_type", "OIDC"),
 					resource.TestCheckResourceAttr(googleName, "name", fmt.Sprintf("testAcc_google_%d", ri)),
 					resource.TestCheckResourceAttr(googleName, "client_id", "abcd123"),
 					resource.TestCheckResourceAttr(googleName, "client_secret", "abcd123"),

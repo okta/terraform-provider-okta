@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/go-cleanhttp"
@@ -33,6 +34,7 @@ type (
 	Config struct {
 		orgName          string
 		domain           string
+		httpProxy        string
 		apiToken         string
 		clientID         string
 		privateKey       string
@@ -90,8 +92,17 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 		httpClient.Transport = transport.NewGovernedTransport(httpClient.Transport, apiMutex, c.logger)
 	}
 
+	var orgUrl string
+	var disableHTTPS bool
+	if c.httpProxy != "" {
+		orgUrl = strings.TrimSuffix(c.httpProxy, "/")
+		disableHTTPS = strings.HasPrefix(orgUrl, "http://")
+	} else {
+		orgUrl = fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
+	}
+
 	setters := []okta.ConfigSetter{
-		okta.WithOrgUrl(fmt.Sprintf("https://%v.%v", c.orgName, c.domain)),
+		okta.WithOrgUrl(orgUrl),
 		okta.WithToken(c.apiToken),
 		okta.WithClientId(c.clientID),
 		okta.WithPrivateKey(c.privateKey),
@@ -101,10 +112,13 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
 		okta.WithRequestTimeout(int64(c.requestTimeout)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
-		okta.WithUserAgentExtra("okta-terraform/3.23.0"),
+		okta.WithUserAgentExtra("okta-terraform/3.30.0"),
 	}
 	if c.apiToken == "" {
 		setters = append(setters, okta.WithAuthorizationMode("PrivateKey"))
+	}
+	if disableHTTPS {
+		setters = append(setters, okta.WithTestingDisableHttpsCheck(true))
 	}
 	_, client, err := okta.NewClient(
 		context.Background(),

@@ -43,5 +43,5 @@ The following arguments are supported:
 A Trusted Origin can be imported via the Okta ID.
 
 ```
-$ terraform import okta_trusted_origin.example <trusted origin id>
+$ terraform import okta_trusted_origin.example &#60;trusted origin id&#62;
 ```

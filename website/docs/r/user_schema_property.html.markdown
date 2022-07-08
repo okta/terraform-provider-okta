@@ -12,6 +12,12 @@ Creates a User Schema property.
 
 This resource allows you to create and configure a custom user schema property.
 
+**IMPORTANT:** With `enum`, list its values as strings even though the `type`
+may be something other than string. This is a limitation of the schema defintion
+in the Terraform Plugin SDK runtime and we juggle the type correctly when making
+Okta API calls. Same holds for the `const` value of `one_of` as well as the
+`array_*` variation of `enum` and `one_of`.
+
 ## Example Usage
 
 ```hcl
@@ -87,11 +93,11 @@ The following arguments are supported:
 User schema property of default user type can be imported via the property index.
 
 ```
-$ terraform import okta_user_schema_property.example <index>
+$ terraform import okta_user_schema_property.example &#60;index&#62;
 ```
 
 User schema property of custom user type can be imported via user type id and property index
 
 ```
-$ terraform import okta_user_schema_property.example <user type id>.<index>
+$ terraform import okta_user_schema_property.example &#60;user type id&#62;.&#60;index&#62;
 ```

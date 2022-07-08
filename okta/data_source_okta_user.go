@@ -3,7 +3,9 @@ package okta
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,7 +19,7 @@ var userSearchSchemaDescription = "Filter to find " +
 	"must match what is in Okta, which is likely camel case. " +
 	"Expression is a free form expression filter " +
 	"https://developer.okta.com/docs/reference/core-okta-api/#filter . " +
-	"The set name/value/comparision properties will be ignored if expression is present"
+	"The set name/value/comparison properties will be ignored if expression is present"
 
 var userSearchSchema = map[string]*schema.Schema{
 	"name": {
@@ -30,10 +32,9 @@ var userSearchSchema = map[string]*schema.Schema{
 		Optional: true,
 	},
 	"comparison": {
-		Type:             schema.TypeString,
-		Optional:         true,
-		Default:          "eq",
-		ValidateDiagFunc: elemInSlice([]string{"eq", "lt", "gt", "sw"}),
+		Type:     schema.TypeString,
+		Optional: true,
+		Default:  "eq",
 	},
 	"expression": {
 		Type:        schema.TypeString,
@@ -76,13 +77,28 @@ func dataSourceUser() *schema.Resource {
 				Optional:         true,
 				Default:          "and",
 				ValidateDiagFunc: elemInSlice([]string{"and", "or"}),
-				Description:      "Search operator uses when joining mulitple search clauses",
+				Description:      "Search operator used when joining mulitple search clauses",
+			},
+			"delay_read_seconds": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Force delay of the user read by N seconds. Useful when eventual consistency of user information needs to be allowed for.",
 			},
 		}),
 	}
 }
 
 func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if n, ok := d.GetOk("delay_read_seconds"); ok {
+		delay, err := strconv.Atoi(n.(string))
+		if err == nil {
+			logger(m).Info("delaying user read by ", delay, " seconds")
+			time.Sleep(time.Duration(delay) * time.Second)
+		} else {
+			logger(m).Warn("user read delay value ", n, " is not an integer")
+		}
+	}
+
 	client := getOktaClientFromMetadata(m)
 	var user *okta.User
 	var err error
@@ -113,25 +129,21 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 		return diag.Errorf("failed to set user's properties: %v", err)
 	}
 
-	skip := false
 	if val := d.Get("skip_roles"); val != nil {
-		skip = val.(bool)
-	}
-	if !skip {
-		err = setAdminRoles(ctx, d, m)
-		if err != nil {
-			return diag.Errorf("failed to set user's admin roles: %v", err)
+		if skip, ok := val.(bool); ok && !skip {
+			err = setAdminRoles(ctx, d, m)
+			if err != nil {
+				return diag.Errorf("failed to set user's admin roles: %v", err)
+			}
 		}
 	}
 
-	skip = false
 	if val := d.Get("skip_groups"); val != nil {
-		skip = val.(bool)
-	}
-	if !skip {
-		err = setAllGroups(ctx, d, client)
-		if err != nil {
-			return diag.Errorf("failed to set user's groups: %v", err)
+		if skip, ok := val.(bool); ok && !skip {
+			err = setAllGroups(ctx, d, client)
+			if err != nil {
+				return diag.Errorf("failed to set user's groups: %v", err)
+			}
 		}
 	}
 
@@ -148,7 +160,15 @@ func getSearchCriteria(d *schema.ResourceData) string {
 			filterList[i] = fmt.Sprintf(`%s`, fmap["expression"])
 			continue
 		}
-		filterList[i] = fmt.Sprintf(`%s %s "%s"`, fmap["name"], fmap["comparison"], fmap["value"])
+
+		// Need to set up the filter clause to allow comparions that do not
+		// accept a right hand argument and those that do.
+		// profile.email pr
+		filterList[i] = fmt.Sprintf(`%s %s`, fmap["name"], fmap["comparison"])
+		if fmap["value"] != "" {
+			// profile.email eq "example@example.com"
+			filterList[i] = fmt.Sprintf(`%s "%s"`, filterList[i], fmap["value"])
+		}
 	}
 
 	operator := " and "
