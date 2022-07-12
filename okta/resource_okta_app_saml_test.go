@@ -361,7 +361,7 @@ resource "%s" "%s" {
 func TestAccAppSaml_certdiff(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appSaml)
-	config := mgr.GetFixtures("basic.tf", ri, t)
+	config := mgr.GetFixtures("basic_cert.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
 	resource.Test(t, resource.TestCase{
