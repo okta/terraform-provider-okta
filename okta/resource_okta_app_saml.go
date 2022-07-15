@@ -85,19 +85,44 @@ func resourceAppSaml() *schema.Resource {
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"created": {
+						"kid": {
 							Type:        schema.TypeString,
-							Description: "Created Date",
+							Description: "Key ID",
 							Computed:    true,
 						},
-						"expires_at": {
+						"kty": {
 							Type:        schema.TypeString,
-							Description: "Expiration Date",
+							Description: "Key type",
 							Computed:    true,
 						},
 						"use": {
 							Type:        schema.TypeString,
 							Description: "Acceptable usage of the certificate",
+							Computed:    true,
+						},
+						"created": {
+							Type:        schema.TypeString,
+							Description: "Created date",
+							Computed:    true,
+						},
+						"last_updated": {
+							Type:        schema.TypeString,
+							Description: "Last updated date",
+							Computed:    true,
+						},
+						"expires_at": {
+							Type:        schema.TypeString,
+							Description: "Expiration date",
+							Computed:    true,
+						},
+						"e": {
+							Type:        schema.TypeString,
+							Description: "RSA exponent",
+							Computed:    true,
+						},
+						"n": {
+							Type:        schema.TypeString,
+							Description: "RSA modulus",
 							Computed:    true,
 						},
 						"x5c": {
@@ -109,26 +134,6 @@ func resourceAppSaml() *schema.Resource {
 						"x5t_s256": {
 							Type:        schema.TypeString,
 							Description: "X.509 certificate SHA-256 thumbprint",
-							Computed:    true,
-						},
-						"kid": {
-							Type:        schema.TypeString,
-							Description: "Key ID",
-							Computed:    true,
-						},
-						"kty": {
-							Type:        schema.TypeString,
-							Description: "Key type",
-							Computed:    true,
-						},
-						"e": {
-							Type:        schema.TypeString,
-							Description: "RSA Exponent",
-							Computed:    true,
-						},
-						"n": {
-							Type:        schema.TypeString,
-							Description: "RSA Modulus",
 							Computed:    true,
 						},
 					},

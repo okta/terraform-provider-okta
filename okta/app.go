@@ -739,15 +739,16 @@ func setAppKeys(d *schema.ResourceData, keys []*okta.JsonWebKey) error {
 
 	for i, key := range keys {
 		arr[i] = map[string]interface{}{
-			"kty":        key.Kty,
-			"kid":        key.Kid,
-			"e":          key.E,
-			"n":          key.N,
-			"created":    key.Created.String(),
-			"expires_at": key.ExpiresAt.String(),
-			"use":        key.Use,
-			"x5c":        key.X5c,
-			"x5t_s256":   key.X5tS256,
+			"kid":          key.Kid,
+			"kty":          key.Kty,
+			"use":          key.Use,
+			"created":      key.Created.String(),
+			"last_updated": key.LastUpdated.String(),
+			"expires_at":   key.ExpiresAt.String(),
+			"e":            key.E,
+			"n":            key.N,
+			"x5c":          key.X5c,
+			"x5t_s256":     key.X5tS256,
 		}
 	}
 

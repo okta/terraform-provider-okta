@@ -282,7 +282,27 @@ The following arguments are supported:
 
 - `key_name` - Certificate name. This modulates the rotation of keys. New name == new key.
 
-- `keys` - All valid key credentials for the application.
+- `keys` - An array of all key credentials for the application. Format of each entry is as follows:
+
+  - `kid` - Key ID.
+
+  - `kty` - Identifies the cryptographic algorithm family used with the key.
+
+  - `use` - Intended use of the public key.
+
+  - `created` - Date created.
+
+  - `last_updated` - Date the key was last updated.
+
+  - `expires_at` - Date the key expires.
+
+  - `e` - RSA exponent.
+
+  - `n` - RSA modulus.
+
+  - `x5c` - X.509 certificate chain.
+
+  - `x5t_s256` - X.509 certificate SHA-256 thumbprint.
 
 - `certificate` - The raw signing certificate.
 
