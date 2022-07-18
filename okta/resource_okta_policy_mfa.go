@@ -90,7 +90,7 @@ func buildSettings(d *schema.ResourceData) *sdk.PolicySettings {
 	if d.Get("is_oie") == true {
 		authenticators := []*sdk.PolicyAuthenticator{}
 
-		for _, key := range remove(sdk.AuthenticatorProviders, sdk.OktaPasswordFactor) {
+		for _, key := range sdk.AuthenticatorProviders {
 			rawFactor := d.Get(key).(map[string]interface{})
 			enroll := rawFactor["enroll"]
 			if enroll == nil {
@@ -155,7 +155,7 @@ func syncSettings(d *schema.ResourceData, settings *sdk.PolicySettings) {
 	_ = d.Set("is_oie", settings.Type == "AUTHENTICATORS")
 
 	if settings.Type == "AUTHENTICATORS" {
-		for _, key := range remove(sdk.AuthenticatorProviders, sdk.OktaPasswordFactor) {
+		for _, key := range sdk.AuthenticatorProviders {
 			syncAuthenticator(d, key, settings.Authenticators)
 		}
 	} else {
@@ -189,14 +189,9 @@ func syncFactor(d *schema.ResourceData, k string, f *sdk.PolicyFactor) {
 func syncAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.PolicyAuthenticator) {
 	for _, authenticator := range authenticators {
 		if authenticator.Key == k {
-			// Skip OktaPassword as this should never be returned for MFA policies using authenticator.
-			// Enrollment policy changes for OIE for password
-			// https://help.okta.com/okta_help.htm?type=oie&id=ext-about-mfa-enrol-policies
-			if k != sdk.OktaPasswordFactor {
-				_ = d.Set(k, map[string]interface{}{
-					"enroll": authenticator.Enroll.Self,
-				})
-			}
+			_ = d.Set(k, map[string]interface{}{
+				"enroll": authenticator.Enroll.Self,
+			})
 			return
 		}
 	}
