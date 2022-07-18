@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -72,6 +73,11 @@ func resourceAppGroupAssignment() *schema.Resource {
 				Default:     false,
 				Description: "Retain the group assignment on destroy. If set to true, the resource will be removed from state but not from the Okta app.",
 			},
+		},
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(24 * 365 * time.Hour),
+			Read:   schema.DefaultTimeout(24 * 365 * time.Hour),
+			Update: schema.DefaultTimeout(24 * 365 * time.Hour),
 		},
 	}
 }

@@ -28,3 +28,11 @@ data "okta_app_group_assignments" "test" {
 - `id` - ID of application.
 
 - `groups` - List of groups IDs assigned to the application.
+
+## Timeouts
+
+-> See [here](https://developer.okta.com/todo) for Considerations when Syncing Users/Groups
+
+The `timeouts` block allows you to specify timeouts for certain actions: 
+
+- `read` - (Defaults to 24 hour) Used when reading the App with synced Users/Groups.

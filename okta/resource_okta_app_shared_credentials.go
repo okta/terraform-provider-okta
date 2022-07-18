@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -71,6 +72,11 @@ func resourceAppSharedCredentials() *schema.Resource {
 				Description: "Shared password, required for certain schemes.",
 			},
 		}),
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(24 * 365 * time.Hour),
+			Read:   schema.DefaultTimeout(24 * 365 * time.Hour),
+			Update: schema.DefaultTimeout(24 * 365 * time.Hour),
+		},
 	}
 }
 

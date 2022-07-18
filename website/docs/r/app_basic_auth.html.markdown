@@ -74,6 +74,18 @@ The following arguments are supported:
 
 - `logo_url` - Direct link of application logo.
 
+## Timeouts
+
+-> See [here](https://developer.okta.com/todo) for Considerations when Syncing Users/Groups
+
+The `timeouts` block allows you to specify timeouts for certain actions: 
+
+- `create` - (Defaults to no timeout) Used when creating the App with synced Users/Groups.
+
+- `update` - (Defaults to no timeout) Used when updating the App with synced Users/Groups.
+
+- `read` - (Defaults to no timeout) Used when reading the App with synced Users/Groups.
+
 ## Import
 
 A Basic Auth App can be imported via the Okta ID.

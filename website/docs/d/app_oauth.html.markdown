@@ -82,3 +82,11 @@ data "okta_app_oauth" "test" {
 
 - `groups` - List of groups IDs assigned to the application.
   - `DEPRECATED`: Please replace all usage of this field with the data source `okta_app_group_assignments`.
+
+## Timeouts
+
+-> See [here](https://developer.okta.com/todo) for Considerations when Syncing Users/Groups
+
+The `timeouts` block allows you to specify timeouts for certain actions: 
+
+- `read` - (Defaults to no timeout) Used when reading the App with synced Users/Groups.

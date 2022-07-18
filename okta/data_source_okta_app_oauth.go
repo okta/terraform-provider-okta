@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -149,6 +150,9 @@ func dataSourceAppOauth() *schema.Resource {
 				Description: "Indicates if the client is allowed to use wildcard matching of redirect_uris",
 			},
 		}),
+		Timeouts: &schema.ResourceTimeout{
+			Read: schema.DefaultTimeout(24 * 365 * time.Hour),
+		},
 	}
 }
 
