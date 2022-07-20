@@ -18,13 +18,14 @@ This resource allows you to configure different authenticators.
 
 ```hcl
 resource "okta_authenticator" "test" {
-  name     = "Security Question"
-  key      = "security_question"
+  name     = "Phone_Number"
+  key      = "phone_number"
   settings = jsonencode(
   {
     "allowedFor" : "recovery"
   }
   )
+  phone_methods  = ["sms", "voice"]
 }
 ```
 
@@ -47,6 +48,8 @@ The following arguments are supported:
 - `provider_shared_secret` - (Optional) An authentication key that must be defined when the RADIUS server is configured, and must be the same on both the RADIUS client and server. Used only for authenticators with type `"security_key"`.
 
 - `provider_user_name_template` - (Optional) Username template expected by the provider. Used only for authenticators with type `"security_key"`.
+
+- `phone_methods` - (Optional) If `key` is set to `phone_number`, specifies allowed methods. Valid values are `"sms"` and `"voice"`. Both methods will be set when this argument is absent.
 
 ## Attributes Reference
 

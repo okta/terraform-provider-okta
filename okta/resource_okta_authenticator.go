@@ -93,6 +93,15 @@ func resourceAuthenticator() *schema.Resource {
 				Description:  "Format expected by the provider",
 				RequiredWith: []string{"provider_hostname"},
 			},
+			"phone_methods": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateDiagFunc: elemInSlice([]string{"sms", "voice"}),
+				},
+				Description: "Enabled Method types for the Phone Authenticator",
+			},
 		},
 	}
 }
@@ -113,6 +122,11 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 		}
 		if err != nil {
 			return diag.Errorf("failed to change authenticator status: %v", err)
+		}
+		if d.Get("key") == "phone_number" {
+			if err = createPhoneMethods(ctx, d, m); err != nil {
+				return diag.Errorf("failed to change authenticator method status: %v", err)
+			}
 		}
 	}
 	return resourceAuthenticatorRead(ctx, d, m)
@@ -152,6 +166,11 @@ func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m in
 			_ = d.Set("provider_integration_key", authenticator.Provider.Configuration.IntegrationKey)
 		}
 	}
+	if d.Get("key") == "phone_number" {
+		if err = readPhoneMethods(ctx, d, m); err != nil {
+			return diag.Errorf("failed to read authenticator method status: %v", err)
+		}
+	}
 	return nil
 }
 
@@ -173,6 +192,12 @@ func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, m 
 		}
 		if err != nil {
 			return diag.Errorf("failed to change authenticator status: %v", err)
+		}
+	}
+	// can't rely on old/new status since the link will always be the same value. Need to check each time.
+	if d.Get("key") == "phone_number" {
+		if err = updatePhoneMethods(ctx, d, m); err != nil {
+			return diag.Errorf("failed to update authenticator method status: %v", err)
 		}
 	}
 	return resourceAuthenticatorRead(ctx, d, m)
