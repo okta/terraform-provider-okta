@@ -9,6 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
+// resourcePolicyMfaDefault requires Org Feature Flag OKTA_MFA_POLICY
 func resourcePolicyMfaDefault() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourcePolicyMfaDefaultCreateOrUpdate,

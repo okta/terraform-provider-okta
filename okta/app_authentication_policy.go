@@ -20,24 +20,24 @@ func setAuthenticationPolicy(ctx context.Context, d *schema.ResourceData, m inte
 	return err
 }
 
-func assignDefaultAuthenticationPolicy(ctx context.Context,  m interface{}, appId string) error {
+func assignDefaultAuthenticationPolicy(ctx context.Context, m interface{}, appId string) error {
 	client := getOktaClientFromMetadata(m)
 	qp := query.NewQueryParams()
 	qp.Type = "ACCESS_POLICY"
 	policies, _, err := client.Policy.ListPolicies(ctx, qp)
 	if err != nil {
-		return errors.New(fmt.Sprintf("failed delete authentication policy: %v", err))
+		return fmt.Errorf("failed delete authentication policy: %v", err)
 	}
 
 	// find the default policy
 	var defaultPolicy *okta.Policy
 	for _, p := range policies {
-		
+
 		v := p.(*okta.Policy)
-		if v.Name == "Default Policy" && *v.System == true{
+		if v.Name == "Default Policy" && *v.System {
 			defaultPolicy = v
 		}
-		
+
 	}
 	if defaultPolicy == nil {
 		return errors.New("no default policy found")

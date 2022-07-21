@@ -12,11 +12,19 @@ Configures default MFA Policy.
 
 This resource allows you to configure default MFA Policy.
 
+~> Requires Org Feature Flag `OKTA_MFA_POLICY`. [Contact support](mailto:dev-inquiries@okta.com) to have this feature flag ***enabled***.
+
+~> Unless Org Feature Flag `ENG_ENABLE_OPTIONAL_PASSWORD_ENROLLMENT` is ***disabled*** `okta_password` or `okta_email` must be present and its `enroll` value set to `REQUIRED`. [Contact support](mailto:dev-inquiries@okta.com) to have this feature flag ***disabled***.
+
 ## Example Usage
 
 ```hcl
 resource "okta_policy_mfa_default" "classic_example" {
   is_oie      = false
+
+  okta_password = {
+    enroll = "REQUIRED"
+  }
 
   okta_otp = {
     enroll = "REQUIRED"
@@ -25,6 +33,10 @@ resource "okta_policy_mfa_default" "classic_example" {
 
 resource "okta_policy_mfa_default" "oie_example" {
   is_oie      = true
+
+  okta_password = {
+    enroll = "REQUIRED"
+  }
 
   # The following authenticator can only be used when `is_oie` is set to true
   okta_verify = {

@@ -25,6 +25,7 @@ func TestAccOktaDefaultMFAPolicy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
 				),
 			},
 			{
@@ -32,6 +33,7 @@ func TestAccOktaDefaultMFAPolicy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
 					resource.TestCheckResourceAttr(resourceName, "google_otp.enroll", "OPTIONAL"),
 				),
 			},
@@ -39,6 +41,7 @@ func TestAccOktaDefaultMFAPolicy(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 				),
 			},
