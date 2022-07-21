@@ -23,6 +23,7 @@ func TestAccOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 	appIncludeConfig := mgr.GetFixtures("app_include.tf", ri2, t)
 	appExcludeConfig := mgr.GetFixtures("app_exclude_platform.tf", ri2, t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleIdpDiscovery)
+	multipleIdp := mgr.GetFixtures("multiple_idp.tf", ri2, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -78,6 +79,13 @@ func TestAccOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "app_exclude.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "idp_type", "OKTA"),
 					resource.TestCheckResourceAttr(resourceName, "platform_include.#", "1"),
+				),
+			},			
+			{
+				Config: multipleIdp,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "idp.#", "2"),
 				),
 			},
 		},

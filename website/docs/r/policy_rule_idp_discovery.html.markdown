@@ -1,7 +1,7 @@
 ---
-layout: 'okta'
-page_title: 'Okta: okta_policy_rule_idp_discovery'
-sidebar_current: 'docs-okta-resource-policy-rule-idp-discovery'
+layout: "okta"
+page_title: "Okta: okta_policy_rule_idp_discovery"
+sidebar_current: "docs-okta-resource-policy-rule-idp-discovery"
 description: |-
   Creates an IdP Discovery Policy Rule.
 ---
@@ -62,6 +62,40 @@ resource "okta_policy_rule_idp_discovery" "example" {
 }
 ```
 
+```hcl
+resource "okta_policy_rule_idp_discovery" "my_rule" {
+  name      = "My Rule"
+  policy_id = "some-policy-id"
+
+  idp {
+    id   = okta_idp_social.google.id
+    type = "GOOGLE"
+  }
+  idp {
+    id   = okta_idp_social.facebook.id
+    type = "FACEBOOK"
+  }
+}
+
+resource "okta_idp_social" "facebook" {
+  name          = "Facebook"
+  type          = "FACEBOOK"
+  protocol_type = "OAUTH2"
+  client_id     = "xxx"
+  client_secret = "xxx"
+  scopes        = ["public_profile", "email"]
+
+}
+resource "okta_idp_social" "google" {
+  name          = "Google"
+  type          = "GOOGLE"
+  protocol_type = "OIDC"
+  client_id     = "xxx"
+  client_secret = "xxx"
+  scopes        = ["openid", "profile", "email"]
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -75,6 +109,17 @@ The following arguments are supported:
 - `idp_id` - (Optional) The identifier for the Idp the rule should route to if all conditions are met.
 
 - `idp_type` - (Optional) Type of Idp. One of: `"SAML2"`, `"IWA"`, `"AgentlessDSSO"`, `"X509"`, `"FACEBOOK"`, `"GOOGLE"`, `"LINKEDIN"`, `"MICROSOFT"`, `"OIDC"`
+
+- `idp` - (Optional) List of multiple Idp associated with this resource. If set this will overwrite the `idp_id` and `idp_type` attributes.
+
+  - `id` - (Required) The identifier for the Idp this rule should route to.
+  - `type` - (Optional) Type of Idp. One of: `"SAML2"`, `"IWA"`, `"AgentlessDSSO"`, `"X509"`, `"FACEBOOK"`, `"GOOGLE"`, `"LINKEDIN"`, `"MICROSOFT"`, `"OIDC"`
+
+````hcl
+idp {
+  id = string
+  type = string
+}
 
 - `network_connection` - (Optional) The network selection mode. One of `"ANYWEHRE"` or `"ZONE"`.
 
@@ -104,7 +149,7 @@ app_include {
   type = string
   name = string
 }
-```
+````
 
 - `app_exclude` - (Optional) Applications to exclude in discovery. See `app_include` for details.
 
@@ -132,7 +177,7 @@ platform_include {
 }
 ```
 
-- `user_identifier_patterns` - (Optional) Specifies a User Identifier pattern condition to match against. If `match_type` of `"EXPRESSION"` is used, only a *single* element can be set, otherwise multiple elements of matching patterns may be provided.
+- `user_identifier_patterns` - (Optional) Specifies a User Identifier pattern condition to match against. If `match_type` of `"EXPRESSION"` is used, only a _single_ element can be set, otherwise multiple elements of matching patterns may be provided.
 
   - `match_type` - (Optional) The kind of pattern. For regex, use `"EXPRESSION"`. For simple string matches, use one of the following: `"SUFFIX"`, `"EQUALS"`, `"STARTS_WITH"`, `"CONTAINS"`
 
@@ -150,7 +195,6 @@ user_identifier_patterns {
 - `id` - ID of the Rule.
 
 - `policyid` - (Deprecated) Policy ID.
-  
 - `policy_id` - Policy ID.
 
 ## Import

@@ -26,6 +26,25 @@ func resourcePolicyRuleIdpDiscovery() *schema.Resource {
 				Optional: true,
 				Default:  "OKTA",
 			},
+			"idp": {
+				Type: schema.TypeList,
+				Optional: true,
+				Description: "List of IDPs affected by this rule. If set this will override the toplevel fields `idp_id` and `idp_type`",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type: schema.TypeString,
+							Required: true,
+							Description: "The ID of the IDP",
+						},
+						"type": {
+							Type: schema.TypeString,
+							Required: true,
+							Description: "The Type of the IDP",
+						},
+					},
+				},
+			},
 			"app_include": {
 				Type:        schema.TypeSet,
 				Elem:        appResource,
@@ -221,6 +240,18 @@ func buildIdpDiscoveryRule(d *schema.ResourceData) *sdk.IdpDiscoveryRule {
 		Type:   sdk.IdpDiscoveryType,
 		Name:   d.Get("name").(string),
 		Status: d.Get("status").(string),
+	}
+	// overwrite Actions.Providers with idp list if existing
+	if idps, ok := d.GetOk("idp"); ok {
+		var providers []*sdk.IdpDiscoveryRuleProvider
+		for _, v := range idps.([]interface{}) {
+			idp := v.(map[string]interface{})
+			providers = append(providers, &sdk.IdpDiscoveryRuleProvider{
+				ID: idp["id"].(string),
+				Type: idp["type"].(string),
+			})
+		}
+		rule.Actions.IDP.Providers = providers
 	}
 	if priority, ok := d.GetOk("priority"); ok {
 		rule.Priority = priority.(int)
