@@ -71,6 +71,10 @@ func buildResourceName(testID int) string {
 	return testResourcePrefix + "_" + strconv.Itoa(testID)
 }
 
+func buildResourceNameWithPrefix(prefix string, testID int) string {
+	return prefix + "_" + strconv.Itoa(testID)
+}
+
 // sharedClient returns a common Okta Client for sweepers, which currently requires the original SDK and the official beta SDK
 func sharedClient() (*okta.Client, *sdk.APISupplement, error) {
 	err := accPreCheck()
