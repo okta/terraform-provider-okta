@@ -173,6 +173,13 @@ func Provider() *schema.Provider {
 				Description:   "API Token granting privileges to Okta API.",
 				ConflictsWith: []string{"api_token"},
 			},
+			"private_key_id": {
+				Optional:      true,
+				Type:          schema.TypeString,
+				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_PRIVATE_KEY_ID", nil),
+				Description:   "API Token Id granting privileges to Okta API.",
+				ConflictsWith: []string{"api_token"},
+			},
 			"base_url": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -417,6 +424,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		apiToken:       d.Get("api_token").(string),
 		clientID:       d.Get("client_id").(string),
 		privateKey:     d.Get("private_key").(string),
+		privateKeyId:	d.Get("private_key_id").(string),
 		scopes:         convertInterfaceToStringSet(d.Get("scopes")),
 		retryCount:     d.Get("max_retries").(int),
 		parallelism:    d.Get("parallelism").(int),
