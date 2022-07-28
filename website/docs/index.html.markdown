@@ -89,6 +89,8 @@ In addition to [generic `provider` arguments](https://www.terraform.io/docs/conf
 
 - `private_key` - (Optional) This is the private key for obtaining the API token (can be represented by a filepath, or the key itself). It can also be sourced from the `OKTA_API_PRIVATE_KEY` environment variable. `private_key` conflicts with `api_token`.
 
+- `private_key_id` - (Optional) This is the private key ID (kid) for obtaining the API token. It can also be sourced from `OKTA_API_PRIVATE_KEY_ID` environmental variable. `private_key_id` conflicts with `api_token`.
+
 - `backoff` - (Optional) Whether to use exponential back off strategy for rate limits, the default is `true`.
 
 - `min_wait_seconds` - (Optional) Minimum seconds to wait when rate limit is hit, the default is `30`.
