@@ -53,6 +53,7 @@ type (
 		supplementClient *sdk.APISupplement
 		client           *http.Client
 		logger           hclog.Logger
+		classicOrg       bool
 	}
 )
 

@@ -362,8 +362,8 @@ func resourceAppOAuth() *schema.Resource {
 				},
 			},
 			"authentication_policy": {
-				Type: schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
 				Description: "Id of this apps authentication policy",
 			},
 		}),
