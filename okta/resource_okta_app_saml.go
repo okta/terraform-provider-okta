@@ -341,6 +341,11 @@ func resourceAppSaml() *schema.Resource {
 				Optional:    true,
 				Description: "Id of this apps authentication policy",
 			},
+			"embed_url": {
+				Type: schema.TypeString,
+				Computed: true,
+				Description: "The url that can be used to embed this application in other portals.",
+			},
 		}),
 	}
 }
@@ -423,6 +428,8 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
 	_ = d.Set("preconfigured_app", app.Name)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
+	_ = d.Set("embed_url", linksValue(app.Links, "appLinks", "href"))
+
 	if app.Settings.ImplicitAssignment != nil {
 		_ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
 	} else {
