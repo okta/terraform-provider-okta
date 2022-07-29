@@ -38,6 +38,7 @@ type (
 		apiToken         string
 		clientID         string
 		privateKey       string
+		privateKeyId     string
 		scopes           []string
 		retryCount       int
 		parallelism      int
@@ -106,6 +107,7 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 		okta.WithToken(c.apiToken),
 		okta.WithClientId(c.clientID),
 		okta.WithPrivateKey(c.privateKey),
+		okta.WithPrivateKeyId(c.privateKeyId),
 		okta.WithScopes(c.scopes),
 		okta.WithCache(false),
 		okta.WithHttpClientPtr(httpClient),
