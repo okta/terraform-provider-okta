@@ -39,6 +39,7 @@ type (
 		apiToken         string
 		clientID         string
 		privateKey       string
+		privateKeyId     string
 		scopes           []string
 		retryCount       int
 		parallelism      int
@@ -128,7 +129,7 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 	case c.privateKey != "":
 		setters = append(
 			setters,
-			okta.WithPrivateKey(c.privateKey), okta.WithAuthorizationMode("PrivateKey"), okta.WithScopes(c.scopes),
+			okta.WithPrivateKey(c.privateKey), okta.WithPrivateKeyId(c.privateKeyId), okta.WithScopes(c.scopes), okta.WithAuthorizationMode("PrivateKey"),
 		)
 	}
 
