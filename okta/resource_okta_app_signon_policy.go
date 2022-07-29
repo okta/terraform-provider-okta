@@ -89,7 +89,6 @@ func resourceAppSignOnPolicyDelete(ctx context.Context, d *schema.ResourceData, 
 		2. assign the default policy to all apps using the current policy (the one to delete)
 		3. delete the policy
 	**/
-
 	client := getOktaClientFromMetadata(m)
 	qp := query.NewQueryParams()
 	qp.Type = "ACCESS_POLICY"
@@ -141,7 +140,6 @@ func resourceAppSignOnPolicyDelete(ctx context.Context, d *schema.ResourceData, 
 						return diag.Errorf("failed to assign default policy '%v' to app %v: %v", defaultPolicy.Id, app.Id, updateErr)
 					}
 				}
-
 			}
 		}
 
