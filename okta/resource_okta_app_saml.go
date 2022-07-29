@@ -79,6 +79,66 @@ func resourceAppSaml() *schema.Resource {
 				ValidateDiagFunc: intBetween(2, 10),
 				Description:      "Number of years the certificate is valid.",
 			},
+			"keys": {
+				Type:        schema.TypeList,
+				Description: "Application keys",
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"kid": {
+							Type:        schema.TypeString,
+							Description: "Key ID",
+							Computed:    true,
+						},
+						"kty": {
+							Type:        schema.TypeString,
+							Description: "Key type",
+							Computed:    true,
+						},
+						"use": {
+							Type:        schema.TypeString,
+							Description: "Acceptable usage of the certificate",
+							Computed:    true,
+						},
+						"created": {
+							Type:        schema.TypeString,
+							Description: "Created date",
+							Computed:    true,
+						},
+						"last_updated": {
+							Type:        schema.TypeString,
+							Description: "Last updated date",
+							Computed:    true,
+						},
+						"expires_at": {
+							Type:        schema.TypeString,
+							Description: "Expiration date",
+							Computed:    true,
+						},
+						"e": {
+							Type:        schema.TypeString,
+							Description: "RSA exponent",
+							Computed:    true,
+						},
+						"n": {
+							Type:        schema.TypeString,
+							Description: "RSA modulus",
+							Computed:    true,
+						},
+						"x5c": {
+							Type:        schema.TypeList,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Description: "X.509 Certificate Chain",
+							Computed:    true,
+						},
+						"x5t_s256": {
+							Type:        schema.TypeString,
+							Description: "X.509 certificate SHA-256 thumbprint",
+							Computed:    true,
+						},
+					},
+				},
+			},
 			"metadata": {
 				Type:        schema.TypeString,
 				Description: "SAML xml metadata payload",
@@ -457,6 +517,17 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		_ = d.Set("entity_key", key)
 		_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.X509Data.X509Certificates[0].Data)
 	}
+
+	keys, err := fetchAppKeys(ctx, m, app.Id)
+
+	if err != nil {
+		return diag.Errorf("failed to load existing keys for SAML application: %f", err)
+	}
+
+	if err := setAppKeys(d, keys); err != nil {
+		return diag.Errorf("failed to set Application Credential Key Values: %v", err)
+	}
+
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	if app.SignOnMode == "SAML_1_1" {
 		_ = d.Set("saml_version", saml11)
@@ -669,6 +740,7 @@ func tryCreateCertificate(ctx context.Context, d *schema.ResourceData, m interfa
 		// Set ID and the read done at the end of update and create will do the GET on metadata
 		_ = d.Set("key_id", key.Kid)
 	}
+
 	return nil
 }
 
