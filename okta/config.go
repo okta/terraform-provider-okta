@@ -35,6 +35,7 @@ type (
 		orgName          string
 		domain           string
 		httpProxy        string
+		accessToken      string
 		apiToken         string
 		clientID         string
 		privateKey       string
@@ -104,11 +105,6 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 
 	setters := []okta.ConfigSetter{
 		okta.WithOrgUrl(orgUrl),
-		okta.WithToken(c.apiToken),
-		okta.WithClientId(c.clientID),
-		okta.WithPrivateKey(c.privateKey),
-		okta.WithPrivateKeyId(c.privateKeyId),
-		okta.WithScopes(c.scopes),
 		okta.WithCache(false),
 		okta.WithHttpClientPtr(httpClient),
 		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
@@ -116,9 +112,27 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
 		okta.WithUserAgentExtra("okta-terraform/3.31.0"),
 	}
-	if c.apiToken == "" {
-		setters = append(setters, okta.WithAuthorizationMode("PrivateKey"))
+
+	switch {
+	case c.accessToken != "":
+		setters = append(
+			setters,
+			okta.WithToken(c.accessToken), okta.WithAuthorizationMode("Bearer"),
+		)
+
+	case c.apiToken != "":
+		setters = append(
+			setters,
+			okta.WithToken(c.apiToken), okta.WithAuthorizationMode("SSWS"),
+		)
+
+	case c.privateKey != "":
+		setters = append(
+			setters,
+			okta.WithPrivateKey(c.privateKey), okta.WithPrivateKeyId(c.privateKeyId), okta.WithScopes(c.scopes), okta.WithAuthorizationMode("PrivateKey"),
+		)
 	}
+
 	if disableHTTPS {
 		setters = append(setters, okta.WithTestingDisableHttpsCheck(true))
 	}
