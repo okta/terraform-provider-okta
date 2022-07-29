@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.32.0 (July 29, 2022)
+
+NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* Export the app embed url for saml apps [#1215](https://github.com/okta/terraform-provider-okta/pull/1215). Thanks, [@felixcolaci](https://github.com/felixcolaci)!
+* Ability to configure the provider with an access (Bearer) token [#1222](https://github.com/okta/terraform-provider-okta/pull/1222). Thanks, [@ericnorrisl](https://github.com/ericnorris)!
+* Add `privateKeyId` private key signing support available in okta-sdk-golang client [#1223](https://github.com/okta/terraform-provider-okta/pull/1223). Thanks, [@powellchristoph](https://github.com/powellchristoph)!
+
+BUG FIXES:
+
+* Fix "no default policy found" bug, includes ability for provider to discover if it is running against an OIE or Classic org [#1224](https://github.com/okta/terraform-provider-okta/pull/1224). Thanks, [@monde](https://github.com/monde)!
+
 ## 3.31.0 (July 08, 2022)
 
 NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
