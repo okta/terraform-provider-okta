@@ -4,6 +4,7 @@
 
 NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
 
+* Add keys attribute to okta_app_saml resource [#1206](https://github.com/okta/terraform-provider-okta/pull/1206). Thanks, [@ericnorrisl](https://github.com/ericnorris) and [@slichtenthal](https://github.com/slichtenthal)!
 * Export the app embed url for saml apps [#1215](https://github.com/okta/terraform-provider-okta/pull/1215). Thanks, [@felixcolaci](https://github.com/felixcolaci)!
 * Ability to configure the provider with an access (Bearer) token [#1222](https://github.com/okta/terraform-provider-okta/pull/1222). Thanks, [@ericnorrisl](https://github.com/ericnorris)!
 * Add `privateKeyId` private key signing support available in okta-sdk-golang client [#1223](https://github.com/okta/terraform-provider-okta/pull/1223). Thanks, [@powellchristoph](https://github.com/powellchristoph)!
