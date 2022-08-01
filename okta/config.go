@@ -130,7 +130,7 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 	case c.privateKey != "":
 		setters = append(
 			setters,
-			okta.WithPrivateKey(c.privateKey), okta.WithPrivateKeyId(c.privateKeyId), okta.WithScopes(c.scopes), okta.WithAuthorizationMode("PrivateKey"),
+			okta.WithPrivateKey(c.privateKey), okta.WithPrivateKeyId(c.privateKeyId), okta.WithScopes(c.scopes), okta.WithClientId(c.clientID), okta.WithAuthorizationMode("PrivateKey"),
 		)
 	}
 
