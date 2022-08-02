@@ -1,5 +1,12 @@
 # Changelog
 
+
+## 3.33.0 (August 02, 2022)
+
+BUG FIXES:
+
+* Fix "error invalid configuration" error introduced in v3.32.0 release; includes unit tests to verify fix. [#1234](https://github.com/okta/terraform-provider-okta/pull/1234). Thanks, [@ericnorris](https://github.com/ericnorris)!
+
 ## 3.32.0 (July 29, 2022)
 
 NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
