@@ -40,6 +40,7 @@ type (
 		clientID         string
 		privateKey       string
 		privateKeyId     string
+		jwt              string
 		scopes           []string
 		retryCount       int
 		parallelism      int
@@ -131,6 +132,12 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 		setters = append(
 			setters,
 			okta.WithPrivateKey(c.privateKey), okta.WithPrivateKeyId(c.privateKeyId), okta.WithScopes(c.scopes), okta.WithClientId(c.clientID), okta.WithAuthorizationMode("PrivateKey"),
+		)
+
+	case c.jwt != "":
+		setters = append(
+			setters,
+			okta.WithToken(c.jwt), okta.WithScopes(c.scopes), okta.WithAuthorizationMode("JWT"),
 		)
 	}
 
