@@ -144,11 +144,6 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	if c.apiToken != "" {
-		if _, _, err := client.User.GetUser(ctx, "me"); err != nil {
-			return err
-		}
-	}
 	c.oktaClient = client
 	c.supplementClient = &sdk.APISupplement{
 		RequestExecutor: client.CloneRequestExecutor(),

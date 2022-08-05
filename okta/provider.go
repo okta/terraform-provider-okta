@@ -432,7 +432,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		accessToken:    d.Get("access_token").(string),
 		clientID:       d.Get("client_id").(string),
 		privateKey:     d.Get("private_key").(string),
-		privateKeyId:	d.Get("private_key_id").(string),
+		privateKeyId:   d.Get("private_key_id").(string),
 		scopes:         convertInterfaceToStringSet(d.Get("scopes")),
 		retryCount:     d.Get("max_retries").(int),
 		parallelism:    d.Get("parallelism").(int),
@@ -453,6 +453,13 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	}
 	if err := config.loadAndValidate(ctx); err != nil {
 		return nil, diag.Errorf("[ERROR] invalid configuration: %v", err)
+	}
+
+	// NOTE: validate credentials during initial config with a call to /api/v1/users/me
+	if config.apiToken != "" {
+		if _, _, err := config.oktaClient.User.GetUser(ctx, "me"); err != nil {
+			return err, diag.Errorf("[ERROR] : api_token is not correct %v", err)
+		}
 	}
 
 	// Discover if the Okta Org is Classic or OIE
