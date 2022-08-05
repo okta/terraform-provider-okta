@@ -32,7 +32,7 @@ sweep:
 	go test $(TEST) -v -sweep=$(SWEEP) $(SWEEPARGS)
 
 test:
-	go test -i $(TEST) || exit 1
+	go test $(TEST) || exit 1
 	echo $(TEST) | \
 		xargs -t -n4 go test $(TESTARGS) $(TEST_FILTER) -timeout=30s -parallel=4
 
