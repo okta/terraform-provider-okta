@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestMaxApiCapacity(t *testing.T) {
+func TestAccMaxApiCapacity(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appGroupAssignments)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
