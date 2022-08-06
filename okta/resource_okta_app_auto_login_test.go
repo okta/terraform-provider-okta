@@ -4,16 +4,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func TestAccAppAutoLoginApplication_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appAutoLogin)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(appAutoLogin, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appAutoLogin)
 
 	resource.Test(t, resource.TestCase{
@@ -25,7 +23,7 @@ func TestAccAppAutoLoginApplication_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewAutoLoginApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "sign_on_url", "https://example.com/login.html"),
 					resource.TestCheckResourceAttr(resourceName, "sign_on_redirect_url", "https://example.com"),
 					resource.TestCheckResourceAttr(resourceName, "reveal_password", "true"),
@@ -42,7 +40,7 @@ func TestAccAppAutoLoginApplication_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewAutoLoginApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "sign_on_url", "https://exampleupdate.com/login.html"),
 					resource.TestCheckResourceAttr(resourceName, "sign_on_redirect_url", "https://exampleupdate.com"),

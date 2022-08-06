@@ -7,16 +7,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccAppUserSchemas_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appUserSchemaProperty)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 
 	resource.Test(t, resource.TestCase{
@@ -28,8 +26,7 @@ func TestAccAppUserSchemas_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
-					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "required", "false"),
@@ -48,7 +45,7 @@ func TestAccAppUserSchemas_crud(t *testing.T) {
 				Config: updated,
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test updated"),

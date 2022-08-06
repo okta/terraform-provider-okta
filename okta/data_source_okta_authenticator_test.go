@@ -4,14 +4,12 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaDataSourceAuthenticator_read(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(authenticator)
-	config := mgr.GetFixtures("datasource.tf", ri, t)
+	mgr := newFixtureManager(authenticator, t.Name())
+	config := mgr.GetFixtures("datasource.tf", t)
 	resourceName := fmt.Sprintf("data.%s.test", authenticator)
 	resourceName1 := fmt.Sprintf("data.%s.test_1", authenticator)
 

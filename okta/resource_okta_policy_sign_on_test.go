@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
@@ -15,8 +14,8 @@ func deleteSignOnPolicies(client *testClient) error {
 }
 
 func TestAccOktaPolicySignOn_defaultError(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testOktaPolicySignOnDefaultErrors(ri)
+	mgr := newFixtureManager(policySignOn, t.Name())
+	config := testOktaPolicySignOnDefaultErrors(mgr.Seed)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -32,11 +31,10 @@ func TestAccOktaPolicySignOn_defaultError(t *testing.T) {
 }
 
 func TestAccOktaPolicySignOn_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(policySignOn)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_inactive.tf", ri, t)
-	renamedConfig := mgr.GetFixtures("basic_renamed.tf", ri, t)
+	mgr := newFixtureManager(policySignOn, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_inactive.tf", t)
+	renamedConfig := mgr.GetFixtures("basic_renamed.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policySignOn)
 
 	resource.Test(t, resource.TestCase{
@@ -48,7 +46,7 @@ func TestAccOktaPolicySignOn_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test SignOn Policy"),
 				),
@@ -57,7 +55,7 @@ func TestAccOktaPolicySignOn_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test SignOn Policy Updated"),
 				),
@@ -66,7 +64,7 @@ func TestAccOktaPolicySignOn_crud(t *testing.T) {
 				Config: renamedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAccUpdated_%d", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAccUpdated_%d", mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test SignOn Policy"),
 				),

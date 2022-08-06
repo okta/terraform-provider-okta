@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -15,11 +14,10 @@ var (
 )
 
 func TestAccOktaDataSourceUsers_read(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(users)
-	users := mgr.GetFixtures("users.tf", ri, t)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	dataSource := mgr.GetFixtures("datasource.tf", ri, t)
+	mgr := newFixtureManager(users, t.Name())
+	users := mgr.GetFixtures("users.tf", t)
+	config := mgr.GetFixtures("basic.tf", t)
+	dataSource := mgr.GetFixtures("datasource.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -58,10 +56,9 @@ func TestAccOktaDataSourceUsers_read(t *testing.T) {
 }
 
 func TestAccOktaDataSourceUsers_readWithGroupId(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(users)
-	users := mgr.GetFixtures("users_with_group.tf", ri, t)
-	config := mgr.GetFixtures("group.tf", ri, t)
+	mgr := newFixtureManager(users, t.Name())
+	users := mgr.GetFixtures("users_with_group.tf", t)
+	config := mgr.GetFixtures("group.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -93,10 +90,9 @@ func TestAccOktaDataSourceUsers_readWithGroupId(t *testing.T) {
 }
 
 func TestAccOktaDataSourceUsers_readWithGroupIdIncludingGroups(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(users)
-	users := mgr.GetFixtures("users_with_group.tf", ri, t)
-	config := mgr.GetFixtures("group_with_groups.tf", ri, t)
+	mgr := newFixtureManager(users, t.Name())
+	users := mgr.GetFixtures("users_with_group.tf", t)
+	config := mgr.GetFixtures("group_with_groups.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {

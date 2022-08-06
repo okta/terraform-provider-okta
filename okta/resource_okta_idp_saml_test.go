@@ -4,15 +4,13 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaIdpSaml_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(idpSaml)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(idpSaml, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", idpSaml)
 
 	resource.Test(t, resource.TestCase{
@@ -23,7 +21,7 @@ func TestAccOktaIdpSaml_crud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "acs_type", "INSTANCE"),
 					resource.TestCheckResourceAttrSet(resourceName, "audience"),
 					resource.TestCheckResourceAttr(resourceName, "sso_url", "https://idp.example.com"),
@@ -41,7 +39,7 @@ func TestAccOktaIdpSaml_crud(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "max_clock_skew", "60"),
 					resource.TestCheckResourceAttr(resourceName, "acs_type", "INSTANCE"),
 					resource.TestCheckResourceAttrSet(resourceName, "audience"),

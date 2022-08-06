@@ -8,7 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -47,10 +46,10 @@ func deletePolicyRulesByType(ruleType string, client *testClient) error {
 }
 
 func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testOktaPolicyRulePassword(ri)
-	updatedConfig := testOktaPolicyRulePasswordUpdated(ri)
-	resourceName := buildResourceFQN(policyRulePassword, ri)
+	mgr := newFixtureManager(policyRulePassword, t.Name())
+	config := testOktaPolicyRulePassword(mgr.Seed)
+	updatedConfig := testOktaPolicyRulePasswordUpdated(mgr.Seed)
+	resourceName := buildResourceFQN(policyRulePassword, mgr.Seed)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -61,7 +60,7 @@ func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 				),
 			},
@@ -69,7 +68,7 @@ func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "password_change", "DENY"),
 					resource.TestCheckResourceAttr(resourceName, "password_reset", "DENY"),
@@ -82,8 +81,8 @@ func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
 
 // Testing the logic that errors when an invalid priority is provided
 func TestAccOktaPolicyRulePassword_priorityError(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testOktaPolicyRulePriorityError(ri)
+	mgr := newFixtureManager(policyRulePassword, t.Name())
+	config := testOktaPolicyRulePriorityError(mgr.Seed)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -100,10 +99,10 @@ func TestAccOktaPolicyRulePassword_priorityError(t *testing.T) {
 
 // Testing the successful setting of priority
 func TestAccOktaPolicyRulePassword_priority(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testOktaPolicyRulePriority(ri)
-	resourceName := buildResourceFQN(policyRulePassword, ri)
-	name := buildResourceName(ri)
+	mgr := newFixtureManager(policyRulePassword, t.Name())
+	config := testOktaPolicyRulePriority(mgr.Seed)
+	resourceName := buildResourceFQN(policyRulePassword, mgr.Seed)
+	name := buildResourceName(mgr.Seed)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

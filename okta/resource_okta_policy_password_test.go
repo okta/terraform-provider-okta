@@ -7,7 +7,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -38,10 +37,9 @@ func deletePolicyByType(t string, client *testClient) error {
 }
 
 func TestAccOktaPolicyPassword_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(policyPassword)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(policyPassword, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyPassword)
 
 	resource.Test(t, resource.TestCase{
@@ -53,7 +51,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test Password Policy"),
 				),
@@ -62,7 +60,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test Password Policy Updated"),
 					resource.TestCheckResourceAttr(resourceName, "password_min_length", "12"),

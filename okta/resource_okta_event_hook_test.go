@@ -6,7 +6,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -14,12 +13,11 @@ import (
 )
 
 func TestAccOktaEventHook_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := "okta_event_hook.test"
-	mgr := newFixtureManager(eventHook)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
-	activatedConfig := mgr.GetFixtures("basic_activated.tf", ri, t)
+	mgr := newFixtureManager(eventHook, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	activatedConfig := mgr.GetFixtures("basic_activated.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -30,7 +28,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, eventHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
@@ -51,7 +49,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, eventHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
@@ -91,7 +89,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 				Config: activatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, eventHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),

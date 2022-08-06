@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
@@ -34,16 +33,14 @@ func sweepGroupRules(client *testClient) error {
 }
 
 func TestAccOktaGroupRule_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", groupRule)
-	mgr := newFixtureManager("okta_group_rule")
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
-	name := buildResourceName(ri)
-	ri = acctest.RandInt()
-	groupUpdate := mgr.GetFixtures("basic_group_update.tf", ri, t)
-	deactivated := mgr.GetFixtures("basic_deactivated.tf", ri, t)
-	name2 := buildResourceName(ri)
+	mgr := newFixtureManager("okta_group_rule", t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	name := buildResourceName(mgr.Seed)
+	groupUpdate := mgr.GetFixtures("basic_group_update.tf", t)
+	deactivated := mgr.GetFixtures("basic_deactivated.tf", t)
+	name2 := buildResourceName(mgr.Seed)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -86,10 +83,10 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 }
 
 func TestAccOktaGroupRule_invalidHandle(t *testing.T) {
-	ri := acctest.RandInt()
+	mgr := newFixtureManager(groupRule, t.Name())
 	groupResource := fmt.Sprintf("%s.test", group)
 	ruleResource := fmt.Sprintf("%s.inval", groupRule)
-	testName := buildResourceName(ri)
+	testName := buildResourceName(mgr.Seed)
 	testSetup := buildInvalidSetup(testName)
 	testBuild := buildInvalidBuild(testName)
 	testRun := buildInvalidTest(testName)

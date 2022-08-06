@@ -5,17 +5,15 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(userFactorQuestion)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(userFactorQuestion, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", userFactorQuestion)
 	resource.Test(
 		t, resource.TestCase{

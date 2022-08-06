@@ -3,14 +3,12 @@ package okta
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccDataSourceOktaEmailCustomization_read(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(emailCustomization)
-	config := mgr.GetFixtures("datasource.tf", ri, t)
+	mgr := newFixtureManager(emailCustomization, t.Name())
+	config := mgr.GetFixtures("datasource.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

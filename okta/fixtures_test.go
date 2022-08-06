@@ -7,10 +7,14 @@ import (
 	"path"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 )
 
 type fixtureManager struct {
-	Path string
+	Path     string
+	Seed     int
+	TestName string
 }
 
 const (
@@ -20,14 +24,17 @@ const (
 )
 
 // newFixtureManager get a new fixture manager for a particular resource.
-func newFixtureManager(resourceName string) *fixtureManager {
+func newFixtureManager(resourceName, testName string) *fixtureManager {
 	dir, _ := os.Getwd()
+	ri := acctest.RandInt()
 	return &fixtureManager{
-		Path: path.Join(dir, "../examples", resourceName),
+		Path:     path.Join(dir, "../examples", resourceName),
+		TestName: testName,
+		Seed:     ri,
 	}
 }
 
-func (manager *fixtureManager) GetFixtures(fixtureName string, rInt int, t *testing.T) string {
+func (manager *fixtureManager) GetFixtures(fixtureName string, t *testing.T) string {
 	file, err := os.Open(path.Join(manager.Path, fixtureName))
 	if err != nil {
 		t.Fatalf("failed to load terraform fixtures for ACC test, err: %v", err)
@@ -42,9 +49,9 @@ func (manager *fixtureManager) GetFixtures(fixtureName string, rInt int, t *test
 		return tfConfig
 	}
 
-	return manager.ConfigReplace(tfConfig, rInt)
+	return manager.ConfigReplace(tfConfig)
 }
 
-func (manager *fixtureManager) ConfigReplace(tfConfig string, rInt int) string {
-	return strings.ReplaceAll(tfConfig, uuidPattern, fmt.Sprintf("%d", rInt))
+func (manager *fixtureManager) ConfigReplace(tfConfig string) string {
+	return strings.ReplaceAll(tfConfig, uuidPattern, fmt.Sprintf("%d", manager.Seed))
 }

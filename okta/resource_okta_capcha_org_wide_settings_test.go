@@ -5,16 +5,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaCaptchaOrgWideSettings(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(captchaOrgWideSettings)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("updated.tf", ri, t)
-	empty := mgr.GetFixtures("empty.tf", ri, t)
+	mgr := newFixtureManager(captchaOrgWideSettings, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
+	empty := mgr.GetFixtures("empty.tf", t)
 	resourceName := fmt.Sprintf("%s.test", captchaOrgWideSettings)
 	resource.Test(
 		t, resource.TestCase{

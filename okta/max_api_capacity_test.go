@@ -4,14 +4,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccMaxApiCapacity(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appGroupAssignments)
-	config := mgr.GetFixtures("datasource.tf", ri, t)
+	mgr := newFixtureManager(appGroupAssignments, t.Name())
+	config := mgr.GetFixtures("datasource.tf", t)
 
 	oldApiCapacity := os.Getenv("MAX_API_CAPACITY")
 	t.Cleanup(func() {

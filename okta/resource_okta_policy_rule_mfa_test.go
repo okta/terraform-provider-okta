@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
@@ -14,10 +13,9 @@ func deleteMfaPolicyRules(client *testClient) error {
 }
 
 func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(policyRuleMfa)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(policyRuleMfa, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleMfa)
 
 	resource.Test(t, resource.TestCase{
@@ -29,7 +27,7 @@ func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "app_include.#", "1"),
 				),
@@ -38,7 +36,7 @@ func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "app_include.#", "2"),
 				),

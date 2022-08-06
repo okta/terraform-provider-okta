@@ -6,17 +6,15 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", appSignOnPolicyRule)
-	mgr := newFixtureManager(appSignOnPolicyRule)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(appSignOnPolicyRule, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -26,7 +24,7 @@ func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttrSet(resourceName, "priority"),
 					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),
@@ -48,7 +46,7 @@ func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)+"_updated"),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)+"_updated"),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttrSet(resourceName, "priority"),
 					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),

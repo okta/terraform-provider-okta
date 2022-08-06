@@ -6,7 +6,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -27,9 +26,8 @@ func sweepLinkDefinitions(client *testClient) error {
 }
 
 func TestAccOktaLinkDefinition(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(linkDefinition)
-	config := mgr.GetFixtures("basic.tf", ri, t)
+	mgr := newFixtureManager(linkDefinition, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", linkDefinition)
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -39,7 +37,7 @@ func TestAccOktaLinkDefinition(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "primary_name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "primary_name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "primary_title", "Manager"),
 					resource.TestCheckResourceAttr(resourceName, "primary_description", "Manager link property"),
 					resource.TestCheckResourceAttr(resourceName, "associated_name", "testAcc_subordinate"),

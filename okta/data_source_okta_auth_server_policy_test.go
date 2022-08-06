@@ -4,15 +4,13 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaDataSourceAuthServerPolicy_read(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(authServerPolicy)
-	config := mgr.GetFixtures("datasource.tf", ri, t)
-	createServerWithPolicy := buildTestAuthServerWithPolicy(ri)
+	mgr := newFixtureManager(authServerPolicy, t.Name())
+	config := mgr.GetFixtures("datasource.tf", t)
+	createServerWithPolicy := buildTestAuthServerWithPolicy(mgr.Seed)
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,

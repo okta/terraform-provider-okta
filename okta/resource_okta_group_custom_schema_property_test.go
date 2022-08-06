@@ -8,7 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -31,11 +30,10 @@ func sweepGroupCustomSchema(client *testClient) error {
 }
 
 func TestAccOktaGroupSchema_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(groupSchemaProperty)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("basic_updated.tf", ri, t)
-	unique := mgr.GetFixtures("unique.tf", ri, t)
+	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("basic_updated.tf", t)
+	unique := mgr.GetFixtures("unique.tf", t)
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 
 	resource.Test(t, resource.TestCase{
@@ -47,7 +45,7 @@ func TestAccOktaGroupSchema_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaGroupSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test"),
@@ -68,7 +66,7 @@ func TestAccOktaGroupSchema_crud(t *testing.T) {
 				Config: updated,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaGroupSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test updated"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test updated"),
@@ -89,7 +87,7 @@ func TestAccOktaGroupSchema_crud(t *testing.T) {
 				Config: unique,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaGroupSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test setting unique attribute to UNIQUE_VALIDATED"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test setting unique attribute to UNIQUE_VALIDATED"),
@@ -106,12 +104,11 @@ func TestAccOktaGroupSchema_crud(t *testing.T) {
 }
 
 func TestAccOktaGroupSchema_arrayString(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
-	mgr := newFixtureManager(groupSchemaProperty)
-	config := mgr.GetFixtures("array_string.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("array_string_updated.tf", ri, t)
-	arrayEnum := mgr.GetFixtures("array_enum.tf", ri, t)
+	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+	config := mgr.GetFixtures("array_string.tf", t)
+	updatedConfig := mgr.GetFixtures("array_string_updated.tf", t)
+	arrayEnum := mgr.GetFixtures("array_enum.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -122,7 +119,7 @@ func TestAccOktaGroupSchema_arrayString(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaGroupSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test"),
@@ -136,7 +133,7 @@ func TestAccOktaGroupSchema_arrayString(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaGroupSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test updated"),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test updated"),
@@ -150,7 +147,7 @@ func TestAccOktaGroupSchema_arrayString(t *testing.T) {
 				Config: arrayEnum,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaGroupSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "string"),
@@ -219,8 +216,7 @@ func testOktaGroupSchemasExists(name string) resource.TestCheckFunc {
 }
 
 func TestAccResourceOktaGroupSchema_array_enum_number(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(groupSchemaProperty)
+	mgr := newFixtureManager(groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -250,7 +246,7 @@ func TestAccResourceOktaGroupSchema_array_enum_number(t *testing.T) {
 			    title = "number point oh three"
 			    const = "0.03"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "number"),
@@ -289,7 +285,7 @@ func TestAccResourceOktaGroupSchema_array_enum_number(t *testing.T) {
 			    title = "number point oh three three"
 			    const = "0.033"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "number"),
@@ -310,8 +306,7 @@ func TestAccResourceOktaGroupSchema_array_enum_number(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupSchema_enum_number(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(groupSchemaProperty)
+	mgr := newFixtureManager(groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -340,7 +335,7 @@ func TestAccResourceOktaGroupSchema_enum_number(t *testing.T) {
 			    title = "number point oh three"
 			    const = "0.03"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "number"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "0.01"),
@@ -377,7 +372,7 @@ func TestAccResourceOktaGroupSchema_enum_number(t *testing.T) {
 			    title = "number point oh three three"
 			    const = "0.033"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "number"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "0.011"),
@@ -397,8 +392,7 @@ func TestAccResourceOktaGroupSchema_enum_number(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupSchema_array_enum_integer(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(groupSchemaProperty)
+	mgr := newFixtureManager(groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -428,7 +422,7 @@ func TestAccResourceOktaGroupSchema_array_enum_integer(t *testing.T) {
 			    title = "integer three"
 			    const = "3"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "integer"),
@@ -467,7 +461,7 @@ func TestAccResourceOktaGroupSchema_array_enum_integer(t *testing.T) {
 			    title = "integer six"
 			    const = "6"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "integer"),
@@ -488,8 +482,7 @@ func TestAccResourceOktaGroupSchema_array_enum_integer(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupSchema_enum_integer(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(groupSchemaProperty)
+	mgr := newFixtureManager(groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -518,7 +511,7 @@ func TestAccResourceOktaGroupSchema_enum_integer(t *testing.T) {
 			    title = "integer three"
 			    const = "3"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "integer"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "1"),
@@ -555,7 +548,7 @@ func TestAccResourceOktaGroupSchema_enum_integer(t *testing.T) {
 			    title = "integer six"
 			    const = "6"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "integer"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "4"),
@@ -577,8 +570,7 @@ func TestAccResourceOktaGroupSchema_enum_integer(t *testing.T) {
 func TestAccResourceOktaGroupSchema_array_enum_boolean(t *testing.T) {
 	// TODO deal with apparent monolith bug:
 	// "the API returned an error: Array specified in enum field must match const values specified in oneOf field."
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(groupSchemaProperty)
+	mgr := newFixtureManager(groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -604,7 +596,7 @@ func TestAccResourceOktaGroupSchema_array_enum_boolean(t *testing.T) {
 			    title = "boolean False"
 			    const = "false"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "boolean"),
@@ -636,7 +628,7 @@ func TestAccResourceOktaGroupSchema_array_enum_boolean(t *testing.T) {
 			    title = "boolean TRUE"
 			    const = "true"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "boolean"),
@@ -656,8 +648,7 @@ func TestAccResourceOktaGroupSchema_array_enum_boolean(t *testing.T) {
 func TestAccResourceOktaGroupSchema_enum_boolean(t *testing.T) {
 	// TODO deal with apparent monolith bug:
 	// "the API returned an error: Array specified in enum field must match const values specified in oneOf field."
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(groupSchemaProperty)
+	mgr := newFixtureManager(groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -682,7 +673,7 @@ func TestAccResourceOktaGroupSchema_enum_boolean(t *testing.T) {
 			    title = "boolean False"
 			    const = "false"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "boolean"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "true"),
@@ -712,7 +703,7 @@ func TestAccResourceOktaGroupSchema_enum_boolean(t *testing.T) {
 			    title = "boolean TRUE"
 			    const = "true"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "boolean"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "false"),
@@ -729,8 +720,7 @@ func TestAccResourceOktaGroupSchema_enum_boolean(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupSchema_array_enum_string(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(groupSchemaProperty)
+	mgr := newFixtureManager(groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -760,7 +750,7 @@ func TestAccResourceOktaGroupSchema_array_enum_string(t *testing.T) {
 			    title = "string Three"
 			    const = "three"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "string"),
@@ -799,7 +789,7 @@ func TestAccResourceOktaGroupSchema_array_enum_string(t *testing.T) {
 			    title = "STRING THREE"
 			    const = "THREE"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "string"),
@@ -820,8 +810,7 @@ func TestAccResourceOktaGroupSchema_array_enum_string(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupSchema_enum_string(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(groupSchemaProperty)
+	mgr := newFixtureManager(groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -850,7 +839,7 @@ func TestAccResourceOktaGroupSchema_enum_string(t *testing.T) {
 			    title = "string Three"
 			    const = "three"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "one"),
@@ -887,7 +876,7 @@ func TestAccResourceOktaGroupSchema_enum_string(t *testing.T) {
 			    title = "STRING THREE"
 			    const = "THREE"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "ONE"),

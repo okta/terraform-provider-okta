@@ -5,15 +5,13 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccDataSourceOktaUser_read(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
-	baseConfig := mgr.GetFixtures("datasource.tf", ri, t)
-	createUserConfig := mgr.GetFixtures("datasource_create_user.tf", ri, t)
+	mgr := newFixtureManager(user, t.Name())
+	baseConfig := mgr.GetFixtures("datasource.tf", t)
+	createUserConfig := mgr.GetFixtures("datasource_create_user.tf", t)
 
 	// NOTE: eliminated previous flapping issues when delay_read_seconds was added to okta_user
 	// TF_ACC=1 go test -tags unit -mod=readonly -test.v -run ^TestAccOktaDataSourceUser_read$

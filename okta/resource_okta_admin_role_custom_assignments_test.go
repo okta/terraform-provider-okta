@@ -6,15 +6,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaAdminRoleCustomAssignments(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(adminRoleCustomAssignments)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(adminRoleCustomAssignments, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", adminRoleCustomAssignments)
 	resource.Test(
 		t, resource.TestCase{

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
@@ -15,10 +14,9 @@ func deleteMfaPolicies(client *testClient) error {
 
 // Note: at least one factor (e.g. `okta_otp`) should be enabled before running this test.
 func TestAccOktaMfaPolicy_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(policyMfa)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(policyMfa, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyMfa)
 
 	resource.Test(t, resource.TestCase{
@@ -30,7 +28,7 @@ func TestAccOktaMfaPolicy_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy"),
 					resource.TestCheckResourceAttr(resourceName, "okta_email.enroll", "REQUIRED"),
@@ -41,7 +39,7 @@ func TestAccOktaMfaPolicy_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)+"_new"),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)+"_new"),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy Updated"),
 					resource.TestCheckResourceAttr(resourceName, "okta_email.enroll", "REQUIRED"),

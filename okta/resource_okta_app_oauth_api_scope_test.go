@@ -6,16 +6,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func TestAccAppOAuthApplication_apiScope(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuthAPIScope)
-	plainConfig := mgr.GetFixtures("basic.tf", ri, t)
-	plainUpdatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(appOAuthAPIScope, t.Name())
+	plainConfig := mgr.GetFixtures("basic.tf", t)
+	plainUpdatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test_app_scopes", appOAuthAPIScope)
 
 	// Replace example org url with actual url to prevent API error

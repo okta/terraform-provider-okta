@@ -4,16 +4,14 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaDataSourceGroup_read(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(group)
-	groupCreate := mgr.GetFixtures("okta_group.tf", ri, t)
-	config := mgr.GetFixtures("datasource.tf", ri, t)
-	configInvalid := mgr.GetFixtures("datasource_not_found.tf", ri, t)
+	mgr := newFixtureManager(group, t.Name())
+	groupCreate := mgr.GetFixtures("okta_group.tf", t)
+	config := mgr.GetFixtures("datasource.tf", t)
+	configInvalid := mgr.GetFixtures("datasource_not_found.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {

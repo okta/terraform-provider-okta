@@ -6,19 +6,17 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccAppGroupAssignment_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", appGroupAssignment)
 	resourceName0 := fmt.Sprintf("%s.test.0", appGroupAssignment)
 	resourceName1 := fmt.Sprintf("%s.test.1", appGroupAssignment)
-	mgr := newFixtureManager(appGroupAssignment)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(appGroupAssignment, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -95,13 +93,12 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 }
 
 func TestAccAppGroupAssignment_retain(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", appGroupAssignment)
 	appName := fmt.Sprintf("%s.test", appOAuth)
 	groupName := fmt.Sprintf("%s.test", group)
-	mgr := newFixtureManager(appGroupAssignment)
-	retainAssignment := mgr.GetFixtures("retain_assignment.tf", ri, t)
-	retainAssignmentDestroy := mgr.GetFixtures("retain_assignment_destroy.tf", ri, t)
+	mgr := newFixtureManager(appGroupAssignment, t.Name())
+	retainAssignment := mgr.GetFixtures("retain_assignment.tf", t)
+	retainAssignmentDestroy := mgr.GetFixtures("retain_assignment_destroy.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

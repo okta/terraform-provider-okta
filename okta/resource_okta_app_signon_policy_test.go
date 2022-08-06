@@ -4,16 +4,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSignOnPolicy)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
-	renamedConfig := mgr.GetFixtures("basic_renamed.tf", ri, t)
+	mgr := newFixtureManager(appSignOnPolicy, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	renamedConfig := mgr.GetFixtures("basic_renamed.tf", t)
 	resourceName := fmt.Sprintf("%v.test", appSignOnPolicy)
 
 	resource.Test(t, resource.TestCase{
@@ -25,7 +23,7 @@ func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("Test_App", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("Test_App", mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "description", "The app signon policy used by our test app."),
 				),
 			},
@@ -33,7 +31,7 @@ func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("Test_App", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("Test_App", mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "description", "The updated app signon policy used by our test app."),
 				),
 			},
@@ -41,7 +39,7 @@ func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
 				Config: renamedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("Test_App_Renamed", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("Test_App_Renamed", mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "description", "The app signon policy used by our test app."),
 				),
 			},

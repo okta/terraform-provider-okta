@@ -6,18 +6,16 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccOktaAppUser_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", appUser)
-	mgr := newFixtureManager(appUser)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	update := mgr.GetFixtures("update.tf", ri, t)
-	basicProfile := mgr.GetFixtures("basic_profile.tf", ri, t)
+	mgr := newFixtureManager(appUser, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	update := mgr.GetFixtures("update.tf", t)
+	basicProfile := mgr.GetFixtures("basic_profile.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -30,7 +28,7 @@ func TestAccOktaAppUser_crud(t *testing.T) {
 					ensureAppUserExists(resourceName),
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "user_id"),
-					resource.TestCheckResourceAttr(resourceName, "username", fmt.Sprintf("testAcc_%d@example.com", ri)),
+					resource.TestCheckResourceAttr(resourceName, "username", fmt.Sprintf("testAcc_%d@example.com", mgr.Seed)),
 				),
 			},
 			{
@@ -39,7 +37,7 @@ func TestAccOktaAppUser_crud(t *testing.T) {
 					ensureAppUserExists(resourceName),
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "user_id"),
-					resource.TestCheckResourceAttr(resourceName, "username", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "username", buildResourceName(mgr.Seed)),
 				),
 			},
 			{
@@ -48,7 +46,7 @@ func TestAccOktaAppUser_crud(t *testing.T) {
 					ensureAppUserExists(resourceName),
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "user_id"),
-					resource.TestCheckResourceAttr(resourceName, "username", fmt.Sprintf("testAcc_%d@example.com", ri)),
+					resource.TestCheckResourceAttr(resourceName, "username", fmt.Sprintf("testAcc_%d@example.com", mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "profile", "{\"testCustom\":\"testing\"}"),
 				),
 			},
@@ -79,13 +77,12 @@ func TestAccOktaAppUser_crud(t *testing.T) {
 }
 
 func TestAccOktaAppUser_retain(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", appUser)
 	appName := fmt.Sprintf("%s.test", appOAuth)
 	userName := fmt.Sprintf("%s.test", user)
-	mgr := newFixtureManager(appUser)
-	retain := mgr.GetFixtures("retain.tf", ri, t)
-	retainDestroy := mgr.GetFixtures("retain_destroy.tf", ri, t)
+	mgr := newFixtureManager(appUser, t.Name())
+	retain := mgr.GetFixtures("retain.tf", t)
+	retainDestroy := mgr.GetFixtures("retain_destroy.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -98,7 +95,7 @@ func TestAccOktaAppUser_retain(t *testing.T) {
 					ensureAppUserExists(resourceName),
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "user_id"),
-					resource.TestCheckResourceAttr(resourceName, "username", fmt.Sprintf("testAcc_%d@example.com", ri)),
+					resource.TestCheckResourceAttr(resourceName, "username", fmt.Sprintf("testAcc_%d@example.com", mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "retain_assignment", "true"),
 				),
 			},

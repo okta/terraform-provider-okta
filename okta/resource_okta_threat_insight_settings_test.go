@@ -6,16 +6,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccThreatInsightSettings(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(threatInsightSettings)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(threatInsightSettings, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", threatInsightSettings)
 
 	resource.Test(t, resource.TestCase{

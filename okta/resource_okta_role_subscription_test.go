@@ -4,15 +4,13 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaRoleSubscription_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", roleSubscription)
-	mgr := newFixtureManager(roleSubscription)
-	config := mgr.GetFixtures("basic.tf", ri, t)
+	mgr := newFixtureManager(roleSubscription, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

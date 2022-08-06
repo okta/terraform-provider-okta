@@ -5,18 +5,16 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccResourceOktaTheme_import_update(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(theme)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
-	importConfig := mgr.GetFixtures("import.tf", ri, t)
-	deleteImagesConfig := mgr.GetFixtures("delete-images.tf", ri, t)
+	mgr := newFixtureManager(theme, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
+	importConfig := mgr.GetFixtures("import.tf", t)
+	deleteImagesConfig := mgr.GetFixtures("delete-images.tf", t)
 
 	// okta_theme is read and update only, so set up the test by importing the theme first
 	resource.Test(t, resource.TestCase{

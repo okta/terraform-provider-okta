@@ -6,7 +6,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -35,14 +34,13 @@ func sweepInlineHooks(client *testClient) error {
 }
 
 func TestAccOktaInlineHook_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := "okta_inline_hook.test"
-	mgr := newFixtureManager(inlineHook)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
-	activatedConfig := mgr.GetFixtures("basic_activated.tf", ri, t)
-	registration := mgr.GetFixtures("registration.tf", ri, t)
-	passwordImport := mgr.GetFixtures("password_import.tf", ri, t)
+	mgr := newFixtureManager(inlineHook, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	activatedConfig := mgr.GetFixtures("basic_activated.tf", t)
+	registration := mgr.GetFixtures("registration.tf", t)
+	passwordImport := mgr.GetFixtures("password_import.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -53,7 +51,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, inlineHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.oauth2.tokens.transform"),
 					resource.TestCheckResourceAttr(resourceName, "version", "1.0.1"),
@@ -71,7 +69,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, inlineHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.import.transform"),
 					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
@@ -85,7 +83,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 				Config: activatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, inlineHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.import.transform"),
 					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
@@ -99,7 +97,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 				Config: registration,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, inlineHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.user.pre-registration"),
 					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
@@ -113,7 +111,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 				Config: passwordImport,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, inlineHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.user.credential.password.import"),
 					resource.TestCheckResourceAttr(resourceName, "version", "1.0.0"),

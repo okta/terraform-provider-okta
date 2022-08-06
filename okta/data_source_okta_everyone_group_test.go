@@ -5,13 +5,12 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaDataSourceEveryoneGroup_read(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testAccDataSourceEveryoneGroupConfig(ri)
+	mgr := newFixtureManager(groupEveryone, t.Name())
+	config := testAccDataSourceEveryoneGroupConfig(mgr.Seed)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -22,7 +21,7 @@ func TestAccOktaDataSourceEveryoneGroup_read(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_everyone_group.everyone-"+strconv.Itoa(ri), "id"),
+					resource.TestCheckResourceAttrSet("data.okta_everyone_group.everyone-"+strconv.Itoa(mgr.Seed), "id"),
 				),
 			},
 		},

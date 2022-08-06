@@ -3,14 +3,12 @@ package okta
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaDataSourceIdpMetadataSaml_read(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(idpMetadataSaml)
-	config := mgr.GetFixtures("datasource.tf", ri, t)
+	mgr := newFixtureManager(idpMetadataSaml, t.Name())
+	config := mgr.GetFixtures("datasource.tf", t)
 	resourceName := "data.okta_idp_metadata_saml.test"
 
 	resource.Test(t, resource.TestCase{

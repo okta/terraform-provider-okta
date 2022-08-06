@@ -4,17 +4,15 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccOktaAuthenticator_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", authenticator)
-	mgr := newFixtureManager(authenticator)
-	config := mgr.GetFixtures("security_question.tf", ri, t)
-	configUpdated := mgr.GetFixtures("security_question_updated.tf", ri, t)
+	mgr := newFixtureManager(authenticator, t.Name())
+	config := mgr.GetFixtures("security_question.tf", t)
+	configUpdated := mgr.GetFixtures("security_question_updated.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

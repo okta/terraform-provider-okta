@@ -6,14 +6,12 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaEmailSender(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(emailSender)
-	config := mgr.GetFixtures("basic.tf", ri, t)
+	mgr := newFixtureManager(emailSender, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", emailSender)
 
 	resource.Test(t, resource.TestCase{
@@ -25,7 +23,7 @@ func TestAccOktaEmailSender(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, emailSenderExists),
-					resource.TestCheckResourceAttr(resourceName, "from_name", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "from_name", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "from_address", "no-reply@example.com"),
 					resource.TestCheckResourceAttr(resourceName, "subdomain", "mail"),
 					resource.TestCheckResourceAttr(resourceName, "dns_records.#", "4"),

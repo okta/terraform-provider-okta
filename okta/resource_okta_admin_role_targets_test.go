@@ -6,15 +6,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccAdminRoleTargets(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(adminRoleTargets)
-	basic := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(adminRoleTargets, t.Name())
+	basic := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceAppName := fmt.Sprintf("%s.test_app", adminRoleTargets)
 	resourceGroupName := fmt.Sprintf("%s.test_group", adminRoleTargets)
 	resource.Test(t, resource.TestCase{

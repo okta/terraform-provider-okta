@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -37,10 +36,9 @@ func createRedirectURIExists(name string) resource.TestCheckFunc {
 }
 
 func TestAccAppOAuthApplication_redirectCrud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuthRedirectURI)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(appOAuthRedirectURI, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appOAuthRedirectURI)
 
 	resource.Test(t, resource.TestCase{

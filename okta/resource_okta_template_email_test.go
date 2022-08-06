@@ -5,15 +5,13 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaEmailTemplate_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", templateEmail)
-	mgr := newFixtureManager(templateEmail)
-	config := mgr.GetFixtures("basic.tf", ri, t)
+	mgr := newFixtureManager(templateEmail, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

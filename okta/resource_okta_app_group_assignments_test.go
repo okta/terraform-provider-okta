@@ -5,17 +5,15 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccAppGroupAssignments_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", appGroupAssignments)
-	mgr := newFixtureManager(appGroupAssignments)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(appGroupAssignments, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 
 	group1 := fmt.Sprintf("%s.test1", group)
 	group2 := fmt.Sprintf("%s.test2", group)

@@ -6,17 +6,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaGroupMembership_crud(t *testing.T) {
-	ri := acctest.RandInt()
-
-	mgr := newFixtureManager(groupMembership)
-	config := mgr.GetFixtures("okta_group_membership.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("okta_group_membership_updated.tf", ri, t)
-	removedConfig := mgr.GetFixtures("okta_group_membership_removed.tf", ri, t)
+	mgr := newFixtureManager(groupMembership, t.Name())
+	config := mgr.GetFixtures("okta_group_membership.tf", t)
+	updatedConfig := mgr.GetFixtures("okta_group_membership_updated.tf", t)
+	removedConfig := mgr.GetFixtures("okta_group_membership_removed.tf", t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
