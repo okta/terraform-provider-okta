@@ -14,7 +14,7 @@ func TestAccOktaCaptchaOrgWideSettings(t *testing.T) {
 	updated := mgr.GetFixtures("updated.tf", t)
 	empty := mgr.GetFixtures("empty.tf", t)
 	resourceName := fmt.Sprintf("%s.test", captchaOrgWideSettings)
-	resource.Test(
+	oktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:          func() { testAccPreCheck(t) },
 			ProviderFactories: testAccProvidersFactories,

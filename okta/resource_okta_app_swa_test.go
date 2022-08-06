@@ -15,7 +15,7 @@ func TestAccAppSwaApplication_preconfig(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("preconfig_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSwa)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(okta.NewSwaApplication())),
@@ -49,7 +49,7 @@ func TestAccAppSwaApplication_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("custom_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSwa)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(okta.NewSwaApplication())),

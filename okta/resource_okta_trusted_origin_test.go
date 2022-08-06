@@ -15,7 +15,7 @@ func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("okta_trusted_origin_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.testAcc_%d", trustedOrigin, mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      testAccCheckTrustedOriginDestroy,

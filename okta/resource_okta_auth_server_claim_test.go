@@ -13,7 +13,7 @@ func TestAccOktaAuthServerClaim_create(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
@@ -48,7 +48,7 @@ func TestAccOktaAuthServerClaim_groupType(t *testing.T) {
 	mgr := newFixtureManager(authServerClaim, t.Name())
 	config := mgr.GetFixtures("basic_group.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),

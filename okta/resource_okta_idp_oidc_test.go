@@ -13,7 +13,7 @@ func TestAccOktaIdpOidc_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("generic_oidc_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", idpOidc)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(idpOidc, createDoesIdpExist()),

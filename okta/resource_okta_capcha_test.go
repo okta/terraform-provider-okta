@@ -13,7 +13,7 @@ func TestAccOktaCaptcha(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", captcha)
-	resource.Test(
+	oktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:          func() { testAccPreCheck(t) },
 			ProviderFactories: testAccProvidersFactories,

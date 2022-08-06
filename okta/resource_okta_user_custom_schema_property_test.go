@@ -44,7 +44,7 @@ func TestAccResourceOktaUserSchema_crud(t *testing.T) {
 	nonDefault := mgr.GetFixtures("non_default_user_type.tf", t)
 	resourceName := buildResourceFQN(userSchemaProperty, mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaUserSchemasDestroy(),
@@ -141,7 +141,7 @@ func TestAccResourceOktaUserSchema_array_enum(t *testing.T) {
 	arrayEnum := mgr.GetFixtures("array_enum.tf", t)
 	arrayNumber := mgr.GetFixtures("array_number.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaUserSchemasDestroy(),
@@ -244,7 +244,7 @@ func checkOktaUserSchemasDestroy() resource.TestCheckFunc {
 func TestAccResourceOktaUserSchema_array_enum_number(t *testing.T) {
 	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaUserSchemasDestroy(),
@@ -334,7 +334,7 @@ func TestAccResourceOktaUserSchema_array_enum_number(t *testing.T) {
 func TestAccResourceOktaUserSchema_enum_number(t *testing.T) {
 	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaUserSchemasDestroy(),
@@ -420,7 +420,7 @@ func TestAccResourceOktaUserSchema_enum_number(t *testing.T) {
 func TestAccResourceOktaUserSchema_array_enum_integer(t *testing.T) {
 	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaUserSchemasDestroy(),
@@ -510,7 +510,7 @@ func TestAccResourceOktaUserSchema_array_enum_integer(t *testing.T) {
 func TestAccResourceOktaUserSchema_enum_integer(t *testing.T) {
 	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaUserSchemasDestroy(),
@@ -598,7 +598,7 @@ func TestAccResourceOktaUserSchema_array_enum_boolean(t *testing.T) {
 	// "the API returned an error: Array specified in enum field must match const values specified in oneOf field."
 	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaUserSchemasDestroy(),
@@ -676,7 +676,7 @@ func TestAccResourceOktaUserSchema_enum_boolean(t *testing.T) {
 	// "the API returned an error: Array specified in enum field must match const values specified in oneOf field."
 	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaUserSchemasDestroy(),
@@ -748,7 +748,7 @@ func TestAccResourceOktaUserSchema_enum_boolean(t *testing.T) {
 func TestAccResourceOktaUserSchema_array_enum_string(t *testing.T) {
 	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaUserSchemasDestroy(),
@@ -838,7 +838,7 @@ func TestAccResourceOktaUserSchema_array_enum_string(t *testing.T) {
 func TestAccResourceOktaUserSchema_enum_string(t *testing.T) {
 	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaUserSchemasDestroy(),

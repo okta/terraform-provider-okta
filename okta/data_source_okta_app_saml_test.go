@@ -12,7 +12,7 @@ func TestAccOktaDataSourceAppSaml_read(t *testing.T) {
 	config := mgr.GetFixtures("datasource.tf", t)
 	appCreate := buildTestAppSaml(mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},

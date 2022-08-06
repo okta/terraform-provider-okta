@@ -20,7 +20,7 @@ func TestAccAppOAuthApplication_apiScope(t *testing.T) {
 	config := strings.ReplaceAll(plainConfig, "https://your.okta.org", getOktaDomainName())
 	updatedConfig := strings.ReplaceAll(plainUpdatedConfig, "https://your.okta.org", getOktaDomainName())
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),

@@ -16,7 +16,7 @@ func TestAccOktaOrgSupport(t *testing.T) {
 	config := mgr.GetFixtures("standard.tf", t)
 	updatedConfig := mgr.GetFixtures("extended.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkSupportDestroy,

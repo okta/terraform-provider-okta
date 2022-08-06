@@ -29,7 +29,7 @@ func TestAccOktaLinkDefinition(t *testing.T) {
 	mgr := newFixtureManager(linkDefinition, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", linkDefinition)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(linkDefinition, doesLinkDefinitionExist),

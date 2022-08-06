@@ -42,7 +42,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 	registration := mgr.GetFixtures("registration.tf", t)
 	passwordImport := mgr.GetFixtures("password_import.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(inlineHook, inlineHookExists),

@@ -18,7 +18,7 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      testAccCheckUserDestroy,
@@ -100,7 +100,7 @@ func TestAccAppGroupAssignment_retain(t *testing.T) {
 	retainAssignment := mgr.GetFixtures("retain_assignment.tf", t)
 	retainAssignmentDestroy := mgr.GetFixtures("retain_assignment_destroy.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      testAccCheckUserDestroy,

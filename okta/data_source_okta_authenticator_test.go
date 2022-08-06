@@ -13,7 +13,7 @@ func TestAccOktaDataSourceAuthenticator_read(t *testing.T) {
 	resourceName := fmt.Sprintf("data.%s.test", authenticator)
 	resourceName1 := fmt.Sprintf("data.%s.test_1", authenticator)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},

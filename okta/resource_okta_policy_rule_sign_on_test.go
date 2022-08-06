@@ -17,7 +17,7 @@ func TestAccOktaPolicyRuleSignon_defaultErrors(t *testing.T) {
 	mgr := newFixtureManager(policyRuleSignOn, t.Name())
 	config := testOktaPolicyRuleSignOnDefaultErrors(mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createRuleCheckDestroy(policyRuleSignOn),
@@ -40,7 +40,7 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 	factorSequence := mgr.GetFixtures("factor_sequence.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleSignOn)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createRuleCheckDestroy(policyRuleSignOn),

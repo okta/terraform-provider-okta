@@ -18,7 +18,7 @@ func TestAccAppSamlAppSettings_crud(t *testing.T) {
 	updated := mgr.GetFixtures("preconfigured_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSamlAppSettings)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),

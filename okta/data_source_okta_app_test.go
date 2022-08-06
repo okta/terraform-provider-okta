@@ -12,7 +12,7 @@ func TestAccOktaDataSourceApp_read(t *testing.T) {
 	config := mgr.GetFixtures("datasource.tf", t)
 	appCreate := buildTestApp(mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
@@ -55,7 +55,7 @@ func TestAccOktaDataSourceAppLabelTest_read(t *testing.T) {
 	resourceName := fmt.Sprintf("data.%s.test", app)
 	config := testLabelConfig(mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},

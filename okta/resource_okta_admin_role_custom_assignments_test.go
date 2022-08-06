@@ -14,7 +14,7 @@ func TestAccOktaAdminRoleCustomAssignments(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", adminRoleCustomAssignments)
-	resource.Test(
+	oktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:          func() { testAccPreCheck(t) },
 			ProviderFactories: testAccProvidersFactories,

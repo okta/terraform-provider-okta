@@ -29,7 +29,7 @@ func TestAccOktaBehavior(t *testing.T) {
 	updated := mgr.GetFixtures("updated.tf", t)
 	inactive := mgr.GetFixtures("inactive.tf", t)
 	resourceName := fmt.Sprintf("%s.test", behavior)
-	resource.Test(
+	oktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:          func() { testAccPreCheck(t) },
 			ProviderFactories: testAccProvidersFactories,

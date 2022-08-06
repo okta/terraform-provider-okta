@@ -51,7 +51,7 @@ func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
 	updatedConfig := testOktaPolicyRulePasswordUpdated(mgr.Seed)
 	resourceName := buildResourceFQN(policyRulePassword, mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createRuleCheckDestroy(policyRulePassword),
@@ -84,7 +84,7 @@ func TestAccOktaPolicyRulePassword_priorityError(t *testing.T) {
 	mgr := newFixtureManager(policyRulePassword, t.Name())
 	config := testOktaPolicyRulePriorityError(mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createRuleCheckDestroy(policyRulePassword),
@@ -104,7 +104,7 @@ func TestAccOktaPolicyRulePassword_priority(t *testing.T) {
 	resourceName := buildResourceFQN(policyRulePassword, mgr.Seed)
 	name := buildResourceName(mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createRuleCheckDestroy(policyRulePassword),

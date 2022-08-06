@@ -19,7 +19,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	activatedConfig := mgr.GetFixtures("basic_activated.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(eventHook, eventHookExists),

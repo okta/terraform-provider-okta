@@ -15,7 +15,7 @@ func TestAccDataSourceOktaUser_read(t *testing.T) {
 
 	// NOTE: eliminated previous flapping issues when delay_read_seconds was added to okta_user
 	// TF_ACC=1 go test -tags unit -mod=readonly -test.v -run ^TestAccOktaDataSourceUser_read$
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
@@ -63,7 +63,7 @@ func TestAccDataSourceOktaUser_read(t *testing.T) {
 
 // TestAccDataSourceOktaUser_SkipAdminRoles pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUser_SkipAdminRoles(t *testing.T) {
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
@@ -82,7 +82,7 @@ func TestAccDataSourceOktaUser_SkipAdminRoles(t *testing.T) {
 
 // TestAccDataSourceOktaUser_SkipGroups pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUser_SkipGroups(t *testing.T) {
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
@@ -101,7 +101,7 @@ func TestAccDataSourceOktaUser_SkipGroups(t *testing.T) {
 
 // TestAccDataSourceOktaUser_SkipGroupsSkipRoles pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUser_SkipGroupsSkipRoles(t *testing.T) {
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
@@ -122,7 +122,7 @@ func TestAccDataSourceOktaUser_SkipGroupsSkipRoles(t *testing.T) {
 func TestAccDataSourceOktaUser_NoSkips(t *testing.T) {
 	allAdminRolesRegexp, _ := regexp.Compile("APP_ADMIN, SUPER_ADMIN")
 	allGroupMembershipsRegexp, _ := regexp.Compile("00g[a-z,A-Z,0-9]{17}, 00g[a-z,A-Z,0-9]{17}")
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},

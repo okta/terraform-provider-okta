@@ -11,7 +11,7 @@ func TestAccOktaDataSourceIdpMetadataSaml_read(t *testing.T) {
 	config := mgr.GetFixtures("datasource.tf", t)
 	resourceName := "data.okta_idp_metadata_saml.test"
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},

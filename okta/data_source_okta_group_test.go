@@ -13,7 +13,7 @@ func TestAccOktaDataSourceGroup_read(t *testing.T) {
 	config := mgr.GetFixtures("datasource.tf", t)
 	configInvalid := mgr.GetFixtures("datasource_not_found.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},

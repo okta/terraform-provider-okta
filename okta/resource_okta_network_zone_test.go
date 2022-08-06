@@ -33,7 +33,7 @@ func TestAccOktaNetworkZone_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.ip_network_zone_example", networkZone)
 	dynamicResourceName := fmt.Sprintf("%s.dynamic_network_zone_example", networkZone)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(networkZone, doesNetworkZoneExist),

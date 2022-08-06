@@ -42,7 +42,7 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 	deactivated := mgr.GetFixtures("basic_deactivated.tf", t)
 	name2 := buildResourceName(mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(groupRule, doesGroupRuleExist),
@@ -92,7 +92,7 @@ func TestAccOktaGroupRule_invalidHandle(t *testing.T) {
 	testRun := buildInvalidTest(testName)
 	testUpdate := buildInvalidUpdate(testName)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},

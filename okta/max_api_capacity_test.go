@@ -17,7 +17,7 @@ func TestAccMaxApiCapacity(t *testing.T) {
 	})
 	// hack max api capacity value is enabled by env var
 	os.Setenv("MAX_API_CAPACITY", "50")
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      nil,

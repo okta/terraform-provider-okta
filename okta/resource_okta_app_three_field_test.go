@@ -15,7 +15,7 @@ func TestAccAppThreeFieldApplication_crud(t *testing.T) {
 	updatedCreds := mgr.GetFixtures("updated_credentials.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appThreeField)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appThreeField, createDoesAppExist(okta.NewSwaThreeFieldApplication())),

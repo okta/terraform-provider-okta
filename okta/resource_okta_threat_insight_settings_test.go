@@ -16,7 +16,7 @@ func TestAccThreatInsightSettings(t *testing.T) {
 	updated := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", threatInsightSettings)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaThreatInsightSettingsDestroy(),

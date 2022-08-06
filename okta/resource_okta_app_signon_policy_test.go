@@ -14,7 +14,7 @@ func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
 	renamedConfig := mgr.GetFixtures("basic_renamed.tf", t)
 	resourceName := fmt.Sprintf("%v.test", appSignOnPolicy)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createPolicyCheckDestroy(appSignOnPolicy),

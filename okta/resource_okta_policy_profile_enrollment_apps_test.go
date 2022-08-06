@@ -13,7 +13,7 @@ func TestAccOktaPolicyProfileEnrollmentApps(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyProfileEnrollmentApps)
 	resourceName2 := fmt.Sprintf("%s.test_2", policyProfileEnrollmentApps)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      nil,

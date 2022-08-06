@@ -14,7 +14,7 @@ func TestAccAppSharedCredentials_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSharedCredentials)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSharedCredentials, createDoesAppExist(okta.NewBrowserPluginApplication())),

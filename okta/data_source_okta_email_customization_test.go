@@ -10,7 +10,7 @@ func TestAccDataSourceOktaEmailCustomization_read(t *testing.T) {
 	mgr := newFixtureManager(emailCustomization, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{

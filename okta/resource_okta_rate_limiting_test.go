@@ -12,7 +12,7 @@ func TestAccOktaRateLimiting_crud(t *testing.T) {
 	mgr := newFixtureManager(rateLimiting, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      nil,

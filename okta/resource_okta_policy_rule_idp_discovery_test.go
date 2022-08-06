@@ -23,7 +23,7 @@ func TestAccOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 	appExcludeConfig := mgr2.GetFixtures("app_exclude_platform.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleIdpDiscovery)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createRuleCheckDestroy(policyRuleIdpDiscovery),

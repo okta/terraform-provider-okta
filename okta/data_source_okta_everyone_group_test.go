@@ -12,7 +12,7 @@ func TestAccOktaDataSourceEveryoneGroup_read(t *testing.T) {
 	mgr := newFixtureManager(groupEveryone, t.Name())
 	config := testAccDataSourceEveryoneGroupConfig(mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},

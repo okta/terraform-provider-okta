@@ -17,7 +17,7 @@ func TestAccResourceOktaTheme_import_update(t *testing.T) {
 	deleteImagesConfig := mgr.GetFixtures("delete-images.tf", t)
 
 	// okta_theme is read and update only, so set up the test by importing the theme first
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: func(s *terraform.State) error {

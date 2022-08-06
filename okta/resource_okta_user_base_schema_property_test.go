@@ -21,7 +21,7 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 	nonDefault := mgr.GetFixtures("non_default_user_type.tf", t)
 	resourceName := fmt.Sprintf("%s.%s", userBaseSchemaProperty, firstNameTestProp)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      nil, // can't delete base properties
@@ -78,7 +78,7 @@ func TestAccOktaUserBaseSchemaLogin_crud(t *testing.T) {
 	updated := mgr.GetFixtures("login_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.%s", userBaseSchemaProperty, loginTestProp)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      nil, // can't delete base properties

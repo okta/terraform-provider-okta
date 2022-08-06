@@ -12,7 +12,7 @@ func TestAccOktaDataSourceAppOauth_read(t *testing.T) {
 	config := mgr.GetFixtures("datasource.tf", t)
 	appCreate := buildTestAppOauth(mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{

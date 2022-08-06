@@ -17,7 +17,7 @@ func TestAccOktaPolicySignOn_defaultError(t *testing.T) {
 	mgr := newFixtureManager(policySignOn, t.Name())
 	config := testOktaPolicySignOnDefaultErrors(mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createPolicyCheckDestroy(policySignOn),
@@ -37,7 +37,7 @@ func TestAccOktaPolicySignOn_crud(t *testing.T) {
 	renamedConfig := mgr.GetFixtures("basic_renamed.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policySignOn)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createPolicyCheckDestroy(policySignOn),

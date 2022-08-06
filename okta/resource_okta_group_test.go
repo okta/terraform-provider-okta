@@ -33,7 +33,7 @@ func TestAccOktaGroup_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("okta_group_updated.tf", t)
 	addUsersConfig := mgr.GetFixtures("okta_group_with_users.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(group, doesGroupExist),
@@ -66,7 +66,7 @@ func TestAccOktaGroup_customschema(t *testing.T) {
 	updated := mgr.GetFixtures("okta_group_custom_updated.tf", t)
 	removal := mgr.GetFixtures("okta_group_custom_removal.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(group, doesGroupExist),

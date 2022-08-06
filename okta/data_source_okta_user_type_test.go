@@ -13,7 +13,7 @@ func TestAccOktaDataSourceUserType_read(t *testing.T) {
 	createUserType := mgr.GetFixtures("okta_user_type.tf", t)
 	config := mgr.GetFixtures("datasource.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},

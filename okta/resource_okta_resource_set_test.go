@@ -31,7 +31,7 @@ func TestAccOktaResourceSet(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resourceSet)
-	resource.Test(
+	oktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:          func() { testAccPreCheck(t) },
 			ProviderFactories: testAccProvidersFactories,
@@ -92,7 +92,7 @@ func TestAccResrouceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 		}`, orgName, baseUrl)
 	mgr := newFixtureManager(resourceSet, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resourceSet)
-	resource.Test(
+	oktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:          func() { testAccPreCheck(t) },
 			ProviderFactories: testAccProvidersFactories,

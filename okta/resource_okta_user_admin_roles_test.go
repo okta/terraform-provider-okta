@@ -14,7 +14,7 @@ func TestAccOktaUserAdminRoles_crud(t *testing.T) {
 	remove := mgr.GetFixtures("basic_removal.tf", t)
 	resourceName := fmt.Sprintf("%s.test", userAdminRoles)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      testAccCheckUserDestroy,

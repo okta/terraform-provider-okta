@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -24,6 +25,12 @@ func init() {
 			return testAccProvider, nil
 		},
 	}
+}
+
+// oktaResourceTest is the entry to overriding the Terraform SDKs Acceptance
+// Test framework before the call to resource.Test
+func oktaResourceTest(t *testing.T, c resource.TestCase) {
+	resource.Test(t, c)
 }
 
 func TestProvider(t *testing.T) {

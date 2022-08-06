@@ -14,7 +14,7 @@ func TestAccOktaAuthenticator_crud(t *testing.T) {
 	config := mgr.GetFixtures("security_question.tf", t)
 	configUpdated := mgr.GetFixtures("security_question_updated.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      nil,

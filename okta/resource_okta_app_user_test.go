@@ -17,7 +17,7 @@ func TestAccOktaAppUser_crud(t *testing.T) {
 	update := mgr.GetFixtures("update.tf", t)
 	basicProfile := mgr.GetFixtures("basic_profile.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkAppUserDestroy,
@@ -84,7 +84,7 @@ func TestAccOktaAppUser_retain(t *testing.T) {
 	retain := mgr.GetFixtures("retain.tf", t)
 	retainDestroy := mgr.GetFixtures("retain_destroy.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkAppUserDestroy,

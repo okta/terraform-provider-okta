@@ -14,7 +14,7 @@ func TestAccAppUserBaseSchema_change(t *testing.T) {
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appUserBaseSchemaProperty)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		// Just need to make sure the app gets cleaned up

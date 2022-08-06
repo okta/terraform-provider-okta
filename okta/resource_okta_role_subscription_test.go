@@ -12,7 +12,7 @@ func TestAccOktaRoleSubscription_crud(t *testing.T) {
 	mgr := newFixtureManager(roleSubscription, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      nil,

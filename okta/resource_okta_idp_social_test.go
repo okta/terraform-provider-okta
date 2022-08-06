@@ -15,7 +15,7 @@ func TestAccOktaIdpSocial_crud(t *testing.T) {
 	microName := fmt.Sprintf("%s.microsoft", idpSocial)
 	googleName := fmt.Sprintf("%s.google", idpSocial)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(idpSocial, createDoesIdpExist()),

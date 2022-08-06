@@ -15,7 +15,7 @@ func TestAccAdminRoleTargets(t *testing.T) {
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceAppName := fmt.Sprintf("%s.test_app", adminRoleTargets)
 	resourceGroupName := fmt.Sprintf("%s.test_group", adminRoleTargets)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(idpOidc, doesTargetExists()),

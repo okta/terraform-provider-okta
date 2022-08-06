@@ -12,7 +12,7 @@ func TestAccOktaFactorTOTP(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", factorTotp)
 	mgr := newFixtureManager(factorTotp, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(factorTotp, doesFactorTOTPExist),

@@ -15,7 +15,7 @@ func TestAccOktaProfileMapping_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	preventDelete := mgr.GetFixtures("prevent_delete.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(profileMapping, doesOktaProfileExist),

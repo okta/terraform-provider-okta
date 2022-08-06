@@ -13,7 +13,7 @@ func TestAccOktaDataSourceDefaultPolicy_readPasswordPolicy(t *testing.T) {
 	mgr := newFixtureManager(defaultPolicy, t.Name())
 	config := testAccDataSourceDefaultPolicy(mgr.Seed, sdk.PasswordPolicyType)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
@@ -33,7 +33,7 @@ func TestAccOktaDataSourceDefaultPolicy_readIdpPolicy(t *testing.T) {
 	mgr := newFixtureManager(defaultPolicy, t.Name())
 	config := testAccDataSourceDefaultPolicy(mgr.Seed, sdk.IdpDiscoveryType)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},

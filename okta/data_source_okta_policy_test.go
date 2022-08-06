@@ -11,7 +11,7 @@ import (
 func TestAccOktaDataSourcePolicy_read(t *testing.T) {
 	config := testAccDataSourcePolicyConfig()
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},

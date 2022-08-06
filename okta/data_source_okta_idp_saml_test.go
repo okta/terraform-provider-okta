@@ -12,7 +12,7 @@ func TestAccOktaDataSourceIdpSaml_read(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("datasource_id.tf", t)
 	idpSaml := mgr.GetFixtures("basic.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
