@@ -77,7 +77,7 @@ func accPreCheck() error {
 	token := os.Getenv("OKTA_API_TOKEN")
 	clientID := os.Getenv("OKTA_API_CLIENT_ID")
 	privateKey := os.Getenv("OKTA_API_PRIVATE_KEY")
-	privateKeyId := os.Getenv("OKTA_API_PRIVATE_KEY_IE")
+	privateKeyId := os.Getenv("OKTA_API_PRIVATE_KEY_ID")
 	scopes := os.Getenv("OKTA_API_SCOPES")
 	if token == "" && (clientID == "" || scopes == "" || privateKey == "" || privateKeyId == "") {
 		return errors.New("either OKTA_API_TOKEN or OKTA_API_CLIENT_ID, OKTA_API_SCOPES and OKTA_API_PRIVATE_KEY must be set for acceptance tests")
