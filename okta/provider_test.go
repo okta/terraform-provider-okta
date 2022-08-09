@@ -371,7 +371,7 @@ func getCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 		for _, header := range deleteResponseHeaders {
 			i.Response.Headers.Del(header)
 		}
-		for name, _ := range i.Response.Headers {
+		for name := range i.Response.Headers {
 			// delete all X-headers
 			if strings.HasPrefix(name, "X-") {
 				i.Response.Headers.Del(name)
