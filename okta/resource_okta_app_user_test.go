@@ -110,17 +110,17 @@ func TestAccOktaAppUser_retain(t *testing.T) {
 	})
 }
 
-func ensureAppUserExists(name string) resource.TestCheckFunc {
+func ensureAppUserExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		missingErr := fmt.Errorf("resource not found: %s", name)
-		rs, ok := s.RootModule().Resources[name]
+		missingErr := fmt.Errorf("resource not found: %s", resourceName)
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return missingErr
 		}
 
 		appID := rs.Primary.Attributes["app_id"]
 		userID := rs.Primary.Attributes["user_id"]
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
+		client := oktaClientForTest()
 
 		u, _, err := client.Application.GetApplicationUser(context.Background(), appID, userID, nil)
 		if err != nil {
@@ -142,7 +142,7 @@ func checkAppUserDestroy(s *terraform.State) error {
 		appID := rs.Primary.Attributes["app_id"]
 		userID := rs.Primary.Attributes["user_id"]
 
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
+		client := oktaClientForTest()
 		_, response, err := client.Application.GetApplicationUser(context.Background(), appID, userID, nil)
 		exists, err := doesResourceExist(response, err)
 		if err != nil {
@@ -173,7 +173,7 @@ func ensureAppUserRetained(appName, userName string) resource.TestCheckFunc {
 
 		appID := appRes.Primary.ID
 		userID := userRes.Primary.ID
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
+		client := oktaClientForTest()
 
 		g, _, err := client.Application.GetApplicationUser(context.Background(), appID, userID, nil)
 		if err != nil {

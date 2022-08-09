@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+	"hash/fnv"
 	"io/ioutil"
 	"os"
 	"path"
@@ -23,10 +24,19 @@ const (
 	uuidPattern  = "replace_with_uuid"
 )
 
-// newFixtureManager get a new fixture manager for a particular resource.
+// newFixtureManager Gets a new fixture manager for a particular resource.
 func newFixtureManager(resourceName, testName string) *fixtureManager {
-	dir, _ := os.Getwd()
 	ri := acctest.RandInt()
+
+	// If we are running in VCR mode make the random number be a hash of the
+	// test name.
+	if os.Getenv("OKTA_VCR_TF_ACC") != "" {
+		h := fnv.New32a()
+		h.Write([]byte(testName))
+		ri = int(h.Sum32())
+	}
+
+	dir, _ := os.Getwd()
 	return &fixtureManager{
 		Path:     path.Join(dir, "../examples", resourceName),
 		TestName: testName,

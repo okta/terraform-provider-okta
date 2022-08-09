@@ -6,12 +6,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
-
-func deleteSignOnPolicies(client *testClient) error {
-	return deletePolicyByType(sdk.SignOnPolicyType, client)
-}
 
 func TestAccOktaPolicySignOn_defaultError(t *testing.T) {
 	mgr := newFixtureManager(policySignOn, t.Name())

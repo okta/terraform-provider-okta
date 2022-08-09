@@ -4,27 +4,10 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
-
-func sweepResourceSets(client *testClient) error {
-	var errorList []error
-	resourceSets, _, err := client.apiSupplement.ListResourceSets(context.Background())
-	if err != nil {
-		return err
-	}
-	for _, b := range resourceSets.ResourceSets {
-		if !strings.HasPrefix(b.Label, "testAcc_") {
-			if _, err := client.apiSupplement.DeleteResourceSet(context.Background(), b.Id); err != nil {
-				errorList = append(errorList, err)
-			}
-		}
-	}
-	return condenseError(errorList)
-}
 
 func TestAccOktaResourceSet(t *testing.T) {
 	mgr := newFixtureManager(resourceSet, t.Name())
@@ -55,11 +38,6 @@ func TestAccOktaResourceSet(t *testing.T) {
 				},
 			},
 		})
-}
-
-func doesResourceSetExist(id string) (bool, error) {
-	_, response, err := getSupplementFromMetadata(testAccProvider.Meta()).GetResourceSet(context.Background(), id)
-	return doesResourceExist(response, err)
 }
 
 // TestAccResrouceOktaResourceSet_Issue1097_Pagination deals with resolving a
@@ -112,4 +90,10 @@ func TestAccResrouceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 				},
 			},
 		})
+}
+
+func doesResourceSetExist(id string) (bool, error) {
+	client := apiSupplementForTest()
+	_, response, err := client.GetResourceSet(context.Background(), id)
+	return doesResourceExist(response, err)
 }

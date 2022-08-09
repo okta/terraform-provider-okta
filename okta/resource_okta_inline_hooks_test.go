@@ -3,35 +3,10 @@ package okta
 import (
 	"context"
 	"net/http"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
-
-func sweepInlineHooks(client *testClient) error {
-	var errorList []error
-	hooks, _, err := client.oktaClient.InlineHook.ListInlineHooks(context.Background(), nil)
-	if err != nil {
-		return err
-	}
-	for _, hook := range hooks {
-		if !strings.HasPrefix(hook.Name, testResourcePrefix) {
-			continue
-		}
-		if hook.Status == statusActive {
-			_, _, err = client.oktaClient.InlineHook.DeactivateInlineHook(context.Background(), hook.Id)
-			if err != nil {
-				errorList = append(errorList, err)
-			}
-		}
-		_, err = client.oktaClient.InlineHook.DeleteInlineHook(context.Background(), hook.Id)
-		if err != nil {
-			errorList = append(errorList, err)
-		}
-	}
-	return condenseError(errorList)
-}
 
 func TestAccOktaInlineHook_crud(t *testing.T) {
 	resourceName := "okta_inline_hook.test"
@@ -126,7 +101,8 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 }
 
 func inlineHookExists(id string) (bool, error) {
-	_, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).InlineHook.GetInlineHook(context.Background(), id)
+	client := oktaClientForTest()
+	_, resp, err := client.InlineHook.GetInlineHook(context.Background(), id)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, err
 	}

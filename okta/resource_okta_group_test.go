@@ -7,24 +7,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
-
-func sweepGroups(client *testClient) error {
-	var errorList []error
-	// Should never need to deal with pagination, limit is 10,000 by default
-	groups, _, err := client.oktaClient.Group.ListGroups(context.Background(), &query.Params{Q: testResourcePrefix})
-	if err != nil {
-		return err
-	}
-
-	for _, s := range groups {
-		if _, err := client.oktaClient.Group.DeleteGroup(context.Background(), s.Id); err != nil {
-			errorList = append(errorList, err)
-		}
-	}
-	return condenseError(errorList)
-}
 
 func TestAccOktaGroup_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", group)
@@ -97,6 +80,7 @@ func TestAccOktaGroup_customschema(t *testing.T) {
 }
 
 func doesGroupExist(id string) (bool, error) {
-	_, response, err := getOktaClientFromMetadata(testAccProvider.Meta()).Group.GetGroup(context.Background(), id)
+	client := oktaClientForTest()
+	_, response, err := client.Group.GetGroup(context.Background(), id)
 	return doesResourceExist(response, err)
 }

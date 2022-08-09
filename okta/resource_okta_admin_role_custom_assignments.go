@@ -48,7 +48,7 @@ func resourceAdminRoleCustomAssignmentsCreate(ctx context.Context, d *schema.Res
 	if err != nil {
 		return diag.Errorf("failed to create custom admin role assignment: %v", err)
 	}
-	_, err = getSupplementFromMetadata(m).CreateResourceSetBinding(ctx, d.Get("resource_set_id").(string), *cr)
+	_, err = getAPISupplementFromMetadata(m).CreateResourceSetBinding(ctx, d.Get("resource_set_id").(string), *cr)
 	if err != nil {
 		return diag.Errorf("failed to create custom admin role assignment: %v", err)
 	}
@@ -57,7 +57,7 @@ func resourceAdminRoleCustomAssignmentsCreate(ctx context.Context, d *schema.Res
 }
 
 func resourceAdminRoleCustomAssignmentsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	members, resp, err := listResourceSetBindingMembers(ctx, getSupplementFromMetadata(m), d.Get("resource_set_id").(string), d.Get("custom_role_id").(string))
+	members, resp, err := listResourceSetBindingMembers(ctx, getAPISupplementFromMetadata(m), d.Get("resource_set_id").(string), d.Get("custom_role_id").(string))
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to list members assigned to the custom role: %v", err)
 	}
@@ -73,7 +73,7 @@ func resourceAdminRoleCustomAssignmentsUpdate(ctx context.Context, d *schema.Res
 	if !d.HasChange("members") {
 		return nil
 	}
-	client := getSupplementFromMetadata(m)
+	client := getAPISupplementFromMetadata(m)
 	oldMembers, newMembers := d.GetChange("members")
 	oldSet := oldMembers.(*schema.Set)
 	newSet := newMembers.(*schema.Set)
@@ -91,7 +91,7 @@ func resourceAdminRoleCustomAssignmentsUpdate(ctx context.Context, d *schema.Res
 }
 
 func resourceAdminRoleCustomAssignmentsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	resp, err := getSupplementFromMetadata(m).DeleteResourceSetBinding(ctx, d.Get("resource_set_id").(string), d.Get("custom_role_id").(string))
+	resp, err := getAPISupplementFromMetadata(m).DeleteResourceSetBinding(ctx, d.Get("resource_set_id").(string), d.Get("custom_role_id").(string))
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete admin custom role assignment: %v", err)
 	}

@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -19,7 +21,7 @@ func TestAccSecurityNotificationEmails(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaSecurityNotificationEmailsDestroy(),
+		CheckDestroy:      checkOktaSecurityNotificationEmailsDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -37,25 +39,33 @@ func TestAccSecurityNotificationEmails(t *testing.T) {
 	})
 }
 
-func checkOktaSecurityNotificationEmailsDestroy() resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		for _, rs := range s.RootModule().Resources {
-			if rs.Type != securityNotificationEmails {
-				continue
-			}
-			c := testAccProvider.Meta().(*Config)
-			emails, err := getSupplementFromMetadata(testAccProvider.Meta()).GetSecurityNotificationEmails(context.Background(), c.orgName, c.domain, c.apiToken, c.client)
-			if err != nil {
-				return fmt.Errorf("failed to get security notification emails: %v", err)
-			}
-			if !emails.SendEmailForNewDeviceEnabled ||
-				!emails.SendEmailForFactorEnrollmentEnabled ||
-				!emails.SendEmailForFactorResetEnabled ||
-				!emails.SendEmailForPasswordChangedEnabled ||
-				!emails.ReportSuspiciousActivityEnabled {
-				return errors.New("all the flags should be set to true")
-			}
+func checkOktaSecurityNotificationEmailsDestroy(s *terraform.State) error {
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != securityNotificationEmails {
+			continue
 		}
-		return nil
+		supplimentClient := apiSupplementForTest()
+		oktaClient := oktaClientForTest()
+		oktaConfig := oktaClient.GetConfig()
+		token := oktaConfig.Okta.Client.Token
+		orgUrl, err := url.Parse(oktaConfig.Okta.Client.OrgUrl)
+		if err != nil {
+			return err
+		}
+		hostParts := strings.Split(orgUrl.Hostname(), ".")
+		orgName := hostParts[0]
+		domain := fmt.Sprintf("%s.%s", hostParts[1], hostParts[2])
+		emails, err := supplimentClient.GetSecurityNotificationEmails(context.Background(), orgName, domain, token, oktaConfig.HttpClient)
+		if err != nil {
+			return fmt.Errorf("failed to get security notification emails: %v", err)
+		}
+		if !emails.SendEmailForNewDeviceEnabled ||
+			!emails.SendEmailForFactorEnrollmentEnabled ||
+			!emails.SendEmailForFactorResetEnabled ||
+			!emails.SendEmailForPasswordChangedEnabled ||
+			!emails.ReportSuspiciousActivityEnabled {
+			return errors.New("all the flags should be set to true")
+		}
 	}
+	return nil
 }

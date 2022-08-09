@@ -37,7 +37,7 @@ func checkMembershipState(id string) (bool, error) {
 	ids := strings.Split(id, "+")
 	groupId := ids[0]
 	userId := ids[1]
-	client := getOktaClientFromMetadata(testAccProvider.Meta())
+	client := oktaClientForTest()
 	state, err := checkIfUserInGroup(context.Background(), client, groupId, userId)
 	if err != nil {
 		if strings.Contains(err.Error(), fmt.Sprintf("Resource not found: %s (UserGroup)", groupId)) {

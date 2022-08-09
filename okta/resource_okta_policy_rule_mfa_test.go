@@ -5,12 +5,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
-
-func deleteMfaPolicyRules(client *testClient) error {
-	return deletePolicyRulesByType(sdk.MfaPolicyType, client)
-}
 
 func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
 	mgr := newFixtureManager(policyRuleMfa, t.Name())

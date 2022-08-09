@@ -51,9 +51,7 @@ type (
 		maxAPICapacity   int // experimental
 		oktaClient       *okta.Client
 		supplementClient *sdk.APISupplement
-		client           *http.Client
 		logger           hclog.Logger
-		classicOrg       bool
 	}
 )
 
@@ -148,7 +146,6 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 	c.supplementClient = &sdk.APISupplement{
 		RequestExecutor: client.CloneRequestExecutor(),
 	}
-	c.client = httpClient
 	return nil
 }
 

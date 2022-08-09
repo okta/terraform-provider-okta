@@ -4,37 +4,11 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
-
-func deletePasswordPolicies(client *testClient) error {
-	return deletePolicyByType(sdk.PasswordPolicyType, client)
-}
-
-func deletePolicyByType(t string, client *testClient) error {
-	ctx := context.Background()
-	policies, _, err := client.oktaClient.Policy.ListPolicies(ctx, &query.Params{Type: t})
-	if err != nil {
-		return fmt.Errorf("failed to list policies in order to properly destroy: %v", err)
-	}
-	for _, _policy := range policies {
-		policy := _policy.(*okta.Policy)
-		if strings.HasPrefix(policy.Name, testResourcePrefix) {
-			_, err = client.oktaClient.Policy.DeletePolicy(ctx, policy.Id)
-			if err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
 
 func TestAccOktaPolicyPassword_crud(t *testing.T) {
 	mgr := newFixtureManager(policyPassword, t.Name())
@@ -89,16 +63,15 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 	})
 }
 
-func ensurePolicyExists(name string) resource.TestCheckFunc {
+func ensurePolicyExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		missingErr := fmt.Errorf("resource not found: %s", name)
-		rs, ok := s.RootModule().Resources[name]
+		missingErr := fmt.Errorf("resource not found: %s", resourceName)
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return missingErr
 		}
 
-		ID := rs.Primary.ID
-		exist, err := doesPolicyExistsUpstream(ID)
+		exist, err := doesPolicyExistsUpstream(rs.Primary.ID)
 		if err != nil {
 			return err
 		} else if !exist {
@@ -116,22 +89,22 @@ func createPolicyCheckDestroy(policyType string) func(*terraform.State) error {
 				continue
 			}
 
-			ID := rs.Primary.ID
-			exists, err := doesPolicyExistsUpstream(ID)
+			exists, err := doesPolicyExistsUpstream(rs.Primary.ID)
 			if err != nil {
 				return err
 			}
 
 			if exists {
-				return fmt.Errorf("policy still exists, ID: %s", ID)
+				return fmt.Errorf("policy still exists, ID: %s", rs.Primary.ID)
 			}
 		}
 		return nil
 	}
 }
 
-func doesPolicyExistsUpstream(id string) (bool, error) {
-	policy, resp, err := getSupplementFromMetadata(testAccProvider.Meta()).GetPolicy(context.Background(), id)
+func doesPolicyExistsUpstream(policyID string) (bool, error) {
+	client := apiSupplementForTest()
+	policy, resp, err := client.GetPolicy(context.Background(), policyID)
 	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return false, nil
 	} else if err != nil {

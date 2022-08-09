@@ -5,36 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
-
-func sweepUserCustomSchema(client *testClient) error {
-	userTypes, _, err := client.oktaClient.UserType.ListUserTypes(context.Background())
-	if err != nil {
-		return err
-	}
-	for _, userType := range userTypes {
-		typeSchemaID := userTypeSchemaID(userType)
-		schema, _, err := client.oktaClient.UserSchema.GetUserSchema(context.Background(), typeSchemaID)
-		if err != nil {
-			return err
-		}
-		for key := range schema.Definitions.Custom.Properties {
-			if strings.HasPrefix(key, testResourcePrefix) {
-				custom := buildCustomUserSchema(key, nil)
-				_, _, err = client.oktaClient.UserSchema.UpdateUserProfile(context.Background(), typeSchemaID, *custom)
-				if err != nil {
-					return err
-				}
-			}
-		}
-	}
-	return nil
-}
 
 func TestAccResourceOktaUserSchema_crud(t *testing.T) {
 	mgr := newFixtureManager(userSchemaProperty, t.Name())
@@ -47,7 +22,7 @@ func TestAccResourceOktaUserSchema_crud(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -144,7 +119,7 @@ func TestAccResourceOktaUserSchema_array_enum(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -225,29 +200,13 @@ func TestAccResourceOktaUserSchema_array_enum(t *testing.T) {
 	})
 }
 
-func checkOktaUserSchemasDestroy() resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		for _, rs := range s.RootModule().Resources {
-			schemaUserType := "default"
-			if rs.Primary.Attributes["user_type"] != "" {
-				schemaUserType = rs.Primary.Attributes["user_type"]
-			}
-			exists, _ := testUserSchemaPropertyExists(schemaUserType, rs.Primary.ID, customSchema)
-			if exists {
-				return fmt.Errorf("resource still exists, ID: %s", rs.Primary.ID)
-			}
-		}
-		return nil
-	}
-}
-
 func TestAccResourceOktaUserSchema_array_enum_number(t *testing.T) {
 	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -337,7 +296,7 @@ func TestAccResourceOktaUserSchema_enum_number(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -423,7 +382,7 @@ func TestAccResourceOktaUserSchema_array_enum_integer(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -513,7 +472,7 @@ func TestAccResourceOktaUserSchema_enum_integer(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -601,7 +560,7 @@ func TestAccResourceOktaUserSchema_array_enum_boolean(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -679,7 +638,7 @@ func TestAccResourceOktaUserSchema_enum_boolean(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -751,7 +710,7 @@ func TestAccResourceOktaUserSchema_array_enum_string(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -841,7 +800,7 @@ func TestAccResourceOktaUserSchema_enum_string(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -921,12 +880,12 @@ func TestAccResourceOktaUserSchema_enum_string(t *testing.T) {
 	})
 }
 
-func testOktaUserSchemasExists(name string) resource.TestCheckFunc {
+func testOktaUserSchemasExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
-		rs, ok := s.RootModule().Resources[name]
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
-			return fmt.Errorf("not found: %s", name)
+			return fmt.Errorf("not found: %s", resourceName)
 		}
 
 		schemaUserType := "default"
@@ -945,11 +904,12 @@ func testOktaUserSchemasExists(name string) resource.TestCheckFunc {
 }
 
 func testUserSchemaPropertyExists(schemaUserType, index, resolutionScope string) (bool, error) {
-	typeSchemaID, err := getUserTypeSchemaID(context.Background(), getOktaClientFromMetadata(testAccProvider.Meta()), schemaUserType)
+	client := oktaClientForTest()
+	typeSchemaID, err := getUserTypeSchemaID(context.Background(), client, schemaUserType)
 	if err != nil {
 		return false, err
 	}
-	us, _, err := getOktaClientFromMetadata(testAccProvider.Meta()).UserSchema.GetUserSchema(context.Background(), typeSchemaID)
+	us, _, err := client.UserSchema.GetUserSchema(context.Background(), typeSchemaID)
 	if err != nil {
 		return false, fmt.Errorf("failed to get user schema: %v", err)
 	}
@@ -963,4 +923,18 @@ func testUserSchemaPropertyExists(schemaUserType, index, resolutionScope string)
 	default:
 		return false, fmt.Errorf("resolution scope can be only 'base' or 'custom'")
 	}
+}
+
+func checkOktaUserSchemasDestroy(s *terraform.State) error {
+	for _, rs := range s.RootModule().Resources {
+		schemaUserType := "default"
+		if rs.Primary.Attributes["user_type"] != "" {
+			schemaUserType = rs.Primary.Attributes["user_type"]
+		}
+		exists, _ := testUserSchemaPropertyExists(schemaUserType, rs.Primary.ID, customSchema)
+		if exists {
+			return fmt.Errorf("resource still exists, ID: %s", rs.Primary.ID)
+		}
+	}
+	return nil
 }

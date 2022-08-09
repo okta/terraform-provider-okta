@@ -35,7 +35,7 @@ func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 }
 
 func testAccCheckTrustedOriginDestroy(s *terraform.State) error {
-	client := getOktaClientFromMetadata(testAccProvider.Meta())
+	client := oktaClientForTest()
 
 	for _, r := range s.RootModule().Resources {
 		_, resp, err := client.TrustedOrigin.GetOrigin(context.Background(), r.Primary.ID)

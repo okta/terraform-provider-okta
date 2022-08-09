@@ -42,7 +42,8 @@ func TestAccOktaProfileMapping_crud(t *testing.T) {
 	})
 }
 
-func doesOktaProfileExist(id string) (bool, error) {
-	_, response, err := getSupplementFromMetadata(testAccProvider.Meta()).GetEmailTemplate(context.Background(), id)
+func doesOktaProfileExist(profileID string) (bool, error) {
+	client := apiSupplementForTest()
+	_, response, err := client.GetEmailTemplate(context.Background(), profileID)
 	return doesResourceExist(response, err)
 }

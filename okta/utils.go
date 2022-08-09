@@ -23,6 +23,17 @@ import (
 
 const defaultPaginationLimit int64 = 200
 
+func isClassicOrganization(ctx context.Context, m interface{}) (bool, error) {
+	client := getAPISupplementFromMetadata(m)
+	org, _, err := client.GetWellKnownOktaOrganization(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	classicOrg := (org.Pipeline == "v1") // v1 == Classic, idx == OIE
+	return classicOrg, nil
+}
+
 func buildSchema(schemas ...map[string]*schema.Schema) map[string]*schema.Schema {
 	r := map[string]*schema.Schema{}
 	for _, s := range schemas {
@@ -289,7 +300,7 @@ func getOktaClientFromMetadata(meta interface{}) *okta.Client {
 	return meta.(*Config).oktaClient
 }
 
-func getSupplementFromMetadata(meta interface{}) *sdk.APISupplement {
+func getAPISupplementFromMetadata(meta interface{}) *sdk.APISupplement {
 	return meta.(*Config).supplementClient
 }
 

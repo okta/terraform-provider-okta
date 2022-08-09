@@ -1,9 +1,6 @@
 package okta
 
 import (
-	"context"
-	"fmt"
-	"strings"
 	"testing"
 )
 
@@ -31,29 +28,4 @@ func TestLogoStateFunc(t *testing.T) {
 			t.Errorf("Error matching logo, expected %q, got %q, for file %q", c.expected, result, c.input)
 		}
 	}
-}
-
-func deleteTestApps(client *testClient) error {
-	appList, err := listApps(context.Background(), client.oktaClient, &appFilters{LabelPrefix: testResourcePrefix}, defaultPaginationLimit)
-	if err != nil {
-		return err
-	}
-	var warnings []string
-	for _, app := range appList {
-		warn := fmt.Sprintf("failed to sweep an application, there may be dangling resources. ID %s, label %s", app.Id, app.Label)
-		_, err := client.oktaClient.Application.DeactivateApplication(context.Background(), app.Id)
-		if err != nil {
-			warnings = append(warnings, warn)
-		}
-		resp, err := client.oktaClient.Application.DeleteApplication(context.Background(), app.Id)
-		if is404(resp) {
-			warnings = append(warnings, warn)
-		} else if err != nil {
-			return err
-		}
-	}
-	if len(warnings) > 0 {
-		return fmt.Errorf("sweep failures: %s", strings.Join(warnings, ", "))
-	}
-	return nil
 }

@@ -22,8 +22,12 @@ func setAuthenticationPolicy(ctx context.Context, d *schema.ResourceData, m inte
 func assignDefaultAuthenticationPolicy(ctx context.Context, m interface{}, appId string) error {
 	// Inspecting the ACCESS_POLICY is OIE only https://developer.okta.com/docs/reference/api/policy/#policy-object
 	// "Note: The following policy types are available only with the Identity Engine: ACCESS_POLICY or PROFILE_ENROLLMENT."
-	// If the org is not OIE return early
-	if config, ok := m.(*Config); ok && config.classicOrg {
+	// If the org is not OIE return early.
+	classicOrg, err := isClassicOrganization(ctx, m)
+	if err != nil {
+		return err
+	}
+	if classicOrg {
 		return nil
 	}
 

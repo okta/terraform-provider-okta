@@ -33,7 +33,7 @@ func resourcePolicyProfileEnrollment() *schema.Resource {
 }
 
 func resourcePolicyProfileEnrollmentCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	policy, _, err := getSupplementFromMetadata(m).CreatePolicy(ctx, buildPolicyProfileEnrollment(d))
+	policy, _, err := getAPISupplementFromMetadata(m).CreatePolicy(ctx, buildPolicyProfileEnrollment(d))
 	if err != nil {
 		return diag.Errorf("failed to create profile enrollment policy: %v", err)
 	}
@@ -62,7 +62,7 @@ func resourcePolicyProfileEnrollmentRead(ctx context.Context, d *schema.Resource
 }
 
 func resourcePolicyProfileEnrollmentUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getSupplementFromMetadata(m).UpdatePolicy(ctx, d.Id(), buildPolicyProfileEnrollment(d))
+	_, _, err := getAPISupplementFromMetadata(m).UpdatePolicy(ctx, d.Id(), buildPolicyProfileEnrollment(d))
 	if err != nil {
 		return diag.Errorf("failed to update profile enrollment policy: %v", err)
 	}

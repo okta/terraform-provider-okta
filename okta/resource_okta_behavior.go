@@ -80,7 +80,7 @@ func resourceBehaviorCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	behavior, _, err := getSupplementFromMetadata(m).CreateBehavior(ctx, buildBehavior(d))
+	behavior, _, err := getAPISupplementFromMetadata(m).CreateBehavior(ctx, buildBehavior(d))
 	if err != nil {
 		return diag.Errorf("failed to create location behavior: %v", err)
 	}
@@ -90,7 +90,7 @@ func resourceBehaviorCreate(ctx context.Context, d *schema.ResourceData, m inter
 
 func resourceBehaviorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	logger(m).Info("getting behavior", "id", d.Id())
-	behavior, resp, err := getSupplementFromMetadata(m).GetBehavior(ctx, d.Id())
+	behavior, resp, err := getAPISupplementFromMetadata(m).GetBehavior(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to find behavior: %v", err)
 	}
@@ -111,7 +111,7 @@ func resourceBehaviorUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = getSupplementFromMetadata(m).UpdateBehavior(ctx, d.Id(), buildBehavior(d))
+	_, _, err = getAPISupplementFromMetadata(m).UpdateBehavior(ctx, d.Id(), buildBehavior(d))
 	if err != nil {
 		return diag.Errorf("failed to update location behavior: %v", err)
 	}
@@ -126,7 +126,7 @@ func resourceBehaviorUpdate(ctx context.Context, d *schema.ResourceData, m inter
 
 func resourceBehaviorDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	logger(m).Info("deleting location behavior", "name", d.Get("name").(string))
-	_, err := getSupplementFromMetadata(m).DeleteBehavior(ctx, d.Id())
+	_, err := getAPISupplementFromMetadata(m).DeleteBehavior(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete location behavior: %v", err)
 	}
@@ -156,7 +156,7 @@ func buildBehavior(d *schema.ResourceData) sdk.Behavior {
 }
 
 func handleBehaviorLifecycle(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getSupplementFromMetadata(m)
+	client := getAPISupplementFromMetadata(m)
 	if d.Get("status").(string) == statusActive {
 		logger(m).Info("activating behavior", "name", d.Get("name").(string))
 		_, err := client.ActivateBehavior(ctx, d.Id())

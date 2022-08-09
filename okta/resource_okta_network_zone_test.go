@@ -3,28 +3,10 @@ package okta
 import (
 	"context"
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
-
-func sweepNetworkZones(client *testClient) error {
-	var errorList []error
-	zones, _, err := client.oktaClient.NetworkZone.ListNetworkZones(context.Background(), &query.Params{Limit: defaultPaginationLimit})
-	if err != nil {
-		return err
-	}
-	for _, zone := range zones {
-		if strings.HasPrefix(zone.Name, testResourcePrefix) {
-			if _, err := client.oktaClient.NetworkZone.DeleteNetworkZone(context.Background(), zone.Id); err != nil {
-				errorList = append(errorList, err)
-			}
-		}
-	}
-	return condenseError(errorList)
-}
 
 func TestAccOktaNetworkZone_crud(t *testing.T) {
 	mgr := newFixtureManager(networkZone, t.Name())
@@ -70,6 +52,7 @@ func TestAccOktaNetworkZone_crud(t *testing.T) {
 }
 
 func doesNetworkZoneExist(id string) (bool, error) {
-	_, response, err := getOktaClientFromMetadata(testAccProvider.Meta()).NetworkZone.GetNetworkZone(context.Background(), id)
+	client := oktaClientForTest()
+	_, response, err := client.NetworkZone.GetNetworkZone(context.Background(), id)
 	return doesResourceExist(response, err)
 }

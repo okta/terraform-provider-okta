@@ -58,12 +58,12 @@ func TestAccAppUserSchemas_crud(t *testing.T) {
 	})
 }
 
-func testAppUserSchemasExists(name string) resource.TestCheckFunc {
+func testAppUserSchemasExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
-		rs, ok := s.RootModule().Resources[name]
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
-			return fmt.Errorf("not found: %s", name)
+			return fmt.Errorf("not found: %s", resourceName)
 		}
 
 		if exists, _ := testAppUserSchemaExists(rs.Primary.ID); !exists {
@@ -75,8 +75,8 @@ func testAppUserSchemasExists(name string) resource.TestCheckFunc {
 
 func testAppUserSchemaExists(index string) (bool, error) {
 	ids := strings.Split(index, "/")
-	schema, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).UserSchema.
-		GetApplicationUserSchema(context.Background(), ids[0])
+	client := oktaClientForTest()
+	schema, resp, err := client.UserSchema.GetApplicationUserSchema(context.Background(), ids[0])
 	if err != nil {
 		if resp != nil && resp.StatusCode == 404 {
 			return false, nil

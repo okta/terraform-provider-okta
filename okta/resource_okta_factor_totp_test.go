@@ -33,6 +33,7 @@ func TestAccOktaFactorTOTP(t *testing.T) {
 }
 
 func doesFactorTOTPExist(id string) (bool, error) {
-	_, response, err := getSupplementFromMetadata(testAccProvider.Meta()).GetHotpFactorProfile(context.Background(), id)
+	client := apiSupplementForTest()
+	_, response, err := client.GetHotpFactorProfile(context.Background(), id)
 	return doesResourceExist(response, err)
 }

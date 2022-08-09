@@ -76,8 +76,8 @@ func appSignOnPolicyRuleExists(s *terraform.State) error {
 		if rs.Type != appSignOnPolicyRule {
 			continue
 		}
-		rule, resp, err := getSupplementFromMetadata(testAccProvider.Meta()).
-			GetAppSignOnPolicyRule(context.Background(), rs.Primary.Attributes["policy_id"], rs.Primary.ID)
+		client := apiSupplementForTest()
+		rule, resp, err := client.GetAppSignOnPolicyRule(context.Background(), rs.Primary.Attributes["policy_id"], rs.Primary.ID)
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			return nil
 		} else if err != nil {

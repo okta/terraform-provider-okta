@@ -110,7 +110,7 @@ func resourceTemplateEmail() *schema.Resource {
 func resourceTemplateEmailCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	temp := buildEmailTemplate(d)
 	id := d.Get("type").(string)
-	_, _, err := getSupplementFromMetadata(m).CreateEmailTemplate(ctx, *temp, nil)
+	_, _, err := getAPISupplementFromMetadata(m).CreateEmailTemplate(ctx, *temp, nil)
 	if err != nil {
 		return diag.Errorf("failed to create email template: %v", err)
 	}
@@ -119,7 +119,7 @@ func resourceTemplateEmailCreate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceTemplateEmailRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	temp, resp, err := getSupplementFromMetadata(m).GetEmailTemplate(ctx, d.Id())
+	temp, resp, err := getAPISupplementFromMetadata(m).GetEmailTemplate(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get email template: %v", err)
 	}
@@ -138,7 +138,7 @@ func resourceTemplateEmailRead(ctx context.Context, d *schema.ResourceData, m in
 
 func resourceTemplateEmailUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	temp := buildEmailTemplate(d)
-	_, _, err := getSupplementFromMetadata(m).UpdateEmailTemplate(ctx, d.Id(), *temp, nil)
+	_, _, err := getAPISupplementFromMetadata(m).UpdateEmailTemplate(ctx, d.Id(), *temp, nil)
 	if err != nil {
 		return diag.Errorf("failed to update email template: %v", err)
 	}
@@ -146,7 +146,7 @@ func resourceTemplateEmailUpdate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceTemplateEmailDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, err := getSupplementFromMetadata(m).DeleteEmailTemplate(ctx, d.Id())
+	_, err := getAPISupplementFromMetadata(m).DeleteEmailTemplate(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete email template: %v", err)
 	}

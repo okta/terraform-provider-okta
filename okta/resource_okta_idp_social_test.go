@@ -18,7 +18,7 @@ func TestAccOktaIdpSocial_crud(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpSocial, createDoesIdpExist()),
+		CheckDestroy:      createCheckResourceDestroy(idpSocial, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

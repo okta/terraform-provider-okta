@@ -39,6 +39,7 @@ func TestAccOktaCaptcha(t *testing.T) {
 }
 
 func doesCaptchaExist(id string) (bool, error) {
-	_, response, err := getSupplementFromMetadata(testAccProvider.Meta()).GetCaptcha(context.Background(), id)
+	client := apiSupplementForTest()
+	_, response, err := client.GetCaptcha(context.Background(), id)
 	return doesResourceExist(response, err)
 }

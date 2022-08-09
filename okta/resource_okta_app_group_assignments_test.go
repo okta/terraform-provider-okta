@@ -49,16 +49,16 @@ func TestAccAppGroupAssignments_crud(t *testing.T) {
 	})
 }
 
-func ensureAppGroupAssignmentsExist(name string, groupsExpected ...string) resource.TestCheckFunc {
+func ensureAppGroupAssignmentsExist(resourceName string, groupsExpected ...string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		missingErr := fmt.Errorf("resource not found: %s", name)
-		rs, ok := s.RootModule().Resources[name]
+		missingErr := fmt.Errorf("resource not found: %s", resourceName)
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return missingErr
 		}
 
 		appID := rs.Primary.Attributes["app_id"]
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
+		client := oktaClientForTest()
 
 		// Get all the IDs of groups we expect to be assigned
 		expectedGroupIDs := map[string]bool{}

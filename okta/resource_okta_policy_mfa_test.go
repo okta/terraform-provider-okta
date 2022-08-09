@@ -5,12 +5,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
-
-func deleteMfaPolicies(client *testClient) error {
-	return deletePolicyByType(sdk.MfaPolicyType, client)
-}
 
 // Note: at least one factor (e.g. `okta_otp`) should be enabled before running this test.
 func TestAccOktaMfaPolicy_crud(t *testing.T) {

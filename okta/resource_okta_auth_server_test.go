@@ -7,32 +7,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
-
-func deleteAuthServers(client *testClient) error {
-	servers, _, err := client.oktaClient.AuthorizationServer.ListAuthorizationServers(context.Background(), &query.Params{Q: testResourcePrefix})
-	if err != nil {
-		return err
-	}
-	for _, s := range servers {
-		if _, err := client.oktaClient.AuthorizationServer.DeactivateAuthorizationServer(context.Background(), s.Id); err != nil {
-			return err
-		}
-		if _, err := client.oktaClient.AuthorizationServer.DeleteAuthorizationServer(context.Background(), s.Id); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func authServerExists(id string) (bool, error) {
-	server, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).AuthorizationServer.GetAuthorizationServer(context.Background(), id)
-	if resp != nil && resp.StatusCode == http.StatusNotFound {
-		return false, nil
-	}
-	return server != nil && server.Id != "" && err == nil, err
-}
 
 func TestAccOktaAuthServer_crud(t *testing.T) {
 	mgr := newFixtureManager(authServer, t.Name())
@@ -148,4 +123,13 @@ func TestAccOktaAuthServer_gh299(t *testing.T) {
 			},
 		},
 	})
+}
+
+func authServerExists(id string) (bool, error) {
+	client := oktaClientForTest()
+	server, resp, err := client.AuthorizationServer.GetAuthorizationServer(context.Background(), id)
+	if resp != nil && resp.StatusCode == http.StatusNotFound {
+		return false, nil
+	}
+	return server != nil && server.Id != "" && err == nil, err
 }

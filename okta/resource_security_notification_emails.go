@@ -52,7 +52,8 @@ func resourceSecurityNotificationEmails() *schema.Resource {
 
 func resourceSecurityNotificationEmailsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*Config)
-	emails, err := getSupplementFromMetadata(m).UpdateSecurityNotificationEmails(ctx, buildSecurityNotificationEmails(d), c.orgName, c.domain, c.apiToken, c.client)
+	client := c.oktaClient.GetConfig().HttpClient
+	emails, err := getAPISupplementFromMetadata(m).UpdateSecurityNotificationEmails(ctx, buildSecurityNotificationEmails(d), c.orgName, c.domain, c.apiToken, client)
 	if err != nil {
 		return diag.Errorf("failed to update security notification emails: %v", err)
 	}
@@ -67,7 +68,8 @@ func resourceSecurityNotificationEmailsCreate(ctx context.Context, d *schema.Res
 
 func resourceSecurityNotificationEmailsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*Config)
-	emails, err := getSupplementFromMetadata(m).GetSecurityNotificationEmails(ctx, c.orgName, c.domain, c.apiToken, c.client)
+	client := c.oktaClient.GetConfig().HttpClient
+	emails, err := getAPISupplementFromMetadata(m).GetSecurityNotificationEmails(ctx, c.orgName, c.domain, c.apiToken, client)
 	if err != nil {
 		return diag.Errorf("failed to get security notification emails: %v", err)
 	}
@@ -82,7 +84,8 @@ func resourceSecurityNotificationEmailsRead(ctx context.Context, d *schema.Resou
 
 func resourceSecurityNotificationEmailsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*Config)
-	_, err := getSupplementFromMetadata(m).UpdateSecurityNotificationEmails(ctx, buildSecurityNotificationEmails(d), c.orgName, c.domain, c.apiToken, c.client)
+	client := c.oktaClient.GetConfig().HttpClient
+	_, err := getAPISupplementFromMetadata(m).UpdateSecurityNotificationEmails(ctx, buildSecurityNotificationEmails(d), c.orgName, c.domain, c.apiToken, client)
 	if err != nil {
 		return diag.Errorf("failed to update security notification emails: %v", err)
 	}
@@ -91,6 +94,7 @@ func resourceSecurityNotificationEmailsUpdate(ctx context.Context, d *schema.Res
 
 func resourceSecurityNotificationEmailsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*Config)
+	client := c.oktaClient.GetConfig().HttpClient
 	emails := sdk.SecurityNotificationEmails{
 		SendEmailForNewDeviceEnabled:        true,
 		SendEmailForFactorEnrollmentEnabled: true,
@@ -98,7 +102,7 @@ func resourceSecurityNotificationEmailsDelete(ctx context.Context, d *schema.Res
 		SendEmailForPasswordChangedEnabled:  true,
 		ReportSuspiciousActivityEnabled:     true,
 	}
-	_, err := getSupplementFromMetadata(m).UpdateSecurityNotificationEmails(ctx, emails, c.orgName, c.domain, c.apiToken, c.client)
+	_, err := getAPISupplementFromMetadata(m).UpdateSecurityNotificationEmails(ctx, emails, c.orgName, c.domain, c.apiToken, client)
 	if err != nil {
 		return diag.Errorf("failed to set default security notification emails: %v", err)
 	}

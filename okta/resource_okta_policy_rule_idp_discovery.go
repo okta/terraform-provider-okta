@@ -75,7 +75,7 @@ func resourcePolicyRuleIdpDiscoveryCreate(ctx context.Context, d *schema.Resourc
 	}
 	logger(m).Info("creating IdP discovery policy rule", "policy_id", policyID)
 	newRule := buildIdpDiscoveryRule(d)
-	rule, _, err := getSupplementFromMetadata(m).CreateIdpDiscoveryRule(ctx, policyID, *newRule, nil)
+	rule, _, err := getAPISupplementFromMetadata(m).CreateIdpDiscoveryRule(ctx, policyID, *newRule, nil)
 	if err != nil {
 		return diag.Errorf("failed to create IDP discovery policy rule: %v", err)
 	}
@@ -96,7 +96,7 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 		return diag.Errorf("either 'policyid' or 'policy_id' field should be set")
 	}
 	logger(m).Info("reading IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
-	rule, resp, err := getSupplementFromMetadata(m).GetIdpDiscoveryRule(ctx, policyID, d.Id())
+	rule, resp, err := getAPISupplementFromMetadata(m).GetIdpDiscoveryRule(ctx, policyID, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get IDP discovery policy rule: %v", err)
 	}
@@ -143,7 +143,7 @@ func resourcePolicyRuleIdpDiscoveryUpdate(ctx context.Context, d *schema.Resourc
 	}
 	logger(m).Info("updating IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
 	newRule := buildIdpDiscoveryRule(d)
-	rule, _, err := getSupplementFromMetadata(m).UpdateIdpDiscoveryRule(ctx, policyID, d.Id(), *newRule, nil)
+	rule, _, err := getAPISupplementFromMetadata(m).UpdateIdpDiscoveryRule(ctx, policyID, d.Id(), *newRule, nil)
 	if err != nil {
 		return diag.Errorf("failed to update IDP discovery policy rule: %v", err)
 	}

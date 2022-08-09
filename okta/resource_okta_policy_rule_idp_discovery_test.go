@@ -5,12 +5,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
-
-func deletePolicyRuleIdpDiscovery(client *testClient) error {
-	return deletePolicyRulesByType(sdk.IdpDiscoveryType, client)
-}
 
 func TestAccOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 	mgr := newFixtureManager(policyRuleIdpDiscovery, t.Name())

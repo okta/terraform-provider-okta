@@ -41,15 +41,15 @@ func TestAccAppSamlAppSettings_crud(t *testing.T) {
 	})
 }
 
-func checkAppSamlAppSettingsExists(name string) resource.TestCheckFunc {
+func checkAppSamlAppSettingsExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		missingErr := fmt.Errorf("resource not found: %s", name)
-		rs, ok := s.RootModule().Resources[name]
+		missingErr := fmt.Errorf("resource not found: %s", resourceName)
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return missingErr
 		}
 		appID := rs.Primary.Attributes["app_id"]
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
+		client := oktaClientForTest()
 		app := okta.NewSamlApplication()
 		_, _, err := client.Application.GetApplication(context.Background(), appID, app, nil)
 		if err != nil {

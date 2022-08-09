@@ -43,7 +43,8 @@ func checkSupportDestroy(s *terraform.State) error {
 		if rs.Type != orgSupport {
 			continue
 		}
-		support, _, err := getOktaClientFromMetadata(testAccProvider.Meta()).OrgSetting.GetOrgOktaSupportSettings(context.Background())
+		client := oktaClientForTest()
+		support, _, err := client.OrgSetting.GetOrgOktaSupportSettings(context.Background())
 		if err != nil {
 			return err
 		}

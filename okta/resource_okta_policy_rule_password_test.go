@@ -15,10 +15,6 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func deletePolicyRulePasswords(client *testClient) error {
-	return deletePolicyRulesByType(sdk.PasswordPolicyType, client)
-}
-
 func deletePolicyRulesByType(ruleType string, client *testClient) error {
 	ctx := context.Background()
 	policies, _, err := client.oktaClient.Policy.ListPolicies(ctx, &query.Params{Type: ruleType})
@@ -121,17 +117,16 @@ func TestAccOktaPolicyRulePassword_priority(t *testing.T) {
 	})
 }
 
-func ensureRuleExists(name string) resource.TestCheckFunc {
+func ensureRuleExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		missingErr := fmt.Errorf("resource not found: %s", name)
-		rs, ok := s.RootModule().Resources[name]
+		missingErr := fmt.Errorf("resource not found: %s", resourceName)
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return missingErr
 		}
 
 		policyID := rs.Primary.Attributes["policy_id"]
-		ID := rs.Primary.ID
-		exist, err := doesRuleExistsUpstream(policyID, ID)
+		exist, err := doesRuleExistsUpstream(policyID, rs.Primary.ID)
 		if err != nil {
 			return err
 		} else if !exist {
@@ -150,22 +145,22 @@ func createRuleCheckDestroy(ruleType string) func(*terraform.State) error {
 			}
 
 			policyID := rs.Primary.Attributes["policy_id"]
-			ID := rs.Primary.ID
-			exists, err := doesRuleExistsUpstream(policyID, ID)
+			exists, err := doesRuleExistsUpstream(policyID, rs.Primary.ID)
 			if err != nil {
 				return err
 			}
 
 			if exists {
-				return fmt.Errorf("rule still exists, ID: %s, PolicyID: %s", ID, policyID)
+				return fmt.Errorf("rule still exists, ID: %s, PolicyID: %s", rs.Primary.ID, policyID)
 			}
 		}
 		return nil
 	}
 }
 
-func doesRuleExistsUpstream(policyID, id string) (bool, error) {
-	rule, resp, err := getSupplementFromMetadata(testAccProvider.Meta()).GetPolicyRule(context.Background(), policyID, id)
+func doesRuleExistsUpstream(policyID, ruleID string) (bool, error) {
+	client := apiSupplementForTest()
+	rule, resp, err := client.GetPolicyRule(context.Background(), policyID, ruleID)
 	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return false, nil
 	} else if err != nil {

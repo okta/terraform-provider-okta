@@ -5,29 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
-
-func sweepGroupCustomSchema(client *testClient) error {
-	schema, _, err := client.oktaClient.GroupSchema.GetGroupSchema(context.Background())
-	if err != nil {
-		return err
-	}
-	for key := range schema.Definitions.Custom.Properties {
-		if strings.HasPrefix(key, testResourcePrefix) {
-			custom := buildCustomGroupSchema(key, nil)
-			_, _, err = client.oktaClient.GroupSchema.UpdateGroupSchema(context.Background(), *custom)
-			if err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
 
 func TestAccOktaGroupSchema_crud(t *testing.T) {
 	mgr := newFixtureManager(groupSchemaProperty, t.Name())
@@ -39,12 +21,12 @@ func TestAccOktaGroupSchema_crud(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaGroupSchemasDestroy(),
+		CheckDestroy:      checkOktaGroupSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaGroupSchemasExists(resourceName),
+					testOktaGroupSchemasExists(t.Name(), resourceName),
 					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
@@ -65,7 +47,7 @@ func TestAccOktaGroupSchema_crud(t *testing.T) {
 			{
 				Config: updated,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaGroupSchemasExists(resourceName),
+					testOktaGroupSchemasExists(t.Name(), resourceName),
 					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test updated"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
@@ -86,7 +68,7 @@ func TestAccOktaGroupSchema_crud(t *testing.T) {
 			{
 				Config: unique,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaGroupSchemasExists(resourceName),
+					testOktaGroupSchemasExists(t.Name(), resourceName),
 					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test setting unique attribute to UNIQUE_VALIDATED"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
@@ -113,12 +95,12 @@ func TestAccOktaGroupSchema_arrayString(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaGroupSchemasDestroy(),
+		CheckDestroy:      checkOktaGroupSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaGroupSchemasExists(resourceName),
+					testOktaGroupSchemasExists(t.Name(), resourceName),
 					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
@@ -132,7 +114,7 @@ func TestAccOktaGroupSchema_arrayString(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaGroupSchemasExists(resourceName),
+					testOktaGroupSchemasExists(t.Name(), resourceName),
 					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test updated"),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
@@ -146,7 +128,7 @@ func TestAccOktaGroupSchema_arrayString(t *testing.T) {
 			{
 				Config: arrayEnum,
 				Check: resource.ComposeTestCheckFunc(
-					testOktaGroupSchemasExists(resourceName),
+					testOktaGroupSchemasExists(t.Name(), resourceName),
 					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
@@ -176,52 +158,13 @@ func TestAccOktaGroupSchema_arrayString(t *testing.T) {
 	})
 }
 
-func checkOktaGroupSchemasDestroy() resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		for _, rs := range s.RootModule().Resources {
-			exists, _ := testGroupSchemaPropertyExists(rs.Primary.ID)
-			if exists {
-				return fmt.Errorf("resource still exists, ID: %s", rs.Primary.ID)
-			}
-		}
-		return nil
-	}
-}
-
-func testGroupSchemaPropertyExists(index string) (bool, error) {
-	gs, _, err := getOktaClientFromMetadata(testAccProvider.Meta()).GroupSchema.GetGroupSchema(context.Background())
-	if err != nil {
-		return false, fmt.Errorf("failed to get group schema: %v", err)
-	}
-	ca := groupSchemaCustomAttribute(gs, index)
-	return ca != nil, nil
-}
-
-func testOktaGroupSchemasExists(name string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		// Ensure we have enough information in state to look up in API
-		rs, ok := s.RootModule().Resources[name]
-		if !ok {
-			return fmt.Errorf("not found: %s", name)
-		}
-		exists, err := testGroupSchemaPropertyExists(rs.Primary.ID)
-		if err != nil {
-			return fmt.Errorf("failed to find: %v", err)
-		}
-		if !exists {
-			return fmt.Errorf("custom property %s does not exist in a group profile subschema", rs.Primary.ID)
-		}
-		return nil
-	}
-}
-
 func TestAccResourceOktaGroupSchema_array_enum_number(t *testing.T) {
 	mgr := newFixtureManager(groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaGroupSchemasDestroy(),
+		CheckDestroy:      checkOktaGroupSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -311,7 +254,7 @@ func TestAccResourceOktaGroupSchema_enum_number(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaGroupSchemasDestroy(),
+		CheckDestroy:      checkOktaGroupSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -397,7 +340,7 @@ func TestAccResourceOktaGroupSchema_array_enum_integer(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaGroupSchemasDestroy(),
+		CheckDestroy:      checkOktaGroupSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -487,7 +430,7 @@ func TestAccResourceOktaGroupSchema_enum_integer(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaGroupSchemasDestroy(),
+		CheckDestroy:      checkOktaGroupSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -575,7 +518,7 @@ func TestAccResourceOktaGroupSchema_array_enum_boolean(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaGroupSchemasDestroy(),
+		CheckDestroy:      checkOktaGroupSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -653,7 +596,7 @@ func TestAccResourceOktaGroupSchema_enum_boolean(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaGroupSchemasDestroy(),
+		CheckDestroy:      checkOktaGroupSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -725,7 +668,7 @@ func TestAccResourceOktaGroupSchema_array_enum_string(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaGroupSchemasDestroy(),
+		CheckDestroy:      checkOktaGroupSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -815,7 +758,7 @@ func TestAccResourceOktaGroupSchema_enum_string(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaGroupSchemasDestroy(),
+		CheckDestroy:      checkOktaGroupSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -893,4 +836,42 @@ func TestAccResourceOktaGroupSchema_enum_string(t *testing.T) {
 			},
 		},
 	})
+}
+
+func checkOktaGroupSchemasDestroy(s *terraform.State) error {
+	for _, rs := range s.RootModule().Resources {
+		exists, _ := testGroupSchemaPropertyExists(rs.Primary.ID)
+		if exists {
+			return fmt.Errorf("resource still exists, ID: %s", rs.Primary.ID)
+		}
+	}
+	return nil
+}
+
+func testGroupSchemaPropertyExists(index string) (bool, error) {
+	client := oktaClientForTest()
+	gs, _, err := client.GroupSchema.GetGroupSchema(context.Background())
+	if err != nil {
+		return false, fmt.Errorf("failed to get group schema: %v", err)
+	}
+	ca := groupSchemaCustomAttribute(gs, index)
+	return ca != nil, nil
+}
+
+func testOktaGroupSchemasExists(testName, resourceName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		// Ensure we have enough information in state to look up in API
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("not found: %s", resourceName)
+		}
+		exists, err := testGroupSchemaPropertyExists(rs.Primary.ID)
+		if err != nil {
+			return fmt.Errorf("failed to find: %v", err)
+		}
+		if !exists {
+			return fmt.Errorf("custom property %s does not exist in a group profile subschema", rs.Primary.ID)
+		}
+		return nil
+	}
 }

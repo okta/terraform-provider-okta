@@ -164,7 +164,7 @@ func createPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, te
 	if err := ensureNotDefaultPolicy(d); err != nil {
 		return err
 	}
-	policy, _, err := getSupplementFromMetadata(m).CreatePolicy(ctx, template)
+	policy, _, err := getAPISupplementFromMetadata(m).CreatePolicy(ctx, template)
 	if err != nil {
 		return err
 	}
@@ -197,7 +197,7 @@ func getGroups(d *schema.ResourceData) *okta.PolicyPeopleCondition {
 // Grabs policy from upstream, if the resource does not exist the returned policy will be nil which is not considered an error
 func getPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) (*sdk.Policy, error) {
 	logger(m).Info("getting policy", "id", d.Id())
-	policy, resp, err := getSupplementFromMetadata(m).GetPolicy(ctx, d.Id())
+	policy, resp, err := getAPISupplementFromMetadata(m).GetPolicy(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return nil, err
 	}
@@ -233,7 +233,7 @@ func updatePolicy(ctx context.Context, d *schema.ResourceData, m interface{}, te
 	if err := ensureNotDefaultPolicy(d); err != nil {
 		return err
 	}
-	policy, _, err := getSupplementFromMetadata(m).UpdatePolicy(ctx, d.Id(), template)
+	policy, _, err := getAPISupplementFromMetadata(m).UpdatePolicy(ctx, d.Id(), template)
 	if err != nil {
 		return err
 	}

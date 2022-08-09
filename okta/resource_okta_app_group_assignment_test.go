@@ -126,17 +126,17 @@ func TestAccAppGroupAssignment_retain(t *testing.T) {
 	})
 }
 
-func ensureAppGroupAssignmentExists(name string) resource.TestCheckFunc {
+func ensureAppGroupAssignmentExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		missingErr := fmt.Errorf("resource not found: %s", name)
-		rs, ok := s.RootModule().Resources[name]
+		missingErr := fmt.Errorf("resource not found: %s", resourceName)
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return missingErr
 		}
 
 		appID := rs.Primary.Attributes["app_id"]
 		groupID := rs.Primary.Attributes["group_id"]
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
+		client := oktaClientForTest()
 
 		g, _, err := client.Application.GetApplicationGroupAssignment(context.Background(), appID, groupID, nil)
 		if err != nil {
@@ -165,7 +165,7 @@ func ensureAppGroupAssignmentRetained(appName, groupName string) resource.TestCh
 
 		appID := appRes.Primary.ID
 		groupID := groupRes.Primary.ID
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
+		client := oktaClientForTest()
 
 		g, _, err := client.Application.GetApplicationGroupAssignment(context.Background(), appID, groupID, nil)
 		if err != nil {

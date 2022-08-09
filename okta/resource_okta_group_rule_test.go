@@ -7,30 +7,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
-
-func sweepGroupRules(client *testClient) error {
-	var errorList []error
-	// Should never need to deal with pagination
-	rules, _, err := client.oktaClient.Group.ListGroupRules(context.Background(), &query.Params{Limit: defaultPaginationLimit})
-	if err != nil {
-		return err
-	}
-
-	for _, s := range rules {
-		if s.Status == statusActive {
-			if _, err := client.oktaClient.Group.DeactivateGroupRule(context.Background(), s.Id); err != nil {
-				errorList = append(errorList, err)
-				continue
-			}
-		}
-		if _, err := client.oktaClient.Group.DeleteGroupRule(context.Background(), s.Id, nil); err != nil {
-			errorList = append(errorList, err)
-		}
-	}
-	return condenseError(errorList)
-}
 
 func TestAccOktaGroupRule_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", groupRule)
@@ -188,7 +165,7 @@ resource "okta_group_rule" "inval" {
 }
 
 func doesGroupRuleExist(id string) (bool, error) {
-	client := getOktaClientFromMetadata(testAccProvider.Meta())
+	client := oktaClientForTest()
 	_, response, err := client.Group.GetGroupRule(context.Background(), id, nil)
 
 	return doesResourceExist(response, err)

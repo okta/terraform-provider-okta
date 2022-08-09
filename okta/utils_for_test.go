@@ -20,8 +20,7 @@ func ensureResourceExists(name string, checkUpstream checkUpstream) resource.Tes
 		if !ok {
 			return missingErr
 		}
-		ID := rs.Primary.ID
-		exist, err := checkUpstream(ID)
+		exist, err := checkUpstream(rs.Primary.ID)
 		if err != nil {
 			return err
 		} else if !exist {
@@ -37,13 +36,12 @@ func createCheckResourceDestroy(typeName string, checkUpstream checkUpstream) re
 			if rs.Type != typeName {
 				continue
 			}
-			ID := rs.Primary.ID
-			exists, err := checkUpstream(ID)
+			exists, err := checkUpstream(rs.Primary.ID)
 			if err != nil {
 				return err
 			}
 			if exists {
-				return fmt.Errorf("resource still exists, ID: %s", ID)
+				return fmt.Errorf("resource still exists, ID: %s", rs.Primary.ID)
 			}
 		}
 		return nil

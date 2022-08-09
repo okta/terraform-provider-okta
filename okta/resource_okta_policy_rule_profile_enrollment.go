@@ -93,21 +93,21 @@ func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 }
 
 func resourcePolicyProfileEnrollmentRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	policy, _, err := getSupplementFromMetadata(m).GetPolicy(ctx, d.Get("policy_id").(string))
+	policy, _, err := getAPISupplementFromMetadata(m).GetPolicy(ctx, d.Get("policy_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to get profile enrollment policy: %v", err)
 	}
 	if policy.Type != sdk.ProfileEnrollmentPolicyType {
 		return diag.Errorf("provided policy is not of type %s", sdk.ProfileEnrollmentPolicyType)
 	}
-	rules, _, err := getSupplementFromMetadata(m).ListPolicyRules(ctx, d.Get("policy_id").(string))
+	rules, _, err := getAPISupplementFromMetadata(m).ListPolicyRules(ctx, d.Get("policy_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to get list profile enrollment policy rules: %v", err)
 	}
 	if len(rules) == 0 {
 		return diag.Errorf("this policy should contain one default Catch-All rule, but it doesn't")
 	}
-	rule, _, err := getSupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), rules[0].Id, buildPolicyRuleProfileEnrollment(d, rules[0].Id))
+	rule, _, err := getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), rules[0].Id, buildPolicyRuleProfileEnrollment(d, rules[0].Id))
 	if err != nil {
 		return diag.Errorf("failed to create profile enrollment policy rule: %v", err)
 	}
@@ -116,7 +116,7 @@ func resourcePolicyProfileEnrollmentRuleCreate(ctx context.Context, d *schema.Re
 }
 
 func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	rule, resp, err := getSupplementFromMetadata(m).GetPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+	rule, resp, err := getAPISupplementFromMetadata(m).GetPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get profile enrollment policy rule: %v", err)
 	}
@@ -148,7 +148,7 @@ func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.Reso
 }
 
 func resourcePolicyProfileEnrollmentRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getSupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), d.Id(), buildPolicyRuleProfileEnrollment(d, d.Id()))
+	_, _, err := getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), d.Id(), buildPolicyRuleProfileEnrollment(d, d.Id()))
 	if err != nil {
 		return diag.Errorf("failed to update profile enrollment policy rule: %v", err)
 	}

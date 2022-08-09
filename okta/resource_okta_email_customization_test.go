@@ -69,7 +69,8 @@ func createCheckResourceEmailCustomizationDestroy(s *terraform.State) error {
 		brandID := rs.Primary.Attributes["brand_id"]
 		templateName := rs.Primary.Attributes["template_name"]
 
-		_, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).Brand.GetEmailTemplateCustomization(context.Background(), brandID, templateName, ID)
+		client := oktaClientForTest()
+		_, resp, err := client.Brand.GetEmailTemplateCustomization(context.Background(), brandID, templateName, ID)
 		if err != nil || resp.StatusCode == http.StatusNotFound {
 			return nil
 		}

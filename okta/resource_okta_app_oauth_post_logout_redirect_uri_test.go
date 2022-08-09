@@ -10,31 +10,6 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
-func createPostLogoutRedirectURIExists(name string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		missingErr := fmt.Errorf("resource not found: %s", name)
-		rs, ok := s.RootModule().Resources[name]
-		if !ok {
-			return missingErr
-		}
-
-		uri := rs.Primary.ID
-		appID := rs.Primary.Attributes["app_id"]
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
-		app := okta.NewOpenIdConnectApplication()
-		_, response, err := client.Application.GetApplication(context.Background(), appID, app, nil)
-
-		// We don't want to consider a 404 an error in some cases and thus the delineation
-		if response != nil && response.StatusCode == 404 {
-			return missingErr
-		} else if err != nil && contains(app.Settings.OauthClient.PostLogoutRedirectUris, uri) {
-			return nil
-		}
-
-		return err
-	}
-}
-
 func TestAccAppOAuthApplication_postLogoutRedirectCrud(t *testing.T) {
 	mgr := newFixtureManager(appOAuthPostLogoutRedirectURI, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
@@ -66,4 +41,29 @@ func TestAccAppOAuthApplication_postLogoutRedirectCrud(t *testing.T) {
 			},
 		},
 	})
+}
+
+func createPostLogoutRedirectURIExists(resourceName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		missingErr := fmt.Errorf("resource not found: %s", resourceName)
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return missingErr
+		}
+
+		uri := rs.Primary.ID
+		appID := rs.Primary.Attributes["app_id"]
+		client := oktaClientForTest()
+		app := okta.NewOpenIdConnectApplication()
+		_, response, err := client.Application.GetApplication(context.Background(), appID, app, nil)
+
+		// We don't want to consider a 404 an error in some cases and thus the delineation
+		if response != nil && response.StatusCode == 404 {
+			return missingErr
+		} else if err != nil && contains(app.Settings.OauthClient.PostLogoutRedirectUris, uri) {
+			return nil
+		}
+
+		return err
+	}
 }

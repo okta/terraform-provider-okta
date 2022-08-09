@@ -118,7 +118,7 @@ func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 	if policyID == "" {
 		return fmt.Errorf("either 'policyid' or 'policy_id' field should be set")
 	}
-	rule, _, err := getSupplementFromMetadata(m).CreatePolicyRule(ctx, policyID, template)
+	rule, _, err := getAPISupplementFromMetadata(m).CreatePolicyRule(ctx, policyID, template)
 	if err != nil {
 		return fmt.Errorf("failed to create policy rule: %v", err)
 	}
@@ -161,7 +161,7 @@ func buildPolicyNetworkCondition(d *schema.ResourceData) *okta.PolicyNetworkCond
 }
 
 func getPolicyRule(ctx context.Context, d *schema.ResourceData, m interface{}) (*sdk.PolicyRule, error) {
-	client := getSupplementFromMetadata(m)
+	client := getAPISupplementFromMetadata(m)
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
 		policyID = d.Get("policyid").(string)
@@ -236,7 +236,7 @@ func updateRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 	if policyID == "" {
 		return fmt.Errorf("either 'policyid' or 'policy_id' field should be set")
 	}
-	rule, _, err := getSupplementFromMetadata(m).UpdatePolicyRule(ctx, policyID, d.Id(), template)
+	rule, _, err := getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, policyID, d.Id(), template)
 	if err != nil {
 		return err
 	}

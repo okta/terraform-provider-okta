@@ -38,7 +38,7 @@ func resourceCaptchaOrgWideSettings() *schema.Resource {
 }
 
 func resourceCaptchaOrgWideSettingsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	captcha, _, err := getSupplementFromMetadata(m).UpdateOrgWideCaptchaSettings(ctx, buildCaptchaOrgWideSettings(d))
+	captcha, _, err := getAPISupplementFromMetadata(m).UpdateOrgWideCaptchaSettings(ctx, buildCaptchaOrgWideSettings(d))
 	if err != nil {
 		return diag.Errorf("failed to set org-wide CAPTCHA settings: %v", err)
 	}
@@ -49,7 +49,7 @@ func resourceCaptchaOrgWideSettingsCreate(ctx context.Context, d *schema.Resourc
 }
 
 func resourceCaptchaOrgWideSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	captcha, _, err := getSupplementFromMetadata(m).GetOrgWideCaptchaSettings(ctx)
+	captcha, _, err := getAPISupplementFromMetadata(m).GetOrgWideCaptchaSettings(ctx)
 	if err != nil {
 		return diag.Errorf("failed to get org-wide CAPTCHA settings: %v", err)
 	}
@@ -64,7 +64,7 @@ func resourceCaptchaOrgWideSettingsRead(ctx context.Context, d *schema.ResourceD
 }
 
 func resourceCaptchaOrgWideSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	captcha, _, err := getSupplementFromMetadata(m).UpdateOrgWideCaptchaSettings(ctx, buildCaptchaOrgWideSettings(d))
+	captcha, _, err := getAPISupplementFromMetadata(m).UpdateOrgWideCaptchaSettings(ctx, buildCaptchaOrgWideSettings(d))
 	if err != nil {
 		return diag.Errorf("failed to update org-wide CAPTCHA settings: %v", err)
 	}
@@ -74,7 +74,7 @@ func resourceCaptchaOrgWideSettingsUpdate(ctx context.Context, d *schema.Resourc
 }
 
 func resourceCaptchaOrgWideSettingsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, err := getSupplementFromMetadata(m).DeleteOrgWideCaptchaSettings(ctx)
+	_, err := getAPISupplementFromMetadata(m).DeleteOrgWideCaptchaSettings(ctx)
 	if err != nil {
 		return diag.Errorf("failed to delete org-wide CAPTCHA settings: %v", err)
 	}

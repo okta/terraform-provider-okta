@@ -120,12 +120,12 @@ func TestAccOktaUserBaseSchemaLogin_crud(t *testing.T) {
 	})
 }
 
-func testOktaUserBaseSchemasExists(name string) resource.TestCheckFunc {
+func testOktaUserBaseSchemasExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
-		rs, ok := s.RootModule().Resources[name]
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
-			return fmt.Errorf("not found: %s", name)
+			return fmt.Errorf("not found: %s", resourceName)
 		}
 		schemaUserType := "default"
 		if rs.Primary.Attributes["user_type"] != "" {

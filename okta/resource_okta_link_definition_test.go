@@ -3,27 +3,10 @@ package okta
 import (
 	"context"
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
-
-func sweepLinkDefinitions(client *testClient) error {
-	var errorList []error
-	linkedObjects, _, err := getOktaClientFromMetadata(testAccProvider.Meta()).LinkedObject.ListLinkedObjectDefinitions(context.Background())
-	if err != nil {
-		return err
-	}
-	for _, object := range linkedObjects {
-		if strings.HasPrefix(object.Primary.Name, testResourcePrefix) {
-			if _, err := getOktaClientFromMetadata(testAccProvider.Meta()).LinkedObject.DeleteLinkedObjectDefinition(context.Background(), object.Primary.Name); err != nil {
-				errorList = append(errorList, err)
-			}
-		}
-	}
-	return condenseError(errorList)
-}
 
 func TestAccOktaLinkDefinition(t *testing.T) {
 	mgr := newFixtureManager(linkDefinition, t.Name())
@@ -50,6 +33,7 @@ func TestAccOktaLinkDefinition(t *testing.T) {
 }
 
 func doesLinkDefinitionExist(id string) (bool, error) {
-	_, response, err := getOktaClientFromMetadata(testAccProvider.Meta()).LinkedObject.GetLinkedObjectDefinition(context.Background(), id)
+	client := oktaClientForTest()
+	_, response, err := client.LinkedObject.GetLinkedObjectDefinition(context.Background(), id)
 	return doesResourceExist(response, err)
 }

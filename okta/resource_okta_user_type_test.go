@@ -4,25 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
-
-func sweepUserTypes(client *testClient) error {
-	userTypeList, _, _ := client.oktaClient.UserType.ListUserTypes(context.Background())
-	var errorList []error
-	for _, ut := range userTypeList {
-		if strings.HasPrefix(ut.Name, testResourcePrefix) {
-			if _, err := client.oktaClient.UserType.DeleteUserType(context.Background(), ut.Id); err != nil {
-				errorList = append(errorList, err)
-			}
-		}
-	}
-	return condenseError(errorList)
-}
 
 func TestAccOktaUserType_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", userType)
@@ -65,6 +51,7 @@ func TestAccOktaUserType_crud(t *testing.T) {
 }
 
 func doesUserTypeExist(id string) (bool, error) {
-	_, response, err := getOktaClientFromMetadata(testAccProvider.Meta()).UserType.GetUserType(context.Background(), id)
+	client := oktaClientForTest()
+	_, response, err := client.UserType.GetUserType(context.Background(), id)
 	return doesResourceExist(response, err)
 }

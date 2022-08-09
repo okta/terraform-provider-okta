@@ -197,7 +197,7 @@ func resourcePolicyPasswordDefaultUpdate(ctx context.Context, d *schema.Resource
 		id = policy.Id
 		_ = d.Set("default_auth_provider", policy.Conditions.AuthProvider.Provider)
 	}
-	_, _, err := getSupplementFromMetadata(m).UpdatePolicy(ctx, id, buildDefaultPasswordPolicy(d))
+	_, _, err := getAPISupplementFromMetadata(m).UpdatePolicy(ctx, id, buildDefaultPasswordPolicy(d))
 	if err != nil {
 		return diag.Errorf("failed to update default password policy: %v", err)
 	}

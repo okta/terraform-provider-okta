@@ -111,7 +111,8 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 }
 
 func eventHookExists(id string) (bool, error) {
-	eh, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).EventHook.GetEventHook(context.Background(), id)
+	client := oktaClientForTest()
+	eh, resp, err := client.EventHook.GetEventHook(context.Background(), id)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, err
 	}

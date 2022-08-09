@@ -19,7 +19,7 @@ func TestAccThreatInsightSettings(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaThreatInsightSettingsDestroy(),
+		CheckDestroy:      checkOktaThreatInsightSettingsDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -39,23 +39,22 @@ func TestAccThreatInsightSettings(t *testing.T) {
 	})
 }
 
-func checkOktaThreatInsightSettingsDestroy() resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		for _, rs := range s.RootModule().Resources {
-			if rs.Type != threatInsightSettings {
-				continue
-			}
-			conf, _, err := getOktaClientFromMetadata(testAccProvider.Meta()).ThreatInsightConfiguration.GetCurrentConfiguration(context.Background())
-			if err != nil {
-				return fmt.Errorf("failed to get threat insight configuration: %v", err)
-			}
-			if len(conf.ExcludeZones) > 0 {
-				return errors.New("excluded zones list should be empty")
-			}
-			if conf.Action != "none" {
-				return errors.New("action should be 'none'")
-			}
+func checkOktaThreatInsightSettingsDestroy(s *terraform.State) error {
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != threatInsightSettings {
+			continue
 		}
-		return nil
+		client := oktaClientForTest()
+		conf, _, err := client.ThreatInsightConfiguration.GetCurrentConfiguration(context.Background())
+		if err != nil {
+			return fmt.Errorf("failed to get threat insight configuration: %v", err)
+		}
+		if len(conf.ExcludeZones) > 0 {
+			return errors.New("excluded zones list should be empty")
+		}
+		if conf.Action != "none" {
+			return errors.New("action should be 'none'")
+		}
 	}
+	return nil
 }
