@@ -2,6 +2,7 @@ package okta
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
@@ -36,4 +37,71 @@ func TestAccOktaAuthServerPolicyRule_create(t *testing.T) {
 			},
 		},
 	})
+}
+
+// TestAccOktaAuthServerPolicyRule_priority_concurrency_bug is a test to
+// reproduce and then fix a bug in the Okta service where it couldn't, at the
+// time, elegantly handle current API calls to either update rule create or rule
+// priority.
+func TestAccOktaAuthServerPolicyRule_priority_concurrency_bug(t *testing.T) {
+
+	numRules := 10
+	testPolicyRules := make([]string, numRules)
+	for i := 0; i < numRules; i++ {
+		testPolicyRules[i] = testPolicyRule(i)
+	}
+
+	config := fmt.Sprintf(`
+data "okta_group" "all" {
+  name = "Everyone"
+}
+resource "okta_auth_server" "test" {
+  name        = "testAcc_replace_with_uuid"
+  description = "test"
+  audiences   = ["whatever.rise.zone"]
+}
+resource "okta_auth_server_policy" "test" {
+  name             = "test"
+  description      = "test"
+  priority         = 1
+  client_whitelist = ["ALL_CLIENTS"]
+  auth_server_id   = okta_auth_server.test.id
+}
+%s`, strings.Join(testPolicyRules, ""))
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(authServerPolicyRule)
+	resource.Test(
+		t, resource.TestCase{
+			PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: testAccProvidersFactories,
+			CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
+			Steps: []resource.TestStep{
+				{
+					Config: mgr.ConfigReplace(config, ri),
+					Check: resource.ComposeTestCheckFunc(
+						// Just check if policy rule 09 exists. We only care
+						// about reproducing then fixing the 500 bug. If we make
+						// it to this check the test didn't fail and the bug has
+						// been fixed.
+						resource.TestCheckResourceAttr("okta_auth_server_policy_rule.test_09", "name", "Test Policy Rule 09"),
+					),
+				},
+			},
+		})
+
+}
+
+func testPolicyRule(num int) string {
+	return fmt.Sprintf(`
+resource "okta_auth_server_policy_rule" "test_%02d" {
+  auth_server_id       = okta_auth_server.test.id
+  policy_id            = okta_auth_server_policy.test.id
+  status               = "ACTIVE"
+  name                 = "Test Policy Rule %02d"
+  priority             = %d 
+  group_whitelist      = [data.okta_group.all.id]
+  grant_type_whitelist = ["implicit"]
+}`,
+		num, num, num+1)
+
 }
