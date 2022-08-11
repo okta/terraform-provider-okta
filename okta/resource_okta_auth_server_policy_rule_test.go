@@ -47,8 +47,10 @@ func TestAccOktaAuthServerPolicyRule_priority_concurrency_bug(t *testing.T) {
 
 	numRules := 10
 	testPolicyRules := make([]string, numRules)
+	// Test setup makes each policy rule dependent on the one before it.
 	for i := 0; i < numRules; i++ {
-		testPolicyRules[i] = testPolicyRule(i)
+		dependsOn := i - 1
+		testPolicyRules[i] = testPolicyRule(i, dependsOn)
 	}
 
 	config := fmt.Sprintf(`
@@ -91,7 +93,12 @@ resource "okta_auth_server_policy" "test" {
 
 }
 
-func testPolicyRule(num int) string {
+func testPolicyRule(num, dependsOn int) string {
+	var dependsOnStr string
+	if dependsOn >= 0 {
+		dependsOnStr = fmt.Sprintf("depends_on = [okta_auth_server_policy_rule.test_%02d]", dependsOn)
+	}
+
 	return fmt.Sprintf(`
 resource "okta_auth_server_policy_rule" "test_%02d" {
   auth_server_id       = okta_auth_server.test.id
@@ -101,7 +108,7 @@ resource "okta_auth_server_policy_rule" "test_%02d" {
   priority             = %d 
   group_whitelist      = [data.okta_group.all.id]
   grant_type_whitelist = ["implicit"]
+  %s
 }`,
-		num, num, num+1)
-
+		num, num, num+1, dependsOnStr)
 }
