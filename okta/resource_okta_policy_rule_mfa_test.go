@@ -6,12 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
-
-func deleteMfaPolicyRules(client *testClient) error {
-	return deletePolicyRulesByType(sdk.MfaPolicyType, client)
-}
 
 func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
 	ri := acctest.RandInt()

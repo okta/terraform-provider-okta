@@ -4,38 +4,12 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
-
-func deletePasswordPolicies(client *testClient) error {
-	return deletePolicyByType(sdk.PasswordPolicyType, client)
-}
-
-func deletePolicyByType(t string, client *testClient) error {
-	ctx := context.Background()
-	policies, _, err := client.oktaClient.Policy.ListPolicies(ctx, &query.Params{Type: t})
-	if err != nil {
-		return fmt.Errorf("failed to list policies in order to properly destroy: %v", err)
-	}
-	for _, _policy := range policies {
-		policy := _policy.(*okta.Policy)
-		if strings.HasPrefix(policy.Name, testResourcePrefix) {
-			_, err = client.oktaClient.Policy.DeletePolicy(ctx, policy.Id)
-			if err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
 
 func TestAccOktaPolicyPassword_crud(t *testing.T) {
 	ri := acctest.RandInt()

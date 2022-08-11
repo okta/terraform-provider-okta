@@ -5,37 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
-
-func sweepUserCustomSchema(client *testClient) error {
-	userTypes, _, err := client.oktaClient.UserType.ListUserTypes(context.Background())
-	if err != nil {
-		return err
-	}
-	for _, userType := range userTypes {
-		typeSchemaID := userTypeSchemaID(userType)
-		schema, _, err := client.oktaClient.UserSchema.GetUserSchema(context.Background(), typeSchemaID)
-		if err != nil {
-			return err
-		}
-		for key := range schema.Definitions.Custom.Properties {
-			if strings.HasPrefix(key, testResourcePrefix) {
-				custom := buildCustomUserSchema(key, nil)
-				_, _, err = client.oktaClient.UserSchema.UpdateUserProfile(context.Background(), typeSchemaID, *custom)
-				if err != nil {
-					return err
-				}
-			}
-		}
-	}
-	return nil
-}
 
 func TestAccResourceOktaUserSchema_crud(t *testing.T) {
 	ri := acctest.RandInt()

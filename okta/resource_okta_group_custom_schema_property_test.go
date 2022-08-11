@@ -5,30 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
-
-func sweepGroupCustomSchema(client *testClient) error {
-	schema, _, err := client.oktaClient.GroupSchema.GetGroupSchema(context.Background())
-	if err != nil {
-		return err
-	}
-	for key := range schema.Definitions.Custom.Properties {
-		if strings.HasPrefix(key, testResourcePrefix) {
-			custom := buildCustomGroupSchema(key, nil)
-			_, _, err = client.oktaClient.GroupSchema.UpdateGroupSchema(context.Background(), *custom)
-			if err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
 
 func TestAccOktaGroupSchema_crud(t *testing.T) {
 	ri := acctest.RandInt()
