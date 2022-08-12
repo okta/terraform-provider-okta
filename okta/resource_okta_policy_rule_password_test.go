@@ -5,46 +5,13 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
-
-func deletePolicyRulePasswords(client *testClient) error {
-	return deletePolicyRulesByType(sdk.PasswordPolicyType, client)
-}
-
-func deletePolicyRulesByType(ruleType string, client *testClient) error {
-	ctx := context.Background()
-	policies, _, err := client.oktaClient.Policy.ListPolicies(ctx, &query.Params{Type: ruleType})
-	if err != nil {
-		return fmt.Errorf("failed to list policies in order to properly destroy rules: %v", err)
-	}
-	for _, _policy := range policies {
-		policy := _policy.(*okta.Policy)
-		rules, _, err := client.apiSupplement.ListPolicyRules(ctx, policy.Id)
-		if err != nil {
-			return err
-		}
-		// Tests have always used default policy, I don't really think that is necessarily a good idea but
-		// leaving for now, that means we only delete the rules and not the policy, we can keep it around.
-		for i := range rules {
-			if strings.HasPrefix(rules[i].Name, testResourcePrefix) {
-				_, err = client.oktaClient.Policy.DeletePolicyRule(ctx, policy.Id, rules[i].Id)
-				if err != nil {
-					return err
-				}
-			}
-		}
-	}
-	return nil
-}
 
 func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
 	ri := acctest.RandInt()

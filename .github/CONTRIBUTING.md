@@ -397,6 +397,15 @@ PASS
 ok  	github.com/okta/terraform-provider-okta/okta	55.619s
 ```
 
+#### Forced clean out of dangling acceptance test resources
+
+Sometimes the acceptance testing framework can exit leaving dangling resources.
+Run the forced sweeper test to clean them all out.
+
+```
+OKTA_ACC_TEST_FORCE_SWEEPERS=1 TF_LOG=warn make testacc TEST=./okta TESTARGS='-run=TestRunForcedSweeper'
+```
+
 #### Writing an Acceptance Test
 
 Terraform has a framework for writing acceptance tests which minimises the

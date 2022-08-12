@@ -106,6 +106,9 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 }
 
 func resourceAuthServerPolicyRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	oktaMutexKV.Lock(authServerPolicyRule)
+	defer oktaMutexKV.Unlock(authServerPolicyRule)
+
 	err := validateAuthServerPolicyRule(d)
 	if err != nil {
 		return diag.FromErr(err)
@@ -155,6 +158,9 @@ func resourceAuthServerPolicyRuleRead(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceAuthServerPolicyRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	oktaMutexKV.Lock(authServerPolicyRule)
+	defer oktaMutexKV.Unlock(authServerPolicyRule)
+
 	err := validateAuthServerPolicyRule(d)
 	if err != nil {
 		return diag.FromErr(err)
@@ -197,6 +203,9 @@ func handleAuthServerPolicyRuleLifecycle(ctx context.Context, d *schema.Resource
 }
 
 func resourceAuthServerPolicyRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	oktaMutexKV.Lock(authServerPolicyRule)
+	defer oktaMutexKV.Unlock(authServerPolicyRule)
+
 	_, err := getOktaClientFromMetadata(m).AuthorizationServer.DeleteAuthorizationServerPolicyRule(
 		ctx,
 		d.Get("auth_server_id").(string),

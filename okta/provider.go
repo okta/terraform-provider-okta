@@ -432,7 +432,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		accessToken:    d.Get("access_token").(string),
 		clientID:       d.Get("client_id").(string),
 		privateKey:     d.Get("private_key").(string),
-		privateKeyId:	d.Get("private_key_id").(string),
+		privateKeyId:   d.Get("private_key_id").(string),
 		scopes:         convertInterfaceToStringSet(d.Get("scopes")),
 		retryCount:     d.Get("max_retries").(int),
 		parallelism:    d.Get("parallelism").(int),

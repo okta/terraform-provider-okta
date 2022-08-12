@@ -7,12 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
-
-func deleteSignOnPolicies(client *testClient) error {
-	return deletePolicyByType(sdk.SignOnPolicyType, client)
-}
 
 func TestAccOktaPolicySignOn_defaultError(t *testing.T) {
 	ri := acctest.RandInt()
