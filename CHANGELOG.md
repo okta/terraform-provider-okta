@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.34.0 (August 12, 2022)
+
+BUG FIXES:
+
+* Fix concurrency issue in resource `okta_auth_server_policy_rule` that could cause 500s in the Okta API as well as not preserve priority ordering even when `depends_on`is present [#1248](https://github.com/okta/terraform-provider-okta/pull/1248). Thanks, [@monde](https://github.com/monde)!
+
+PROJECT IMPROVEMENTS:
+
+* Fix typo provider test [#1229](https://github.com/okta/terraform-provider-okta/pull/1229). Thanks, [@lukas-hetzenecker](https://github.com/lukas-hetzenecker)!
 
 ## 3.33.0 (August 02, 2022)
 
