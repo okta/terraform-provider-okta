@@ -63,9 +63,9 @@ func resourceAppSwa() *schema.Resource {
 			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(24 * 365 * time.Hour),
-			Read:   schema.DefaultTimeout(24 * 365 * time.Hour),
-			Update: schema.DefaultTimeout(24 * 365 * time.Hour),
+			Create: schema.DefaultTimeout(1 * time.Hour),
+			Read:   schema.DefaultTimeout(1 * time.Hour),
+			Update: schema.DefaultTimeout(1 * time.Hour),
 		},
 	}
 }

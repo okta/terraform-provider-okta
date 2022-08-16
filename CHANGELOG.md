@@ -1,5 +1,34 @@
 # Changelog
 
+## 3.34.0 (August 12, 2022)
+
+BUG FIXES:
+
+* Fix concurrency issue in resource `okta_auth_server_policy_rule` that could cause 500s in the Okta API as well as not preserve priority ordering even when `depends_on`is present [#1248](https://github.com/okta/terraform-provider-okta/pull/1248). Thanks, [@monde](https://github.com/monde)!
+
+PROJECT IMPROVEMENTS:
+
+* Fix typo provider test [#1229](https://github.com/okta/terraform-provider-okta/pull/1229). Thanks, [@lukas-hetzenecker](https://github.com/lukas-hetzenecker)!
+
+## 3.33.0 (August 02, 2022)
+
+BUG FIXES:
+
+* Fix "error invalid configuration" error introduced in v3.32.0 release; includes unit tests to verify fix. [#1234](https://github.com/okta/terraform-provider-okta/pull/1234). Thanks, [@ericnorris](https://github.com/ericnorris)!
+
+## 3.32.0 (July 29, 2022)
+
+NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* Add keys attribute to okta_app_saml resource [#1206](https://github.com/okta/terraform-provider-okta/pull/1206). Thanks, [@ericnorrisl](https://github.com/ericnorris) and [@slichtenthal](https://github.com/slichtenthal)!
+* Export the app embed url for saml apps [#1215](https://github.com/okta/terraform-provider-okta/pull/1215). Thanks, [@felixcolaci](https://github.com/felixcolaci)!
+* Ability to configure the provider with an access (Bearer) token [#1222](https://github.com/okta/terraform-provider-okta/pull/1222). Thanks, [@ericnorrisl](https://github.com/ericnorris)!
+* Add `privateKeyId` private key signing support available in okta-sdk-golang client [#1223](https://github.com/okta/terraform-provider-okta/pull/1223). Thanks, [@powellchristoph](https://github.com/powellchristoph)!
+
+BUG FIXES:
+
+* Fix "no default policy found" bug, includes ability for provider to discover if it is running against an OIE or Classic org [#1224](https://github.com/okta/terraform-provider-okta/pull/1224). Thanks, [@monde](https://github.com/monde)!
+
 ## 3.31.0 (July 08, 2022)
 
 NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:

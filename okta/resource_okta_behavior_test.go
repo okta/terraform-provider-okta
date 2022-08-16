@@ -7,22 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
-
-func sweepBehaviors(client *testClient) error {
-	var errorList []error
-	behaviors, _, err := client.apiSupplement.ListBehaviors(context.Background(), &query.Params{Q: testResourcePrefix})
-	if err != nil {
-		return err
-	}
-	for _, b := range behaviors {
-		if _, err := client.apiSupplement.DeleteBehavior(context.Background(), b.ID); err != nil {
-			errorList = append(errorList, err)
-		}
-	}
-	return condenseError(errorList)
-}
 
 func TestAccOktaBehavior(t *testing.T) {
 	ri := acctest.RandInt()

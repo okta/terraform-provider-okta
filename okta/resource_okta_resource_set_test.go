@@ -4,28 +4,11 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
-
-func sweepResourceSets(client *testClient) error {
-	var errorList []error
-	resourceSets, _, err := client.apiSupplement.ListResourceSets(context.Background())
-	if err != nil {
-		return err
-	}
-	for _, b := range resourceSets.ResourceSets {
-		if !strings.HasPrefix(b.Label, "testAcc_") {
-			if _, err := client.apiSupplement.DeleteResourceSet(context.Background(), b.Id); err != nil {
-				errorList = append(errorList, err)
-			}
-		}
-	}
-	return condenseError(errorList)
-}
 
 func TestAccOktaResourceSet(t *testing.T) {
 	ri := acctest.RandInt()

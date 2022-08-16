@@ -76,15 +76,13 @@ The following arguments are supported:
 
 ## Timeouts
 
--> See [here](https://developer.okta.com/todo) for Considerations when Syncing Users/Groups
+The `timeouts` block allows you to specify custom [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions: 
 
-The `timeouts` block allows you to specify timeouts for certain actions: 
+- `create` - Create timeout if syncing users/groups (default 1 hour).
 
-- `create` - (Defaults to no timeout) Used when creating the App with synced Users/Groups.
+- `update` - Update timeout if syncing users/groups (default 1 hour).
 
-- `update` - (Defaults to no timeout) Used when updating the App with synced Users/Groups.
-
-- `read` - (Defaults to no timeout) Used when reading the App with synced Users/Groups.
+- `read` - Read timeout if syncing users/groups (default 1 hour).
 
 ## Import
 

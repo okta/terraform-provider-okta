@@ -144,19 +144,26 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("OKTA_ORG_NAME", nil),
 				Description: "The organization to manage in Okta.",
 			},
+			"access_token": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				DefaultFunc:   schema.EnvDefaultFunc("OKTA_ACCESS_TOKEN", nil),
+				Description:   "Bearer token granting privileges to Okta API.",
+				ConflictsWith: []string{"api_token", "client_id", "scopes", "private_key"},
+			},
 			"api_token": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_TOKEN", nil),
 				Description:   "API Token granting privileges to Okta API.",
-				ConflictsWith: []string{"client_id", "scopes", "private_key"},
+				ConflictsWith: []string{"access_token", "client_id", "scopes", "private_key"},
 			},
 			"client_id": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_CLIENT_ID", nil),
 				Description:   "API Token granting privileges to Okta API.",
-				ConflictsWith: []string{"api_token"},
+				ConflictsWith: []string{"access_token", "api_token"},
 			},
 			"scopes": {
 				Type:          schema.TypeSet,
@@ -164,13 +171,20 @@ func Provider() *schema.Provider {
 				Elem:          &schema.Schema{Type: schema.TypeString},
 				DefaultFunc:   envDefaultSetFunc("OKTA_API_SCOPES", nil),
 				Description:   "API Token granting privileges to Okta API.",
-				ConflictsWith: []string{"api_token"},
+				ConflictsWith: []string{"access_token", "api_token"},
 			},
 			"private_key": {
 				Optional:      true,
 				Type:          schema.TypeString,
 				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_PRIVATE_KEY", nil),
 				Description:   "API Token granting privileges to Okta API.",
+				ConflictsWith: []string{"access_token", "api_token"},
+			},
+			"private_key_id": {
+				Optional:      true,
+				Type:          schema.TypeString,
+				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_PRIVATE_KEY_ID", nil),
+				Description:   "API Token Id granting privileges to Okta API.",
 				ConflictsWith: []string{"api_token"},
 			},
 			"base_url": {
@@ -415,8 +429,10 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		orgName:        d.Get("org_name").(string),
 		domain:         d.Get("base_url").(string),
 		apiToken:       d.Get("api_token").(string),
+		accessToken:    d.Get("access_token").(string),
 		clientID:       d.Get("client_id").(string),
 		privateKey:     d.Get("private_key").(string),
+		privateKeyId:   d.Get("private_key_id").(string),
 		scopes:         convertInterfaceToStringSet(d.Get("scopes")),
 		retryCount:     d.Get("max_retries").(int),
 		parallelism:    d.Get("parallelism").(int),
@@ -438,6 +454,12 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	if err := config.loadAndValidate(ctx); err != nil {
 		return nil, diag.Errorf("[ERROR] invalid configuration: %v", err)
 	}
+
+	// Discover if the Okta Org is Classic or OIE
+	if org, _, err := config.supplementClient.GetWellKnownOktaOrganization(ctx); err == nil {
+		config.classicOrg = (org.Pipeline == "v1") // v1 == Classic, idx == OIE
+	}
+
 	return &config, nil
 }
 

@@ -277,7 +277,7 @@ func dataSourceAppSaml() *schema.Resource {
 			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
-			Read: schema.DefaultTimeout(24 * 365 * time.Hour),
+			Read: schema.DefaultTimeout(1 * time.Hour),
 		},
 	}
 }

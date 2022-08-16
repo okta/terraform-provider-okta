@@ -31,8 +31,6 @@ data "okta_app_group_assignments" "test" {
 
 ## Timeouts
 
--> See [here](https://developer.okta.com/todo) for Considerations when Syncing Users/Groups
-
-The `timeouts` block allows you to specify timeouts for certain actions: 
+The `timeouts` block allows you to specify custom [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions: 
 
 - `read` - (Defaults to 24 hour) Used when reading the App with synced Users/Groups.
