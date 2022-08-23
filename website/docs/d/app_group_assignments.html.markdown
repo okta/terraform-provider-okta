@@ -28,9 +28,3 @@ data "okta_app_group_assignments" "test" {
 - `id` - ID of application.
 
 - `groups` - List of groups IDs assigned to the application.
-
-## Timeouts
-
-The `timeouts` block allows you to specify custom [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions: 
-
-- `read` - (Defaults to 24 hour) Used when reading the App with synced Users/Groups.

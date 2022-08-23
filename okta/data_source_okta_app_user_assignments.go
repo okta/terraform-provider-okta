@@ -2,7 +2,6 @@ package okta
 
 import (
 	"context"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -26,9 +25,6 @@ func dataSourceAppUserAssignments() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "List of user IDs assigned to the app",
 			},
-		},
-		Timeouts: &schema.ResourceTimeout{
-			Read: schema.DefaultTimeout(1 * time.Hour),
 		},
 	}
 }

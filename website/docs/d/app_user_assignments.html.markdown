@@ -29,8 +29,3 @@ data "okta_app_user_assignments" "test" {
 
 - `users` - List of user IDs assigned to the application.
 
-## Timeouts
-
-The `timeouts` block allows you to specify custom [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions: 
-
-- `read` - (Defaults to no timeout) Used when reading the App with synced Users/Groups.

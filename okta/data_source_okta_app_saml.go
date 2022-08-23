@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -276,9 +275,6 @@ func dataSourceAppSaml() *schema.Resource {
 				Deprecated:  "The `users` field is now deprecated for the data source `okta_app_saml`, please replace all uses of this with: `okta_app_user_assignments`",
 			},
 		}),
-		Timeouts: &schema.ResourceTimeout{
-			Read: schema.DefaultTimeout(1 * time.Hour),
-		},
 	}
 }
 
