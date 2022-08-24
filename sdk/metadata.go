@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/crewjam/saml"
@@ -34,7 +34,7 @@ func (m *APISupplement) getXML(ctx context.Context, url string) ([]byte, *saml.E
 		return nil, nil, err
 	}
 	defer resp.Body.Close()
-	raw, err := ioutil.ReadAll(resp.Body)
+	raw, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, nil, err
 	}

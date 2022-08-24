@@ -29,4 +29,3 @@ func TestLogoStateFunc(t *testing.T) {
 		}
 	}
 }
-

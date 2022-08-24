@@ -10,4 +10,3 @@ func createDoesIdpExist() func(string) (bool, error) {
 		return doesResourceExist(response, err)
 	}
 }
-

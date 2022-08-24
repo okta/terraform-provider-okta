@@ -44,7 +44,6 @@ func TestAccOktaAuthServerPolicyRule_create(t *testing.T) {
 // time, elegantly handle current API calls to either update rule create or rule
 // priority.
 func TestAccOktaAuthServerPolicyRule_priority_concurrency_bug(t *testing.T) {
-
 	numRules := 10
 	testPolicyRules := make([]string, numRules)
 	// Test setup makes each policy rule dependent on the one before it.
@@ -90,7 +89,6 @@ resource "okta_auth_server_policy" "test" {
 				},
 			},
 		})
-
 }
 
 func testPolicyRule(num, dependsOn int) string {

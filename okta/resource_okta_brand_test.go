@@ -42,7 +42,6 @@ func TestAccResourceOktaBrand_import_update(t *testing.T) {
 					// simple check
 					if len(s[0].Attributes["links"]) <= 2 {
 						return fmt.Errorf("there should more than two attributes set on the instance %+v", s[0].Attributes)
-
 					}
 					return nil
 				},
