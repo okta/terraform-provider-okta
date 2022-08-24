@@ -148,7 +148,6 @@ func TestBuildEnum(t *testing.T) {
 		actual, err := buildEnum(test.ae, test.elemType)
 		if test.shouldError && err == nil {
 			t.Errorf("%q - buildEnum should have errored on %+v, %s, got %+v", test.name, test.ae, test.elemType, actual)
-
 		}
 		if !reflect.DeepEqual(test.expected, actual) {
 			t.Errorf("%q - buildEnum expected %+v, got %+v", test.name, test.expected, actual)

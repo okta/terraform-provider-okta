@@ -402,8 +402,8 @@ func resourceAppSaml() *schema.Resource {
 				Description: "Id of this apps authentication policy",
 			},
 			"embed_url": {
-				Type: schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
 				Description: "The url that can be used to embed this application in other portals.",
 			},
 		}),
@@ -519,7 +519,6 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	}
 
 	keys, err := fetchAppKeys(ctx, m, app.Id)
-
 	if err != nil {
 		return diag.Errorf("failed to load existing keys for SAML application: %f", err)
 	}

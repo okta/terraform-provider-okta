@@ -15,8 +15,10 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-var sweeperLogger hclog.Logger
-var sweeperLogLevel hclog.Level
+var (
+	sweeperLogger   hclog.Logger
+	sweeperLogLevel hclog.Level
+)
 
 func init() {
 	sweeperLogLevel = hclog.Warn

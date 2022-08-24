@@ -149,7 +149,6 @@ func resourceAppSignOnPolicyDelete(ctx context.Context, d *schema.ResourceData, 
 		}
 		return nil
 	}
-
 }
 
 func listApplications(ctx context.Context, client *okta.Client) ([]okta.App, error) {
