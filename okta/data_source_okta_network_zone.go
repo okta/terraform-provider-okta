@@ -120,8 +120,8 @@ func findNetworkZoneByName(ctx context.Context, m interface{}, name string) (*ok
 				return nil, err
 			}
 			for i := range moreZones {
-				if zones[i].Name == name {
-					return zones[i], nil
+				if moreZones[i].Name == name {
+					return moreZones[i], nil
 				}
 			}
 		} else {
