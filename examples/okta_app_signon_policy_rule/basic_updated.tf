@@ -107,6 +107,10 @@ resource "okta_app_signon_policy_rule" "test" {
     os_type = "WINDOWS"
     type    = "DESKTOP"
   }
+  platform_include {
+    os_type = "CHROMEOS"
+    type    = "DESKTOP"
+  }
   priority                    = 98
   re_authentication_frequency = "PT43800H"
   inactivity_period           = "PT2H"
