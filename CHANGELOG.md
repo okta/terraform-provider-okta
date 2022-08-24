@@ -1,5 +1,27 @@
 # Changelog
 
+## 3.35.0 (August 25, 2022)
+
+NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* Adds customizable Timeouts to resources/data that rely on syncing users and groups to avoid context.DeadlineExceeded
+ [#1207](https://github.com/okta/terraform-provider-okta/pull/1207). Thanks, [@emanor-okta](https://github.com/emanor-okta)!
+  * [Terraform documentation: Resources - Retries and Customizable Timeouts](https://www.terraform.io/plugin/sdkv2/resources/retries-and-customizable-timeouts)
+  * Resources: `okta_app_auto_login`, `okta_app_basic_auth`, `okta_app_bookmark`, `okta_app_group_assignment`, `okta_app_oauth`, `okta_app_saml`, `okta_app_secure_password_store`, `okta_app_shared_credentials`, `okta_app_swa`
+
+BUG FIXES:
+
+* Correctly collect network zones in datasource `okta_network_zone` [#1239](https://github.com/okta/terraform-provider-okta/pull/1239). Thanks, [@natmariam](https://github.com/natmariam)!
+* Adding `CHROMEOS` to `os_type` in `platform_include` [#1261](https://github.com/okta/terraform-provider-okta/pull/1261). Thanks, [@monde](https://github.com/monde)!
+* Update okta-sdk-golang that correctly caches OAuth2 access tokens [#1262](https://github.com/okta/terraform-provider-okta/pull/1262). Thanks, [@monde](https://github.com/monde)!
+* Update role types validation on resource `okta_role_subscription` [#1265](https://github.com/okta/terraform-provider-okta/pull/1265). Thanks, [@monde](https://github.com/monde)!
+* Correct pagination to list all email templates on data source `okta_email_templates` [#1266](https://github.com/okta/terraform-provider-okta/pull/1266). Thanks, [@monde](https://github.com/monde)!
+
+PROJECT IMPROVEMENTS:
+
+* Show current version for provider config in documentation [#1256](https://github.com/okta/terraform-provider-okta/pull/1256). Thanks, [@ErelAdoni](https://github.com/ErelAdoni)!
+* Code clean up from go vet and format [#1264](https://github.com/okta/terraform-provider-okta/pull/1264). Thanks, [@monde](https://github.com/monde)!
+
 ## 3.34.0 (August 12, 2022)
 
 BUG FIXES:
