@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func dataSourceEmailTemplates() *schema.Resource {
@@ -39,7 +40,8 @@ func dataSourceEmailTemplatesRead(ctx context.Context, d *schema.ResourceData, m
 		return diag.Errorf("brand_id required for email templates: %v", err)
 	}
 
-	templates, _, err := getOktaClientFromMetadata(m).Brand.ListEmailTemplates(ctx, brand.Id, nil)
+	qp := &query.Params{Limit: defaultPaginationLimit}
+	templates, err := collectEmailTempates(ctx, getOktaClientFromMetadata(m), brand, qp)
 	if err != nil {
 		return diag.Errorf("failed to list email templates: %v", err)
 	}
@@ -56,4 +58,22 @@ func dataSourceEmailTemplatesRead(ctx context.Context, d *schema.ResourceData, m
 	_ = d.Set("email_templates", schema.NewSet(schema.HashResource(emailTemplatesDataSource), arr))
 
 	return nil
+}
+
+func collectEmailTempates(ctx context.Context, client *okta.Client, brand *okta.Brand, qp *query.Params) ([]*okta.EmailTemplate, error) {
+	templates, resp, err := client.Brand.ListEmailTemplates(ctx, brand.Id, qp)
+	if err != nil {
+		return nil, err
+	}
+	for resp.HasNextPage() {
+		var nextTemplates []*okta.EmailTemplate
+		resp, err = resp.Next(ctx, &nextTemplates)
+		if err != nil {
+			return nil, err
+		}
+		for i := range nextTemplates {
+			templates = append(templates, nextTemplates[i])
+		}
+	}
+	return templates, nil
 }
