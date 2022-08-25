@@ -46,3 +46,35 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 		},
 	})
 }
+
+func TestAccAppBookmarkApplication_timeouts(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appBookmark)
+	resourceName := fmt.Sprintf("%s.test", appBookmark)
+	config := `
+resource "okta_app_bookmark" "test" {
+  label  = "testAcc_replace_with_uuid"
+  url    = "https://test.com"
+  timeouts {
+    create = "60m"
+    read = "2h"
+    update = "30m"
+  }
+}`
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(okta.NewBookmarkApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config, ri),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewAutoLoginApplication())),
+					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),
+					resource.TestCheckResourceAttr(resourceName, "timeouts.read", "2h"),
+					resource.TestCheckResourceAttr(resourceName, "timeouts.update", "30m"),
+				),
+			},
+		},
+	})
+}
