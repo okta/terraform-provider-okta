@@ -27,7 +27,8 @@ func TestAccOktaAuthServer_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
@@ -68,7 +69,8 @@ func TestAccOktaAuthServer_fullStack(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("full_stack_with_client.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
@@ -116,7 +118,8 @@ func TestAccOktaAuthServer_gh299(t *testing.T) {
 	config := mgr.GetFixtures("dependency.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{

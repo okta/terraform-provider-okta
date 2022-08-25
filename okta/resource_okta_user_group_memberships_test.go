@@ -16,7 +16,8 @@ func TestAccOktaUserGroupMemberships_crud(t *testing.T) {
 	remove := mgr.GetFixtures("basic_removal.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{

@@ -14,9 +14,8 @@ func TestAccOktaDataSourceEveryoneGroup_read(t *testing.T) {
 	config := testAccDataSourceEveryoneGroupConfig(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{

@@ -13,7 +13,8 @@ func TestAccOktaDataSourceIdpOidc_read(t *testing.T) {
 	idpOidcConfig := mgr.GetFixtures("generic_oidc.tf", ri, t)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{

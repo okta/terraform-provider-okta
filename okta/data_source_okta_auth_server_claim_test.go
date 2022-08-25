@@ -15,9 +15,8 @@ func TestAccOktaDataSourceAuthServerClaim(t *testing.T) {
 	createUser := mgr.GetFixtures("datasource_create_auth_server.tf", ri, t)
 	resourceName := fmt.Sprintf("data.%s.test", authServerClaim)
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{

@@ -18,7 +18,8 @@ func TestAccOktaLinkValue(t *testing.T) {
 	updated := mgr.GetFixtures("updated.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", linkValue)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkLinkValueDestroy,
 		Steps: []resource.TestStep{

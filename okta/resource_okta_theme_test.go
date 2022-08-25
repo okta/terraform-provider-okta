@@ -20,7 +20,8 @@ func TestAccResourceOktaTheme_import_update(t *testing.T) {
 
 	// okta_theme is read and update only, so set up the test by importing the theme first
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: func(s *terraform.State) error {
 			// theme api doens't have real delete for a theme

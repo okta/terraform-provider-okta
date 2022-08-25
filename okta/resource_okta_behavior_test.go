@@ -18,7 +18,8 @@ func TestAccOktaBehavior(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", behavior)
 	resource.Test(
 		t, resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
+			PreCheck:          testAccPreCheck(t),
+			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      createCheckResourceDestroy(behavior, doesBehaviorExist),
 			Steps: []resource.TestStep{

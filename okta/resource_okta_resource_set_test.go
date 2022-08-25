@@ -18,7 +18,8 @@ func TestAccOktaResourceSet(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resourceSet)
 	resource.Test(
 		t, resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
+			PreCheck:          testAccPreCheck(t),
+			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      createCheckResourceDestroy(resourceSet, doesResourceSetExist),
 			Steps: []resource.TestStep{
@@ -80,7 +81,8 @@ func TestAccResrouceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resourceSet)
 	resource.Test(
 		t, resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
+			PreCheck:          testAccPreCheck(t),
+			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      createCheckResourceDestroy(resourceSet, doesResourceSetExist),
 			Steps: []resource.TestStep{

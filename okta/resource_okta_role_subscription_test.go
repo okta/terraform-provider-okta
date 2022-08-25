@@ -15,7 +15,8 @@ func TestAccOktaRoleSubscription_crud(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{

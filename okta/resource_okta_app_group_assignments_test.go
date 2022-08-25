@@ -22,7 +22,8 @@ func TestAccAppGroupAssignments_crud(t *testing.T) {
 	group3 := fmt.Sprintf("%s.test3", group)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{

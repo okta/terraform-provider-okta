@@ -22,9 +22,8 @@ func TestAccOktaDataSourceUsers_read(t *testing.T) {
 	dataSource := mgr.GetFixtures("datasource.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
@@ -64,9 +63,8 @@ func TestAccOktaDataSourceUsers_readWithGroupId(t *testing.T) {
 	config := mgr.GetFixtures("group.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
@@ -99,9 +97,8 @@ func TestAccOktaDataSourceUsers_readWithGroupIdIncludingGroups(t *testing.T) {
 	config := mgr.GetFixtures("group_with_groups.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
@@ -130,9 +127,8 @@ func TestAccOktaDataSourceUsers_readWithGroupIdIncludingGroups(t *testing.T) {
 // TestAccDataSourceOktaUsers_IncludeNone pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUsers_IncludeNone(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
@@ -152,9 +148,8 @@ func TestAccDataSourceOktaUsers_IncludeNone(t *testing.T) {
 // TestAccDataSourceOktaUsers_IncludeGroups pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUsers_IncludeGroups(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
@@ -174,9 +169,8 @@ func TestAccDataSourceOktaUsers_IncludeGroups(t *testing.T) {
 // TestAccDataSourceOktaUsers_IncludeRoles pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUsers_IncludeRoles(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
@@ -196,9 +190,8 @@ func TestAccDataSourceOktaUsers_IncludeRoles(t *testing.T) {
 // TestAccDataSourceOktaUsers_IncludeAll pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUsers_IncludeAll(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{

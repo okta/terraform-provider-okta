@@ -17,7 +17,8 @@ func TestAccAppUserBaseSchema_change(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appUserBaseSchemaProperty)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		// Just need to make sure the app gets cleaned up
 		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),

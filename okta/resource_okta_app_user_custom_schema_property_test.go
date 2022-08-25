@@ -20,7 +20,8 @@ func TestAccAppUserSchemas_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{

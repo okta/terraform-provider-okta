@@ -24,7 +24,8 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.%s", userBaseSchemaProperty, firstNameTestProp)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      nil, // can't delete base properties
 		Steps: []resource.TestStep{
@@ -82,7 +83,8 @@ func TestAccOktaUserBaseSchemaLogin_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.%s", userBaseSchemaProperty, loginTestProp)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      nil, // can't delete base properties
 		Steps: []resource.TestStep{

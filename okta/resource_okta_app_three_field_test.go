@@ -18,7 +18,8 @@ func TestAccAppThreeFieldApplication_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appThreeField)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appThreeField, createDoesAppExist(okta.NewSwaThreeFieldApplication())),
 		Steps: []resource.TestStep{

@@ -17,7 +17,8 @@ func TestAccOktaEmailSender(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", emailSender)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(emailSender, emailSenderExists),
 		Steps: []resource.TestStep{

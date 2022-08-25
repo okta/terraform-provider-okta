@@ -18,7 +18,8 @@ func TestAccAdminRoleTargets(t *testing.T) {
 	resourceAppName := fmt.Sprintf("%s.test_app", adminRoleTargets)
 	resourceGroupName := fmt.Sprintf("%s.test_group", adminRoleTargets)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(idpOidc, doesTargetExists()),
 		Steps: []resource.TestStep{

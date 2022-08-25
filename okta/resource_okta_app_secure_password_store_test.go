@@ -17,7 +17,8 @@ func TestAccAppSecurePasswordStoreApplication_credsSchemes(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSecurePasswordStore)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSecurePasswordStore, createDoesAppExist(okta.NewSecurePasswordStoreApplication())),
 		Steps: []resource.TestStep{
@@ -66,7 +67,8 @@ resource "okta_app_secure_password_store" "test" {
   }
 }`
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSecurePasswordStore, createDoesAppExist(okta.NewSecurePasswordStoreApplication())),
 		Steps: []resource.TestStep{

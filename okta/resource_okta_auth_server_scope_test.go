@@ -20,7 +20,8 @@ func TestAccOktaAuthServerScope_crud(t *testing.T) {
 	importConfig := mgr.GetFixtures("import.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{

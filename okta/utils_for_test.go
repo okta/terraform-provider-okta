@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -101,4 +102,42 @@ func newTestOktaClientWithResponse(response roundTripFunc) (context.Context, *ok
 	}
 
 	return oktaCtx, c, nil
+}
+
+const ErrorCheckMissingPermission = "You do not have permission to access the feature you are requesting"
+
+// testAccErrorChecks Ability to skip tests that have specific errors.
+func testAccErrorChecks(t *testing.T) resource.ErrorCheckFunc {
+	return func(err error) error {
+		if err == nil {
+			return nil
+		}
+		if err = errorCheckSkipMessagesContaining(t, ErrorCheckMissingPermission)(err); err != nil {
+			return err
+		}
+
+		return nil
+	}
+}
+
+// errorCheckSkipMessagesContaining skips tests based on error messages that indicate unsupported features
+func errorCheckSkipMessagesContaining(t *testing.T, messages ...string) resource.ErrorCheckFunc {
+	return func(err error) error {
+		if err == nil {
+			return nil
+		}
+
+		for _, message := range messages {
+			errorMessage := err.Error()
+			missingFlags := []string{}
+			if message == ErrorCheckMissingPermission {
+				missingFlags = append(missingFlags, "ADVANCED_SSO")
+			}
+			if strings.Contains(errorMessage, message) {
+				t.Skipf("Skipping test for:\n%sOrg possibly missing flags %+v", errorMessage, missingFlags)
+			}
+		}
+
+		return err
+	}
 }

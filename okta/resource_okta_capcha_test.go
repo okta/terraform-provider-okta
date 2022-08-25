@@ -17,7 +17,8 @@ func TestAccOktaCaptcha(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", captcha)
 	resource.Test(
 		t, resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
+			PreCheck:          testAccPreCheck(t),
+			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      createCheckResourceDestroy(captcha, doesCaptchaExist),
 			Steps: []resource.TestStep{
