@@ -28,3 +28,4 @@ data "okta_app_user_assignments" "test" {
 - `id` - ID of application.
 
 - `users` - List of user IDs assigned to the application.
+
