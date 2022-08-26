@@ -20,7 +20,8 @@ func TestAccAppSaml_conditionalRequire(t *testing.T) {
 	config := buildTestSamlConfigMissingFields(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
 		Steps: []resource.TestStep{
@@ -38,7 +39,8 @@ func TestAccAppSaml_invalidURL(t *testing.T) {
 	config := buildTestSamlConfigInvalidURL(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
 		Steps: []resource.TestStep{
@@ -60,7 +62,8 @@ func TestAccAppSaml_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
 		Steps: []resource.TestStep{
@@ -158,7 +161,8 @@ func TestAccAppSaml_preconfigured(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
 		Steps: []resource.TestStep{
@@ -239,7 +243,8 @@ func TestAccAppSaml_userGroups(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
 		Steps: []resource.TestStep{
@@ -277,7 +282,8 @@ func TestAccAppSaml_inlineHook(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
 		Steps: []resource.TestStep{
@@ -309,7 +315,8 @@ func TestAccAppSaml_federationBroker(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
@@ -395,7 +402,8 @@ resource "okta_app_saml" "test" {
 }
 `
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
 		Steps: []resource.TestStep{

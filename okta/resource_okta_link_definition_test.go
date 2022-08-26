@@ -15,7 +15,8 @@ func TestAccOktaLinkDefinition(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", linkDefinition)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(linkDefinition, doesLinkDefinitionExist),
 		Steps: []resource.TestStep{

@@ -17,7 +17,8 @@ func TestAccOktaMfaPolicy_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", policyMfa)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createPolicyCheckDestroy(policyMfa),
 		Steps: []resource.TestStep{

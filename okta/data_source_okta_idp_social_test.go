@@ -13,9 +13,8 @@ func TestAccOktaDataSourceIdpSocial_read(t *testing.T) {
 	preConfig := mgr.GetFixtures("basic.tf", ri, t)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{

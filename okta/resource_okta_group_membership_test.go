@@ -19,7 +19,8 @@ func TestAccOktaGroupMembership_crud(t *testing.T) {
 	removedConfig := mgr.GetFixtures("okta_group_membership_removed.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(groupMembership, checkMembershipState),
 		Steps: []resource.TestStep{

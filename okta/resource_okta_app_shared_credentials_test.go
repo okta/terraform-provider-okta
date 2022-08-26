@@ -17,7 +17,8 @@ func TestAccAppSharedCredentials_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSharedCredentials)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSharedCredentials, createDoesAppExist(okta.NewBrowserPluginApplication())),
 		Steps: []resource.TestStep{
@@ -95,7 +96,8 @@ resource "okta_app_shared_credentials" "test" {
   }
 }`
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSharedCredentials, createDoesAppExist(okta.NewBrowserPluginApplication())),
 		Steps: []resource.TestStep{

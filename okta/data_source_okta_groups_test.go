@@ -13,7 +13,8 @@ func TestAccOktaDataSourceGroups_read(t *testing.T) {
 	groups := mgr.GetFixtures("okta_groups.tf", ri, t)
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{

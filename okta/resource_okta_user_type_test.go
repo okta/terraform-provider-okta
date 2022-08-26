@@ -19,7 +19,8 @@ func TestAccOktaUserType_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("okta_user_type_updated.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(userType, doesUserTypeExist),
 		Steps: []resource.TestStep{

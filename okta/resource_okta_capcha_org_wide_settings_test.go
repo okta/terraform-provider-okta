@@ -18,7 +18,8 @@ func TestAccOktaCaptchaOrgWideSettings(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", captchaOrgWideSettings)
 	resource.Test(
 		t, resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
+			PreCheck:          testAccPreCheck(t),
+			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      createCheckResourceDestroy(captchaOrgWideSettings, doesCaptchaOrgWideSettingsExist),
 			Steps: []resource.TestStep{

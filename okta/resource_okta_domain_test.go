@@ -16,7 +16,8 @@ func TestAccOktaDomain(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", domain)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(domain, domainExists),
 		Steps: []resource.TestStep{

@@ -63,10 +63,12 @@ func oktaConfig() (*Config, error) {
 	return config, nil
 }
 
-func testAccPreCheck(t *testing.T) {
-	err := accPreCheck()
-	if err != nil {
-		t.Fatalf("%v", err)
+func testAccPreCheck(t *testing.T) func() {
+	return func() {
+		err := accPreCheck()
+		if err != nil {
+			t.Fatalf("%v", err)
+		}
 	}
 }
 

@@ -111,7 +111,7 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
 		okta.WithRequestTimeout(int64(c.requestTimeout)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
-		okta.WithUserAgentExtra("okta-terraform/3.34.0"),
+		okta.WithUserAgentExtra("okta-terraform/3.35.0"),
 	}
 
 	switch {

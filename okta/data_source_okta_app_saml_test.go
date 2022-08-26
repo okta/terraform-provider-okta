@@ -15,9 +15,8 @@ func TestAccOktaDataSourceAppSaml_read(t *testing.T) {
 	appCreate := buildTestAppSaml(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{

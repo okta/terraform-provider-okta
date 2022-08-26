@@ -21,7 +21,8 @@ func TestAccOktaGroupSchema_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaGroupSchemasDestroy(),
 		Steps: []resource.TestStep{
@@ -96,7 +97,8 @@ func TestAccOktaGroupSchema_arrayString(t *testing.T) {
 	arrayEnum := mgr.GetFixtures("array_enum.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaGroupSchemasDestroy(),
 		Steps: []resource.TestStep{
@@ -205,7 +207,8 @@ func TestAccResourceOktaGroupSchema_array_enum_number(t *testing.T) {
 	mgr := newFixtureManager(groupSchemaProperty)
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaGroupSchemasDestroy(),
 		Steps: []resource.TestStep{
@@ -296,7 +299,8 @@ func TestAccResourceOktaGroupSchema_enum_number(t *testing.T) {
 	mgr := newFixtureManager(groupSchemaProperty)
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaGroupSchemasDestroy(),
 		Steps: []resource.TestStep{
@@ -383,7 +387,8 @@ func TestAccResourceOktaGroupSchema_array_enum_integer(t *testing.T) {
 	mgr := newFixtureManager(groupSchemaProperty)
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaGroupSchemasDestroy(),
 		Steps: []resource.TestStep{
@@ -474,7 +479,8 @@ func TestAccResourceOktaGroupSchema_enum_integer(t *testing.T) {
 	mgr := newFixtureManager(groupSchemaProperty)
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaGroupSchemasDestroy(),
 		Steps: []resource.TestStep{
@@ -563,7 +569,8 @@ func TestAccResourceOktaGroupSchema_array_enum_boolean(t *testing.T) {
 	mgr := newFixtureManager(groupSchemaProperty)
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaGroupSchemasDestroy(),
 		Steps: []resource.TestStep{
@@ -642,7 +649,8 @@ func TestAccResourceOktaGroupSchema_enum_boolean(t *testing.T) {
 	mgr := newFixtureManager(groupSchemaProperty)
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaGroupSchemasDestroy(),
 		Steps: []resource.TestStep{
@@ -715,7 +723,8 @@ func TestAccResourceOktaGroupSchema_array_enum_string(t *testing.T) {
 	mgr := newFixtureManager(groupSchemaProperty)
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaGroupSchemasDestroy(),
 		Steps: []resource.TestStep{
@@ -806,7 +815,8 @@ func TestAccResourceOktaGroupSchema_enum_string(t *testing.T) {
 	mgr := newFixtureManager(groupSchemaProperty)
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkOktaGroupSchemasDestroy(),
 		Steps: []resource.TestStep{
