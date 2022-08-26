@@ -105,6 +105,13 @@ func newTestOktaClientWithResponse(response roundTripFunc) (context.Context, *ok
 }
 
 const ErrorCheckMissingPermission = "You do not have permission to access the feature you are requesting"
+const ErrorCheckCannotCreateSWA = "Cannot create application instance template_swa."
+const ErrorCheckCannotCreateBasicAuth = "Cannot create application instance template_basic_auth."
+const ErrorCheckCannotCreateSPS = "Cannot create application instance template_sps."
+const ErrorCheckCannotCreateAWSConole = "Cannot create application instance aws_console."
+const ErrorCheckCannotCreateSWAThreeField = "Cannot create application instance template_swa3field."
+const ErrorCheckFFGroupMembershipRules = "GROUP_MEMBERSHIP_RULES is not enabled."
+const ErrorCheckFFMFAPolicy = "Invalid policy type specified. Missing Required Feature Flag OKTA_MFA_POLICY"
 
 // testAccErrorChecks Ability to skip tests that have specific errors.
 func testAccErrorChecks(t *testing.T) resource.ErrorCheckFunc {
@@ -113,6 +120,27 @@ func testAccErrorChecks(t *testing.T) resource.ErrorCheckFunc {
 			return nil
 		}
 		if err = errorCheckSkipMessagesContaining(t, ErrorCheckMissingPermission)(err); err != nil {
+			return err
+		}
+		if err = errorCheckSkipMessagesContaining(t, ErrorCheckCannotCreateSWA)(err); err != nil {
+			return err
+		}
+		if err = errorCheckSkipMessagesContaining(t, ErrorCheckCannotCreateBasicAuth)(err); err != nil {
+			return err
+		}
+		if err = errorCheckSkipMessagesContaining(t, ErrorCheckCannotCreateSPS)(err); err != nil {
+			return err
+		}
+		if err = errorCheckSkipMessagesContaining(t, ErrorCheckCannotCreateAWSConole)(err); err != nil {
+			return err
+		}
+		if err = errorCheckSkipMessagesContaining(t, ErrorCheckCannotCreateSWAThreeField)(err); err != nil {
+			return err
+		}
+		if err = errorCheckSkipMessagesContaining(t, ErrorCheckFFGroupMembershipRules)(err); err != nil {
+			return err
+		}
+		if err = errorCheckSkipMessagesContaining(t, ErrorCheckFFMFAPolicy)(err); err != nil {
 			return err
 		}
 
@@ -132,6 +160,27 @@ func errorCheckSkipMessagesContaining(t *testing.T, messages ...string) resource
 			missingFlags := []string{}
 			if message == ErrorCheckMissingPermission {
 				missingFlags = append(missingFlags, "ADVANCED_SSO")
+			}
+			if message == ErrorCheckCannotCreateSWA {
+				missingFlags = append(missingFlags, "ALLOW_SWA")
+			}
+			if message == ErrorCheckCannotCreateBasicAuth {
+				missingFlags = append(missingFlags, "ALLOW_SWA")
+			}
+			if message == ErrorCheckCannotCreateSPS {
+				missingFlags = append(missingFlags, "ALLOW_SWA")
+			}
+			if message == ErrorCheckCannotCreateAWSConole {
+				missingFlags = append(missingFlags, "ALLOW_SWA")
+			}
+			if message == ErrorCheckCannotCreateSWAThreeField {
+				missingFlags = append(missingFlags, "ALLOW_SWA")
+			}
+			if message == ErrorCheckFFGroupMembershipRules {
+				missingFlags = append(missingFlags, "GROUP_MEMBERSHIP_RULES")
+			}
+			if message == ErrorCheckFFMFAPolicy {
+				missingFlags = append(missingFlags, "OKTA_MFA_POLICY")
 			}
 			if strings.Contains(errorMessage, message) {
 				t.Skipf("Skipping test for:\n%sOrg possibly missing flags %+v", errorMessage, missingFlags)
