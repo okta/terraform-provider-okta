@@ -65,9 +65,9 @@ func listGroups(ctx context.Context, client *okta.Client, qp *query.Params) ([]*
 // Group Primary Key Operations (Use when # groups < # users in operations)
 func addGroupMembers(ctx context.Context, client *okta.Client, groupId string, users []string) error {
 	for _, user := range users {
-		resp, err := client.Group.AddUserToGroup(ctx, groupId, user)
-		exists, err := doesResourceExist(resp, err)
-		if err != nil {
+		resp, err1 := client.Group.AddUserToGroup(ctx, groupId, user)
+		exists, err2 := doesResourceExist(resp, err)
+		if err1 != nil || err2 != nil {
 			return fmt.Errorf("failed to add user (%s) to group (%s): %w", user, groupId, err)
 		}
 		if !exists {
