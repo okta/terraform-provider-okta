@@ -470,12 +470,12 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interf
 	// https://developer.okta.com/docs/reference/api/policy/#default-policies
 	// New applications (other than Office365, Radius, and MFA) are assigned to the default Policy.
 	// TODO: determine how to inspect app for MFA status
-	//if app.Name != "office365" && app.Name != "radius" {
-	//	err = setAuthenticationPolicy(ctx, d, m, app.Id)
-	//	if err != nil {
-	//		return diag.Errorf("failed to set authentication policy for an SAML application: %v", err)
-	//	}
-	//}
+	if app.Name != "office365" && app.Name != "radius" {
+		err = setAuthenticationPolicy(ctx, d, m, app.Id)
+		if err != nil {
+			return diag.Errorf("failed to set authentication policy for an SAML application: %v", err)
+		}
+	}
 	return resourceAppSamlRead(ctx, d, m)
 }
 
@@ -603,10 +603,10 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 			return diag.Errorf("failed to upload logo for SAML application: %v", err)
 		}
 	}
-	//err = setAuthenticationPolicy(ctx, d, m, app.Id)
-	//if err != nil {
-	//	return diag.Errorf("failed to set authentication policy for an SAML application: %v", err)
-	//}
+	err = setAuthenticationPolicy(ctx, d, m, app.Id)
+	if err != nil {
+		return diag.Errorf("failed to set authentication policy for an SAML application: %v", err)
+	}
 	return resourceAppSamlRead(ctx, d, m)
 }
 
