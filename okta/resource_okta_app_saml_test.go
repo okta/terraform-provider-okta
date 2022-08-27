@@ -457,5 +457,6 @@ func TestAccAppSaml_certdiff(t *testing.T) {
 				Config:   config,
 				PlanOnly: true,
 			},
-		}
-	}
+		},
+	})
+}
