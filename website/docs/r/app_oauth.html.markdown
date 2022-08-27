@@ -167,6 +167,16 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 - `logo_url` - Direct link of application logo.
 
+## Timeouts
+
+The `timeouts` block allows you to specify custom [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions: 
+
+- `create` - Create timeout if syncing users/groups (default 1 hour).
+
+- `update` - Update timeout if syncing users/groups (default 1 hour).
+
+- `read` - Read timeout if syncing users/groups (default 1 hour).
+
 ## Import
 
 An OIDC Application can be imported via the Okta ID.

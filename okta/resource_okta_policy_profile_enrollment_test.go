@@ -15,7 +15,8 @@ func TestAccOktaPolicyProfileEnrollment(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", policyProfileEnrollment)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createPolicyCheckDestroy(policyProfileEnrollment),
 		Steps: []resource.TestStep{

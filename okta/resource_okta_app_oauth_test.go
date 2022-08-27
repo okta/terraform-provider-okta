@@ -24,7 +24,8 @@ func TestAccResourceOktaAppOauth_basic(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
@@ -96,7 +97,8 @@ func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
@@ -135,7 +137,8 @@ func TestAccResourceOktaAppOauth_serviceNative(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
@@ -176,7 +179,8 @@ func TestAccResourceOktaAppOauth_federationBroker(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
@@ -214,7 +218,8 @@ func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
@@ -256,7 +261,8 @@ func TestAccResourceOktaAppOauth_customClientID(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
@@ -287,7 +293,8 @@ func TestAccResourceOktaAppOauth_customClientIDError(t *testing.T) {
 	ri := acctest.RandInt()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
@@ -307,7 +314,8 @@ func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
@@ -387,12 +395,15 @@ resource "%s" "test" {
 }
 
 // TestAccResourceOktaAppOauth_redirect_uris relates to issue 1170
-//  Enable terraform to maintain order of redirect_uris
+//
+//	Enable terraform to maintain order of redirect_uris
+//
 // https://github.com/okta/terraform-provider-okta/issues/1170
 func TestAccResourceOktaAppOauth_redirect_uris(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
@@ -428,7 +439,8 @@ func TestAccResourceOktaAppOauth_groups_claim(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
@@ -460,6 +472,43 @@ func TestAccResourceOktaAppOauth_groups_claim(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.value", ".*"),
 					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.name", "groups"),
 					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.issuer_mode", "ORG_URL"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaAppOauth_timeouts(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appOAuth)
+	resourceName := fmt.Sprintf("%s.test", appOAuth)
+	config := `
+resource "okta_app_oauth" "test" {
+  label                      = "testAcc_replace_with_uuid"
+  type                       = "web"
+  grant_types                = ["authorization_code"]
+  redirect_uris              = ["http://d.com/"]
+  response_types             = ["code"]
+  timeouts {
+    create = "60m"
+    read = "2h"
+    update = "30m"
+  }
+}
+`
+	resource.Test(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config, ri),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewAutoLoginApplication())),
+					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),
+					resource.TestCheckResourceAttr(resourceName, "timeouts.read", "2h"),
+					resource.TestCheckResourceAttr(resourceName, "timeouts.update", "30m"),
 				),
 			},
 		},

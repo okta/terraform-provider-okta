@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -37,7 +37,7 @@ func (m *APISupplement) UpdateSecurityNotificationEmails(ctx context.Context, bo
 		return nil, err
 	}
 	defer res.Body.Close()
-	respBody, err := ioutil.ReadAll(res.Body)
+	respBody, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (m *APISupplement) GetSecurityNotificationEmails(ctx context.Context, orgNa
 		return nil, err
 	}
 	defer res.Body.Close()
-	respBody, err := ioutil.ReadAll(res.Body)
+	respBody, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}

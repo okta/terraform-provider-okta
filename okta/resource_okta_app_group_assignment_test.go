@@ -21,7 +21,8 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
@@ -104,7 +105,8 @@ func TestAccAppGroupAssignment_retain(t *testing.T) {
 	retainAssignmentDestroy := mgr.GetFixtures("retain_assignment_destroy.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
@@ -123,6 +125,64 @@ func TestAccAppGroupAssignment_retain(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceNotExists(resourceName),
 					ensureAppGroupAssignmentRetained(appName, groupName),
+				),
+			},
+		},
+	})
+}
+
+func TestAccAppGroupAssignment_timeouts(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appGroupAssignment)
+	resourceName0 := fmt.Sprintf("%s.test.0", appGroupAssignment)
+	config := `
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  grant_types    = ["implicit", "authorization_code"]
+  redirect_uris  = ["http://d.com/"]
+  response_types = ["code", "token", "id_token"]
+  issuer_mode    = "ORG_URL"
+
+  lifecycle {
+    ignore_changes = [users, groups]
+  }
+}
+
+resource "okta_group" "test" {
+  name = "testAcc_replace_with_uuid"
+}
+
+locals {
+  group_ids = tolist([okta_group.test.id])
+}
+
+resource "okta_app_group_assignment" "test" {
+  count = length(local.group_ids)
+
+  app_id   = okta_app_oauth.test.id
+  group_id = local.group_ids[count.index]
+  priority = count.index
+
+  timeouts {
+    create = "60m"
+    read = "2h"
+    update = "30m"
+  }
+}
+`
+	resource.Test(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config, ri),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName0, "timeouts.create", "60m"),
+					resource.TestCheckResourceAttr(resourceName0, "timeouts.read", "2h"),
+					resource.TestCheckResourceAttr(resourceName0, "timeouts.update", "30m"),
 				),
 			},
 		},

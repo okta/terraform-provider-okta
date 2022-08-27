@@ -19,7 +19,8 @@ func TestAccResourceOktaGroupMemberships_crud(t *testing.T) {
 	remove := mgr.GetFixtures("basic_removal.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
@@ -39,7 +40,8 @@ func TestAccResourceOktaGroupMemberships_crud(t *testing.T) {
 // TestAccResourceOktaGroupMemberships_Issue1072 addresses https://github.com/okta/terraform-provider-okta/issues/1072
 func TestAccResourceOktaGroupMemberships_Issue1072(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
@@ -69,7 +71,8 @@ resource "okta_group_memberships" "test" {
 // https://github.com/okta/terraform-provider-okta/issues/1155
 func TestAccResourceOktaGroupMemberships_ClassicBehavior(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
@@ -108,7 +111,8 @@ func TestAccResourceOktaGroupMemberships_ClassicBehavior(t *testing.T) {
 // https://github.com/okta/terraform-provider-okta/issues/1155
 func TestAccResourceOktaGroupMemberships_TrackAllUsersBehavior(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
@@ -269,7 +273,8 @@ resource "okta_group" "test" {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{

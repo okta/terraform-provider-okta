@@ -40,7 +40,7 @@ func resourceThemeCreate(ctx context.Context, d *schema.ResourceData, m interfac
 		}
 	}
 	if themeID == "" {
-		return diag.Errorf("brand_id required to create theme")
+		return diag.Errorf("theme_id required to create theme")
 	}
 
 	theme, _, err := getOktaClientFromMetadata(m).Brand.GetBrandTheme(ctx, brandID, themeID)

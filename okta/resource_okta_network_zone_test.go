@@ -3,29 +3,11 @@ package okta
 import (
 	"context"
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
-
-func sweepNetworkZones(client *testClient) error {
-	var errorList []error
-	zones, _, err := client.oktaClient.NetworkZone.ListNetworkZones(context.Background(), &query.Params{Limit: defaultPaginationLimit})
-	if err != nil {
-		return err
-	}
-	for _, zone := range zones {
-		if strings.HasPrefix(zone.Name, testResourcePrefix) {
-			if _, err := client.oktaClient.NetworkZone.DeleteNetworkZone(context.Background(), zone.Id); err != nil {
-				errorList = append(errorList, err)
-			}
-		}
-	}
-	return condenseError(errorList)
-}
 
 func TestAccOktaNetworkZone_crud(t *testing.T) {
 	ri := acctest.RandInt()
@@ -36,7 +18,8 @@ func TestAccOktaNetworkZone_crud(t *testing.T) {
 	dynamicResourceName := fmt.Sprintf("%s.dynamic_network_zone_example", networkZone)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(networkZone, doesNetworkZoneExist),
 		Steps: []resource.TestStep{

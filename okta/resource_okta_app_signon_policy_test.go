@@ -17,7 +17,8 @@ func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%v.test", appSignOnPolicy)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createPolicyCheckDestroy(appSignOnPolicy),
 		Steps: []resource.TestStep{

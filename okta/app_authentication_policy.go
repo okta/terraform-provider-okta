@@ -2,7 +2,6 @@ package okta
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,6 +20,13 @@ func setAuthenticationPolicy(ctx context.Context, d *schema.ResourceData, m inte
 }
 
 func assignDefaultAuthenticationPolicy(ctx context.Context, m interface{}, appId string) error {
+	// Inspecting the ACCESS_POLICY is OIE only https://developer.okta.com/docs/reference/api/policy/#policy-object
+	// "Note: The following policy types are available only with the Identity Engine: ACCESS_POLICY or PROFILE_ENROLLMENT."
+	// If the org is not OIE return early
+	if config, ok := m.(*Config); ok && config.classicOrg {
+		return nil
+	}
+
 	client := getOktaClientFromMetadata(m)
 	qp := query.NewQueryParams()
 	qp.Type = "ACCESS_POLICY"
@@ -29,19 +35,15 @@ func assignDefaultAuthenticationPolicy(ctx context.Context, m interface{}, appId
 		return fmt.Errorf("failed delete authentication policy: %v", err)
 	}
 
-	// find the default policy
-	var defaultPolicy *okta.Policy
+	// Assign the default policy to the app if the policy exists
 	for _, p := range policies {
 
 		v := p.(*okta.Policy)
 		if v.Name == "Default Policy" && *v.System {
-			defaultPolicy = v
+			_, err = client.Application.UpdateApplicationPolicy(ctx, appId, v.Id)
+			return err
 		}
+	}
 
-	}
-	if defaultPolicy == nil {
-		return errors.New("no default policy found")
-	}
-	_, err = client.Application.UpdateApplicationPolicy(ctx, appId, defaultPolicy.Id)
-	return err
+	return nil
 }

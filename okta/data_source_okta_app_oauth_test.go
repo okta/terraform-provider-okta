@@ -15,7 +15,8 @@ func TestAccOktaDataSourceAppOauth_read(t *testing.T) {
 	appCreate := buildTestAppOauth(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{

@@ -7,18 +7,14 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
-
-func deleteSignOnPolicyRules(client *testClient) error {
-	return deletePolicyRulesByType(sdk.SignOnPolicyType, client)
-}
 
 func TestAccOktaPolicyRuleSignon_defaultErrors(t *testing.T) {
 	config := testOktaPolicyRuleSignOnDefaultErrors(acctest.RandInt())
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createRuleCheckDestroy(policyRuleSignOn),
 		Steps: []resource.TestStep{
@@ -42,7 +38,8 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", policyRuleSignOn)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createRuleCheckDestroy(policyRuleSignOn),
 		Steps: []resource.TestStep{

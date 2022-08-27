@@ -19,7 +19,8 @@ func TestAccOktaGroupAdminRole_crud(t *testing.T) {
 	groupTargetsRemoved := mgr.GetFixtures("group_targets_removed.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(group, doesGroupExist),
 		Steps: []resource.TestStep{

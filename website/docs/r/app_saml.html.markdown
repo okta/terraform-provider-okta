@@ -1,7 +1,7 @@
 ---
-layout: 'okta'
-page_title: 'Okta: okta_app_saml'
-sidebar_current: 'docs-okta-resource-app-saml'
+layout: "okta"
+page_title: "Okta: okta_app_saml"
+sidebar_current: "docs-okta-resource-app-saml"
 description: |-
   Creates a SAML Application.
 ---
@@ -9,6 +9,10 @@ description: |-
 # okta_app_saml
 
 This resource allows you to create and configure a SAML Application.
+
+-> If you receive the error `You do not have permission to access the feature
+you are requesting` [contact support](mailto:dev-inquiries@okta.com) and
+request feature flag `ADVANCED_SSO` be applied to your org.
 
 ## Example Usage
 
@@ -170,6 +174,7 @@ The following arguments are supported:
 - `assertion_signed` - (Optional) Determines whether the SAML assertion is digitally signed.
 
 - `attribute_statements` - (Optional) List of SAML Attribute statements.
+
   - `name` - (Required) The name of the attribute statement.
   - `filter_type` - (Optional) Type of group attribute filter. Valid values are: `"STARTS_WITH"`, `"EQUALS"`, `"CONTAINS"`, or `"REGEX"`
   - `filter_value` - (Optional) Filter value to use.
@@ -194,6 +199,7 @@ The following arguments are supported:
 - `features` - (Optional) features enabled. Notice: you can't currently configure provisioning features via the API.
 
 - `groups` - (Optional) Groups associated with the application.
+
   - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
 
 - `hide_ios` - (Optional) Do not display application icon on mobile app. Default is: `false`
@@ -204,7 +210,7 @@ The following arguments are supported:
 
 - `idp_issuer` - (Optional) SAML issuer ID.
 
-- `implicit_assignment` - (Optional) *Early Access Property*. Enables [Federation Broker Mode]( https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm). When this mode is enabled, `users` and `groups` arguments are ignored.
+- `implicit_assignment` - (Optional) _Early Access Property_. Enables [Federation Broker Mode](https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm). When this mode is enabled, `users` and `groups` arguments are ignored.
 
 - `inline_hook_id` - (Optional) Saml Inline Hook associated with the application.
 
@@ -218,6 +224,7 @@ The following arguments are supported:
 
 - `preconfigured_app` - (Optional) name of application from the Okta Integration Network, if not included a custom app will be created.  
   If not provided the following arguments are required:
+
   - `sso_url`
   - `recipient`
   - `destination`
@@ -268,6 +275,7 @@ The following arguments are supported:
 - `user_name_template_type` - (Optional) Username template type. Default is: `"BUILT_IN"`.
 
 - `users` - (Optional) Users associated with the application.
+
   - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
 - `authentication_policy` - (Optional) The ID of the associated `app_signon_policy`. If this property is removed from the application the `default` sign-on-policy will be associated with this application.
@@ -284,6 +292,28 @@ The following arguments are supported:
 
 - `key_name` - Certificate name. This modulates the rotation of keys. New name == new key.
 
+- `keys` - An array of all key credentials for the application. Format of each entry is as follows:
+
+  - `kid` - Key ID.
+
+  - `kty` - Identifies the cryptographic algorithm family used with the key.
+
+  - `use` - Intended use of the public key.
+
+  - `created` - Date created.
+
+  - `last_updated` - Date the key was last updated.
+
+  - `expires_at` - Date the key expires.
+
+  - `e` - RSA exponent.
+
+  - `n` - RSA modulus.
+
+  - `x5c` - X.509 certificate chain.
+
+  - `x5t_s256` - X.509 certificate SHA-256 thumbprint.
+
 - `certificate` - The raw signing certificate.
 
 - `metadata` - The raw SAML metadata in XML.
@@ -299,6 +329,18 @@ The following arguments are supported:
 - `entity_url` - Entity URL for instance [http://www.okta.com/exk1fcia6d6EMsf331d8](http://www.okta.com/exk1fcia6d6EMsf331d8).
 
 - `logo_url` - Direct link of application logo.
+
+- `embedd_url` - Url that can be used to embed this application into another portal.
+
+## Timeouts
+
+The `timeouts` block allows you to specify custom [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions: 
+
+- `create` - Create timeout if syncing users/groups (default 1 hour).
+
+- `update` - Update timeout if syncing users/groups (default 1 hour).
+
+- `read` - Read timeout if syncing users/groups (default 1 hour).
 
 ## Import
 

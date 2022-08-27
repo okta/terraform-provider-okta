@@ -100,6 +100,16 @@ The following arguments are supported:
 
 - `sign_on_mode` - Sign-on mode of application.
 
+## Timeouts
+
+The `timeouts` block allows you to specify custom [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions: 
+
+- `create` - Create timeout if syncing users/groups (default 1 hour).
+
+- `update` - Update timeout if syncing users/groups (default 1 hour).
+
+- `read` - Read timeout if syncing users/groups (default 1 hour).
+
 ## Import
 
 Secure Password Store Application can be imported via the Okta ID.

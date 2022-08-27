@@ -8,30 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
-
-func sweepGroupRules(client *testClient) error {
-	var errorList []error
-	// Should never need to deal with pagination
-	rules, _, err := client.oktaClient.Group.ListGroupRules(context.Background(), &query.Params{Limit: defaultPaginationLimit})
-	if err != nil {
-		return err
-	}
-
-	for _, s := range rules {
-		if s.Status == statusActive {
-			if _, err := client.oktaClient.Group.DeactivateGroupRule(context.Background(), s.Id); err != nil {
-				errorList = append(errorList, err)
-				continue
-			}
-		}
-		if _, err := client.oktaClient.Group.DeleteGroupRule(context.Background(), s.Id, nil); err != nil {
-			errorList = append(errorList, err)
-		}
-	}
-	return condenseError(errorList)
-}
 
 func TestAccOktaGroupRule_crud(t *testing.T) {
 	ri := acctest.RandInt()
@@ -46,7 +23,8 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 	name2 := buildResourceName(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(groupRule, doesGroupRuleExist),
 		Steps: []resource.TestStep{
@@ -96,9 +74,8 @@ func TestAccOktaGroupRule_invalidHandle(t *testing.T) {
 	testUpdate := buildInvalidUpdate(testName)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(groupRule, doesGroupRuleExist),
 		Steps: []resource.TestStep{

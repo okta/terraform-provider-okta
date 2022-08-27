@@ -15,9 +15,8 @@ func TestAccOktaDataSourceApp_read(t *testing.T) {
 	appCreate := buildTestApp(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
@@ -57,9 +56,8 @@ func TestAccOktaDataSourceAppLabelTest_read(t *testing.T) {
 	config := testLabelConfig(ri)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{

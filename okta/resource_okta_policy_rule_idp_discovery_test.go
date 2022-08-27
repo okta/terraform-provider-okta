@@ -6,12 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
-
-func deletePolicyRuleIdpDiscovery(client *testClient) error {
-	return deletePolicyRulesByType(sdk.IdpDiscoveryType, client)
-}
 
 func TestAccOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 	ri := acctest.RandInt()
@@ -25,7 +20,8 @@ func TestAccOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", policyRuleIdpDiscovery)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createRuleCheckDestroy(policyRuleIdpDiscovery),
 		Steps: []resource.TestStep{

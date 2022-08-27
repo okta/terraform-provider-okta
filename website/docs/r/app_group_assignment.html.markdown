@@ -58,6 +58,16 @@ The following arguments are supported:
 
 - `id` - ID of the group assignment.
 
+## Timeouts
+
+The `timeouts` block allows you to specify custom [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions: 
+
+- `create` - Create timeout if syncing users/groups (default 1 hour).
+
+- `update` - Update timeout if syncing users/groups (default 1 hour).
+
+- `read` - Read timeout if syncing users/groups (default 1 hour).
+
 ## Import
 
 An application group assignment can be imported via the `app_id` and the `group_id`.

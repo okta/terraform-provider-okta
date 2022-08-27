@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -61,6 +62,11 @@ func resourceAppSwa() *schema.Resource {
 				Description: "If going to the login page URL redirects to another page, then enter that URL here",
 			},
 		}),
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(1 * time.Hour),
+			Read:   schema.DefaultTimeout(1 * time.Hour),
+			Update: schema.DefaultTimeout(1 * time.Hour),
+		},
 	}
 }
 

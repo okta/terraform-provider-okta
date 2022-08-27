@@ -90,6 +90,8 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 		// which could result in multiple matches on the data source's "label"
 		// property.  We need to further inspect for an exact label match.
 		if filters.Label != "" {
+			// guard on nils, an app is always set
+			app = appList[0]
 			for i, _app := range appList {
 				if _app.Label == filters.Label {
 					app = appList[i]

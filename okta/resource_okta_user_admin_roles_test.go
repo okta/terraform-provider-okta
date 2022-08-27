@@ -18,7 +18,8 @@ func TestAccOktaUserAdminRoles_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", userAdminRoles)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{

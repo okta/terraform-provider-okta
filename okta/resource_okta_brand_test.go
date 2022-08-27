@@ -19,7 +19,8 @@ func TestAccResourceOktaBrand_import_update(t *testing.T) {
 
 	// okta_brand is read and update only, so set up the test by importing the brand first
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy: func(s *terraform.State) error {
 			// brand api doens't have real delete for a brand

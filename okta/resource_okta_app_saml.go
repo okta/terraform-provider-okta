@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -78,6 +79,66 @@ func resourceAppSaml() *schema.Resource {
 				Optional:         true,
 				ValidateDiagFunc: intBetween(2, 10),
 				Description:      "Number of years the certificate is valid.",
+			},
+			"keys": {
+				Type:        schema.TypeList,
+				Description: "Application keys",
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"kid": {
+							Type:        schema.TypeString,
+							Description: "Key ID",
+							Computed:    true,
+						},
+						"kty": {
+							Type:        schema.TypeString,
+							Description: "Key type",
+							Computed:    true,
+						},
+						"use": {
+							Type:        schema.TypeString,
+							Description: "Acceptable usage of the certificate",
+							Computed:    true,
+						},
+						"created": {
+							Type:        schema.TypeString,
+							Description: "Created date",
+							Computed:    true,
+						},
+						"last_updated": {
+							Type:        schema.TypeString,
+							Description: "Last updated date",
+							Computed:    true,
+						},
+						"expires_at": {
+							Type:        schema.TypeString,
+							Description: "Expiration date",
+							Computed:    true,
+						},
+						"e": {
+							Type:        schema.TypeString,
+							Description: "RSA exponent",
+							Computed:    true,
+						},
+						"n": {
+							Type:        schema.TypeString,
+							Description: "RSA modulus",
+							Computed:    true,
+						},
+						"x5c": {
+							Type:        schema.TypeList,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Description: "X.509 Certificate Chain",
+							Computed:    true,
+						},
+						"x5t_s256": {
+							Type:        schema.TypeString,
+							Description: "X.509 certificate SHA-256 thumbprint",
+							Computed:    true,
+						},
+					},
+				},
 			},
 			"metadata": {
 				Type:        schema.TypeString,
@@ -350,12 +411,22 @@ func resourceAppSaml() *schema.Resource {
 				Description:      "SAML version for the app's sign-on mode",
 				ValidateDiagFunc: elemInSlice([]string{saml20, saml11}),
 			},
-			//"authentication_policy": {
-			//	Type:        schema.TypeString,
-			//	Optional:    true,
-			//	Description: "Id of this apps authentication policy",
-			//},
+			"authentication_policy": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Id of this apps authentication policy",
+			},
+			"embed_url": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The url that can be used to embed this application in other portals.",
+			},
 		}),
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(1 * time.Hour),
+			Read:   schema.DefaultTimeout(1 * time.Hour),
+			Update: schema.DefaultTimeout(1 * time.Hour),
+		},
 	}
 }
 
@@ -437,6 +508,8 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
 	_ = d.Set("preconfigured_app", app.Name)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
+	_ = d.Set("embed_url", linksValue(app.Links, "appLinks", "href"))
+
 	if app.Settings.ImplicitAssignment != nil {
 		_ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
 	} else {
@@ -464,6 +537,16 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		_ = d.Set("entity_key", key)
 		_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.X509Data.X509Certificates[0].Data)
 	}
+
+	keys, err := fetchAppKeys(ctx, m, app.Id)
+	if err != nil {
+		return diag.Errorf("failed to load existing keys for SAML application: %f", err)
+	}
+
+	if err := setAppKeys(d, keys); err != nil {
+		return diag.Errorf("failed to set Application Credential Key Values: %v", err)
+	}
+
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	if app.SignOnMode == "SAML_1_1" {
 		_ = d.Set("saml_version", saml11)
@@ -676,6 +759,7 @@ func tryCreateCertificate(ctx context.Context, d *schema.ResourceData, m interfa
 		// Set ID and the read done at the end of update and create will do the GET on metadata
 		_ = d.Set("key_id", key.Kid)
 	}
+
 	return nil
 }
 

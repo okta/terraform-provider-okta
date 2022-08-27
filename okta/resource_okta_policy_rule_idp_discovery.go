@@ -241,7 +241,7 @@ var (
 				Type:             schema.TypeString,
 				Optional:         true,
 				Default:          "ANY",
-				ValidateDiagFunc: elemInSlice([]string{"ANY", "IOS", "WINDOWS", "ANDROID", "OTHER", "OSX", "MACOS"}),
+				ValidateDiagFunc: elemInSlice([]string{"ANY", "IOS", "WINDOWS", "ANDROID", "OTHER", "OSX", "MACOS", "CHROMEOS"}),
 			},
 			"os_expression": {
 				Type:        schema.TypeString,

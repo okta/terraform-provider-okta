@@ -21,7 +21,8 @@ func TestAccAppSamlAppSettings_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSamlAppSettings)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
 		Steps: []resource.TestStep{

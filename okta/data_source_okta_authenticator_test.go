@@ -16,9 +16,8 @@ func TestAccOktaDataSourceAuthenticator_read(t *testing.T) {
 	resourceName1 := fmt.Sprintf("data.%s.test_1", authenticator)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{

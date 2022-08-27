@@ -22,9 +22,8 @@ func TestAccOktaDataSourceUsers_read(t *testing.T) {
 	dataSource := mgr.GetFixtures("datasource.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
@@ -64,9 +63,8 @@ func TestAccOktaDataSourceUsers_readWithGroupId(t *testing.T) {
 	config := mgr.GetFixtures("group.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
@@ -99,9 +97,8 @@ func TestAccOktaDataSourceUsers_readWithGroupIdIncludingGroups(t *testing.T) {
 	config := mgr.GetFixtures("group_with_groups.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
@@ -129,14 +126,15 @@ func TestAccOktaDataSourceUsers_readWithGroupIdIncludingGroups(t *testing.T) {
 
 // TestAccDataSourceOktaUsers_IncludeNone pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUsers_IncludeNone(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(user)
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testOktaUsersRolesGroupsConfig(false, false),
+				Config: mgr.ConfigReplace(testOktaUsersRolesGroupsConfig(false, false), ri),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_users.test", "users.#", "1"),
 					resource.TestCheckResourceAttr("data.okta_users.test", "users.0.admin_roles.#", "0"),       // skipped
@@ -151,14 +149,15 @@ func TestAccDataSourceOktaUsers_IncludeNone(t *testing.T) {
 
 // TestAccDataSourceOktaUsers_IncludeGroups pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUsers_IncludeGroups(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(user)
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testOktaUsersRolesGroupsConfig(true, false),
+				Config: mgr.ConfigReplace(testOktaUsersRolesGroupsConfig(true, false), ri),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_users.test", "users.#", "1"),
 					resource.TestCheckResourceAttr("data.okta_users.test", "users.0.admin_roles.#", "0"),       // skipped
@@ -173,14 +172,15 @@ func TestAccDataSourceOktaUsers_IncludeGroups(t *testing.T) {
 
 // TestAccDataSourceOktaUsers_IncludeRoles pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUsers_IncludeRoles(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(user)
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testOktaUsersRolesGroupsConfig(false, true),
+				Config: mgr.ConfigReplace(testOktaUsersRolesGroupsConfig(false, true), ri),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_users.test", "users.#", "1"),
 					resource.TestCheckResourceAttr("data.okta_users.test", "users.0.admin_roles.#", "2"),       // SUPER_ADMIN, APP_ADMIN
@@ -195,14 +195,15 @@ func TestAccDataSourceOktaUsers_IncludeRoles(t *testing.T) {
 
 // TestAccDataSourceOktaUsers_IncludeAll pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUsers_IncludeAll(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(user)
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-		},
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testOktaUsersRolesGroupsConfig(true, true),
+				Config: mgr.ConfigReplace(testOktaUsersRolesGroupsConfig(true, true), ri),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_users.test", "users.#", "1"),
 					resource.TestCheckResourceAttr("data.okta_users.test", "users.0.admin_roles.#", "2"),       // SUPER_ADMIN, APP_ADMIN
@@ -217,11 +218,11 @@ func TestAccDataSourceOktaUsers_IncludeAll(t *testing.T) {
 
 func testOktaUsersRolesGroupsConfig(includeGroups, includeRoles bool) string {
 	prepend := `
-resource "okta_group" "test" {
-  name        = "Example"
+resource "okta_group" "testAcc-replace_with_uuid" {
+  name        = "testAcc-replace_with_uuid"
   description = "A Group"
 }
-resource "okta_user" "test" {
+resource "okta_user" "testAcc-replace_with_uuid" {
   first_name = "TestAcc"
   last_name  = "Smith"
   login      = "testAcc-replace_with_uuid@example.com"
@@ -231,23 +232,23 @@ resource "okta_user" "test" {
   }
 }
 resource "okta_user_admin_roles" "test" {
-  user_id     = okta_user.test.id
+  user_id     = okta_user.testAcc-replace_with_uuid.id
   admin_roles = [
     "SUPER_ADMIN",
     "APP_ADMIN",
   ]
 }
 resource "okta_user_group_memberships" "test" {
-  user_id = okta_user.test.id
+  user_id     = okta_user.testAcc-replace_with_uuid.id
   groups = [
-    okta_group.test.id,
+    okta_group.testAcc-replace_with_uuid.id,
   ]
 }
 data "okta_users" "test" {
   search {
     name = "profile.email"
     comparison = "eq"
-    value = okta_user.test.email
+    value = okta_user.testAcc-replace_with_uuid.email
   }
   
   delay_read_seconds = 2
@@ -263,7 +264,7 @@ data "okta_users" "test" {
 
 	append := `
   depends_on = [
-    okta_user.test,
+    okta_user.testAcc-replace_with_uuid,
     okta_user_admin_roles.test,
     okta_user_group_memberships.test
   ]
@@ -271,7 +272,7 @@ data "okta_users" "test" {
 output "output_admin_roles" {
   value = join(", ", data.okta_users.test.users.0.admin_roles)
   depends_on = [
-    okta_user.test,
+    okta_user.testAcc-replace_with_uuid,
     okta_user_admin_roles.test,
     okta_user_group_memberships.test
   ]
@@ -279,7 +280,7 @@ output "output_admin_roles" {
 output "output_group_memberships" {
   value = join(", ", data.okta_users.test.users.0.group_memberships)
   depends_on = [
-    okta_user.test,
+    okta_user.testAcc-replace_with_uuid,
     okta_user_admin_roles.test,
     okta_user_group_memberships.test
   ]

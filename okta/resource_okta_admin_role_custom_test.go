@@ -3,29 +3,11 @@ package okta
 import (
 	"context"
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
-
-func sweepCustomRoles(client *testClient) error {
-	var errorList []error
-	customRoles, _, err := client.apiSupplement.ListCustomRoles(context.Background(), &query.Params{Limit: defaultPaginationLimit})
-	if err != nil {
-		return err
-	}
-	for _, role := range customRoles.Roles {
-		if !strings.HasPrefix(role.Label, "testAcc_") {
-			if _, err := client.apiSupplement.DeleteCustomRole(context.Background(), role.Id); err != nil {
-				errorList = append(errorList, err)
-			}
-		}
-	}
-	return condenseError(errorList)
-}
 
 func TestAccOktaAdminRoleCustom(t *testing.T) {
 	ri := acctest.RandInt()
@@ -35,7 +17,8 @@ func TestAccOktaAdminRoleCustom(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", adminRoleCustom)
 	resource.Test(
 		t, resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
+			PreCheck:          testAccPreCheck(t),
+			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      createCheckResourceDestroy(adminRoleCustom, doesAdminRoleCustomExist),
 			Steps: []resource.TestStep{

@@ -13,18 +13,21 @@ func TestAccDataSourceOktaEmailTemplates_read(t *testing.T) {
 	config := mgr.GetFixtures("datasource.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_email_templates.test", "email_templates.#"),
-					resource.TestCheckResourceAttr("data.okta_email_templates.test", "email_templates.#", "10"),
+					resource.TestCheckResourceAttr("data.okta_email_templates.test", "email_templates.#", "26"),
 					resource.TestCheckResourceAttrSet("data.okta_email_templates.test", "email_templates.0.name"),
 					resource.TestCheckResourceAttrSet("data.okta_email_templates.test", "email_templates.0.links"),
 					resource.TestCheckResourceAttrSet("data.okta_email_templates.test", "email_templates.1.name"),
 					resource.TestCheckResourceAttrSet("data.okta_email_templates.test", "email_templates.1.links"),
+					resource.TestCheckResourceAttrSet("data.okta_email_templates.test", "email_templates.25.name"),
+					resource.TestCheckResourceAttrSet("data.okta_email_templates.test", "email_templates.25.links"),
 				),
 			},
 		},

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -367,6 +368,11 @@ func resourceAppOAuth() *schema.Resource {
 				Description: "Id of this apps authentication policy",
 			},
 		}),
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(1 * time.Hour),
+			Read:   schema.DefaultTimeout(1 * time.Hour),
+			Update: schema.DefaultTimeout(1 * time.Hour),
+		},
 	}
 }
 

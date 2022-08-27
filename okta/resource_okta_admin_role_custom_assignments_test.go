@@ -18,7 +18,8 @@ func TestAccOktaAdminRoleCustomAssignments(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", adminRoleCustomAssignments)
 	resource.Test(
 		t, resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
+			PreCheck:          testAccPreCheck(t),
+			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      createCheckResourceDestroy(adminRoleCustomAssignments, doesAdminRoleCustomAssignmentExist),
 			Steps: []resource.TestStep{

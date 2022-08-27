@@ -1,5 +1,73 @@
 # Changelog
 
+## 3.35.0 (August 25, 2022)
+
+NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* Adds customizable Timeouts to resources/data that rely on syncing users and groups to avoid context.DeadlineExceeded
+ [#1207](https://github.com/okta/terraform-provider-okta/pull/1207). Thanks, [@emanor-okta](https://github.com/emanor-okta)!
+  * [Terraform documentation: Resources - Retries and Customizable Timeouts](https://www.terraform.io/plugin/sdkv2/resources/retries-and-customizable-timeouts)
+  * Resources: `okta_app_auto_login`, `okta_app_basic_auth`, `okta_app_bookmark`, `okta_app_group_assignment`, `okta_app_oauth`, `okta_app_saml`, `okta_app_secure_password_store`, `okta_app_shared_credentials`, `okta_app_swa`
+
+BUG FIXES:
+
+* Correctly collect network zones in datasource `okta_network_zone` [#1239](https://github.com/okta/terraform-provider-okta/pull/1239). Thanks, [@natmariam](https://github.com/natmariam)!
+* Adding `CHROMEOS` to `os_type` in `platform_include` [#1261](https://github.com/okta/terraform-provider-okta/pull/1261). Thanks, [@monde](https://github.com/monde)!
+* Update okta-sdk-golang that correctly caches OAuth2 access tokens [#1262](https://github.com/okta/terraform-provider-okta/pull/1262). Thanks, [@monde](https://github.com/monde)!
+* Update role types validation on resource `okta_role_subscription` [#1265](https://github.com/okta/terraform-provider-okta/pull/1265). Thanks, [@monde](https://github.com/monde)!
+* Correct pagination to list all email templates on data source `okta_email_templates` [#1266](https://github.com/okta/terraform-provider-okta/pull/1266). Thanks, [@monde](https://github.com/monde)!
+
+PROJECT IMPROVEMENTS:
+
+* Show current version for provider config in documentation [#1256](https://github.com/okta/terraform-provider-okta/pull/1256). Thanks, [@ErelAdoni](https://github.com/ErelAdoni)!
+* Code clean up from go vet and format [#1264](https://github.com/okta/terraform-provider-okta/pull/1264). Thanks, [@monde](https://github.com/monde)!
+
+## 3.34.0 (August 12, 2022)
+
+BUG FIXES:
+
+* Fix concurrency issue in resource `okta_auth_server_policy_rule` that could cause 500s in the Okta API as well as not preserve priority ordering even when `depends_on`is present [#1248](https://github.com/okta/terraform-provider-okta/pull/1248). Thanks, [@monde](https://github.com/monde)!
+
+PROJECT IMPROVEMENTS:
+
+* Fix typo provider test [#1229](https://github.com/okta/terraform-provider-okta/pull/1229). Thanks, [@lukas-hetzenecker](https://github.com/lukas-hetzenecker)!
+
+## 3.33.0 (August 02, 2022)
+
+BUG FIXES:
+
+* Fix "error invalid configuration" error introduced in v3.32.0 release; includes unit tests to verify fix. [#1234](https://github.com/okta/terraform-provider-okta/pull/1234). Thanks, [@ericnorris](https://github.com/ericnorris)!
+
+## 3.32.0 (July 29, 2022)
+
+NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* Add keys attribute to okta_app_saml resource [#1206](https://github.com/okta/terraform-provider-okta/pull/1206). Thanks, [@ericnorrisl](https://github.com/ericnorris) and [@slichtenthal](https://github.com/slichtenthal)!
+* Export the app embed url for saml apps [#1215](https://github.com/okta/terraform-provider-okta/pull/1215). Thanks, [@felixcolaci](https://github.com/felixcolaci)!
+* Ability to configure the provider with an access (Bearer) token [#1222](https://github.com/okta/terraform-provider-okta/pull/1222). Thanks, [@ericnorrisl](https://github.com/ericnorris)!
+* Add `privateKeyId` private key signing support available in okta-sdk-golang client [#1223](https://github.com/okta/terraform-provider-okta/pull/1223). Thanks, [@powellchristoph](https://github.com/powellchristoph)!
+
+BUG FIXES:
+
+* Fix "no default policy found" bug, includes ability for provider to discover if it is running against an OIE or Classic org [#1224](https://github.com/okta/terraform-provider-okta/pull/1224). Thanks, [@monde](https://github.com/monde)!
+
+## 3.31.0 (July 08, 2022)
+
+NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* New resource `okta_app_signon_policy` [#1193](https://github.com/okta/terraform-provider-okta/pull/1193). Thanks, [@felixcolaci](https://github.com/felixcolaci)!
+* Added property `inactivity_period` to resource `okta_app_signon_policy_rule` [#1184](https://github.com/okta/terraform-provider-okta/pull/1181). Thanks, [@monde](https://github.com/monde)!
+* Property `issuer_mode` can be `"CUSTOM_URL"`, `"ORG_URL"`, or `"DYNAMIC"` on resource `okta_auth_server_default` [#1197](https://github.com/okta/terraform-provider-okta/pull/1197). Thanks, [@monde](https://github.com/monde)!
+
+BUG FIXES:
+
+* Correct API endpoint and call for resource `okta_policy_profile_enrollment_apps` [#1191](https://github.com/okta/terraform-provider-okta/pull/1191). Thanks, [@felixcolaci](https://github.com/felixcolaci)!
+* Fix resources pagination in resource `okta_resource_set` for resource items greater than 100 [#1196](https://github.com/okta/terraform-provider-okta/pull/1196). Thanks, [@monde](https://github.com/monde)!
+
+ENHANCEMENTS:
+
+* Update documentation on resource `okta_policy_mfa` and `okta_policy_mfa_default` for required FF `OKTA_MFA_POLICY` and when FF `ENG_ENABLE_OPTIONAL_PASSWORD_ENROLLMENT` is enabled [#1176](https://github.com/okta/terraform-provider-okta/pull/1176). Thanks, [@monde](https://github.com/monde)!
+
 ## 3.30.0 (June 22, 2022)
 
 BUG FIXES:

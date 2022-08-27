@@ -2,7 +2,7 @@ package okta
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path"
 	"strings"
@@ -33,7 +33,7 @@ func (manager *fixtureManager) GetFixtures(fixtureName string, rInt int, t *test
 		t.Fatalf("failed to load terraform fixtures for ACC test, err: %v", err)
 	}
 	defer file.Close()
-	rawFile, err := ioutil.ReadAll(file)
+	rawFile, err := io.ReadAll(file)
 	if err != nil {
 		t.Fatalf("failed to load terraform fixtures for ACC test, err: %v", err)
 	}
