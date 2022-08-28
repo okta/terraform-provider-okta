@@ -315,6 +315,17 @@ func normalizeDataJSON(val interface{}) string {
 	return string(ret)
 }
 
+// Removes nulls from group profile map and returns, since Okta does not render nulls in profile
+func normalizeGroupProfile(profile okta.GroupProfileMap) okta.GroupProfileMap {
+	trimedProfile := make(okta.GroupProfileMap)
+	for k, v := range profile {
+		if v != nil {
+			trimedProfile[k] = v
+		}
+	}
+	return trimedProfile
+}
+
 // Opposite of append
 func remove(arr []string, el string) []string {
 	var newArr []string
@@ -339,7 +350,7 @@ func setNonPrimitives(d *schema.ResourceData, valueMap map[string]interface{}) e
 	return nil
 }
 
-// Okta SDK will (not often) return just `Okta API has returned an error: ""`` when the error is not valid JSON.
+// Okta SDK will (not often) return just `Okta API has returned an error: ""“ when the error is not valid JSON.
 // The status should help with debugability. Potentially also could check for an empty error and omit
 // it when it occurs and build some more context.
 func responseErr(resp *okta.Response, err error) error {

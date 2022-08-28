@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 	"strings"
 	"time"
 
@@ -69,7 +70,19 @@ func resourceGroup() *schema.Resource {
 				StateFunc:        normalizeDataJSON,
 				Description:      "JSON formatted custom attributes for a group. It must be JSON due to various types Okta allows.",
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
+					if new == "" {
+						return true
+					}
+
+					var oldCustomAttrs okta.GroupProfileMap
+					_ = json.Unmarshal([]byte(old), &oldCustomAttrs)
+					oldCustomAttrs = normalizeGroupProfile(oldCustomAttrs)
+
+					var newCustomAttrs okta.GroupProfileMap
+					_ = json.Unmarshal([]byte(new), &newCustomAttrs)
+					newCustomAttrs = normalizeGroupProfile(newCustomAttrs)
+
+					return reflect.DeepEqual(oldCustomAttrs, newCustomAttrs)
 				},
 			},
 		},

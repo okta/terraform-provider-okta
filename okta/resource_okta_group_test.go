@@ -94,7 +94,6 @@ func TestAccOktaGroup_customschema_null(t *testing.T) {
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(group, doesGroupExist),
 		Steps: []resource.TestStep{
