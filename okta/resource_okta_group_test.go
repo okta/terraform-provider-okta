@@ -108,11 +108,15 @@ func TestAccOktaGroup_customschema_null(t *testing.T) {
 				Config: nulls,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%s", strconv.Itoa(ri))),
+					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", fmt.Sprintf("{\"testSchema2_%s\":true}", strconv.Itoa(ri))),
 				),
 			},
 			{
 				Config:   nulls,
 				PlanOnly: true,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", fmt.Sprintf("{\"testSchema2_%s\":true}", strconv.Itoa(ri))),
+				),
 			},
 			{
 				Config: removal,

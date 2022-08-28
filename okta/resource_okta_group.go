@@ -233,7 +233,7 @@ func buildGroup(d *schema.ResourceData) *okta.Group {
 		Profile: &okta.GroupProfile{
 			Name:            d.Get("name").(string),
 			Description:     d.Get("description").(string),
-			GroupProfileMap: customAttrs,
+			GroupProfileMap: normalizeGroupProfile(customAttrs),
 		},
 	}
 }
