@@ -3,7 +3,10 @@ package okta
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strings"
+
+	"github.com/cenkalti/backoff/v4"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -118,7 +121,18 @@ func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 	if policyID == "" {
 		return fmt.Errorf("either 'policyid' or 'policy_id' field should be set")
 	}
-	rule, _, err := getSupplementFromMetadata(m).CreatePolicyRule(ctx, policyID, template)
+	var rule *sdk.PolicyRule
+	err = backoff.Retry(func() error {
+		ruleObj, resp, err := getSupplementFromMetadata(m).CreatePolicyRule(ctx, policyID, template)
+		if resp.StatusCode == http.StatusInternalServerError {
+			return err
+		}
+		if err != nil {
+			return backoff.Permanent(err)
+		}
+		rule = ruleObj
+		return nil
+	}, backoff.NewExponentialBackOff())
 	if err != nil {
 		return fmt.Errorf("failed to create policy rule: %v", err)
 	}
