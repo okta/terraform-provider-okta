@@ -7,7 +7,7 @@ resource "okta_idp_social" "google" {
   protocol_type       = "OIDC"
   name                = "Google"
   provisioning_action = "DISABLED"
-  scopes              = [
+  scopes = [
     "profile",
     "email",
     "openid",

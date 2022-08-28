@@ -3,9 +3,9 @@ data "okta_group" "all" {
 }
 
 resource "okta_policy_signon" "test" {
-  name            = "testAcc_replace_with_uuid"
-  status          = "ACTIVE"
-  description     = "Terraform Acceptance Test SignOn Policy"
+  name        = "testAcc_replace_with_uuid"
+  status      = "ACTIVE"
+  description = "Terraform Acceptance Test SignOn Policy"
   groups_included = [
     data.okta_group.all.id
   ]
@@ -16,13 +16,13 @@ data "okta_behavior" "new_city" {
 }
 
 resource "okta_network_zone" "test" {
-  name       = "testAcc_replace_with_uuid"
-  type       = "IP"
-  gateways   = [
+  name = "testAcc_replace_with_uuid"
+  type = "IP"
+  gateways = [
     "1.2.3.4/24",
     "2.3.4.5-2.3.4.15"
   ]
-  proxies    = [
+  proxies = [
     "2.2.3.4/24",
     "3.3.4.5-3.3.4.15"
   ]
