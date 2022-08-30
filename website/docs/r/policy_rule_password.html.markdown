@@ -20,23 +20,25 @@ The following arguments are supported:
   
 - `policy_id` - (Required) Policy ID.
 
-- `name` - (Required) Policy Rule Name.
+- `name` - (Required) Policy Rule Name. Type `"string"`
 
-- `priority` - (Optional) Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last (lowest) if not there.
+- `priority` - (Optional) Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last (lowest) if not there. Type `"number"`
 
-- `status` - (Optional) Policy Rule Status: `"ACTIVE"` or `"INACTIVE"`.
+- `status` - (Optional) Policy Rule Status: `"ACTIVE"` or `"INACTIVE"`. Type `"string"`
 
-- `password_change` - (Optional) Allow or deny a user to change their password: `"ALLOW"` or `"DENY"`. By default, it is `"ALLOW"`.
+- `password_change` - (Optional) Allow or deny a user to change their password: `"ALLOW"` or `"DENY"`. By default, it is `"ALLOW"`. Type `"string"`
 
-- `password_reset` - (Optional) Allow or deny a user to reset their password: `"ALLOW"` or `"DENY"`. By default, it is `"ALLOW"`.
+- `password_reset` - (Optional) Allow or deny a user to reset their password: `"ALLOW"` or `"DENY"`. By default, it is `"ALLOW"`. Type `"string"`
 
-- `password_unlock` - (Optional) Allow or deny a user to unlock: `"ALLOW"` or `"DENY"`. By default, it is `"DENY"`,
+- `password_unlock` - (Optional) Allow or deny a user to unlock: `"ALLOW"` or `"DENY"`. By default, it is `"DENY"`, Type `"string"`
 
-- `network_connection` - (Optional) Network selection mode: `"ANYWHERE"`, `"ZONE"`, `"ON_NETWORK"`, or `"OFF_NETWORK"`.
+- `network_connection` - (Optional) Network selection mode: `"ANYWHERE"`, `"ZONE"`, `"ON_NETWORK"`, or `"OFF_NETWORK"`. Type `"string"`
 
-- `network_includes` - (Optional) The network zones to include. Conflicts with `network_excludes`.
+- `network_includes` - (Optional) The network zones to include. Conflicts with `network_excludes`. Type `"list(string)"`
 
-- `network_excludes` - (Optional) The network zones to exclude. Conflicts with `network_includes`.
+- `network_excludes` - (Optional) The network zones to exclude. Conflicts with `network_includes`. Type `"list(string)"`
+
+- `users_excluded` - (Optional) The users to exclude. Type `"set(string)"`
 
 ## Attributes Reference
 
