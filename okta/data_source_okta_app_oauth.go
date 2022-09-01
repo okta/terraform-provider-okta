@@ -216,7 +216,7 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 		}
 		// There can be only two client secrets. Choose the latest created one that is active
 		if len(secretList) > 0 {
-			if secretList[0].Status == "ACTIVE" && secretList[1].Status == "ACTIVE" {
+			if len(secretList) > 1 && secretList[0].Status == "ACTIVE" && secretList[1].Status == "ACTIVE" {
 				if secretList[1].LastUpdated > secretList[0].LastUpdated {
 					clientSecret = secretList[1].ClientSecret
 				} else {
@@ -224,7 +224,7 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 				}
 			} else if secretList[0].Status == "ACTIVE" {
 				clientSecret = secretList[0].ClientSecret
-			} else if secretList[1].Status == "ACTIVE" {
+			} else if len(secretList) > 1 && secretList[1].Status == "ACTIVE" {
 				clientSecret = secretList[1].ClientSecret
 			}
 		}
