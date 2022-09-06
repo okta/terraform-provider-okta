@@ -122,6 +122,7 @@ func dataSourceAppOauth() *schema.Resource {
 			"client_secret": {
 				Type:        schema.TypeString,
 				Computed:    true,
+				Sensitive:   true,
 				Description: "OAuth client secret",
 			},
 			"policy_uri": {
