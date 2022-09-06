@@ -26,7 +26,6 @@ func TestAccOktaDataSourceAppOauth_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_app_oauth.test", "client_id"),
-					resource.TestCheckResourceAttrSet("data.okta_app_oauth.test", "client_secret"),
 					resource.TestCheckResourceAttrSet("data.okta_app_oauth.test", "grant_types.#"),
 					resource.TestCheckResourceAttrSet("data.okta_app_oauth.test", "redirect_uris.#"),
 					resource.TestCheckResourceAttrSet("data.okta_app_oauth.test", "type"),
