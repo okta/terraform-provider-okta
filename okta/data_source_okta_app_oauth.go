@@ -119,6 +119,12 @@ func dataSourceAppOauth() *schema.Resource {
 				Computed:    true,
 				Description: "OAuth client ID",
 			},
+			"client_secret": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Sensitive:   true,
+				Description: "OAuth client secret",
+			},
 			"policy_uri": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -201,6 +207,7 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("logo_uri", app.Settings.OauthClient.LogoUri)
 	_ = d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
 	_ = d.Set("client_id", app.Credentials.OauthClient.ClientId)
+	_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
 	_ = d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
 	_ = d.Set("wildcard_redirect", app.Settings.OauthClient.WildcardRedirect)
 	respTypes := make([]string, len(app.Settings.OauthClient.ResponseTypes))
