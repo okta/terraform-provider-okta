@@ -9,9 +9,8 @@ description: |-
 # okta_brand
 
 This resource allows you to get and update an Okta [Brand](https://developer.okta.com/docs/reference/api/brands/#brand-object).
-
-Brands are can only be updated through the Okta API. Therefore this resource
-only gets and updates a brand.
+The Okta Management API does not have a true Create or Delete for a brand. Therefore, the brand resource must be imported
+first into the terraform state before updates can be applied to the brand.
 
 ## Example Usage
 
