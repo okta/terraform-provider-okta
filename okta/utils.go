@@ -3,8 +3,11 @@ package okta
 import (
 	"context"
 	"crypto/sha256"
+	"crypto/x509"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	"io"
@@ -444,4 +447,47 @@ func suppressDuringCreateFunc(attribute string) func(k, old, new string, d *sche
 		}
 		return old == new
 	}
+}
+
+// Normalizes to certificate object when it's passed as a raw b64 block instead of a full pem file
+func rawCertNormalize(certContents string) (*x509.Certificate, error) {
+	certContents = strings.ReplaceAll(strings.TrimSpace(certContents), " ", "")
+	certDecoded, err := base64.StdEncoding.DecodeString(certContents)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode b64: %s", err)
+	}
+	cert, err := x509.ParseCertificate(certDecoded)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode pem certificate: %s", err)
+	}
+
+	return cert, nil
+}
+
+// Normalizes to certificate object when passed as PEM formatted certificate file
+func pemCertNormalize(certContents string) (*x509.Certificate, error) {
+	certContents = strings.TrimSpace(certContents)
+	cert, rest := pem.Decode([]byte(certContents))
+	if cert == nil {
+		return nil, fmt.Errorf("failed to decode PEM file, rest: %s", rest)
+	}
+
+	parsedCert, err := x509.ParseCertificate(cert.Bytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse certificate: %s", err)
+	}
+
+	return parsedCert, nil
+}
+
+func certNormalize(certContents string) (*x509.Certificate, error) {
+	certDecoded, err := pemCertNormalize(certContents)
+	if err == nil {
+		return certDecoded, nil
+	}
+	certDecoded, err = rawCertNormalize(certContents)
+	if err != nil {
+		return nil, err
+	}
+	return certDecoded, nil
 }

@@ -389,6 +389,20 @@ func resourceAppSaml() *schema.Resource {
 				Optional:     true,
 				Description:  "x509 encoded certificate that the Service Provider uses to sign Single Logout requests",
 				RequiredWith: []string{"single_logout_issuer", "single_logout_url"},
+				DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+					oldCert, err := certNormalize(oldValue)
+					if err != nil {
+						return false
+					}
+					newCert, err := certNormalize(newValue)
+					if err != nil {
+						return false
+					}
+					if oldCert.Equal(newCert) {
+						return true
+					}
+					return false
+				},
 			},
 			"saml_version": {
 				Type:             schema.TypeString,

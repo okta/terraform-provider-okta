@@ -39,7 +39,7 @@ The following arguments are supported:
 
 - `name` - (Required) The Application's display name.
 
-- `type` - (Required) The type of Social IdP. It can be `"FACEBOOK"`, `"LINKEDIN"`, `"MICROSOFT"`, `"GOOGLE"` or `"APPLE"`.
+- `type` - (Required) The type of Social IdP. See API docs [Identity Provider Type](https://developer.okta.com/docs/reference/api/idps/#identity-provider-type)
 
 - `scopes` - (Required) The scopes of the IdP.
 

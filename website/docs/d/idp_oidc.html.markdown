@@ -58,6 +58,6 @@ data "okta_idp_oidc" "example" {
   
 - `issuer_url` - URI that identifies the issuer.
   
-- `issuer_mode` - Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL.
+- `issuer_mode` - Indicates whether Okta uses the original Okta org domain URL, a custom domain URL, or dynamic.
   
 - `max_clock_skew` - Maximum allowable clock-skew when processing messages from the IdP.

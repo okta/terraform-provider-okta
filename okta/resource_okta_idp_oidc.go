@@ -58,11 +58,15 @@ func resourceIdpOidc() *schema.Resource {
 				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"issuer_mode": {
-				Type:             schema.TypeString,
-				Description:      "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
-				ValidateDiagFunc: elemInSlice([]string{"ORG_URL", "CUSTOM_URL"}),
-				Default:          "ORG_URL",
-				Optional:         true,
+				Type:        schema.TypeString,
+				Description: "Indicates whether Okta uses the original Okta org domain URL, custom domain URL, or dynamic. See Identity Provider attributes - issuerMode - https://developer.okta.com/docs/reference/api/idps/#identity-provider-attributes",
+				ValidateDiagFunc: elemInSlice([]string{
+					"CUSTOM_URL",
+					"DYNAMIC",
+					"ORG_URL",
+				}),
+				Default:  "ORG_URL",
+				Optional: true,
 			},
 			"max_clock_skew": {
 				Type:     schema.TypeInt,

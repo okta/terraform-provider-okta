@@ -193,34 +193,45 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("label", app.Label)
 	_ = d.Set("name", app.Name)
 	_ = d.Set("status", app.Status)
-	_ = d.Set("type", app.Settings.OauthClient.ApplicationType)
 	_ = d.Set("auto_submit_toolbar", app.Visibility.AutoSubmitToolbar)
 	_ = d.Set("hide_ios", app.Visibility.Hide.IOS)
 	_ = d.Set("hide_web", app.Visibility.Hide.Web)
-	_ = d.Set("client_uri", app.Settings.OauthClient.ClientUri)
-	_ = d.Set("logo_uri", app.Settings.OauthClient.LogoUri)
-	_ = d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
-	_ = d.Set("client_id", app.Credentials.OauthClient.ClientId)
-	_ = d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
-	_ = d.Set("wildcard_redirect", app.Settings.OauthClient.WildcardRedirect)
-	respTypes := make([]string, len(app.Settings.OauthClient.ResponseTypes))
-	for i := range app.Settings.OauthClient.ResponseTypes {
-		respTypes[i] = string(*app.Settings.OauthClient.ResponseTypes[i])
+
+	respTypes := []string{}
+	grantTypes := []string{}
+	redirectUris := []string{}
+	postLogoutRedirectUris := []string{}
+
+	if app.Settings.OauthClient != nil {
+		_ = d.Set("type", app.Settings.OauthClient.ApplicationType)
+		_ = d.Set("client_uri", app.Settings.OauthClient.ClientUri)
+		_ = d.Set("logo_uri", app.Settings.OauthClient.LogoUri)
+		_ = d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
+		_ = d.Set("client_id", app.Credentials.OauthClient.ClientId)
+		_ = d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
+		_ = d.Set("wildcard_redirect", app.Settings.OauthClient.WildcardRedirect)
+		for i := range app.Settings.OauthClient.ResponseTypes {
+			respTypes = append(respTypes, string(*app.Settings.OauthClient.ResponseTypes[i]))
+		}
+		for i := range app.Settings.OauthClient.GrantTypes {
+			grantTypes = append(grantTypes, string(*app.Settings.OauthClient.GrantTypes[i]))
+		}
+		redirectUris = append(redirectUris, app.Settings.OauthClient.RedirectUris...)
+		postLogoutRedirectUris = append(postLogoutRedirectUris, app.Settings.OauthClient.PostLogoutRedirectUris...)
 	}
-	grantTypes := make([]string, len(app.Settings.OauthClient.GrantTypes))
-	for i := range app.Settings.OauthClient.GrantTypes {
-		grantTypes[i] = string(*app.Settings.OauthClient.GrantTypes[i])
-	}
+
 	aggMap := map[string]interface{}{
-		"redirect_uris":             convertStringSliceToSet(app.Settings.OauthClient.RedirectUris),
+		"redirect_uris":             convertStringSliceToSet(redirectUris),
 		"response_types":            convertStringSliceToSet(respTypes),
 		"grant_types":               convertStringSliceToSet(grantTypes),
-		"post_logout_redirect_uris": convertStringSliceToSet(app.Settings.OauthClient.PostLogoutRedirectUris),
+		"post_logout_redirect_uris": convertStringSliceToSet(postLogoutRedirectUris),
 	}
-	if app.Settings.OauthClient.IdpInitiatedLogin != nil {
+	if app.Settings.OauthClient != nil &&
+		app.Settings.OauthClient.IdpInitiatedLogin != nil {
 		_ = d.Set("login_mode", app.Settings.OauthClient.IdpInitiatedLogin.Mode)
 		aggMap["login_scopes"] = convertStringSliceToSet(app.Settings.OauthClient.IdpInitiatedLogin.DefaultScope)
 	}
+
 	err = setNonPrimitives(d, aggMap)
 	if err != nil {
 		return diag.Errorf("failed to set OAuth application properties: %v", err)
