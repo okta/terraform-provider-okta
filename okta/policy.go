@@ -265,7 +265,13 @@ func syncPolicyFromUpstream(d *schema.ResourceData, policy *sdk.Policy) error {
 	_ = d.Set("description", policy.Description)
 	_ = d.Set("status", policy.Status)
 	_ = d.Set("priority", policy.Priority)
-	return setNonPrimitives(d, map[string]interface{}{
-		"groups_included": convertStringSliceToSet(policy.Conditions.People.Groups.Include),
-	})
+	if policy.Conditions != nil &&
+		policy.Conditions.People != nil &&
+		policy.Conditions.People.Groups != nil &&
+		policy.Conditions.People.Groups.Include != nil {
+		return setNonPrimitives(d, map[string]interface{}{
+			"groups_included": convertStringSliceToSet(policy.Conditions.People.Groups.Include),
+		})
+	}
+	return nil
 }
