@@ -295,13 +295,9 @@ func resourceAppSaml() *schema.Resource {
 			},
 			"features": {
 				Type:        schema.TypeSet,
-				Optional:    true,
+				Computed:    true,
 				Description: "features to enable",
 				Elem:        &schema.Schema{Type: schema.TypeString},
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					// always suppress diff since you can't currently configure provisioning features via the API
-					return true
-				},
 			},
 			"app_settings_json": {
 				Type:             schema.TypeString,
