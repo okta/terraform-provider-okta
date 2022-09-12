@@ -121,6 +121,37 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 	})
 }
 
+func TestAccOktaPolicyRuleSignon_multiple(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(policyRuleSignOn)
+	config := mgr.GetFixtures("basic.tf", ri, t)
+	basicMultiple := mgr.GetFixtures("basic_multiple.tf", ri, t)
+	resourceName := fmt.Sprintf("%s.test", policyRuleSignOn)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createRuleCheckDestroy(policyRuleSignOn),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+				),
+			},
+			{
+				Config: basicMultiple,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(fmt.Sprintf("%s.test_allow", policyRuleSignOn)),
+					ensureRuleExists(fmt.Sprintf("%s.test_deny", policyRuleSignOn))),
+			},
+		},
+	})
+}
+
 func testOktaPolicyRuleSignOnDefaultErrors(rInt int) string {
 	name := buildResourceName(rInt)
 
