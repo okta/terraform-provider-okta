@@ -130,15 +130,17 @@ func buildResourceSet(d *schema.ResourceData, isNew bool) (*sdk.ResourceSet, err
 func flattenResourceSetResources(resources []*sdk.ResourceSetResource) *schema.Set {
 	var arr []interface{}
 	for _, res := range resources {
-		links := res.Links.(map[string]interface{})
-		var url string
-		for _, v := range links {
-			for _, link := range v.(map[string]interface{}) {
-				url = link.(string)
-				break
+		if res.Links != nil {
+			links := res.Links.(map[string]interface{})
+			var url string
+			for _, v := range links {
+				for _, link := range v.(map[string]interface{}) {
+					url = link.(string)
+					break
+				}
 			}
+			arr = append(arr, url)
 		}
-		arr = append(arr, url)
 	}
 	return schema.NewSet(schema.HashString, arr)
 }
