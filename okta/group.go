@@ -66,10 +66,10 @@ func listGroups(ctx context.Context, client *okta.Client, qp *query.Params) ([]*
 func addGroupMembers(ctx context.Context, client *okta.Client, groupId string, users []string) error {
 	for _, user := range users {
 		resp, err := client.Group.AddUserToGroup(ctx, groupId, user)
-		exists, err := doesResourceExist(resp, err)
 		if err != nil {
 			return fmt.Errorf("failed to add user (%s) to group (%s): %w", user, groupId, err)
 		}
+		exists, err := doesResourceExist(resp, err)
 		if !exists {
 			return fmt.Errorf("targeted object does not exist: %s", err)
 		}
