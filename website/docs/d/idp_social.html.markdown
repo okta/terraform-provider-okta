@@ -62,7 +62,7 @@ data "okta_idp_social" "example" {
   
 - `token_binding` - The method of making a token request.
   
-- `type` - The type of Social IdP.
+- `type` - The type of Social IdP. See API docs [Identity Provider Type](https://developer.okta.com/docs/reference/api/idps/#identity-provider-type)
   
 - `scopes` - The scopes of the IdP.
   

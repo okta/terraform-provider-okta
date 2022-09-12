@@ -67,7 +67,7 @@ The following arguments are supported:
 
 - `protocol_type` - (Optional) The type of protocol to use. It can be `"OIDC"` or `"OAUTH2"`.
 
-- `issuer_mode` - (Optional) Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL. It can be `"ORG_URL"` or `"CUSTOM_URL"`.
+- `issuer_mode` - (Optional) Indicates whether Okta uses the original Okta org domain URL, a custom domain URL, or dynamic. It can be `"ORG_URL"`, `"CUSTOM_URL"`, or `"DYNAMIC"`.
 
 - `max_clock_skew` - (Optional) Maximum allowable clock-skew when processing messages from the IdP.
 
