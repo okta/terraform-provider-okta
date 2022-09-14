@@ -119,6 +119,12 @@ func dataSourceAppOauth() *schema.Resource {
 				Computed:    true,
 				Description: "OAuth client ID",
 			},
+			"client_secret": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Sensitive:   true,
+				Description: "OAuth client secret",
+			},
 			"policy_uri": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -189,6 +195,7 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.Errorf("failed to list OAuth's app groups and users: %v", err)
 	}
+
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
 	_ = d.Set("name", app.Name)
@@ -208,6 +215,13 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 		_ = d.Set("logo_uri", app.Settings.OauthClient.LogoUri)
 		_ = d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
 		_ = d.Set("client_id", app.Credentials.OauthClient.ClientId)
+
+		secret, err := getCurrentlyActiveClientSecret(ctx, m, app.Id)
+		if err != nil {
+			return diag.Errorf("failed to fetch OAuth client secret: %v", err)
+		}
+		_ = d.Set("client_secret", secret)
+
 		_ = d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
 		_ = d.Set("wildcard_redirect", app.Settings.OauthClient.WildcardRedirect)
 		for i := range app.Settings.OauthClient.ResponseTypes {
@@ -239,4 +253,29 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 	p, _ := json.Marshal(app.Links)
 	_ = d.Set("links", string(p))
 	return nil
+}
+
+// getCurrentlyActiveClientSecret See: https://developer.okta.com/docs/reference/api/apps/#list-client-secrets
+func getCurrentlyActiveClientSecret(ctx context.Context, m interface{}, appId string) (string, error) {
+	secrets, _, err := getOktaClientFromMetadata(m).Application.ListClientSecretsForApplication(ctx, appId)
+	if err != nil {
+		return "", err
+	}
+
+	// There can only be two client secrets. Regardless, choose the latest created active secret.
+	var secretValue string
+	var secret *okta.ClientSecret
+	for _, s := range secrets {
+		if secret == nil && s.Status == "ACTIVE" {
+			secret = s
+		}
+		if secret != nil && s.Status == "ACTIVE" && secret.Created.Before(*s.Created) {
+			secret = s
+		}
+	}
+	if secret != nil {
+		secretValue = secret.ClientSecret
+	}
+
+	return secretValue, nil
 }

@@ -75,6 +75,8 @@ data "okta_app_oauth" "test" {
 
 - `client_id` - OAuth client ID. If set during creation, app is created with this id.
 
+- `client_secret` - The latest active client secret of the application. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
+
 - `client_uri` - URI to a web page providing information about the client.
 
 - `policy_uri` - URI to web page providing client policy document.
