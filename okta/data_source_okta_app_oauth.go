@@ -158,6 +158,13 @@ func dataSourceAppOauth() *schema.Resource {
 	}
 }
 
+type clientSecretItem struct {
+	Status       string `json:"status,omitempty"`
+	Id           string `json:"id,omitempty"`
+	ClientSecret string `json:"client_secret,omitempty"`
+	LastUpdated  string `json:"lastUpdated,omitempty"`
+}
+
 func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	filters, err := getAppFilters(d)
 	if err != nil {
@@ -195,6 +202,35 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.Errorf("failed to list OAuth's app groups and users: %v", err)
 	}
+	skipClientSecrets := false // Do we ever need to skip doing this?
+	clientSecret := ""
+	if !skipClientSecrets {
+		re := getOktaClientFromMetadata(m).GetRequestExecutor()
+		req, err := re.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/apps/%s/credentials/secrets", app.Id), nil)
+		if err != nil {
+			return diag.Errorf("failed to list OAuth client secrets: %v", err)
+		}
+		var secretList []*clientSecretItem
+		_, err = re.Do(ctx, req, &secretList)
+		if err != nil {
+			return diag.Errorf("failed to list OAuth client secrets: %v", err)
+		}
+		// There can be only two client secrets. Choose the latest created one that is active
+		if len(secretList) > 0 {
+			if len(secretList) > 1 && secretList[0].Status == "ACTIVE" && secretList[1].Status == "ACTIVE" {
+				if secretList[1].LastUpdated > secretList[0].LastUpdated {
+					clientSecret = secretList[1].ClientSecret
+				} else {
+					clientSecret = secretList[0].ClientSecret
+				}
+			} else if secretList[0].Status == "ACTIVE" {
+				clientSecret = secretList[0].ClientSecret
+			} else if len(secretList) > 1 && secretList[1].Status == "ACTIVE" {
+				clientSecret = secretList[1].ClientSecret
+			}
+		}
+	}
+
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
 	_ = d.Set("name", app.Name)
