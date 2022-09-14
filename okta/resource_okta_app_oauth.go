@@ -208,6 +208,11 @@ func resourceAppOAuth() *schema.Resource {
 				},
 				Description: "List of scopes to use for the request",
 			},
+			"pkce_required": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. `true` for `browser` and `native` application types.",
+			},
 			"redirect_uris": {
 				Type:        schema.TypeList,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -517,6 +522,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 		_ = d.Set("client_id", app.Credentials.OauthClient.ClientId)
 		_ = d.Set("token_endpoint_auth_method", app.Credentials.OauthClient.TokenEndpointAuthMethod)
 		_ = d.Set("auto_key_rotation", app.Credentials.OauthClient.AutoKeyRotation)
+		_ = d.Set("pkce_required", app.Credentials.OauthClient.PkceRequired)
 	}
 	err = setAppSettings(d, app.Settings.App)
 	if err != nil {
@@ -729,6 +735,8 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 			AutoKeyRotation:         boolPtr(d.Get("auto_key_rotation").(bool)),
 			ClientId:                d.Get("client_id").(string),
 			TokenEndpointAuthMethod: authMethod,
+			PkceRequired:            boolPtr(d.Get("pkce_required").(bool)),
+			ClientSecret:            d.Get("client_secret").(string),
 		},
 		UserNameTemplate: buildUserNameTemplate(d),
 	}
