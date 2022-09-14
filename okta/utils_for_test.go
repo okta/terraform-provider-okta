@@ -149,7 +149,7 @@ func testAccErrorChecks(t *testing.T) resource.ErrorCheckFunc {
 			return err
 		}
 
-		return nil
+		return err
 	}
 }
 
