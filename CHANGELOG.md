@@ -1,5 +1,41 @@
 # Changelog
 
+## 3.36.0 (September 14, 2022)
+
+NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* Add `client_secret` attribute on data source `okta_app_oauth` [#1307](https://github.com/okta/terraform-provider-okta/pull/1307) Thanks, [@dkulchinsky](https://github.com/dkulchinsky), [@monde](https://github.com/monde), [@rickardp](https://github.com/rickardp)!
+  * oauth app data source: allow to retrieve client_secret [#1285](https://github.com/okta/terraform-provider-okta/pull/1285)
+  * client_secret is missing from okta_app_oauth data source [#1279](https://github.com/okta/terraform-provider-okta/issues/1279)
+  * Added support for retrieving client secret from okta_app_oauth data source [#1280](https://github.com/okta/terraform-provider-okta/pull/1280)
+* Adds `pkce_required` property to resource `okta_app_oauth` [#1305](https://github.com/okta/terraform-provider-okta/pull/1305) Thanks, [@monde](https://github.com/monde)!
+  * Add support to pkce_required property for OIDC app integrations [#1241](https://github.com/okta/terraform-provider-okta/issues/1241)
+* Schema updates for `okta_idp_oidc` and `okta_idp_social` [#1297](https://github.com/okta/terraform-provider-okta/pull/1297) Thanks, [@monde](https://github.com/monde)!
+  * okta_idp_oidc does not support DYNAMIC issuer_mode [#1288](https://github.com/okta/terraform-provider-okta/issues/1288)
+  * Okta Social IDP with Type Github [#1293](https://github.com/okta/terraform-provider-okta/issues/1293)
+
+BUG FIXES:
+
+* Policy Rule Retry On InternalServerError [#1273](https://github.com/okta/terraform-provider-okta/pull/1273) Thanks, [@ymylei](https://github.com/ymylei)!
+* Set SAML Features To Computed [#1272](https://github.com/okta/terraform-provider-okta/pull/1272) Thanks, [@ymylei](https://github.com/ymylei)!
+* Errors when adding user to group are incorrectly ignored. [#1301](https://github.com/okta/terraform-provider-okta/pull/1301) Thanks, [@monde](https://github.com/monde)!
+  * prevent error overwrite in addGroupMember [#1269](https://github.com/okta/terraform-provider-okta/issues/1269)
+* Okta Group Schema Null Handling [#1271](https://github.com/okta/terraform-provider-okta/pull/1271) Thanks, [@ymylei](https://github.com/ymylei)!
+* Diff Suppression on SLO Certs [#1270](https://github.com/okta/terraform-provider-okta/pull/1270) Thanks, [@ymylei](https://github.com/ymylei)!
+* Nil guard on app.Settings.OauthClient [#1300](https://github.com/okta/terraform-provider-okta/pull/1300) Thanks, [@monde](https://github.com/monde)!
+  * Provider crashes when doing a data source lookup of an app with different type than the label it is using for the lookup. * [#1082](https://github.com/okta/terraform-provider-okta/issues/1082)
+* Nil guard on resource `set _links` value [#1299](https://github.com/okta/terraform-provider-okta/pull/1299) Thanks, [@monde](https://github.com/monde)!
+  * Error when creating okta_resource_set [#1278](https://github.com/okta/terraform-provider-okta/issues/1278)
+* Guard from nil pointer dereference [#1298](https://github.com/okta/terraform-provider-okta/pull/1298) Thanks, [@monde](https://github.com/monde)!
+  * Plugin crash when importing okta_policy_signon [#1294](https://github.com/okta/terraform-provider-okta/issues/1294)
+
+PROJECT IMPROVEMENTS:
+
+* Variable Types Update - Documentation [#1276](https://github.com/okta/terraform-provider-okta/pull/1276)
+Thanks, [@pro4tlzz](https://github.com/pro4tlzz)!
+* Update brand.html.markdown [#1281](https://github.com/okta/terraform-provider-okta/pull/1281) Thanks, [@monde](https://github.com/monde)!
+* Update theme.html.markdown [#1282](https://github.com/okta/terraform-provider-okta/pull/1282) Thanks, [@monde](https://github.com/monde)!
+
 ## 3.35.0 (August 25, 2022)
 
 NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
