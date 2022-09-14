@@ -514,3 +514,34 @@ resource "okta_app_oauth" "test" {
 		},
 	})
 }
+
+func TestAccResourceOktaAppOauth_pkce_required(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appOAuth)
+	resourceName := fmt.Sprintf("%s.test", appOAuth)
+	config := `
+resource "okta_app_oauth" "test" {
+  label = "testAcc_replace_with_uuid"
+  type  = "native"
+  pkce_required  = true
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://d.com/"]
+  response_types = ["code"]
+}
+`
+	resource.Test(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config, ri),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(okta.NewAutoLoginApplication())),
+					resource.TestCheckResourceAttr(resourceName, "pkce_required", "true"),
+				),
+			},
+		},
+	})
+}

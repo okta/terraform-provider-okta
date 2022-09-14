@@ -49,19 +49,21 @@ The following arguments are supported:
 
 - `accessibility_self_service` - (Optional) Enable self-service. By default, it is `false`.
 
+- `authentication_policy` - (Optional) The ID of the associated `app_signon_policy`. If this property is removed from the application the `default` sign-on-policy will be associated with this application.
+
 - `admin_note` - (Optional) Application notes for admins.
 
 - `app_links_json` - (Optional) Displays specific appLinks for the app. The value for each application link should be boolean.
 
 - `app_settings_json` - (Optional) Application settings in JSON format.
 
-- `auto_key_rotation` - (Optional) Requested key rotation mode.
+- `auto_key_rotation` - (Optional) Requested key rotation mode. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
 
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
 - `client_basic_secret` - (Optional) OAuth client secret key, this can be set when token_endpoint_auth_method is client_secret_basic.
 
-- `client_id` - (Optional) OAuth client ID. If set during creation, app is created with this id.
+- `client_id` - (Optional) OAuth client ID. If set during creation, app is created with this id. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
 
 - `client_uri` - (Optional) URI to a web page providing information about the client.
 
@@ -112,6 +114,8 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 - `omit_secret` - (Optional) This tells the provider not to persist the application's secret to state. Your app's `client_secret` will be recreated if this ever changes from true => false.
 
+- `pkce_required` - (Optional) Require Proof Key for Code Exchange (PKCE) for additional verification. `true` for `browser` and `native` application types. See https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
+
 - `policy_uri` - (Optional) URI to web page providing client policy document.
 
 - `post_logout_redirect_uris` - (Optional) List of URIs for redirection after logout.
@@ -132,7 +136,7 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 - `status` - (Optional) The status of the application, by default, it is `"ACTIVE"`.
 
-- `token_endpoint_auth_method` - (Optional) Requested authentication method for the token endpoint. It can be set to `"none"`, `"client_secret_post"`, `"client_secret_basic"`, `"client_secret_jwt"`, `"private_key_jwt"`. To enable PKCE, set this to `"none"`.
+- `token_endpoint_auth_method` - (Optional) Requested authentication method for the token endpoint. It can be set to `"none"`, `"client_secret_post"`, `"client_secret_basic"`, `"client_secret_jwt"`, `"private_key_jwt"`. To enable PKCE, set this to `"none"`. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
 
 - `tos_uri` - (Optional) URI to web page providing client tos (terms of service).
 
@@ -151,21 +155,19 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 - `wildcard_redirect` - (Optional) *Early Access Property*. Indicates if the client is allowed to use wildcard matching of `redirect_uris`. Valid values: `"DISABLED"`, `"SUBDOMAIN"`. Default value is `"DISABLED"`.
 
-- `authentication_policy` - (Optional) The ID of the associated `app_signon_policy`. If this property is removed from the application the `default` sign-on-policy will be associated with this application.
-
 ## Attributes Reference
 
+- `client_id` - The client ID of the application.
+
+- `client_secret` - The client secret of the application. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
+
 - `id` - ID of the application.
+
+- `logo_url` - Direct link of application logo.
 
 - `name` - Name assigned to the application by Okta.
 
 - `sign_on_mode` - Sign-on mode of application.
-
-- `client_id` - The client ID of the application.
-
-- `client_secret` - The client secret of the application.
-
-- `logo_url` - Direct link of application logo.
 
 ## Timeouts
 
