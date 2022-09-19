@@ -36,7 +36,38 @@ resource "okta_email_customization" "forgot_password_en_alt" {
 ## Arguments Reference
 
 - `brand_id` - (Required) Brand ID
-- `template_name` - (Required) Template Name
+- `template_name` - (Required) Template Name. Valid values: `"AccountLockout"`,
+`"ADForgotPassword"`,
+`"ADForgotPasswordDenied"`,
+`"ADSelfServiceUnlock"`,
+`"ADUserActivation"`,
+`"AuthenticatorEnrolled"`,
+`"AuthenticatorReset"`,
+`"ChangeEmailConfirmation"`,
+`"EmailChallenge"`,
+`"EmailChangeConfirmation"`,
+`"EmailFactorVerification"`,
+`"ForgotPassword"`,
+`"ForgotPasswordDenied"`,
+`"IGAReviewerEndNotification"`,
+`"IGAReviewerNotification"`,
+`"IGAReviewerPendingNotification"`,
+`"IGAReviewerReassigned"`,
+`"LDAPForgotPassword"`,
+`"LDAPForgotPasswordDenied"`,
+`"LDAPSelfServiceUnlock"`,
+`"LDAPUserActivation"`,
+`"MyAccountChangeConfirmation"`,
+`"NewSignOnNotification"`,
+`"OktaVerifyActivation"`,
+`"PasswordChanged"`,
+`"PasswordResetByAdmin"`,
+`"PendingEmailChange"`,
+`"RegistrationActivation"`,
+`"RegistrationEmailVerification"`,
+`"SelfServiceUnlock"`,
+`"SelfServiceUnlockOnUnlockedAccount"`,
+`"UserActivation"`
 
 ## Attributes Reference
 
