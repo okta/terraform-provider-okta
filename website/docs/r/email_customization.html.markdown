@@ -70,7 +70,8 @@ resource "okta_email_customization" "forgot_password_en_alt" {
 `"SelfServiceUnlockOnUnlockedAccount"`,
 `"UserActivation"`
 - `language` - The language supported by the customization
-- `is_default` - Whether the customization is the default. If `is_default` is true and there is already a default customization when this resource is created will cause an error. Only set to true for updating a resource.
+- `is_default` - Whether the customization is the default
+  - Setting `is_default` to true when there is already a default customization will cause an error when this resource is created.
 - `subject` - The subject of the customization
 - `body` - The body of the customization
 
