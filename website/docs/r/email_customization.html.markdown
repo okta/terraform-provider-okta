@@ -37,12 +37,45 @@ resource "okta_email_customization" "forgot_password_en_alt" {
 
 - `brand_id` - (Required) Brand ID
 - `template_name` - (Required) Template Name
+  - Example values: `"AccountLockout"`,
+`"ADForgotPassword"`,
+`"ADForgotPasswordDenied"`,
+`"ADSelfServiceUnlock"`,
+`"ADUserActivation"`,
+`"AuthenticatorEnrolled"`,
+`"AuthenticatorReset"`,
+`"ChangeEmailConfirmation"`,
+`"EmailChallenge"`,
+`"EmailChangeConfirmation"`,
+`"EmailFactorVerification"`,
+`"ForgotPassword"`,
+`"ForgotPasswordDenied"`,
+`"IGAReviewerEndNotification"`,
+`"IGAReviewerNotification"`,
+`"IGAReviewerPendingNotification"`,
+`"IGAReviewerReassigned"`,
+`"LDAPForgotPassword"`,
+`"LDAPForgotPasswordDenied"`,
+`"LDAPSelfServiceUnlock"`,
+`"LDAPUserActivation"`,
+`"MyAccountChangeConfirmation"`,
+`"NewSignOnNotification"`,
+`"OktaVerifyActivation"`,
+`"PasswordChanged"`,
+`"PasswordResetByAdmin"`,
+`"PendingEmailChange"`,
+`"RegistrationActivation"`,
+`"RegistrationEmailVerification"`,
+`"SelfServiceUnlock"`,
+`"SelfServiceUnlockOnUnlockedAccount"`,
+`"UserActivation"`
+- `language` - The language supported by the customization
+- `is_default` - Whether the customization is the default
+  - Setting `is_default` to true when there is already a default customization will cause an error when this resource is created.
+- `subject` - The subject of the customization
+- `body` - The body of the customization
 
 ## Attributes Reference
 
-- `id` - (Read-Only) Customization ID
-- `links` - (Read-Only) Link relations for this object - JSON HAL - Discoverable resources related to the email template
-- `language` - The language supported by the customization
-- `is_default` - Whether the customization is the default. If `is_default` is true and there is already a default customization when this resource is created will cause an error. Only set to true for updating a resource.
-- `subject` - The subject of the customization
-- `body` - The body of the customization
+- `id` - Customization ID
+- `links` - Link relations for this object - JSON HAL - Discoverable resources related to the email template
