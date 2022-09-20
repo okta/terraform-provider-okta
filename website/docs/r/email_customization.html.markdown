@@ -77,9 +77,5 @@ resource "okta_email_customization" "forgot_password_en_alt" {
 
 ## Attributes Reference
 
-- `id` - (Read-Only) Customization ID
-- `links` - (Read-Only) Link relations for this object - JSON HAL - Discoverable resources related to the email template
-- `language` - The language supported by the customization
-- `is_default` - Whether the customization is the default
-- `subject` - The subject of the customization
-- `body` - The body of the customization
+- `id` - Customization ID
+- `links` - Link relations for this object - JSON HAL - Discoverable resources related to the email template
