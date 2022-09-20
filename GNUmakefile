@@ -63,6 +63,7 @@ test-compile:
 
 lint:
 	@echo "==> Checking source code against linters..."
+	@$(TFPROVIDERLINT) -version
 	@$(TFPROVIDERLINT) \
 		-c 1 \
 		-AT001 \
