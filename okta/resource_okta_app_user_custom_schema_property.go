@@ -178,6 +178,7 @@ func resourceAppUserSchemaPropertyUpdate(ctx context.Context, d *schema.Resource
 
 func resourceAppUserSchemaPropertyDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	custom := buildCustomUserSchema(d.Get("index").(string), nil)
+	retypeUserSchemaPropertyEnums(custom)
 	_, _, err := getOktaClientFromMetadata(m).UserSchema.
 		UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
 	if err != nil {
@@ -197,6 +198,7 @@ func updateAppUserSubSchemaProperty(ctx context.Context, d *schema.ResourceData,
 		subSchema.Union = "DISABLE"
 	}
 	custom := buildCustomUserSchema(d.Get("index").(string), subSchema)
+	retypeUserSchemaPropertyEnums(custom)
 	bOff := backoff.NewExponentialBackOff()
 	bOff.MaxElapsedTime = time.Second * 10
 	bOff.InitialInterval = time.Second
