@@ -155,7 +155,7 @@ func resourcePolicyProfileEnrollmentRuleUpdate(ctx context.Context, d *schema.Re
 	return resourcePolicyProfileEnrollmentRuleRead(ctx, d, m)
 }
 
-//  You cannot delete a default rule in a policy
+// You cannot delete a default rule in a policy
 func resourcePolicyProfileEnrollmentRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	return nil
 }
