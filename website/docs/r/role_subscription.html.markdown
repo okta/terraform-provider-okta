@@ -24,7 +24,19 @@ resource "okta_role_subscription" "test" {
 
 ## Argument Reference
 
-- `role_type` - (Required) Type of the role. Valid values: `"API_ADMIN"`, `"APP_ADMIN"`, `"GROUP_MEMBERSHIP_ADMIN"`, `"HELP_DESK_ADMIN"`, `"MOBILE_ADMIN"`, `"ORG_ADMIN"`, `"READ_ONLY_ADMIN"`, `"REPORT_ADMIN"`, `"SUPER_ADMIN"`, `"USER_ADMIN"`.  See [API docs](https://developer.okta.com/docs/reference/api/admin-notifications/#role-types)
+- `role_type` - (Required) Type of the role. Valid values:
+  `"API_ADMIN"`,
+  `"APP_ADMIN"`,
+  `"CUSTOM"`,
+  `"GROUP_MEMBERSHIP_ADMIN"`,
+  `"HELP_DESK_ADMIN"`,
+  `"MOBILE_ADMIN"`,
+  `"ORG_ADMIN"`,
+  `"READ_ONLY_ADMIN"`,
+  `"REPORT_ADMIN"`,
+  `"SUPER_ADMIN"`,
+  `"USER_ADMIN"`
+  . See [API docs](https://developer.okta.com/docs/reference/api/admin-notifications/#role-types)
 
 - `notification_type` - (Required) Type of the notification. Valid values: 
   - `"CONNECTOR_AGENT"` -  Disconnects and reconnects: On-prem provisioning, on-prem MFA agents, and RADIUS server agent.
