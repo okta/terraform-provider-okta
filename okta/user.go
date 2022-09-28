@@ -177,8 +177,17 @@ var userProfileDataSchema = map[string]*schema.Schema{
 }
 
 var validAdminRoles = []string{
-	"SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN",
-	"READ_ONLY_ADMIN", "HELP_DESK_ADMIN", "REPORT_ADMIN", "GROUP_MEMBERSHIP_ADMIN",
+	"API_ACCESS_MANAGEMENT_ADMIN",
+	"APP_ADMIN",
+	"CUSTOM",
+	"GROUP_MEMBERSHIP_ADMIN",
+	"HELP_DESK_ADMIN",
+	"MOBILE_ADMIN",
+	"ORG_ADMIN",
+	"READ_ONLY_ADMIN",
+	"REPORT_ADMIN",
+	"SUPER_ADMIN",
+	"USER_ADMIN",
 }
 
 func buildUserDataSourceSchema(target map[string]*schema.Schema) map[string]*schema.Schema {

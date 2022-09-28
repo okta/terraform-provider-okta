@@ -27,7 +27,19 @@ The following arguments are supported:
 
 - `group_id` - (Required) The ID of group to attach admin roles to.
 
-- `admin_roles` - (Required) Admin roles associated with the group. It can be any of the following values `"SUPER_ADMIN"`, `"ORG_ADMIN"`, `"APP_ADMIN"`, `"USER_ADMIN"`, `"HELP_DESK_ADMIN"`, `"READ_ONLY_ADMIN"`, `"MOBILE_ADMIN"`, `"API_ACCESS_MANAGEMENT_ADMIN"`, `"REPORT_ADMIN"`, `"GROUP_MEMBERSHIP_ADMIN"`.
+- `admin_roles` - (Required) Admin roles associated with the group. It can be any of the following values:
+  `"API_ADMIN"`,
+  `"APP_ADMIN"`,
+  `"CUSTOM"`,
+  `"GROUP_MEMBERSHIP_ADMIN"`,
+  `"HELP_DESK_ADMIN"`,
+  `"MOBILE_ADMIN"`,
+  `"ORG_ADMIN"`,
+  `"READ_ONLY_ADMIN"`,
+  `"REPORT_ADMIN"`,
+  `"SUPER_ADMIN"`,
+  `"USER_ADMIN"`
+  .
 
 ## Attributes Reference
 

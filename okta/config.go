@@ -181,8 +181,8 @@ const retryOnStatusCodes contextKey = "retryOnStatusCodes"
 // Used to make http client retry on provided list of response status codes
 //
 // To enable this check, inject `retryOnStatusCodes` key into the context with list of status codes you want to retry on
-// 		ctx = context.WithValue(ctx, retryOnStatusCodes, []int{404, 409})
 //
+//	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{404, 409})
 func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, error) {
 	// do not retry on context.Canceled or context.DeadlineExceeded
 	if ctx.Err() != nil {
