@@ -400,6 +400,10 @@ func sweepPasswordPolicies(client *testClient) error {
 	return sweepPolicyByType(sdk.PasswordPolicyType, client)
 }
 
+func sweepAccessPolicies(client *testClient) error {
+	return sweepPolicyByType(sdk.AccessPolicyType, client)
+}
+
 func sweepPolicyRuleIdpDiscovery(client *testClient) error {
 	return sweepPolicyRulesByType(sdk.IdpDiscoveryType, client)
 }
@@ -417,6 +421,10 @@ func sweepSignOnPolicyRules(client *testClient) error {
 }
 
 func sweepSignOnPolicies(client *testClient) error {
+	err := sweepPolicyByType(sdk.AccessPolicyType, client)
+	if err != nil {
+		return err
+	}
 	return sweepPolicyByType(sdk.SignOnPolicyType, client)
 }
 
