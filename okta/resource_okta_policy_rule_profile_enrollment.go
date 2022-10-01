@@ -93,6 +93,10 @@ func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 }
 
 func resourcePolicyProfileEnrollmentRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
+	}
+
 	policy, _, err := getSupplementFromMetadata(m).GetPolicy(ctx, d.Get("policy_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to get profile enrollment policy: %v", err)
@@ -116,6 +120,10 @@ func resourcePolicyProfileEnrollmentRuleCreate(ctx context.Context, d *schema.Re
 }
 
 func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
+	}
+
 	rule, resp, err := getSupplementFromMetadata(m).GetPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get profile enrollment policy rule: %v", err)
@@ -148,6 +156,10 @@ func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.Reso
 }
 
 func resourcePolicyProfileEnrollmentRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
+	}
+
 	_, _, err := getSupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), d.Id(), buildPolicyRuleProfileEnrollment(d, d.Id()))
 	if err != nil {
 		return diag.Errorf("failed to update profile enrollment policy rule: %v", err)
@@ -155,8 +167,12 @@ func resourcePolicyProfileEnrollmentRuleUpdate(ctx context.Context, d *schema.Re
 	return resourcePolicyProfileEnrollmentRuleRead(ctx, d, m)
 }
 
-//  You cannot delete a default rule in a policy
+// You cannot delete a default rule in a policy
 func resourcePolicyProfileEnrollmentRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
+	}
+
 	return nil
 }
 

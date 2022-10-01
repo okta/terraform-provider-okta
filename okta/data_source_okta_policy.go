@@ -40,7 +40,7 @@ func dataSourcePolicy() *schema.Resource {
 }
 
 func dataSourcePolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	policy, err := findPolicy(ctx, m, d.Get("name").(string), d.Get("type").(string))
+	policy, err := findPolicyByNameAndType(ctx, m, d.Get("name").(string), d.Get("type").(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}

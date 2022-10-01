@@ -30,8 +30,12 @@ func (f *appFilters) String() string {
 }
 
 func listApps(ctx context.Context, client *okta.Client, filters *appFilters, limit int64) ([]*okta.Application, error) {
-	apps, resp, err := client.Application.
-		ListApplications(ctx, &query.Params{Limit: limit, Filter: filters.Status, Q: filters.getQ()})
+	params := &query.Params{Limit: limit}
+	if filters != nil {
+		params.Filter = filters.Status
+		params.Q = filters.getQ()
+	}
+	apps, resp, err := client.Application.ListApplications(ctx, params)
 	if err != nil {
 		return nil, err
 	}

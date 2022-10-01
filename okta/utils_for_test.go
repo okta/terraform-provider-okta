@@ -113,6 +113,7 @@ const (
 	ErrorCheckCannotCreateSWAThreeField = "Cannot create application instance template_swa3field"
 	ErrorCheckFFGroupMembershipRules    = "GROUP_MEMBERSHIP_RULES is not enabled"
 	ErrorCheckFFMFAPolicy               = "Missing Required Feature Flag OKTA_MFA_POLICY"
+	ErrorOnlyOIEOrgs                    = "is a feature for OIE Orgs only"
 )
 
 // testAccErrorChecks Ability to skip tests that have specific errors.
@@ -146,6 +147,9 @@ func testAccErrorChecks(t *testing.T) resource.ErrorCheckFunc {
 			return err
 		}
 		if errorCheckMessageContaining(t, ErrorCheckFFMFAPolicy, err) {
+			return err
+		}
+		if errorCheckMessageContaining(t, ErrorOnlyOIEOrgs, err) {
 			return err
 		}
 
@@ -184,8 +188,12 @@ func errorCheckMessageContaining(t *testing.T, message string, err error) bool {
 	if message == ErrorCheckFFMFAPolicy {
 		missingFlags = append(missingFlags, "OKTA_MFA_POLICY")
 	}
+	if message == ErrorOnlyOIEOrgs {
+		t.Skipf("Attempt to run OIE feature test on a Classic org")
+		return true
+	}
 	if strings.Contains(errorMessage, message) {
-		t.Skipf("Skipping test for:\n%sOrg possibly missing flags %+v", errorMessage, missingFlags)
+		t.Skipf("Skipping test, org possibly missing flags:\n%+v\nerror:\n%s", missingFlags, errorMessage)
 		return true
 	}
 
