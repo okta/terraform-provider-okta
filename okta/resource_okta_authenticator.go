@@ -99,6 +99,10 @@ func resourceAuthenticator() *schema.Resource {
 
 // authenticator API is immutable, create is just a read of the key set on the resource
 func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(authenticator)
+	}
+
 	authenticator, err := findAuthenticator(ctx, m, "", d.Get("key").(string))
 	if err != nil {
 		return diag.FromErr(err)
@@ -119,6 +123,10 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(authenticator)
+	}
+
 	authenticator, resp, err := getOktaClientFromMetadata(m).Authenticator.GetAuthenticator(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get authenticator: %v", err)
@@ -156,6 +164,10 @@ func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(authenticator)
+	}
+
 	err := validateAuthenticator(d)
 	if err != nil {
 		return diag.FromErr(err)
@@ -180,6 +192,10 @@ func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, m 
 
 // delete is NOOP, authenticators are immutable for create and delete
 func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(authenticator)
+	}
+
 	return nil
 }
 

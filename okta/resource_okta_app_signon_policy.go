@@ -41,8 +41,13 @@ func buildAppSignOnPoilicy(d *schema.ResourceData) *okta.AccessPolicy {
 }
 
 func resourceAppSignOnPolicyCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(appSignOnPolicy)
+	}
+
 	logger(m).Info("creating authentication policy", "name", d.Get("name").(string))
-	policyToCreate := buildAppSignOnPoilicy(d)
+	var policy okta.Policies
+	policy = buildAccessPoilicy(d)
 
 	oktaClient := getOktaClientFromMetadata(m)
 
@@ -56,6 +61,10 @@ func resourceAppSignOnPolicyCreate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceAppSignOnPolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(appSignOnPolicy)
+	}
+
 	logger(m).Info("reading authentication policy", "id", d.Id(), "name", d.Get("name").(string))
 	policy := &okta.Policy{}
 	authenticationPolicy, resp, err := getOktaClientFromMetadata(m).Policy.GetPolicy(ctx, d.Id(), policy, nil)
@@ -74,6 +83,10 @@ func resourceAppSignOnPolicyRead(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceAppSignOnPolicyUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(appSignOnPolicy)
+	}
+
 	logger(m).Info("updating authentication policy", "id", d.Id(), "name", d.Get("name").(string))
 	policyToUpdate := buildAppSignOnPoilicy(d)
 	_, _, err := getOktaClientFromMetadata(m).Policy.UpdatePolicy(ctx, d.Id(), policyToUpdate)
@@ -84,11 +97,18 @@ func resourceAppSignOnPolicyUpdate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceAppSignOnPolicyDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	/**
-		1. find the default app policy
-		2. assign the default policy to all apps using the current policy (the one to delete)
-		3. delete the policy
-	**/
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(appSignOnPolicy)
+	}
+
+	// 1. find the default app policy
+	// 2. assign default policy to all apps whose authentication policy is the policy about to be deleted
+	// 3. delete the policy
+	defaultPolicy, err := findDefaultAccessPolicy(ctx, m)
+	if err != nil {
+		return diag.Errorf("Error finding default access policy: %v", err)
+	}
+
 	client := getOktaClientFromMetadata(m)
 	qp := query.NewQueryParams()
 	qp.Type = "ACCESS_POLICY"

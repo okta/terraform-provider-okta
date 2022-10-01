@@ -479,3 +479,29 @@ func envDefaultSetFunc(k string, dv interface{}) schema.SchemaDefaultFunc {
 		return dv, nil
 	}
 }
+
+func isClassicOrg(m interface{}) bool {
+	if config, ok := m.(*Config); ok && config.classicOrg {
+		return true
+	}
+	return false
+}
+
+func oieOnlyFeatureError(kind, name string) diag.Diagnostics {
+	url := fmt.Sprintf("https://registry.terraform.io/providers/okta/okta/latest/docs/%s/%s", kind, string(name[5:]))
+	if kind == "resources" {
+		kind = "resource"
+	}
+	if kind == "data-sources" {
+		kind = "datasource"
+	}
+	return diag.Errorf("%q is a %s for OIE Orgs only, see %s", name, kind, url)
+}
+
+func resourceOIEOnlyFeatureError(name string) diag.Diagnostics {
+	return oieOnlyFeatureError("resources", name)
+}
+
+func datasourceOIEOnlyFeatureError(name string) diag.Diagnostics {
+	return oieOnlyFeatureError("data-sources", name)
+}

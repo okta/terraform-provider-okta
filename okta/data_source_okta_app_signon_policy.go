@@ -28,6 +28,10 @@ func dataSourceAppSignOnPolicy() *schema.Resource {
 }
 
 func dataSourceAppSignOnPolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return datasourceOIEOnlyFeatureError(appSignOnPolicy)
+	}
+
 	app := okta.NewApplication()
 	_, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), app, nil)
 	if err != nil {
