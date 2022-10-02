@@ -39,6 +39,8 @@ func resourceEmailCustomizationCreate(ctx context.Context, d *schema.ResourceDat
 	}
 	if isDefault, ok := d.GetOk("is_default"); ok {
 		etcr.IsDefault = boolPtr(isDefault.(bool))
+	} else {
+		etcr.IsDefault = boolPtr(false)
 	}
 	if subject, ok := d.GetOk("subject"); ok {
 		etcr.Subject = subject.(string)
