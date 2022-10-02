@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -46,7 +47,13 @@ func resourceEmailCustomizationCreate(ctx context.Context, d *schema.ResourceDat
 		etcr.Body = body.(string)
 	}
 
-	customization, _, err := getOktaClientFromMetadata(m).Brand.CreateEmailTemplateCustomization(ctx, brandID.(string), templateName.(string), etcr)
+	client := getOktaClientFromMetadata(m)
+
+	if forceIsDefaultOnCreate(d) && *etcr.IsDefault {
+		_, _ = client.Brand.DeleteEmailTemplateCustomizations(context.Background(), brandID.(string), templateName.(string))
+	}
+
+	customization, _, err := client.Brand.CreateEmailTemplateCustomization(ctx, brandID.(string), templateName.(string), etcr)
 	if err != nil {
 		return diag.Errorf("failed to create email customization: %v", err)
 	}
@@ -59,6 +66,27 @@ func resourceEmailCustomizationCreate(ctx context.Context, d *schema.ResourceDat
 	}
 
 	return nil
+}
+
+func forceIsDefaultOnCreate(d *schema.ResourceData) bool {
+	return forceCreateIs("create", d)
+}
+
+func forceIsDefaultOnDestroy(d *schema.ResourceData) bool {
+	return forceCreateIs("destroy", d)
+}
+
+func forceCreateIs(action string, d *schema.ResourceData) bool {
+	if forceIsDefault, ok := d.GetOk("force_is_default"); ok {
+		values := forceIsDefault.(string)
+		for _, value := range strings.Split(values, ",") {
+			if value == action {
+				return true
+			}
+
+		}
+	}
+	return false
 }
 
 func resourceEmailCustomizationRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -126,7 +154,15 @@ func resourceEmailCustomizationDelete(ctx context.Context, d *schema.ResourceDat
 		return diagErr
 	}
 
-	_, err := getOktaClientFromMetadata(m).Brand.DeleteEmailTemplateCustomization(ctx, etcr.brandID, etcr.templateName, d.Id())
+	client := getOktaClientFromMetadata(m)
+	if isDefault, ok := d.GetOk("is_default"); ok {
+		if forceIsDefaultOnDestroy(d) && isDefault.(bool) {
+			_, _ = client.Brand.DeleteEmailTemplateCustomizations(context.Background(), etcr.brandID, etcr.templateName)
+			return nil
+		}
+	}
+
+	_, err := client.Brand.DeleteEmailTemplateCustomization(ctx, etcr.brandID, etcr.templateName, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete email customization: %v", err)
 	}

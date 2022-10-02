@@ -16,6 +16,7 @@ func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
 	mgr := newFixtureManager(emailCustomization)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
+	updatedConfigChangeIsDefault := mgr.GetFixtures("updated_change_is_default.tf", ri, t)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -26,37 +27,38 @@ func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "id"),
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "brand_id"),
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "template_name"),
-					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en_alt", "template_name", "ForgotPassword"),
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "language"),
-					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en_alt", "language", "cs"), // setting the language to Czech for testing
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "is_default"),
-					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en_alt", "is_default", "false"),
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "subject"),
-					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en_alt", "subject", "Forgot Password"),
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "body"),
-					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en_alt", "body", "Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink"),
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "links"),
+					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en", "id"),
+					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en", "brand_id"),
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en", "template_name", "ForgotPassword"),
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en", "language", "en"),
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en", "is_default", "true"),
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en", "subject", "Forgot Password"),
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en", "body", "Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink"),
+					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en", "links"),
+
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_es", "language", "es"),
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_es", "is_default", "false"),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "id"),
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "brand_id"),
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "template_name"),
-					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en_alt", "template_name", "ForgotPassword"),
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "language"),
-					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en_alt", "language", "cs"),
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "is_default"),
-					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en_alt", "is_default", "false"),
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "subject"),
-					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en_alt", "subject", "Forgot Password"),
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "body"),
-					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en_alt", "body", "Hello $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink"),
-					resource.TestCheckResourceAttrSet("okta_email_customization.forgot_password_en_alt", "links"),
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en", "language", "en"),
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en", "is_default", "true"),
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en", "body", "Hello $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink"),
+
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_es", "language", "es"),
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_es", "is_default", "false"),
+				),
+			},
+			{
+				Config: updatedConfigChangeIsDefault,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en", "language", "en"),
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_en", "is_default", "false"),
+
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_es", "language", "es"),
+					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_es", "is_default", "true"),
 				),
 			},
 		},

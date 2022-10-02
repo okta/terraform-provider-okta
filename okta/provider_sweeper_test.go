@@ -54,6 +54,7 @@ func TestMain(m *testing.M) {
 		setupSweeper("okta_*_app", sweepTestApps)
 		setupSweeper(authServer, sweepAuthServers)
 		setupSweeper(behavior, sweepBehaviors)
+		setupSweeper(emailCustomization, sweepEmailCustomization)
 		setupSweeper(groupRule, sweepGroupRules)
 		setupSweeper("okta_*_idp", sweepTestIdps)
 		setupSweeper(inlineHook, sweepInlineHooks)
@@ -97,6 +98,7 @@ func TestRunForcedSweeper(t *testing.T) {
 	sweepTestApps(testClient)
 	sweepAuthServers(testClient)
 	sweepBehaviors(testClient)
+	sweepEmailCustomization(testClient)
 	sweepGroupRules(testClient)
 	sweepTestIdps(testClient)
 	sweepInlineHooks(testClient)
@@ -246,6 +248,37 @@ func sweepBehaviors(client *testClient) error {
 		logSweptResource("behavior", b.ID, b.Name)
 	}
 	return condenseError(errorList)
+}
+
+func sweepEmailCustomization(client *testClient) error {
+	ctx := context.Background()
+	brands, _, err := client.oktaClient.Brand.ListBrands(ctx)
+	if err != nil {
+		return err
+	}
+	for _, brand := range brands {
+		qp := &query.Params{Limit: defaultPaginationLimit}
+		templates, resp, err := client.oktaClient.Brand.ListEmailTemplates(ctx, brand.Id, qp)
+		if err != nil {
+			continue
+		}
+		for resp.HasNextPage() {
+			var nextTemplates []*okta.EmailTemplate
+			resp, err = resp.Next(ctx, &nextTemplates)
+			if err != nil {
+				continue
+			}
+			for i := range nextTemplates {
+				templates = append(templates, nextTemplates[i])
+			}
+		}
+
+		for _, template := range templates {
+			_, _ = client.oktaClient.Brand.DeleteEmailTemplateCustomizations(context.Background(), brand.Id, template.Name)
+		}
+	}
+
+	return nil
 }
 
 func sweepGroupRules(client *testClient) error {
