@@ -15,6 +15,8 @@ func TestAccOktaOrgConfiguration(t *testing.T) {
 	mgr := newFixtureManager(orgConfiguration)
 	config := mgr.GetFixtures("standard.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("standard_updated.tf", ri, t)
+	companyName := fmt.Sprintf("testAcc-%d Hashicorp CI Terraform Provider Okta", ri)
+	companyNameUpdated := fmt.Sprintf("testAcc-%d Hashicorp CI Terraform Provider Okta Updated", ri)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -25,14 +27,14 @@ func TestAccOktaOrgConfiguration(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "company_name", "Hashicorp CI Terraform Provider Okta"),
+					resource.TestCheckResourceAttr(resourceName, "company_name", companyName),
 					resource.TestCheckResourceAttr(resourceName, "website", "https://terraform.io"),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "company_name", "Hashicorp CI Terraform Provider Okta Updated"),
+					resource.TestCheckResourceAttr(resourceName, "company_name", companyNameUpdated),
 					resource.TestCheckResourceAttr(resourceName, "website", "https://terraform.com"),
 					resource.TestCheckResourceAttr(resourceName, "phone_number", strconv.Itoa(ri)),
 				),
