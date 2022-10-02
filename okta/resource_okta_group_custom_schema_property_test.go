@@ -563,6 +563,7 @@ func TestAccResourceOktaGroupSchema_enum_integer(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupSchema_array_enum_boolean(t *testing.T) {
+	t.Skip("TODO deal with apparent monolith bug")
 	// TODO deal with apparent monolith bug:
 	// "the API returned an error: Array specified in enum field must match const values specified in oneOf field."
 	ri := acctest.RandInt()
