@@ -127,9 +127,9 @@ func resourceOrgConfiguration() *schema.Resource {
 }
 
 func resourceOrgSettingsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	settings, _, err := getOktaClientFromMetadata(m).OrgSetting.PartialUpdateOrgSetting(ctx, buildOrgSettings(d))
+	settings, _, err := getOktaClientFromMetadata(m).OrgSetting.PartialUpdateOrgSetting(ctx, buildOrgSettings(d, nil))
 	if err != nil {
-		return diag.Errorf("failed to update org settings: %v", err)
+		return diag.Errorf("failed to create org settings: %v", err)
 	}
 	d.SetId(settings.Id)
 	logo, ok := d.GetOk("logo")
@@ -175,7 +175,16 @@ func resourceOrgSettingsRead(ctx context.Context, d *schema.ResourceData, m inte
 }
 
 func resourceOrgSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getOktaClientFromMetadata(m).OrgSetting.UpdateOrgSetting(ctx, buildOrgSettings(d))
+	// We are doing a full update so read in existing values before updating not
+	// managed in the provider so we don't null them inadvertantly.
+	// See the difference between POST (partial) PUT (full) updates
+	// https://developer.okta.com/docs/reference/api/org/#update-org-settings
+	settings, _, err := getOktaClientFromMetadata(m).OrgSetting.GetOrgSettings(ctx)
+	if err != nil {
+		return diag.Errorf("failed to read prior to update org settings: %v", err)
+	}
+
+	_, _, err = getOktaClientFromMetadata(m).OrgSetting.UpdateOrgSetting(ctx, buildOrgSettings(d, settings))
 	if err != nil {
 		return diag.Errorf("failed to update org settings: %v", err)
 	}
@@ -266,18 +275,77 @@ func setOrgSettings(d *schema.ResourceData, settings *okta.OrgSetting) {
 	}
 }
 
-func buildOrgSettings(d *schema.ResourceData) okta.OrgSetting {
-	return okta.OrgSetting{
-		Address1:              d.Get("address_1").(string),
-		Address2:              d.Get("address_2").(string),
-		City:                  d.Get("city").(string),
-		CompanyName:           d.Get("company_name").(string),
-		Country:               d.Get("country").(string),
-		EndUserSupportHelpURL: d.Get("end_user_support_help_url").(string),
-		PhoneNumber:           d.Get("phone_number").(string),
-		PostalCode:            d.Get("postal_code").(string),
-		State:                 d.Get("state").(string),
-		SupportPhoneNumber:    d.Get("support_phone_number").(string),
-		Website:               d.Get("website").(string),
+func buildOrgSettings(d *schema.ResourceData, previous *okta.OrgSetting) okta.OrgSetting {
+	setting := okta.OrgSetting{}
+	if previous != nil {
+		if setting.Address1 == "" && previous.Address1 != "" {
+			setting.Address1 = previous.Address1
+		}
+		if setting.Address2 == "" && previous.Address2 != "" {
+			setting.Address2 = previous.Address2
+		}
+		if setting.City == "" && previous.City != "" {
+			setting.City = previous.City
+		}
+		if setting.CompanyName == "" && previous.CompanyName != "" {
+			setting.CompanyName = previous.CompanyName
+		}
+		if setting.Country == "" && previous.Country != "" {
+			setting.Country = previous.Country
+		}
+		if setting.EndUserSupportHelpURL == "" && previous.EndUserSupportHelpURL != "" {
+			setting.EndUserSupportHelpURL = previous.EndUserSupportHelpURL
+		}
+		if setting.PhoneNumber == "" && previous.PhoneNumber != "" {
+			setting.PhoneNumber = previous.PhoneNumber
+		}
+		if setting.PostalCode == "" && previous.PostalCode != "" {
+			setting.PostalCode = previous.PostalCode
+		}
+		if setting.State == "" && previous.State != "" {
+			setting.State = previous.State
+		}
+		if setting.SupportPhoneNumber == "" && previous.SupportPhoneNumber != "" {
+			setting.SupportPhoneNumber = previous.SupportPhoneNumber
+		}
+		if setting.Website == "" && previous.Website != "" {
+			setting.Website = previous.Website
+		}
 	}
+
+	if o, n := d.GetChange("address_1"); o != n {
+		setting.Address1 = n.(string)
+	}
+	if o, n := d.GetChange("address_2"); o != n {
+		setting.Address2 = n.(string)
+	}
+	if o, n := d.GetChange("city"); o != n {
+		setting.City = n.(string)
+	}
+	if o, n := d.GetChange("company_name"); o != n {
+		setting.CompanyName = n.(string)
+	}
+	if o, n := d.GetChange("country"); o != n {
+		setting.Country = n.(string)
+	}
+	if o, n := d.GetChange("end_user_support_help_url"); o != n {
+		setting.EndUserSupportHelpURL = n.(string)
+	}
+	if o, n := d.GetChange("phone_number"); o != n {
+		setting.PhoneNumber = n.(string)
+	}
+	if o, n := d.GetChange("postal_code"); o != n {
+		setting.PostalCode = n.(string)
+	}
+	if o, n := d.GetChange("state"); o != n {
+		setting.State = n.(string)
+	}
+	if o, n := d.GetChange("support_phone_number"); o != n {
+		setting.SupportPhoneNumber = n.(string)
+	}
+	if o, n := d.GetChange("website"); o != n {
+		setting.Website = n.(string)
+	}
+
+	return setting
 }
