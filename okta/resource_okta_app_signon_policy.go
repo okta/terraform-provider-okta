@@ -43,9 +43,7 @@ func resourceAppSignOnPolicyCreate(ctx context.Context, d *schema.ResourceData, 
 	}
 
 	logger(m).Info("creating authentication policy", "name", d.Get("name").(string))
-	var policy okta.Policies
-	policy = buildAccessPoilicy(d)
-
+	policy := buildAccessPoilicy(d)
 	oktaClient := getOktaClientFromMetadata(m)
 
 	responsePolicy, _, err := oktaClient.Policy.CreatePolicy(ctx, policy, nil)
