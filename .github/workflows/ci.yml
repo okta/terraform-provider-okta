@@ -25,11 +25,12 @@ jobs:
       - name: Vet Code
         run: make vet
 
-      - name: Lint Code
-        run: make lint
+      # skip there is a bug in https://github.com/bflad/tfproviderlint/issues/255
+      #- name: Lint Code
+      #  run: make lint
 
       - name: Check Build
         run: make build
-        
+
       - name: Test
         run: make test
