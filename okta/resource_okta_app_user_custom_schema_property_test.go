@@ -52,7 +52,7 @@ func TestAccAppUserSchemas_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
-					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test updated"),
+					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test updated 001"),
 					resource.TestCheckResourceAttr(resourceName, "required", "true"),
 					resource.TestCheckResourceAttr(resourceName, "master", "OKTA"),
 					resource.TestCheckResourceAttr(resourceName, "scope", "SELF"),

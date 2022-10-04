@@ -95,6 +95,11 @@ var emailCustomizationResourceSchema = map[string]*schema.Schema{
 		Optional:    true,
 		Description: "The body of the customization",
 	},
+	"force_is_default": {
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Force is_default on the create and delete by deleting all email customizations. Comma separated string with values of 'create' or 'destroy' or both `create,destroy'.",
+	},
 }
 
 func flattenEmailCustomization(emailCustomization *okta.EmailTemplateCustomization) map[string]interface{} {

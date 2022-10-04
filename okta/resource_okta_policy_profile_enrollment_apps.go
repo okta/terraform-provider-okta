@@ -41,6 +41,10 @@ func resourcePolicyProfileEnrollmentApps() *schema.Resource {
 }
 
 func resourcePolicyProfileEnrollmentAppsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(policyProfileEnrollmentApps)
+	}
+
 	err := setDefaultPolicyID(ctx, d, m)
 	if err != nil {
 		return diag.FromErr(err)
@@ -60,6 +64,10 @@ func resourcePolicyProfileEnrollmentAppsCreate(ctx context.Context, d *schema.Re
 }
 
 func resourcePolicyProfileEnrollmentAppsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(policyProfileEnrollmentApps)
+	}
+
 	err := setDefaultPolicyID(ctx, d, m)
 	if err != nil {
 		return diag.FromErr(err)
@@ -74,6 +82,10 @@ func resourcePolicyProfileEnrollmentAppsRead(ctx context.Context, d *schema.Reso
 }
 
 func resourcePolicyProfileEnrollmentAppsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(policyProfileEnrollmentApps)
+	}
+
 	oldApps, newApps := d.GetChange("apps")
 	oldSet := oldApps.(*schema.Set)
 	newSet := newApps.(*schema.Set)
@@ -103,6 +115,10 @@ func resourcePolicyProfileEnrollmentAppsUpdate(ctx context.Context, d *schema.Re
 }
 
 func resourcePolicyProfileEnrollmentAppsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(policyProfileEnrollmentApps)
+	}
+
 	defaultPolicyID := d.Get("default_policy_id").(string)
 	apps := convertInterfaceToStringSetNullable(d.Get("apps"))
 	client := getOktaClientFromMetadata(m)
@@ -140,7 +156,7 @@ func listPolicyEnrollmentAppIDs(ctx context.Context, client *sdk.APISupplement, 
 }
 
 func setDefaultPolicyID(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	policy, err := findPolicy(ctx, m, "Default Policy", sdk.ProfileEnrollmentPolicyType)
+	policy, err := findSystemPolicyByType(ctx, m, sdk.ProfileEnrollmentPolicyType)
 	if err != nil {
 		return err
 	}

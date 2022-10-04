@@ -182,6 +182,10 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 }
 
 func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
+	}
+
 	rule, _, err := getSupplementFromMetadata(m).CreateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), buildAppSignOnPolicyRule(d))
 	if err != nil {
 		return diag.Errorf("failed to create app sign on policy rule: %v", err)
@@ -199,6 +203,10 @@ func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
+	}
+
 	rule, resp, err := getSupplementFromMetadata(m).GetAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get app sign on policy rule: %v", err)
@@ -263,6 +271,10 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
+	}
+
 	_, _, err := getSupplementFromMetadata(m).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), buildAppSignOnPolicyRule(d))
 	if err != nil {
 		return diag.Errorf("failed to create app sign on policy rule: %v", err)
@@ -282,6 +294,10 @@ func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceAppSignOnPolicyRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
+	}
+
 	if d.Get("name") == "Catch-all Rule" {
 		// You cannot delete a default rule in a policy
 		return nil

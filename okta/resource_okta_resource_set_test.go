@@ -16,6 +16,7 @@ func TestAccOktaResourceSet(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updated := mgr.GetFixtures("updated.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", resourceSet)
+	os.Setenv("TF_VAR_hostname", fmt.Sprintf("%s.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL")))
 	resource.Test(
 		t, resource.TestCase{
 			PreCheck:          testAccPreCheck(t),

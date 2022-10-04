@@ -33,6 +33,10 @@ func resourcePolicyProfileEnrollment() *schema.Resource {
 }
 
 func resourcePolicyProfileEnrollmentCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(policyProfileEnrollment)
+	}
+
 	policy, _, err := getSupplementFromMetadata(m).CreatePolicy(ctx, buildPolicyProfileEnrollment(d))
 	if err != nil {
 		return diag.Errorf("failed to create profile enrollment policy: %v", err)
@@ -49,6 +53,10 @@ func resourcePolicyProfileEnrollmentCreate(ctx context.Context, d *schema.Resour
 }
 
 func resourcePolicyProfileEnrollmentRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(policyProfileEnrollment)
+	}
+
 	policy, err := getPolicy(ctx, d, m)
 	if err != nil {
 		return diag.Errorf("failed to get profile enrollment policy: %v", err)
@@ -62,6 +70,10 @@ func resourcePolicyProfileEnrollmentRead(ctx context.Context, d *schema.Resource
 }
 
 func resourcePolicyProfileEnrollmentUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(policyProfileEnrollment)
+	}
+
 	_, _, err := getSupplementFromMetadata(m).UpdatePolicy(ctx, d.Id(), buildPolicyProfileEnrollment(d))
 	if err != nil {
 		return diag.Errorf("failed to update profile enrollment policy: %v", err)
@@ -81,6 +93,10 @@ func resourcePolicyProfileEnrollmentUpdate(ctx context.Context, d *schema.Resour
 }
 
 func resourcePolicyProfileEnrollmentDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return resourceOIEOnlyFeatureError(policyProfileEnrollment)
+	}
+
 	err := deletePolicy(ctx, d, m)
 	if err != nil {
 		return diag.Errorf("failed to delete profile enrollment policy: %v", err)

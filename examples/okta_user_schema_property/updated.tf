@@ -1,9 +1,9 @@
 resource "okta_user_schema_property" "testAcc_replace_with_uuid" {
   index       = "testAcc_replace_with_uuid"
-  title       = "terraform acceptance test updated"
+  title       = "terraform acceptance test updated 004"
   type        = "string"
-  description = "terraform acceptance test updated"
-  required    = true
+  description = "terraform acceptance test updated 004"
+  required    = false
   min_length  = 1
   max_length  = 70
   permissions = "READ_WRITE"

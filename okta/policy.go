@@ -90,33 +90,8 @@ var (
 	}
 )
 
-func findPolicy(ctx context.Context, m interface{}, name, policyType string) (*okta.Policy, error) {
-	policies, resp, err := getOktaClientFromMetadata(m).Policy.ListPolicies(ctx, &query.Params{Type: policyType})
-	if err != nil {
-		return nil, fmt.Errorf("failed to list policies: %v", err)
-	}
-	for {
-		for _, _policy := range policies {
-			policy := _policy.(*okta.Policy)
-			if policy.Name == name {
-				return policy, nil
-			}
-		}
-		if resp.HasNextPage() {
-			resp, err = resp.Next(ctx, &policies)
-			if err != nil {
-				return nil, fmt.Errorf("failed to list policies: %v", err)
-			}
-			continue
-		} else {
-			break
-		}
-	}
-	return nil, fmt.Errorf("no policies retrieved for policy type '%s' and name '%s'", policyType, name)
-}
-
 func setDefaultPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, policyType string) (*okta.Policy, error) {
-	policy, err := findPolicy(ctx, m, "Default Policy", policyType)
+	policy, err := findSystemPolicyByType(ctx, m, policyType)
 	if err != nil {
 		return nil, err
 	}
@@ -274,4 +249,61 @@ func syncPolicyFromUpstream(d *schema.ResourceData, policy *sdk.Policy) error {
 		})
 	}
 	return nil
+}
+
+func findDefaultAccessPolicy(ctx context.Context, m interface{}) (*okta.Policy, error) {
+	// OIE only
+	if config, ok := m.(*Config); ok && config.classicOrg {
+		return nil, nil
+	}
+
+	policy, err := findSystemPolicyByType(ctx, m, "ACCESS_POLICY")
+	if err != nil {
+		return nil, fmt.Errorf("error finding default ACCESS_POLICY %+v", err)
+	}
+	return policy, nil
+}
+
+// findSystemPolicyByType System policy is the default policy regardless of name
+func findSystemPolicyByType(ctx context.Context, m interface{}, _type string) (*okta.Policy, error) {
+	client := getOktaClientFromMetadata(m)
+	qp := query.NewQueryParams(query.WithType(_type))
+	policies, _, err := client.Policy.ListPolicies(ctx, qp)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, p := range policies {
+		policy := p.(*okta.Policy)
+		if *policy.System {
+			return policy, nil
+		}
+	}
+
+	return nil, fmt.Errorf("default system %q policy not found", _type)
+}
+
+func findPolicyByNameAndType(ctx context.Context, m interface{}, name, policyType string) (*okta.Policy, error) {
+	policies, resp, err := getOktaClientFromMetadata(m).Policy.ListPolicies(ctx, &query.Params{Type: policyType})
+	if err != nil {
+		return nil, fmt.Errorf("failed to list policies: %v", err)
+	}
+	for {
+		for _, _policy := range policies {
+			policy := _policy.(*okta.Policy)
+			if policy.Name == name {
+				return policy, nil
+			}
+		}
+		if resp.HasNextPage() {
+			resp, err = resp.Next(ctx, &policies)
+			if err != nil {
+				return nil, fmt.Errorf("failed to list policies: %v", err)
+			}
+			continue
+		} else {
+			break
+		}
+	}
+	return nil, fmt.Errorf("no policies retrieved for policy type '%s' and name '%s'", policyType, name)
 }

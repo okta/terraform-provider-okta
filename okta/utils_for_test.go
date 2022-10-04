@@ -113,44 +113,50 @@ const (
 	ErrorCheckCannotCreateSWAThreeField = "Cannot create application instance template_swa3field"
 	ErrorCheckFFGroupMembershipRules    = "GROUP_MEMBERSHIP_RULES is not enabled"
 	ErrorCheckFFMFAPolicy               = "Missing Required Feature Flag OKTA_MFA_POLICY"
+	ErrorOnlyOIEOrgs                    = "for OIE Orgs only"
 )
 
-// testAccErrorChecks Ability to skip tests that have specific errors.
+// testAccErrorChecks Intended for use with TF sdk TestCase ErrorCheck function.
+// Ability to skip tests that have specific errors.
+
 func testAccErrorChecks(t *testing.T) resource.ErrorCheckFunc {
 	return func(err error) error {
 		if err == nil {
 			return nil
 		}
-		if errorCheckMessageContaining(t, ErrorCheckMissingPermission, err) {
-			return err
+		messages := []string{
+			ErrorCheckMissingPermission,
+			ErrorCheckCannotCreateSWA,
+			ErrorCheckCannotCreateBasicAuth,
+			ErrorCheckCannotCreateSPS,
+			ErrorCheckCannotCreateAWSConole,
+			ErrorCheckCannotCreateSWAThreeField,
+			ErrorCheckFFGroupMembershipRules,
+			ErrorCheckFFMFAPolicy,
 		}
-		if errorCheckMessageContaining(t, ErrorCheckMissingPermission, err) {
-			return err
+		for _, message := range messages {
+			// if error check message containing matches the message it will
+			// apply a skip to t
+			if errorCheckMessageContaining(t, message, err) {
+				return err
+			}
 		}
-		if errorCheckMessageContaining(t, ErrorCheckCannotCreateSWA, err) {
-			return err
-		}
-		if errorCheckMessageContaining(t, ErrorCheckCannotCreateBasicAuth, err) {
-			return err
-		}
-		if errorCheckMessageContaining(t, ErrorCheckCannotCreateSPS, err) {
-			return err
-		}
-		if errorCheckMessageContaining(t, ErrorCheckCannotCreateAWSConole, err) {
-			return err
-		}
-		if errorCheckMessageContaining(t, ErrorCheckCannotCreateSWAThreeField, err) {
-			return err
-		}
-		if errorCheckMessageContaining(t, ErrorCheckFFGroupMembershipRules, err) {
-			return err
-		}
-		if errorCheckMessageContaining(t, ErrorCheckFFMFAPolicy, err) {
+
+		// check for our error on resources that are OIE only but are running
+		// against a classic test org
+		if errorCheckOIEOnlyFeature(t, err) {
 			return err
 		}
 
 		return err
 	}
+}
+func errorCheckOIEOnlyFeature(t *testing.T, err error) bool {
+	if strings.Contains(err.Error(), ErrorOnlyOIEOrgs) {
+		t.Skipf("Attempt to run OIE feature test on a Classic org")
+		return true
+	}
+	return false
 }
 
 func errorCheckMessageContaining(t *testing.T, message string, err error) bool {
@@ -185,7 +191,7 @@ func errorCheckMessageContaining(t *testing.T, message string, err error) bool {
 		missingFlags = append(missingFlags, "OKTA_MFA_POLICY")
 	}
 	if strings.Contains(errorMessage, message) {
-		t.Skipf("Skipping test for:\n%sOrg possibly missing flags %+v", errorMessage, missingFlags)
+		t.Skipf("Skipping test, org possibly missing flags:\n%+v\nerror:\n%s", missingFlags, errorMessage)
 		return true
 	}
 

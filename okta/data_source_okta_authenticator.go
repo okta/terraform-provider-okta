@@ -71,6 +71,10 @@ func dataSourceAuthenticator() *schema.Resource {
 }
 
 func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	if isClassicOrg(m) {
+		return datasourceOIEOnlyFeatureError(authenticator)
+	}
+
 	id := d.Get("id").(string)
 	name := d.Get("name").(string)
 	key := d.Get("key").(string)
