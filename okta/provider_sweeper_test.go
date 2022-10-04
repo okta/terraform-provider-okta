@@ -68,7 +68,8 @@ func TestMain(m *testing.M) {
 		setupSweeper(policyRuleMfa, sweepMfaPolicyRules)
 		setupSweeper(policyRulePassword, sweepPolicyRulePasswords)
 		setupSweeper(policyRuleSignOn, sweepSignOnPolicyRules)
-		setupSweeper(policySignOn, sweepSignOnPolicies)
+		setupSweeper(policySignOn, sweepAccessPolicies)
+		//setupSweeper(policySignOn, sweepSignOnPolicies)
 		setupSweeper(resourceSet, sweepResourceSets)
 		setupSweeper(user, sweepUsers)
 		setupSweeper(userSchemaProperty, sweepUserCustomSchema)
@@ -112,6 +113,7 @@ func TestRunForcedSweeper(t *testing.T) {
 	sweepMfaPolicyRules(testClient)
 	sweepPolicyRulePasswords(testClient)
 	sweepSignOnPolicyRules(testClient)
+	sweepAccessPolicies(testClient)
 	sweepSignOnPolicies(testClient)
 	sweepResourceSets(testClient)
 	sweepUsers(testClient)
@@ -454,10 +456,6 @@ func sweepSignOnPolicyRules(client *testClient) error {
 }
 
 func sweepSignOnPolicies(client *testClient) error {
-	err := sweepPolicyByType(sdk.AccessPolicyType, client)
-	if err != nil {
-		return err
-	}
 	return sweepPolicyByType(sdk.SignOnPolicyType, client)
 }
 
