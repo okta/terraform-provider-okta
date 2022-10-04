@@ -19,7 +19,7 @@ func setAuthenticationPolicy(ctx context.Context, d *schema.ResourceData, m inte
 func assignDefaultAuthenticationPolicy(ctx context.Context, m interface{}, appId string) error {
 	// Apps in OIE orgs have a default authentication / access policy that is
 	// type ACCESS_POLICY. Apps in classic orgs do not have an access policy
-	// assessible through the public API. Only by hand in the Admin UI.
+	// accessible through the public API. Only by hand in the Admin UI.
 	// https://developer.okta.com/docs/reference/api/policy/#policy-object
 	if config, ok := m.(*Config); ok && config.classicOrg {
 		return nil
