@@ -1,5 +1,40 @@
 # Changelog
 
+## 3.37.0 (October 04, 2022)
+
+NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* Add `ui_schema_id` property to resource `okta_policy_rule_profile_enrollment` [#1324](https://github.com/okta/terraform-provider-okta/pull/1324). Thanks, [@monde](https://github.com/monde)!
+* Add `CUSTOM` to list of group role types in datasource `okta_role_subscription` [#1320](https://github.com/okta/terraform-provider-okta/pull/1320). Thanks, [@monde](https://github.com/monde)!
+* From PR [#1322](https://github.com/okta/terraform-provider-okta/pull/1322). Thanks, [@monde](https://github.com/monde)!
+  * Improved resource `okta_email_customization` behavior with new property `force_is_default` with regards to the `is_default` property
+  * Added explicit errors for Classic orgs trying to make use of OIE features. Error messages refer to corresponding online documentation
+    * datasource `okta_app_signon_policy`
+    * datasource `okta_authenticator`
+    * resource `okta_app_signon_policy`
+    * resource `okta_authenticator`
+    * resource `okta_captcha`
+    * resource `okta_captcha_org_wide_settings`
+    * resource `okta_policy_profile_enrollment`
+    * resource `okta_policy_profile_enrollment_apps`
+    * resource `okta_policy_rule_profile_enrollment`
+
+BUG FIXES:
+
+* Fixed `okta_app_user_schema_property` for non string enum types [#1316](https://github.com/okta/terraform-provider-okta/pull/1316). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* From PR [#1322](https://github.com/okta/terraform-provider-okta/pull/1322). Thanks, [@monde](https://github.com/monde)!
+  * Fixed (unreported) bug where resource `okta_org_configuration` would null out org settings 
+  * Fixed an ACC test with resource `okta_user_schema_property` that would cause a incorrect login flow blocking out the admin
+  * Fixed/improved sms template tests
+  * Marked the schema enum boolean tests skip as there is an issue with the public API / monolith
+  * Cleaned up code paths for default/system policy getting/setting for apps and policies
+  * Fixed and/or cleaned up a number of other ACC tests
+
+PROJECT IMPROVEMENTS:
+
+* Correct `okta_email_customization` docs [#1310](https://github.com/okta/terraform-provider-okta/pull/1310). Thanks, [@lucascantor](https://github.com/lucascantor)!
+
+
 ## 3.36.0 (September 14, 2022)
 
 NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
