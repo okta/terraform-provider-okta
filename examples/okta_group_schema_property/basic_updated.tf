@@ -1,8 +1,8 @@
 resource "okta_group_schema_property" "test" {
   index       = "testAcc_replace_with_uuid"
-  title       = "terraform acceptance test updated"
+  title       = "terraform acceptance test updated 002"
   type        = "string"
-  description = "terraform acceptance test updated"
+  description = "terraform acceptance test updated 002"
   required    = true
   min_length  = 1
   max_length  = 70

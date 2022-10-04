@@ -11,7 +11,7 @@ resource "okta_app_user_schema_property" "test" {
   index       = "testAcc_replace_with_uuid"
   title       = "terraform acceptance test"
   type        = "string"
-  description = "terraform acceptance test updated"
+  description = "terraform acceptance test updated 001"
   required    = true
   master      = "OKTA"
   scope       = "SELF"
