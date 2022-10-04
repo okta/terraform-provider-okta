@@ -12,6 +12,8 @@ description: |-
 
 This resource allows you to create and configure a Profile Enrollment Policy Rule.
 
+It is documented in the Okta public API's [Profile Enrollment Action object](https://developer.okta.com/docs/reference/api/policy/#profile-enrollment-action-object) section.
+
 ## Example Usage
 
 ```hcl
@@ -79,11 +81,13 @@ The following arguments are supported:
 
 - `access` - (Optional) Allow or deny access based on the rule conditions. Valid values are: `"ALLOW"`, `"DENY"`. Default is `"ALLOW"`.
 
-- `profile_attributes` - (Optional) A list of attributes to prompt the user during registration or progressive profiling.
-
+- `profile_attributes` - (Required) A list of attributes to prompt the user during registration or progressive profiling. Where defined on the User schema, these attributes are persisted in the User profile. Non-schema attributes may also be added, which aren't persisted to the User's profile, but are included in requests to the registration inline hook. A maximum of 10 Profile properties is supported.
     - `label` - (Required) A display-friendly label for this property
     - `name` - (Required) The name of a User Profile property
-    - `required` - (Optional) Indicates if this property is required for enrollment. Default is `false`.
+    - `required` - (Required) Indicates if this property is required for enrollment. Default is `false`.
+
+- `ui_schema_id` - (Required if present) Value created by the backend. If present all policy updates must include this attribute/value.
+
     
 ## Attributes Reference
 

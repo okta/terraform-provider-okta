@@ -50,6 +50,11 @@ func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 				ValidateDiagFunc: elemInSlice([]string{"DENY", "REGISTER"}),
 				Description:      "Which action should be taken if this User is new",
 			},
+			"ui_schema_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Value created by the backend. If present all policy updates must include this attribute/value.",
+			},
 			"email_verification": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -141,6 +146,7 @@ func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.Reso
 		_ = d.Set("target_group_id", rule.Actions.ProfileEnrollment.TargetGroupIds[0])
 	}
 	_ = d.Set("unknown_user_action", rule.Actions.ProfileEnrollment.UnknownUserAction)
+	_ = d.Set("ui_schema_id", rule.Actions.ProfileEnrollment.UiSchemaId)
 	_ = d.Set("email_verification", *rule.Actions.ProfileEnrollment.ActivationRequirements.EmailVerification)
 	_ = d.Set("access", rule.Actions.ProfileEnrollment.Access)
 	arr := make([]map[string]interface{}, len(rule.Actions.ProfileEnrollment.ProfileAttributes))
@@ -191,6 +197,7 @@ func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.Pol
 				EmailVerification: boolPtr(d.Get("email_verification").(bool)),
 			},
 			UnknownUserAction: d.Get("unknown_user_action").(string),
+			UiSchemaId:        d.Get("ui_schema_id").(string),
 		},
 	}
 	hook, ok := d.GetOk("inline_hook_id")

@@ -7,6 +7,11 @@ resource "okta_policy_rule_profile_enrollment" "test" {
   unknown_user_action = "REGISTER"
   email_verification  = true
   access              = "ALLOW"
+  profile_attributes {
+    name     = "email"
+    label    = "Email"
+    required = true
+  }
 }
 
 
