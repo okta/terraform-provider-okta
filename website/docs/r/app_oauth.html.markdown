@@ -136,7 +136,16 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 - `refresh_token_rotation` - (Optional) Refresh token rotation behavior. Valid values: `"STATIC"` or `"ROTATE"`.
 
-- `response_types` - (Optional) List of OAuth 2.0 response type strings.
+- `response_types` - (Optional) List of OAuth 2.0 response type strings. Array
+    values of `"code"`, `"token"`, `"id_token"`. The `grant_types` and `response_types`
+    values described are partially orthogonal, as they refer to arguments
+    passed to different endpoints in the OAuth 2.0 protocol (opens new window).
+    However, they are related in that the `grant_types` available to a client
+    influence the `response_types` that the client is allowed to use, and vice versa.
+    For instance, a grant_types value that includes authorization_code implies a
+    `response_types` value that includes code, as both values are defined as part of
+    the OAuth 2.0 authorization code grant.
+    See: https://developer.okta.com/docs/reference/api/apps/#add-oauth-2-0-client-application
 
 - `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it's also can be provided during import). Default is `false`.
 

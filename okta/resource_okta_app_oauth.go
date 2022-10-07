@@ -214,14 +214,9 @@ func resourceAppOAuth() *schema.Resource {
 				Optional:    true,
 				Description: "Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object",
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					appType := d.Get("type").(string)
-					// Here, we juggle getting around setting a default pkce
-					// value as the behavior is dependant on the app type.
-					if appType == "native" || appType == "browser" {
-						// when pkce_required is not set in the HCL
-						if old == "true" && new == "false" {
-							return true
-						}
+					// when pkce_required is not set in the HCL
+					if old == "true" && new == "false" {
+						return true
 					}
 					return false
 				},
@@ -741,17 +736,6 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 		}
 	}
 
-	var pkceRequired bool
-	pkce := d.GetRawConfig().GetAttr("pkce_required")
-	// if the operator doesn't set pkce then it is true else honor the HCL value
-	switch {
-	case pkce.IsNull():
-		pkceRequired = true
-	case pkce.True():
-		pkceRequired = true
-	default:
-		pkceRequired = false
-	}
 	app.Label = d.Get("label").(string)
 	authMethod := d.Get("token_endpoint_auth_method").(string)
 	app.Credentials = &okta.OAuthApplicationCredentials{
@@ -760,10 +744,25 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 			ClientId:                d.Get("client_id").(string),
 			TokenEndpointAuthMethod: authMethod,
 			ClientSecret:            d.Get("client_secret").(string),
-			PkceRequired:            boolPtr(pkceRequired),
 		},
 		UserNameTemplate: buildUserNameTemplate(d),
 	}
+
+	var pkceRequired *bool
+	pkceVal := d.GetRawConfig().GetAttr("pkce_required")
+	// only explicitly set pkce_required to true for browser and native apps
+	// when it isn't set in the HCL
+	if pkceVal.IsNull() && (appType == "native" || appType == "browser") {
+		pkceRequired = boolPtr(true)
+	} else {
+		switch {
+		case pkceVal.True():
+			pkceRequired = boolPtr(true)
+		case pkceVal.False():
+			pkceRequired = boolPtr(false)
+		}
+	}
+	app.Credentials.OauthClient.PkceRequired = pkceRequired
 
 	if sec, ok := d.GetOk("client_basic_secret"); ok {
 		app.Credentials.OauthClient.ClientSecret = sec.(string)

@@ -764,6 +764,103 @@ func TestAccResourceOktaAppOauth_config_combinations(t *testing.T) {
 				{"should-not", "get-here"},
 			},
 		},
+		{
+			name: "web-pkce-not-set",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "web"},
+				{"pkce_required", "false"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "client_secret_basic"},
+			},
+		},
+		{
+			name: "web-pkce-set-true",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  pkce_required  = true
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "web"},
+				{"pkce_required", "true"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "client_secret_basic"},
+			},
+		},
+		{
+			name: "web-pkce-set-false",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  pkce_required  = false
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "web"},
+				{"pkce_required", "false"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "client_secret_basic"},
+			},
+		},
+		{
+			name: "web-pkce-not-set-token-none",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  token_endpoint_auth_method = "none"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			expectErrorMessage: `''pkce_required'' must be set to true when ''token_endpoint_auth_method'' is ''none''`,
+			attrPairs: [][]string{
+				{"should-not", "get-here"},
+			},
+		},
+		{
+			name: "web-pkce-set-true-token-none",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  pkce_required  = true
+  token_endpoint_auth_method = "none"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			expectErrorMessage: `token_endpoint_auth_method: 'token_endpoint_auth_method' is invalid. Valid values: [client_secret_basic, client_secret_post, client_secret_jwt, private_key_jwt]`,
+			attrPairs: [][]string{
+				{"should-not", "get-here"},
+			},
+		},
+		{
+			name: "web-pkce-set-false-token-none",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  pkce_required  = false
+  token_endpoint_auth_method = "none"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			expectErrorMessage: `''pkce_required'' must be set to true when ''token_endpoint_auth_method'' is ''none''`,
+			attrPairs: [][]string{
+				{"should-not", "get-here"},
+			},
+		},
 	}
 	for _, test := range cases {
 		ri := acctest.RandInt()
