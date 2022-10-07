@@ -118,7 +118,6 @@ const (
 
 // testAccErrorChecks Intended for use with TF sdk TestCase ErrorCheck function.
 // Ability to skip tests that have specific errors.
-
 func testAccErrorChecks(t *testing.T) resource.ErrorCheckFunc {
 	return func(err error) error {
 		if err == nil {
