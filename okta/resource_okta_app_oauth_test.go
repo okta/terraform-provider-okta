@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
@@ -544,4 +545,357 @@ resource "okta_app_oauth" "test" {
 			},
 		},
 	})
+}
+
+// TestAccResourceOktaAppOauth_config_combinations
+// W.R.T. https://github.com/okta/terraform-provider-okta/issues/1325
+// Documentation of the the API behavior of pkce_required when the app type is
+// "browser" or "native"
+//
+// https://developer.okta.com/docs/reference/api/apps/#username-template-object
+func TestAccResourceOktaAppOauth_config_combinations(t *testing.T) {
+	mgr := newFixtureManager(appOAuth)
+
+	cases := []struct {
+		name               string
+		config             string
+		attrPairs          [][]string
+		expectErrorMessage string
+	}{
+		{
+			name: "native-pkce-not-set",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "native"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "native"},
+				{"pkce_required", "true"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "client_secret_basic"},
+			},
+		},
+		{
+			name: "native-pkce-set-true",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "native"
+  pkce_required  = true
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "native"},
+				{"pkce_required", "true"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "client_secret_basic"},
+			},
+		},
+		{
+			name: "native-pkce-set-false",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "native"
+  pkce_required  = false
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "native"},
+				{"pkce_required", "false"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "client_secret_basic"},
+			},
+		},
+		{
+			name: "native-pkce-not-set-token-none",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "native"
+  token_endpoint_auth_method = "none"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "native"},
+				{"pkce_required", "true"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "none"},
+			},
+		},
+		{
+			name: "native-pkce-set-true-token-none",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "native"
+  pkce_required  = true
+  token_endpoint_auth_method = "none"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "native"},
+				{"pkce_required", "true"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "none"},
+			},
+		},
+		{
+			name: "native-pkce-set-false-token-none",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "native"
+  pkce_required  = false
+  token_endpoint_auth_method = "none"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			expectErrorMessage: `''pkce_required'' must be set to true when ''token_endpoint_auth_method'' is ''none''`,
+			attrPairs: [][]string{
+				{"should-not", "get-here"},
+			},
+		},
+		{
+			name: "browser-pkce-not-set",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "browser"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "browser"},
+				{"pkce_required", "true"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "client_secret_basic"},
+			},
+		},
+		{
+			name: "browser-pkce-set-true",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "browser"
+  pkce_required  = true
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "browser"},
+				{"pkce_required", "true"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "client_secret_basic"},
+			},
+		},
+		{
+			name: "browser-pkce-set-false",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "browser"
+  pkce_required  = false
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "browser"},
+				{"pkce_required", "false"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "client_secret_basic"},
+			},
+		},
+		{
+			name: "browser-pkce-not-set-token-none",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "browser"
+  token_endpoint_auth_method = "none"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "browser"},
+				{"pkce_required", "true"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "none"},
+			},
+		},
+		{
+			name: "browser-pkce-set-true-token-none",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "browser"
+  pkce_required  = true
+  token_endpoint_auth_method = "none"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "browser"},
+				{"pkce_required", "true"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "none"},
+			},
+		},
+		{
+			name: "browser-pkce-set-false-token-none",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "browser"
+  pkce_required  = false
+  token_endpoint_auth_method = "none"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			expectErrorMessage: `''pkce_required'' must be set to true when ''token_endpoint_auth_method'' is ''none''`,
+			attrPairs: [][]string{
+				{"should-not", "get-here"},
+			},
+		},
+		{
+			name: "web-pkce-not-set",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "web"},
+				{"pkce_required", "false"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "client_secret_basic"},
+			},
+		},
+		{
+			name: "web-pkce-set-true",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  pkce_required  = true
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "web"},
+				{"pkce_required", "true"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "client_secret_basic"},
+			},
+		},
+		{
+			name: "web-pkce-set-false",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  pkce_required  = false
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			attrPairs: [][]string{
+				{"type", "web"},
+				{"pkce_required", "false"},
+				{"auto_key_rotation", "true"},
+				{"token_endpoint_auth_method", "client_secret_basic"},
+			},
+		},
+		{
+			name: "web-pkce-not-set-token-none",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  token_endpoint_auth_method = "none"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			expectErrorMessage: `''pkce_required'' must be set to true when ''token_endpoint_auth_method'' is ''none''`,
+			attrPairs: [][]string{
+				{"should-not", "get-here"},
+			},
+		},
+		{
+			name: "web-pkce-set-true-token-none",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  pkce_required  = true
+  token_endpoint_auth_method = "none"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			expectErrorMessage: `token_endpoint_auth_method: 'token_endpoint_auth_method' is invalid. Valid values: [client_secret_basic, client_secret_post, client_secret_jwt, private_key_jwt]`,
+			attrPairs: [][]string{
+				{"should-not", "get-here"},
+			},
+		},
+		{
+			name: "web-pkce-set-false-token-none",
+			config: `resource "okta_app_oauth" "%s" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  pkce_required  = false
+  token_endpoint_auth_method = "none"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["http://example.com/"]
+  response_types = ["code"]
+}`,
+			expectErrorMessage: `''pkce_required'' must be set to true when ''token_endpoint_auth_method'' is ''none''`,
+			attrPairs: [][]string{
+				{"should-not", "get-here"},
+			},
+		},
+	}
+	for _, test := range cases {
+		ri := acctest.RandInt()
+		resourceName := fmt.Sprintf("%s.%s", appOAuth, test.name)
+		config := fmt.Sprintf(test.config, test.name)
+		testFuncs := []resource.TestCheckFunc{
+			ensureResourceExists(resourceName, createDoesAppExist(okta.NewAutoLoginApplication())),
+		}
+		for _, pair := range test.attrPairs {
+			testFuncs = append(testFuncs, resource.TestCheckResourceAttr(resourceName, pair[0], pair[1]))
+		}
+		errorCheck := testAccErrorChecks(t)
+		if test.expectErrorMessage != "" {
+			errorCheck = func(err error) error {
+				if err == nil {
+					return errors.New("expected an error")
+				}
+				if !strings.Contains(err.Error(), test.expectErrorMessage) {
+					return fmt.Errorf("expected error %q, got %q", test.expectErrorMessage, err.Error())
+				}
+				return nil
+			}
+		}
+
+		resource.Test(t, resource.TestCase{
+			PreCheck:          testAccPreCheck(t),
+			ErrorCheck:        errorCheck,
+			ProviderFactories: testAccProvidersFactories,
+			CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+			Steps: []resource.TestStep{
+				{
+					Config: mgr.ConfigReplace(config, ri),
+					Check:  resource.ComposeTestCheckFunc(testFuncs...),
+				},
+			},
+		})
+	}
 }

@@ -57,11 +57,15 @@ The following arguments are supported:
 
 - `app_settings_json` - (Optional) Application settings in JSON format.
 
-- `auto_key_rotation` - (Optional) Requested key rotation mode. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
+- `auto_key_rotation` - (Optional) Requested key rotation mode.  If
+    `auto_key_rotation` isn't specified, the client automatically opts in for Okta's
+    key rotation. You can update this property via the API or via the administrator
+    UI.
+    See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
 
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
-- `client_basic_secret` - (Optional) OAuth client secret key, this can be set when token_endpoint_auth_method is client_secret_basic.
+- `client_basic_secret` - (Optional) OAuth client secret key, this can be set when `token_endpoint_auth_method` is `"client_secret_basic"`.
 
 - `client_id` - (Optional) OAuth client ID. If set during creation, app is created with this id. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
 
@@ -114,7 +118,11 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 - `omit_secret` - (Optional) This tells the provider not to persist the application's secret to state. Your app's `client_secret` will be recreated if this ever changes from true => false.
 
-- `pkce_required` - (Optional) Require Proof Key for Code Exchange (PKCE) for additional verification. `true` for `browser` and `native` application types. See https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
+- `pkce_required` - (Optional) Require Proof Key for Code Exchange (PKCE) for
+    additional verification.  If `pkce_required` isn't specified when adding a new
+    application, Okta sets it to `true` by default for `"browser"` and `"native"`
+    application types.
+    See https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
 
 - `policy_uri` - (Optional) URI to web page providing client policy document.
 
@@ -128,7 +136,16 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 - `refresh_token_rotation` - (Optional) Refresh token rotation behavior. Valid values: `"STATIC"` or `"ROTATE"`.
 
-- `response_types` - (Optional) List of OAuth 2.0 response type strings.
+- `response_types` - (Optional) List of OAuth 2.0 response type strings. Array
+    values of `"code"`, `"token"`, `"id_token"`. The `grant_types` and `response_types`
+    values described are partially orthogonal, as they refer to arguments
+    passed to different endpoints in the OAuth 2.0 protocol (opens new window).
+    However, they are related in that the `grant_types` available to a client
+    influence the `response_types` that the client is allowed to use, and vice versa.
+    For instance, a grant_types value that includes authorization_code implies a
+    `response_types` value that includes code, as both values are defined as part of
+    the OAuth 2.0 authorization code grant.
+    See: https://developer.okta.com/docs/reference/api/apps/#add-oauth-2-0-client-application
 
 - `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it's also can be provided during import). Default is `false`.
 
@@ -136,7 +153,15 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 - `status` - (Optional) The status of the application, by default, it is `"ACTIVE"`.
 
-- `token_endpoint_auth_method` - (Optional) Requested authentication method for the token endpoint. It can be set to `"none"`, `"client_secret_post"`, `"client_secret_basic"`, `"client_secret_jwt"`, `"private_key_jwt"`. To enable PKCE, set this to `"none"`. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
+- `token_endpoint_auth_method` - (Optional) Requested authentication method for
+    the token endpoint. It can be set to `"none"`, `"client_secret_post"`,
+    `"client_secret_basic"`, `"client_secret_jwt"`, `"private_key_jwt"`.  Use
+    `pkce_required` to require PKCE for your confidential clients using the
+    Authorization Code flow. If `"token_endpoint_auth_method"` is `"none"`,
+    `pkce_required` needs to be `true`. If `pkce_required` isn't specified when
+    adding a new application, Okta sets it to `true` by default for `"browser"` and
+    `"native"` application types.
+    See https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
 
 - `tos_uri` - (Optional) URI to web page providing client tos (terms of service).
 

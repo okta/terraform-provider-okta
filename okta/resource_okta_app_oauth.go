@@ -16,7 +16,6 @@ import (
 
 type (
 	applicationMap struct {
-		Type               string
 		RequiredGrantTypes []string
 		ValidGrantTypes    []string
 	}
@@ -38,7 +37,7 @@ const (
 // is the best way to implement this logic, as it needs to introspect.
 // NOTE: opened a ticket to Okta to fix their docs, they are off.
 // https://developer.okta.com/docs/api/resources/apps#credentials-settings-details
-var appGrantTypeMap = map[string]*applicationMap{
+var appRequirementsByType = map[string]*applicationMap{
 	"web": {
 		RequiredGrantTypes: []string{
 			authorizationCode,
@@ -55,7 +54,6 @@ var appGrantTypeMap = map[string]*applicationMap{
 		},
 	},
 	"native": {
-		Type: "native",
 		RequiredGrantTypes: []string{
 			authorizationCode,
 		},
@@ -169,6 +167,9 @@ func resourceAppOAuth() *schema.Resource {
 				Default:          "client_secret_basic",
 				Description:      "Requested authentication method for the token endpoint.",
 			},
+			// API docs say that auto_key_rotation will alwas be set true if it
+			// is missing on input therefore we can declare it's default to be
+			// true in the schema.
 			"auto_key_rotation": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -211,7 +212,14 @@ func resourceAppOAuth() *schema.Resource {
 			"pkce_required": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. `true` for `browser` and `native` application types.",
+				Description: "Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object",
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					// when pkce_required is not set in the HCL
+					if old == "true" && new == "false" {
+						return true
+					}
+					return false
+				},
 			},
 			"redirect_uris": {
 				Type:        schema.TypeList,
@@ -705,7 +713,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 
 	// If grant_types are not set, we default to the bare minimum.
 	if len(grantTypes) < 1 {
-		appMap, ok := appGrantTypeMap[appType]
+		appMap, ok := appRequirementsByType[appType]
 		if ok {
 			if appMap.RequiredGrantTypes == nil {
 				grantTypes = appMap.ValidGrantTypes
@@ -735,11 +743,26 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 			AutoKeyRotation:         boolPtr(d.Get("auto_key_rotation").(bool)),
 			ClientId:                d.Get("client_id").(string),
 			TokenEndpointAuthMethod: authMethod,
-			PkceRequired:            boolPtr(d.Get("pkce_required").(bool)),
 			ClientSecret:            d.Get("client_secret").(string),
 		},
 		UserNameTemplate: buildUserNameTemplate(d),
 	}
+
+	var pkceRequired *bool
+	pkceVal := d.GetRawConfig().GetAttr("pkce_required")
+	// only explicitly set pkce_required to true for browser and native apps
+	// when it isn't set in the HCL
+	if pkceVal.IsNull() && (appType == "native" || appType == "browser") {
+		pkceRequired = boolPtr(true)
+	} else {
+		switch {
+		case pkceVal.True():
+			pkceRequired = boolPtr(true)
+		case pkceVal.False():
+			pkceRequired = boolPtr(false)
+		}
+	}
+	app.Credentials.OauthClient.PkceRequired = pkceRequired
 
 	if sec, ok := d.GetOk("client_basic_secret"); ok {
 		app.Credentials.OauthClient.ClientSecret = sec.(string)
@@ -829,7 +852,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 func validateGrantTypes(d *schema.ResourceData) error {
 	grantTypeList := convertInterfaceToStringSet(d.Get("grant_types"))
 	appType := d.Get("type").(string)
-	appMap, ok := appGrantTypeMap[appType]
+	appMap, ok := appRequirementsByType[appType]
 	if !ok {
 		return nil
 	}
