@@ -236,10 +236,15 @@ func buildInlineChannel(d *schema.ResourceData) *okta.InlineHookChannel {
 		if !ok {
 			a["type"] = "HEADER"
 		}
-		auth = &okta.InlineHookChannelConfigAuthScheme{
-			Key:   a["key"].(string),
-			Type:  a["type"].(string),
-			Value: a["value"].(string),
+		auth = &okta.InlineHookChannelConfigAuthScheme{}
+		if key, ok := a["key"]; ok && key != nil {
+			auth.Key = key.(string)
+		}
+		if _type, ok := a["type"]; ok && _type != nil {
+			auth.Type = _type.(string)
+		}
+		if value, ok := a["value"]; ok && value != nil {
+			auth.Value = value.(string)
 		}
 	}
 	rawChannel := d.Get("channel").(map[string]interface{})
