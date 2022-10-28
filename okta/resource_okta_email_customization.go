@@ -85,7 +85,6 @@ func forceCreateIs(action string, d *schema.ResourceData) bool {
 			if value == action {
 				return true
 			}
-
 		}
 	}
 	return false

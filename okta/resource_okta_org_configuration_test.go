@@ -23,7 +23,6 @@ func TestAccOktaOrgConfiguration(t *testing.T) {
 	companyNameUpdated := fmt.Sprintf("testAcc-%d Hashicorp CI Terraform Provider Okta Updated", ri)
 
 	resource.Test(t, resource.TestCase{
-
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
