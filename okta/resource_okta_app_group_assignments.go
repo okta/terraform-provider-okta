@@ -193,22 +193,41 @@ func syncGroups(d *schema.ResourceData, groups []interface{}, assignments []*okt
 }
 
 func buildProfile(d *schema.ResourceData, i int, assignment *okta.ApplicationGroupAssignment) string {
-	oldProfile := d.Get(fmt.Sprintf("group.%d.profile", i)).(string)
+	if i < 0 || assignment == nil {
+		return ""
+	}
+
+	oldProfile, ok := d.Get(fmt.Sprintf("group.%d.profile", i)).(string)
+	if !ok {
+		return ""
+	}
 	opm := make(map[string]interface{})
-	_ = json.Unmarshal([]byte(oldProfile), &opm)
+
+	err := json.Unmarshal([]byte(oldProfile), &opm)
+	if err != nil {
+		return ""
+	}
 	ap, ok := assignment.Profile.(map[string]interface{})
-	if ok {
-		for k, v := range ap {
-			if _, ok := opm[k]; ok {
-				opm[k] = v
-				continue
-			}
-			if v != nil {
-				opm[k] = v
-			}
+	if !ok {
+		return ""
+	}
+
+	// copy new values from assignment profile to the old profile only if old
+	// profile has the attribute and the new value is not nil
+	for k, v := range ap {
+		if v == nil {
+			continue
+		}
+		if _, ok := opm[k]; ok {
+			opm[k] = v
 		}
 	}
-	jsonProfile, _ := json.Marshal(&opm)
+
+	jsonProfile, err := json.Marshal(&opm)
+	if err != nil {
+		return ""
+	}
+
 	return string(jsonProfile)
 }
 
