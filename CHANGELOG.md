@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.38.0 (October 28, 2022)
+
+BUG FIXES:
+
+* Address potential panic in resource `okta_app_group_assignments`'s `profile` attribute [#1345](https://github.com/okta/terraform-provider-okta/pull/1345). Thanks, [@monde](https://github.com/monde)!
+* Address potential panic in resource `okta_inline_hook`s `auth` attribute [#1337](https://github.com/okta/terraform-provider-okta/pull/1337). Thanks, [@monde](https://github.com/monde)!
+* Fully document and refine `okta_app_oauth`'s `pkce_required` attribute required if `token_endpoint_auth_method` is "none" [#1327](https://github.com/okta/terraform-provider-okta/pull/1327). Thanks, [@monde](https://github.com/monde)!
+
 ## 3.37.0 (October 04, 2022)
 
 NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
