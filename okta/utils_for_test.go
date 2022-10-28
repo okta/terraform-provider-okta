@@ -150,6 +150,7 @@ func testAccErrorChecks(t *testing.T) resource.ErrorCheckFunc {
 		return err
 	}
 }
+
 func errorCheckOIEOnlyFeature(t *testing.T, err error) bool {
 	if strings.Contains(err.Error(), ErrorOnlyOIEOrgs) {
 		t.Skipf("Attempt to run OIE feature test on a Classic org")

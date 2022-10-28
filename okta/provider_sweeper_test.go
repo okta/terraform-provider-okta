@@ -69,7 +69,7 @@ func TestMain(m *testing.M) {
 		setupSweeper(policyRulePassword, sweepPolicyRulePasswords)
 		setupSweeper(policyRuleSignOn, sweepSignOnPolicyRules)
 		setupSweeper(policySignOn, sweepAccessPolicies)
-		//setupSweeper(policySignOn, sweepSignOnPolicies)
+		// setupSweeper(policySignOn, sweepSignOnPolicies)
 		setupSweeper(resourceSet, sweepResourceSets)
 		setupSweeper(user, sweepUsers)
 		setupSweeper(userSchemaProperty, sweepUserCustomSchema)
