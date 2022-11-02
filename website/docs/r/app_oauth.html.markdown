@@ -22,6 +22,10 @@ resource "okta_app_oauth" "example" {
 }
 ```
 
+### With JWKS value
+
+See also [Advanced PEM secrets and JWKS example](#advanced-pem-and-jwks-example).
+
 ```hcl
 resource "okta_app_oauth" "example" {
   label          = "example"
@@ -223,5 +227,91 @@ $ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_groups
 ```
 
 ## Etc.
+
 ### Resetting client secret
-If the client secret needs to be reset run an apply with `omit_secret` set to true in the resource. This causes `client_secret` to be set to blank. Remove `omit_secret` and run apply again. The resource will set a new `client_secret` for the app.
+
+If the client secret needs to be reset run an apply with `omit_secret` set to
+true in the resource. This causes `client_secret` to be set to blank. Remove
+`omit_secret` and run apply again. The resource will set a new `client_secret`
+for the app.
+
+### Advanced PEM and JWKS example
+
+
+```hcl
+# This example config illustrates how Terraform can be used to generate a
+# private keys PEM file and valid JWKS to be used as part of an Okta OAuth
+# app's creation.
+#
+terraform {
+  required_providers {
+    okta = {
+      source = "okta/okta"
+    }
+    tls = {
+      source = "hashicorp/tls"
+    }
+    jwks = {
+      source = "iwarapter/jwks"
+    }
+  }
+}
+
+# NOTE: Example to generate a PEM easily as a tool. These secrets will be saved
+# to the state file and shouldn't be persisted. Instead, save the secrets into
+# a secrets manager to be reused.
+# https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key
+#
+# NOTE: Even though tls is a Hashicorp provider you should still audit its code
+# to be satisfied with its security.
+# https://github.com/hashicorp/terraform-provider-tls
+#
+resource "tls_private_key" "rsa" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+#
+# Pretty print a PEM with TF show and jq
+# terraform show -json | jq -r '.values.root_module.resources[] | select(.address == "tls_private_key.rsa").values.private_key_pem'
+#
+# Delete the secrets explicitly or just remove them from the config and run
+# apply again.
+# terraform apply -destroy -auto-approve -target=tls_private_key.rsa
+
+# NOTE: Even though the iwarapter/jwks is listed in the registry you should
+# still audit its code to be satisfied with its security.
+# https://registry.terraform.io/providers/iwarapter/jwks/latest/docs/data-sources/from_key
+# https://github.com/iwarapter/terraform-provider-jwks
+#
+data "jwks_from_key" "jwks" {
+  key = tls_private_key.rsa.private_key_pem
+  kid = "my-kid"
+}
+#
+# Pretty print the jwks
+# terraform show -json | jq -r '.values.root_module.resources[] | select(.address == "data.jwks_from_key.jwks").values.jwks' | jq .
+
+# Feed values into Okta OAuth app's jwks
+locals {
+  jwks = jsondecode(data.jwks_from_key.jwks.jwks)
+}
+
+# https://registry.terraform.io/providers/okta/okta/latest/docs/resources/app_oauth
+resource "okta_app_oauth" "app" {
+  label                      = "My OAuth App"
+  type                       = "service"
+  response_types             = ["token"]
+  grant_types                = ["client_credentials"]
+  token_endpoint_auth_method = "private_key_jwt"
+
+  jwks {
+    kty = local.jwks.kty
+    kid = local.jwks.kid
+    e   = local.jwks.e
+    n   = local.jwks.n
+  }
+}
+#
+# Pretty print OAuth app Client ID
+# terraform show -json | jq -r '.values.root_module.resources[] | select(.address == "okta_app_oauth.app").values.id'
+```
