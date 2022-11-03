@@ -63,6 +63,9 @@ func resourceUserBaseSchemaResourceV0() *schema.Resource {
 }
 
 func resourceUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	oktaMutexKV.Lock(userBaseSchemaProperty)
+	defer oktaMutexKV.Unlock(userBaseSchemaProperty)
+
 	if err := updateUserBaseSubschema(ctx, d, m); err != nil {
 		return err
 	}
@@ -89,6 +92,9 @@ func resourceUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, m i
 }
 
 func resourceUserBaseSchemaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	oktaMutexKV.Lock(userBaseSchemaProperty)
+	defer oktaMutexKV.Unlock(userBaseSchemaProperty)
+
 	if err := updateUserBaseSubschema(ctx, d, m); err != nil {
 		return err
 	}
