@@ -149,42 +149,30 @@ func testOktaUserBaseSchemasExists(name string) resource.TestCheckFunc {
 
 // TestAccOktaUserBaseSchemaLogin_multiple_properties Test for issue 1217 fix.
 // https://github.com/okta/terraform-provider-okta/issues/1217 This test would
-// fail befor the fix was implemented. The fix is to put a calling mutex on
+// fail before the fix was implemented. The fix is to put a calling mutex on
 // create and update for the `okta_user_base_schema_property` resource. The Okta
 // management API ignores parallel calls to `POST
 // /api/v1/meta/schemas/user/{userId}` and our fix is to use a calling mutex in
 // the resource to impose the equivelent of `terraform -parallelism=1`
 func TestAccOktaUserBaseSchemaLogin_multiple_properties(t *testing.T) {
 	config := `
-data "okta_user_type" "user" {
-	name = "user"
-}
 resource "okta_user_base_schema_property" "login" {
 	index       = "login"
 	title       = "Username"
 	type        = "string"
 	required    = true
-	master      = "PROFILE_MASTER"
-	user_type   = "${data.okta_user_type.user.id}"
-	pattern     = ".+"
 	permissions = "%s"
 }
 resource "okta_user_base_schema_property" "firstname" {
 	index       = "firstName"
 	title       = "First name"
 	type        = "string"
-	required    = true
-	master      = "PROFILE_MASTER"
-	user_type   = "${data.okta_user_type.user.id}"
 	permissions = "%s"
 }
 resource "okta_user_base_schema_property" "lastname" {
 	index       = "lastName"
 	title       = "Last name"
 	type        = "string"
-	required    = true
-	master      = "PROFILE_MASTER"
-	user_type   = "${data.okta_user_type.user.id}"
 	permissions = "%s"
 }
 resource "okta_user_base_schema_property" "email" {
@@ -192,16 +180,12 @@ resource "okta_user_base_schema_property" "email" {
 	title       = "Primary email"
 	type        = "string"
 	required    = true
-	master      = "PROFILE_MASTER"
-	user_type   = "${data.okta_user_type.user.id}"
 	permissions = "%s"
 }
 resource "okta_user_base_schema_property" "mobilephone" {
 	index       = "mobilePhone"
 	title       = "Mobile phone"
 	type        = "string"
-	master      = "PROFILE_MASTER"
-	user_type   = "${data.okta_user_type.user.id}"
 	permissions = "%s"
 }`
 	ro := make([]interface{}, 5)

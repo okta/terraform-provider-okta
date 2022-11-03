@@ -13,7 +13,7 @@ func resourceUserBaseSchemaProperty() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceUserBaseSchemaCreate,
 		ReadContext:   resourceUserBaseSchemaRead,
-		UpdateContext: resourceUserBaseSchemaUpdate,
+		UpdateContext: resourceUserBaseSchemaCreate,
 		DeleteContext: resourceUserBaseSchemaDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
@@ -63,6 +63,9 @@ func resourceUserBaseSchemaResourceV0() *schema.Resource {
 }
 
 func resourceUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	// NOTE: Okta API will ignore parallel calls to `POST
+	// /api/v1/meta/schemas/user/{userId}` so a mutex to affect TF
+	// `-parallelism=1` behavior is needed here.
 	oktaMutexKV.Lock(userBaseSchemaProperty)
 	defer oktaMutexKV.Unlock(userBaseSchemaProperty)
 
@@ -89,16 +92,6 @@ func resourceUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, m i
 	}
 	syncBaseUserSchema(d, subschema)
 	return nil
-}
-
-func resourceUserBaseSchemaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	oktaMutexKV.Lock(userBaseSchemaProperty)
-	defer oktaMutexKV.Unlock(userBaseSchemaProperty)
-
-	if err := updateUserBaseSubschema(ctx, d, m); err != nil {
-		return err
-	}
-	return resourceUserBaseSchemaRead(ctx, d, m)
 }
 
 // create or modify a subschema
