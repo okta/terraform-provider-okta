@@ -12,7 +12,7 @@ import (
 func resourceAppOAuthRedirectURI() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppOAuthRedirectURICreate,
-		ReadContext:   resourceAppOAuthRedirectURIRead,
+		ReadContext:   resourceFuncNoOp,
 		UpdateContext: resourceAppOAuthRedirectURIUpdate,
 		DeleteContext: resourceAppOAuthRedirectURIDelete,
 		// The id for this is the uri
@@ -39,12 +39,7 @@ func resourceAppOAuthRedirectURICreate(ctx context.Context, d *schema.ResourceDa
 		return diag.Errorf("failed to create redirect URI: %v", err)
 	}
 	d.SetId(d.Get("uri").(string))
-	return resourceAppOAuthRedirectURIRead(ctx, d, m)
-}
-
-// read does nothing due to the nature of this resource
-func resourceAppOAuthRedirectURIRead(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
-	return nil
+	return resourceFuncNoOp(ctx, d, m)
 }
 
 func resourceAppOAuthRedirectURIUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -53,7 +48,7 @@ func resourceAppOAuthRedirectURIUpdate(ctx context.Context, d *schema.ResourceDa
 	}
 	// Normally not advisable, but ForceNew generated unnecessary calls
 	d.SetId(d.Get("uri").(string))
-	return resourceAppOAuthRedirectURIRead(ctx, d, m)
+	return resourceFuncNoOp(ctx, d, m)
 }
 
 func resourceAppOAuthRedirectURIDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

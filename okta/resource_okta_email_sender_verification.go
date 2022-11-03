@@ -11,8 +11,8 @@ import (
 func resourceEmailSenderVerification() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceEmailSenderVerificationCreate,
-		ReadContext:   resourceEmailSenderVerificationRead,
-		DeleteContext: resourceEmailSenderVerificationDelete,
+		ReadContext:   resourceFuncNoOp,
+		DeleteContext: resourceFuncNoOp,
 		Importer:      nil,
 		Schema: map[string]*schema.Schema{
 			"sender_id": {
@@ -42,13 +42,5 @@ func resourceEmailSenderVerificationCreate(ctx context.Context, d *schema.Resour
 		return diag.Errorf("failed to verify custom email sender: %v", err)
 	}
 	d.SetId(d.Get("sender_id").(string))
-	return nil
-}
-
-func resourceEmailSenderVerificationRead(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
-	return nil
-}
-
-func resourceEmailSenderVerificationDelete(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
 	return nil
 }

@@ -15,7 +15,7 @@ func resourceAppSamlAppSettings() *schema.Resource {
 		CreateContext: resourceAppSamlSettingsCreate,
 		ReadContext:   resourceAppSamlSettingsRead,
 		UpdateContext: resourceAppSamlSettingsUpdate,
-		DeleteContext: resourceAppSamlSettingsDelete,
+		DeleteContext: resourceFuncNoOp,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -98,8 +98,4 @@ func updateOrCreateAppSettings(ctx context.Context, d *schema.ResourceData, m in
 		return "", fmt.Errorf("failed to update SAML application's settings: %v", err)
 	}
 	return app.Id, nil
-}
-
-func resourceAppSamlSettingsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return nil
 }

@@ -14,7 +14,7 @@ func resourcePolicyPasswordDefault() *schema.Resource {
 		CreateContext: resourcePolicyPasswordDefaultUpdate,
 		ReadContext:   resourcePolicyPasswordDefaultRead,
 		UpdateContext: resourcePolicyPasswordDefaultUpdate,
-		DeleteContext: resourcePolicyPasswordDefaultDelete,
+		DeleteContext: resourceFuncNoOp,
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				policy, err := setDefaultPolicy(ctx, d, m, sdk.PasswordPolicyType)
@@ -247,11 +247,6 @@ func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceDa
 			_ = d.Set("password_exclude_last_name", true)
 		}
 	}
-	return nil
-}
-
-// Default policy can not be removed
-func resourcePolicyPasswordDefaultDelete(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
 	return nil
 }
 

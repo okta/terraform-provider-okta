@@ -505,3 +505,7 @@ func resourceOIEOnlyFeatureError(name string) diag.Diagnostics {
 func datasourceOIEOnlyFeatureError(name string) diag.Diagnostics {
 	return oieOnlyFeatureError("data-sources", name)
 }
+
+func resourceFuncNoOp(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
+	return nil
+}

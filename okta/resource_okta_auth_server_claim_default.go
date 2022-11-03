@@ -15,7 +15,7 @@ func resourceAuthServerClaimDefault() *schema.Resource {
 		CreateContext: resourceAuthServerClaimDefaultUpdate,
 		ReadContext:   resourceAuthServerClaimDefaultRead,
 		UpdateContext: resourceAuthServerClaimDefaultUpdate,
-		DeleteContext: resourceAuthServerClaimDefaultDelete,
+		DeleteContext: resourceFuncNoOp,
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				parts := strings.Split(d.Id(), "/")
@@ -148,11 +148,6 @@ func resourceAuthServerClaimDefaultUpdate(ctx context.Context, d *schema.Resourc
 		return diag.Errorf("failed to update auth server default claim: %v", err)
 	}
 	return resourceAuthServerClaimDefaultRead(ctx, d, m)
-}
-
-// Default claims are immutable.
-func resourceAuthServerClaimDefaultDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return nil
 }
 
 func buildAuthServerClaimDefault(d *schema.ResourceData) okta.OAuth2Claim {

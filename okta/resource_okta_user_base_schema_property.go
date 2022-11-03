@@ -14,7 +14,7 @@ func resourceUserBaseSchemaProperty() *schema.Resource {
 		CreateContext: resourceUserBaseSchemaCreate,
 		ReadContext:   resourceUserBaseSchemaRead,
 		UpdateContext: resourceUserBaseSchemaCreate,
-		DeleteContext: resourceUserBaseSchemaDelete,
+		DeleteContext: resourceFuncNoOp,
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				resourceIndex := d.Id()
@@ -116,11 +116,6 @@ func updateUserBaseSubschema(ctx context.Context, d *schema.ResourceData, m inte
 	if err != nil {
 		return diag.Errorf("failed to create user base schema: %v", err)
 	}
-	return nil
-}
-
-// can't delete Base schema
-func resourceUserBaseSchemaDelete(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
 	return nil
 }
 

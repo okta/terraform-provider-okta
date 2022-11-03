@@ -14,7 +14,7 @@ func resourceRoleSubscription() *schema.Resource {
 		CreateContext: resourceRoleSubscriptionCreate,
 		ReadContext:   resourceRoleSubscriptionRead,
 		UpdateContext: resourceRoleSubscriptionUpdate,
-		DeleteContext: resourceRoleSubscriptionDelete,
+		DeleteContext: resourceFuncNoOp,
 		Importer: &schema.ResourceImporter{
 			StateContext: func(_ context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				parts := strings.Split(d.Id(), "/")
@@ -121,10 +121,6 @@ func resourceRoleSubscriptionUpdate(ctx context.Context, d *schema.ResourceData,
 	if err != nil {
 		return diag.Errorf("failed to change subscription: %v", err)
 	}
-	return nil
-}
-
-func resourceRoleSubscriptionDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	return nil
 }
 

@@ -13,7 +13,7 @@ func resourceRateLimiting() *schema.Resource {
 		CreateContext: resourceRateLimitingCreate,
 		ReadContext:   resourceRateLimitingRead,
 		UpdateContext: resourceRateLimitingUpdate,
-		DeleteContext: resourceRateLimitingDelete,
+		DeleteContext: resourceFuncNoOp,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -78,10 +78,6 @@ func resourceRateLimitingUpdate(ctx context.Context, d *schema.ResourceData, m i
 	if err != nil {
 		return diag.Errorf("failed to set rate limiting communications: %v", err)
 	}
-	return nil
-}
-
-func resourceRateLimitingDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	return nil
 }
 

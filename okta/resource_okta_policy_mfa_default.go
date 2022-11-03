@@ -15,7 +15,7 @@ func resourcePolicyMfaDefault() *schema.Resource {
 		CreateContext: resourcePolicyMfaDefaultCreateOrUpdate,
 		ReadContext:   resourcePolicyMfaDefaultRead,
 		UpdateContext: resourcePolicyMfaDefaultCreateOrUpdate,
-		DeleteContext: resourcePolicyMfaDefaultDelete,
+		DeleteContext: resourceFuncNoOp,
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				_, err := setDefaultPolicy(ctx, d, m, sdk.MfaPolicyType)
@@ -56,11 +56,6 @@ func resourcePolicyMfaDefaultRead(ctx context.Context, d *schema.ResourceData, m
 
 	syncSettings(d, policy.Settings)
 
-	return nil
-}
-
-// Default policy can not be removed
-func resourcePolicyMfaDefaultDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	return nil
 }
 
