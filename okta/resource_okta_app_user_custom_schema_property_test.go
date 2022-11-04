@@ -601,3 +601,95 @@ func testAppUserSchemaExists(index string) (bool, error) {
 	}
 	return false, nil
 }
+
+// TestAccOktaAppUserSchemas_parallel_api_calls test coverage to ensure backoff
+// in create, update, delete for okta_app_user_schema_property resource is
+// operating correctly.
+func TestAccOktaAppUserSchemas_parallel_api_calls(t *testing.T) {
+	config := `
+resource "okta_app_oauth" "test" {
+	label          = "testAcc_replace_with_uuid"
+	type           = "native"
+	grant_types    = ["authorization_code"]
+	redirect_uris  = ["http://d.com/"]
+	response_types = ["code"]
+}
+resource "okta_app_user_schema_property" "one" {
+	app_id      = okta_app_oauth.test.id
+	index       = "testAcc_replace_with_uuid_one"
+	title       = "one"
+	type  = "string"
+	permissions = "%s"
+}
+resource "okta_app_user_schema_property" "two" {
+	app_id      = okta_app_oauth.test.id
+	index       = "testAcc_replace_with_uuid_two"
+	title       = "two"
+	type  = "string"
+	permissions = "%s"
+}
+resource "okta_app_user_schema_property" "three" {
+	app_id      = okta_app_oauth.test.id
+	index       = "testAcc_replace_with_uuid_three"
+	title       = "three"
+	type  = "string"
+	permissions = "%s"
+}
+resource "okta_app_user_schema_property" "four" {
+	app_id      = okta_app_oauth.test.id
+	index       = "testAcc_replace_with_uuid_four"
+	title       = "four"
+	type  = "string"
+	permissions = "%s"
+}
+resource "okta_app_user_schema_property" "five" {
+	app_id      = okta_app_oauth.test.id
+	index       = "testAcc_replace_with_uuid_five"
+	title       = "five"
+	type  = "string"
+	permissions = "%s"
+}
+`
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(appUserSchemaProperty)
+	ro := make([]interface{}, 5)
+	for i := 0; i < 5; i++ {
+		ro[i] = "READ_ONLY"
+	}
+	rw := make([]interface{}, 5)
+	for i := 0; i < 5; i++ {
+		rw[i] = "READ_WRITE"
+	}
+	roConfig := fmt.Sprintf(config, ro...)
+	roConfig = mgr.ConfigReplace(roConfig, ri)
+	rwConfig := fmt.Sprintf(config, rw...)
+	rwConfig = mgr.ConfigReplace(rwConfig, ri)
+	resource.Test(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		Steps: []resource.TestStep{
+			{
+				Config: roConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_app_user_schema_property.one", "permissions", "READ_ONLY"),
+					resource.TestCheckResourceAttr("okta_app_user_schema_property.two", "permissions", "READ_ONLY"),
+					resource.TestCheckResourceAttr("okta_app_user_schema_property.three", "permissions", "READ_ONLY"),
+					resource.TestCheckResourceAttr("okta_app_user_schema_property.four", "permissions", "READ_ONLY"),
+					resource.TestCheckResourceAttr("okta_app_user_schema_property.five", "permissions", "READ_ONLY"),
+				),
+			},
+			{
+				Config: rwConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_app_user_schema_property.one", "permissions", "READ_WRITE"),
+					resource.TestCheckResourceAttr("okta_app_user_schema_property.two", "permissions", "READ_WRITE"),
+					resource.TestCheckResourceAttr("okta_app_user_schema_property.three", "permissions", "READ_WRITE"),
+					resource.TestCheckResourceAttr("okta_app_user_schema_property.four", "permissions", "READ_WRITE"),
+					resource.TestCheckResourceAttr("okta_app_user_schema_property.five", "permissions", "READ_WRITE"),
+				),
+			},
+		},
+	})
+}
