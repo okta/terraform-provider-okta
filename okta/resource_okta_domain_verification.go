@@ -13,8 +13,8 @@ import (
 func resourceDomainVerification() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceDomainVerificationCreate,
-		ReadContext:   resourceDomainVerificationRead,
-		DeleteContext: resourceDomainVerificationDelete,
+		ReadContext:   resourceFuncNoOp,
+		DeleteContext: resourceFuncNoOp,
 		Importer:      nil,
 		Schema: map[string]*schema.Schema{
 			"domain_id": {
@@ -45,16 +45,6 @@ func resourceDomainVerificationCreate(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(err)
 	}
 	d.SetId(d.Get("domain_id").(string))
-	return nil
-}
-
-// nothing to do here, since domain should be already verified during creation.
-func resourceDomainVerificationRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return nil
-}
-
-// nothing to do here, since domain cannot be re-verified
-func resourceDomainVerificationDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	return nil
 }
 

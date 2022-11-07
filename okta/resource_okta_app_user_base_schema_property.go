@@ -13,7 +13,7 @@ func resourceAppUserBaseSchemaProperty() *schema.Resource {
 		CreateContext: resourceAppUserBaseSchemaCreate,
 		ReadContext:   resourceAppUserBaseSchemaRead,
 		UpdateContext: resourceAppUserBaseSchemaUpdate,
-		DeleteContext: resourceAppUserBaseSchemaDelete,
+		DeleteContext: resourceFuncNoOp,
 		Importer:      createNestedResourceImporter([]string{"app_id", "index"}),
 		Schema: buildSchema(
 			userBaseSchemaSchema,
@@ -83,11 +83,6 @@ func resourceAppUserBaseSchemaUpdate(ctx context.Context, d *schema.ResourceData
 		return err
 	}
 	return resourceAppUserBaseSchemaRead(ctx, d, m)
-}
-
-// can't delete Base
-func resourceAppUserBaseSchemaDelete(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
-	return nil
 }
 
 // create or modify a subschema

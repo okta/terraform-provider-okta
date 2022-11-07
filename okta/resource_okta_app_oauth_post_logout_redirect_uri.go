@@ -12,7 +12,7 @@ import (
 func resourceAppOAuthPostLogoutRedirectURI() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppOAuthPostLogoutRedirectURICreate,
-		ReadContext:   resourceAppOAuthPostLogoutRedirectURIRead,
+		ReadContext:   resourceFuncNoOp,
 		UpdateContext: resourceAppOAuthPostLogoutRedirectURIUpdate,
 		DeleteContext: resourceAppOAuthPostLogoutRedirectURIDelete,
 		// The id for this is the uri
@@ -39,12 +39,7 @@ func resourceAppOAuthPostLogoutRedirectURICreate(ctx context.Context, d *schema.
 		return diag.Errorf("failed to create post logout redirect URI: %v", err)
 	}
 	d.SetId(d.Get("uri").(string))
-	return resourceAppOAuthPostLogoutRedirectURIRead(ctx, d, m)
-}
-
-// read does nothing due to the nature of this resource
-func resourceAppOAuthPostLogoutRedirectURIRead(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
-	return nil
+	return resourceFuncNoOp(ctx, d, m)
 }
 
 func resourceAppOAuthPostLogoutRedirectURIUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -53,7 +48,7 @@ func resourceAppOAuthPostLogoutRedirectURIUpdate(ctx context.Context, d *schema.
 	}
 	// Normally not advisable, but ForceNew generated unnecessary calls
 	d.SetId(d.Get("uri").(string))
-	return resourceAppOAuthPostLogoutRedirectURIRead(ctx, d, m)
+	return resourceFuncNoOp(ctx, d, m)
 }
 
 func resourceAppOAuthPostLogoutRedirectURIDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

@@ -146,3 +146,83 @@ func testOktaUserBaseSchemasExists(name string) resource.TestCheckFunc {
 		return nil
 	}
 }
+
+// TestAccOktaUserBaseSchemaLogin_multiple_properties Test for issue 1217 fix.
+// https://github.com/okta/terraform-provider-okta/issues/1217 This test would
+// fail before the fix was implemented. The fix is to put a calling mutex on
+// create and update for the `okta_user_base_schema_property` resource. The Okta
+// management API ignores parallel calls to `POST
+// /api/v1/meta/schemas/user/{userId}` and our fix is to use a calling mutex in
+// the resource to impose the equivelent of `terraform -parallelism=1`
+func TestAccOktaUserBaseSchemaLogin_multiple_properties(t *testing.T) {
+	config := `
+resource "okta_user_base_schema_property" "login" {
+	index       = "login"
+	title       = "Username"
+	type        = "string"
+	required    = true
+	permissions = "%s"
+}
+resource "okta_user_base_schema_property" "firstname" {
+	index       = "firstName"
+	title       = "First name"
+	type        = "string"
+	permissions = "%s"
+}
+resource "okta_user_base_schema_property" "lastname" {
+	index       = "lastName"
+	title       = "Last name"
+	type        = "string"
+	permissions = "%s"
+}
+resource "okta_user_base_schema_property" "email" {
+	index       = "email"
+	title       = "Primary email"
+	type        = "string"
+	required    = true
+	permissions = "%s"
+}
+resource "okta_user_base_schema_property" "mobilephone" {
+	index       = "mobilePhone"
+	title       = "Mobile phone"
+	type        = "string"
+	permissions = "%s"
+}`
+	ro := make([]interface{}, 5)
+	for i := 0; i < 5; i++ {
+		ro[i] = "READ_ONLY"
+	}
+	rw := make([]interface{}, 5)
+	for i := 0; i < 5; i++ {
+		rw[i] = "READ_WRITE"
+	}
+	roConfig := fmt.Sprintf(config, ro...)
+	rwConfig := fmt.Sprintf(config, rw...)
+	resource.Test(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: roConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_user_base_schema_property.login", "permissions", "READ_ONLY"),
+					resource.TestCheckResourceAttr("okta_user_base_schema_property.firstname", "permissions", "READ_ONLY"),
+					resource.TestCheckResourceAttr("okta_user_base_schema_property.lastname", "permissions", "READ_ONLY"),
+					resource.TestCheckResourceAttr("okta_user_base_schema_property.email", "permissions", "READ_ONLY"),
+					resource.TestCheckResourceAttr("okta_user_base_schema_property.mobilephone", "permissions", "READ_ONLY"),
+				),
+			},
+			{
+				Config: rwConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_user_base_schema_property.login", "permissions", "READ_WRITE"),
+					resource.TestCheckResourceAttr("okta_user_base_schema_property.firstname", "permissions", "READ_WRITE"),
+					resource.TestCheckResourceAttr("okta_user_base_schema_property.lastname", "permissions", "READ_WRITE"),
+					resource.TestCheckResourceAttr("okta_user_base_schema_property.email", "permissions", "READ_WRITE"),
+					resource.TestCheckResourceAttr("okta_user_base_schema_property.mobilephone", "permissions", "READ_WRITE"),
+				),
+			},
+		},
+	})
+}

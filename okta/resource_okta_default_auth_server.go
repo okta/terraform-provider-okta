@@ -12,7 +12,7 @@ func resourceAuthServerDefault() *schema.Resource {
 		CreateContext: resourceAuthServerDefaultUpdate,
 		ReadContext:   resourceAuthServerDefaultRead,
 		UpdateContext: resourceAuthServerDefaultUpdate,
-		DeleteContext: resourceAuthServerDefaultDelete,
+		DeleteContext: resourceFuncNoOp,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -138,9 +138,4 @@ func resourceAuthServerDefaultUpdate(ctx context.Context, d *schema.ResourceData
 	}
 	d.SetId(authServer.Id)
 	return resourceAuthServerDefaultRead(ctx, d, m)
-}
-
-// Default authorization server can not be removed
-func resourceAuthServerDefaultDelete(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
-	return nil
 }

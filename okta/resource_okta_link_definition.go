@@ -56,6 +56,12 @@ func resourceLinkDefinition() *schema.Resource {
 }
 
 func resourceLinkDefinitionCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	// NOTE: Okta API will ignore parallel calls to `POST
+	// /api/v1/meta/schemas/user/linkedObjects` so a mutex to affect TF
+	// `-parallelism=1` behavior is needed here.
+	oktaMutexKV.Lock(linkDefinition)
+	defer oktaMutexKV.Unlock(linkDefinition)
+
 	linkedObject := okta.LinkedObject{
 		Primary: &okta.LinkedObjectDetails{
 			Name:        d.Get("primary_name").(string),
@@ -100,6 +106,12 @@ func resourceLinkDefinitionRead(ctx context.Context, d *schema.ResourceData, m i
 }
 
 func resourceLinkDefinitionDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	// NOTE: Okta API will ignore parallel calls to `DELETE
+	// /api/v1/meta/schemas/user/linkedObjects` so a mutex to affect TF
+	// `-parallelism=1` behavior is needed here.
+	oktaMutexKV.Lock(linkDefinition)
+	defer oktaMutexKV.Unlock(linkDefinition)
+
 	resp, err := getOktaClientFromMetadata(m).LinkedObject.DeleteLinkedObjectDefinition(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to remove linked object: %v", err)

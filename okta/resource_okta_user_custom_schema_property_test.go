@@ -969,3 +969,80 @@ func testUserSchemaPropertyExists(schemaUserType, index, resolutionScope string)
 		return false, fmt.Errorf("resolution scope can be only 'base' or 'custom'")
 	}
 }
+
+// TestAccResourceOktaUserSchema_parallel_api_calls test coverage to ensure
+// backoff in create and update for okta_ser_schema_property resource is
+// operating correctly.
+func TestAccResourceOktaUserSchema_parallel_api_calls(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(userSchemaProperty)
+	config := `
+resource "okta_user_schema_property" "one" {
+	index       = "testAcc_replace_with_uuid_one"
+	title       = "one"
+	type        = "string"
+	permissions = "%s"
+}
+resource "okta_user_schema_property" "two" {
+	index       = "testAcc_replace_with_uuid_two"
+	title       = "two"
+	type        = "string"
+	permissions = "%s"
+}
+resource "okta_user_schema_property" "three" {
+	index       = "testAcc_replace_with_uuid_three"
+	title       = "three"
+	type        = "string"
+	permissions = "%s"
+}
+resource "okta_user_schema_property" "four" {
+	index       = "testAcc_replace_with_uuid_four"
+	title       = "four"
+	type        = "string"
+	permissions = "%s"
+}
+resource "okta_user_schema_property" "five" {
+	index       = "testAcc_replace_with_uuid_five"
+	title       = "five"
+	type        = "string"
+	permissions = "%s"
+}
+`
+	ro := make([]interface{}, 5)
+	for i := 0; i < 5; i++ {
+		ro[i] = "READ_ONLY"
+	}
+	rw := make([]interface{}, 5)
+	for i := 0; i < 5; i++ {
+		rw[i] = "READ_WRITE"
+	}
+	roConfig := mgr.ConfigReplace(fmt.Sprintf(config, ro...), ri)
+	rwConfig := mgr.ConfigReplace(fmt.Sprintf(config, rw...), ri)
+	resource.Test(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: roConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_user_schema_property.one", "permissions", "READ_ONLY"),
+					resource.TestCheckResourceAttr("okta_user_schema_property.two", "permissions", "READ_ONLY"),
+					resource.TestCheckResourceAttr("okta_user_schema_property.three", "permissions", "READ_ONLY"),
+					resource.TestCheckResourceAttr("okta_user_schema_property.four", "permissions", "READ_ONLY"),
+					resource.TestCheckResourceAttr("okta_user_schema_property.five", "permissions", "READ_ONLY"),
+				),
+			},
+			{
+				Config: rwConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_user_schema_property.one", "permissions", "READ_WRITE"),
+					resource.TestCheckResourceAttr("okta_user_schema_property.two", "permissions", "READ_WRITE"),
+					resource.TestCheckResourceAttr("okta_user_schema_property.three", "permissions", "READ_WRITE"),
+					resource.TestCheckResourceAttr("okta_user_schema_property.four", "permissions", "READ_WRITE"),
+					resource.TestCheckResourceAttr("okta_user_schema_property.five", "permissions", "READ_WRITE"),
+				),
+			},
+		},
+	})
+}

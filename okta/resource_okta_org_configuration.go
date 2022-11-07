@@ -14,7 +14,7 @@ func resourceOrgConfiguration() *schema.Resource {
 		CreateContext: resourceOrgSettingsCreate,
 		ReadContext:   resourceOrgSettingsRead,
 		UpdateContext: resourceOrgSettingsUpdate,
-		DeleteContext: resourceOrgSettingsDelete,
+		DeleteContext: resourceFuncNoOp,
 		Importer:      &schema.ResourceImporter{StateContext: schema.ImportStatePassthroughContext},
 		Schema: map[string]*schema.Schema{
 			"company_name": {
@@ -204,10 +204,6 @@ func resourceOrgSettingsUpdate(ctx context.Context, d *schema.ResourceData, m in
 		return diag.FromErr(err)
 	}
 	return resourceOrgSettingsRead(ctx, d, m)
-}
-
-func resourceOrgSettingsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return nil
 }
 
 func updateCommunicationSettings(ctx context.Context, d *schema.ResourceData, m interface{}) error {

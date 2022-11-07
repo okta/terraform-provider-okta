@@ -10,8 +10,8 @@ import (
 func resourceEventHookVerification() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceEventHookVerificationCreate,
-		ReadContext:   resourceEventHookVerificationRead,
-		DeleteContext: resourceEventHookVerificationDelete,
+		ReadContext:   resourceFuncNoOp,
+		DeleteContext: resourceFuncNoOp,
 		Importer:      nil,
 		Schema: map[string]*schema.Schema{
 			"event_hook_id": {
@@ -30,13 +30,5 @@ func resourceEventHookVerificationCreate(ctx context.Context, d *schema.Resource
 		return diag.Errorf("failed to verify event hook sender: %v", err)
 	}
 	d.SetId(d.Get("event_hook_id").(string))
-	return nil
-}
-
-func resourceEventHookVerificationRead(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
-	return nil
-}
-
-func resourceEventHookVerificationDelete(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
 	return nil
 }

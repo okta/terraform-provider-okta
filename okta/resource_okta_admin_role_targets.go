@@ -216,6 +216,9 @@ func removeAllTargets(ctx context.Context, d *schema.ResourceData, m interface{}
 		d.SetId("")
 		return "", fmt.Errorf("failed to assign '%s' role back to user: %v", d.Get("role_type").(string), err)
 	}
+	if role == nil {
+		return "", errors.New("role was nil")
+	}
 	return role.Id, nil
 }
 

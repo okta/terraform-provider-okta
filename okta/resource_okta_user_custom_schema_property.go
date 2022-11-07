@@ -167,7 +167,6 @@ func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index s
 		stringifyUserSchemaPropertyEnums(schema)
 
 		if err != nil {
-			logger(m).Error(err.Error())
 			if resp != nil && resp.StatusCode == 500 {
 				return fmt.Errorf("updating user custom schema property caused 500 error: %w", err)
 			}
@@ -186,9 +185,11 @@ func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index s
 		} else if schemaAttribute != nil && reflect.DeepEqual(schemaAttribute, updated.Definitions.Custom.Properties[index]) {
 			return nil
 		}
-		logger(m).Error("failed to apply changes after several retries")
 		return errors.New("failed to apply changes after several retries")
 	}, bc)
+	if err != nil {
+		logger(m).Error("failed to apply changes after several retries %+v", err)
+	}
 	return schemaAttribute, err
 }
 

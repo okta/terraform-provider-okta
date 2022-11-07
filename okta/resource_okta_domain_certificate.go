@@ -13,9 +13,9 @@ import (
 func resourceDomainCertificate() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceDomainCertificateCreate,
-		ReadContext:   resourceDomainCertificateRead,
+		ReadContext:   resourceFuncNoOp,
 		UpdateContext: resourceDomainCertificateUpdate,
-		DeleteContext: resourceDomainCertificateDelete,
+		DeleteContext: resourceFuncNoOp,
 		Importer:      nil,
 		Schema: map[string]*schema.Schema{
 			"domain_id": {
@@ -80,21 +80,12 @@ func resourceDomainCertificateCreate(ctx context.Context, d *schema.ResourceData
 	return nil
 }
 
-func resourceDomainCertificateRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return nil
-}
-
 func resourceDomainCertificateUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := buildDomainCertificate(d)
 	_, err := getOktaClientFromMetadata(m).Domain.CreateCertificate(ctx, d.Get("domain_id").(string), c)
 	if err != nil {
 		return diag.Errorf("failed to update domain's certificate: %v", err)
 	}
-	return nil
-}
-
-// nothing to do here, since domain's certificate can be deleted
-func resourceDomainCertificateDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	return nil
 }
 
