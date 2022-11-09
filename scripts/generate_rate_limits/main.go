@@ -28,7 +28,7 @@ var (
 			lines := []string{}
 			scanner := bufio.NewScanner(mappingsFile)
 
-			reID := regexp.MustCompile(`{[\w]+}`)
+			reID := regexp.MustCompile(`{[^}]+}`)
 			for scanner.Scan() {
 				line := scanner.Text()
 				if strings.HasPrefix(line, "/api/v1/internal") ||
