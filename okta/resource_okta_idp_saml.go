@@ -144,8 +144,8 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	if idp.IssuerMode != "" {
 		_ = d.Set("issuer_mode", idp.IssuerMode)
 	}
-	mapping, _, err := getProfileMappingBySourceID(ctx, idp.Id, "", m)
-	if err != nil {
+	mapping, resp, err := getProfileMappingBySourceID(ctx, idp.Id, "", m)
+	if err := suppressErrorOn401(resp, err); err != nil {
 		return diag.Errorf("failed to get SAML identity provider profile mapping: %v", err)
 	}
 	if mapping != nil {
