@@ -95,7 +95,19 @@ func (m *APIMutex) Status(method, endPoint string) *APIStatus {
 
 // Class Returns the api endpoint class.
 func (m *APIMutex) Class(method, endPoint string) string {
-	return m.normalizedKey(method, endPoint)
+	path := reOktaID.ReplaceAllString(endPoint, "ID")
+	return m.normalizedKey(method, path)
+}
+
+// Bucket Returns the rate limit bucket the api endpoint falls into.
+func (m *APIMutex) Bucket(method, endPoint string) string {
+	path := reOktaID.ReplaceAllString(endPoint, "ID")
+	key := m.normalizedKey(method, path)
+	bucket, ok := m.buckets[key]
+	if !ok {
+		return "/"
+	}
+	return bucket
 }
 
 func (m *APIMutex) normalizedKey(method, endPoint string) string {
@@ -118,7 +130,7 @@ func (s *APIStatus) Remaining() int {
 }
 
 var (
-	reOktaID = regexp.MustCompile(`\A[\w]{20}\z`)
+	reOktaID = regexp.MustCompile(`[\w]{20}`)
 )
 
 func (m *APIMutex) get(method, endPoint string) *APIStatus {
