@@ -13,10 +13,12 @@ import (
 )
 
 const (
-	postBinding     = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
-	redirectBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
-	saml11          = "1.1"
-	saml20          = "2.0"
+	postBinding                  = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+	redirectBinding              = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+	saml11                       = "1.1"
+	saml20                       = "2.0"
+	provisioningAuthSchemeToken  = "TOKEN"
+	provisioningAuthSchemeOAuth2 = "OAUTH2"
 )
 
 var (
@@ -36,7 +38,41 @@ var (
 		saml11: "SAML_1_1",
 		saml20: "SAML_2_0",
 	}
+	provisioningConnectionProfileSchema = &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"auth_scheme": {
+				Type:     schema.TypeString,
+				Required: true,
+				ValidateDiagFunc: elemInSlice([]string{
+					provisioningAuthSchemeToken,
+					// provisioningAuthSchemeOAuth2,
+				}),
+			},
+			"token": {
+				Type:      schema.TypeString,
+				Required:  true,
+				Sensitive: true,
+			},
+			// okta-sdk currently does not support OAUTH2 auth scheme with client id
+			//"client_id": {
+			//Type:     schema.TypeString,
+			//Optional: true,
+			//},
+		},
+	}
 )
+
+// provisioningConnection is a helper to simplify marshalling of provisioning connections
+type provisioningConnection struct {
+	activate bool
+	profile  provisioningConnectionProfile
+}
+
+// provisioningConnectionProfile is a helper to simplify marshalling of connection profiles
+type provisioningConnectionProfile struct {
+	authScheme string
+	token      string
+}
 
 func isValidSkipArg(s string) bool {
 	return s == "skip_users" || s == "skip_groups"
@@ -417,6 +453,27 @@ func resourceAppSaml() *schema.Resource {
 				Computed:    true,
 				Description: "The url that can be used to embed this application in other portals.",
 			},
+			"default_provisioning_connection": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"activate": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: "Whether to activate the provisioning connection.",
+						},
+						"profile": {
+							Type:        schema.TypeList,
+							Required:    true,
+							MaxItems:    1,
+							Description: "The provisioning profile to use.",
+							Elem:        provisioningConnectionProfileSchema,
+						},
+					},
+				},
+			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(1 * time.Hour),
@@ -472,6 +529,12 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interf
 			return diag.Errorf("failed to set authentication policy for an SAML application: %v", err)
 		}
 	}
+
+	err = applyDefaultProvisioningConnection(ctx, d, m, app.Id)
+	if err != nil {
+		return diag.Errorf("failed to set default provisioning connection for SAML application: %v", err)
+	}
+
 	return resourceAppSamlRead(ctx, d, m)
 }
 
@@ -556,6 +619,19 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 			return diag.Errorf("failed to sync groups and users for OAuth application: %v", err)
 		}
 	}
+
+	pc := getProvisioningConnectionFromResourceData(d)
+	if pc != nil {
+		provisioningConnection, err := fetchDefaultProvisioningConnection(ctx, m, app.Id)
+		if err != nil {
+			return diag.Errorf("failed to load default provisioning connection for SAML application: %f", err)
+		}
+
+		if err := setDefaultProvisioningConnection(d, pc.profile.token, provisioningConnection); err != nil {
+			return diag.Errorf("failed to set default provisioning connection values: %v", err)
+		}
+	}
+
 	return nil
 }
 
@@ -730,8 +806,118 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	return app, nil
 }
 
+// applyDefaultProvisioningConnection applys the provisioning connection via the okta api and updates the resource
+func applyDefaultProvisioningConnection(
+	ctx context.Context,
+	d *schema.ResourceData,
+	m interface{},
+	appID string,
+) error {
+	pc := getProvisioningConnectionFromResourceData(d)
+	if pc == nil {
+		return errors.New("setting default provisioning action: connection is empty")
+	}
+
+	params := &query.Params{Activate: &pc.activate}
+	provisioningConnection, _, err := getOktaClientFromMetadata(
+		m,
+	).Application.SetDefaultProvisioningConnectionForApplication(
+		ctx,
+		appID,
+		okta.ProvisioningConnectionRequest{
+			Profile: &okta.ProvisioningConnectionProfile{
+				AuthScheme: pc.profile.authScheme,
+				Token:      pc.profile.token,
+			},
+		},
+		params,
+	)
+	if err != nil {
+		return fmt.Errorf("setting default provisioning action: %w", err)
+	}
+
+	_ = setDefaultProvisioningConnection(d, pc.profile.token, provisioningConnection)
+
+	return nil
+}
+
+// getProvisioningConnectionFromResourceData marshals the resource data to a provisioningConnection
+func getProvisioningConnectionFromResourceData(d *schema.ResourceData) *provisioningConnection {
+	pc := d.Get("default_provisioning_connection")
+	if pc == nil {
+		return nil
+	}
+	pcSlice := pc.([]interface{})
+	if len(pcSlice) == 0 {
+		return nil
+	}
+
+	provCon := pcSlice[0].(map[string]interface{})
+	activate := provCon["activate"].(bool)
+	profileSlice := provCon["profile"].([]interface{})
+	profile := profileSlice[0].(map[string]interface{})
+	authScheme := profile["auth_scheme"].(string)
+	token := profile["token"].(string)
+
+	return &provisioningConnection{
+		activate: activate,
+		profile: provisioningConnectionProfile{
+			authScheme: authScheme,
+			token:      token,
+		},
+	}
+}
+
+// fetchDefaultProvisioningConnection retrieves the DefaultProvisioningConnection from the okta api
+func fetchDefaultProvisioningConnection(
+	ctx context.Context,
+	m interface{},
+	appID string,
+) (*okta.ProvisioningConnection, error) {
+	provisioningConnection, _, err := getOktaClientFromMetadata(
+		m,
+	).Application.GetDefaultProvisioningConnectionForApplication(
+		ctx,
+		appID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return provisioningConnection, nil
+}
+
+// setDefaultProvisioningConnection updates the resource data with the latest provisioningConnection
+func setDefaultProvisioningConnection(
+	d *schema.ResourceData,
+	token string,
+	provisioningConnection *okta.ProvisioningConnection,
+) error {
+	activate := false
+	if provisioningConnection.Status == statusActive {
+		activate = true
+	}
+	authScheme := provisioningConnection.AuthScheme
+	pc := []map[string]interface{}{
+		{
+			"activate": activate,
+			"profile": []map[string]interface{}{
+				{
+					"auth_scheme": authScheme,
+					"token":       token,
+				},
+			},
+		},
+	}
+	return d.Set("default_provisioning_connection", pc)
+}
+
 // Keep in mind that at the time of writing this the official SDK did not support generating certs.
-func generateCertificate(ctx context.Context, d *schema.ResourceData, m interface{}, appID string) (*okta.JsonWebKey, error) {
+func generateCertificate(
+	ctx context.Context,
+	d *schema.ResourceData,
+	m interface{},
+	appID string,
+) (*okta.JsonWebKey, error) {
 	requestExecutor := getRequestExecutor(m)
 	years := d.Get("key_years_valid").(int)
 	url := fmt.Sprintf("/api/v1/apps/%s/credentials/keys/generate?validityYears=%d", appID, years)
@@ -769,11 +955,15 @@ func validateAppSaml(d *schema.ResourceData) error {
 		if (d.Get(fmt.Sprintf("attribute_statements.%d.filter_type", i)).(string) != "" ||
 			d.Get(fmt.Sprintf("attribute_statements.%d.filter_value", i)).(string) != "") &&
 			objType != "GROUP" {
-			return errors.New("invalid 'attribute_statements': when setting 'filter_value' or 'filter_type', value of 'type' should be set to 'GROUP'")
+			return errors.New(
+				"invalid 'attribute_statements': when setting 'filter_value' or 'filter_type', value of 'type' should be set to 'GROUP'",
+			)
 		}
 		if objType == "GROUP" &&
 			len(convertInterfaceToStringArrNullable(d.Get(fmt.Sprintf("attribute_statements.%d.values", i)))) > 0 {
-			return errors.New("invalid 'attribute_statements': when setting 'values', 'type' should be set to 'EXPRESSION'")
+			return errors.New(
+				"invalid 'attribute_statements': when setting 'values', 'type' should be set to 'EXPRESSION'",
+			)
 		}
 	}
 	return nil
