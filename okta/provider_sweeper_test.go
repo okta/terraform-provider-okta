@@ -479,9 +479,19 @@ func sweepResourceSets(client *testClient) error {
 
 func sweepUsers(client *testClient) error {
 	var errorList []error
-	users, _, err := client.oktaClient.User.ListUsers(context.Background(), &query.Params{Q: testResourcePrefix})
+	users, resp, err := client.oktaClient.User.ListUsers(context.Background(), &query.Params{Limit: 200, Q: testResourcePrefix})
 	if err != nil {
 		return err
+	}
+	for resp.HasNextPage() {
+		var nextUsers []*okta.User
+		resp, err = resp.Next(context.Background(), &nextUsers)
+		if err != nil {
+			return err
+		}
+		for i := range nextUsers {
+			users = append(users, nextUsers[i])
+		}
 	}
 
 	for _, u := range users {

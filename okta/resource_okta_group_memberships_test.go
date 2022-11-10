@@ -272,6 +272,10 @@ resource "okta_group" "test" {
 		t.SkipNow()
 	}
 
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(groupMemberships)
+	config = mgr.ConfigReplace(config, ri)
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
