@@ -1,5 +1,35 @@
 # Changelog
 
+## 3.39.0 (November 18, 2022)
+
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* `okta_authenticator` resource and data source [#1379](https://github.com/okta/terraform-provider-okta/pull/1379). Thanks, [@monde](https://github.com/monde)!
+  * Added argment `provider_json` allowing provider information to be set with JSON on the authenticator
+  * Improved resource behavior in regards to Okta API's hard create, soft create, and soft delete of authenticators
+  * Improved data source and resource documentation
+
+* Added `authentication_policy` argument to resource `okta_app_bookmark` [#1376](https://github.com/okta/terraform-provider-okta/pull/1376). Thanks, [@jakezarobsky-8451](https://github.com/jakezarobsky-8451)!
+
+* `okta_user` resrouce [#1372](https://github.com/okta/terraform-provider-okta/pull/1372). Thanks, [@monde](https://github.com/monde)!
+  * Adds `skip_roles` flag to allow explicit gating on the attempt to set roles
+  * Swallows and warns on 403 errors when roles API is called and API token is less than super admin scope
+  * Improved data source and resource documentation
+
+### ENHANCEMENTS:
+
+* `okta_idp_saml` gracefully handles 401 errors when setting profile mapping [#1355](https://github.com/okta/terraform-provider-okta/pull/1355)/[#1369](https://github.com/okta/terraform-provider-okta/pull/1369). Thanks, [@deorus](https://github.com/deorus)!
+* Rate limits handler rules are generated from Okta service's actual code [#1356](https://github.com/okta/terraform-provider-okta/pull/1356). Thanks, [@monde](https://github.com/monde)!
+
+### BUG FIXES:
+
+* Address parallel API calls in `okta_user_base_schema_property` resource [#1351](https://github.com/okta/terraform-provider-okta/pull/1351). Thanks, [@monde](https://github.com/monde)!
+
+### PROJECT IMPROVEMENTS:
+
+* Updated `okta_app_user_schema_property`, `okta_auth_server_policy`, and `okta_auth_server_policy_rule` resource documentation [#1348](https://github.com/okta/terraform-provider-okta/pull/1348). Thanks, [@zlitberg](https://github.com/zlitberg)!
+* Document a PEM and JWKS example for the `okta_app_oauth` resource [#1350](https://github.com/okta/terraform-provider-okta/pull/1350). Thanks, [@monde](https://github.com/monde)!
+
 ## 3.38.0 (October 28, 2022)
 
 BUG FIXES:
