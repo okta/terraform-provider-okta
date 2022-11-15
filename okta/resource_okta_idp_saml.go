@@ -145,7 +145,7 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		_ = d.Set("issuer_mode", idp.IssuerMode)
 	}
 	mapping, resp, err := getProfileMappingBySourceID(ctx, idp.Id, "", m)
-	if err := suppressErrorOn401(resp, err); err != nil {
+	if err := suppressErrorOn401("resource okta_idp_saml.user_type_id", m, resp, err); err != nil {
 		return diag.Errorf("failed to get SAML identity provider profile mapping: %v", err)
 	}
 	if mapping != nil {
