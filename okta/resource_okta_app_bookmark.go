@@ -32,6 +32,11 @@ func resourceAppBookmark() *schema.Resource {
 				Default:  false,
 				Optional: true,
 			},
+			"authentication_policy": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Id of this apps authentication policy",
+			}
 		}),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(1 * time.Hour),
@@ -58,6 +63,10 @@ func resourceAppBookmarkCreate(ctx context.Context, d *schema.ResourceData, m in
 	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for bookmark application: %v", err)
+	}
+	err = setAuthenticationPolicy(ctx, d, m, app.id)
+	if err != nil {
+		return diag.Errorf("failed to set authentication policy for bookmark application: %v", err)
 	}
 	return resourceAppBookmarkRead(ctx, d, m)
 }
@@ -105,6 +114,10 @@ func resourceAppBookmarkUpdate(ctx context.Context, d *schema.ResourceData, m in
 			_ = d.Set("logo", o)
 			return diag.Errorf("failed to upload logo for bookmark application: %v", err)
 		}
+	}
+	err = setAuthenticationPolicy(ctx, d, m, app.Id)
+	if err != nil {
+		return diag.Errorf("failed to set authentication policy for bookmark application: %v", err)
 	}
 	return resourceAppBookmarkRead(ctx, d, m)
 }
