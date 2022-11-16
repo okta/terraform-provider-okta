@@ -284,6 +284,16 @@ func suppressErrorOn404(resp *okta.Response, err error) error {
 	return responseErr(resp, err)
 }
 
+// Useful shortcut for suppressing errors from Okta's SDK when a Org does not
+// have permission to access a feature.
+func suppressErrorOn401(what string, meta interface{}, resp *okta.Response, err error) error {
+	if resp != nil && resp.StatusCode == http.StatusUnauthorized {
+		logger(meta).Warn(fmt.Sprintf("Suppressing %q on %q", "401 Unauthorized", what))
+		return nil
+	}
+	return responseErr(resp, err)
+}
+
 func getParallelismFromMetadata(meta interface{}) int {
 	return meta.(*Config).parallelism
 }

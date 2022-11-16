@@ -168,6 +168,7 @@ func errorCheckMessageContaining(t *testing.T, message string, err error) bool {
 	missingFlags := []string{}
 	if message == ErrorCheckMissingPermission {
 		missingFlags = append(missingFlags, "ADVANCED_SSO")
+		missingFlags = append(missingFlags, "MAPPINGS_API")
 	}
 	if message == ErrorCheckCannotCreateSWA {
 		missingFlags = append(missingFlags, "ALLOW_SWA")
@@ -191,7 +192,7 @@ func errorCheckMessageContaining(t *testing.T, message string, err error) bool {
 		missingFlags = append(missingFlags, "OKTA_MFA_POLICY")
 	}
 	if strings.Contains(errorMessage, message) {
-		t.Skipf("Skipping test, org possibly missing flags:\n%+v\nerror:\n%s", missingFlags, errorMessage)
+		t.Skipf("Skipping test, org possibly missing flags:\n%s\nerror:\n%s", strings.Join(missingFlags, ", "), errorMessage)
 		return true
 	}
 
