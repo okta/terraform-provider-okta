@@ -74,7 +74,7 @@ func TestAccDataSourceOktaUser_SkipAdminRoles(t *testing.T) {
 			{
 				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(false, true), ri),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.okta_user.test", "admin_roles.#", "0"),       // skipped
+					resource.TestCheckNoResourceAttr("data.okta_user.test", "admin_roles.#"),          // skipped
 					resource.TestCheckResourceAttr("data.okta_user.test", "group_memberships.#", "2"), // Everyone, A Group
 				),
 			},

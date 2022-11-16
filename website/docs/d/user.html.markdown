@@ -50,7 +50,7 @@ data "okta_user" "example" {
   - `expression` - (Optional, but overrides name/comparison/value) A raw search expression string. If present it will override name/comparison/value.
 - `compound_search_operator` - (Optional) Given multiple search elements they will be compounded together with the op. Default is `and`, `or` is also valid.
 - `skip_groups` - (Optional) Additional API call to collect user's groups will not be made.
-- `skip_roles` - (Optional) Additional API call to collect user's roles will not be made.
+- `skip_roles` - (Optional) Additional API call to collect user's roles will not be made. `admin_roles` will not be written to state if skipping roles.
 - `delay_read_seconds` - (Optional) Force delay of the user read by N seconds. Useful when eventual consistency of user information needs to be allowed for.
 
 ## Attributes Reference

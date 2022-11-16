@@ -84,6 +84,12 @@ func resourceUser() *schema.Resource {
 					ValidateDiagFunc: elemInSlice(validAdminRoles),
 				},
 			},
+			"skip_roles": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Do not populate user roles information (prevents additional API call)",
+			},
 			"city": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -470,10 +476,15 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	if err != nil {
 		return diag.Errorf("failed to set user's properties: %v", err)
 	}
-	err = setAdminRoles(ctx, d, m)
-	if err != nil {
-		return diag.Errorf("failed to set user's roles: %v", err)
+	if val := d.Get("skip_roles"); val != nil {
+		if skip, ok := val.(bool); ok && !skip {
+			err = setAdminRoles(ctx, d, m)
+			if err != nil {
+				return diag.Errorf("failed to set user's admin roles: %v", err)
+			}
+		}
 	}
+
 	// Only sync when it is outlined, an empty list will remove all membership
 	if _, exists := d.GetOk("group_memberships"); exists {
 		err = setGroupUserMemberships(ctx, d, client)

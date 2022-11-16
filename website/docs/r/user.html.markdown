@@ -15,7 +15,12 @@ This resource allows you to create and configure an Okta User.
 ~> **IMPORTANT** If the provider is executed with a non-super user API token a
 403 occurs when the provider attempts to inspect the user's admin roles. This
 403 is swallowed and a warning is logged allowing the resource to continue
-without this error hindering it.
+without this error hindering it. An empty `admin_roles` array will be present in
+the resource state.
+
+~> **IMPORTANT** Use `skip_roles=true` to avoid `admin_roles` being present in
+resource state. This also prevents the underlying API call for those values to
+be made.
 
 ## Example Usage
 
@@ -129,6 +134,8 @@ The following arguments are supported:
 - `profile_url` - (Optional) User profile property.
 
 - `second_email` - (Optional) User profile property.
+
+- `skip_roles` - (Optional) Additional API call to collect user's roles will not be made. `admin_roles` will not be written to state if skipping roles.
 
 - `state` - (Optional) User profile property.
 
