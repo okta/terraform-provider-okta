@@ -2,7 +2,6 @@ package okta
 
 import (
 	"fmt"
-	"os"
 	"strings"
 	"testing"
 
@@ -248,6 +247,10 @@ data "okta_group" "test_b" {
 
 // TestAccOktaGroupMembershipsIssue1119 addresses https://github.com/okta/terraform-provider-okta/issues/1119
 func TestAccOktaGroupMembershipsIssue1119(t *testing.T) {
+	if !allowLongRunningACCTest(t) {
+		return
+	}
+
 	configUsers := ""
 	for i := 0; i < 250; i++ {
 		configUsers = fmt.Sprintf("%s%s", configUsers, configUser(i))
@@ -268,10 +271,6 @@ resource "okta_group" "test" {
 	}
 
 	config := fmt.Sprintf(strFmt, args...)
-	if !allowLongRunningACCTest(t) {
-		t.SkipNow()
-	}
-
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(groupMemberships)
 	config = mgr.ConfigReplace(config, ri)
@@ -296,15 +295,6 @@ resource "okta_group" "test" {
 			},
 		},
 	})
-}
-
-func allowLongRunningACCTest(t *testing.T) bool {
-	envVar := "OKTA_ALLOW_LONG_RUNNING_ACC_TEST"
-	allow := (os.Getenv(envVar) != "")
-	if !allow {
-		t.Logf("%q not present, skipping test", envVar)
-	}
-	return allow
 }
 
 func configGroupMemberships(n int) string {

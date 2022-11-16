@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
 
@@ -197,4 +198,27 @@ func errorCheckMessageContaining(t *testing.T, message string, err error) bool {
 	}
 
 	return false
+}
+
+// allowLongRunningACCTest Test skip helper for allowing long running tests to
+// be executed.
+func allowLongRunningACCTest(t *testing.T) bool {
+	envVar := "OKTA_ALLOW_LONG_RUNNING_ACC_TEST"
+	allow := (os.Getenv(envVar) != "")
+	if !allow {
+		t.Skipf("%q not present, skipping test", envVar)
+	}
+	return allow
+}
+
+// orgAdminOnlyTest Test skip helper for tests that should only run with a token
+// of org admin permissions, not super admin.
+func orgAdminOnlyTest(t *testing.T) bool {
+	envVar := "OKTA_API_TOKEN_ROLE"
+	envVal := os.Getenv(envVar)
+	allow := (envVal == "org-admin")
+	if !allow {
+		t.Skipf("%s=%s not, requires %q value, skipping test", envVar, envVal, "org-admin")
+	}
+	return allow
 }
