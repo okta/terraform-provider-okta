@@ -12,6 +12,11 @@ Creates an Okta User.
 
 This resource allows you to create and configure an Okta User.
 
+~> **IMPORTANT** If the provider is executed with a non-super user API token a
+403 occurs when the provider attempts to inspect the user's admin roles. This
+403 is swallowed and a warning is logged allowing the resource to continue
+without this error hindering it.
+
 ## Example Usage
 
 Full profile:

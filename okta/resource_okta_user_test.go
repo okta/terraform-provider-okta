@@ -440,3 +440,44 @@ resource okta_user "test" {
 }
 `, r)
 }
+
+// TestIssue1216Suppress403Errors
+// https://github.com/okta/terraform-provider-okta/issues/1216 When this test
+// runs with an API token of Org Admin (not Super Admin) the resource will fail
+// when the admin roles are gathered.
+func TestIssue1216Suppress403Errors(t *testing.T) {
+	if !orgAdminOnlyTest(t) {
+		return
+	}
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(user)
+	config := `
+resource "okta_user" "test" {
+  first_name = "TestAcc"
+  last_name  = "Smith"
+  login      = "testAcc-replace_with_uuid@example.com"
+  email      = "testAcc-replace_with_uuid@example.com"
+}`
+	config = mgr.ConfigReplace(config, ri)
+	resourceName := fmt.Sprintf("%s.test", user)
+	email := fmt.Sprintf("testAcc-%d@example.com", ri)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      testAccCheckUserDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
+					resource.TestCheckResourceAttr(resourceName, "login", email),
+					resource.TestCheckResourceAttr(resourceName, "email", email),
+					resource.TestCheckResourceAttr(resourceName, "admin_roles.#", "0"),
+				),
+			},
+		},
+	})
+}
