@@ -6,3 +6,4 @@ App. [See Okta documentation for more details](https://developer.okta.com/docs/a
 
 - Example of an app with a group association [can be found here](./basic.tf)
 - Example of an app with a user association [can be found here](./basic_updated.tf)
+- Example of an app with a authentication policy [can be found here](./app_with_authentication_policy.tf)

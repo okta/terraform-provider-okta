@@ -11,14 +11,13 @@ resource "okta_group" "group" {
 }
 
 resource "okta_app_bookmark" "test" {
-  label                 = "testAcc_replace_with_uuid"
-  url                   = "https://test.com"
-  authentication_policy = "some-authentication-policy-id"
-  groups                = [okta_group.group.id]
-
+  label = "testAcc_replace_with_uuid"
+  url   = "https://test.com"
 
   users {
     id       = okta_user.user.id
     username = okta_user.user.email
   }
+
+  groups = [okta_group.group.id]
 }
