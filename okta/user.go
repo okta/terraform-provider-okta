@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 	"reflect"
 	"time"
 
@@ -274,29 +273,24 @@ func listUserOnlyRoles(ctx context.Context, c *okta.Client, userID string) (user
 	return
 }
 
-func getAdminRoles(ctx context.Context, id string, c *okta.Client) ([]interface{}, error) {
+func getAdminRoles(ctx context.Context, id string, c *okta.Client) ([]interface{}, *okta.Response, error) {
 	roleTypes := make([]interface{}, 0)
-
 	roles, resp, err := listUserOnlyRoles(ctx, c, id)
 
 	if err != nil {
-		if resp != nil && resp.StatusCode == http.StatusForbidden {
-			// no-op
-		} else {
-			return nil, err
-		}
+		return roleTypes, resp, err
 	} else {
 		for _, role := range roles {
 			roleTypes = append(roleTypes, role.Type)
 		}
 	}
 
-	return roleTypes, err
+	return roleTypes, resp, err
 }
 
 func setAdminRoles(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	roleTypes, err := getAdminRoles(ctx, d.Id(), getOktaClientFromMetadata(m))
-	if err != nil {
+	roleTypes, resp, err := getAdminRoles(ctx, d.Id(), getOktaClientFromMetadata(m))
+	if err := suppressErrorOn403("setting admin roles", m, resp, err); err != nil {
 		return fmt.Errorf("failed to get admin roles: %v", err)
 	}
 

@@ -121,7 +121,7 @@ func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interfac
 			rawMap["group_memberships"] = groups
 		}
 		if includeRoles {
-			roles, err := getAdminRoles(ctx, user.Id, client)
+			roles, _, err := getAdminRoles(ctx, user.Id, client)
 			if err != nil {
 				return diag.Errorf("failed to set user's admin roles: %v", err)
 			}
