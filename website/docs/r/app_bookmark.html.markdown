@@ -33,6 +33,8 @@ The following arguments are supported:
 
 - `app_links_json` - (Optional) Displays specific appLinks for the app. The value for each application link should be boolean.
 
+- `authentication_policy` - (Optional) The ID of the associated `app_signon_policy`. If this property is removed from the application the `default` sign-on-policy will be associated with this application.
+
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
 - `enduser_note` - (Optional) Application notes for end users.
