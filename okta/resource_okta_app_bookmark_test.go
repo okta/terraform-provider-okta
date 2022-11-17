@@ -31,6 +31,7 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
 					resource.TestCheckResourceAttr(resourceName, "groups.#", "1"),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttr(resourceName, "authentication_policy", "some-authentication-policy-id"),
 				),
 			},
 			{
@@ -42,6 +43,7 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
 					resource.TestCheckResourceAttr(resourceName, "users.#", "1"),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttr(resourceName, "authentication_policy", "some-authentication-policy-id"),
 				),
 			},
 		},
@@ -54,8 +56,9 @@ func TestAccAppBookmarkApplication_timeouts(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appBookmark)
 	config := `
 resource "okta_app_bookmark" "test" {
-  label  = "testAcc_replace_with_uuid"
-  url    = "https://test.com"
+  label                 = "testAcc_replace_with_uuid"
+  url                   = "https://test.com"
+  authentication_policy = "test_policy_id"
   timeouts {
     create = "60m"
     read = "2h"
