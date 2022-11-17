@@ -58,7 +58,7 @@ The following arguments are supported:
 
 - `max_length` - (Optional) The maximum length of the user property value. Only applies to type `"string"`.
 
-- `scope` - (Optional) determines whether an app user attribute can be set at the Individual or Group Level.
+- `scope` - (Optional) determines whether an app user attribute can be set at the Personal `"SELF"` or Group `"NONE"` level. Default value is `"NONE"`.
 
 - `array_type` - (Optional) The type of the array elements if `type` is set to `"array"`.
 
@@ -66,7 +66,7 @@ The following arguments are supported:
 
 - `array_one_of` - (Optional) Display name and value an enum array can be set to.
 
-  - `const` - (Required) value mapping to member of `enum`.
+  - `const` - (Required) value mapping to member of `array_enum`.
   - `title` - (Required) display name for the enum value.
 
 - `permissions` - (Optional) Access control permissions for the property. It can be set to `"READ_WRITE"`, `"READ_ONLY"`, `"HIDE"`.
@@ -77,7 +77,7 @@ The following arguments are supported:
 
 - `external_namespace` - (Optional) External namespace of the user schema property.
 
-- `union` - (Optional) Used to assign attribute group priority. Can not be set to 'true' if `scope` is set to Individual level.
+- `union` - (Optional) If `type` is set to `"array"`, used to set whether attribute value is determined by group priority `false`, or combine values across groups `true`. Can not be set to `true` if `scope` is set to `"SELF"`.
 
 ## Attributes Reference
 

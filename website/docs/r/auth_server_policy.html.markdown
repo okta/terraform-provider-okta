@@ -37,7 +37,7 @@ The following arguments are supported:
 
 - `priority` - (Required) The priority of the Auth Server Policy.
 
-- `description` - (Optional) The description of the Auth Server Policy.
+- `description` - (Required) The description of the Auth Server Policy.
 
 - `client_whitelist` - (Required) The clients to whitelist the policy for. `["ALL_CLIENTS"]` is a special value that can be used to whitelist all clients, otherwise it is a list of client ids.
 
