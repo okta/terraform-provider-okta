@@ -43,15 +43,20 @@ func dataSourceAuthenticator() *schema.Resource {
 				Computed:    true,
 				Description: "Type of the authenticator",
 			},
-			"provider_hostname": {
+			"provider_json": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Server host name or IP address",
+				Description: "Authenticator Provider in JSON format",
 			},
 			"provider_auth_port": {
 				Type:        schema.TypeInt,
 				Computed:    true,
 				Description: "The RADIUS server port (for example 1812). This is defined when the On-Prem RADIUS server is configured",
+			},
+			"provider_hostname": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Server host name or IP address",
 			},
 			"provider_instance_id": {
 				Type:     schema.TypeString,
@@ -103,10 +108,26 @@ func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m 
 		_ = d.Set("settings", string(b))
 	}
 	if authenticator.Provider != nil {
+		b, _ := json.Marshal(authenticator.Provider)
+		dataMap := map[string]interface{}{}
+		_ = json.Unmarshal([]byte(string(b)), &dataMap)
+		b, _ = json.Marshal(dataMap)
+		_ = d.Set("provider_json", string(b))
+
 		_ = d.Set("provider_type", authenticator.Provider.Type)
-		_ = d.Set("provider_hostname", authenticator.Provider.Configuration.HostName)
-		_ = d.Set("provider_auth_port", authenticator.Provider.Configuration.AuthPort)
-		_ = d.Set("provider_instance_id", authenticator.Provider.Configuration.InstanceId)
+
+		if authenticator.Type == "security_key" {
+			_ = d.Set("provider_hostname", authenticator.Provider.Configuration.HostName)
+			_ = d.Set("provider_auth_port", authenticator.Provider.Configuration.AuthPort)
+			_ = d.Set("provider_instance_id", authenticator.Provider.Configuration.InstanceId)
+		}
+
+		if authenticator.Provider.Type == "DUO" {
+			_ = d.Set("provider_host", authenticator.Provider.Configuration.Host)
+			_ = d.Set("provider_secret_key", authenticator.Provider.Configuration.SecretKey)
+			_ = d.Set("provider_integration_key", authenticator.Provider.Configuration.IntegrationKey)
+		}
+
 		if authenticator.Provider.Configuration.UserNameTemplate != nil {
 			_ = d.Set("provider_user_name_template", authenticator.Provider.Configuration.UserNameTemplate.Template)
 		}

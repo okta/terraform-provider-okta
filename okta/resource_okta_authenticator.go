@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -46,6 +47,27 @@ func resourceAuthenticator() *schema.Resource {
 					return new == ""
 				},
 			},
+			"provider_json": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Provider in JSON format",
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
+				ConflictsWith: []string{
+					// general
+					"provider_auth_port",
+					"provider_hostname",
+					"provider_shared_secret",
+					"provider_user_name_template",
+					// duo
+					"provider_host",
+					"provider_integration_key",
+					"provider_secret_key",
+				},
+			},
 			"status": {
 				Type:             schema.TypeString,
 				Optional:         true,
@@ -58,26 +80,63 @@ func resourceAuthenticator() *schema.Resource {
 				Computed:    true,
 				Description: "The type of Authenticator",
 			},
-			"provider_hostname": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     "localhost",
-				Description: "Server host name or IP address",
-			},
+			// General Provider Arguments
 			"provider_auth_port": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      9000,
-				Description:  "The RADIUS server port (for example 1812). This is defined when the On-Prem RADIUS server is configured",
-				RequiredWith: []string{"provider_hostname"},
+				Type:          schema.TypeInt,
+				Optional:      true,
+				Description:   "The RADIUS server port (for example 1812). This is defined when the On-Prem RADIUS server is configured",
+				RequiredWith:  []string{"provider_hostname"},
+				ConflictsWith: []string{"provider_json"},
+				DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+					if _, ok := d.GetOk("provider_json"); ok {
+						return true
+					}
+					return false
+				},
+			},
+			"provider_hostname": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				Default:       "localhost",
+				Description:   "Server host name or IP address",
+				ConflictsWith: []string{"provider_json"},
 			},
 			"provider_shared_secret": {
-				Type:         schema.TypeString,
-				Sensitive:    true,
-				Optional:     true,
-				Description:  "An authentication key that must be defined when the RADIUS server is configured, and must be the same on both the RADIUS client and server.",
-				RequiredWith: []string{"provider_hostname"},
+				Type:          schema.TypeString,
+				Sensitive:     true,
+				Optional:      true,
+				Description:   "An authentication key that must be defined when the RADIUS server is configured, and must be the same on both the RADIUS client and server.",
+				RequiredWith:  []string{"provider_hostname"},
+				ConflictsWith: []string{"provider_json"},
 			},
+			"provider_user_name_template": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				Default:       "global.assign.userName.login",
+				Description:   "Format expected by the provider",
+				RequiredWith:  []string{"provider_hostname"},
+				ConflictsWith: []string{"provider_json"},
+			},
+			// DUO specific provider arguments
+			"provider_host": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				Description:   "The Duo Security API hostname",
+				ConflictsWith: []string{"provider_json"},
+			},
+			"provider_integration_key": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				Description:   "The Duo Security integration key",
+				ConflictsWith: []string{"provider_json"},
+			},
+			"provider_secret_key": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				Description:   "The Duo Security secret key",
+				ConflictsWith: []string{"provider_json"},
+			},
+			// General Provider Attributes
 			"provider_instance_id": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -86,40 +145,59 @@ func resourceAuthenticator() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"provider_user_name_template": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "global.assign.userName.login",
-				Description:  "Format expected by the provider",
-				RequiredWith: []string{"provider_hostname"},
-			},
 		},
 	}
 }
 
-// authenticator API is immutable, create is just a read of the key set on the resource
+// resourceAuthenticatorCreate Okta API has an odd notion of create for
+// authenticators. If the authenticator doesn't exist then a one time `POST
+// /api/v1/authenticators` to create the authenticator (hard create) is to be
+// performed. Thereafter, that authenticator is never deleted, it is only
+// deactivated (soft delete). Therefore, if the authenticator already exists
+// create is just a soft import of an existing authenticator.
 func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	if isClassicOrg(m) {
 		return resourceOIEOnlyFeatureError(authenticator)
 	}
 
-	authenticator, err := findAuthenticator(ctx, m, "", d.Get("key").(string))
-	if err != nil {
-		return diag.FromErr(err)
+	var err error
+	// soft create if the authenticator already exists
+	authenticator, _ := findAuthenticator(ctx, m, "", d.Get("key").(string))
+	if authenticator == nil {
+		// otherwise hard create
+		authenticator, err = buildAuthenticator(d)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		activate := (d.Get("status").(string) == statusActive)
+		qp := &query.Params{
+			Activate: boolPtr(activate),
+		}
+		authenticator, _, err = getOktaClientFromMetadata(m).Authenticator.CreateAuthenticator(ctx, *authenticator, qp)
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
+
 	d.SetId(authenticator.Id)
+
+	// If status is defined in the config, and the actual status reported by the
+	// API is not the same, then toggle the status. Soft update.
 	status, ok := d.GetOk("status")
 	if ok && authenticator.Status != status.(string) {
+		var err error
 		if status.(string) == statusInactive {
-			_, _, err = getOktaClientFromMetadata(m).Authenticator.DeactivateAuthenticator(ctx, d.Id())
+			authenticator, _, err = getOktaClientFromMetadata(m).Authenticator.DeactivateAuthenticator(ctx, d.Id())
 		} else {
-			_, _, err = getOktaClientFromMetadata(m).Authenticator.ActivateAuthenticator(ctx, d.Id())
+			authenticator, _, err = getOktaClientFromMetadata(m).Authenticator.ActivateAuthenticator(ctx, d.Id())
 		}
 		if err != nil {
 			return diag.Errorf("failed to change authenticator status: %v", err)
 		}
 	}
-	return resourceAuthenticatorRead(ctx, d, m)
+
+	establishAuthenticator(authenticator, d)
+	return nil
 }
 
 func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -127,39 +205,12 @@ func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m in
 		return resourceOIEOnlyFeatureError(authenticator)
 	}
 
-	authenticator, resp, err := getOktaClientFromMetadata(m).Authenticator.GetAuthenticator(ctx, d.Id())
-	if err := suppressErrorOn404(resp, err); err != nil {
+	authenticator, _, err := getOktaClientFromMetadata(m).Authenticator.GetAuthenticator(ctx, d.Id())
+	if err != nil {
 		return diag.Errorf("failed to get authenticator: %v", err)
 	}
-	_ = d.Set("key", authenticator.Key)
-	_ = d.Set("name", authenticator.Name)
-	_ = d.Set("status", authenticator.Status)
-	_ = d.Set("type", authenticator.Type)
-	if authenticator.Settings != nil {
-		b, _ := json.Marshal(authenticator.Settings)
+	establishAuthenticator(authenticator, d)
 
-		dataMap := map[string]interface{}{}
-		_ = json.Unmarshal([]byte(string(b)), &dataMap)
-		b, _ = json.Marshal(dataMap)
-
-		_ = d.Set("settings", string(b))
-	}
-	if authenticator.Provider != nil {
-		_ = d.Set("provider_type", authenticator.Provider.Type)
-		_ = d.Set("provider_hostname", authenticator.Provider.Configuration.HostName)
-		_ = d.Set("provider_auth_port", authenticator.Provider.Configuration.AuthPort)
-		_ = d.Set("provider_instance_id", authenticator.Provider.Configuration.InstanceId)
-		if authenticator.Provider.Configuration.UserNameTemplate != nil {
-			_ = d.Set("provider_user_name_template", authenticator.Provider.Configuration.UserNameTemplate.Template)
-		}
-
-		// Duo specific setup
-		if authenticator.Provider.Type == "DUO" {
-			_ = d.Set("provider_host", authenticator.Provider.Configuration.Host)
-			_ = d.Set("provider_secret_key", authenticator.Provider.Configuration.SecretKey)
-			_ = d.Set("provider_integration_key", authenticator.Provider.Configuration.IntegrationKey)
-		}
-	}
 	return nil
 }
 
@@ -172,7 +223,11 @@ func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, m 
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = getOktaClientFromMetadata(m).Authenticator.UpdateAuthenticator(ctx, d.Id(), *buildAuthenticator(d))
+	authenticator, err := buildAuthenticator(d)
+	if err != nil {
+		return diag.Errorf("failed to update authenticator: %v", err)
+	}
+	_, _, err = getOktaClientFromMetadata(m).Authenticator.UpdateAuthenticator(ctx, d.Id(), *authenticator)
 	if err != nil {
 		return diag.Errorf("failed to update authenticator: %v", err)
 	}
@@ -190,16 +245,23 @@ func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, m 
 	return resourceAuthenticatorRead(ctx, d, m)
 }
 
-// delete is NOOP, authenticators are immutable for create and delete
+// resourceAuthenticatorDelete Delete is soft, authenticators are immutable for
+// true delete. However, deactivate the authenticator as a stand in for delete.
+// Authenticators that are utilized by existing policies can not be deactivated.
 func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	if isClassicOrg(m) {
 		return resourceOIEOnlyFeatureError(authenticator)
 	}
 
+	_, _, err := getOktaClientFromMetadata(m).Authenticator.DeactivateAuthenticator(ctx, d.Id())
+	if err != nil {
+		logger(m).Warn(fmt.Sprintf("Attempted to deactivate authenticator %q as soft delete and received error: %s", d.Get("key"), err))
+	}
+
 	return nil
 }
 
-func buildAuthenticator(d *schema.ResourceData) *okta.Authenticator {
+func buildAuthenticator(d *schema.ResourceData) (*okta.Authenticator, error) {
 	authenticator := okta.Authenticator{
 		Type: d.Get("type").(string),
 		Id:   d.Id(),
@@ -223,7 +285,7 @@ func buildAuthenticator(d *schema.ResourceData) *okta.Authenticator {
 		authenticator.Provider = &okta.AuthenticatorProvider{
 			Type: d.Get("provider_type").(string),
 			Configuration: &okta.AuthenticatorProviderConfiguration{
-				Host:           d.Get("provider_hostname").(string),
+				Host:           d.Get("provider_host").(string),
 				SecretKey:      d.Get("provider_secret_key").(string),
 				IntegrationKey: d.Get("provider_integration_key").(string),
 				UserNameTemplate: &okta.AuthenticatorProviderConfigurationUserNamePlate{
@@ -232,13 +294,26 @@ func buildAuthenticator(d *schema.ResourceData) *okta.Authenticator {
 			},
 		}
 	} else {
-		var settings okta.AuthenticatorSettings
 		if s, ok := d.GetOk("settings"); ok {
-			_ = json.Unmarshal([]byte(s.(string)), &settings)
+			var settings okta.AuthenticatorSettings
+			err := json.Unmarshal([]byte(s.(string)), &settings)
+			if err != nil {
+				return nil, err
+			}
+			authenticator.Settings = &settings
 		}
-		authenticator.Settings = &settings
 	}
-	return &authenticator
+
+	if p, ok := d.GetOk("provider_json"); ok {
+		var provider okta.AuthenticatorProvider
+		err := json.Unmarshal([]byte(p.(string)), &provider)
+		if err != nil {
+			return nil, err
+		}
+		authenticator.Provider = &provider
+	}
+
+	return &authenticator, nil
 }
 
 func validateAuthenticator(d *schema.ResourceData) error {
@@ -253,6 +328,8 @@ func validateAuthenticator(d *schema.ResourceData) error {
 				"'provider_auth_port', 'provider_shared_secret' and 'provider_user_name_template' are required", typ)
 		}
 	}
+
+	typ = d.Get("provider_type").(string)
 	if typ == "DUO" {
 		h := d.Get("provider_host").(string)
 		sk := d.Get("provider_secret_key").(string)
@@ -264,4 +341,38 @@ func validateAuthenticator(d *schema.ResourceData) error {
 		}
 	}
 	return nil
+}
+
+func establishAuthenticator(authenticator *okta.Authenticator, d *schema.ResourceData) {
+	_ = d.Set("key", authenticator.Key)
+	_ = d.Set("name", authenticator.Name)
+	_ = d.Set("status", authenticator.Status)
+	_ = d.Set("type", authenticator.Type)
+	if authenticator.Settings != nil {
+		b, _ := json.Marshal(authenticator.Settings)
+		dataMap := map[string]interface{}{}
+		_ = json.Unmarshal([]byte(string(b)), &dataMap)
+		b, _ = json.Marshal(dataMap)
+		_ = d.Set("settings", string(b))
+	}
+
+	if authenticator.Provider != nil {
+		_ = d.Set("provider_type", authenticator.Provider.Type)
+
+		if authenticator.Type == "security_key" {
+			_ = d.Set("provider_hostname", authenticator.Provider.Configuration.HostName)
+			_ = d.Set("provider_auth_port", authenticator.Provider.Configuration.AuthPort)
+			_ = d.Set("provider_instance_id", authenticator.Provider.Configuration.InstanceId)
+		}
+
+		if authenticator.Provider.Configuration.UserNameTemplate != nil {
+			_ = d.Set("provider_user_name_template", authenticator.Provider.Configuration.UserNameTemplate.Template)
+		}
+
+		if authenticator.Provider.Type == "DUO" {
+			_ = d.Set("provider_host", authenticator.Provider.Configuration.Host)
+			_ = d.Set("provider_secret_key", authenticator.Provider.Configuration.SecretKey)
+			_ = d.Set("provider_integration_key", authenticator.Provider.Configuration.IntegrationKey)
+		}
+	}
 }
