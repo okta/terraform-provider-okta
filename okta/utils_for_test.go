@@ -222,3 +222,20 @@ func orgAdminOnlyTest(t *testing.T) bool {
 	}
 	return allow
 }
+
+// testAttributeJSON Deep equal of the JSON at named resource attribute witht he
+// expected JSON
+func testAttributeJSON(name, attribute, expectedJSON string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[name]
+		if !ok {
+			return fmt.Errorf("not found: %s", name)
+		}
+		actualJSON := rs.Primary.Attributes[attribute]
+		eq := areJSONStringsEqual(expectedJSON, actualJSON)
+		if !eq {
+			return fmt.Errorf("attribute '%s' in '%s' expected %q, got %q", attribute, name, expectedJSON, actualJSON)
+		}
+		return nil
+	}
+}
