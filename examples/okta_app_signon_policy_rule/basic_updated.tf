@@ -91,18 +91,16 @@ resource "okta_app_signon_policy_rule" "test" {
     os_type = "MACOS"
     type    = "DESKTOP"
   }
-# FIXME Okta API for /api/v1/policies/{policyId}/rules/{ruleId}
-# is not returning os_expression even when it has been set throwing off the TF state.
-#  platform_include {
-#    os_expression = ".*"
-#    os_type = "OTHER"
-#    type    = "DESKTOP"
-#  }
-#  platform_include {
-#    os_expression = ".*"
-#    os_type = "OTHER"
-#    type    = "MOBILE"
-#  }
+  platform_include {
+    os_expression = ""
+    os_type = "OTHER"
+    type    = "DESKTOP"
+  }
+  platform_include {
+    os_expression = ""
+    os_type = "OTHER"
+    type    = "MOBILE"
+  }
   platform_include {
     os_type = "WINDOWS"
     type    = "DESKTOP"
