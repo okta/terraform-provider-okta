@@ -69,6 +69,7 @@ data "okta_user" "example" {
 - `group_memberships` - Groups user belongs to.
 - `honorific_prefix` - Honorific prefix(es) of the user, or title in most Western languages.
 - `honorific_suffix` - Honorific suffix(es) of the user.
+- `id` - User ID.
 - `last_name` - Family name of the user.
 - `locale` - User's default location for purposes of localizing items such as currency, date time format, numerical representations, etc.
 - `login` - Unique identifier for the user.
