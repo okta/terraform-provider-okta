@@ -2,6 +2,9 @@ package okta
 
 import (
 	"context"
+	"reflect"
+	"sort"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,6 +30,42 @@ func resourceThreatInsightSettings() *schema.Resource {
 				Optional:    true,
 				Description: "List of Network Zone IDs to exclude to be not logged or blocked by Okta ThreatInsight and proceed to Sign On rules evaluation",
 				Elem:        &schema.Schema{Type: schema.TypeString},
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					// k will be "network_excludes.#"", "network_excludes.1", ..., "network_excludes.N"
+					items := strings.Split(k, ".")
+					// special case before the resource has been created
+					if old == "" || (len(items) > 1 && items[1] == "#") {
+						// old value of an item is blank OR
+						// "network_excludes.#"" will be seen during the set up before create
+						// always return false or the TF plan will be in an illogical state
+						return false
+					}
+					_o, _n := d.GetChange("network_excludes")
+					oldNE, ok := _o.([]interface{})
+					if !ok {
+						return false
+					}
+					newNE, ok := _n.([]interface{})
+					if !ok {
+						return false
+					}
+					// length of new/old network_exclude slices has changed
+					if len(oldNE) != len(newNE) {
+						return false
+					}
+					// sort and check with deepequal
+					sort.Slice(oldNE, func(i, j int) bool {
+						a := oldNE[i].(string)
+						b := oldNE[j].(string)
+						return a < b
+					})
+					sort.Slice(newNE, func(i, j int) bool {
+						a := newNE[i].(string)
+						b := newNE[j].(string)
+						return a < b
+					})
+					return reflect.DeepEqual(oldNE, newNE)
+				},
 			},
 		},
 	}
