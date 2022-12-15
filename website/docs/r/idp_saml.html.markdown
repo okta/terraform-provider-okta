@@ -12,6 +12,10 @@ Creates a SAML Identity Provider.
 
 This resource allows you to create and configure a SAML Identity Provider.
 
+-> If you receive the error `You do not have permission to access the feature
+you are requesting` [contact support](mailto:dev-inquiries@okta.com) and
+request feature flag `MAPPINGS_API` be applied to your org.
+
 ## Example Usage
 
 ```hcl
