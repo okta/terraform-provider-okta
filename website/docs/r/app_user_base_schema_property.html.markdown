@@ -44,6 +44,8 @@ The following arguments are supported:
 
 - `pattern` - (Optional) The validation pattern to use for the subschema, only available for `login` property. Must be in form of `.+`, or `[<pattern>]+`.
 
+- `user_type` - User type ID. By default, it is `"default"`.
+
 ## Attributes Reference
 
 - `app_id` - ID of the application the user property is associated with.
