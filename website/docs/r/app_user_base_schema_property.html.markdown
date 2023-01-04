@@ -16,11 +16,11 @@ This resource allows you to configure a base app user schema property.
 
 ```hcl
 resource "okta_app_user_base_schema_property" "example" {
-  app_id      = "<app id>"
-  index       = "customPropertyName"
-  title       = "customPropertyName"
-  type        = "string"
-  master      = "OKTA"
+  app_id = "<app id>"
+  index  = "customPropertyName"
+  title  = "customPropertyName"
+  type   = "string"
+  master = "OKTA"
 }
 ```
 
@@ -43,6 +43,8 @@ The following arguments are supported:
 - `master` - (Optional) Master priority for the user schema property. It can be set to `"PROFILE_MASTER"` or `"OKTA"`.
 
 - `pattern` - (Optional) The validation pattern to use for the subschema, only available for `login` property. Must be in form of `.+`, or `[<pattern>]+`.
+
+- `user_type` - User type ID. By default, it is `"default"`.
 
 ## Attributes Reference
 
