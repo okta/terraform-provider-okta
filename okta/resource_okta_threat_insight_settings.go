@@ -4,7 +4,6 @@ import (
 	"context"
 	"reflect"
 	"sort"
-	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -31,10 +30,8 @@ func resourceThreatInsightSettings() *schema.Resource {
 				Description: "List of Network Zone IDs to exclude to be not logged or blocked by Okta ThreatInsight and proceed to Sign On rules evaluation",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					// k will be "network_excludes.#"", "network_excludes.1", ..., "network_excludes.N"
-					items := strings.Split(k, ".")
 					// special case before the resource has been created
-					if old == "" || (len(items) > 1 && items[1] == "#") {
+					if old == "" || k == "network_excludes.#" {
 						// old value of an item is blank OR
 						// "network_excludes.#"" will be seen during the set up before create
 						// always return false or the TF plan will be in an illogical state
