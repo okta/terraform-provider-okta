@@ -673,6 +673,64 @@ func setSamlSettings(d *schema.ResourceData, signOn *okta.SamlApplicationSetting
 	})
 }
 
+func setWsFedSettings(d *schema.ResourceData, signOn *okta.WsFederationApplicationSettingsApplication) error {
+	_ = d.Set("default_relay_state", signOn.DefaultRelayState)
+	_ = d.Set("sso_url", signOn.SsoAcsUrl)
+	_ = d.Set("recipient", signOn.Recipient)
+	_ = d.Set("destination", signOn.Destination)
+	_ = d.Set("audience", signOn.Audience)
+	_ = d.Set("idp_issuer", signOn.IdpIssuer)
+	_ = d.Set("subject_name_id_template", signOn.SubjectNameIdTemplate)
+	_ = d.Set("subject_name_id_format", signOn.SubjectNameIdFormat)
+	_ = d.Set("response_signed", signOn.ResponseSigned)
+	_ = d.Set("assertion_signed", signOn.AssertionSigned)
+	_ = d.Set("signature_algorithm", signOn.SignatureAlgorithm)
+	_ = d.Set("digest_algorithm", signOn.DigestAlgorithm)
+	_ = d.Set("honor_force_authn", signOn.HonorForceAuthn)
+	_ = d.Set("authn_context_class_ref", signOn.AuthnContextClassRef)
+	if signOn.AllowMultipleAcsEndpoints != nil {
+		if *signOn.AllowMultipleAcsEndpoints {
+			acsEndpointsObj := signOn.AcsEndpoints
+			if len(acsEndpointsObj) > 0 {
+				acsEndpoints := make([]string, len(acsEndpointsObj))
+				for i := range acsEndpointsObj {
+					acsEndpoints[i] = acsEndpointsObj[i].Url
+				}
+				_ = d.Set("acs_endpoints", convertStringSliceToSetNullable(acsEndpoints))
+			}
+		} else {
+			_ = d.Set("acs_endpoints", nil)
+		}
+	}
+
+	if len(signOn.InlineHooks) > 0 {
+		_ = d.Set("inline_hook_id", signOn.InlineHooks[0].Id)
+	}
+	attrStatements := signOn.AttributeStatements
+	arr := make([]map[string]interface{}, len(attrStatements))
+
+	for i, st := range attrStatements {
+		arr[i] = map[string]interface{}{
+			"name":         st.Name,
+			"namespace":    st.Namespace,
+			"type":         st.Type,
+			"values":       st.Values,
+			"filter_type":  st.FilterType,
+			"filter_value": st.FilterValue,
+		}
+	}
+	if signOn.Slo != nil && signOn.Slo.Enabled != nil && *signOn.Slo.Enabled {
+		_ = d.Set("single_logout_issuer", signOn.Slo.Issuer)
+		_ = d.Set("single_logout_url", signOn.Slo.LogoutUrl)
+		if signOn.SpCertificate != nil && len(signOn.SpCertificate.X5c) > 0 {
+			_ = d.Set("single_logout_certificate", signOn.SpCertificate.X5c[0])
+		}
+	}
+	return setNonPrimitives(d, map[string]interface{}{
+		"attribute_statements": arr,
+	})
+}
+
 func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	if d.Get("status").(string) == statusActive {

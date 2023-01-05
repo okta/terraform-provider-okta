@@ -33,6 +33,8 @@ const (
 	appOAuthRedirectURI           = "okta_app_oauth_redirect_uri"
 	appSaml                       = "okta_app_saml"
 	appSamlAppSettings            = "okta_app_saml_app_settings"
+	appWSFed                      = "okta_app_ws_federation"
+	appWSFedAppSettings           = "okta_app_ws_federation_settings"
 	appSecurePasswordStore        = "okta_app_secure_password_store"
 	appSharedCredentials          = "okta_app_shared_credentials"
 	appSignOnPolicy               = "okta_app_signon_policy"
