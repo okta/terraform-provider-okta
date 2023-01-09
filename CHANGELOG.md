@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.40.0 (January 09, 2023)
+
+### BUG FIXES:
+
+* Fixes ThreatInsight Configuration Continuously Reordering [#1398](https://github.com/okta/terraform-provider-okta/pull/1398). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fixes rate limit accounting for `/api/v1/authorizationServers` endpoints [#1420](https://github.com/okta/terraform-provider-okta/pull/1420). Thanks, [@monde](https://github.com/monde)!
+
+### PROJECT IMPROVEMENTS:
+
+* Improve `app_user_base_schema_property` documentation [#1407](https://github.com/okta/terraform-provider-okta/pull/1407). Thanks, [@robgero](https://github.com/robgero)!
+* Fix `TestAccOktaAppSignOnPolicy` ACC test [#1412](https://github.com/okta/terraform-provider-okta/pull/1412). Thanks, [@noinarisak](https://github.com/noinarisak)!
+
 ## 3.39.0 (November 18, 2022)
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
