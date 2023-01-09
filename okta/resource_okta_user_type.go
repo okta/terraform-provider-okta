@@ -26,8 +26,8 @@ func resourceUserType() *schema.Resource {
 				Description: "The display name for the type",
 			},
 			"display_name": {
-				Type:        schema.TypeString,
-				Required:    true,
+				Type:     schema.TypeString,
+				Required: true,
 				Description: "The display name for the type	",
 			},
 			"description": {

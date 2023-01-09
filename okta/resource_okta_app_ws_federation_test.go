@@ -45,7 +45,7 @@ func TestAccAppWsFedApplication_preconfig(t *testing.T) {
 	})
 }
 
-// Test creation of a custom SAML app.
+// Test creation of a custom WSFed app.
 func TestAccAppWsFedApplication_crud(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appWsFed)
