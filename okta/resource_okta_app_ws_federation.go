@@ -19,80 +19,77 @@ func resourceAppWsFed() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: appImporter,
 		},
-		// Schema: buildAppWsFedSchema(map[string]*schema.Schema{
 		Schema: map[string]*schema.Schema{
 			"label": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "A display-friendly label for this app",
+				Description: "This label displays under the app on your home page",
 			},
 			"site_url": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				Description:      "",
+				Description:      "Launch URL for the Web Application",
 				ValidateDiagFunc: stringIsURL(validURLSchemes...),
 			},
 			"realm": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "",
+				Description: "The trust realm for the Web Application",
 			},
 			"reply_url": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "",
+				Description: "The ReplyTo URL to which responses are directed",
 			},
 			"reply_override": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Login URL",
+				Description: "Enable web application to override ReplyTo URL with wreply param",
 			},
 			"name_id_format": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "",
+				Description: "Name ID Format",
 			},
 			"audience_restriction": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Default:     false,
-				Description: "",
+				Description: "The assertion containing a bearer subject confirmation MUST contain an Audience Restriction including the service provider's unique identifier as an Audience",
 			},
 			"authn_context_class_ref": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "",
+				Description: "Specifies the Authentication Context for the issued SAML Assertion",
 			},
 			"group_filter": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "",
+				Description: "An expression that will be used to filter groups. If the Okta group name matches the expression, the group name will be included in the SAML Assertion Attribute Statement",
 			},
 			"group_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "",
+				Description: "Specifies the SAML attribute name for a user's group memberships",
 			},
 			"group_value_format": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "",
+				Description: "Specifies the SAML assertion attribute value for filtered groups",
 			},
 			"username_attribute": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "",
+				Description: "Specifies additional username attribute statements to include in the SAML Assertion",
 			},
 			"attribute_statements": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "",
+				Description: "Defines custom SAML attribute statements",
 			},
 			"visibility": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Default:     false,
-				Description: "Should the application icon be visible to users?",
+				Description: "Application icon vsibility to users",
 			},
 		},
 		Timeouts: &schema.ResourceTimeout{

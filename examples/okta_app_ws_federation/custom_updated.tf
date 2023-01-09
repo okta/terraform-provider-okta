@@ -1,7 +1,7 @@
 resource "okta_app_ws_federation" "test" {
 		label    = "example"
 		site_url = "https://signin.example.com/saml"
-		realm = "example"
+		realm = "EXAMPLE"
 		reply_url = "https://example-two.com"
 		allow_override = false
 		name_id_format = "uid"
