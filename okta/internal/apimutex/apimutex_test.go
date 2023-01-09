@@ -81,6 +81,30 @@ func TestUpdate(t *testing.T) {
 	}
 }
 
+func TestGetRegex(t *testing.T) {
+	tests := []struct {
+		method         string
+		endPoint       string
+		expectedBucket string
+	}{
+		{http.MethodGet, "/d/n/e", "/"},
+		{http.MethodGet, "/.well-known/acme-challenge/ID", "/.well-known/acme-challenge/{token}"},
+		{http.MethodGet, "/api/v1/groups", "/api/v1/groups"},
+		{http.MethodPost, "/api/v1/groups", "/api/v1/groups"},
+		{http.MethodGet, "/api/v1/authorizationServers/0123456789abcdefghij/policies/0123456789abcdefghij", "/api/v1"},
+	}
+	amu, err := NewAPIMutex(100)
+	if err != nil {
+		t.Fatalf("api mutex constructor had error %+v", err)
+	}
+	for _, test := range tests {
+		result := amu.get(test.method, test.endPoint)
+		if result != amu.status[test.expectedBucket] {
+			t.Fatalf("expected endpoint \"%s %s\" to be in status bucket %q", test.method, test.endPoint, test.expectedBucket)
+		}
+	}
+}
+
 func minRemaining(remaining []int) int {
 	var result int
 	first := true
