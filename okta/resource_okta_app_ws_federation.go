@@ -211,7 +211,7 @@ func buildAppWsFed(d *schema.ResourceData) *okta.WsFederationApplication {
 			Realm:                d.Get("realm").(string),
 			SiteURL:              d.Get("site_url").(string),
 			UsernameAttribute:    d.Get("").(string),
-			WReplyOverride:       d.Get("").(bool),
+			WReplyOverride:       d.Get("").(*bool),
 			WReplyURL:            d.Get("").(string),
 		},
 		Notes: buildAppNotes(d),
