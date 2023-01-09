@@ -105,9 +105,7 @@ func TestAccAppWsFedApplication_timeouts(t *testing.T) {
 		group_attribute_value = "dn"
 		username_attribute = "username"
 		custom_attribute_statements = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname|${user.firstName}|,http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname|${user.lastName}|"
-		visibility = true
-		signature_algorithm = "SHA256"     
-		digest_algorithm = "SHA256"        
+		visibility = true      
 	}
 	`
 	resource.Test(t, resource.TestCase{
