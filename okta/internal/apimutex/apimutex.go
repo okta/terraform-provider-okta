@@ -134,10 +134,19 @@ var (
 )
 
 func (m *APIMutex) get(method, endPoint string) *APIStatus {
-	// the important point here is the replace all is performing this
+	// The important point here is the replace all is performing this
 	// transformation for the bucket lookup /api/v1/users/abcdefghij0123456789
-	// to /api/v1/users/ID
-	path := reOktaID.ReplaceAllString(endPoint, "ID")
+	// to /api/v1/users/ID .
+	path := reOktaID.ReplaceAllStringFunc(endPoint, func(element string) string {
+		// Any path elements, like "authorizationServers", which are 20
+		// characters long should be handled here.
+		switch element {
+		case "authorizationServers":
+			return element
+		default:
+			return "ID"
+		}
+	})
 	key := m.normalizedKey(method, path)
 	bucket, ok := m.buckets[key]
 	if !ok {
