@@ -133,18 +133,6 @@ func dataSourceAppWsFedRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("name", app.Name)
 	_ = d.Set("status", app.Status)
 	_ = d.Set("key_id", app.Credentials.Signing.Kid)
-	// if app.Settings != nil {
-	// 	// if app.Settings.SignOn != nil {
-	// 	// 	err = setSamlSettings(d, app.Settings.SignOn)
-	// 	// 	if err != nil {
-	// 	// 		return diag.Errorf("failed to read SAML app: error setting SAML sign-on settings: %v", err)
-	// 	// 	}
-	// 	// }
-	// 	err = setAppSettings(d, app.Settings.App)
-	// 	if err != nil {
-	// 		return diag.Errorf("failed to read WsFed app: failed to set WsFed app settings: %v", err)
-	// 	}
-	// }
 	_ = d.Set("features", convertStringSliceToSetNullable(app.Features))
 	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
