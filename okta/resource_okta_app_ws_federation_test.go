@@ -106,7 +106,7 @@ func TestAccAppWsFedApplication_timeouts(t *testing.T) {
 		    username_attribute = "username"
 		    attribute_statements = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname|bob|,http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname|hope|"
 		    visibility = false
-		    status = "active"
+		    status = "ACTIVE"
 	    }
 	`
 	resource.Test(t, resource.TestCase{
