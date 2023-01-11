@@ -256,10 +256,6 @@ func buildAppSwaSchema(appSchema map[string]*schema.Schema) map[string]*schema.S
 	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, appVisibilitySchema, baseAppSwaSchema, appSchema)
 }
 
-// func buildAppWsFedSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-// 	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, appVisibilitySchema, baseAppWsFedSchema, appSchema)
-// }
-
 func buildSchemeAppCreds(d *schema.ResourceData) *okta.SchemeApplicationCredentials {
 	revealPass := d.Get("reveal_password").(bool)
 	return &okta.SchemeApplicationCredentials{

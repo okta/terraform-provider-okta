@@ -6,7 +6,7 @@ here. Just some really common ones! We will stand up a wiki soon.
 ## Example Stacks
 
 - [Okta and Cognito](./oidc-cognito-stack.tf) Example of using Okta OIDC application with a Cognito ID Provider to
-  provide a serverless SPA access to As resources.
+  provide a serverless SPA access to AWS resources.
 
 ## Test Fixture Examples
 
