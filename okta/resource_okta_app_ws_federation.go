@@ -46,7 +46,7 @@ func resourceAppWsFed() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
-				Description: "Enable web application to override ReplyTo URL with wreply param",
+				Description: "Enable web application to override ReplyTo URL with reply param",
 			},
 			"name_id_format": {
 				Type:        schema.TypeString,
@@ -91,7 +91,7 @@ func resourceAppWsFed() *schema.Resource {
 			"visibility": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Application icon vsibility to users",
+				Description: "Application icon visibility to users",
 			},
 			"auto_submit_toolbar": {
 				Type:        schema.TypeBool,
@@ -112,8 +112,10 @@ func resourceAppWsFed() *schema.Resource {
 				Description: "Do not display application icon to users",
 			},
 			"status": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     true,
+				Description: "Activation status of the application",
 			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
@@ -125,32 +127,23 @@ func resourceAppWsFed() *schema.Resource {
 }
 
 func resourceAppWsFedCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	fmt.Print("create:1")
 	client := getOktaClientFromMetadata(m)
-	fmt.Print("create:2")
 	app := buildAppWsFed(d)
-	fmt.Print("create:3")
 	activate := d.Get("status").(string) == statusActive
-	fmt.Print("create:4")
 	params := &query.Params{Activate: &activate}
-	fmt.Print("create:5")
 	_, _, err := client.Application.CreateApplication(ctx, app, params)
 	if err != nil {
 		return diag.Errorf("failed to create WSFed application: %v", err)
 	}
-	fmt.Print("create:6")
 	d.SetId(app.Id)
-	fmt.Print("create:7")
 	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
 		return diag.Errorf("failed to handle groups and users for WSFed application: %v", err)
 	}
-	fmt.Print("create:8")
 	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for WSFed application: %v", err)
 	}
-	fmt.Print("create:end")
 	return resourceAppWsFedRead(ctx, d, m)
 }
 
@@ -225,9 +218,7 @@ func resourceAppWsFedDelete(ctx context.Context, d *schema.ResourceData, m inter
 func buildAppWsFed(d *schema.ResourceData) *okta.WsFederationApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewWsFederationApplication()
-	fmt.Print("build:1")
 	app.Label = d.Get("label").(string)
-	fmt.Print("build:2")
 	// name := d.Get("preconfigured_app").(string)
 	// if name != "" {
 	// 	app.Name = name
