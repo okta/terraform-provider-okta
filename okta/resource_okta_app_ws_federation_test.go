@@ -94,7 +94,6 @@ func TestAccAppWsFedApplication_timeouts(t *testing.T) {
 	 resource "okta_app_ws_federation" "exampleWsFedApp" {
 		    label    = "exampleWsFedApp"
 		    site_url = "https://signin.example.com/saml"
-		    # realm = "example"
 		    reply_url = "https://example.com"
 		    reply_override = false
 		    name_id_format = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"

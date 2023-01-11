@@ -148,12 +148,6 @@ func dataSourceAppWsFedRead(ctx context.Context, d *schema.ResourceData, m inter
 	_ = d.Set("label", app.Label)
 	_ = d.Set("name", app.Name)
 	_ = d.Set("status", app.Status)
-	_ = d.Set("key_id", app.Credentials.Signing.Kid)
-	_ = d.Set("features", convertStringSliceToSetNullable(app.Features))
-	_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
-	_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
-	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
-	_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
 	p, _ := json.Marshal(app.Links)
 	_ = d.Set("links", string(p))
 	return nil
