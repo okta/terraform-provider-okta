@@ -1,4 +1,4 @@
-# okta_app_ws_federation
+# okta_app_ws_federation $\pi$
 
 This resource represents an Okta WS Federation Application in various configuration states. For more information see
 the [API docs](https://developer.okta.com/docs/reference/api/apps/#add-ws-federation-application)
