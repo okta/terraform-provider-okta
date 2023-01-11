@@ -1,5 +1,5 @@
-resource "okta_app_ws_federation" "exampleWsFedApp" {
-	label    = "exampleWsFedApp"
+resource "okta_app_ws_federation" "test" {
+	label    = "testAcc_replace_with_uuid"
 	site_url = "https://signin.test.com/saml"
 	reply_url = "https://test.com"
 	reply_override = false

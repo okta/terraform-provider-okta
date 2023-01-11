@@ -38,8 +38,8 @@ func TestAccOktaDataSourceAppWsFed_read(t *testing.T) {
 
 func buildTestAppWsFed(d int) string {
 	return fmt.Sprintf(`
-	resource "okta_app_ws_federation" "exampleWsFedApp" {
-		label    = "exampleWsFedApp_%d"
+	resource "okta_app_ws_federation" "test" {
+		label    = "testAcc_%d"
 		site_url = "https://signin.test.com/saml"
 		reply_url = "https://test.com"
 		reply_override = false

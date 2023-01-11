@@ -29,7 +29,7 @@ func TestAccAppWsFedApplication_preconfig(t *testing.T) {
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewWsFederationApplication())),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttrSet(resourceName, "site_url"),
 				),
 			},
 			{
@@ -38,7 +38,7 @@ func TestAccAppWsFedApplication_preconfig(t *testing.T) {
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewWsFederationApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
-					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttrSet(resourceName, "site_url"),
 				),
 			},
 		},
@@ -90,9 +90,10 @@ func TestAccAppWsFedApplication_timeouts(t *testing.T) {
 	ri := acctest.RandInt()
 	mgr := newFixtureManager(appWsFed)
 	resourceName := fmt.Sprintf("%s.test", appWsFed)
+	importConfig := mgr.GetFixtures("import.tf", ri, t)
 	config := `
 	 resource "okta_app_ws_federation" "exampleWsFedApp" {
-		    label    = "exampleWsFedApp"
+		    label    = "testAcc_replace_with_uuid"
 		    site_url = "https://signin.example.com/saml"
 		    reply_url = "https://example.com"
 		    reply_override = false
@@ -122,6 +123,9 @@ func TestAccAppWsFedApplication_timeouts(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "timeouts.read", "2h"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.update", "30m"),
 				),
+			},
+			{
+				Config: importConfig,
 			},
 		},
 	})
