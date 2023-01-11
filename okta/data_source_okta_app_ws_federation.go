@@ -56,7 +56,7 @@ func dataSourceAppWsFed() *schema.Resource {
 			"reply_override": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Enable web application to override ReplyTo URL with wreply param",
+				Description: "Enable web application to override ReplyTo URL with reply param",
 			},
 			"name_id_format": {
 				Type:        schema.TypeString,
@@ -101,7 +101,7 @@ func dataSourceAppWsFed() *schema.Resource {
 			"visibility": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Application icon vsibility to users",
+				Description: "Application icon visibility to users",
 			},
 		}),
 	}

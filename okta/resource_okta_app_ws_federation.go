@@ -2,7 +2,6 @@ package okta
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -216,15 +215,8 @@ func resourceAppWsFedDelete(ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func buildAppWsFed(d *schema.ResourceData) *okta.WsFederationApplication {
-	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewWsFederationApplication()
 	app.Label = d.Get("label").(string)
-	// name := d.Get("preconfigured_app").(string)
-	// if name != "" {
-	// 	app.Name = name
-	// 	app.SignOnMode = "WS_FEDERATION" // in case pre-configured app has more than one sign-on modes
-	// }
-	fmt.Print("build:3")
 	WReplyOverride := d.Get("reply_override").(bool)
 	app.Settings = &okta.WsFederationApplicationSettings{
 		App: &okta.WsFederationApplicationSettingsApplication{
@@ -244,10 +236,5 @@ func buildAppWsFed(d *schema.ResourceData) *okta.WsFederationApplication {
 		Notes: buildAppNotes(d),
 	}
 	app.Visibility = buildAppVisibility(d)
-	// app.Accessibility = buildAppAccessibility(d)
-	// app.Credentials = &okta.ApplicationCredentials{
-	// 	UserNameTemplate: buildUserNameTemplate(d),
-	// }
-
 	return app
 }

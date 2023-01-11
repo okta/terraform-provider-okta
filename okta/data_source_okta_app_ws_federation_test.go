@@ -38,20 +38,20 @@ func TestAccOktaDataSourceAppWsFed_read(t *testing.T) {
 
 func buildTestAppWsFed(d int) string {
 	return fmt.Sprintf(`
-	resource "okta_app_ws_federation" "example" {
-		label    = "example_%d"
-		site_url = "https://signin.example.com/saml"
-		realm = "example"
-		reply_url = "https://example.com"
-		allow_override = false
-		name_id_format = "uid"
-		audience_restriction = "https://signin.example.com"
-		authn_context_class_ref = "Kerberos"
+	resource "okta_app_ws_federation" "exampleWsFedApp" {
+		label    = "exampleWsFedApp_%d"
+		site_url = "https://signin.test.com/saml"
+		reply_url = "https://test.com"
+		reply_override = false
+		name_id_format = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+		audience_restriction = "https://signin.test.com"
+		authn_context_class_ref = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
 		group_filter = "app1.*"
 		group_name = "username"
 		group_value_format = "dn"
 		username_attribute = "username"
-		attribute_statements = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname|${user.firstName}|,http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname|${user.lastName}|"
-		visibility = true      
+		attribute_statements = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname|bob|,http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname|hope|"
+		visibility = false
+		status = "active"
 	}`, d)
 }

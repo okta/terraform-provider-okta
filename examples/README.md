@@ -6,7 +6,7 @@ here. Just some really common ones! We will stand up a wiki soon.
 ## Example Stacks
 
 - [Okta and Cognito](./oidc-cognito-stack.tf) Example of using Okta OIDC application with a Cognito ID Provider to
-  provide a serverless SPA access to AWS resources.
+  provide a serverless SPA access to As resources.
 
 ## Test Fixture Examples
 
@@ -25,6 +25,7 @@ the provider, but we don't quite have the manpower yet to do so.
   Store Applications.
 - [okta_app_swa](./okta_app_swa) Supports the management of Okta SWA Applications.
 - [okta_app_three_field](./okta_app_three_field) Supports the management of Okta Three Field Applications.
+- [okta_app_ws_federation](./okta_app_ws_federation) Supports the management of Okta WS-Fed Applications.
 - [okta_app](./okta_app) Generic Application data source.
 - [okta_auth_server_claim](./okta_auth_server_claim) Supports the management of Okta Authorization servers claims.
 - [okta_auth_server_policy_rule](./okta_auth_server_policy_rule) Supports the management of Okta Authorization servers
