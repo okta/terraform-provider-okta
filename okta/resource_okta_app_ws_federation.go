@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -19,7 +20,7 @@ func resourceAppWsFed() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: appImporter,
 		},
-		Schema: map[string]*schema.Schema{
+		Schema: buildSchema(skipUsersAndGroupsSchema, map[string]*schema.Schema{
 			"label": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -42,8 +43,9 @@ func resourceAppWsFed() *schema.Resource {
 				Description: "The ReplyTo URL to which responses are directed",
 			},
 			"reply_override": {
-				Type:        schema.TypeString,
+				Type:        schema.TypeBool,
 				Optional:    true,
+				Default:     false,
 				Description: "Enable web application to override ReplyTo URL with wreply param",
 			},
 			"name_id_format": {
@@ -52,7 +54,7 @@ func resourceAppWsFed() *schema.Resource {
 				Description: "Name ID Format",
 			},
 			"audience_restriction": {
-				Type:        schema.TypeBool,
+				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "The assertion containing a bearer subject confirmation MUST contain an Audience Restriction including the service provider's unique identifier as an Audience",
 			},
@@ -91,7 +93,29 @@ func resourceAppWsFed() *schema.Resource {
 				Optional:    true,
 				Description: "Application icon vsibility to users",
 			},
-		},
+			"auto_submit_toolbar": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Display auto submit toolbar",
+			},
+			"hide_ios": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Do not display application icon on mobile app",
+			},
+			"hide_web": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Do not display application icon to users",
+			},
+			"status": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+		}),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(1 * time.Hour),
 			Read:   schema.DefaultTimeout(1 * time.Hour),
@@ -101,23 +125,32 @@ func resourceAppWsFed() *schema.Resource {
 }
 
 func resourceAppWsFedCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	fmt.Print("create:1")
 	client := getOktaClientFromMetadata(m)
+	fmt.Print("create:2")
 	app := buildAppWsFed(d)
+	fmt.Print("create:3")
 	activate := d.Get("status").(string) == statusActive
+	fmt.Print("create:4")
 	params := &query.Params{Activate: &activate}
+	fmt.Print("create:5")
 	_, _, err := client.Application.CreateApplication(ctx, app, params)
 	if err != nil {
 		return diag.Errorf("failed to create WSFed application: %v", err)
 	}
+	fmt.Print("create:6")
 	d.SetId(app.Id)
+	fmt.Print("create:7")
 	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
 		return diag.Errorf("failed to handle groups and users for WSFed application: %v", err)
 	}
+	fmt.Print("create:8")
 	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for WSFed application: %v", err)
 	}
+	fmt.Print("create:end")
 	return resourceAppWsFedRead(ctx, d, m)
 }
 
@@ -192,34 +225,38 @@ func resourceAppWsFedDelete(ctx context.Context, d *schema.ResourceData, m inter
 func buildAppWsFed(d *schema.ResourceData) *okta.WsFederationApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := okta.NewWsFederationApplication()
+	fmt.Print("build:1")
 	app.Label = d.Get("label").(string)
-	name := d.Get("preconfigured_app").(string)
-	if name != "" {
-		app.Name = name
-		app.SignOnMode = "WS_FEDERATION" // in case pre-configured app has more than one sign-on modes
-	}
+	fmt.Print("build:2")
+	// name := d.Get("preconfigured_app").(string)
+	// if name != "" {
+	// 	app.Name = name
+	// 	app.SignOnMode = "WS_FEDERATION" // in case pre-configured app has more than one sign-on modes
+	// }
+	fmt.Print("build:3")
+	WReplyOverride := d.Get("reply_override").(bool)
 	app.Settings = &okta.WsFederationApplicationSettings{
 		App: &okta.WsFederationApplicationSettingsApplication{
-			AttributeStatements:  d.Get("").(string),
-			AudienceRestriction:  d.Get("").(string),
-			AuthnContextClassRef: d.Get("").(string),
-			GroupFilter:          d.Get("").(string),
-			GroupName:            d.Get("").(string),
-			GroupValueFormat:     d.Get("").(string),
-			NameIDFormat:         d.Get("").(string),
+			AttributeStatements:  d.Get("attribute_statements").(string),
+			AudienceRestriction:  d.Get("audience_restriction").(string),
+			AuthnContextClassRef: d.Get("authn_context_class_ref").(string),
+			GroupFilter:          d.Get("group_filter").(string),
+			GroupName:            d.Get("group_name").(string),
+			GroupValueFormat:     d.Get("group_value_format").(string),
+			NameIDFormat:         d.Get("name_id_format").(string),
 			Realm:                d.Get("realm").(string),
 			SiteURL:              d.Get("site_url").(string),
-			UsernameAttribute:    d.Get("").(string),
-			WReplyOverride:       d.Get("").(*bool),
-			WReplyURL:            d.Get("").(string),
+			UsernameAttribute:    d.Get("username_attribute").(string),
+			WReplyOverride:       &WReplyOverride,
+			WReplyURL:            d.Get("reply_url").(string),
 		},
 		Notes: buildAppNotes(d),
 	}
 	app.Visibility = buildAppVisibility(d)
-	app.Accessibility = buildAppAccessibility(d)
-	app.Credentials = &okta.ApplicationCredentials{
-		UserNameTemplate: buildUserNameTemplate(d),
-	}
+	// app.Accessibility = buildAppAccessibility(d)
+	// app.Credentials = &okta.ApplicationCredentials{
+	// 	UserNameTemplate: buildUserNameTemplate(d),
+	// }
 
 	return app
 }

@@ -15,11 +15,27 @@ import (
 func dataSourceAppWsFed() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppWsFedRead,
-		Schema: map[string]*schema.Schema{
+		Schema: buildSchema(skipUsersAndGroupsSchema, map[string]*schema.Schema{
+			"id": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"label", "label_prefix"},
+			},
 			"label": {
-				Type:        schema.TypeString,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"id", "label_prefix"},
+			},
+			"label_prefix": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"id", "label"},
+			},
+			"active_only": {
+				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "This label displays under the app on your home page",
+				Default:     true,
+				Description: "Search only ACTIVE applications.",
 			},
 			"site_url": {
 				Type:             schema.TypeString,
@@ -87,7 +103,7 @@ func dataSourceAppWsFed() *schema.Resource {
 				Optional:    true,
 				Description: "Application icon vsibility to users",
 			},
-		},
+		}),
 	}
 }
 
