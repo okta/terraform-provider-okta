@@ -1,0 +1,338 @@
+---
+version: 1
+interactions:
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes
+    method: GET
+  response:
+    body: '[{"id":"scp5ysislxkvogsZL1d7","name":"okta.myAccount.customAuthenticator.manage","description":"Allows
+      the end user to manage their custom authenticators.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislxkvogsZL1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislyVNdLd0I1d7","name":"okta.myAccount.customAuthenticator.read","description":"Allows
+      the end user to read their custom authenticators.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislyVNdLd0I1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislrVff16SQ1d7","name":"okta.myAccount.email.manage","description":"Allows
+      the end user to manage their email addresses.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislrVff16SQ1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislsUZ24eJd1d7","name":"okta.myAccount.email.read","description":"Allows
+      the end user to read their email addresses.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislsUZ24eJd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislpwhfPrti1d7","name":"okta.myAccount.manage","description":"Allows
+      the end user to manage their account profile, email addresses, and phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislpwhfPrti1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisltY1GWJvh1d7","name":"okta.myAccount.phone.manage","description":"Allows
+      the end user to manage their phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisltY1GWJvh1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislun4NNF2m1d7","name":"okta.myAccount.phone.read","description":"Allows
+      the end user to read their phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislun4NNF2m1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislvF3v3W5A1d7","name":"okta.myAccount.profile.manage","description":"Allows
+      the end user to manage their account profile.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislvF3v3W5A1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislwoAAPaEO1d7","name":"okta.myAccount.profile.read","description":"Allows
+      the end user to read their account profile.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislwoAAPaEO1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislqgEzndw91d7","name":"okta.myAccount.read","description":"Allows
+      the end user to read their account profile, email addresses, and phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislqgEzndw91d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisliWcRBGpw1d7","name":"openid","description":"Signals
+      that a request is an OpenID request.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisliWcRBGpw1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisljVrc2wrc1d7","name":"profile","description":"The
+      exact data varies based on what profile information you have provided, such
+      as: name, time zone, picture, or birthday.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisljVrc2wrc1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislk1rvle8n1d7","name":"email","description":"This
+      allows the app to view your email address.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislk1rvle8n1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisllz1ArEnk1d7","name":"address","description":"This
+      allows the app to view your address, such as: street address, city, state, and
+      zip code.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisllz1ArEnk1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislmTRp70PG1d7","name":"phone","description":"This
+      allows the app to view your phone number.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislmTRp70PG1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislnM1ExSEV1d7","name":"offline_access","description":"This
+      keeps you signed in to the app, even when you are not using it.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislnM1ExSEV1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisloDEqUJzs1d7","name":"device_sso","description":"This
+      allows you to single sign on between native client applications on your device.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisloDEqUJzs1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-_ZyyAzv0We6MJIw_VMKIJxJxupowisv77i6WfPCRuR0''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:23:35 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes
+    method: GET
+  response:
+    body: '[{"id":"scp5ysislxkvogsZL1d7","name":"okta.myAccount.customAuthenticator.manage","description":"Allows
+      the end user to manage their custom authenticators.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislxkvogsZL1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislyVNdLd0I1d7","name":"okta.myAccount.customAuthenticator.read","description":"Allows
+      the end user to read their custom authenticators.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislyVNdLd0I1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislrVff16SQ1d7","name":"okta.myAccount.email.manage","description":"Allows
+      the end user to manage their email addresses.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislrVff16SQ1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislsUZ24eJd1d7","name":"okta.myAccount.email.read","description":"Allows
+      the end user to read their email addresses.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislsUZ24eJd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislpwhfPrti1d7","name":"okta.myAccount.manage","description":"Allows
+      the end user to manage their account profile, email addresses, and phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislpwhfPrti1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisltY1GWJvh1d7","name":"okta.myAccount.phone.manage","description":"Allows
+      the end user to manage their phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisltY1GWJvh1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislun4NNF2m1d7","name":"okta.myAccount.phone.read","description":"Allows
+      the end user to read their phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislun4NNF2m1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislvF3v3W5A1d7","name":"okta.myAccount.profile.manage","description":"Allows
+      the end user to manage their account profile.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislvF3v3W5A1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislwoAAPaEO1d7","name":"okta.myAccount.profile.read","description":"Allows
+      the end user to read their account profile.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislwoAAPaEO1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislqgEzndw91d7","name":"okta.myAccount.read","description":"Allows
+      the end user to read their account profile, email addresses, and phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislqgEzndw91d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisliWcRBGpw1d7","name":"openid","description":"Signals
+      that a request is an OpenID request.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisliWcRBGpw1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisljVrc2wrc1d7","name":"profile","description":"The
+      exact data varies based on what profile information you have provided, such
+      as: name, time zone, picture, or birthday.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisljVrc2wrc1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislk1rvle8n1d7","name":"email","description":"This
+      allows the app to view your email address.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislk1rvle8n1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisllz1ArEnk1d7","name":"address","description":"This
+      allows the app to view your address, such as: street address, city, state, and
+      zip code.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisllz1ArEnk1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislmTRp70PG1d7","name":"phone","description":"This
+      allows the app to view your phone number.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislmTRp70PG1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislnM1ExSEV1d7","name":"offline_access","description":"This
+      keeps you signed in to the app, even when you are not using it.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislnM1ExSEV1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisloDEqUJzs1d7","name":"device_sso","description":"This
+      allows you to single sign on between native client applications on your device.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisloDEqUJzs1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-s6CFVKbPlm9uSVP6nPg-yPOjmPB4oq3KodoMkG0UuzE''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:23:36 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes
+    method: GET
+  response:
+    body: '[{"id":"scp5ysislxkvogsZL1d7","name":"okta.myAccount.customAuthenticator.manage","description":"Allows
+      the end user to manage their custom authenticators.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislxkvogsZL1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislyVNdLd0I1d7","name":"okta.myAccount.customAuthenticator.read","description":"Allows
+      the end user to read their custom authenticators.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislyVNdLd0I1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislrVff16SQ1d7","name":"okta.myAccount.email.manage","description":"Allows
+      the end user to manage their email addresses.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislrVff16SQ1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislsUZ24eJd1d7","name":"okta.myAccount.email.read","description":"Allows
+      the end user to read their email addresses.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislsUZ24eJd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislpwhfPrti1d7","name":"okta.myAccount.manage","description":"Allows
+      the end user to manage their account profile, email addresses, and phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislpwhfPrti1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisltY1GWJvh1d7","name":"okta.myAccount.phone.manage","description":"Allows
+      the end user to manage their phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisltY1GWJvh1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislun4NNF2m1d7","name":"okta.myAccount.phone.read","description":"Allows
+      the end user to read their phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislun4NNF2m1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislvF3v3W5A1d7","name":"okta.myAccount.profile.manage","description":"Allows
+      the end user to manage their account profile.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislvF3v3W5A1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislwoAAPaEO1d7","name":"okta.myAccount.profile.read","description":"Allows
+      the end user to read their account profile.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislwoAAPaEO1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislqgEzndw91d7","name":"okta.myAccount.read","description":"Allows
+      the end user to read their account profile, email addresses, and phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislqgEzndw91d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisliWcRBGpw1d7","name":"openid","description":"Signals
+      that a request is an OpenID request.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisliWcRBGpw1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisljVrc2wrc1d7","name":"profile","description":"The
+      exact data varies based on what profile information you have provided, such
+      as: name, time zone, picture, or birthday.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisljVrc2wrc1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislk1rvle8n1d7","name":"email","description":"This
+      allows the app to view your email address.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislk1rvle8n1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisllz1ArEnk1d7","name":"address","description":"This
+      allows the app to view your address, such as: street address, city, state, and
+      zip code.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisllz1ArEnk1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislmTRp70PG1d7","name":"phone","description":"This
+      allows the app to view your phone number.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislmTRp70PG1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislnM1ExSEV1d7","name":"offline_access","description":"This
+      keeps you signed in to the app, even when you are not using it.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislnM1ExSEV1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisloDEqUJzs1d7","name":"device_sso","description":"This
+      allows you to single sign on between native client applications on your device.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisloDEqUJzs1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-EZQL_x9RWJWElCbBSwkrtQweTdRUltFikWJiTK7c9Sw''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:23:36 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes
+    method: GET
+  response:
+    body: '[{"id":"scp5ysislxkvogsZL1d7","name":"okta.myAccount.customAuthenticator.manage","description":"Allows
+      the end user to manage their custom authenticators.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislxkvogsZL1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislyVNdLd0I1d7","name":"okta.myAccount.customAuthenticator.read","description":"Allows
+      the end user to read their custom authenticators.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislyVNdLd0I1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislrVff16SQ1d7","name":"okta.myAccount.email.manage","description":"Allows
+      the end user to manage their email addresses.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislrVff16SQ1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislsUZ24eJd1d7","name":"okta.myAccount.email.read","description":"Allows
+      the end user to read their email addresses.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislsUZ24eJd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislpwhfPrti1d7","name":"okta.myAccount.manage","description":"Allows
+      the end user to manage their account profile, email addresses, and phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislpwhfPrti1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisltY1GWJvh1d7","name":"okta.myAccount.phone.manage","description":"Allows
+      the end user to manage their phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisltY1GWJvh1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislun4NNF2m1d7","name":"okta.myAccount.phone.read","description":"Allows
+      the end user to read their phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislun4NNF2m1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislvF3v3W5A1d7","name":"okta.myAccount.profile.manage","description":"Allows
+      the end user to manage their account profile.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislvF3v3W5A1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislwoAAPaEO1d7","name":"okta.myAccount.profile.read","description":"Allows
+      the end user to read their account profile.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislwoAAPaEO1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislqgEzndw91d7","name":"okta.myAccount.read","description":"Allows
+      the end user to read their account profile, email addresses, and phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislqgEzndw91d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisliWcRBGpw1d7","name":"openid","description":"Signals
+      that a request is an OpenID request.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisliWcRBGpw1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisljVrc2wrc1d7","name":"profile","description":"The
+      exact data varies based on what profile information you have provided, such
+      as: name, time zone, picture, or birthday.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisljVrc2wrc1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislk1rvle8n1d7","name":"email","description":"This
+      allows the app to view your email address.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislk1rvle8n1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisllz1ArEnk1d7","name":"address","description":"This
+      allows the app to view your address, such as: street address, city, state, and
+      zip code.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisllz1ArEnk1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislmTRp70PG1d7","name":"phone","description":"This
+      allows the app to view your phone number.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislmTRp70PG1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislnM1ExSEV1d7","name":"offline_access","description":"This
+      keeps you signed in to the app, even when you are not using it.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislnM1ExSEV1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisloDEqUJzs1d7","name":"device_sso","description":"This
+      allows you to single sign on between native client applications on your device.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisloDEqUJzs1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-tO8fBE99DeVEtfthipHYJGIscBVpuJy_uKBEoS3EmeA''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:23:36 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes
+    method: GET
+  response:
+    body: '[{"id":"scp5ysislxkvogsZL1d7","name":"okta.myAccount.customAuthenticator.manage","description":"Allows
+      the end user to manage their custom authenticators.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislxkvogsZL1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislyVNdLd0I1d7","name":"okta.myAccount.customAuthenticator.read","description":"Allows
+      the end user to read their custom authenticators.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislyVNdLd0I1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislrVff16SQ1d7","name":"okta.myAccount.email.manage","description":"Allows
+      the end user to manage their email addresses.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislrVff16SQ1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislsUZ24eJd1d7","name":"okta.myAccount.email.read","description":"Allows
+      the end user to read their email addresses.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislsUZ24eJd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislpwhfPrti1d7","name":"okta.myAccount.manage","description":"Allows
+      the end user to manage their account profile, email addresses, and phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislpwhfPrti1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisltY1GWJvh1d7","name":"okta.myAccount.phone.manage","description":"Allows
+      the end user to manage their phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisltY1GWJvh1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislun4NNF2m1d7","name":"okta.myAccount.phone.read","description":"Allows
+      the end user to read their phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislun4NNF2m1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislvF3v3W5A1d7","name":"okta.myAccount.profile.manage","description":"Allows
+      the end user to manage their account profile.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislvF3v3W5A1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislwoAAPaEO1d7","name":"okta.myAccount.profile.read","description":"Allows
+      the end user to read their account profile.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislwoAAPaEO1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislqgEzndw91d7","name":"okta.myAccount.read","description":"Allows
+      the end user to read their account profile, email addresses, and phone numbers.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislqgEzndw91d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisliWcRBGpw1d7","name":"openid","description":"Signals
+      that a request is an OpenID request.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisliWcRBGpw1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisljVrc2wrc1d7","name":"profile","description":"The
+      exact data varies based on what profile information you have provided, such
+      as: name, time zone, picture, or birthday.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisljVrc2wrc1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislk1rvle8n1d7","name":"email","description":"This
+      allows the app to view your email address.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislk1rvle8n1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisllz1ArEnk1d7","name":"address","description":"This
+      allows the app to view your address, such as: street address, city, state, and
+      zip code.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisllz1ArEnk1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislmTRp70PG1d7","name":"phone","description":"This
+      allows the app to view your phone number.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislmTRp70PG1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysislnM1ExSEV1d7","name":"offline_access","description":"This
+      keeps you signed in to the app, even when you are not using it.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysislnM1ExSEV1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"scp5ysisloDEqUJzs1d7","name":"device_sso","description":"This
+      allows you to single sign on between native client applications on your device.","system":true,"metadataPublish":"ALL_CLIENTS","apiResourceId":null,"default":false,"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes/scp5ysisloDEqUJzs1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-Fm6fl-k5Y_z81zKGoKyDj5I9NFbJNkjtA_Bkvq6CMRk''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:23:37 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""

@@ -1,0 +1,99 @@
+---
+version: 1
+interactions:
+- request:
+    body: |
+      {"mode":"PREVIEW","granularModeSettings":{"OAUTH2_AUTHORIZE":"ENFORCE","LOGIN_PAGE":"ENFORCE"}}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/internal/rateLimits/clientRateLimitMode
+    method: POST
+  response:
+    body: '{"mode":"PREVIEW","granularModeSettings":{"OAUTH2_AUTHORIZE":"ENFORCE","LOGIN_PAGE":"ENFORCE"}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:59 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"rateLimitNotification":true}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/internal/orgSettings/rateLimitNotificationSetting
+    method: POST
+  response:
+    body: '{"rateLimitNotification":true}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:59 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/internal/rateLimits/clientRateLimitMode
+    method: GET
+  response:
+    body: '{"mode":"PREVIEW","granularModeSettings":{"LOGIN_PAGE":"ENFORCE","OAUTH2_AUTHORIZE":"ENFORCE"}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:59 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/internal/orgSettings/rateLimitNotificationSetting
+    method: GET
+  response:
+    body: '{"rateLimitNotification":true}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:59 GMT
+    status: 200 OK
+    code: 200
+    duration: ""

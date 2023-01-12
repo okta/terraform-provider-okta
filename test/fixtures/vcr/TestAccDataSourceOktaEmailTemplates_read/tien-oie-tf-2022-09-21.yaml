@@ -1,0 +1,358 @@
+---
+version: 1
+interactions:
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands
+    method: GET
+  response:
+    body: '[{"id":"bnd5jjkl2p4D0LQh01d7","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"_links":{"themes":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7","hints":{"allow":["GET","PUT"]}}}}]'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:02:29 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7
+    method: GET
+  response:
+    body: '{"id":"bnd5jjkl2p4D0LQh01d7","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"_links":{"themes":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7","hints":{"allow":["GET","PUT"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:02:29 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email
+    method: GET
+  response:
+    body: '[{"name":"UserActivation","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ForgotPassword","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ForgotPasswordDenied","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"PasswordResetByAdmin","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ADUserActivation","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ADForgotPasswordDenied","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ADForgotPassword","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"LDAPUserActivation","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"LDAPForgotPassword","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"LDAPForgotPasswordDenied","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/customizations","hints":{"allow":["GET","POST","DELETE"]}}}}]'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:02:29 GMT
+      Link:
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email?limit=10>;
+        rel="self"
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email?after=TERBUEZvcmdvdFBhc3N3b3JkRGVuaWVk&limit=10>;
+        rel="next"
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands
+    method: GET
+  response:
+    body: '[{"id":"bnd5jjkl2p4D0LQh01d7","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"_links":{"themes":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7","hints":{"allow":["GET","PUT"]}}}}]'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:02:29 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7
+    method: GET
+  response:
+    body: '{"id":"bnd5jjkl2p4D0LQh01d7","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"_links":{"themes":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7","hints":{"allow":["GET","PUT"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:02:29 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email
+    method: GET
+  response:
+    body: '[{"name":"UserActivation","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ForgotPassword","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ForgotPasswordDenied","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"PasswordResetByAdmin","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ADUserActivation","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ADForgotPasswordDenied","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ADForgotPassword","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"LDAPUserActivation","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"LDAPForgotPassword","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"LDAPForgotPasswordDenied","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/customizations","hints":{"allow":["GET","POST","DELETE"]}}}}]'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:02:29 GMT
+      Link:
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email?limit=10>;
+        rel="self"
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email?after=TERBUEZvcmdvdFBhc3N3b3JkRGVuaWVk&limit=10>;
+        rel="next"
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands
+    method: GET
+  response:
+    body: '[{"id":"bnd5jjkl2p4D0LQh01d7","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"_links":{"themes":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7","hints":{"allow":["GET","PUT"]}}}}]'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:02:30 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7
+    method: GET
+  response:
+    body: '{"id":"bnd5jjkl2p4D0LQh01d7","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"_links":{"themes":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7","hints":{"allow":["GET","PUT"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:02:30 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email
+    method: GET
+  response:
+    body: '[{"name":"UserActivation","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ForgotPassword","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ForgotPasswordDenied","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"PasswordResetByAdmin","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ADUserActivation","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ADForgotPasswordDenied","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ADForgotPassword","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"LDAPUserActivation","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"LDAPForgotPassword","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"LDAPForgotPasswordDenied","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/customizations","hints":{"allow":["GET","POST","DELETE"]}}}}]'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:02:30 GMT
+      Link:
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email?limit=10>;
+        rel="self"
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email?after=TERBUEZvcmdvdFBhc3N3b3JkRGVuaWVk&limit=10>;
+        rel="next"
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands
+    method: GET
+  response:
+    body: '[{"id":"bnd5jjkl2p4D0LQh01d7","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"_links":{"themes":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7","hints":{"allow":["GET","PUT"]}}}}]'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:02:30 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7
+    method: GET
+  response:
+    body: '{"id":"bnd5jjkl2p4D0LQh01d7","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"_links":{"themes":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7","hints":{"allow":["GET","PUT"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:02:30 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email
+    method: GET
+  response:
+    body: '[{"name":"UserActivation","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ForgotPassword","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ForgotPasswordDenied","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"PasswordResetByAdmin","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ADUserActivation","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ADForgotPasswordDenied","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ADForgotPassword","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"LDAPUserActivation","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"LDAPForgotPassword","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"LDAPForgotPasswordDenied","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/customizations","hints":{"allow":["GET","POST","DELETE"]}}}}]'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:02:30 GMT
+      Link:
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email?limit=10>;
+        rel="self"
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email?after=TERBUEZvcmdvdFBhc3N3b3JkRGVuaWVk&limit=10>;
+        rel="next"
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands
+    method: GET
+  response:
+    body: '[{"id":"bnd5jjkl2p4D0LQh01d7","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"_links":{"themes":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7","hints":{"allow":["GET","PUT"]}}}}]'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:02:31 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7
+    method: GET
+  response:
+    body: '{"id":"bnd5jjkl2p4D0LQh01d7","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"_links":{"themes":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7","hints":{"allow":["GET","PUT"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:02:31 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email
+    method: GET
+  response:
+    body: '[{"name":"UserActivation","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/UserActivation/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ForgotPassword","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPassword/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ForgotPasswordDenied","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ForgotPasswordDenied/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"PasswordResetByAdmin","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/PasswordResetByAdmin/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ADUserActivation","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADUserActivation/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ADForgotPasswordDenied","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPasswordDenied/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"ADForgotPassword","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/ADForgotPassword/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"LDAPUserActivation","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPUserActivation/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"LDAPForgotPassword","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPassword/customizations","hints":{"allow":["GET","POST","DELETE"]}}}},{"name":"LDAPForgotPasswordDenied","_links":{"settings":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied","hints":{"allow":["GET"]}},"defaultContent":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/default-content","hints":{"allow":["GET"]}},"test":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/test","hints":{"allow":["POST"]}},"customizations":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email/LDAPForgotPasswordDenied/customizations","hints":{"allow":["GET","POST","DELETE"]}}}}]'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:02:31 GMT
+      Link:
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email?limit=10>;
+        rel="self"
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/brands/bnd5jjkl2p4D0LQh01d7/templates/email?after=TERBUEZvcmdvdFBhc3N3b3JkRGVuaWVk&limit=10>;
+        rel="next"
+    status: 200 OK
+    code: 200
+    duration: ""

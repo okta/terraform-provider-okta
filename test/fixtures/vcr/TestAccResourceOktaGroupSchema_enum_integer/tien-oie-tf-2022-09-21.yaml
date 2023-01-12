@@ -1,0 +1,233 @@
+---
+version: 1
+interactions:
+- request:
+    body: |
+      {"definitions":{"custom":{"id":"#custom","properties":{"testAcc_1318076026":{"description":"testing","enum":[1,2,3],"master":{"type":"OKTA"},"oneOf":[{"const":1,"title":"integer one"},{"const":2,"title":"integer two"},{"const":3,"title":"integer three"}],"permissions":[{"action":"READ_ONLY","principal":"SELF"}],"required":false,"scope":"SELF","title":"terraform acceptance test","type":"integer"}},"type":"object"}}}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default
+    method: POST
+  response:
+    body: '{"id":"https://tien-oie-tf-2022-09-21.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta
+      group","description":"Okta group profile template","lastUpdated":"2023-01-11T20:27:07.000Z","created":"2022-09-21T17:21:14.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_1318076026":{"title":"terraform
+      acceptance test","description":"testing","type":"integer","mutability":"READ_WRITE","scope":"SELF","enum":[1,2,3],"oneOf":[{"const":1,"title":"integer
+      one"},{"const":2,"title":"integer two"},{"const":3,"title":"integer three"}],"permissions":[{"principal":"SELF","action":"READ_ONLY"}]}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:27:12 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default
+    method: GET
+  response:
+    body: '{"id":"https://tien-oie-tf-2022-09-21.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta
+      group","description":"Okta group profile template","lastUpdated":"2023-01-11T20:27:12.000Z","created":"2022-09-21T17:21:14.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_1318076026":{"title":"terraform
+      acceptance test","description":"testing","type":"integer","mutability":"READ_WRITE","scope":"SELF","enum":[1,2,3],"oneOf":[{"const":1,"title":"integer
+      one"},{"const":2,"title":"integer two"},{"const":3,"title":"integer three"}],"permissions":[{"principal":"SELF","action":"READ_ONLY"}]}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:27:12 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default
+    method: GET
+  response:
+    body: '{"id":"https://tien-oie-tf-2022-09-21.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta
+      group","description":"Okta group profile template","lastUpdated":"2023-01-11T20:27:12.000Z","created":"2022-09-21T17:21:14.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_1318076026":{"title":"terraform
+      acceptance test","description":"testing","type":"integer","mutability":"READ_WRITE","scope":"SELF","enum":[1,2,3],"oneOf":[{"const":1,"title":"integer
+      one"},{"const":2,"title":"integer two"},{"const":3,"title":"integer three"}],"permissions":[{"principal":"SELF","action":"READ_ONLY"}]}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:27:13 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default
+    method: GET
+  response:
+    body: '{"id":"https://tien-oie-tf-2022-09-21.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta
+      group","description":"Okta group profile template","lastUpdated":"2023-01-11T20:27:12.000Z","created":"2022-09-21T17:21:14.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_1318076026":{"title":"terraform
+      acceptance test","description":"testing","type":"integer","mutability":"READ_WRITE","scope":"SELF","enum":[1,2,3],"oneOf":[{"const":1,"title":"integer
+      one"},{"const":2,"title":"integer two"},{"const":3,"title":"integer three"}],"permissions":[{"principal":"SELF","action":"READ_ONLY"}]}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:27:13 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"definitions":{"custom":{"id":"#custom","properties":{"testAcc_1318076026":{"description":"testing","enum":[4,5,6],"master":{"type":"OKTA"},"oneOf":[{"const":4,"title":"integer four"},{"const":5,"title":"integer five"},{"const":6,"title":"integer six"}],"permissions":[{"action":"READ_ONLY","principal":"SELF"}],"required":false,"scope":"SELF","title":"terraform acceptance test","type":"integer"}},"type":"object"}}}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default
+    method: POST
+  response:
+    body: '{"id":"https://tien-oie-tf-2022-09-21.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta
+      group","description":"Okta group profile template","lastUpdated":"2023-01-11T20:27:12.000Z","created":"2022-09-21T17:21:14.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_1318076026":{"title":"terraform
+      acceptance test","description":"testing","type":"integer","mutability":"READ_WRITE","scope":"SELF","enum":[4,5,6],"oneOf":[{"const":4,"title":"integer
+      four"},{"const":5,"title":"integer five"},{"const":6,"title":"integer six"}],"permissions":[{"principal":"SELF","action":"READ_ONLY"}]}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:27:13 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default
+    method: GET
+  response:
+    body: '{"id":"https://tien-oie-tf-2022-09-21.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta
+      group","description":"Okta group profile template","lastUpdated":"2023-01-11T20:27:13.000Z","created":"2022-09-21T17:21:14.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_1318076026":{"title":"terraform
+      acceptance test","description":"testing","type":"integer","mutability":"READ_WRITE","scope":"SELF","enum":[4,5,6],"oneOf":[{"const":4,"title":"integer
+      four"},{"const":5,"title":"integer five"},{"const":6,"title":"integer six"}],"permissions":[{"principal":"SELF","action":"READ_ONLY"}]}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:27:13 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default
+    method: GET
+  response:
+    body: '{"id":"https://tien-oie-tf-2022-09-21.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta
+      group","description":"Okta group profile template","lastUpdated":"2023-01-11T20:27:13.000Z","created":"2022-09-21T17:21:14.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_1318076026":{"title":"terraform
+      acceptance test","description":"testing","type":"integer","mutability":"READ_WRITE","scope":"SELF","enum":[4,5,6],"oneOf":[{"const":4,"title":"integer
+      four"},{"const":5,"title":"integer five"},{"const":6,"title":"integer six"}],"permissions":[{"principal":"SELF","action":"READ_ONLY"}]}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:27:14 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"definitions":{"custom":{"id":"#custom","properties":{"testAcc_1318076026":null},"type":"object"}}}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default
+    method: POST
+  response:
+    body: '{"id":"https://tien-oie-tf-2022-09-21.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta
+      group","description":"Okta group profile template","lastUpdated":"2023-01-11T20:27:13.000Z","created":"2022-09-21T17:21:14.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:27:14 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default
+    method: GET
+  response:
+    body: '{"id":"https://tien-oie-tf-2022-09-21.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta
+      group","description":"Okta group profile template","lastUpdated":"2023-01-11T20:27:14.000Z","created":"2022-09-21T17:21:14.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}]}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:27:14 GMT
+    status: 200 OK
+    code: 200
+    duration: ""

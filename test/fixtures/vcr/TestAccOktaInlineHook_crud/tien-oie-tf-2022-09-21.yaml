@@ -1,0 +1,788 @@
+---
+version: 1
+interactions:
+- request:
+    body: |
+      {"channel":{"config":{"authScheme":{"key":"Authorization","type":"HEADER","value":"123"},"method":"POST","uri":"https://example.com/test"},"type":"HTTP","version":"1.0.0"},"name":"testAcc_79090822","status":"ACTIVE","type":"com.okta.oauth2.tokens.transform","version":"1.0.1"}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks
+    method: POST
+  response:
+    body: '{"id":"cal6m9fi87bCQ3n5I1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.oauth2.tokens.transform","version":"1.0.1","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2023-01-11T20:31:20.000Z","lastUpdated":"2023-01-11T20:31:20.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:20 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"channel":{"config":{"authScheme":{"key":"Authorization","type":"HEADER","value":"secret"},"method":"POST","uri":"https://example.com/test"},"type":"HTTP","version":"1.0.0"},"name":"twillio","status":"ACTIVE","type":"com.okta.telephony.provider","version":"1.0.0"}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks
+    method: POST
+  response:
+    body: '{"id":"cal6m9eegzjGpF3Ms1d7","status":"ACTIVE","name":"twillio","type":"com.okta.telephony.provider","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2023-01-11T20:31:20.000Z","lastUpdated":"2023-01-11T20:31:20.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:20 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9fi87bCQ3n5I1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.oauth2.tokens.transform","version":"1.0.1","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2023-01-11T20:31:20.000Z","lastUpdated":"2023-01-11T20:31:20.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:20 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9eegzjGpF3Ms1d7","status":"ACTIVE","name":"twillio","type":"com.okta.telephony.provider","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2023-01-11T20:31:20.000Z","lastUpdated":"2023-01-11T20:31:20.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:20 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9eegzjGpF3Ms1d7","status":"ACTIVE","name":"twillio","type":"com.okta.telephony.provider","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2023-01-11T20:31:20.000Z","lastUpdated":"2023-01-11T20:31:20.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:21 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9fi87bCQ3n5I1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.oauth2.tokens.transform","version":"1.0.1","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2023-01-11T20:31:20.000Z","lastUpdated":"2023-01-11T20:31:20.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:21 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9eegzjGpF3Ms1d7","status":"ACTIVE","name":"twillio","type":"com.okta.telephony.provider","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2023-01-11T20:31:20.000Z","lastUpdated":"2023-01-11T20:31:20.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:22 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9fi87bCQ3n5I1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.oauth2.tokens.transform","version":"1.0.1","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2023-01-11T20:31:20.000Z","lastUpdated":"2023-01-11T20:31:20.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:22 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7/lifecycle/deactivate
+    method: POST
+  response:
+    body: '{"id":"cal6m9fi87bCQ3n5I1d7","status":"INACTIVE","name":"testAcc_79090822","type":"com.okta.oauth2.tokens.transform","version":"1.0.1","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2023-01-11T20:31:20.000Z","lastUpdated":"2023-01-11T20:31:22.000Z","_links":{"activate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7"},"delete":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7","hints":{"allow":["DELETE"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:22 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7/lifecycle/deactivate
+    method: POST
+  response:
+    body: '{"id":"cal6m9eegzjGpF3Ms1d7","status":"INACTIVE","name":"twillio","type":"com.okta.telephony.provider","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2023-01-11T20:31:20.000Z","lastUpdated":"2023-01-11T20:31:22.000Z","_links":{"activate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7"},"delete":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7","hints":{"allow":["DELETE"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:22 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9fi87bCQ3n5I1d7
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Date:
+      - Wed, 11 Jan 2023 20:31:22 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eegzjGpF3Ms1d7
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Date:
+      - Wed, 11 Jan 2023 20:31:22 GMT
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: |
+      {"channel":{"config":{"headers":[{"key":"x-stuff-and-such","value":"yea boi"}],"method":"POST","uri":"https://example.com/test1"},"type":"HTTP","version":"1.0.0"},"name":"testAcc_79090822","status":"INACTIVE","type":"com.okta.import.transform","version":"1.0.2"}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks
+    method: POST
+  response:
+    body: '{"id":"cal6m9ebahdM6x08B1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[{"key":"x-stuff-and-such","value":"yea
+      boi"}],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:22.000Z","lastUpdated":"2023-01-11T20:31:22.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:23 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/lifecycle/deactivate
+    method: POST
+  response:
+    body: '{"id":"cal6m9ebahdM6x08B1d7","status":"INACTIVE","name":"testAcc_79090822","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[{"key":"x-stuff-and-such","value":"yea
+      boi"}],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:22.000Z","lastUpdated":"2023-01-11T20:31:23.000Z","_links":{"activate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7"},"delete":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7","hints":{"allow":["DELETE"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:23 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9ebahdM6x08B1d7","status":"INACTIVE","name":"testAcc_79090822","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[{"key":"x-stuff-and-such","value":"yea
+      boi"}],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:22.000Z","lastUpdated":"2023-01-11T20:31:23.000Z","_links":{"activate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7"},"delete":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7","hints":{"allow":["DELETE"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:23 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9ebahdM6x08B1d7","status":"INACTIVE","name":"testAcc_79090822","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[{"key":"x-stuff-and-such","value":"yea
+      boi"}],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:22.000Z","lastUpdated":"2023-01-11T20:31:23.000Z","_links":{"activate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7"},"delete":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7","hints":{"allow":["DELETE"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:24 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9ebahdM6x08B1d7","status":"INACTIVE","name":"testAcc_79090822","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[{"key":"x-stuff-and-such","value":"yea
+      boi"}],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:22.000Z","lastUpdated":"2023-01-11T20:31:23.000Z","_links":{"activate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7"},"delete":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7","hints":{"allow":["DELETE"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:24 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"channel":{"config":{"method":"POST","uri":"https://example.com/test1"},"type":"HTTP","version":"1.0.0"},"name":"testAcc_79090822","status":"ACTIVE","type":"com.okta.import.transform","version":"1.0.2"}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7
+    method: PUT
+  response:
+    body: '{"id":"cal6m9ebahdM6x08B1d7","status":"INACTIVE","name":"testAcc_79090822","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:22.000Z","lastUpdated":"2023-01-11T20:31:25.000Z","_links":{"activate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7"},"delete":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7","hints":{"allow":["DELETE"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:25 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/lifecycle/activate
+    method: POST
+  response:
+    body: '{"id":"cal6m9ebahdM6x08B1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:22.000Z","lastUpdated":"2023-01-11T20:31:25.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:25 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9ebahdM6x08B1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:22.000Z","lastUpdated":"2023-01-11T20:31:25.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:25 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9ebahdM6x08B1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:22.000Z","lastUpdated":"2023-01-11T20:31:25.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:26 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9ebahdM6x08B1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:22.000Z","lastUpdated":"2023-01-11T20:31:25.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:27 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/lifecycle/deactivate
+    method: POST
+  response:
+    body: '{"id":"cal6m9ebahdM6x08B1d7","status":"INACTIVE","name":"testAcc_79090822","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:22.000Z","lastUpdated":"2023-01-11T20:31:28.000Z","_links":{"activate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7"},"delete":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7","hints":{"allow":["DELETE"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:28 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9ebahdM6x08B1d7
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Date:
+      - Wed, 11 Jan 2023 20:31:28 GMT
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: |
+      {"channel":{"config":{"method":"POST","uri":"https://example.com/test1"},"type":"HTTP","version":"1.0.0"},"name":"testAcc_79090822","status":"ACTIVE","type":"com.okta.user.pre-registration","version":"1.0.2"}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks
+    method: POST
+  response:
+    body: '{"id":"cal6m9h2kzKtUgvce1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.user.pre-registration","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:28.000Z","lastUpdated":"2023-01-11T20:31:28.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:28 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9h2kzKtUgvce1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.user.pre-registration","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:28.000Z","lastUpdated":"2023-01-11T20:31:28.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:28 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9h2kzKtUgvce1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.user.pre-registration","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:28.000Z","lastUpdated":"2023-01-11T20:31:28.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:29 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9h2kzKtUgvce1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.user.pre-registration","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:28.000Z","lastUpdated":"2023-01-11T20:31:28.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:30 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7/lifecycle/deactivate
+    method: POST
+  response:
+    body: '{"id":"cal6m9h2kzKtUgvce1d7","status":"INACTIVE","name":"testAcc_79090822","type":"com.okta.user.pre-registration","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:28.000Z","lastUpdated":"2023-01-11T20:31:30.000Z","_links":{"activate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7"},"delete":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7","hints":{"allow":["DELETE"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:30 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9h2kzKtUgvce1d7
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Date:
+      - Wed, 11 Jan 2023 20:31:30 GMT
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: |
+      {"channel":{"config":{"method":"POST","uri":"https://example.com/test1"},"type":"HTTP","version":"1.0.0"},"name":"testAcc_79090822","status":"ACTIVE","type":"com.okta.user.credential.password.import","version":"1.0.0"}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks
+    method: POST
+  response:
+    body: '{"id":"cal6m9eanwPubNbJP1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.user.credential.password.import","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:30.000Z","lastUpdated":"2023-01-11T20:31:30.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:30 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9eanwPubNbJP1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.user.credential.password.import","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:30.000Z","lastUpdated":"2023-01-11T20:31:30.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:30 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7
+    method: GET
+  response:
+    body: '{"id":"cal6m9eanwPubNbJP1d7","status":"ACTIVE","name":"testAcc_79090822","type":"com.okta.user.credential.password.import","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:30.000Z","lastUpdated":"2023-01-11T20:31:30.000Z","_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7"},"execute":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:31 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7/lifecycle/deactivate
+    method: POST
+  response:
+    body: '{"id":"cal6m9eanwPubNbJP1d7","status":"INACTIVE","name":"testAcc_79090822","type":"com.okta.user.credential.password.import","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2023-01-11T20:31:30.000Z","lastUpdated":"2023-01-11T20:31:31.000Z","_links":{"activate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7"},"delete":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7","hints":{"allow":["DELETE"]}}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:31:31 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/inlineHooks/cal6m9eanwPubNbJP1d7
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Date:
+      - Wed, 11 Jan 2023 20:31:31 GMT
+    status: 204 No Content
+    code: 204
+    duration: ""
