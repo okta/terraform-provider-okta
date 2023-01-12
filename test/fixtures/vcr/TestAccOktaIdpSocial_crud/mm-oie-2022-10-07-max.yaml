@@ -1,0 +1,1939 @@
+---
+version: 1
+interactions:
+- request:
+    body: |
+      {"profile":{"name":"testAcc_1258331618","description":"testing, testing, testing"}}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups
+    method: POST
+  response:
+    body: '{"id":"00g6mnehjy0QHvYa51d7","created":"2023-01-12T17:35:19.000Z","lastUpdated":"2023-01-12T17:35:19.000Z","lastMembershipUpdated":"2023-01-12T17:35:19.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1258331618","description":"testing,
+      testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.1a5ebe44c4244fb796c235d86b47e3bb.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.d9cfbd8a00a4feac1aa5612ba02e99c0.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g6mnehjy0QHvYa51d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g6mnehjy0QHvYa51d7/apps"}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-APC3QFJZcKN_hQ-4p5310aWZLFCAYawX2SQSlRQdNOY''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:19 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"definitions":{"custom":{"id":"#custom","properties":{"customfieldId":{"description":"Test custom field","master":{"type":"PROFILE_MASTER"},"maxLength":50,"minLength":1,"permissions":[{"action":"READ_ONLY","principal":"SELF"}],"required":false,"scope":"NONE","title":"Test Custom Field","type":"string"}},"type":"object"}}}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/default
+    method: POST
+  response:
+    body: '{"id":"https://mm-oie-2022-10-07-max.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta
+      user profile template with default permission settings","lastUpdated":"2023-01-12T17:35:20.000Z","created":"2022-10-07T23:16:57.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_7334087311348261718":{"title":"terraform
+      acceptance test setting unique attribute to UNIQUE_VALIDATED","description":"terraform
+      acceptance test setting unique attribute to UNIQUE_VALIDATED","type":"string","required":true,"unique":"UNIQUE_VALIDATED","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":70,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"OKTA"}},"customfieldId":{"title":"Test
+      Custom Field","description":"Test custom field","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["testAcc_7334087311348261718"]},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific
+      prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific
+      suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary
+      email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile
+      Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary
+      email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile
+      phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary
+      phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street
+      address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip
+      code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country
+      code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal
+      Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred
+      language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time
+      zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User
+      type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee
+      number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost
+      center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7","method":"GET"},"type":{"rel":"type","href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7","method":"GET"}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-W2JE0_wo5-JMVev9ZQ2Dbo_vdBzVRQ1jiFLyIPqCbYc''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:20 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g6mnehjy0QHvYa51d7
+    method: GET
+  response:
+    body: '{"id":"00g6mnehjy0QHvYa51d7","created":"2023-01-12T17:35:19.000Z","lastUpdated":"2023-01-12T17:35:19.000Z","lastMembershipUpdated":"2023-01-12T17:35:19.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1258331618","description":"testing,
+      testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.1a5ebe44c4244fb796c235d86b47e3bb.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.d9cfbd8a00a4feac1aa5612ba02e99c0.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g6mnehjy0QHvYa51d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g6mnehjy0QHvYa51d7/apps"}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-yT-Bm2uYD72k4AA-daSMfQgMOzKq6HmVHF_OWXhLDZ0''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:20 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/default
+    method: GET
+  response:
+    body: '{"id":"https://mm-oie-2022-10-07-max.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta
+      user profile template with default permission settings","lastUpdated":"2023-01-12T17:35:20.000Z","created":"2022-10-07T23:16:57.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_7334087311348261718":{"title":"terraform
+      acceptance test setting unique attribute to UNIQUE_VALIDATED","description":"terraform
+      acceptance test setting unique attribute to UNIQUE_VALIDATED","type":"string","required":true,"unique":"UNIQUE_VALIDATED","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":70,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"OKTA"}},"customfieldId":{"title":"Test
+      Custom Field","description":"Test custom field","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["testAcc_7334087311348261718"]},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific
+      prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific
+      suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary
+      email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile
+      Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary
+      email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile
+      phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary
+      phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street
+      address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip
+      code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country
+      code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal
+      Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred
+      language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time
+      zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User
+      type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee
+      number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost
+      center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7","method":"GET"},"type":{"rel":"type","href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7","method":"GET"}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-fflsxZpIS4aOd4gTDPAlRwqP3SOkcZ3Fz5sV8YElBFc''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:20 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g6mnehjy0QHvYa51d7
+    method: GET
+  response:
+    body: '{"id":"00g6mnehjy0QHvYa51d7","created":"2023-01-12T17:35:19.000Z","lastUpdated":"2023-01-12T17:35:19.000Z","lastMembershipUpdated":"2023-01-12T17:35:19.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1258331618","description":"testing,
+      testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.1a5ebe44c4244fb796c235d86b47e3bb.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.d9cfbd8a00a4feac1aa5612ba02e99c0.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g6mnehjy0QHvYa51d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g6mnehjy0QHvYa51d7/apps"}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-wVPil9HcMswiJFtMbMfjH3erWMwnBwPuaaEqXxMfQGA''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:20 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"issuerMode":"ORG_URL","name":"testAcc_facebook_1258331618","policy":{"accountLink":{"action":"AUTO"},"provisioning":{"action":"AUTO","conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}},"groups":{"action":"NONE"},"profileMaster":false},"subject":{"matchType":"USERNAME","userNameTemplate":{"template":"idpuser.email"}}},"protocol":{"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}},"scopes":["public_profile","email"],"type":"OAUTH2"},"type":"FACEBOOK"}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps
+    method: POST
+  response:
+    body: '{"id":"0oa6mnfn2tLWmb4ha1d7","issuerMode":"ORG_URL","name":"testAcc_facebook_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:20.000Z","protocol":{"type":"OAUTH2","endpoints":{"authorization":{"url":"https://www.facebook.com/dialog/oauth","binding":"HTTP-REDIRECT"},"token":{"url":"https://graph.facebook.com/v2.8/oauth/access_token","binding":"HTTP-POST"}},"scopes":["public_profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"FACEBOOK","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnfn2tLWmb4ha1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-6_7B09J6jLdwxmtePsv-BodfgjJI-Mq60jtp8qy_65Y''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:20 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"issuerMode":"ORG_URL","name":"testAcc_google_1258331618","policy":{"accountLink":{"action":"AUTO"},"provisioning":{"action":"AUTO","conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}},"groups":{"action":"NONE"},"profileMaster":false},"subject":{"matchType":"USERNAME","userNameTemplate":{"template":"idpuser.email"}}},"protocol":{"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}},"scopes":["openid","profile","email"],"type":"OIDC"},"type":"GOOGLE"}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps
+    method: POST
+  response:
+    body: '{"id":"0oa6mnjk3tc03TcZw1d7","issuerMode":"ORG_URL","name":"testAcc_google_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:20.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://accounts.google.com/o/oauth2/auth","binding":"HTTP-REDIRECT"},"token":{"url":"https://www.googleapis.com/oauth2/v3/token","binding":"HTTP-POST"}},"scopes":["openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"GOOGLE","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk3tc03TcZw1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-oBxV4vZ2VzMRwu5uQpYv9yo229j0Y-KLrLBF9BuP2ag''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:20 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"issuerMode":"ORG_URL","name":"testAcc_microsoft_1258331618","policy":{"accountLink":{"action":"AUTO"},"provisioning":{"action":"AUTO","conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}},"groups":{"action":"ASSIGN","assignments":["00g6mnehjy0QHvYa51d7"]},"profileMaster":false},"subject":{"matchType":"USERNAME","userNameTemplate":{"template":"idpuser.userPrincipalName"}}},"protocol":{"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}},"scopes":["https://graph.microsoft.com/User.Read","openid","profile","email"],"type":"OIDC"},"type":"MICROSOFT"}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps
+    method: POST
+  response:
+    body: '{"id":"0oa6mnjk41HGHHGQs1d7","issuerMode":"ORG_URL","name":"testAcc_microsoft_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:20.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://login.microsoftonline.com/common/oauth2/v2.0/authorize","binding":"HTTP-REDIRECT"},"token":{"url":"https://login.microsoftonline.com/common/oauth2/v2.0/token","binding":"HTTP-POST"}},"scopes":["https://graph.microsoft.com/User.Read","openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"ASSIGN","assignments":["00g6mnehjy0QHvYa51d7"]},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.userPrincipalName"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"MICROSOFT","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk41HGHHGQs1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-v_DewqO6XKgpVNjWHH3x2xLq5aZQ9OdR5B7Ne9Aft_o''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:20 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnfn2tLWmb4ha1d7/lifecycle/activate
+    method: POST
+  response:
+    body: '{"id":"0oa6mnfn2tLWmb4ha1d7","issuerMode":"ORG_URL","name":"testAcc_facebook_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:20.000Z","protocol":{"type":"OAUTH2","endpoints":{"authorization":{"url":"https://www.facebook.com/dialog/oauth","binding":"HTTP-REDIRECT"},"token":{"url":"https://graph.facebook.com/v2.8/oauth/access_token","binding":"HTTP-POST"}},"scopes":["public_profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"FACEBOOK","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnfn2tLWmb4ha1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-t3znCmee-YyY-V35k-sYqks0wTiWibKHzTpgQZbl_Io''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:20 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk3tc03TcZw1d7/lifecycle/activate
+    method: POST
+  response:
+    body: '{"id":"0oa6mnjk3tc03TcZw1d7","issuerMode":"ORG_URL","name":"testAcc_google_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:20.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://accounts.google.com/o/oauth2/auth","binding":"HTTP-REDIRECT"},"token":{"url":"https://www.googleapis.com/oauth2/v3/token","binding":"HTTP-POST"}},"scopes":["openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"GOOGLE","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk3tc03TcZw1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-8LJLK0eTbdCcqW-s4jO9ggbnBeCV481-G5mQ3_T2OqY''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:20 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk3tc03TcZw1d7
+    method: GET
+  response:
+    body: '{"id":"0oa6mnjk3tc03TcZw1d7","issuerMode":"ORG_URL","name":"testAcc_google_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:20.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://accounts.google.com/o/oauth2/auth","binding":"HTTP-REDIRECT"},"token":{"url":"https://www.googleapis.com/oauth2/v3/token","binding":"HTTP-POST"}},"scopes":["openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"GOOGLE","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk3tc03TcZw1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-ekZCAmmRrv4jlHZ21qAZBtHIGZi9K3w38vQ7MlD2u7A''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:20 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnfn2tLWmb4ha1d7
+    method: GET
+  response:
+    body: '{"id":"0oa6mnfn2tLWmb4ha1d7","issuerMode":"ORG_URL","name":"testAcc_facebook_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:20.000Z","protocol":{"type":"OAUTH2","endpoints":{"authorization":{"url":"https://www.facebook.com/dialog/oauth","binding":"HTTP-REDIRECT"},"token":{"url":"https://graph.facebook.com/v2.8/oauth/access_token","binding":"HTTP-POST"}},"scopes":["public_profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"FACEBOOK","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnfn2tLWmb4ha1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-PYdJBNC4R6-Lnk2ermTRTKJlHrZgYi09FnY3QdtGjlQ''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:20 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk41HGHHGQs1d7/lifecycle/activate
+    method: POST
+  response:
+    body: '{"id":"0oa6mnjk41HGHHGQs1d7","issuerMode":"ORG_URL","name":"testAcc_microsoft_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:20.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://login.microsoftonline.com/common/oauth2/v2.0/authorize","binding":"HTTP-REDIRECT"},"token":{"url":"https://login.microsoftonline.com/common/oauth2/v2.0/token","binding":"HTTP-POST"}},"scopes":["https://graph.microsoft.com/User.Read","openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"ASSIGN","assignments":["00g6mnehjy0QHvYa51d7"]},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.userPrincipalName"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"MICROSOFT","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk41HGHHGQs1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-oGaz-2DhwP5UieMpAPb5UF3mzDYTcf4qyUjkbTDwuEA''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:21 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk41HGHHGQs1d7
+    method: GET
+  response:
+    body: '{"id":"0oa6mnjk41HGHHGQs1d7","issuerMode":"ORG_URL","name":"testAcc_microsoft_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:20.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://login.microsoftonline.com/common/oauth2/v2.0/authorize","binding":"HTTP-REDIRECT"},"token":{"url":"https://login.microsoftonline.com/common/oauth2/v2.0/token","binding":"HTTP-POST"}},"scopes":["https://graph.microsoft.com/User.Read","openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"ASSIGN","assignments":["00g6mnehjy0QHvYa51d7"]},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.userPrincipalName"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"MICROSOFT","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk41HGHHGQs1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-zTxeuHyErX0q9fpR-AYJubaLjkyK7lwAaGcf5DyoQ2g''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:21 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/default
+    method: GET
+  response:
+    body: '{"id":"https://mm-oie-2022-10-07-max.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta
+      user profile template with default permission settings","lastUpdated":"2023-01-12T17:35:20.000Z","created":"2022-10-07T23:16:57.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_7334087311348261718":{"title":"terraform
+      acceptance test setting unique attribute to UNIQUE_VALIDATED","description":"terraform
+      acceptance test setting unique attribute to UNIQUE_VALIDATED","type":"string","required":true,"unique":"UNIQUE_VALIDATED","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":70,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"OKTA"}},"customfieldId":{"title":"Test
+      Custom Field","description":"Test custom field","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["testAcc_7334087311348261718"]},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific
+      prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific
+      suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary
+      email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile
+      Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary
+      email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile
+      phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary
+      phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street
+      address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip
+      code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country
+      code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal
+      Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred
+      language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time
+      zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User
+      type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee
+      number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost
+      center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7","method":"GET"},"type":{"rel":"type","href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7","method":"GET"}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-Dp88kuyX2i0P_DufWzMT5avPYagpW-glMxNCw7RAY0Q''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:21 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnfn2tLWmb4ha1d7
+    method: GET
+  response:
+    body: '{"id":"0oa6mnfn2tLWmb4ha1d7","issuerMode":"ORG_URL","name":"testAcc_facebook_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:20.000Z","protocol":{"type":"OAUTH2","endpoints":{"authorization":{"url":"https://www.facebook.com/dialog/oauth","binding":"HTTP-REDIRECT"},"token":{"url":"https://graph.facebook.com/v2.8/oauth/access_token","binding":"HTTP-POST"}},"scopes":["public_profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"FACEBOOK","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnfn2tLWmb4ha1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-qMiHfjdOTQpEV1MGuInBQXhj0k-zQJ6MoMcLomWN1hk''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:21 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g6mnehjy0QHvYa51d7
+    method: GET
+  response:
+    body: '{"id":"00g6mnehjy0QHvYa51d7","created":"2023-01-12T17:35:19.000Z","lastUpdated":"2023-01-12T17:35:19.000Z","lastMembershipUpdated":"2023-01-12T17:35:19.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1258331618","description":"testing,
+      testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.1a5ebe44c4244fb796c235d86b47e3bb.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.d9cfbd8a00a4feac1aa5612ba02e99c0.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g6mnehjy0QHvYa51d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g6mnehjy0QHvYa51d7/apps"}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-C5ZxmxD8FyNKPytyClXmRiV2JoUzFoLikU5rQZyVRVE''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:21 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk41HGHHGQs1d7
+    method: GET
+  response:
+    body: '{"id":"0oa6mnjk41HGHHGQs1d7","issuerMode":"ORG_URL","name":"testAcc_microsoft_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:20.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://login.microsoftonline.com/common/oauth2/v2.0/authorize","binding":"HTTP-REDIRECT"},"token":{"url":"https://login.microsoftonline.com/common/oauth2/v2.0/token","binding":"HTTP-POST"}},"scopes":["https://graph.microsoft.com/User.Read","openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"ASSIGN","assignments":["00g6mnehjy0QHvYa51d7"]},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.userPrincipalName"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"MICROSOFT","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk41HGHHGQs1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-sOU-oh0rYZezQoymQzg3o9MXYWMXEZwAqEORUsuBDy8''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:21 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk3tc03TcZw1d7
+    method: GET
+  response:
+    body: '{"id":"0oa6mnjk3tc03TcZw1d7","issuerMode":"ORG_URL","name":"testAcc_google_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:20.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://accounts.google.com/o/oauth2/auth","binding":"HTTP-REDIRECT"},"token":{"url":"https://www.googleapis.com/oauth2/v3/token","binding":"HTTP-POST"}},"scopes":["openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"GOOGLE","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk3tc03TcZw1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-HME7LMAhYGAhztyYy-KkKlyoJUkQyBF0JCYjMTuGnjw''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:22 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g6mnehjy0QHvYa51d7
+    method: GET
+  response:
+    body: '{"id":"00g6mnehjy0QHvYa51d7","created":"2023-01-12T17:35:19.000Z","lastUpdated":"2023-01-12T17:35:19.000Z","lastMembershipUpdated":"2023-01-12T17:35:19.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1258331618","description":"testing,
+      testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.1a5ebe44c4244fb796c235d86b47e3bb.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.d9cfbd8a00a4feac1aa5612ba02e99c0.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g6mnehjy0QHvYa51d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g6mnehjy0QHvYa51d7/apps"}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-55nGkIFeV2pZFPQs_4y_NJNpZJu0bUOcDqzqFnF3vU0''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:22 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk3tc03TcZw1d7
+    method: GET
+  response:
+    body: '{"id":"0oa6mnjk3tc03TcZw1d7","issuerMode":"ORG_URL","name":"testAcc_google_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:20.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://accounts.google.com/o/oauth2/auth","binding":"HTTP-REDIRECT"},"token":{"url":"https://www.googleapis.com/oauth2/v3/token","binding":"HTTP-POST"}},"scopes":["openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"GOOGLE","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk3tc03TcZw1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-PZE05tMm4jnYy5KyHdZ_WhalDMGY-zsV3Vd7YW8cq20''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:22 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/default
+    method: GET
+  response:
+    body: '{"id":"https://mm-oie-2022-10-07-max.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta
+      user profile template with default permission settings","lastUpdated":"2023-01-12T17:35:20.000Z","created":"2022-10-07T23:16:57.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_7334087311348261718":{"title":"terraform
+      acceptance test setting unique attribute to UNIQUE_VALIDATED","description":"terraform
+      acceptance test setting unique attribute to UNIQUE_VALIDATED","type":"string","required":true,"unique":"UNIQUE_VALIDATED","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":70,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"OKTA"}},"customfieldId":{"title":"Test
+      Custom Field","description":"Test custom field","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["testAcc_7334087311348261718"]},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific
+      prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific
+      suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary
+      email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile
+      Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary
+      email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile
+      phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary
+      phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street
+      address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip
+      code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country
+      code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal
+      Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred
+      language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time
+      zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User
+      type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee
+      number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost
+      center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7","method":"GET"},"type":{"rel":"type","href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7","method":"GET"}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-QwolrkKK8ETb8NYa2aZX6tt83MoA1b44BkN_ohfBuj8''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:22 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk41HGHHGQs1d7
+    method: GET
+  response:
+    body: '{"id":"0oa6mnjk41HGHHGQs1d7","issuerMode":"ORG_URL","name":"testAcc_microsoft_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:20.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://login.microsoftonline.com/common/oauth2/v2.0/authorize","binding":"HTTP-REDIRECT"},"token":{"url":"https://login.microsoftonline.com/common/oauth2/v2.0/token","binding":"HTTP-POST"}},"scopes":["https://graph.microsoft.com/User.Read","openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"ASSIGN","assignments":["00g6mnehjy0QHvYa51d7"]},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.userPrincipalName"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"MICROSOFT","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk41HGHHGQs1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-n-TdCes3BLGtNe6WnhZm1VoEXGiWCC8GjDTns8e0LXI''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:22 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnfn2tLWmb4ha1d7
+    method: GET
+  response:
+    body: '{"id":"0oa6mnfn2tLWmb4ha1d7","issuerMode":"ORG_URL","name":"testAcc_facebook_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:20.000Z","protocol":{"type":"OAUTH2","endpoints":{"authorization":{"url":"https://www.facebook.com/dialog/oauth","binding":"HTTP-REDIRECT"},"token":{"url":"https://graph.facebook.com/v2.8/oauth/access_token","binding":"HTTP-POST"}},"scopes":["public_profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"FACEBOOK","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnfn2tLWmb4ha1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-7xEEhE84fsmTn4U3lZ-iBHGjl3jhp2ZQtvjC_4Qw7r0''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:22 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk41HGHHGQs1d7/lifecycle/deactivate
+    method: POST
+  response:
+    body: '{"id":"0oa6mnjk41HGHHGQs1d7","issuerMode":"ORG_URL","name":"testAcc_microsoft_1258331618","status":"INACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:22.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://login.microsoftonline.com/common/oauth2/v2.0/authorize","binding":"HTTP-REDIRECT"},"token":{"url":"https://login.microsoftonline.com/common/oauth2/v2.0/token","binding":"HTTP-POST"}},"scopes":["https://graph.microsoft.com/User.Read","openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"ASSIGN","assignments":["00g6mnehjy0QHvYa51d7"]},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.userPrincipalName"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"MICROSOFT","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk41HGHHGQs1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-Hx-yc-fOn9iJy4G763tWWGYSWWYO0G6jODjP00X2wPQ''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:22 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnfn2tLWmb4ha1d7/lifecycle/deactivate
+    method: POST
+  response:
+    body: '{"id":"0oa6mnfn2tLWmb4ha1d7","issuerMode":"ORG_URL","name":"testAcc_facebook_1258331618","status":"INACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:22.000Z","protocol":{"type":"OAUTH2","endpoints":{"authorization":{"url":"https://www.facebook.com/dialog/oauth","binding":"HTTP-REDIRECT"},"token":{"url":"https://graph.facebook.com/v2.8/oauth/access_token","binding":"HTTP-POST"}},"scopes":["public_profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"FACEBOOK","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnfn2tLWmb4ha1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-QTNjFtOItrjCH5ndbkAFWH0USlf8a8WtPzdH6kSzrRY''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:22 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"issuerMode":"ORG_URL","name":"testAcc_google_1258331618","policy":{"accountLink":{"action":"AUTO"},"provisioning":{"action":"DISABLED","conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}},"groups":{"action":"NONE"},"profileMaster":false},"subject":{"matchType":"USERNAME","userNameTemplate":{"template":"idpuser.email"}}},"protocol":{"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}},"scopes":["openid","profile","email"],"type":"OIDC"},"type":"GOOGLE"}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk3tc03TcZw1d7
+    method: PUT
+  response:
+    body: '{"id":"0oa6mnjk3tc03TcZw1d7","issuerMode":"ORG_URL","name":"testAcc_google_1258331618","status":"INACTIVE","created":null,"lastUpdated":"2023-01-12T17:35:23.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://accounts.google.com/o/oauth2/auth","binding":"HTTP-REDIRECT"},"token":{"url":"https://www.googleapis.com/oauth2/v3/token","binding":"HTTP-POST"}},"scopes":["openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"DISABLED","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"GOOGLE","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk3tc03TcZw1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-WrSHInUdcwuMRLtIQnrH1v3TMR600iMpoQ2Up0Mz5MU''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:23 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"definitions":{"custom":{"id":"#custom","properties":{"customfieldId":null},"type":"object"}}}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/default
+    method: POST
+  response:
+    body: '{"id":"https://mm-oie-2022-10-07-max.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta
+      user profile template with default permission settings","lastUpdated":"2023-01-12T17:35:23.000Z","created":"2022-10-07T23:16:57.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_7334087311348261718":{"title":"terraform
+      acceptance test setting unique attribute to UNIQUE_VALIDATED","description":"terraform
+      acceptance test setting unique attribute to UNIQUE_VALIDATED","type":"string","required":true,"unique":"UNIQUE_VALIDATED","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":70,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"OKTA"}}},"required":["testAcc_7334087311348261718"]},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific
+      prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific
+      suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary
+      email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile
+      Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary
+      email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile
+      phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary
+      phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street
+      address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip
+      code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country
+      code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal
+      Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred
+      language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time
+      zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User
+      type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee
+      number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost
+      center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7","method":"GET"},"type":{"rel":"type","href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7","method":"GET"}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-4n-CvTSgxj9JQ0Lj5K8b7xjDfnZLabwZPYQchdU9drg''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:23 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/default
+    method: GET
+  response:
+    body: '{"id":"https://mm-oie-2022-10-07-max.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta
+      user profile template with default permission settings","lastUpdated":"2023-01-12T17:35:23.000Z","created":"2022-10-07T23:16:57.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_7334087311348261718":{"title":"terraform
+      acceptance test setting unique attribute to UNIQUE_VALIDATED","description":"terraform
+      acceptance test setting unique attribute to UNIQUE_VALIDATED","type":"string","required":true,"unique":"UNIQUE_VALIDATED","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":70,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"OKTA"}}},"required":["testAcc_7334087311348261718"]},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific
+      prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific
+      suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary
+      email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display
+      name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile
+      Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary
+      email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile
+      phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary
+      phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street
+      address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip
+      code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country
+      code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal
+      Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred
+      language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time
+      zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User
+      type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee
+      number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost
+      center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7","method":"GET"},"type":{"rel":"type","href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7","method":"GET"}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-Rx6UuGz0U5NW3IVzAujNMYk2RrPHJXEXnXklz-e9sP0''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:23 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnfn2tLWmb4ha1d7
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-xIyAyCcu0zD9ZZSEmF2jwLe1j4QfvrUTG9kVKY9-3oM''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Date:
+      - Thu, 12 Jan 2023 17:35:23 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk41HGHHGQs1d7
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-kCuWbguSPJXhtnNTIs-HMVbut--_64zv_VzCaBIim90''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Date:
+      - Thu, 12 Jan 2023 17:35:23 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g6mnehjy0QHvYa51d7
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-YpTAK6JZn_0gmMWRfO_zUpH2m9Te7OVE-02rwm6frfc''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Date:
+      - Thu, 12 Jan 2023 17:35:23 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk3tc03TcZw1d7/lifecycle/activate
+    method: POST
+  response:
+    body: '{"id":"0oa6mnjk3tc03TcZw1d7","issuerMode":"ORG_URL","name":"testAcc_google_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:23.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://accounts.google.com/o/oauth2/auth","binding":"HTTP-REDIRECT"},"token":{"url":"https://www.googleapis.com/oauth2/v3/token","binding":"HTTP-POST"}},"scopes":["openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"DISABLED","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"GOOGLE","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk3tc03TcZw1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-Z3nLdNe_Zx2Gjw5E7OaZtEl-hL2tKrMbq0gKym3fSeU''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:24 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk3tc03TcZw1d7
+    method: GET
+  response:
+    body: '{"id":"0oa6mnjk3tc03TcZw1d7","issuerMode":"ORG_URL","name":"testAcc_google_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:23.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://accounts.google.com/o/oauth2/auth","binding":"HTTP-REDIRECT"},"token":{"url":"https://www.googleapis.com/oauth2/v3/token","binding":"HTTP-POST"}},"scopes":["openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"DISABLED","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"GOOGLE","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk3tc03TcZw1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-4jSYx-ljSrG71K2gOqC4ptTtDsk4yNfbEi2DNvsmcVE''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:24 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk3tc03TcZw1d7
+    method: GET
+  response:
+    body: '{"id":"0oa6mnjk3tc03TcZw1d7","issuerMode":"ORG_URL","name":"testAcc_google_1258331618","status":"ACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:23.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://accounts.google.com/o/oauth2/auth","binding":"HTTP-REDIRECT"},"token":{"url":"https://www.googleapis.com/oauth2/v3/token","binding":"HTTP-POST"}},"scopes":["openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"DISABLED","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"GOOGLE","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk3tc03TcZw1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-5Zb6iJ5jHg9kqR2DVCGx-mPl1WsPZhPp8b3KRsKKRz0''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:24 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk3tc03TcZw1d7/lifecycle/deactivate
+    method: POST
+  response:
+    body: '{"id":"0oa6mnjk3tc03TcZw1d7","issuerMode":"ORG_URL","name":"testAcc_google_1258331618","status":"INACTIVE","created":"2023-01-12T17:35:20.000Z","lastUpdated":"2023-01-12T17:35:24.000Z","protocol":{"type":"OIDC","endpoints":{"authorization":{"url":"https://accounts.google.com/o/oauth2/auth","binding":"HTTP-REDIRECT"},"token":{"url":"https://www.googleapis.com/oauth2/v3/token","binding":"HTTP-POST"}},"scopes":["openid","profile","email"],"credentials":{"client":{"client_id":"abcd123","client_secret":"abcd123"}}},"policy":{"provisioning":{"action":"DISABLED","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0},"type":"GOOGLE","_links":{"authorize":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize?idp=0oa6mnjk3tc03TcZw1d7&client_id={clientId}&response_type={responseType}&response_mode={responseMode}&scope={scopes}&redirect_uri={redirectUri}&state={state}&nonce={nonce}","templated":true,"hints":{"allow":["GET"]}},"clientRedirectUri":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/v1/authorize/callback","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-BdVc0iAu0X_ij6Q_P6xnIScf9u0e4151tUd8CX5zyZA''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:35:26 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/idps/0oa6mnjk3tc03TcZw1d7
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-I9BfPj0BokS4s9Vm-ZVl_H1b-jBRLPidRFevayPNx1k''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Date:
+      - Thu, 12 Jan 2023 17:35:26 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 204 No Content
+    code: 204
+    duration: ""

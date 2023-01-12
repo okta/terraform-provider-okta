@@ -1,0 +1,126 @@
+---
+version: 1
+interactions:
+- request:
+    body: |
+      {"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":true,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true}
+    form: {}
+    headers:
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/internal/org/settings/security-notification-settings
+    method: PUT
+  response:
+    body: '{"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":true,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true,"customizedEmailsList":[],"customizedEmailsWithReportButtonList":[]}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:37:54 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/internal/org/settings/security-notification-settings
+    method: GET
+  response:
+    body: '{"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":true,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true,"customizedEmailsList":[],"customizedEmailsWithReportButtonList":[]}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:37:56 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/internal/org/settings/security-notification-settings
+    method: GET
+  response:
+    body: '{"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":true,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true,"customizedEmailsList":[],"customizedEmailsWithReportButtonList":[]}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:37:57 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":false,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true}
+    form: {}
+    headers:
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/internal/org/settings/security-notification-settings
+    method: PUT
+  response:
+    body: '{"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":false,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true,"customizedEmailsList":[],"customizedEmailsWithReportButtonList":[]}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:37:59 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/internal/org/settings/security-notification-settings
+    method: GET
+  response:
+    body: '{"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":false,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true,"customizedEmailsList":[],"customizedEmailsWithReportButtonList":[]}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:38:01 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":true,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true}
+    form: {}
+    headers:
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/internal/org/settings/security-notification-settings
+    method: PUT
+  response:
+    body: '{"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":true,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true,"customizedEmailsList":[],"customizedEmailsWithReportButtonList":[]}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:38:04 GMT
+    status: 200 OK
+    code: 200
+    duration: ""

@@ -1,0 +1,29 @@
+---
+version: 1
+interactions:
+- request:
+    body: |
+      {"credentials":{"password":{}},"profile":{"email":"testAcc-9zlbpdr72u@example.com","firstName":"TestAcc","lastName":"9zlbpdr72u","login":"testAcc-9zlbpdr72u@example.com","notValid":"this-isnt-valid","postalAddress":null}}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/users
+    method: POST
+  response:
+    body: '{"errorCode":"E0000001","errorSummary":"Api validation failed: newUser","errorLink":"E0000001","errorId":"oaelNohq1ixStS8ziM-Z1Y9Pw","errorCauses":[{"errorSummary":"Property
+      name ''notValid'' is not defined in profile"}]}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:36:41 GMT
+    status: 400 Bad Request
+    code: 400
+    duration: ""

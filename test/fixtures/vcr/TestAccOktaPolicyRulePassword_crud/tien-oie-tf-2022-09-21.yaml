@@ -1,0 +1,1173 @@
+---
+version: 1
+interactions:
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD
+    method: GET
+  response:
+    body: '[{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}]'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-l2yFHc0ItZy-0YGFHxkZ7tO7n0JZFmWQtzgwN_Q5Nig''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:15 GMT
+      Link:
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD>;
+        rel="self"
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD
+    method: GET
+  response:
+    body: '[{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}]'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-BmLLNVBqx-56GG6NouwGYXRzMe5ELeDouqL313C3eI4''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:15 GMT
+      Link:
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD>;
+        rel="self"
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"type":"PASSWORD","name":"testAcc_1073461219","status":"ACTIVE","conditions":{"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW"},"selfServiceUnlock":{"access":"DENY"}}}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules
+    method: POST
+  response:
+    body: '{"id":"0pr6m9fwre8BcR7Zi1d7","status":"ACTIVE","name":"testAcc_1073461219","priority":1,"created":"2023-01-11T20:33:15.000Z","lastUpdated":"2023-01-11T20:33:15.000Z","system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW"},"selfServiceUnlock":{"access":"DENY"}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:15 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7
+    method: GET
+  response:
+    body: '{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-2tLz_BTknEEfGQqutJ9wvxowOxZVkSZ61llWgdM2ZYo''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:15 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7
+    method: GET
+  response:
+    body: '{"id":"0pr6m9fwre8BcR7Zi1d7","status":"ACTIVE","name":"testAcc_1073461219","priority":1,"created":null,"lastUpdated":null,"system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW"},"selfServiceUnlock":{"access":"DENY"}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-bYAwFkgSiSFaGIOVbknNYalzymX3lwjMKuS3Vh-IY30''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:16 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD
+    method: GET
+  response:
+    body: '[{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}]'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-D4JTQNLJf5uwNlXmtTiMoHA09eteBIUqsYsjxyTUwHc''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:16 GMT
+      Link:
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD>;
+        rel="self"
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD
+    method: GET
+  response:
+    body: '[{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}]'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-zvx9j3Szjx0n9bhgilMdDED7iqxkDWvN78ImaOMms-A''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:16 GMT
+      Link:
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD>;
+        rel="self"
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7
+    method: GET
+  response:
+    body: '{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-p9RnTZashXE3ZAjeSMGpUubDOhLQk8v_43yURY6S4PM''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:17 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7
+    method: GET
+  response:
+    body: '{"id":"0pr6m9fwre8BcR7Zi1d7","status":"ACTIVE","name":"testAcc_1073461219","priority":1,"created":null,"lastUpdated":null,"system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW"},"selfServiceUnlock":{"access":"DENY"}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-ULlkf-1iy0rCq2ohnilT2ldNhNGYU3vvNYygI6jOIKo''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:17 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD
+    method: GET
+  response:
+    body: '[{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}]'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-P5DqbRXNlS-xtD5DpQDf4j35tWrwO5Ko1oJBxATFQgY''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:17 GMT
+      Link:
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD>;
+        rel="self"
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD
+    method: GET
+  response:
+    body: '[{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}]'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-hDu-LNQ6sEgNnFz_jzB6ZtVSJZBlzcy_3YiMJpFvQ7w''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:17 GMT
+      Link:
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD>;
+        rel="self"
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7
+    method: GET
+  response:
+    body: '{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-76X-_n8MVOkWwpvaZpKuLZ83VTTf-wFDDtMOn2JORnU''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:17 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7
+    method: GET
+  response:
+    body: '{"id":"0pr6m9fwre8BcR7Zi1d7","status":"ACTIVE","name":"testAcc_1073461219","priority":1,"created":null,"lastUpdated":null,"system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW"},"selfServiceUnlock":{"access":"DENY"}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-Hw4vn9HgEl2K7lYDMz_l0VeAY6eiO1q-dx35S5CqDKk''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:17 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD
+    method: GET
+  response:
+    body: '[{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}]'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-CR2HtAXHwxcmGwas5TJkJDxm8QyagU3moysVkWwjF-0''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:17 GMT
+      Link:
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD>;
+        rel="self"
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"type":"PASSWORD","name":"testAcc_1073461219","status":"INACTIVE","priority":1,"conditions":{"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"DENY"},"selfServicePasswordReset":{"access":"DENY"},"selfServiceUnlock":{"access":"ALLOW"}}}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7
+    method: PUT
+  response:
+    body: '{"id":"0pr6m9fwre8BcR7Zi1d7","status":"ACTIVE","name":"testAcc_1073461219","priority":1,"created":null,"lastUpdated":"2023-01-11T20:33:18.000Z","system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"DENY"},"selfServicePasswordReset":{"access":"DENY"},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:18 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7/lifecycle/deactivate
+    method: POST
+  response:
+    body: ""
+    headers:
+      Date:
+      - Wed, 11 Jan 2023 20:33:18 GMT
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7
+    method: GET
+  response:
+    body: '{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-_Tkt5Bj4kgpljbmJWhq2lb_w-VybysFPibUkmaMBm1Q''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:18 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7
+    method: GET
+  response:
+    body: '{"id":"0pr6m9fwre8BcR7Zi1d7","status":"INACTIVE","name":"testAcc_1073461219","priority":1,"created":null,"lastUpdated":null,"system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"DENY"},"selfServicePasswordReset":{"access":"DENY"},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"activate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7","hints":{"allow":["GET","PUT","DELETE"]}}},"type":"PASSWORD"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-P_Ell6tXqpHroL5dK6cRHFxKOONZurY4t56PosMudrI''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:18 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD
+    method: GET
+  response:
+    body: '[{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}]'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-WIYVUFxQMW3NmMFifqMb1e5K9D0b20UwEt4KxViV7rg''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:18 GMT
+      Link:
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD>;
+        rel="self"
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD
+    method: GET
+  response:
+    body: '[{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}]'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-hJFavwtGoL87qrUB-HdcVjbGKLbg8EiEBbbUY0LOJm8''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:19 GMT
+      Link:
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD>;
+        rel="self"
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7
+    method: GET
+  response:
+    body: '{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-OXpfJFcm0CcU6vZOQnnWtYj0aFeKa5pMk9vPfApJ3IA''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:19 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7
+    method: GET
+  response:
+    body: '{"id":"0pr6m9fwre8BcR7Zi1d7","status":"INACTIVE","name":"testAcc_1073461219","priority":1,"created":null,"lastUpdated":null,"system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"DENY"},"selfServicePasswordReset":{"access":"DENY"},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"activate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7","hints":{"allow":["GET","PUT","DELETE"]}}},"type":"PASSWORD"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-zbE0BGhqPewC2us0kqgvl8e8Yi0cHRlHHTmzoPWh2iw''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:19 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD
+    method: GET
+  response:
+    body: '[{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}]'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-cc0F5HDRg5laiMXtNFS9ztWWNxNIOkJio1d1lnf6UU8''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:19 GMT
+      Link:
+      - <https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies?type=PASSWORD>;
+        rel="self"
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7
+    method: GET
+  response:
+    body: '{"id":"00p5jjkl3vyvKWDUG1d7","status":"ACTIVE","name":"Default Policy","description":"The
+      default policy applies in all situations if no other policy applies.","priority":1,"system":true,"conditions":{"people":{"groups":{"include":["00g5jjkl2rE3qHk0F1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2022-09-21T17:21:16.000Z","lastUpdated":"2023-01-11T20:32:46.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":true,"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":4},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-zN6iHrJuaMQoiVx9UVQp79hcMgj6DT1VcgPQB9yF4M8''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:19 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7
+    method: GET
+  response:
+    body: '{"id":"0pr6m9fwre8BcR7Zi1d7","status":"INACTIVE","name":"testAcc_1073461219","priority":1,"created":null,"lastUpdated":null,"system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"DENY"},"selfServicePasswordReset":{"access":"DENY"},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"activate":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7","hints":{"allow":["GET","PUT","DELETE"]}}},"type":"PASSWORD"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        tien-oie-tf-2022-09-21.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-J3z9fZYl_OYZ6m4KG0K5sd5ieTh1oB4UMs6ikA964no''
+        ''self'' tien-oie-tf-2022-09-21.oktapreview.com *.oktacdn.com app.pendo.io
+        cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com;
+        frame-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com tien-oie-tf-2022-09-21-admin.oktapreview.com
+        login.okta.com com-okta-authenticator:; img-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com
+        *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io
+        pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com
+        data: blob:; font-src ''self'' tien-oie-tf-2022-09-21.oktapreview.com data:
+        *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 11 Jan 2023 20:33:19 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://tien-oie-tf-2022-09-21.oktapreview.com/api/v1/policies/00p5jjkl3vyvKWDUG1d7/rules/0pr6m9fwre8BcR7Zi1d7
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Date:
+      - Wed, 11 Jan 2023 20:33:20 GMT
+    status: 204 No Content
+    code: 204
+    duration: ""

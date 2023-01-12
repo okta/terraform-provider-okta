@@ -1,0 +1,729 @@
+---
+version: 1
+interactions:
+- request:
+    body: |
+      {"audiences":["whatever.rise.zone"],"credentials":{"signing":{"rotationMode":"AUTO"}},"description":"test","issuerMode":"ORG_URL","name":"testAcc_2048313021"}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers
+    method: POST
+  response:
+    body: '{"id":"aus6mnmd7x111ikow1d7","name":"testAcc_2048313021","description":"test","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/aus6mnmd7x111ikow1d7","issuerMode":"ORG_URL","status":"ACTIVE","created":"2023-01-12T17:31:05.000Z","lastUpdated":"2023-01-12T17:31:05.000Z","credentials":{"signing":{"kid":"awEvDSdK5xQctdsthKv-LqmWvGLlxCNR_vW8WydkFhM","rotationMode":"AUTO","lastRotated":"2023-01-12T17:31:06.000Z","nextRotation":"2023-04-12T17:31:06.000Z"}},"default":false,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/aus6mnmd7x111ikow1d7/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/aus6mnmd7x111ikow1d7/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-56BWRWw20JIfrNZGiyKwN3wYr3ihUMgn4rxo518AVFQ''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:31:06 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 201 Created
+    code: 201
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7
+    method: GET
+  response:
+    body: '{"id":"aus6mnmd7x111ikow1d7","name":"testAcc_2048313021","description":"test","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/aus6mnmd7x111ikow1d7","issuerMode":"ORG_URL","status":"ACTIVE","created":"2023-01-12T17:31:05.000Z","lastUpdated":"2023-01-12T17:31:05.000Z","credentials":{"signing":{"kid":"awEvDSdK5xQctdsthKv-LqmWvGLlxCNR_vW8WydkFhM","rotationMode":"AUTO","lastRotated":"2023-01-12T17:31:06.000Z","nextRotation":"2023-04-12T17:31:06.000Z"}},"default":false,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/aus6mnmd7x111ikow1d7/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/aus6mnmd7x111ikow1d7/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-UYlqP9OYz6pqS9BgiuqwiP7pHLcHA14okBpQIXrYaPU''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:31:06 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"conditions":{"clients":{"include":["ALL_CLIENTS"]}},"description":"test","name":"test","priority":1,"status":"ACTIVE","type":"OAUTH_AUTHORIZATION_POLICY"}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies
+    method: POST
+  response:
+    body: '{"id":"00p6mnewr19yEFqZe1d7","status":"ACTIVE","name":"test","description":"test","priority":1,"system":false,"conditions":{"clients":{"include":["ALL_CLIENTS"]}},"created":"2023-01-12T17:31:06.000Z","lastUpdated":"2023-01-12T17:31:06.000Z","_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7/rules","hints":{"allow":["GET"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"OAUTH_AUTHORIZATION_POLICY"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-iqKzdgjoqfCSjKRLwVSGyaRV8FwVAu8xa0W1_k6QaFU''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:31:06 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 201 Created
+    code: 201
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7
+    method: GET
+  response:
+    body: '{"id":"00p6mnewr19yEFqZe1d7","status":"ACTIVE","name":"test","description":"test","priority":1,"system":false,"conditions":{"clients":{"include":["ALL_CLIENTS"]}},"created":"2023-01-12T17:31:06.000Z","lastUpdated":"2023-01-12T17:31:06.000Z","_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7/rules","hints":{"allow":["GET"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"OAUTH_AUTHORIZATION_POLICY"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-TVQdFmxIk02thlY1iocrmEHMjqAth9XmvGUafffJyhM''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:31:07 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7
+    method: GET
+  response:
+    body: '{"id":"aus6mnmd7x111ikow1d7","name":"testAcc_2048313021","description":"test","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/aus6mnmd7x111ikow1d7","issuerMode":"ORG_URL","status":"ACTIVE","created":"2023-01-12T17:31:05.000Z","lastUpdated":"2023-01-12T17:31:05.000Z","credentials":{"signing":{"kid":"awEvDSdK5xQctdsthKv-LqmWvGLlxCNR_vW8WydkFhM","rotationMode":"AUTO","lastRotated":"2023-01-12T17:31:06.000Z","nextRotation":"2023-04-12T17:31:06.000Z"}},"default":false,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/aus6mnmd7x111ikow1d7/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/aus6mnmd7x111ikow1d7/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-nKZ1oFXXEnnocnM-wjny-a8bXnGvYu_rd-oOMIoHJLE''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:31:07 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7
+    method: GET
+  response:
+    body: '{"id":"00p6mnewr19yEFqZe1d7","status":"ACTIVE","name":"test","description":"test","priority":1,"system":false,"conditions":{"clients":{"include":["ALL_CLIENTS"]}},"created":"2023-01-12T17:31:06.000Z","lastUpdated":"2023-01-12T17:31:06.000Z","_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7/rules","hints":{"allow":["GET"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"OAUTH_AUTHORIZATION_POLICY"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-nKH1Ec1w4giQHGbMBtqOdxCPGBR9cQR3FFSYNx3jXvw''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:31:07 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7
+    method: GET
+  response:
+    body: '{"id":"aus6mnmd7x111ikow1d7","name":"testAcc_2048313021","description":"test","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/aus6mnmd7x111ikow1d7","issuerMode":"ORG_URL","status":"ACTIVE","created":"2023-01-12T17:31:05.000Z","lastUpdated":"2023-01-12T17:31:05.000Z","credentials":{"signing":{"kid":"awEvDSdK5xQctdsthKv-LqmWvGLlxCNR_vW8WydkFhM","rotationMode":"AUTO","lastRotated":"2023-01-12T17:31:06.000Z","nextRotation":"2023-04-12T17:31:06.000Z"}},"default":false,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/aus6mnmd7x111ikow1d7/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/aus6mnmd7x111ikow1d7/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-Hn8hhVHrQMNa__PRUPMAWZUd1O5auUsjleSriJ_lDmY''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:31:08 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7
+    method: GET
+  response:
+    body: '{"id":"00p6mnewr19yEFqZe1d7","status":"ACTIVE","name":"test","description":"test","priority":1,"system":false,"conditions":{"clients":{"include":["ALL_CLIENTS"]}},"created":"2023-01-12T17:31:06.000Z","lastUpdated":"2023-01-12T17:31:06.000Z","_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7/rules","hints":{"allow":["GET"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"OAUTH_AUTHORIZATION_POLICY"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-Yb5YBw3YKnvRm_IiILMk9qEdwGsx2zL7dcuIWt3C5jc''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:31:09 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"conditions":{"clients":{"include":["ALL_CLIENTS"]}},"description":"test updated","name":"test_updated","priority":1,"status":"ACTIVE","type":"OAUTH_AUTHORIZATION_POLICY"}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7
+    method: PUT
+  response:
+    body: '{"id":"00p6mnewr19yEFqZe1d7","status":"ACTIVE","name":"test_updated","description":"test
+      updated","priority":1,"system":false,"conditions":{"clients":{"include":["ALL_CLIENTS"]}},"created":"2023-01-12T17:31:06.000Z","lastUpdated":"2023-01-12T17:31:09.000Z","_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7/rules","hints":{"allow":["GET"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"OAUTH_AUTHORIZATION_POLICY"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-qlPKNzVDDwY4aQBWkdbMLaCiJJyM_PsMZlbf1sVispc''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:31:09 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7
+    method: GET
+  response:
+    body: '{"id":"00p6mnewr19yEFqZe1d7","status":"ACTIVE","name":"test_updated","description":"test
+      updated","priority":1,"system":false,"conditions":{"clients":{"include":["ALL_CLIENTS"]}},"created":"2023-01-12T17:31:06.000Z","lastUpdated":"2023-01-12T17:31:09.000Z","_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7/rules","hints":{"allow":["GET"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"OAUTH_AUTHORIZATION_POLICY"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-_egcF-MP_1L-wZOrBML_8nDaDVqz_tOK4P3NKoof_RQ''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:31:09 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7
+    method: GET
+  response:
+    body: '{"id":"aus6mnmd7x111ikow1d7","name":"testAcc_2048313021","description":"test","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/aus6mnmd7x111ikow1d7","issuerMode":"ORG_URL","status":"ACTIVE","created":"2023-01-12T17:31:05.000Z","lastUpdated":"2023-01-12T17:31:05.000Z","credentials":{"signing":{"kid":"awEvDSdK5xQctdsthKv-LqmWvGLlxCNR_vW8WydkFhM","rotationMode":"AUTO","lastRotated":"2023-01-12T17:31:06.000Z","nextRotation":"2023-04-12T17:31:06.000Z"}},"default":false,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/aus6mnmd7x111ikow1d7/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/aus6mnmd7x111ikow1d7/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-vr3tw2rNZ8Gu9lXdbTkAHw8G_1tA17KLaUATCrMA-nI''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:31:10 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7
+    method: GET
+  response:
+    body: '{"id":"00p6mnewr19yEFqZe1d7","status":"ACTIVE","name":"test_updated","description":"test
+      updated","priority":1,"system":false,"conditions":{"clients":{"include":["ALL_CLIENTS"]}},"created":"2023-01-12T17:31:06.000Z","lastUpdated":"2023-01-12T17:31:09.000Z","_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7/rules","hints":{"allow":["GET"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"OAUTH_AUTHORIZATION_POLICY"}'
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-qIrunE5nwhIFtBYLYk-sRqZww4LsK380R-q9t7Q8qNY''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 12 Jan 2023 17:31:10 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/policies/00p6mnewr19yEFqZe1d7
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-MrM3aRONrtwyeFK7goWJw2NP4b3nBc2WRHxruOLaYdY''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Date:
+      - Thu, 12 Jan 2023 17:31:11 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7/lifecycle/deactivate
+    method: POST
+  response:
+    body: ""
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-oonBcS5dMiQxzSTGv_j2fuDBtJeqPEaia3xtFazN7Oc''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Date:
+      - Thu, 12 Jan 2023 17:31:11 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 204 No Content
+    code: 204
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.13.1 golang/go1.18.4 darwin/arm64 okta-terraform/3.33.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus6mnmd7x111ikow1d7
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Content-Security-Policy-Report-Only:
+      - 'default-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        connect-src ''self'' mm-oie-2022-10-07-max.oktapreview.com mm-oie-2022-10-07-max-admin.oktapreview.com
+        *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com
+        mm-oie-2022-10-07-max.kerberos.oktapreview.com *.authenticatorlocalprod.com:8769
+        http://localhost:8769 http://127.0.0.1:8769 *.authenticatorlocalprod.com:65111
+        http://localhost:65111 http://127.0.0.1:65111 *.authenticatorlocalprod.com:65121
+        http://localhost:65121 http://127.0.0.1:65121 *.authenticatorlocalprod.com:65131
+        http://localhost:65131 http://127.0.0.1:65131 *.authenticatorlocalprod.com:65141
+        http://localhost:65141 http://127.0.0.1:65141 *.authenticatorlocalprod.com:65151
+        http://localhost:65151 http://127.0.0.1:65151 https://oinmanager.okta.com
+        data:; script-src ''unsafe-inline'' ''nonce-PlsbAYmtiw4xHn308ka8q4_dFJhzx1F110WI6bULCg8''
+        ''unsafe-eval'' ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com;
+        style-src ''unsafe-inline'' ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-oie-2022-10-07-max.oktapreview.com
+        mm-oie-2022-10-07-max-admin.oktapreview.com login.okta.com com-okta-authenticator:;
+        img-src ''self'' mm-oie-2022-10-07-max.oktapreview.com *.oktacdn.com *.tiles.mapbox.com
+        *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com
+        pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src
+        ''self'' mm-oie-2022-10-07-max.oktapreview.com data: *.oktacdn.com fonts.gstatic.com;
+        frame-ancestors ''self''; report-uri https://oktacsp.report-uri.com/r/t/csp/reportOnly;
+        report-to csp'
+      Date:
+      - Thu, 12 Jan 2023 17:31:11 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 204 No Content
+    code: 204
+    duration: ""
