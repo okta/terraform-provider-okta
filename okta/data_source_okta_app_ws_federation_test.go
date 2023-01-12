@@ -26,11 +26,8 @@ func TestAccOktaDataSourceAppWsFed_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "label", buildResourceName(ri)),
-					// resource.TestCheckResourceAttr("data.okta_app_ws_federation.test_label", "label", buildResourceName(ri)),
-
 					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "site_url", "https://signin.test.com/saml"),
 					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "reply_url", "https://test.com"),
-					//resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "reply_override", "false"),
 					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "realm", "test"),
 					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "name_id_format", "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"),
 					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "audience_restriction", "https://signin.test.com"),
@@ -40,7 +37,6 @@ func TestAccOktaDataSourceAppWsFed_read(t *testing.T) {
 					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "group_value_format", "dn"),
 					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "username_attribute", "username"),
 					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "attribute_statements", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname|bob|,http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname|hope|"),
-					//resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "visibility", "false"),
 					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "status", "ACTIVE"),
 				),
 			},
