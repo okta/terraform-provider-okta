@@ -5,6 +5,7 @@ resource "okta_app_ws_federation" "test" {
 	reply_override = false
 	name_id_format = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
 	audience_restriction = "https://signin.test.com"
+	realm = "test"
 	authn_context_class_ref = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
 	group_filter = "app1.*"
 	group_name = "username"

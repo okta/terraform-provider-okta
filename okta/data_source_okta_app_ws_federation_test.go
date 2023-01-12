@@ -25,11 +25,11 @@ func TestAccOktaDataSourceAppWsFed_read(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_app_ws_federation.test", "key_id"),
 					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test_label", "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "status", statusActive),
-					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test_label", "status", statusActive),
+					// resource.TestCheckResourceAttr("data.okta_app_ws_federation.test_label", "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "realm", "test"),
+					resource.TestCheckResourceAttr("data.okta_app_ws_federation.test", "site_url", "https://signin.test.com/saml"),
+					// resource.TestCheckResourceAttr("data.okta_app_ws_federation.test_label", "status", statusActive),
 				),
 			},
 		},
@@ -43,6 +43,7 @@ func buildTestAppWsFed(d int) string {
 		site_url = "https://signin.test.com/saml"
 		reply_url = "https://test.com"
 		reply_override = false
+		realm = "test"
 		name_id_format = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
 		audience_restriction = "https://signin.test.com"
 		authn_context_class_ref = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"

@@ -169,10 +169,10 @@ func resourceAppWsFedRead(ctx context.Context, d *schema.ResourceData, m interfa
 	_ = d.Set("group_value_format", app.Settings.App.GroupValueFormat)
 	_ = d.Set("username_attribute", app.Settings.App.UsernameAttribute)
 	_ = d.Set("attribute_statements", app.Settings.App.AttributeStatements)
-	_ = d.Set("visibility", app.Visibility)
+	// _ = d.Set("visibility", app.Visibility)
 
-	_ = d.Set("", linksValue(app.Links, "logo", "href"))
-	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
+	// _ = d.Set("", linksValue(app.Links, "logo", "href"))
+	// appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	err = syncGroupsAndUsers(ctx, app.Id, d, m)
 	if err != nil {
 		return diag.Errorf("failed to sync groups and users for WsFed application: %v", err)

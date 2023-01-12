@@ -2,7 +2,6 @@ package okta
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -140,15 +139,17 @@ func dataSourceAppWsFedRead(ctx context.Context, d *schema.ResourceData, m inter
 		logger(m).Info("found multiple WsFed applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
 	}
-	err = setAppUsersIDsAndGroupsIDs(ctx, d, getOktaClientFromMetadata(m), app.Id)
-	if err != nil {
-		return diag.Errorf("failed to list WsFed app groups and users: %v", err)
-	}
+	// err = setAppUsersIDsAndGroupsIDs(ctx, d, getOktaClientFromMetadata(m), app.Id)
+	// if err != nil {
+	// 	return diag.Errorf("failed to list WsFed app groups and users: %v", err)
+	// }
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
-	_ = d.Set("name", app.Name)
-	_ = d.Set("status", app.Status)
-	p, _ := json.Marshal(app.Links)
-	_ = d.Set("links", string(p))
+	_ = d.Set("site_url", app.Settings.App.SiteURL)
+	_ = d.Set("realm", app.Settings.App.Realm)
+
+	// _ = d.Set("status", app.Status)
+	// p, _ := json.Marshal(app.Links)
+	// _ = d.Set("links", string(p))
 	return nil
 }
