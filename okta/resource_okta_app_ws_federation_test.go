@@ -64,10 +64,16 @@ func TestAccAppWsFedApplication_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewWsFederationApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "button_field", "btn-login"),
-					resource.TestCheckResourceAttr(resourceName, "password_field", "txtbox-password"),
-					resource.TestCheckResourceAttr(resourceName, "username_field", "txtbox-username"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://example.com/login.html"),
+					resource.TestCheckResourceAttr(resourceName, "realm", "test"),
+					resource.TestCheckResourceAttr(resourceName, "name_id_format", "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"),
+					resource.TestCheckResourceAttr(resourceName, "audience_restriction", "https://signin.test.com"),
+					resource.TestCheckResourceAttr(resourceName, "authn_context_class_ref", "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"),
+					resource.TestCheckResourceAttr(resourceName, "group_filter", "app1.*"),
+					resource.TestCheckResourceAttr(resourceName, "group_name", "username"),
+					resource.TestCheckResourceAttr(resourceName, "group_value_format", "dn"),
+					resource.TestCheckResourceAttr(resourceName, "username_attribute", "username"),
+					resource.TestCheckResourceAttr(resourceName, "attribute_statements", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname|bob|,http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname|hope|"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 				),
 			},
 			{
@@ -75,11 +81,16 @@ func TestAccAppWsFedApplication_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(okta.NewWsFederationApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "realm", "test"),
+					resource.TestCheckResourceAttr(resourceName, "name_id_format", "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"),
+					resource.TestCheckResourceAttr(resourceName, "audience_restriction", "https://signin.test.com"),
+					resource.TestCheckResourceAttr(resourceName, "authn_context_class_ref", "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"),
+					resource.TestCheckResourceAttr(resourceName, "group_filter", "app1.*"),
+					resource.TestCheckResourceAttr(resourceName, "group_name", "username"),
+					resource.TestCheckResourceAttr(resourceName, "group_value_format", "dn"),
+					resource.TestCheckResourceAttr(resourceName, "username_attribute", "username"),
+					resource.TestCheckResourceAttr(resourceName, "attribute_statements", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname|bob|,http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname|hope|"),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://example.com/login-updated.html"),
-					resource.TestCheckResourceAttr(resourceName, "button_field", "btn-login-updated"),
-					resource.TestCheckResourceAttr(resourceName, "password_field", "txtbox-password-updated"),
-					resource.TestCheckResourceAttr(resourceName, "username_field", "txtbox-username-updated"),
 				),
 			},
 		},
@@ -92,11 +103,12 @@ func TestAccAppWsFedApplication_timeouts(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appWsFed)
 	importConfig := mgr.GetFixtures("import.tf", ri, t)
 	config := `
-	 resource "okta_app_ws_federation" "exampleWsFedApp" {
+	 resource "okta_app_ws_federation" "test" {
 		    label    = "testAcc_replace_with_uuid"
 		    site_url = "https://signin.example.com/saml"
 		    reply_url = "https://example.com"
 		    reply_override = false
+			realm = "test"
 		    name_id_format = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
 		    audience_restriction = "https://signin.example.com"
 		    authn_context_class_ref = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
@@ -107,6 +119,12 @@ func TestAccAppWsFedApplication_timeouts(t *testing.T) {
 		    attribute_statements = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname|bob|,http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname|hope|"
 		    visibility = false
 		    status = "ACTIVE"
+
+			timeouts {
+				create = "60m"
+				read = "2h"
+				update = "30m"
+			}			
 	    }
 	`
 	resource.Test(t, resource.TestCase{
