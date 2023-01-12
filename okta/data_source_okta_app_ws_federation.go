@@ -53,7 +53,7 @@ func dataSourceAppWsFed() *schema.Resource {
 				Description: "The ReplyTo URL to which responses are directed",
 			},
 			"reply_override": {
-				Type:        schema.TypeString,
+				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "Enable web application to override ReplyTo URL with reply param",
 			},
@@ -63,7 +63,7 @@ func dataSourceAppWsFed() *schema.Resource {
 				Description: "Name ID Format",
 			},
 			"audience_restriction": {
-				Type:        schema.TypeBool,
+				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "The assertion containing a bearer subject confirmation MUST contain an Audience Restriction including the service provider's unique identifier as an Audience",
 			},
@@ -102,6 +102,12 @@ func dataSourceAppWsFed() *schema.Resource {
 				Optional:    true,
 				Description: "Application icon visibility to users",
 			},
+			"status": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     true,
+				Description: "Activation status of the application",
+			},
 		}),
 	}
 }
@@ -139,17 +145,25 @@ func dataSourceAppWsFedRead(ctx context.Context, d *schema.ResourceData, m inter
 		logger(m).Info("found multiple WsFed applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
 	}
-	// err = setAppUsersIDsAndGroupsIDs(ctx, d, getOktaClientFromMetadata(m), app.Id)
-	// if err != nil {
-	// 	return diag.Errorf("failed to list WsFed app groups and users: %v", err)
-	// }
+
+	Visibility := d.Get("visibility").(bool)
+
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
 	_ = d.Set("site_url", app.Settings.App.SiteURL)
+	_ = d.Set("reply_url", app.Settings.App.WReplyURL)
+	_ = d.Set("reply_override", app.Settings.App.WReplyOverride)
 	_ = d.Set("realm", app.Settings.App.Realm)
+	_ = d.Set("name_id_format", app.Settings.App.NameIDFormat)
+	_ = d.Set("audience_restriction", app.Settings.App.AudienceRestriction)
+	_ = d.Set("authn_context_class_ref", app.Settings.App.AuthnContextClassRef)
+	_ = d.Set("group_filter", app.Settings.App.GroupFilter)
+	_ = d.Set("group_name", app.Settings.App.GroupName)
+	_ = d.Set("group_value_format", app.Settings.App.GroupValueFormat)
+	_ = d.Set("username_attribute", app.Settings.App.UsernameAttribute)
+	_ = d.Set("attribute_statements", app.Settings.App.AttributeStatements)
+	_ = d.Set("visibility", &Visibility)
+	_ = d.Set("status", app.Status)
 
-	// _ = d.Set("status", app.Status)
-	// p, _ := json.Marshal(app.Links)
-	// _ = d.Set("links", string(p))
 	return nil
 }
