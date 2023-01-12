@@ -125,8 +125,11 @@ func dataSourceAppWsFedRead(ctx context.Context, d *schema.ResourceData, m inter
 		}
 		app = respApp.(*okta.WsFederationApplication)
 	} else {
+
 		re := getOktaClientFromMetadata(m).GetRequestExecutor()
-		qp := &query.Params{Limit: 1, Filter: filters.Status, Q: filters.getQ()}
+
+		qp := &query.Params{Limit: 1, Filter: filters.Label, Q: filters.getQ()}
+
 		req, err := re.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/apps%s", qp.String()), nil)
 		if err != nil {
 			return diag.Errorf("failed to list WsFed apps: %v", err)
