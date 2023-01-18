@@ -103,3 +103,59 @@ resource "okta_policy_mfa" "test" {
 		},
 	})
 }
+
+// TestAccOktaMfaPolicy_Issue_1176 deals with testing
+// https://github.com/okta/terraform-provider-okta/issues/1176
+// Which is similar to PRs 1427/1210
+func TestAccOktaMfaPolicy_Issue_1176(t *testing.T) {
+	ri := acctest.RandInt()
+	mgr := newFixtureManager(policyMfa)
+	config := `
+data "okta_group" "all" {
+  name = "Everyone"
+}
+resource "okta_policy_mfa" "test" {
+    name        = "testAcc_replace_with_uuid"
+    status      = "ACTIVE"
+    description = "Terraform Acceptance Test MFA Policy"
+    is_oie      = true
+    okta_otp = {
+      enroll = "OPTIONAL"
+    }
+    phone_number = {
+      enroll = "OPTIONAL"
+    }
+    okta_password = {
+      enroll = "REQUIRED"
+    }
+    okta_email = {
+      enroll = "OPTIONAL"
+    }
+
+    groups_included = [data.okta_group.all.id]
+}
+	`
+	resourceName := fmt.Sprintf("%s.test", policyMfa)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          testOIEOnlyAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createPolicyCheckDestroy(policyMfa),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config, ri),
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy"),
+					resource.TestCheckResourceAttr(resourceName, "okta_otp.enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "phone_number.enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "okta_email.enroll", "OPTIONAL"),
+				),
+			},
+		},
+	})
+}
