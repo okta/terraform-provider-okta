@@ -38,14 +38,17 @@ func init() {
 	// tests may need to query the okta API for status and the Terraform SDK
 	// doesn't expose the provider's meta data where we store the provider's
 	// config until after tests have completed.
-	config := &Config{
-		orgName: os.Getenv("OKTA_ORG_NAME"),
-		domain:  os.Getenv("OKTA_BASE_URL"),
-	}
-	config.logger = providerLogger(config)
-	testSDKClient, _ = oktaSDKClient(config)
-	testSupplementClient = &sdk.APISupplement{
-		RequestExecutor: testSDKClient.CloneRequestExecutor(),
+	if os.Getenv("TF_ACC") != "" {
+		// only set up for acceptance tests
+		config := &Config{
+			orgName: os.Getenv("OKTA_ORG_NAME"),
+			domain:  os.Getenv("OKTA_BASE_URL"),
+		}
+		config.logger = providerLogger(config)
+		testSDKClient, _ = oktaSDKClient(config)
+		testSupplementClient = &sdk.APISupplement{
+			RequestExecutor: testSDKClient.CloneRequestExecutor(),
+		}
 	}
 }
 
