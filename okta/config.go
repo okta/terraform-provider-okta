@@ -58,15 +58,38 @@ type (
 )
 
 func (c *Config) loadAndValidate(ctx context.Context) error {
+	c.logger = providerLogger(c)
+
+	client, err := oktaSDKClient(c)
+	if err != nil {
+		return err
+	}
+
+	if c.apiToken != "" {
+		if _, _, err := client.User.GetUser(ctx, "me"); err != nil {
+			return err
+		}
+	}
+	c.oktaClient = client
+	c.supplementClient = &sdk.APISupplement{
+		RequestExecutor: client.CloneRequestExecutor(),
+	}
+	return nil
+}
+
+func providerLogger(c *Config) hclog.Logger {
 	logLevel := hclog.Level(c.logLevel)
 	if os.Getenv("TF_LOG") != "" {
 		logLevel = hclog.LevelFromString(os.Getenv("TF_LOG"))
 	}
 
-	c.logger = hclog.New(&hclog.LoggerOptions{
+	return hclog.New(&hclog.LoggerOptions{
 		Level:      logLevel,
 		TimeFormat: "2006/01/02 03:04:05",
 	})
+}
+
+func oktaSDKClient(c *Config) (client *okta.Client, err error) {
 	var httpClient *http.Client
 	if c.backoff {
 		retryableClient := retryablehttp.NewClient()
@@ -90,11 +113,10 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 		c.logger.Info(fmt.Sprintf("running with experimental max_api_capacity configuration at %d%%", c.maxAPICapacity))
 		apiMutex, err := apimutex.NewAPIMutex(c.maxAPICapacity)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		httpClient.Transport = transport.NewGovernedTransport(httpClient.Transport, apiMutex, c.logger)
 	}
-
 	var orgUrl string
 	var disableHTTPS bool
 	if c.httpProxy != "" {
@@ -137,24 +159,14 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 	if disableHTTPS {
 		setters = append(setters, okta.WithTestingDisableHttpsCheck(true))
 	}
-	_, client, err := okta.NewClient(
+
+	c.client = httpClient
+
+	_, client, err = okta.NewClient(
 		context.Background(),
 		setters...,
 	)
-	if err != nil {
-		return err
-	}
-	if c.apiToken != "" {
-		if _, _, err := client.User.GetUser(ctx, "me"); err != nil {
-			return err
-		}
-	}
-	c.oktaClient = client
-	c.supplementClient = &sdk.APISupplement{
-		RequestExecutor: client.CloneRequestExecutor(),
-	}
-	c.client = httpClient
-	return nil
+	return
 }
 
 func errHandler(resp *http.Response, err error, numTries int) (*http.Response, error) {
