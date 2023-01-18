@@ -15,11 +15,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 var (
 	testAccProvidersFactories map[string]func() (*schema.Provider, error)
 	testAccProvider           *schema.Provider
+	testSDKClient             *okta.Client
+	testSupplementClient      *sdk.APISupplement
 )
 
 func init() {
@@ -28,6 +31,24 @@ func init() {
 		"okta": func() (*schema.Provider, error) {
 			return testAccProvider, nil
 		},
+	}
+
+	// We need to be able to query the SDK with an Okta SDK golang client that
+	// is outside of the client that terraform provider creates. This is because
+	// tests may need to query the okta API for status and the Terraform SDK
+	// doesn't expose the provider's meta data where we store the provider's
+	// config until after tests have completed.
+	if os.Getenv("TF_ACC") != "" {
+		// only set up for acceptance tests
+		config := &Config{
+			orgName: os.Getenv("OKTA_ORG_NAME"),
+			domain:  os.Getenv("OKTA_BASE_URL"),
+		}
+		config.logger = providerLogger(config)
+		testSDKClient, _ = oktaSDKClient(config)
+		testSupplementClient = &sdk.APISupplement{
+			RequestExecutor: testSDKClient.CloneRequestExecutor(),
+		}
 	}
 }
 
@@ -61,6 +82,27 @@ func oktaConfig() (*Config, error) {
 		return config, fmt.Errorf("error initializing Okta client: %v", err)
 	}
 	return config, nil
+}
+
+// testOIEOnlyAccPreCheck is a resource.test PreCheck function that will place a
+// logical skip of OIE tests when tests are run against a classic org.
+func testOIEOnlyAccPreCheck(t *testing.T) func() {
+	return func() {
+		err := accPreCheck()
+		if err != nil {
+			t.Fatalf("%v", err)
+		}
+
+		org, _, err := testSupplementClient.GetWellKnownOktaOrganization(context.TODO())
+		if err != nil {
+			t.Fatalf("%v", err)
+		}
+
+		// v1 == Classic, idx == OIE
+		if org.Pipeline != "idx" {
+			t.Skipf("%q test is for OIE orgs only", t.Name())
+		}
+	}
 }
 
 func testAccPreCheck(t *testing.T) func() {
