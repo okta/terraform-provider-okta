@@ -16,8 +16,8 @@ You can define admin roles to target Groups, Applications, and Application Insta
 ```
 Note 1: you have to assign a role to a user before creating this resource.
 
-Note 2: You can target a mixture of both App and App Instance targets, but can't assign permissions to manage all 
-        instances of an App and then a subset of that same App. For example, you can't specify that an admin has access 
+Note 2: You can target a mixture of both App and App Instance targets, but can't assign permissions to manage all
+        instances of an App and then a subset of that same App. For example, you can't specify that an admin has access
         to manage all instances of a Salesforce app and then also specific configurations of the Salesforce app.
 ```
 
@@ -37,7 +37,7 @@ The following arguments are supported:
 
 - `user_id` - (Required) ID of the user.
 
-- `role_type` - (Required) Name of the role associated with the user.
+- `role_type` - (Required) Name of the role associated with the user. See [API Docs](https://developer.okta.com/docs/reference/api/roles/#role-types).
 
 - `apps` - (Optional) List of app names (name represents set of app instances) or a combination of app name and app instance ID (like 'salesforce' or 'facebook.0oapsqQ6dv19pqyEo0g3').
 

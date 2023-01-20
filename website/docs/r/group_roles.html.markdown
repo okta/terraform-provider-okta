@@ -39,7 +39,7 @@ The following arguments are supported:
   `"REPORT_ADMIN"`,
   `"SUPER_ADMIN"`,
   `"USER_ADMIN"`
-  .
+  . See [API Docs](https://developer.okta.com/docs/reference/api/roles/#role-types).
 
 ## Attributes Reference
 

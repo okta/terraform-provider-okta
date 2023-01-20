@@ -1,7 +1,7 @@
 ---
-layout: 'okta' 
-page_title: 'Okta: okta_group_role' 
-sidebar_current: 'docs-okta-resource-group-role' 
+layout: 'okta'
+page_title: 'Okta: okta_group_role'
+sidebar_current: 'docs-okta-resource-group-role'
 description: |-
   Assigns Admin roles to Okta Groups.
 ---
@@ -40,7 +40,7 @@ The following arguments are supported:
   `"REPORT_ADMIN"`,
   `"SUPER_ADMIN"`,
   `"USER_ADMIN"`
-  .
+  . See [API Docs](https://developer.okta.com/docs/reference/api/roles/#role-types).
 
 
   - `"USER_ADMIN"` is the Group Administrator.
