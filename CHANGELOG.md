@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.41.0 (January 27, 2023)
+
+### PROJECT IMPROVEMENTS:
+
+* Enable okta_password authenticator for okta_policy_mfa [#1210](https://github.com/okta/terraform-provider-okta/pull/1210). Tests [#1427](https://github.com/okta/terraform-provider-okta/pull/1427). Thanks, [@nickrmc83](https://github.com/nickrmc83)!
+* Update resource documentation with link to role-type api doc references [#1430](https://github.com/okta/terraform-provider-okta/pull/1430). Thanks, [@noinarisak](https://github.com/noinarisak)!
+
 ## 3.40.0 (January 09, 2023)
 
 ### BUG FIXES:
