@@ -75,6 +75,7 @@ func TestAccDataSourceOktaUser_SkipAdminRoles(t *testing.T) {
 				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(false, true), ri),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckNoResourceAttr("data.okta_user.test", "admin_roles.#"),          // skipped
+					resource.TestCheckNoResourceAttr("data.okta_user.test", "roles.#"),                // skipped
 					resource.TestCheckResourceAttr("data.okta_user.test", "group_memberships.#", "2"), // Everyone, A Group
 				),
 			},
@@ -82,6 +83,7 @@ func TestAccDataSourceOktaUser_SkipAdminRoles(t *testing.T) {
 	})
 }
 
+// TODU
 // TestAccDataSourceOktaUser_SkipGroups pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUser_SkipGroups(t *testing.T) {
 	ri := acctest.RandInt()
@@ -95,6 +97,7 @@ func TestAccDataSourceOktaUser_SkipGroups(t *testing.T) {
 				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(true, false), ri),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_user.test", "admin_roles.#", "2"),       // SUPER_ADMIN, APP_ADMIN
+					resource.TestCheckResourceAttr("data.okta_user.test", "roles.#", "2"),             // SUPER_ADMIN, APP_ADMIN
 					resource.TestCheckResourceAttr("data.okta_user.test", "group_memberships.#", "0"), // skipped
 				),
 			},
@@ -115,6 +118,7 @@ func TestAccDataSourceOktaUser_SkipGroupsSkipRoles(t *testing.T) {
 				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(true, true), ri),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_user.test", "admin_roles.#", "0"),       // skipped
+					resource.TestCheckResourceAttr("data.okta_user.test", "roles.#", "0"),             // skipped
 					resource.TestCheckResourceAttr("data.okta_user.test", "group_memberships.#", "0"), // skipped
 				),
 			},
@@ -122,6 +126,7 @@ func TestAccDataSourceOktaUser_SkipGroupsSkipRoles(t *testing.T) {
 	})
 }
 
+// TODU
 // TestAccDataSourceOktaUser_NoSkips pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUser_NoSkips(t *testing.T) {
 	ri := acctest.RandInt()
@@ -137,6 +142,7 @@ func TestAccDataSourceOktaUser_NoSkips(t *testing.T) {
 				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(false, false), ri),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_user.test", "admin_roles.#", "2"),       // SUPER_ADMIN, APP_ADMIN
+					resource.TestCheckResourceAttr("data.okta_user.test", "roles.#", "2"),             // SUPER_ADMIN, APP_ADMIN
 					resource.TestCheckResourceAttr("data.okta_user.test", "group_memberships.#", "2"), // Everyone, A Group
 					resource.TestMatchOutput("output_admin_roles", allAdminRolesRegexp),
 					resource.TestMatchOutput("output_group_memberships", allGroupMembershipsRegexp),

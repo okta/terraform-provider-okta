@@ -135,6 +135,10 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 			if err != nil {
 				return diag.Errorf("failed to set user's admin roles: %v", err)
 			}
+			err = setRoles(ctx, d, m)
+			if err != nil {
+				return diag.Errorf("failed to set user's roles: %v", err)
+			}
 		}
 	}
 
