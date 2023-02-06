@@ -330,7 +330,7 @@ The following arguments are supported:
 
 - `logo_url` - Direct link of application logo.
 
-- `embedd_url` - Url that can be used to embed this application into another portal.
+- `embed_url` - Url that can be used to embed this application into another portal.
 
 ## Timeouts
 
