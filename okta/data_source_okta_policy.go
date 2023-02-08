@@ -20,15 +20,7 @@ func dataSourcePolicy() *schema.Resource {
 			},
 			"type": {
 				Type: schema.TypeString,
-				ValidateDiagFunc: elemInSlice([]string{
-					sdk.SignOnPolicyType,
-					sdk.PasswordPolicyType,
-					sdk.MfaPolicyType,
-					sdk.IdpDiscoveryType,
-					sdk.AccessPolicyType,
-					sdk.ProfileEnrollmentPolicyType,
-				}),
-				Description: fmt.Sprintf("Policy type: %s, %s, %s, or %s", sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.IdpDiscoveryType),
+				Description: fmt.Sprintf("Policy type, see https://developer.okta.com/docs/reference/api/policy/#policy-object"),
 				Required:    true,
 			},
 			"status": {
@@ -40,10 +32,6 @@ func dataSourcePolicy() *schema.Resource {
 }
 
 func dataSourcePolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
-		return resourceOIEOnlyFeatureError(appSignOnPolicy)
-	}
-
 	policy, err := findPolicyByNameAndType(ctx, m, d.Get("name").(string), d.Get("type").(string))
 	if err != nil {
 		return diag.FromErr(err)
