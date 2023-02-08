@@ -23,8 +23,16 @@ data "okta_policy" "example" {
 
 - `name` - (Required) Name of policy to retrieve.
 
-- `type` - (Required) Type of policy to retrieve. Valid values: `"OKTA_SIGN_ON"`, `"PASSWORD"`, `"MFA_ENROLL"`, 
-`"IDP_DISCOVERY"`, `"ACCESS_POLICY"` (**only available as a part of the Identity Engine**), `"PROFILE_ENROLLMENT"` (**only available as a part of the Identity Engine**)
+- `type` - (Required) Type of policy to retrieve. See https://developer.okta.com/docs/reference/api/policy/#policy-object for valid values. Currently:
+    - All: 
+    - `OKTA_SIGN_ON`
+    - `PASSWORD`
+    - `MFA_ENROLL`
+    - `OAUTH_AUTHORIZATION_POLICY`
+    - `IDP_DISCOVERY`
+    - OIE Only:
+    - `ACCESS_POLICY`
+    - `PROFILE_ENROLLMENT`
 
 ## Attributes Reference
 

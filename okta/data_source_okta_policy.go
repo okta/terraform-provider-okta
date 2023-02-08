@@ -2,11 +2,9 @@ package okta
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func dataSourcePolicy() *schema.Resource {
@@ -19,8 +17,8 @@ func dataSourcePolicy() *schema.Resource {
 				Required:    true,
 			},
 			"type": {
-				Type: schema.TypeString,
-				Description: fmt.Sprintf("Policy type, see https://developer.okta.com/docs/reference/api/policy/#policy-object"),
+				Type:        schema.TypeString,
+				Description: "Policy type, see https://developer.okta.com/docs/reference/api/policy/#policy-object",
 				Required:    true,
 			},
 			"status": {
