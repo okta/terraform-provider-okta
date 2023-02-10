@@ -83,7 +83,6 @@ func TestAccDataSourceOktaUser_SkipAdminRoles(t *testing.T) {
 	})
 }
 
-// TODU
 // TestAccDataSourceOktaUser_SkipGroups pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUser_SkipGroups(t *testing.T) {
 	ri := acctest.RandInt()
@@ -126,7 +125,6 @@ func TestAccDataSourceOktaUser_SkipGroupsSkipRoles(t *testing.T) {
 	})
 }
 
-// TODU
 // TestAccDataSourceOktaUser_NoSkips pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUser_NoSkips(t *testing.T) {
 	ri := acctest.RandInt()
