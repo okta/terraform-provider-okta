@@ -111,7 +111,7 @@ func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interfac
 	includeRoles := d.Get("include_roles").(bool)
 	arr := make([]map[string]interface{}, len(users))
 	for i, user := range users {
-		rawMap := flattenUser(user)
+		rawMap := flattenUser(user, []string{})
 		rawMap["id"] = user.Id
 		if includeGroups {
 			groups, err := getGroupsForUser(ctx, user.Id, client)
