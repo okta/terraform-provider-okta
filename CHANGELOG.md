@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.42.0 (February 10, 2023)
+
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* New data source [`okta_domain`](https://registry.terraform.io/providers/okta/okta/latest/docs/data-sources/domain) see PR 1447 notes in BUG FIXES
+* Actual PEM text values in `okta_domain_certificate` for attributes `certificate`, `certificate_chain`, and `private_key`, see PR 1447 notes in BUG FIXES
+* New attribute `roles` in data source `okta_user` [#1437](https://github.com/okta/terraform-provider-okta/pull/1437). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+### BUG FIXES:
+
+* Don't md5sum to save space on `okta_domain_certificate` values for attributes `certificate`, `certificate_chain`, and `private_key`, per TF best practices [#1447](https://github.com/okta/terraform-provider-okta/pull/1447). Thanks, [@monde](https://github.com/monde)!
+* Remove org type restrictions and artificial input check on `type` attribute for  data source `okta_policy`  [#1445](https://github.com/okta/terraform-provider-okta/pull/1445). Thanks, [@monde](https://github.com/monde)!
+* Improve resource `okta_app_saml` documentation  [#1439](https://github.com/okta/terraform-provider-okta/pull/1439). Thanks, [@exitcode0](https://github.com/exitcode0)!
+
 ## 3.41.0 (January 27, 2023)
 
 ### PROJECT IMPROVEMENTS:
