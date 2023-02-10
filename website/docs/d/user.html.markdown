@@ -83,6 +83,7 @@ data "okta_user" "example" {
 - `preferred_language` - User's preferred written or spoken languages.
 - `primary_phone` - Primary phone number of user such as home number.
 - `profile_url` - URL of user's online profile (e.g. a web page).
+- `roles` - All roles assigned to user.
 - `second_email` - Secondary email address of user typically used for account recovery.
 - `state` - State or region component of user's address (region).
 - `status` - Current status of user.
