@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"reflect"
 	"time"
 
@@ -32,6 +33,11 @@ const (
 
 var userProfileDataSchema = map[string]*schema.Schema{
 	"admin_roles": {
+		Type:     schema.TypeSet,
+		Computed: true,
+		Elem:     &schema.Schema{Type: schema.TypeString},
+	},
+	"roles": {
 		Type:     schema.TypeSet,
 		Computed: true,
 		Elem:     &schema.Schema{Type: schema.TypeString},
@@ -258,6 +264,43 @@ func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 	}
 
 	return &profile
+}
+
+func listUserRoles(ctx context.Context, c *okta.Client, userID string) (userOnlyRoles []*okta.Role, resp *okta.Response, err error) {
+	roles, resp, err := c.User.ListAssignedRolesForUser(ctx, userID, nil)
+	if err != nil {
+		return
+	}
+	userOnlyRoles = append(userOnlyRoles, roles...)
+	return
+}
+
+func getRoles(ctx context.Context, id string, c *okta.Client) ([]interface{}, error) {
+	roleTypes := make([]interface{}, 0)
+	roles, resp, err := listUserRoles(ctx, c, id)
+	if err != nil {
+		if resp != nil && resp.StatusCode == http.StatusForbidden {
+			// no-op
+		} else {
+			return nil, err
+		}
+	} else {
+		for _, role := range roles {
+			roleTypes = append(roleTypes, role.Type)
+		}
+	}
+	return roleTypes, err
+}
+
+func setRoles(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	roleTypes, err := getRoles(ctx, d.Id(), getOktaClientFromMetadata(m))
+	if err != nil {
+		return fmt.Errorf("failed to get roles: %v", err)
+	}
+	// set the custom_profile_attributes values
+	return setNonPrimitives(d, map[string]interface{}{
+		"roles": schema.NewSet(schema.HashString, roleTypes),
+	})
 }
 
 func listUserOnlyRoles(ctx context.Context, c *okta.Client, userID string) (userOnlyRoles []*okta.Role, resp *okta.Response, err error) {
