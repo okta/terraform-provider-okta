@@ -2,8 +2,6 @@ package okta
 
 import (
 	"context"
-	"crypto/sha512"
-	"encoding/base64"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -37,34 +35,16 @@ func resourceDomainCertificate() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Certificate content",
-				StateFunc: func(val interface{}) string {
-					h := sha512.New()
-					h.Write([]byte(val.(string)))
-					return base64.URLEncoding.EncodeToString(h.Sum(nil))
-				},
 			},
 			"private_key": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Certificate private key",
-				StateFunc: func(val interface{}) string {
-					h := sha512.New()
-					h.Write([]byte(val.(string)))
-					return base64.URLEncoding.EncodeToString(h.Sum(nil))
-				},
 			},
 			"certificate_chain": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Certificate chain",
-				StateFunc: func(val interface{}) string {
-					if val.(string) == "" {
-						return ""
-					}
-					h := sha512.New()
-					h.Write([]byte(val.(string)))
-					return base64.URLEncoding.EncodeToString(h.Sum(nil))
-				},
 			},
 		},
 	}

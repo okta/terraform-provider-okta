@@ -389,6 +389,7 @@ func Provider() *schema.Provider {
 			behaviors:                dataSourceBehaviors(),
 			brand:                    dataSourceBrand(),
 			brands:                   dataSourceBrands(),
+			domain:                   dataSourceDomain(),
 			emailCustomization:       dataSourceEmailCustomization(),
 			emailCustomizations:      dataSourceEmailCustomizations(),
 			emailTemplate:            dataSourceEmailTemplate(),
