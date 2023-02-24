@@ -130,3 +130,11 @@ resource "okta_email_customization" "forgot_password_en_alt" {
 
 - `id` - Customization ID
 - `links` - Link relations for this object - JSON HAL - Discoverable resources related to the email template
+
+## Import
+
+An email customization can be imported using the customization ID, brand ID and template name.
+
+```
+$ terraform import okta_email_customization.example &#60;customization_id&#62;/&#60;brand_id&#62;/&#60;template_name&#62;
+```
