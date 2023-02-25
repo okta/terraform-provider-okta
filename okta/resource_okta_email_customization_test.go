@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"testing"
@@ -13,6 +14,7 @@ import (
 
 func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
 	ri := acctest.RandInt()
+	resourceName := fmt.Sprintf("%s.forgot_password_en", emailCustomization)
 	mgr := newFixtureManager(emailCustomization)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
@@ -60,6 +62,27 @@ func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
 					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_es", "language", "es"),
 					resource.TestCheckResourceAttr("okta_email_customization.forgot_password_es", "is_default", "true"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("failed to find %s", resourceName)
+					}
+					ID := rs.Primary.Attributes["id"]
+					brandID := rs.Primary.Attributes["brand_id"]
+					templateName := rs.Primary.Attributes["template_name"]
+					return fmt.Sprintf("%s/%s/%s", ID, brandID, templateName), nil
+				},
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import schema into state")
+					}
+					return nil
+				},
 			},
 		},
 	})
