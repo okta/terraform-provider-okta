@@ -1,6 +1,6 @@
 module github.com/okta/terraform-provider-okta
 
-go 1.17
+go 1.20
 
 require (
 	github.com/cenkalti/backoff v2.2.1+incompatible
