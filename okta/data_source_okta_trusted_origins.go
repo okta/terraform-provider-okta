@@ -98,9 +98,7 @@ func collectTrustedOrigins(ctx context.Context, client *okta.Client, qp *query.P
 		if err != nil {
 			return nil, err
 		}
-		for i := range nextTrustedOrigins {
-			trustedOrigins = append(trustedOrigins, nextTrustedOrigins[i])
-		}
+		trustedOrigins = append(trustedOrigins, nextTrustedOrigins...)
 	}
 	return trustedOrigins, nil
 }
