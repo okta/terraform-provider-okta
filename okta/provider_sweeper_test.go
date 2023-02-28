@@ -270,9 +270,7 @@ func sweepEmailCustomization(client *testClient) error {
 			if err != nil {
 				continue
 			}
-			for i := range nextTemplates {
-				templates = append(templates, nextTemplates[i])
-			}
+			templates = append(templates, nextTemplates...)
 		}
 
 		for _, template := range templates {
@@ -489,9 +487,7 @@ func sweepUsers(client *testClient) error {
 		if err != nil {
 			return err
 		}
-		for i := range nextUsers {
-			users = append(users, nextUsers[i])
-		}
+		users = append(users, nextUsers...)
 	}
 
 	for _, u := range users {

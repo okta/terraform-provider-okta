@@ -145,9 +145,7 @@ func collectUsers(ctx context.Context, client *okta.Client, qp *query.Params) ([
 		if err != nil {
 			return nil, err
 		}
-		for i := range nextUsers {
-			users = append(users, nextUsers[i])
-		}
+		users = append(users, nextUsers...)
 	}
 	return users, nil
 }

@@ -49,9 +49,7 @@ func listApps(ctx context.Context, client *okta.Client, filters *appFilters, lim
 		if err != nil {
 			return nil, err
 		}
-		for i := range nextApps {
-			resultingApps = append(resultingApps, nextApps[i])
-		}
+		resultingApps = append(resultingApps, nextApps...)
 	}
 	return resultingApps, nil
 }

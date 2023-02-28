@@ -71,9 +71,7 @@ func collectEmailTempates(ctx context.Context, client *okta.Client, brand *okta.
 		if err != nil {
 			return nil, err
 		}
-		for i := range nextTemplates {
-			templates = append(templates, nextTemplates[i])
-		}
+		templates = append(templates, nextTemplates...)
 	}
 	return templates, nil
 }
