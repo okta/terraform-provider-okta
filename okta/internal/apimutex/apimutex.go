@@ -129,9 +129,7 @@ func (s *APIStatus) Remaining() int {
 	return s.remaining
 }
 
-var (
-	reOktaID = regexp.MustCompile(`[\w]{20}`)
-)
+var reOktaID = regexp.MustCompile(`[\w]{20}`)
 
 func (m *APIMutex) get(method, endPoint string) *APIStatus {
 	// The important point here is the replace all is performing this

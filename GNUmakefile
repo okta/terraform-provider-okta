@@ -87,14 +87,14 @@ lint:
 		./$(PKG_NAME)
 
 tools:
-	@which $(GOFMT) || go install mvdan.cc/gofumpt@v0.3.1
+	@which $(GOFMT) || go install mvdan.cc/gofumpt@v0.4.0
 	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.28.1
-	@which $(STATICCHECK) || go install honnef.co/go/tools/cmd/staticcheck@v0.3.3
+	@which $(STATICCHECK) || go install honnef.co/go/tools/cmd/staticcheck@v0.4.2
 
 tools-update:
-	@go install mvdan.cc/gofumpt@v0.3.1
+	@go install mvdan.cc/gofumpt@v0.4.0
 	@go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.28.1
-	@go install honnef.co/go/tools/cmd/staticcheck@v0.3.3
+	@go install honnef.co/go/tools/cmd/staticcheck@v0.4.2
 
 website:
 ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
