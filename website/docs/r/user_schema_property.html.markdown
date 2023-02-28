@@ -93,7 +93,7 @@ The following arguments are supported:
 User schema property of default user type can be imported via the property variableName.
 
 ```
-$ terraform import okta_user_schema_property.example &#60;index&#62;
+$ terraform import okta_user_schema_property.example &#60;variableName&#62;
 ```
 
 User schema property of custom user type can be imported via user type id and property index
