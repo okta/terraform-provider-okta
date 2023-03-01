@@ -467,7 +467,7 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interf
 	// New applications (other than Office365, Radius, and MFA) are assigned to the default Policy.
 	// TODO: determine how to inspect app for MFA status
 	if app.Name != "office365" && app.Name != "radius" {
-		err = setAuthenticationPolicy(ctx, d, m, app.Id)
+		err = createOrUpdateAuthenticationPolicy(ctx, d, m, app.Id)
 		if err != nil {
 			return diag.Errorf("failed to set authentication policy for an SAML application: %v", err)
 		}
@@ -485,6 +485,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		d.SetId("")
 		return nil
 	}
+	setAuthenticationPolicy(d, app.Links)
 	if app.Settings != nil {
 		if app.Settings.SignOn != nil {
 			err = setSamlSettings(d, app.Settings.SignOn)
@@ -599,7 +600,7 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 			return diag.Errorf("failed to upload logo for SAML application: %v", err)
 		}
 	}
-	err = setAuthenticationPolicy(ctx, d, m, app.Id)
+	err = createOrUpdateAuthenticationPolicy(ctx, d, m, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to set authentication policy for an SAML application: %v", err)
 	}

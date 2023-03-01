@@ -2,11 +2,12 @@ package okta
 
 import (
 	"context"
+	"path"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func setAuthenticationPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, appId string) error {
+func createOrUpdateAuthenticationPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, appId string) error {
 	raw, ok := d.GetOk("authentication_policy")
 	if !ok {
 		return assignDefaultAuthenticationPolicy(ctx, m, appId)
@@ -14,6 +15,17 @@ func setAuthenticationPolicy(ctx context.Context, d *schema.ResourceData, m inte
 	policyId := raw.(string)
 	_, err := getOktaClientFromMetadata(m).Application.UpdateApplicationPolicy(ctx, appId, policyId)
 	return err
+}
+
+func setAuthenticationPolicy(d *schema.ResourceData, links interface{}) {
+	// only set the authentication_policy if it's been set previously so we can
+	// get proper change detection on the value
+	if _, ok := d.GetOk("authentication_policy"); ok {
+		accessPolicy := linksValue(links, "accessPolicy", "href")
+		if accessPolicy != "" {
+			d.Set("authentication_policy", path.Base(accessPolicy))
+		}
+	}
 }
 
 func assignDefaultAuthenticationPolicy(ctx context.Context, m interface{}, appId string) error {
