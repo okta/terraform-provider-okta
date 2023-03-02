@@ -164,21 +164,24 @@ func createNestedResourceImporter(fields []string) *schema.ResourceImporter {
 	return createCustomNestedResourceImporter(fields, fmt.Sprintf("Expecting the following format %s", strings.Join(fields, "/")))
 }
 
-// Fields should be in order, for instance, []string{"auth_server_id", "policy_id", "id"}
+// createCustomNestedResourceImporter Fields making up the ID should be in
+// order, for instance, []string{"auth_server_id", "policy_id", "id"} However,
+// extra fields can be specified after as well, []string{"auth_server_id",
+// "policy_id", "id", "extra"}
 func createCustomNestedResourceImporter(fields []string, errMessage string) *schema.ResourceImporter {
 	return &schema.ResourceImporter{
 		StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 			parts := strings.Split(d.Id(), "/")
-			if len(parts) != len(fields) {
-				return nil, fmt.Errorf("invalid resource import specifier. %s", errMessage)
-			}
-
 			for i, field := range fields {
 				if field == "id" {
 					d.SetId(parts[i])
 					continue
 				}
-				_ = d.Set(field, parts[i])
+				var value string
+				if i < len(parts) {
+					value = parts[i]
+				}
+				_ = d.Set(field, value)
 			}
 
 			return []*schema.ResourceData{d}, nil
