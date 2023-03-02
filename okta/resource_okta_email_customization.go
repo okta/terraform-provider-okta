@@ -15,7 +15,7 @@ func resourceEmailCustomization() *schema.Resource {
 		ReadContext:   resourceEmailCustomizationRead,
 		UpdateContext: resourceEmailCustomizationUpdate,
 		DeleteContext: resourceEmailCustomizationDelete,
-		Importer:      createNestedResourceImporter([]string{"id", "brand_id", "template_name"}),
+		Importer:      createNestedResourceImporter([]string{"id", "brand_id", "template_name", "force_is_default"}),
 		Schema:        emailCustomizationResourceSchema,
 	}
 }
