@@ -456,7 +456,7 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
-	err = setAuthenticationPolicy(ctx, d, m, app.Id)
+	err = createOrUpdateAuthenticationPolicy(ctx, d, m, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
 	}
@@ -512,6 +512,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 		d.SetId("")
 		return nil
 	}
+	setAuthenticationPolicy(d, app.Links)
 	var rawProfile string
 	if app.Profile != nil {
 		p, _ := json.Marshal(app.Profile)
@@ -689,7 +690,7 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
-	err = setAuthenticationPolicy(ctx, d, m, app.Id)
+	err = createOrUpdateAuthenticationPolicy(ctx, d, m, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to set authentication policy an OAuth application: %v", err)
 	}

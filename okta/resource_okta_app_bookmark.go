@@ -64,7 +64,7 @@ func resourceAppBookmarkCreate(ctx context.Context, d *schema.ResourceData, m in
 	if err != nil {
 		return diag.Errorf("failed to upload logo for bookmark application: %v", err)
 	}
-	err = setAuthenticationPolicy(ctx, d, m, app.Id)
+	err = createOrUpdateAuthenticationPolicy(ctx, d, m, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to set authentication policy for bookmark application: %v", err)
 	}
@@ -81,6 +81,7 @@ func resourceAppBookmarkRead(ctx context.Context, d *schema.ResourceData, m inte
 		d.SetId("")
 		return nil
 	}
+	setAuthenticationPolicy(d, app.Links)
 	_ = d.Set("url", app.Settings.App.Url)
 	_ = d.Set("request_integration", app.Settings.App.RequestIntegration)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
@@ -115,7 +116,7 @@ func resourceAppBookmarkUpdate(ctx context.Context, d *schema.ResourceData, m in
 			return diag.Errorf("failed to upload logo for bookmark application: %v", err)
 		}
 	}
-	err = setAuthenticationPolicy(ctx, d, m, app.Id)
+	err = createOrUpdateAuthenticationPolicy(ctx, d, m, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to set authentication policy for bookmark application: %v", err)
 	}
