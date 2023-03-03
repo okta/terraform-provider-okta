@@ -174,7 +174,6 @@ The following arguments are supported:
 - `assertion_signed` - (Optional) Determines whether the SAML assertion is digitally signed.
 
 - `attribute_statements` - (Optional) List of SAML Attribute statements.
-
   - `name` - (Required) The name of the attribute statement.
   - `filter_type` - (Optional) Type of group attribute filter. Valid values are: `"STARTS_WITH"`, `"EQUALS"`, `"CONTAINS"`, or `"REGEX"`
   - `filter_value` - (Optional) Filter value to use.
@@ -183,6 +182,8 @@ The following arguments are supported:
   - `values` - (Optional) Array of values to use.
 
 - `audience` - (Optional) Audience restriction.
+
+- `authentication_policy` - (Optional) The ID of the associated `app_signon_policy`. If this property is removed from the application the `default` sign-on-policy will be associated with this application.
 
 - `authn_context_class_ref` - (Optional) Identifies the SAML authentication context class for the assertion’s authentication statement.
 
@@ -199,7 +200,6 @@ The following arguments are supported:
 - `features` - (Optional) features enabled. Notice: you can't currently configure provisioning features via the API.
 
 - `groups` - (Optional) Groups associated with the application.
-
   - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
 
 - `hide_ios` - (Optional) Do not display application icon on mobile app. Default is: `false`
@@ -222,9 +222,7 @@ The following arguments are supported:
 
 - `logo` - (Optional) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 
-- `preconfigured_app` - (Optional) name of application from the Okta Integration Network, if not included a custom app will be created.  
-  If not provided the following arguments are required:
-
+- `preconfigured_app` - (Optional) name of application from the Okta Integration Network, if not included a custom app will be created.  If not provided the following arguments are required:
   - `sso_url`
   - `recipient`
   - `destination`
@@ -241,12 +239,13 @@ The following arguments are supported:
 
 - `response_signed` - (Optional) Determines whether the SAML auth response message is digitally signed.
 
+- `saml_signed_request_enabled` - SAML Signed Request enabled
+
 - `saml_version` - (Optional) SAML version for the app's sign-on mode. Valid values are: `"2.0"` or `"1.1"`. Default is `"2.0"`.
 
 - `signature_algorithm` - (Optional) Signature algorithm used ot digitally sign the assertion and response.
 
-- `single_logout_certificate` - (Optional) x509 encoded certificate that the Service Provider uses to sign Single Logout requests.
-  Note: should be provided without `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`, see [official documentation](https://developer.okta.com/docs/reference/api/apps/#service-provider-certificate).
+- `single_logout_certificate` - (Optional) x509 encoded certificate that the Service Provider uses to sign Single Logout requests.  Note: should be provided without `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`, see [official documentation](https://developer.okta.com/docs/reference/api/apps/#service-provider-certificate).
 
 - `single_logout_issuer` - (Optional) The issuer of the Service Provider that generates the Single Logout request.
 
@@ -266,71 +265,58 @@ The following arguments are supported:
 
 - `subject_name_id_template` - (Optional) Template for app user's username when a user is assigned to the app.
 
-- `user_name_template` - (Optional) Username template. Default is: `"${source.login}"`
-
 - `user_name_template_push_status` - (Optional) Push username on update. Valid values: `"PUSH"` and `"DONT_PUSH"`.
 
 - `user_name_template_suffix` - (Optional) Username template suffix.
 
 - `user_name_template_type` - (Optional) Username template type. Default is: `"BUILT_IN"`.
 
+- `user_name_template` - (Optional) Username template. Default is: `"${source.login}"`
+
 - `users` - (Optional) Users associated with the application.
-
   - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
-
-- `authentication_policy` - (Optional) The ID of the associated `app_signon_policy`. If this property is removed from the application the `default` sign-on-policy will be associated with this application.
 
 ## Attributes Reference
 
+- `certificate` - The raw signing certificate.
+
+- `embed_url` - Url that can be used to embed this application into another portal.
+
+- `entity_key` - Entity ID, the ID portion of the `entity_url`.
+
+- `entity_url` - Entity URL for instance [http://www.okta.com/exk1fcia6d6EMsf331d8](http://www.okta.com/exk1fcia6d6EMsf331d8).
+
+- `http_post_binding` - `urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Post` location from the SAML metadata.
+
+- `http_redirect_binding` - `urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect` location from the SAML metadata.
+
 - `id` - id of application.
-
-- `name` - Name assigned to the application by Okta.
-
-- `sign_on_mode` - Sign-on mode of application.
 
 - `key_id` - Certificate key ID.
 
 - `key_name` - Certificate name. This modulates the rotation of keys. New name == new key.
 
 - `keys` - An array of all key credentials for the application. Format of each entry is as follows:
-
   - `kid` - Key ID.
-
   - `kty` - Identifies the cryptographic algorithm family used with the key.
-
   - `use` - Intended use of the public key.
-
   - `created` - Date created.
-
   - `last_updated` - Date the key was last updated.
-
   - `expires_at` - Date the key expires.
-
   - `e` - RSA exponent.
-
   - `n` - RSA modulus.
-
   - `x5c` - X.509 certificate chain.
-
   - `x5t_s256` - X.509 certificate SHA-256 thumbprint.
-
-- `certificate` - The raw signing certificate.
-
-- `metadata` - The raw SAML metadata in XML.
-
-- `metadata_url` - SAML xml metadata URL.
-
-- `http_post_binding` - `urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Post` location from the SAML metadata.
-
-- `http_redirect_binding` - `urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect` location from the SAML metadata.
-
-- `entity_key` - Entity ID, the ID portion of the `entity_url`.
-
-- `entity_url` - Entity URL for instance [http://www.okta.com/exk1fcia6d6EMsf331d8](http://www.okta.com/exk1fcia6d6EMsf331d8).
 
 - `logo_url` - Direct link of application logo.
 
-- `embed_url` - Url that can be used to embed this application into another portal.
+- `metadata_url` - SAML xml metadata URL.
+
+- `metadata` - The raw SAML metadata in XML.
+
+- `name` - Name assigned to the application by Okta.
+
+- `sign_on_mode` - Sign-on mode of application.
 
 ## Timeouts
 

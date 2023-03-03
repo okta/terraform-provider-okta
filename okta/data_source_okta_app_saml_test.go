@@ -30,6 +30,8 @@ func TestAccOktaDataSourceAppSaml_read(t *testing.T) {
 					resource.TestCheckResourceAttr("data.okta_app_saml.test_label", "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr("data.okta_app_saml.test", "status", statusActive),
 					resource.TestCheckResourceAttr("data.okta_app_saml.test_label", "status", statusActive),
+					resource.TestCheckResourceAttr("data.okta_app_saml.test", "saml_signed_request_enabled", "false"),
+					resource.TestCheckResourceAttr("data.okta_app_saml.test_label", "saml_signed_request_enabled", "false"),
 				),
 			},
 		},

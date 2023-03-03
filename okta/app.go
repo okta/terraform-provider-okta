@@ -630,6 +630,7 @@ func setSamlSettings(d *schema.ResourceData, signOn *okta.SamlApplicationSetting
 	_ = d.Set("digest_algorithm", signOn.DigestAlgorithm)
 	_ = d.Set("honor_force_authn", signOn.HonorForceAuthn)
 	_ = d.Set("authn_context_class_ref", signOn.AuthnContextClassRef)
+	_ = d.Set("saml_signed_request_enabled", signOn.SamlSignedRequestEnabled)
 	if signOn.AllowMultipleAcsEndpoints != nil {
 		if *signOn.AllowMultipleAcsEndpoints {
 			acsEndpointsObj := signOn.AcsEndpoints
