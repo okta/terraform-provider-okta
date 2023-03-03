@@ -20,6 +20,10 @@ data "okta_app_saml" "example" {
 
 ## Arguments Reference
 
+- `active_only` - (Optional) tells the provider to query for only `ACTIVE` applications.
+
+- `id` - (Optional) `id` of application to retrieve, conflicts with `label` and `label_prefix`.
+
 - `label` - (Optional) The label of the app to retrieve, conflicts with `label_prefix` and `id`. Label uses
   the `?q=<label>` query parameter exposed by Okta's API. It should be noted that at this time this searches both `name`
   and `label`. This is used to avoid paginating through all applications.
@@ -27,84 +31,23 @@ data "okta_app_saml" "example" {
 - `label_prefix` - (Optional) Label prefix of the app to retrieve, conflicts with `label` and `id`. This will tell the
   provider to do a `starts with` query as opposed to an `equals` query.
 
-- `id` - (Optional) `id` of application to retrieve, conflicts with `label` and `label_prefix`.
-
-- `active_only` - (Optional) tells the provider to query for only `ACTIVE` applications.
+- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync. Default is `false`.
 
 - `skip_users` - (Optional) Indicator that allows the app to skip `users` sync. Default is `false`.
 
-- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync. Default is `false`.
-
 ## Attributes Reference
-
-- `id` - id of application.
-
-- `label` - label of application.
-
-- `name` - name of application.
-
-- `status` - status of application.
-
-- `key_id` - Certificate key ID.
-
-- `auto_submit_toolbar` - Display auto submit toolbar.
-
-- `hide_ios` - Do not display application icon on mobile app.
-
-- `hide_web` - Do not display application icon to users
-
-- `default_relay_state` - Identifies a specific application resource in an IDP initiated SSO scenario.
-
-- `sso_url` - Single Sign-on Url.
-
-- `recipient` - The location where the app may present the SAML assertion.
-
-- `destination` - Identifies the location where the SAML response is intended to be sent inside the SAML assertion.
-
-- `audience` - Audience restriction.
-
-- `idp_issuer` - SAML issuer ID.
-
-- `sp_issuer` - SAML service provider issuer.
-
-- `subject_name_id_template` - Template for app user's username when a user is assigned to the app.
-
-- `subject_name_id_format` - Identifies the SAML processing rules.
-
-- `response_signed` - Determines whether the SAML auth response message is digitally signed.
-
-- `request_compressed` - Denotes whether the request is compressed or not.
-
-- `assertion_signed` - Determines whether the SAML assertion is digitally signed.
-
-- `signature_algorithm` - Signature algorithm used ot digitally sign the assertion and response.
-
-- `digest_algorithm` - Determines the digest algorithm used to digitally sign the SAML assertion and response.
-
-- `honor_force_authn` - Prompt user to re-authenticate if SP asks for it.
-
-- `authn_context_class_ref` - Identifies the SAML authentication context class for the assertion’s authentication
-  statement.
-
-- `accessibility_self_service` - Enable self-service.
 
 - `accessibility_error_redirect_url` - Custom error page URL.
 
 - `accessibility_login_redirect_url` - Custom login page URL.
 
-- `features` - features enabled.
+- `accessibility_self_service` - Enable self-service.
 
-- `user_name_template` - Username template.
-
-- `user_name_template_suffix` - Username template suffix.
-
-- `user_name_template_type` - Username template type.
-
-- `user_name_template_push_status` - Push username on update.
+- `acs_endpoints` - An array of ACS endpoints. You can configure a maximum of 100 endpoints.
 
 - `app_settings_json` - Application settings in JSON format.
 
-- `acs_endpoints` - An array of ACS endpoints. You can configure a maximum of 100 endpoints.
+- `assertion_signed` - Determines whether the SAML assertion is digitally signed.
 
 - `attribute_statements` - List of SAML Attribute statements.
     - `name` - The name of the attribute statement.
@@ -114,18 +57,76 @@ data "okta_app_saml" "example" {
     - `type` - The type of attribute statement value.
     - `values` - Array of values to use.
 
+- `audience` - Audience restriction.
+
+- `authn_context_class_ref` - Identifies the SAML authentication context class for the assertion’s authentication statement.
+
+- `auto_submit_toolbar` - Display auto submit toolbar.
+
+- `default_relay_state` - Identifies a specific application resource in an IDP initiated SSO scenario.
+
+- `destination` - Identifies the location where the SAML response is intended to be sent inside the SAML assertion.
+
+- `digest_algorithm` - Determines the digest algorithm used to digitally sign the SAML assertion and response.
+
+- `features` - features enabled.
+
+- `groups` - List of groups IDs assigned to the application.
+  - `DEPRECATED`: Please replace all usage of this field with the data source `okta_app_group_assignments`.
+
+- `hide_ios` - Do not display application icon on mobile app.
+
+- `hide_web` - Do not display application icon to users
+
+- `honor_force_authn` - Prompt user to re-authenticate if SP asks for it.
+
+- `id` - id of application.
+
+- `idp_issuer` - SAML issuer ID.
+
+- `inline_hook_id` - Saml Inline Hook associated with the application.
+
+- `key_id` - Certificate key ID.
+
+- `label` - label of application.
+
+- `links` - Generic JSON containing discoverable resources related to the app.
+
+- `name` - name of application.
+
+- `recipient` - The location where the app may present the SAML assertion.
+
+- `request_compressed` - Denotes whether the request is compressed or not.
+
+- `response_signed` - Determines whether the SAML auth response message is digitally signed.
+
+- `saml_signed_request_enabled` - SAML Signed Request enabled
+
+- `signature_algorithm` - Signature algorithm used ot digitally sign the assertion and response.
+
+- `single_logout_certificate` - x509 encoded certificate that the Service Provider uses to sign Single Logout requests.
+
 - `single_logout_issuer` - The issuer of the Service Provider that generates the Single Logout request.
 
 - `single_logout_url` - The location where the logout response is sent.
 
-- `single_logout_certificate` - x509 encoded certificate that the Service Provider uses to sign Single Logout requests.
+- `sp_issuer` - SAML service provider issuer.
 
-- `links` - Generic JSON containing discoverable resources related to the app.
+- `sso_url` - Single Sign-on Url.
 
-- `inline_hook_id` - Saml Inline Hook associated with the application.
+- `status` - status of application.
+
+- `subject_name_id_format` - Identifies the SAML processing rules.
+
+- `subject_name_id_template` - Template for app user's username when a user is assigned to the app.
+
+- `user_name_template_push_status` - Push username on update.
+
+- `user_name_template_suffix` - Username template suffix.
+
+- `user_name_template_type` - Username template type.
+
+- `user_name_template` - Username template.
 
 - `users` - List of users IDs assigned to the application.
   - `DEPRECATED`: Please replace all usage of this field with the data source `okta_app_user_assignments`.
-
-- `groups` - List of groups IDs assigned to the application.
-  - `DEPRECATED`: Please replace all usage of this field with the data source `okta_app_group_assignments`.
