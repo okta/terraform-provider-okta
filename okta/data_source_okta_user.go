@@ -123,7 +123,7 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 		user = users[0]
 	}
 	d.SetId(user.Id)
-	rawMap := flattenUser(user)
+	rawMap := flattenUser(user, []string{})
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {
 		return diag.Errorf("failed to set user's properties: %v", err)
