@@ -417,6 +417,12 @@ func resourceAppSaml() *schema.Resource {
 				Computed:    true,
 				Description: "The url that can be used to embed this application in other portals.",
 			},
+			"saml_signed_request_enabled": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "SAML Signed Request enabled",
+				Default:     false,
+			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(1 * time.Hour),
@@ -651,21 +657,22 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	// Note: You can't currently configure provisioning features via the API. Use the administrator UI.
 	// app.Features = convertInterfaceToStringSet(d.Get("features"))
 	app.Settings.SignOn = &okta.SamlApplicationSettingsSignOn{
-		DefaultRelayState:     d.Get("default_relay_state").(string),
-		SsoAcsUrl:             d.Get("sso_url").(string),
-		Recipient:             d.Get("recipient").(string),
-		Destination:           d.Get("destination").(string),
-		Audience:              d.Get("audience").(string),
-		IdpIssuer:             d.Get("idp_issuer").(string),
-		SubjectNameIdTemplate: d.Get("subject_name_id_template").(string),
-		SubjectNameIdFormat:   d.Get("subject_name_id_format").(string),
-		ResponseSigned:        &responseSigned,
-		AssertionSigned:       &assertionSigned,
-		SignatureAlgorithm:    d.Get("signature_algorithm").(string),
-		DigestAlgorithm:       d.Get("digest_algorithm").(string),
-		HonorForceAuthn:       &honorForce,
-		AuthnContextClassRef:  d.Get("authn_context_class_ref").(string),
-		Slo:                   &okta.SingleLogout{Enabled: boolPtr(false)},
+		DefaultRelayState:        d.Get("default_relay_state").(string),
+		SsoAcsUrl:                d.Get("sso_url").(string),
+		Recipient:                d.Get("recipient").(string),
+		Destination:              d.Get("destination").(string),
+		Audience:                 d.Get("audience").(string),
+		IdpIssuer:                d.Get("idp_issuer").(string),
+		SubjectNameIdTemplate:    d.Get("subject_name_id_template").(string),
+		SubjectNameIdFormat:      d.Get("subject_name_id_format").(string),
+		ResponseSigned:           &responseSigned,
+		AssertionSigned:          &assertionSigned,
+		SignatureAlgorithm:       d.Get("signature_algorithm").(string),
+		DigestAlgorithm:          d.Get("digest_algorithm").(string),
+		HonorForceAuthn:          &honorForce,
+		AuthnContextClassRef:     d.Get("authn_context_class_ref").(string),
+		Slo:                      &okta.SingleLogout{Enabled: boolPtr(false)},
+		SamlSignedRequestEnabled: boolPtr(d.Get("saml_signed_request_enabled").(bool)),
 	}
 	sli := d.Get("single_logout_issuer").(string)
 	if sli != "" {

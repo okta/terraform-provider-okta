@@ -274,6 +274,11 @@ func dataSourceAppSaml() *schema.Resource {
 				Description: "Users associated with the application",
 				Deprecated:  "The `users` field is now deprecated for the data source `okta_app_saml`, please replace all uses of this with: `okta_app_user_assignments`",
 			},
+			"saml_signed_request_enabled": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "SAML Signed Request enabled",
+			},
 		}),
 	}
 }
