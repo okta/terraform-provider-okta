@@ -20,6 +20,7 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 	mgr := newFixtureManager(user)
 	config := mgr.GetFixtures("custom_attributes.tf", ri, t)
 	arrayAttrConfig := mgr.GetFixtures("custom_attributes_array.tf", ri, t)
+	ignoreConfig := mgr.GetFixtures("custom_attributes_to_ignore.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("remove_custom_attributes.tf", ri, t)
 	importConfig := mgr.GetFixtures("import.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", user)
@@ -53,6 +54,18 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", "{\"array123\":[\"test\"],\"number123\":1}"),
 				),
 			},
+			{
+				Config:  ignoreConfig,
+				Destroy: false,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
+					resource.TestCheckResourceAttr(resourceName, "login", email),
+					resource.TestCheckResourceAttr(resourceName, "email", email),
+					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", "{\"customAttribute1234\":\"testing-custom-attribute\"}"), // Note: "customAttribute123" is ignored and should not be present
+				),
+			},
+
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(

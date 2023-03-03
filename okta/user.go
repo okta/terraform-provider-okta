@@ -420,7 +420,7 @@ func isCustomUserAttr(key string) bool {
 	return !contains(profileKeys, key)
 }
 
-func flattenUser(u *okta.User) map[string]interface{} {
+func flattenUser(u *okta.User, filteredCustomAttributes []string) map[string]interface{} {
 	customAttributes := make(map[string]interface{})
 	attrs := map[string]interface{}{}
 
@@ -429,6 +429,12 @@ func flattenUser(u *okta.User) map[string]interface{} {
 			attrKey := camelCaseToUnderscore(k)
 
 			if isCustomUserAttr(attrKey) {
+
+				// Exclude any custom attributes that should be filtered
+				if contains(filteredCustomAttributes, attrKey) {
+					continue
+				}
+
 				// Supporting any potential type
 				ref := reflect.ValueOf(v)
 				switch ref.Kind() {

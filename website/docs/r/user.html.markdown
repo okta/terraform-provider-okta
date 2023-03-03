@@ -88,6 +88,10 @@ The following arguments are supported:
 
 - `custom_profile_attributes` - (Optional) raw JSON containing all custom profile attributes.
 
+- `custom_profile_attributes_to_ignore` - (Optional) List of custom_profile_attribute keys that should be excluded from being
+managed by Terraform. This is useful in situations where specific custom fields may contain sensitive information and
+should be managed outside of Terraform.
+
 - `admin_roles` - (Optional) Administrator roles assigned to User.
   - `DEPRECATED`: Please replace usage with the `okta_user_admin_roles` resource.
 
@@ -156,28 +160,28 @@ The following arguments are supported:
 - `expire_password_on_create` - (Optional) If set to `true`, the user will have to change the password at the next login. This property will be used
   when user is being created and works only when `password` field is set. Default is `false`.
 
-- `old_password` - (Optional) Old user password. **IMPORTANT**: Should be ONLY set in case the password was changed 
-outside the provider. After successful password change this field should be removed and `password` field should be used 
+- `old_password` - (Optional) Old user password. **IMPORTANT**: Should be ONLY set in case the password was changed
+outside the provider. After successful password change this field should be removed and `password` field should be used
 for further changes.
 
-- `password_inline_hook` (Optional) Specifies that a Password Import Inline Hook should be triggered to handle verification 
-of the user's password the first time the user logs in. This allows an existing password to be imported into Okta directly 
+- `password_inline_hook` (Optional) Specifies that a Password Import Inline Hook should be triggered to handle verification
+of the user's password the first time the user logs in. This allows an existing password to be imported into Okta directly
 from some other store. When updating a user with a password hook the user must be in the `STAGED` status. The `password`
-field should not be specified when using Password Import Inline Hook. 
+field should not be specified when using Password Import Inline Hook.
 
 - `recovery_question` - (Optional) User password recovery question.
 
 - `recovery_answer` - (Optional) User password recovery answer.
 
-- `password hash` - (Optional) Specifies a hashed password to import into Okta. When updating a user with a hashed password the user must be in the `STAGED` status.  
+- `password hash` - (Optional) Specifies a hashed password to import into Okta. When updating a user with a hashed password the user must be in the `STAGED` status.
   - `algorithm"` - (Required) The algorithm used to generate the hash using the password (and salt, when applicable). Must be set to BCRYPT, SHA-512, SHA-256, SHA-1 or MD5.
-  - `salt` - (Optional) Only required for salted hashes. For BCRYPT, this specifies the radix64-encoded salt used to generate 
+  - `salt` - (Optional) Only required for salted hashes. For BCRYPT, this specifies the radix64-encoded salt used to generate
   the hash, which must be 22 characters long. For other salted hashes, this specifies the base64-encoded salt used to generate the hash.
   - `work_factor` - (Optional) Governs the strength of the hash and the time required to compute it. Only required for BCRYPT algorithm. Minimum value is 1, and maximum is 20.
   - `salt_order` - (Optional) Specifies whether salt was pre- or postfixed to the password before hashing. Only required for salted algorithms.
-  - `value` - (Optional) For SHA-512, SHA-256, SHA-1, MD5, this is the actual base64-encoded hash of the password (and salt, if used). 
-  This is the Base64 encoded value of the SHA-512/SHA-256/SHA-1/MD5 digest that was computed by either pre-fixing or post-fixing 
-  the salt to the password, depending on the saltOrder. If a salt was not used in the source system, then this should just be 
+  - `value` - (Optional) For SHA-512, SHA-256, SHA-1, MD5, this is the actual base64-encoded hash of the password (and salt, if used).
+  This is the Base64 encoded value of the SHA-512/SHA-256/SHA-1/MD5 digest that was computed by either pre-fixing or post-fixing
+  the salt to the password, depending on the saltOrder. If a salt was not used in the source system, then this should just be
   the Base64 encoded value of the password's SHA-512/SHA-256/SHA-1/MD5 digest. For BCRYPT, This is the actual radix64-encoded hashed password.
 
 ## Attributes Reference

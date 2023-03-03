@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"reflect"
 
@@ -108,12 +109,19 @@ func resourceUser() *schema.Resource {
 			"custom_profile_attributes": {
 				Type:             schema.TypeString,
 				Optional:         true,
+				Computed:         true, // Required for SetNew()
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
 				Description:      "JSON formatted custom attributes for a user. It must be JSON due to various types Okta allows.",
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return new == ""
 				},
+			},
+			"custom_profile_attributes_to_ignore": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "List of custom_profile_attribute keys that should be excluded from being managed by Terraform.",
 			},
 			"department": {
 				Type:        schema.TypeString,
@@ -371,6 +379,47 @@ func resourceUser() *schema.Resource {
 				},
 			},
 		},
+
+		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, v interface{}) error {
+			filteredCustomAttributes := convertInterfaceToStringSet(d.Get("custom_profile_attributes_to_ignore"))
+			if len(filteredCustomAttributes) == 0 {
+				return nil
+			}
+
+			oldAttrs, newAttrs := d.GetChange("custom_profile_attributes")
+			var oldAttrsMap map[string]interface{}
+			_ = json.Unmarshal([]byte(oldAttrs.(string)), &oldAttrsMap)
+			var newAttrsMap map[string]interface{}
+			_ = json.Unmarshal([]byte(newAttrs.(string)), &newAttrsMap)
+
+			if d.Id() == "" {
+				// This is a new user resource. In this case, we only have new values. We'll filter any
+				// values for newly created resources as this is a rare case. If one specifies
+				// `custom_profile_attributes_to_filter` and then additionally includes those fields
+				// as specified in the initial resource creation, we'll simply ignore them.
+
+				for k := range newAttrsMap {
+					if contains(filteredCustomAttributes, k) {
+						delete(newAttrsMap, k)
+					}
+				}
+			} else {
+				// We are updating. We've already done a read from the server so the old value will now contain
+				// correct values. Thus, we update `custom_profile_attributes` with the filtered attributes
+				// from the current old value.
+
+				for k, v := range oldAttrsMap {
+					if contains(filteredCustomAttributes, k) {
+						newAttrsMap[k] = v
+					}
+				}
+			}
+
+			customProfileAttributes, _ := json.Marshal(newAttrsMap)
+			d.SetNew("custom_profile_attributes", string(customProfileAttributes))
+
+			return nil
+		},
 	}
 }
 
@@ -460,6 +509,10 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 }
 
 func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return resourceUserReadFilterCustomAttributes(ctx, d, m, []string{})
+}
+
+func resourceUserReadFilterCustomAttributes(ctx context.Context, d *schema.ResourceData, m interface{}, filteredCustomAttributes []string) diag.Diagnostics {
 	logger(m).Info("reading user", "id", d.Id())
 	client := getOktaClientFromMetadata(m)
 	user, resp, err := client.User.GetUser(ctx, d.Id())
@@ -471,7 +524,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 		return nil
 	}
 	_ = d.Set("raw_status", user.Status)
-	rawMap := flattenUser(user)
+	rawMap := flattenUser(user, filteredCustomAttributes)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {
 		return diag.Errorf("failed to set user's properties: %v", err)
@@ -661,7 +714,10 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 			return diag.Errorf("failed to change user's password recovery question: %v", err)
 		}
 	}
-	return resourceUserRead(ctx, d, m)
+
+	filteredCustomAttributes := convertInterfaceToStringSet(d.Get("custom_profile_attributes_to_ignore"))
+
+	return resourceUserReadFilterCustomAttributes(ctx, d, m, filteredCustomAttributes)
 }
 
 func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
