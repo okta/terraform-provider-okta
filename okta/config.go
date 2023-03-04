@@ -91,20 +91,32 @@ func providerLogger(c *Config) hclog.Logger {
 
 func oktaSDKClient(c *Config) (client *okta.Client, err error) {
 	var httpClient *http.Client
+	logLevel := strings.ToLower(os.Getenv("TF_LOG"))
+	debugHttpRequests := (logLevel == "1" || logLevel == "debug" || logLevel == "trace")
 	if c.backoff {
 		retryableClient := retryablehttp.NewClient()
 		retryableClient.RetryWaitMin = time.Second * time.Duration(c.minWait)
 		retryableClient.RetryWaitMax = time.Second * time.Duration(c.maxWait)
 		retryableClient.RetryMax = c.retryCount
 		retryableClient.Logger = c.logger
-		retryableClient.HTTPClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", retryableClient.HTTPClient.Transport)
+		if debugHttpRequests {
+			// Needed for pretty printing http protocol in a local developer environment, ignore deprecation warnings.
+			retryableClient.HTTPClient.Transport = logging.NewTransport("Okta", retryableClient.HTTPClient.Transport)
+		} else {
+			retryableClient.HTTPClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", retryableClient.HTTPClient.Transport)
+		}
 		retryableClient.ErrorHandler = errHandler
 		retryableClient.CheckRetry = checkRetry
 		httpClient = retryableClient.StandardClient()
 		c.logger.Info(fmt.Sprintf("running with backoff http client, wait min %d, wait max %d, retry max %d", retryableClient.RetryWaitMin, retryableClient.RetryWaitMax, retryableClient.RetryMax))
 	} else {
 		httpClient = cleanhttp.DefaultClient()
-		httpClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", httpClient.Transport)
+		if debugHttpRequests {
+			// Needed for pretty printing http protocol in a local developer environment, ignore deprecation warnings.
+			httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
+		} else {
+			httpClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", httpClient.Transport)
+		}
 		c.logger.Info("running with default http client")
 	}
 
