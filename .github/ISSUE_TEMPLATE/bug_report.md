@@ -61,6 +61,14 @@ To obtain the debug output, see the [Terraform documentation on debugging](https
 
 <!--- What should have happened? --->
 
+#### Can this be done in the Admin UI?
+
+<!--- Yes / No / I don't know --->
+
+#### Can this be done in the actual API call?
+
+<!--- Yes / No / I don't know --->
+
 ### Actual Behavior
 
 <!--- What actually happened? --->
