@@ -1,5 +1,50 @@
 # Changelog
 
+## 3.43.0 (March 7, 2023)
+
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* Resource `okta_user` supports ignoring custom profile attributes
+  [#1476](https://github.com/okta/terraform-provider-okta/pull/1476). Thanks,
+  [@virgofx](https://github.com/virgofx)!
+* Adding `settings.signOn.samlSignedRequestEnabled` as
+  `saml_signed_request_enabled` argument on resource `okta_app_saml`
+  [#1475](https://github.com/okta/terraform-provider-okta/pull/1475). Thanks,
+  [@monde](https://github.com/monde)!
+
+### PROJECT IMPROVEMENTS:
+
+* Resource `okta_user_schema_property` documentation update
+  [#1468](https://github.com/okta/terraform-provider-okta/pull/1468) Thanks,
+  [@pro4tlzz](https://github.com/pro4tlzz)!
+
+### BUG FIXES:
+
+* Add correct import functionality for `okta_email_customization`
+  [#1471](https://github.com/okta/terraform-provider-okta/pull/1471) Thanks,
+  [@samcook](https://github.com/samcook)!
+* Fixed `authentication_policy` change detection
+  [#1470](https://github.com/okta/terraform-provider-okta/pull/1470). Thanks,
+  [@monde](https://github.com/monde)!
+* Correctly handle zero "0" integer values in API calls for resources
+  `okta_policy_password` and `okta_policy_password_default`
+  [#1477](https://github.com/okta/terraform-provider-okta/pull/1477). Thanks,
+  [@monde](https://github.com/monde)!
+  - Attributes:
+  - `password_auto_unlock_minutes`
+  - `password_expire_warn_days`
+  - `password_history_count`
+  - `password_max_age_days`
+  - `password_max_lockout_attempts`
+  - `password_min_age_minutes`
+  - `password_min_length`
+  - `password_min_lowercase`
+  - `password_min_number`
+  - `password_min_symbol`
+  - `password_min_uppercase`
+  - `question_min_length`
+  - `recovery_email_token`
+
 ## 3.42.0 (February 10, 2023)
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
