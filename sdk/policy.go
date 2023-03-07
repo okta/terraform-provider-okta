@@ -2,6 +2,7 @@ package sdk
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -54,6 +55,73 @@ type Policy struct {
 	okta.Policy
 
 	Settings *PolicySettings `json:"settings,omitempty"`
+}
+
+// MarshalJSON Deal with the embedded struct okta.Policy having its own
+// marshaler. okta.Policy doens't support a policy settings fully so we have a
+// local implementation of it here.
+// https://developer.okta.com/docs/reference/api/policy/#policy-settings-object
+func (a *Policy) MarshalJSON() ([]byte, error) {
+	// This technique is derived from
+	// https://jhall.io/posts/go-json-tricks-embedded-marshaler/
+	policyJSON, err := a.Policy.MarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+
+	var settingsJSON []byte
+	if a.Settings != nil {
+		type Alias PolicySettings
+		type local struct {
+			*Alias
+		}
+		result := local{Alias: (*Alias)(a.Settings)}
+		settingsJSON, err = json.Marshal(&result)
+		if err != nil {
+			return nil, err
+		}
+
+		// manipulate a serialized policyJSON with a serialized settingsJSON to have
+		// the settings embedded properly.
+		separator := ","
+		if string(policyJSON) == "{}" {
+			separator = ""
+
+		}
+		settingsJSON = []byte(fmt.Sprintf("%s\"settings\":%s}", separator, settingsJSON))
+	}
+
+	var _json string
+	if len(settingsJSON) > 0 {
+		_json = fmt.Sprintf("%s%s", policyJSON[:len(policyJSON)-1], settingsJSON)
+	} else {
+		_json = string(policyJSON)
+	}
+	return []byte(_json), nil
+}
+
+func (a *Policy) UnmarshalJSON(data []byte) error {
+	type Alias Policy
+	result := &struct {
+		*Alias
+	}{
+		Alias: (*Alias)(a),
+	}
+	if err := json.Unmarshal(data, &result); err != nil {
+		return err
+	}
+
+	// Need to get around multiple embedded structs issue when unmarshalling so
+	// make use of an anonymous struct so only settings are unmarshaled
+	settings := struct {
+		Settings PolicySettings `json:"settings,omitempty"`
+	}{}
+	if err := json.Unmarshal(data, &settings); err != nil {
+		return err
+	}
+	a.Settings = &settings.Settings
+
+	return nil
 }
 
 // PolicySettings missing from okta-sdk-golang. However, there is a subset okta.PasswordPolicySettings.
