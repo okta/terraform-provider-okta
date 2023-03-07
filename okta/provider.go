@@ -510,3 +510,8 @@ func datasourceOIEOnlyFeatureError(name string) diag.Diagnostics {
 func resourceFuncNoOp(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
 	return nil
 }
+
+func int64Ptr(what int) *int64 {
+	result := int64(what)
+	return &result
+}

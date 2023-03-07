@@ -209,24 +209,24 @@ func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, m i
 		if err != nil {
 			return diag.Errorf("error setting notification channels for resource %s: %v", d.Id(), err)
 		}
-		_ = d.Set("password_min_length", policy.Settings.Password.Complexity.MinLength)
-		_ = d.Set("password_min_lowercase", policy.Settings.Password.Complexity.MinLowerCase)
-		_ = d.Set("password_min_uppercase", policy.Settings.Password.Complexity.MinUpperCase)
-		_ = d.Set("password_min_number", policy.Settings.Password.Complexity.MinNumber)
-		_ = d.Set("password_min_symbol", policy.Settings.Password.Complexity.MinSymbol)
+		_ = d.Set("password_min_length", *policy.Settings.Password.Complexity.MinLengthPtr)
+		_ = d.Set("password_min_lowercase", *policy.Settings.Password.Complexity.MinLowerCasePtr)
+		_ = d.Set("password_min_uppercase", *policy.Settings.Password.Complexity.MinUpperCasePtr)
+		_ = d.Set("password_min_number", *policy.Settings.Password.Complexity.MinNumberPtr)
+		_ = d.Set("password_min_symbol", *policy.Settings.Password.Complexity.MinSymbolPtr)
 		_ = d.Set("password_exclude_username", policy.Settings.Password.Complexity.ExcludeUsername)
 		if policy.Settings.Password.Complexity.Dictionary != nil && policy.Settings.Password.Complexity.Dictionary.Common != nil {
 			_ = d.Set("password_dictionary_lookup", policy.Settings.Password.Complexity.Dictionary.Common.Exclude)
 		}
-		_ = d.Set("password_max_age_days", policy.Settings.Password.Age.MaxAgeDays)
-		_ = d.Set("password_expire_warn_days", policy.Settings.Password.Age.ExpireWarnDays)
-		_ = d.Set("password_min_age_minutes", policy.Settings.Password.Age.MinAgeMinutes)
-		_ = d.Set("password_history_count", policy.Settings.Password.Age.HistoryCount)
-		_ = d.Set("password_max_lockout_attempts", policy.Settings.Password.Lockout.MaxAttempts)
-		_ = d.Set("password_auto_unlock_minutes", policy.Settings.Password.Lockout.AutoUnlockMinutes)
+		_ = d.Set("password_max_age_days", *policy.Settings.Password.Age.MaxAgeDaysPtr)
+		_ = d.Set("password_expire_warn_days", *policy.Settings.Password.Age.ExpireWarnDaysPtr)
+		_ = d.Set("password_min_age_minutes", *policy.Settings.Password.Age.MinAgeMinutesPtr)
+		_ = d.Set("password_history_count", *policy.Settings.Password.Age.HistoryCountPtr)
+		_ = d.Set("password_max_lockout_attempts", *policy.Settings.Password.Lockout.MaxAttemptsPtr)
+		_ = d.Set("password_auto_unlock_minutes", *policy.Settings.Password.Lockout.AutoUnlockMinutesPtr)
 		_ = d.Set("password_show_lockout_failures", policy.Settings.Password.Lockout.ShowLockoutFailures)
-		_ = d.Set("question_min_length", policy.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLength)
-		_ = d.Set("recovery_email_token", policy.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutes)
+		_ = d.Set("question_min_length", *policy.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLengthPtr)
+		_ = d.Set("recovery_email_token", *policy.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutesPtr)
 		_ = d.Set("sms_recovery", policy.Settings.Recovery.Factors.OktaSms.Status)
 		_ = d.Set("email_recovery", policy.Settings.Recovery.Factors.OktaEmail.Status)
 		_ = d.Set("question_recovery", policy.Settings.Recovery.Factors.RecoveryQuestion.Status)
@@ -278,7 +278,7 @@ func buildPasswordPolicy(d *schema.ResourceData) sdk.Policy {
 		template.Description = description.(string)
 	}
 	if priority, ok := d.GetOk("priority"); ok {
-		template.Priority = int64(priority.(int))
+		template.PriorityPtr = int64Ptr(priority.(int))
 	}
 	template.Conditions = &okta.PolicyRuleConditions{
 		AuthProvider: &okta.PasswordPolicyAuthenticationProviderCondition{
@@ -291,10 +291,10 @@ func buildPasswordPolicy(d *schema.ResourceData) sdk.Policy {
 	template.Settings = &sdk.PolicySettings{
 		Password: &okta.PasswordPolicyPasswordSettings{
 			Age: &okta.PasswordPolicyPasswordSettingsAge{
-				ExpireWarnDays: int64(d.Get("password_expire_warn_days").(int)),
-				HistoryCount:   int64(d.Get("password_history_count").(int)),
-				MaxAgeDays:     int64(d.Get("password_max_age_days").(int)),
-				MinAgeMinutes:  int64(d.Get("password_min_age_minutes").(int)),
+				ExpireWarnDaysPtr: int64Ptr(d.Get("password_expire_warn_days").(int)),
+				HistoryCountPtr:   int64Ptr(d.Get("password_history_count").(int)),
+				MaxAgeDaysPtr:     int64Ptr(d.Get("password_max_age_days").(int)),
+				MinAgeMinutesPtr:  int64Ptr(d.Get("password_min_age_minutes").(int)),
 			},
 			Complexity: &okta.PasswordPolicyPasswordSettingsComplexity{
 				Dictionary: &okta.PasswordDictionary{
@@ -304,15 +304,15 @@ func buildPasswordPolicy(d *schema.ResourceData) sdk.Policy {
 				},
 				ExcludeAttributes: getExcludedAttrs(d.Get("password_exclude_first_name").(bool), d.Get("password_exclude_last_name").(bool)),
 				ExcludeUsername:   boolPtr(d.Get("password_exclude_username").(bool)),
-				MinLength:         int64(d.Get("password_min_length").(int)),
-				MinLowerCase:      int64(d.Get("password_min_lowercase").(int)),
-				MinNumber:         int64(d.Get("password_min_number").(int)),
-				MinSymbol:         int64(d.Get("password_min_symbol").(int)),
-				MinUpperCase:      int64(d.Get("password_min_uppercase").(int)),
+				MinLengthPtr:      int64Ptr(d.Get("password_min_length").(int)),
+				MinLowerCasePtr:   int64Ptr(d.Get("password_min_lowercase").(int)),
+				MinNumberPtr:      int64Ptr(d.Get("password_min_number").(int)),
+				MinSymbolPtr:      int64Ptr(d.Get("password_min_symbol").(int)),
+				MinUpperCasePtr:   int64Ptr(d.Get("password_min_uppercase").(int)),
 			},
 			Lockout: &okta.PasswordPolicyPasswordSettingsLockout{
-				AutoUnlockMinutes:               int64(d.Get("password_auto_unlock_minutes").(int)),
-				MaxAttempts:                     int64(d.Get("password_max_lockout_attempts").(int)),
+				AutoUnlockMinutesPtr:            int64Ptr(d.Get("password_auto_unlock_minutes").(int)),
+				MaxAttemptsPtr:                  int64Ptr(d.Get("password_max_lockout_attempts").(int)),
 				ShowLockoutFailures:             boolPtr(d.Get("password_show_lockout_failures").(bool)),
 				UserLockoutNotificationChannels: convertInterfaceToStringSet(d.Get("password_lockout_notification_channels")),
 			},
@@ -328,7 +328,7 @@ func buildPasswordPolicy(d *schema.ResourceData) sdk.Policy {
 				OktaEmail: &okta.PasswordPolicyRecoveryEmail{
 					Properties: &okta.PasswordPolicyRecoveryEmailProperties{
 						RecoveryToken: &okta.PasswordPolicyRecoveryEmailRecoveryToken{
-							TokenLifetimeMinutes: int64(d.Get("recovery_email_token").(int)),
+							TokenLifetimeMinutesPtr: int64Ptr(d.Get("recovery_email_token").(int)),
 						},
 					},
 					Status: d.Get("email_recovery").(string),
@@ -336,7 +336,7 @@ func buildPasswordPolicy(d *schema.ResourceData) sdk.Policy {
 				RecoveryQuestion: &okta.PasswordPolicyRecoveryQuestion{
 					Properties: &okta.PasswordPolicyRecoveryQuestionProperties{
 						Complexity: &okta.PasswordPolicyRecoveryQuestionComplexity{
-							MinLength: int64(d.Get("question_min_length").(int)),
+							MinLengthPtr: int64Ptr(d.Get("question_min_length").(int)),
 						},
 					},
 					Status: d.Get("question_recovery").(string),
