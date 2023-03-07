@@ -101,6 +101,7 @@ func oktaSDKClient(c *Config) (client *okta.Client, err error) {
 		retryableClient.Logger = c.logger
 		if debugHttpRequests {
 			// Needed for pretty printing http protocol in a local developer environment, ignore deprecation warnings.
+			//lint:ignore SA1019 used in developer mode only
 			retryableClient.HTTPClient.Transport = logging.NewTransport("Okta", retryableClient.HTTPClient.Transport)
 		} else {
 			retryableClient.HTTPClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", retryableClient.HTTPClient.Transport)
@@ -113,6 +114,7 @@ func oktaSDKClient(c *Config) (client *okta.Client, err error) {
 		httpClient = cleanhttp.DefaultClient()
 		if debugHttpRequests {
 			// Needed for pretty printing http protocol in a local developer environment, ignore deprecation warnings.
+			//lint:ignore SA1019 used in developer mode only
 			httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
 		} else {
 			httpClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", httpClient.Transport)
