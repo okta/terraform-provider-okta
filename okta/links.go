@@ -6,7 +6,11 @@ func linksValue(links interface{}, keys ...string) string {
 	}
 	sl, ok := links.([]interface{})
 	if ok {
-		links = sl[0]
+		if len(sl) == 0 {
+			links = map[string]interface{}{}
+		} else {
+			links = sl[0]
+		}
 	}
 	if len(keys) == 0 {
 		v, ok := links.(string)
