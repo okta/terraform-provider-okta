@@ -20,6 +20,11 @@ func TestAccOktaGroupSchema_crud(t *testing.T) {
 	unique := mgr.GetFixtures("unique.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 
+	// NOTE this test will fail because of a bug in the monolith on step 3
+	// "You cannot add the attribute with the variable name
+	// 'testAcc_1749602242782417788' because the deletion process for an
+	// attribute with the same variable name is incomplete. Wait until the data
+	// clean up process finishes and then try again."
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
