@@ -188,7 +188,7 @@ func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index s
 		return errors.New("failed to apply changes after several retries")
 	}, bc)
 	if err != nil {
-		logger(m).Error("failed to apply changes after several retries %+v", err)
+		logger(m).Error("failed to apply changes after several retries", err)
 	}
 	return schemaAttribute, err
 }
