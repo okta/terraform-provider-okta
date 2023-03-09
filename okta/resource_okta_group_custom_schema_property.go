@@ -248,11 +248,7 @@ func buildGroupCustomSchemaAttribute(d *schema.ResourceData) (*okta.GroupSchemaA
 			return nil, err
 		}
 	}
-	var enum []interface{}
-	if rawEnum, ok := d.GetOk("enum"); ok {
-		enum = rawEnum.([]interface{})
-	}
-	return &okta.GroupSchemaAttribute{
+	attribute := &okta.GroupSchemaAttribute{
 		Title:       d.Get("title").(string),
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
@@ -264,16 +260,23 @@ func buildGroupCustomSchemaAttribute(d *schema.ResourceData) (*okta.GroupSchemaA
 			},
 		},
 		Scope:             d.Get("scope").(string),
-		Enum:              enum,
 		Master:            getNullableMaster(d),
 		Items:             items,
-		MinLengthPtr:      int64Ptr(d.Get("min_length").(int)),
-		MaxLengthPtr:      int64Ptr(d.Get("max_length").(int)),
 		OneOf:             oneOf,
 		ExternalName:      d.Get("external_name").(string),
 		ExternalNamespace: d.Get("external_namespace").(string),
 		Unique:            d.Get("unique").(string),
-	}, nil
+	}
+	if min, ok := d.GetOk("min_length"); ok {
+		attribute.MinLengthPtr = int64Ptr(min.(int))
+	}
+	if max, ok := d.GetOk("max_length"); ok {
+		attribute.MaxLengthPtr = int64Ptr(max.(int))
+	}
+	if rawEnum, ok := d.GetOk("enum"); ok {
+		attribute.Enum = rawEnum.([]interface{})
+	}
+	return attribute, nil
 }
 
 func groupSchemaCustomAttribute(s *okta.GroupSchema, index string) *okta.GroupSchemaAttribute {
