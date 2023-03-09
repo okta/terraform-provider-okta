@@ -291,7 +291,7 @@ func tfGroupsToGroupAssignments(d *schema.ResourceData) []*okta.ApplicationGroup
 		}
 		priority, ok := d.GetOk(fmt.Sprintf("group.%d.priority", i))
 		if ok {
-			a.Priority = int64(priority.(int))
+			a.PriorityPtr = int64Ptr(priority.(int))
 		}
 		assignments[i] = a
 	}
