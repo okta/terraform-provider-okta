@@ -14,7 +14,9 @@ resource "okta_app_shared_credentials" "test" {
   shared_username                  = "sharedusername"
   accessibility_self_service       = true
   accessibility_error_redirect_url = "https://example.com/redirect_url_1"
-  accessibility_login_redirect_url = "https://example.com/redirect_url_2"
+  // deprecated in OIE
+  // https://developer.okta.com/docs/reference/api/apps/#accessibility-object
+  // accessibility_login_redirect_url = "https://example.com/redirect_url_2"
   auto_submit_toolbar              = true
   hide_ios                         = true
   logo                             = "../examples/okta_app_basic_auth/terraform_icon.png"
