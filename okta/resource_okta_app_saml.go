@@ -762,6 +762,16 @@ func tryCreateCertificate(ctx context.Context, d *schema.ResourceData, m interfa
 
 		// Set ID and the read done at the end of update and create will do the GET on metadata
 		_ = d.Set("key_id", key.Kid)
+		client := getOktaClientFromMetadata(m)
+		app, err := buildSamlApp(d)
+		if err != nil {
+			return err
+		}
+
+		_, _, err = client.Application.UpdateApplication(ctx, appID, app)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
