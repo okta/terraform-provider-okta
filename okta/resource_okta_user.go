@@ -737,9 +737,9 @@ func buildPasswordCredentialHash(rawPasswordHash interface{}) *okta.PasswordCred
 	hash := passwordHash[0].(map[string]interface{})
 	wf, _ := hash["work_factor"].(int)
 	h := &okta.PasswordCredentialHash{
-		Algorithm:  hash["algorithm"].(string),
-		Value:      hash["value"].(string),
-		WorkFactor: int64(wf),
+		Algorithm:     hash["algorithm"].(string),
+		Value:         hash["value"].(string),
+		WorkFactorPtr: int64Ptr(wf),
 	}
 	h.Salt, _ = hash["salt"].(string)
 	h.SaltOrder, _ = hash["salt_order"].(string)

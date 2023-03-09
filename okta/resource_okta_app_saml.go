@@ -698,8 +698,8 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 		acsEndpointsObj := make([]*okta.AcsEndpoint, len(acsEndpoints))
 		for i := range acsEndpoints {
 			acsEndpointsObj[i] = &okta.AcsEndpoint{
-				Index: int64(i),
-				Url:   acsEndpoints[i],
+				IndexPtr: int64Ptr(i),
+				Url:      acsEndpoints[i],
 			}
 		}
 		allowMultipleAcsEndpoints = true

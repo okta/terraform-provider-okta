@@ -166,8 +166,12 @@ var (
 func syncCustomUserSchema(d *schema.ResourceData, subschema *okta.UserSchemaAttribute) error {
 	syncBaseUserSchema(d, subschema)
 	_ = d.Set("description", subschema.Description)
-	_ = d.Set("min_length", subschema.MinLength)
-	_ = d.Set("max_length", subschema.MaxLength)
+	if subschema.MinLengthPtr != nil {
+		_ = d.Set("min_length", *subschema.MinLengthPtr)
+	}
+	if subschema.MaxLengthPtr != nil {
+		_ = d.Set("max_length", *subschema.MaxLengthPtr)
+	}
 	_ = d.Set("scope", subschema.Scope)
 	_ = d.Set("external_name", subschema.ExternalName)
 	_ = d.Set("external_namespace", subschema.ExternalNamespace)
@@ -324,8 +328,8 @@ func buildUserCustomSchemaAttribute(d *schema.ResourceData) (*okta.UserSchemaAtt
 		Scope:             d.Get("scope").(string),
 		Master:            getNullableMaster(d),
 		Items:             items,
-		MinLength:         int64(d.Get("min_length").(int)),
-		MaxLength:         int64(d.Get("max_length").(int)),
+		MinLengthPtr:      int64Ptr(d.Get("min_length").(int)),
+		MaxLengthPtr:      int64Ptr(d.Get("max_length").(int)),
 		OneOf:             oneOf,
 		ExternalName:      d.Get("external_name").(string),
 		ExternalNamespace: d.Get("external_namespace").(string),

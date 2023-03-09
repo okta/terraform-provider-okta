@@ -174,8 +174,12 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 	_ = d.Set("mfa_required", rule.Actions.SignOn.RequireFactor)
 	_ = d.Set("mfa_remember_device", rule.Actions.SignOn.RememberDeviceByDefault)
 	_ = d.Set("mfa_lifetime", rule.Actions.SignOn.FactorLifetime)
-	_ = d.Set("session_idle", rule.Actions.SignOn.Session.MaxSessionIdleMinutes)
-	_ = d.Set("session_lifetime", rule.Actions.SignOn.Session.MaxSessionLifetimeMinutes)
+	if rule.Actions.SignOn.Session.MaxSessionIdleMinutesPtr != nil {
+		_ = d.Set("session_idle", *rule.Actions.SignOn.Session.MaxSessionIdleMinutesPtr)
+	}
+	if rule.Actions.SignOn.Session.MaxSessionLifetimeMinutesPtr != nil {
+		_ = d.Set("session_lifetime", *rule.Actions.SignOn.Session.MaxSessionLifetimeMinutesPtr)
+	}
 	_ = d.Set("session_persistent", rule.Actions.SignOn.Session.UsePersistentCookie)
 	if rule.Actions.SignOn.FactorPromptMode != "" {
 		_ = d.Set("mfa_prompt", rule.Actions.SignOn.FactorPromptMode)
@@ -299,9 +303,9 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 			RememberDeviceByDefault: boolPtr(d.Get("mfa_remember_device").(bool)),
 			RequireFactor:           boolPtr(d.Get("mfa_required").(bool)),
 			Session: &okta.OktaSignOnPolicyRuleSignonSessionActions{
-				MaxSessionIdleMinutes:     int64(d.Get("session_idle").(int)),
-				MaxSessionLifetimeMinutes: int64(d.Get("session_lifetime").(int)),
-				UsePersistentCookie:       boolPtr(d.Get("session_persistent").(bool)),
+				MaxSessionIdleMinutesPtr:     int64Ptr(d.Get("session_idle").(int)),
+				MaxSessionLifetimeMinutesPtr: int64Ptr(d.Get("session_lifetime").(int)),
+				UsePersistentCookie:          boolPtr(d.Get("session_persistent").(bool)),
 			},
 		},
 	}

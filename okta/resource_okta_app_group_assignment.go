@@ -130,7 +130,9 @@ func resourceAppGroupAssignmentRead(ctx context.Context, d *schema.ResourceData,
 		return diag.Errorf("failed to marshal app user profile to JSON: %v", err)
 	}
 	_ = d.Set("profile", string(jsonProfile))
-	_ = d.Set("priority", g.Priority)
+	if g.PriorityPtr != nil {
+		_ = d.Set("priority", *g.PriorityPtr)
+	}
 	return nil
 }
 

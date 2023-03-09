@@ -110,7 +110,9 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, m interface{})
 	}
 	_ = d.Set("name", idp.Name)
 	_ = d.Set("type", idp.Type)
-	_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkew)
+	if idp.Policy.MaxClockSkewPtr != nil {
+		_ = d.Set("max_clock_skew", *idp.Policy.MaxClockSkewPtr)
+	}
 	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
 	_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
 	_ = d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
@@ -181,9 +183,9 @@ func buildIdPOidc(d *schema.ResourceData) (okta.IdentityProvider, error) {
 		Type:       "OIDC",
 		IssuerMode: d.Get("issuer_mode").(string),
 		Policy: &okta.IdentityProviderPolicy{
-			AccountLink:  buildPolicyAccountLink(d),
-			MaxClockSkew: int64(d.Get("max_clock_skew").(int)),
-			Provisioning: buildIdPProvisioning(d),
+			AccountLink:     buildPolicyAccountLink(d),
+			MaxClockSkewPtr: int64Ptr(d.Get("max_clock_skew").(int)),
+			Provisioning:    buildIdPProvisioning(d),
 			Subject: &okta.PolicySubject{
 				MatchType:      d.Get("subject_match_type").(string),
 				MatchAttribute: d.Get("subject_match_attribute").(string),

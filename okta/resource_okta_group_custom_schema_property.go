@@ -179,8 +179,12 @@ func buildCustomGroupSchema(index string, schema *okta.GroupSchemaAttribute) *ok
 func syncCustomGroupSchema(d *schema.ResourceData, subschema *okta.GroupSchemaAttribute) error {
 	syncBaseGroupSchema(d, subschema)
 	_ = d.Set("description", subschema.Description)
-	_ = d.Set("min_length", subschema.MinLength)
-	_ = d.Set("max_length", subschema.MaxLength)
+	if subschema.MinLengthPtr != nil {
+		_ = d.Set("min_length", *subschema.MinLengthPtr)
+	}
+	if subschema.MaxLengthPtr != nil {
+		_ = d.Set("max_length", *subschema.MaxLengthPtr)
+	}
 	_ = d.Set("scope", subschema.Scope)
 	_ = d.Set("external_name", subschema.ExternalName)
 	_ = d.Set("external_namespace", subschema.ExternalNamespace)
@@ -263,8 +267,8 @@ func buildGroupCustomSchemaAttribute(d *schema.ResourceData) (*okta.GroupSchemaA
 		Enum:              enum,
 		Master:            getNullableMaster(d),
 		Items:             items,
-		MinLength:         int64(d.Get("min_length").(int)),
-		MaxLength:         int64(d.Get("max_length").(int)),
+		MinLengthPtr:      int64Ptr(d.Get("min_length").(int)),
+		MaxLengthPtr:      int64Ptr(d.Get("max_length").(int)),
 		OneOf:             oneOf,
 		ExternalName:      d.Get("external_name").(string),
 		ExternalNamespace: d.Get("external_namespace").(string),

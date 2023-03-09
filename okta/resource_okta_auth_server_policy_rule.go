@@ -134,11 +134,19 @@ func resourceAuthServerPolicyRuleRead(ctx context.Context, d *schema.ResourceDat
 	}
 	_ = d.Set("name", authServerPolicyRule.Name)
 	_ = d.Set("status", authServerPolicyRule.Status)
-	_ = d.Set("priority", authServerPolicyRule.Priority)
+	if authServerPolicyRule.PriorityPtr != nil {
+		_ = d.Set("priority", *authServerPolicyRule.PriorityPtr)
+	}
 	_ = d.Set("type", authServerPolicyRule.Type)
-	_ = d.Set("access_token_lifetime_minutes", authServerPolicyRule.Actions.Token.AccessTokenLifetimeMinutes)
-	_ = d.Set("refresh_token_lifetime_minutes", authServerPolicyRule.Actions.Token.RefreshTokenLifetimeMinutes)
-	_ = d.Set("refresh_token_window_minutes", authServerPolicyRule.Actions.Token.RefreshTokenWindowMinutes)
+	if authServerPolicyRule.Actions.Token.AccessTokenLifetimeMinutesPtr != nil {
+		_ = d.Set("access_token_lifetime_minutes", *authServerPolicyRule.Actions.Token.AccessTokenLifetimeMinutesPtr)
+	}
+	if authServerPolicyRule.Actions.Token.RefreshTokenLifetimeMinutesPtr != nil {
+		_ = d.Set("refresh_token_lifetime_minutes", *authServerPolicyRule.Actions.Token.RefreshTokenLifetimeMinutesPtr)
+	}
+	if authServerPolicyRule.Actions.Token.RefreshTokenWindowMinutesPtr != nil {
+		_ = d.Set("refresh_token_window_minutes", *authServerPolicyRule.Actions.Token.RefreshTokenWindowMinutesPtr)
+	}
 
 	if authServerPolicyRule.Actions.Token.InlineHook != nil {
 		_ = d.Set("inline_hook_id", authServerPolicyRule.Actions.Token.InlineHook.Id)
@@ -227,16 +235,16 @@ func buildAuthServerPolicyRule(d *schema.ResourceData) okta.AuthorizationServerP
 		}
 	}
 	return okta.AuthorizationServerPolicyRule{
-		Name:     d.Get("name").(string),
-		Status:   d.Get("status").(string),
-		Priority: int64(d.Get("priority").(int)),
-		Type:     d.Get("type").(string),
+		Name:        d.Get("name").(string),
+		Status:      d.Get("status").(string),
+		PriorityPtr: int64Ptr(d.Get("priority").(int)),
+		Type:        d.Get("type").(string),
 		Actions: &okta.AuthorizationServerPolicyRuleActions{
 			Token: &okta.TokenAuthorizationServerPolicyRuleAction{
-				AccessTokenLifetimeMinutes:  int64(d.Get("access_token_lifetime_minutes").(int)),
-				RefreshTokenLifetimeMinutes: int64(d.Get("refresh_token_lifetime_minutes").(int)),
-				RefreshTokenWindowMinutes:   int64(d.Get("refresh_token_window_minutes").(int)),
-				InlineHook:                  hook,
+				AccessTokenLifetimeMinutesPtr:  int64Ptr(d.Get("access_token_lifetime_minutes").(int)),
+				RefreshTokenLifetimeMinutesPtr: int64Ptr(d.Get("refresh_token_lifetime_minutes").(int)),
+				RefreshTokenWindowMinutesPtr:   int64Ptr(d.Get("refresh_token_window_minutes").(int)),
+				InlineHook:                     hook,
 			},
 		},
 		Conditions: &okta.AuthorizationServerPolicyRuleConditions{

@@ -257,8 +257,8 @@ func containsAssignment(assignments []*okta.ApplicationGroupAssignment, assignme
 func containsEqualAssignment(assignments []*okta.ApplicationGroupAssignment, assignment *okta.ApplicationGroupAssignment) bool {
 	for i := range assignments {
 		if assignments[i].Id == assignment.Id && reflect.DeepEqual(assignments[i].Profile, assignment.Profile) {
-			if assignment.PriorityPtr != nil && *assignment.PriorityPtr >= 0 {
-				return reflect.DeepEqual(assignments[i].Priority, *assignment.PriorityPtr)
+			if assignments[i].PriorityPtr != nil && assignment.PriorityPtr != nil {
+				return reflect.DeepEqual(*assignments[i].PriorityPtr, *assignment.PriorityPtr)
 			}
 			return true
 		}
