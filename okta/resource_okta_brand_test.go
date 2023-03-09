@@ -28,9 +28,7 @@ func TestAccResourceOktaBrand_import_update(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				// this is set up only for import state test, ignore check as import.tf is for testing
-				ExpectNonEmptyPlan: true,
-				Config:             importConfig,
+				Config: importConfig,
 			},
 			{
 				ResourceName: "okta_brand.example",
