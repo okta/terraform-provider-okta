@@ -64,7 +64,7 @@ func buildDefaultMFAPolicy(d *schema.ResourceData) sdk.Policy {
 	policy.Name = d.Get("name").(string)
 	policy.Status = d.Get("status").(string)
 	policy.Description = d.Get("description").(string)
-	policy.Priority = int64(d.Get("priority").(int))
+	policy.PriorityPtr = int64Ptr(d.Get("priority").(int))
 	policy.Settings = buildSettings(d)
 	policy.Conditions = &okta.PolicyRuleConditions{
 		People: &okta.PolicyPeopleCondition{

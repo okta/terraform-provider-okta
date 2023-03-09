@@ -76,7 +76,7 @@ func buildMFAPolicy(d *schema.ResourceData) sdk.Policy {
 	policy.Status = d.Get("status").(string)
 	policy.Description = d.Get("description").(string)
 	if priority, ok := d.GetOk("priority"); ok {
-		policy.Priority = int64(priority.(int))
+		policy.PriorityPtr = int64Ptr(priority.(int))
 	}
 	policy.Settings = buildSettings(d)
 	policy.Conditions = &okta.PolicyRuleConditions{
@@ -152,6 +152,11 @@ func buildFactorProvider(d *schema.ResourceData, key string) *sdk.PolicyFactor {
 
 // Syncs either classic factors or OIE authenticators into the resource data.
 func syncSettings(d *schema.ResourceData, settings *sdk.PolicySettings) {
+	if settings == nil {
+		// NOTE when sdk/policy.go is gone we probably won't need this guard
+		return
+	}
+
 	_ = d.Set("is_oie", settings.Type == "AUTHENTICATORS")
 
 	if settings.Type == "AUTHENTICATORS" {
