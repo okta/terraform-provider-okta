@@ -105,6 +105,27 @@ func testOIEOnlyAccPreCheck(t *testing.T) func() {
 	}
 }
 
+// testClassicOnlyAccPreCheck is a resource.test PreCheck function that will place a
+// logical skip of classic tests when tests are run against an OIE org.
+func testClassicOnlyAccPreCheck(t *testing.T) func() {
+	return func() {
+		err := accPreCheck()
+		if err != nil {
+			t.Fatalf("%v", err)
+		}
+
+		org, _, err := testSupplementClient.GetWellKnownOktaOrganization(context.TODO())
+		if err != nil {
+			t.Fatalf("%v", err)
+		}
+
+		// v1 == Classic, idx == OIE
+		if org.Pipeline != "v1" {
+			t.Skipf("%q test is for classic orgs only", t.Name())
+		}
+	}
+}
+
 func testAccPreCheck(t *testing.T) func() {
 	return func() {
 		err := accPreCheck()

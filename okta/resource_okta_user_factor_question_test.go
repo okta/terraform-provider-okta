@@ -19,7 +19,7 @@ func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", userFactorQuestion)
 	resource.Test(
 		t, resource.TestCase{
-			PreCheck:          testAccPreCheck(t),
+			PreCheck:          testClassicOnlyAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      createUserFactorCheckDestroy(userFactorQuestion),
