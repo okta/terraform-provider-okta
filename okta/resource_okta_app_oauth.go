@@ -606,7 +606,9 @@ func setOAuthClientSettings(d *schema.ResourceData, oauthClient *okta.OpenIdConn
 	}
 	if oauthClient.RefreshToken != nil {
 		_ = d.Set("refresh_token_rotation", oauthClient.RefreshToken.RotationType)
-		_ = d.Set("refresh_token_leeway", oauthClient.RefreshToken.Leeway)
+		if oauthClient.RefreshToken.LeewayPtr != nil {
+			_ = d.Set("refresh_token_leeway", *oauthClient.RefreshToken.LeewayPtr)
+		}
 	}
 	if oauthClient.Jwks != nil {
 		jwks := oauthClient.Jwks.Keys
@@ -829,7 +831,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 	}
 
 	if leeway, ok := d.GetOk("refresh_token_leeway"); ok {
-		refresh.Leeway = int64(leeway.(int))
+		refresh.LeewayPtr = int64Ptr(leeway.(int))
 		hasRefresh = true
 	}
 

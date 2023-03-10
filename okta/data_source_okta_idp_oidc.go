@@ -123,7 +123,9 @@ func dataSourceIdpOidcRead(ctx context.Context, d *schema.ResourceData, m interf
 	_ = d.Set("client_secret", oidc.Protocol.Credentials.Client.ClientSecret)
 	_ = d.Set("client_id", oidc.Protocol.Credentials.Client.ClientId)
 	_ = d.Set("issuer_url", oidc.Protocol.Issuer.Url)
-	_ = d.Set("max_clock_skew", oidc.Policy.MaxClockSkew)
+	if oidc.Policy.MaxClockSkewPtr != nil {
+		_ = d.Set("max_clock_skew", *oidc.Policy.MaxClockSkewPtr)
+	}
 	_ = d.Set("scopes", convertStringSliceToSet(oidc.Protocol.Scopes))
 	if oidc.IssuerMode != "" {
 		_ = d.Set("issuer_mode", oidc.IssuerMode)

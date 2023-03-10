@@ -166,8 +166,12 @@ var (
 func syncCustomUserSchema(d *schema.ResourceData, subschema *okta.UserSchemaAttribute) error {
 	syncBaseUserSchema(d, subschema)
 	_ = d.Set("description", subschema.Description)
-	_ = d.Set("min_length", subschema.MinLength)
-	_ = d.Set("max_length", subschema.MaxLength)
+	if subschema.MinLengthPtr != nil {
+		_ = d.Set("min_length", *subschema.MinLengthPtr)
+	}
+	if subschema.MaxLengthPtr != nil {
+		_ = d.Set("max_length", *subschema.MaxLengthPtr)
+	}
 	_ = d.Set("scope", subschema.Scope)
 	_ = d.Set("external_name", subschema.ExternalName)
 	_ = d.Set("external_namespace", subschema.ExternalNamespace)
@@ -324,12 +328,16 @@ func buildUserCustomSchemaAttribute(d *schema.ResourceData) (*okta.UserSchemaAtt
 		Scope:             d.Get("scope").(string),
 		Master:            getNullableMaster(d),
 		Items:             items,
-		MinLength:         int64(d.Get("min_length").(int)),
-		MaxLength:         int64(d.Get("max_length").(int)),
 		OneOf:             oneOf,
 		ExternalName:      d.Get("external_name").(string),
 		ExternalNamespace: d.Get("external_namespace").(string),
 		Unique:            d.Get("unique").(string),
+	}
+	if min, ok := d.GetOk("min_length"); ok {
+		attribute.MinLengthPtr = int64Ptr(min.(int))
+	}
+	if max, ok := d.GetOk("max_length"); ok {
+		attribute.MaxLengthPtr = int64Ptr(max.(int))
 	}
 	if rawEnum, ok := d.GetOk("enum"); ok {
 		attribute.Enum = rawEnum.([]interface{})

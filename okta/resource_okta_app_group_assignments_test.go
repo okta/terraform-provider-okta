@@ -48,6 +48,13 @@ func TestAccAppGroupAssignments_crud(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
 				),
 			},
+			{
+				RefreshState: true,
+				Check: resource.ComposeTestCheckFunc(
+					ensureAppGroupAssignmentsExist(resourceName, group1, group2, group3),
+					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
+				),
+			},
 		},
 	})
 }

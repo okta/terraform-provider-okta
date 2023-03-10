@@ -107,7 +107,9 @@ func setDefaultPolicy(ctx context.Context, d *schema.ResourceData, m interface{}
 	_ = d.Set("name", policy.Name)
 	_ = d.Set("description", policy.Description)
 	_ = d.Set("status", policy.Status)
-	_ = d.Set("priority", policy.Priority)
+	if policy.PriorityPtr != nil {
+		_ = d.Set("priority", *policy.PriorityPtr)
+	}
 	d.SetId(policy.Id)
 	return policy, nil
 }
@@ -145,7 +147,9 @@ func createPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, te
 	}
 	d.SetId(policy.Id)
 	// Even if priority is invalid we want to add the policy to Terraform to reflect upstream.
-	err = validatePriority(template.Priority, policy.Priority)
+	if template.PriorityPtr != nil && policy.PriorityPtr != nil {
+		err = validatePriority(*template.PriorityPtr, *policy.PriorityPtr)
+	}
 	if err != nil {
 		return err
 	}
@@ -213,7 +217,9 @@ func updatePolicy(ctx context.Context, d *schema.ResourceData, m interface{}, te
 		return err
 	}
 	// avoiding perpetual diffs by erroring when the configured priority is not valid and the API defaults it.
-	err = validatePriority(template.Priority, policy.Priority)
+	if template.PriorityPtr != nil && policy.PriorityPtr != nil {
+		err = validatePriority(*template.PriorityPtr, *policy.PriorityPtr)
+	}
 	if err != nil {
 		return err
 	}
@@ -239,7 +245,9 @@ func syncPolicyFromUpstream(d *schema.ResourceData, policy *sdk.Policy) error {
 	_ = d.Set("name", policy.Name)
 	_ = d.Set("description", policy.Description)
 	_ = d.Set("status", policy.Status)
-	_ = d.Set("priority", policy.Priority)
+	if policy.PriorityPtr != nil {
+		_ = d.Set("priority", *policy.PriorityPtr)
+	}
 	if policy.Conditions != nil &&
 		policy.Conditions.People != nil &&
 		policy.Conditions.People.Groups != nil &&

@@ -37,6 +37,8 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 	factorSequence := mgr.GetFixtures("factor_sequence.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleSignOn)
 
+	// NOTE can/will fail with "conditions: Invalid condition type specified: riskScore."
+	// Not sure about correct settings for this to pass.
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
@@ -128,6 +130,8 @@ func TestAccOktaPolicyRuleSignon_multiple(t *testing.T) {
 	basicMultiple := mgr.GetFixtures("basic_multiple.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleSignOn)
 
+	// NOTE can/will fail with "conditions: Invalid condition type specified: riskScore."
+	// Not sure about correct settings for this to pass.
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),

@@ -216,7 +216,9 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 		return nil
 	}
 	_ = d.Set("name", rule.Name)
-	_ = d.Set("priority", int(rule.Priority))
+	if rule.PriorityPtr != nil {
+		_ = d.Set("priority", *rule.PriorityPtr)
+	}
 	_ = d.Set("status", rule.Status)
 	if rule.Actions.AppSignOn != nil {
 		_ = d.Set("access", rule.Actions.AppSignOn.Access)
@@ -322,9 +324,9 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 				},
 			},
 		},
-		Name:     d.Get("name").(string),
-		Priority: int64(d.Get("priority").(int)),
-		Type:     "ACCESS_POLICY",
+		Name:        d.Get("name").(string),
+		PriorityPtr: int64Ptr(d.Get("priority").(int)),
+		Type:        "ACCESS_POLICY",
 	}
 	var constraints []*okta.AccessPolicyConstraints
 	v, ok := d.GetOk("constraints")

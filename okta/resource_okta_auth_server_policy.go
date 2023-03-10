@@ -80,7 +80,9 @@ func resourceAuthServerPolicyRead(ctx context.Context, d *schema.ResourceData, m
 	_ = d.Set("name", policy.Name)
 	_ = d.Set("description", policy.Description)
 	_ = d.Set("status", policy.Status)
-	_ = d.Set("priority", policy.Priority)
+	if policy.PriorityPtr != nil {
+		_ = d.Set("priority", *policy.PriorityPtr)
+	}
 	_ = d.Set("client_whitelist", convertStringSliceToSet(policy.Conditions.Clients.Include))
 	return nil
 }
@@ -118,7 +120,7 @@ func buildAuthServerPolicy(d *schema.ResourceData) okta.AuthorizationServerPolic
 		Name:        d.Get("name").(string),
 		Type:        sdk.OauthAuthorizationPolicyType,
 		Status:      d.Get("status").(string),
-		Priority:    int64(d.Get("priority").(int)),
+		PriorityPtr: int64Ptr(d.Get("priority").(int)),
 		Description: d.Get("description").(string),
 		Conditions: &okta.PolicyRuleConditions{
 			Clients: &okta.ClientPolicyCondition{

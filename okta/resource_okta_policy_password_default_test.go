@@ -15,6 +15,7 @@ func TestAccOktaDefaultPasswordPolicy(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", policyPasswordDefault)
 
+	// NOTE needs the "Security Question" authenticator enabled on the org
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),

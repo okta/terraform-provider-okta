@@ -179,8 +179,8 @@ func syncGroups(d *schema.ResourceData, groups []interface{}, assignments []*okt
 		for _, assignment := range assignments {
 			if assignment.Id == d.Get(fmt.Sprintf("group.%d.id", i)).(string) {
 				present = true
-				if assignment.Priority >= 0 {
-					groups[i].(map[string]interface{})["priority"] = assignment.Priority
+				if assignment.PriorityPtr != nil && *assignment.PriorityPtr >= 0 {
+					groups[i].(map[string]interface{})["priority"] = *assignment.PriorityPtr
 				}
 				groups[i].(map[string]interface{})["profile"] = buildProfile(d, i, assignment)
 			}
@@ -257,8 +257,8 @@ func containsAssignment(assignments []*okta.ApplicationGroupAssignment, assignme
 func containsEqualAssignment(assignments []*okta.ApplicationGroupAssignment, assignment *okta.ApplicationGroupAssignment) bool {
 	for i := range assignments {
 		if assignments[i].Id == assignment.Id && reflect.DeepEqual(assignments[i].Profile, assignment.Profile) {
-			if assignment.Priority >= 0 {
-				return reflect.DeepEqual(assignments[i].Priority, assignment.Priority)
+			if assignments[i].PriorityPtr != nil && assignment.PriorityPtr != nil {
+				return reflect.DeepEqual(*assignments[i].PriorityPtr, *assignment.PriorityPtr)
 			}
 			return true
 		}
@@ -272,11 +272,14 @@ func groupAssignmentToTFGroup(assignment *okta.ApplicationGroupAssignment) map[s
 	if string(jsonProfile) != "" {
 		profile = string(jsonProfile)
 	}
-	return map[string]interface{}{
-		"id":       assignment.Id,
-		"priority": assignment.Priority,
-		"profile":  profile,
+	result := map[string]interface{}{
+		"id":      assignment.Id,
+		"profile": profile,
 	}
+	if assignment.PriorityPtr != nil {
+		result["priority"] = *assignment.PriorityPtr
+	}
+	return result
 }
 
 func tfGroupsToGroupAssignments(d *schema.ResourceData) []*okta.ApplicationGroupAssignment {
@@ -291,7 +294,7 @@ func tfGroupsToGroupAssignments(d *schema.ResourceData) []*okta.ApplicationGroup
 		}
 		priority, ok := d.GetOk(fmt.Sprintf("group.%d.priority", i))
 		if ok {
-			a.Priority = int64(priority.(int))
+			a.PriorityPtr = int64Ptr(priority.(int))
 		}
 		assignments[i] = a
 	}

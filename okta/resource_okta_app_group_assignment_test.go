@@ -13,13 +13,15 @@ import (
 
 func TestAccAppGroupAssignment_crud(t *testing.T) {
 	ri := acctest.RandInt()
-	resourceName := fmt.Sprintf("%s.test", appGroupAssignment)
 	resourceName0 := fmt.Sprintf("%s.test.0", appGroupAssignment)
 	resourceName1 := fmt.Sprintf("%s.test.1", appGroupAssignment)
+	resourceName3 := fmt.Sprintf("%s.test3", appGroupAssignment)
 	mgr := newFixtureManager(appGroupAssignment)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
 
+	// TF concurrency will cause this test to flap if the groups and assigned
+	// priorities aren't executed in proper order
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
@@ -32,13 +34,18 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 					ensureAppGroupAssignmentExists(resourceName0),
 					resource.TestCheckResourceAttrSet(resourceName0, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName0, "group_id"),
-					resource.TestCheckResourceAttr(resourceName0, "priority", "0"),
+					resource.TestCheckResourceAttrSet(resourceName0, "priority"),
 					resource.TestCheckResourceAttr(resourceName0, "profile", "{}"),
 					ensureAppGroupAssignmentExists(resourceName1),
 					resource.TestCheckResourceAttrSet(resourceName1, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName1, "group_id"),
-					resource.TestCheckResourceAttr(resourceName1, "priority", "1"),
+					resource.TestCheckResourceAttrSet(resourceName1, "priority"),
 					resource.TestCheckResourceAttr(resourceName1, "profile", "{}"),
+					ensureAppGroupAssignmentExists(resourceName3),
+					resource.TestCheckResourceAttrSet(resourceName3, "app_id"),
+					resource.TestCheckResourceAttrSet(resourceName3, "group_id"),
+					resource.TestCheckResourceAttr(resourceName3, "priority", "3"),
+					resource.TestCheckResourceAttr(resourceName3, "profile", "{}"),
 				),
 			},
 			{
@@ -47,13 +54,18 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 					ensureAppGroupAssignmentExists(resourceName0),
 					resource.TestCheckResourceAttrSet(resourceName0, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName0, "group_id"),
-					resource.TestCheckResourceAttr(resourceName0, "priority", "0"),
+					resource.TestCheckResourceAttrSet(resourceName0, "priority"),
 					resource.TestCheckResourceAttr(resourceName0, "profile", "{}"),
 					ensureAppGroupAssignmentExists(resourceName1),
 					resource.TestCheckResourceAttrSet(resourceName1, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName1, "group_id"),
-					resource.TestCheckResourceAttr(resourceName1, "priority", "1"),
+					resource.TestCheckResourceAttrSet(resourceName0, "priority"),
 					resource.TestCheckResourceAttr(resourceName1, "profile", "{}"),
+					ensureAppGroupAssignmentExists(resourceName3),
+					resource.TestCheckResourceAttrSet(resourceName3, "app_id"),
+					resource.TestCheckResourceAttrSet(resourceName3, "group_id"),
+					resource.TestCheckResourceAttr(resourceName3, "priority", "4"),
+					resource.TestCheckResourceAttr(resourceName3, "profile", "{}"),
 				),
 			},
 			{
@@ -62,23 +74,28 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 					ensureAppGroupAssignmentExists(resourceName0),
 					resource.TestCheckResourceAttrSet(resourceName0, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName0, "group_id"),
-					resource.TestCheckResourceAttr(resourceName0, "priority", "0"),
+					resource.TestCheckResourceAttrSet(resourceName0, "priority"),
 					resource.TestCheckResourceAttr(resourceName0, "profile", "{}"),
 					ensureAppGroupAssignmentExists(resourceName1),
 					resource.TestCheckResourceAttrSet(resourceName1, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName1, "group_id"),
-					resource.TestCheckResourceAttr(resourceName1, "priority", "1"),
+					resource.TestCheckResourceAttrSet(resourceName1, "priority"),
 					resource.TestCheckResourceAttr(resourceName1, "profile", "{}"),
+					ensureAppGroupAssignmentExists(resourceName3),
+					resource.TestCheckResourceAttrSet(resourceName3, "app_id"),
+					resource.TestCheckResourceAttrSet(resourceName3, "group_id"),
+					resource.TestCheckResourceAttr(resourceName3, "priority", "3"),
+					resource.TestCheckResourceAttr(resourceName3, "profile", "{}"),
 				),
 			},
 			{
-				ResourceName:      resourceName,
+				ResourceName:      resourceName3,
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: func(s *terraform.State) (string, error) {
-					rs, ok := s.RootModule().Resources[resourceName0]
+					rs, ok := s.RootModule().Resources[resourceName3]
 					if !ok {
-						return "", fmt.Errorf("failed to find %s", resourceName)
+						return "", fmt.Errorf("failed to find %s", resourceName3)
 					}
 					appID := rs.Primary.Attributes["app_id"]
 					groupID := rs.Primary.Attributes["group_id"]

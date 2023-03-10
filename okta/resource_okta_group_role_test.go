@@ -18,6 +18,8 @@ func TestAccOktaGroupAdminRole_crud(t *testing.T) {
 	groupTargetsUpdated := mgr.GetFixtures("group_targets_updated.tf", ri, t)
 	groupTargetsRemoved := mgr.GetFixtures("group_targets_removed.tf", ri, t)
 
+	// NOTE this test doesn't always pass
+	// "The role specified is already assigned to the user."
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),

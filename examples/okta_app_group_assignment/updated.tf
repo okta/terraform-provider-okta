@@ -24,7 +24,7 @@ resource "okta_group" "test3" {
 }
 
 locals {
-  group_ids = tolist([okta_group.test.id, okta_group.test2.id, okta_group.test3.id])
+  group_ids = tolist([okta_group.test.id, okta_group.test2.id])
 }
 
 resource "okta_app_group_assignment" "test" {
@@ -32,4 +32,13 @@ resource "okta_app_group_assignment" "test" {
 
   app_id   = okta_app_oauth.test.id
   group_id = local.group_ids[count.index]
+  priority = count.index
+}
+
+resource "okta_app_group_assignment" "test3" {
+  app_id   = okta_app_oauth.test.id
+  group_id = okta_group.test3.id
+  priority = 4
+
+  depends_on = [okta_app_group_assignment.test.0, okta_app_group_assignment.test.1]
 }

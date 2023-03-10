@@ -1,5 +1,9 @@
+variable "hostname" {
+   type=string
+}
+
 locals {
-  org_url = "https://terraform-provider-okta.oktapreview.com"
+  org_url = "https://${var.hostname}"
 }
 
 resource "okta_admin_role_custom" "test" {

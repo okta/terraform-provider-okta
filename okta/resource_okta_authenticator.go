@@ -273,7 +273,7 @@ func buildAuthenticator(d *schema.ResourceData) (*okta.Authenticator, error) {
 			Type: d.Get("provider_type").(string),
 			Configuration: &okta.AuthenticatorProviderConfiguration{
 				HostName:     d.Get("provider_hostname").(string),
-				AuthPort:     d.Get("provider_auth_port").(int64),
+				AuthPortPtr:  int64Ptr(d.Get("provider_auth_port").(int)),
 				InstanceId:   d.Get("provider_instance_id").(string),
 				SharedSecret: d.Get("provider_shared_secret").(string),
 				UserNameTemplate: &okta.AuthenticatorProviderConfigurationUserNamePlate{
@@ -361,7 +361,9 @@ func establishAuthenticator(authenticator *okta.Authenticator, d *schema.Resourc
 
 		if authenticator.Type == "security_key" {
 			_ = d.Set("provider_hostname", authenticator.Provider.Configuration.HostName)
-			_ = d.Set("provider_auth_port", authenticator.Provider.Configuration.AuthPort)
+			if authenticator.Provider.Configuration.AuthPortPtr != nil {
+				_ = d.Set("provider_auth_port", *authenticator.Provider.Configuration.AuthPortPtr)
+			}
 			_ = d.Set("provider_instance_id", authenticator.Provider.Configuration.InstanceId)
 		}
 

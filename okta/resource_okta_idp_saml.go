@@ -124,7 +124,9 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	}
 	_ = d.Set("name", idp.Name)
 	_ = d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
-	_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkew)
+	if idp.Policy.MaxClockSkewPtr != nil {
+		_ = d.Set("max_clock_skew", *idp.Policy.MaxClockSkewPtr)
+	}
 	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
 	_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
 	_ = d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
@@ -204,7 +206,7 @@ func buildIdPSaml(d *schema.ResourceData) (okta.IdentityProvider, error) {
 					Template: d.Get("username_template").(string),
 				},
 			},
-			MaxClockSkew: int64(d.Get("max_clock_skew").(int)),
+			MaxClockSkewPtr: int64Ptr(d.Get("max_clock_skew").(int)),
 		},
 		Protocol: &okta.Protocol{
 			Algorithms: buildAlgorithms(d),

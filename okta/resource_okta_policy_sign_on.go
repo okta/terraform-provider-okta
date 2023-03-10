@@ -72,7 +72,7 @@ func buildSignOnPolicy(d *schema.ResourceData) sdk.Policy {
 		template.Description = description.(string)
 	}
 	if priority, ok := d.GetOk("priority"); ok {
-		template.Priority = int64(priority.(int))
+		template.PriorityPtr = int64Ptr(priority.(int))
 	}
 	template.Conditions = &okta.PolicyRuleConditions{
 		People: getGroups(d),
