@@ -18,6 +18,10 @@ func TestAccResourceOktaBrand_import_update(t *testing.T) {
 	importConfig := mgr.GetFixtures("import.tf", ri, t)
 
 	// okta_brand is read and update only, so set up the test by importing the brand first
+
+	// NOTE this test will only pass on an org that hasn't had any of its brand
+	// values changed in the Admin UI. Need to look into making this more
+	// robust.
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
