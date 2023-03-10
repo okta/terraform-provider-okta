@@ -15,6 +15,8 @@ func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleMfa)
 
+	// NOTE can/will fail with "conditions: Invalid condition type specified: app."
+	// Not sure about correct settings for this to pass.
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),

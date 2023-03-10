@@ -35,6 +35,8 @@ func TestAccOktaPolicySignOn_crud(t *testing.T) {
 	renamedConfig := mgr.GetFixtures("basic_renamed.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", policySignOn)
 
+	// NOTE can/will fail with "conditions: Invalid condition type specified: riskScore."
+	// Not sure about correct settings for this to pass.
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
