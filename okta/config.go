@@ -147,7 +147,7 @@ func oktaSDKClient(c *Config) (client *okta.Client, err error) {
 		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
 		okta.WithRequestTimeout(int64(c.requestTimeout)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
-		okta.WithUserAgentExtra("okta-terraform/3.43.0"),
+		okta.WithUserAgentExtra("okta-terraform/3.44.0"),
 	}
 
 	switch {

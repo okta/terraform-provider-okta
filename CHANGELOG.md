@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.44.0 (March 10, 2023)
+
+### BUG FIXES:
+
+* Improve JSON serialization of 0 integer values affecting a number of open
+  issues [#1484](https://github.com/okta/terraform-provider-okta/pull/1484).
+  Thanks, [@monde](https://github.com/monde)!
+* Fix panic in `okta_app_saml` when `embed_url` is missing for
+  `preconfigured_app` apps
+  [#1480](https://github.com/okta/terraform-provider-okta/pull/1480).  Thanks,
+  [@monde](https://github.com/monde)!
+
 ## 3.43.0 (March 7, 2023)
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
