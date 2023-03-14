@@ -42,7 +42,6 @@ const (
 	appUser                       = "okta_app_user"
 	appUserAssignments            = "okta_app_user_assignments"
 	appUserBaseSchemaProperty     = "okta_app_user_base_schema_property"
-	appUserProfile                = "okta_app_user_profile"
 	appUserSchemaProperty         = "okta_app_user_schema_property"
 	authenticator                 = "okta_authenticator"
 	authServer                    = "okta_auth_server"
