@@ -2,10 +2,12 @@ package okta
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 func dataSourceAppUserProfile() *schema.Resource {
@@ -41,14 +43,18 @@ func dataSourceAppUserProfileRead(ctx context.Context, d *schema.ResourceData, m
 
 	var appUser *okta.AppUser
 
-	appUser, resp, err := client.Application.GetApplicationUser(ctx, appId, userId, &query.Params{})
+	appUser, _, err := client.Application.GetApplicationUser(ctx, appId, userId, &query.Params{})
 	if err != nil {
 		return diag.Errorf("unable to get profile for user (%s) assisgned to app (%s): %s", userId, appId, err)
 	}
 
-	d.SetId(appId)
+	jsonProfile, err := json.Marshal(appUser.Profile)
+	if err != nil {
+		return diag.Errorf("failed to marshal app user profile to JSON: %v", err)
+	}
+	_ = d.Set("profile", string(jsonProfile))
+
 	_ = d.Set("user_id", userId)
-	_ = d.Set("profile", appUser.Profile)
-	
+	d.SetId(appId)
 	return nil
 }
