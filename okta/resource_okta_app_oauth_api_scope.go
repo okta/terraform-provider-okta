@@ -17,7 +17,7 @@ var validScopes = []string{
 	"okta.apps.manage", "okta.apps.read",
 	"okta.authorizationServers.manage", "okta.authorizationServers.read",
 	"okta.authenticators.manage", "okta.authenticators.read",
-	"okta.behaviors.manage", "okta.behaviors.read",a
+	"okta.behaviors.manage", "okta.behaviors.read",
 	"okta.brands.manage", "okta.brands.read",
 	"okta.captchas.manage", "okta.captchas.read",
 	"okta.clients.manage", "okta.clients.read", "okta.clients.register",
