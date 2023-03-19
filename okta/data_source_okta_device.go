@@ -55,21 +55,18 @@ func dataSourceDeviceRead(ctx context.Context, d *schema.ResourceData, m interfa
 	var device *sdk.Device
 	deviceID, ok := d.GetOk("id")
 	if !ok {
-        return diag.Errorf("user_id not specified") 
-    }
-
-    respDevice, _, err := getSupplementFromMetadata(m).GetDevice(ctx, deviceID.(string))
-    if err != nil {
-        return diag.Errorf("failed to get device by ID: %v", err)
-    }
-    device = respDevice
+		return diag.Errorf("user_id not specified")
+	}
+	respDevice, _, err := getSupplementFromMetadata(m).GetDevice(ctx, deviceID.(string))
+	if err != nil {
+		return diag.Errorf("failed to get device by ID: %v", err)
+	}
+	device = respDevice
 
 	if device == nil {
 		return nil
 	}
-
 	d.SetId(device.ID)
-
 	_ = d.Set("status", device.Status)
 
 	profile := make(map[string]string)
@@ -88,8 +85,5 @@ func dataSourceDeviceRead(ctx context.Context, d *schema.ResourceData, m interfa
 
 	_ = d.Set("resource_alternate_id", device.ResourceAlternateID)
 	_ = d.Set("resource_id", device.ResourceID)
-
 	return nil
 }
-
-

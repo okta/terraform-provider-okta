@@ -61,8 +61,8 @@ const (
 	captchaOrgWideSettings        = "okta_captcha_org_wide_settings"
 	defaultPolicies               = "okta_default_policies"
 	defaultPolicy                 = "okta_default_policy"
-    device                        = "okta_device"
-    devices                       = "okta_devices"
+	device                        = "okta_device"
+	devices                       = "okta_devices"
 	domain                        = "okta_domain"
 	domainCertificate             = "okta_domain_certificate"
 	domainVerification            = "okta_domain_verification"
@@ -392,8 +392,8 @@ func Provider() *schema.Provider {
 			brand:                    dataSourceBrand(),
 			brands:                   dataSourceBrands(),
 			domain:                   dataSourceDomain(),
-            device:                   dataSourceDevice(),
-            devices:                  dataSourceDevices(),
+			device:                   dataSourceDevice(),
+			devices:                  dataSourceDevices(),
 			emailCustomization:       dataSourceEmailCustomization(),
 			emailCustomizations:      dataSourceEmailCustomizations(),
 			emailTemplate:            dataSourceEmailTemplate(),

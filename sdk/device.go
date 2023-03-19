@@ -10,15 +10,15 @@ import (
 )
 
 type Device struct {
-	ID                  string                 `json:"id"`
-	Status              string                 `json:"status"`
-	Profile             map[string]interface{} `json:"profile"`
-	ResourceType        string                 `json:"resourceType"`
-	ResourceDisplayName map[string]interface{} `json:"sourceDisplayName"`
-	ResourceAlternateID string                 `json:"resourceAlternateId"`
-	ResourceID          string                 `json:"resourceId"`
-	Links               interface{}            `json:"_links"`
-    Embedded            map[string][]map[string]interface{}    `json:"_embedded"`
+	ID                  string                              `json:"id"`
+	Status              string                              `json:"status"`
+	Profile             map[string]interface{}              `json:"profile"`
+	ResourceType        string                              `json:"resourceType"`
+	ResourceDisplayName map[string]interface{}              `json:"sourceDisplayName"`
+	ResourceAlternateID string                              `json:"resourceAlternateId"`
+	ResourceID          string                              `json:"resourceId"`
+	Links               interface{}                         `json:"_links"`
+	Embedded            map[string][]map[string]interface{} `json:"_embedded"`
 }
 
 // ListDevices Gets all devices based on the query params
