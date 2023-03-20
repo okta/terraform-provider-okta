@@ -27,6 +27,7 @@ func (m *APISupplement) ListDevices(ctx context.Context, qp *query.Params) ([]*D
 	if qp != nil {
 		url += qp.String()
 	}
+    fmt.Printf("THE URL IS %+v", url)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err

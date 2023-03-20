@@ -20,6 +20,11 @@ func dataSourceDevices() *schema.Resource {
 				Optional:    true,
 				Description: "Searches for devices owned by the specified user_id",
 			},
+			"search": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Searches for devices with specified query",
+			},
 			"devices": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -64,27 +69,36 @@ func dataSourceDevices() *schema.Resource {
 
 func dataSourceDevicesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	qp := &query.Params{Limit: defaultPaginationLimit}
-	userID, ok := d.GetOk("user_id")
+	userID, userOk := d.GetOk("user_id")
+    search, searchOk := d.GetOk("search")
 	var devices []*sdk.Device
 	var err error
-	if ok {
+
+    if searchOk {
+        qp.Search = search.(string)
+    }
+	if userOk {
 		qp.Expand = "users"
+    }
+    devices, _, err = getSupplementFromMetadata(m).ListDevices(ctx, qp)
 
-		respDevices, _, err := getSupplementFromMetadata(m).ListDevices(ctx, qp)
-		if err != nil {
-			return diag.Errorf("failed to list devices: %v", err)
-		}
+    switch {
+    case err != nil:
+        return diag.Errorf("failed to query for devices: %v", err)
+    case len(devices) < 1:
+        return diag.Errorf("devices matching search not found")
+    }
 
-		devices = searchUserDevices(ctx, respDevices, userID.(string), m)
-		if err != nil {
-			return diag.Errorf("failed to find devices for specified user: %v", err)
-		}
-	} else {
-		devices, _, err = getSupplementFromMetadata(m).ListDevices(ctx, qp)
-		if err != nil {
-			return diag.Errorf("failed to list devices: %v", err)
-		}
-	}
+    if err != nil {
+        return diag.Errorf("failed to list devices: %v", err)
+    }
+    if userOk {
+        devices = searchUserDevices(ctx, devices, userID.(string), m)
+        if err != nil {
+            return diag.Errorf("failed to find devices for specified user: %v", err)
+        }
+    }
+
 	d.SetId(fmt.Sprintf("%d", crc32.ChecksumIEEE([]byte(qp.String()))))
 	arr := make([]map[string]interface{}, len(devices))
 	for i := range devices {

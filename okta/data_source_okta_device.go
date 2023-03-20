@@ -58,9 +58,12 @@ func dataSourceDeviceRead(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.Errorf("user_id not specified")
 	}
 	respDevice, _, err := getSupplementFromMetadata(m).GetDevice(ctx, deviceID.(string))
-	if err != nil {
-		return diag.Errorf("failed to get device by ID: %v", err)
-	}
+    switch {
+    case err != nil:
+        return diag.Errorf("failed to query for devices: %v", err)
+    case respDevice == nil:
+        return diag.Errorf("device with id '%s' does not exist", deviceID)
+    }
 	device = respDevice
 
 	if device == nil {
