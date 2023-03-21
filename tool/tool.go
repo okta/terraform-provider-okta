@@ -1,7 +1,7 @@
 //go:build tools
 // +build tools
 
-package tools
+package tool
 
 import (
 	// Document generation.
