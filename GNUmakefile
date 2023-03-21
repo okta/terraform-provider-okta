@@ -18,6 +18,9 @@ default: build
 dep: # Download required dependencies
 	go mod tidy
 
+docs:
+	go generate
+
 build: fmtcheck
 	go install
 
