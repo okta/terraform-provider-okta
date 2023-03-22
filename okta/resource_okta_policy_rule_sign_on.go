@@ -260,7 +260,7 @@ func resourcePolicySignOnRuleDelete(ctx context.Context, d *schema.ResourceData,
 }
 
 // Build Policy Sign On Rule from resource data
-func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
+func buildSignOnPolicyRule(d *schema.ResourceData) sdk.SdkPolicyRule {
 	template := sdk.SignOnPolicyRule()
 	template.Name = d.Get("name").(string)
 	template.Status = d.Get("status").(string)
@@ -295,8 +295,8 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 			Level: ri.(string),
 		}
 	}
-	template.Actions = sdk.PolicyRuleActions{
-		SignOn: &sdk.SignOnPolicyRuleSignOnActions{
+	template.Actions = sdk.SdkPolicyRuleActions{
+		SignOn: &sdk.SdkSignOnPolicyRuleSignOnActions{
 			Access:                  d.Get("access").(string),
 			FactorLifetime:          int64(d.Get("mfa_lifetime").(int)),
 			FactorPromptMode:        d.Get("mfa_prompt").(string),
@@ -317,11 +317,11 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 	if len(factorSeq) == 0 {
 		return template
 	}
-	template.Actions.SignOn.Challenge = &sdk.SignOnPolicyRuleSignOnActionsChallenge{}
-	chain := make([]sdk.SignOnPolicyRuleSignOnActionsChallengeChain, len(factorSeq))
+	template.Actions.SignOn.Challenge = &sdk.SdkSignOnPolicyRuleSignOnActionsChallenge{}
+	chain := make([]sdk.SdkSignOnPolicyRuleSignOnActionsChallengeChain, len(factorSeq))
 	for i := range factorSeq {
-		chain[i] = sdk.SignOnPolicyRuleSignOnActionsChallengeChain{
-			Criteria: []sdk.SignOnPolicyRuleSignOnActionsChallengeChainCriteria{
+		chain[i] = sdk.SdkSignOnPolicyRuleSignOnActionsChallengeChain{
+			Criteria: []sdk.SdkSignOnPolicyRuleSignOnActionsChallengeChainCriteria{
 				{
 					Provider:   d.Get(fmt.Sprintf("factor_sequence.%d.primary_criteria_provider", i)).(string),
 					FactorType: d.Get(fmt.Sprintf("factor_sequence.%d.primary_criteria_factor_type", i)).(string),
@@ -329,9 +329,9 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 			},
 		}
 		secondaryCriteria := d.Get(fmt.Sprintf("factor_sequence.%d.secondary_criteria", i)).([]interface{})
-		chain[i].Next = make([]sdk.SignOnPolicyRuleSignOnActionsChallengeChainNext, 1)
+		chain[i].Next = make([]sdk.SdkSignOnPolicyRuleSignOnActionsChallengeChainNext, 1)
 		for j := range secondaryCriteria {
-			chain[i].Next[0].Criteria = append(chain[i].Next[0].Criteria, sdk.SignOnPolicyRuleSignOnActionsChallengeChainCriteria{
+			chain[i].Next[0].Criteria = append(chain[i].Next[0].Criteria, sdk.SdkSignOnPolicyRuleSignOnActionsChallengeChainCriteria{
 				Provider:   d.Get(fmt.Sprintf("factor_sequence.%d.secondary_criteria.%d.provider", i, j)).(string),
 				FactorType: d.Get(fmt.Sprintf("factor_sequence.%d.secondary_criteria.%d.factor_type", i, j)).(string),
 			})

@@ -88,7 +88,7 @@ func resourcePolicyPasswordRuleDelete(ctx context.Context, d *schema.ResourceDat
 }
 
 // build password policy rule from schema data
-func buildPolicyRulePassword(d *schema.ResourceData) sdk.PolicyRule {
+func buildPolicyRulePassword(d *schema.ResourceData) sdk.SdkPolicyRule {
 	template := sdk.PasswordPolicyRule()
 	template.Name = d.Get("name").(string)
 	template.Status = d.Get("status").(string)
@@ -99,7 +99,7 @@ func buildPolicyRulePassword(d *schema.ResourceData) sdk.PolicyRule {
 		Network: buildPolicyNetworkCondition(d),
 		People:  getUsers(d),
 	}
-	template.Actions = sdk.PolicyRuleActions{
+	template.Actions = sdk.SdkPolicyRuleActions{
 		PasswordPolicyRuleActions: &okta.PasswordPolicyRuleActions{
 			PasswordChange: &okta.PasswordPolicyRuleAction{
 				Access: d.Get("password_change").(string),

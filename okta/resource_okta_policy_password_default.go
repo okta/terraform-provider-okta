@@ -277,7 +277,7 @@ func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceDa
 }
 
 // create or update a password policy
-func buildDefaultPasswordPolicy(d *schema.ResourceData) sdk.Policy {
+func buildDefaultPasswordPolicy(d *schema.ResourceData) sdk.SdkPolicy {
 	policy := sdk.PasswordPolicy()
 	policy.Name = d.Get("name").(string)
 	policy.Status = d.Get("status").(string)
@@ -295,7 +295,7 @@ func buildDefaultPasswordPolicy(d *schema.ResourceData) sdk.Policy {
 	}
 	// Okta defaults
 	// we add the defaults here & not in the schema map to avoid defaults appearing in the terraform plan diff
-	policy.Settings = &sdk.PolicySettings{
+	policy.Settings = &sdk.SdkPolicySettings{
 		Password: &okta.PasswordPolicyPasswordSettings{
 			Age: &okta.PasswordPolicyPasswordSettingsAge{
 				ExpireWarnDaysPtr: int64Ptr(d.Get("password_expire_warn_days").(int)),

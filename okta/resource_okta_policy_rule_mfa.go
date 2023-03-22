@@ -93,7 +93,7 @@ func resourcePolicyMfaRuleDelete(ctx context.Context, d *schema.ResourceData, m 
 }
 
 // build password policy rule from schema data
-func buildMfaPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
+func buildMfaPolicyRule(d *schema.ResourceData) sdk.SdkPolicyRule {
 	rule := sdk.MfaPolicyRule()
 	rule.Name = d.Get("name").(string)
 	rule.Status = d.Get("status").(string)
@@ -106,7 +106,7 @@ func buildMfaPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 		App:     buildMFAPolicyAppCondition(d),
 	}
 	if enroll, ok := d.GetOk("enroll"); ok {
-		rule.Actions = sdk.PolicyRuleActions{
+		rule.Actions = sdk.SdkPolicyRuleActions{
 			PasswordPolicyRuleActions: &okta.PasswordPolicyRuleActions{
 				Enroll: &okta.PolicyRuleActionsEnroll{
 					Self: enroll.(string),

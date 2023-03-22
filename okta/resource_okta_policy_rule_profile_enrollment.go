@@ -183,14 +183,14 @@ func resourcePolicyProfileEnrollmentRuleDelete(ctx context.Context, d *schema.Re
 }
 
 // build profile enrollment policy rule from schema data
-func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.PolicyRule {
+func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.SdkPolicyRule {
 	rule := sdk.ProfileEnrollmentPolicyRule()
 	rule.Id = id
 	rule.Name = "Catch-all Rule" // read-only
 	rule.Priority = 99           // read-only
 	rule.System = boolPtr(true)  // read-only
 	rule.Status = statusActive
-	rule.Actions = sdk.PolicyRuleActions{
+	rule.Actions = sdk.SdkPolicyRuleActions{
 		ProfileEnrollment: &okta.ProfileEnrollmentPolicyRuleAction{
 			Access: d.Get("access").(string),
 			ActivationRequirements: &okta.ProfileEnrollmentPolicyRuleActivationRequirement{

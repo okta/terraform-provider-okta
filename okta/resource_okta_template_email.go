@@ -153,20 +153,20 @@ func resourceTemplateEmailDelete(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func buildEmailTemplate(d *schema.ResourceData) *sdk.EmailTemplate {
-	trans := map[string]*sdk.EmailTranslation{}
+func buildEmailTemplate(d *schema.ResourceData) *sdk.SdkEmailTemplate {
+	trans := map[string]*sdk.SdkEmailTranslation{}
 	rawTransList := d.Get("translations").(*schema.Set)
 
 	for _, val := range rawTransList.List() {
 		rawTrans := val.(map[string]interface{})
-		trans[rawTrans["language"].(string)] = &sdk.EmailTranslation{
+		trans[rawTrans["language"].(string)] = &sdk.SdkEmailTranslation{
 			Subject:  rawTrans["subject"].(string),
 			Template: rawTrans["template"].(string),
 		}
 	}
 	defaultLang := d.Get("default_language").(string)
 
-	return &sdk.EmailTemplate{
+	return &sdk.SdkEmailTemplate{
 		DefaultLanguage: defaultLang,
 		Name:            "Custom",
 		Type:            d.Get("type").(string),
@@ -176,7 +176,7 @@ func buildEmailTemplate(d *schema.ResourceData) *sdk.EmailTemplate {
 	}
 }
 
-func flattenEmailTranslations(temp map[string]*sdk.EmailTranslation) *schema.Set {
+func flattenEmailTranslations(temp map[string]*sdk.SdkEmailTranslation) *schema.Set {
 	var rawSet []interface{}
 	for key, val := range temp {
 		rawSet = append(rawSet, map[string]interface{}{

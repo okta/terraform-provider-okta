@@ -9,23 +9,23 @@ import (
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
-func PasswordPolicyRule() PolicyRule {
-	return PolicyRule{Type: PasswordPolicyType}
+func PasswordPolicyRule() SdkPolicyRule {
+	return SdkPolicyRule{Type: PasswordPolicyType}
 }
 
-func SignOnPolicyRule() PolicyRule {
-	return PolicyRule{Type: SignOnPolicyRuleType}
+func SignOnPolicyRule() SdkPolicyRule {
+	return SdkPolicyRule{Type: SignOnPolicyRuleType}
 }
 
-func MfaPolicyRule() PolicyRule {
-	return PolicyRule{Type: MfaPolicyType}
+func MfaPolicyRule() SdkPolicyRule {
+	return SdkPolicyRule{Type: MfaPolicyType}
 }
 
-func ProfileEnrollmentPolicyRule() PolicyRule {
-	return PolicyRule{Type: ProfileEnrollmentPolicyType}
+func ProfileEnrollmentPolicyRule() SdkPolicyRule {
+	return SdkPolicyRule{Type: ProfileEnrollmentPolicyType}
 }
 
-type PolicyRule struct {
+type SdkPolicyRule struct {
 	Id          string                     `json:"id,omitempty"`
 	Type        string                     `json:"type,omitempty"`
 	Name        string                     `json:"name,omitempty"`
@@ -35,16 +35,16 @@ type PolicyRule struct {
 	Created     *time.Time                 `json:"created,omitempty"`
 	LastUpdated *time.Time                 `json:"lastUpdated,omitempty"`
 	Conditions  *okta.PolicyRuleConditions `json:"conditions"`
-	Actions     PolicyRuleActions          `json:"actions,omitempty"`
+	Actions     SdkPolicyRuleActions       `json:"actions,omitempty"`
 }
 
-type PolicyRuleActions struct {
-	SignOn            *SignOnPolicyRuleSignOnActions          `json:"signon,omitempty"`
+type SdkPolicyRuleActions struct {
+	SignOn            *SdkSignOnPolicyRuleSignOnActions       `json:"signon,omitempty"`
 	ProfileEnrollment *okta.ProfileEnrollmentPolicyRuleAction `json:"profileEnrollment,omitempty"`
 	*okta.PasswordPolicyRuleActions
 }
 
-type SignOnPolicyRuleSignOnActions struct {
+type SdkSignOnPolicyRuleSignOnActions struct {
 	Access                  string                                         `json:"access,omitempty"`
 	FactorLifetime          int64                                          `json:"factorLifetime,omitempty"`
 	FactorPromptMode        string                                         `json:"factorPromptMode,omitempty"`
@@ -52,35 +52,35 @@ type SignOnPolicyRuleSignOnActions struct {
 	RememberDeviceByDefault *bool                                          `json:"rememberDeviceByDefault,omitempty"`
 	RequireFactor           *bool                                          `json:"requireFactor,omitempty"`
 	Session                 *okta.OktaSignOnPolicyRuleSignonSessionActions `json:"session,omitempty"`
-	Challenge               *SignOnPolicyRuleSignOnActionsChallenge        `json:"challenge,omitempty"`
+	Challenge               *SdkSignOnPolicyRuleSignOnActionsChallenge     `json:"challenge,omitempty"`
 }
 
-type SignOnPolicyRuleSignOnActionsChallenge struct {
-	Chain []SignOnPolicyRuleSignOnActionsChallengeChain `json:"chain,omitempty"`
+type SdkSignOnPolicyRuleSignOnActionsChallenge struct {
+	Chain []SdkSignOnPolicyRuleSignOnActionsChallengeChain `json:"chain,omitempty"`
 }
 
-type SignOnPolicyRuleSignOnActionsChallengeChain struct {
-	Criteria []SignOnPolicyRuleSignOnActionsChallengeChainCriteria `json:"criteria,omitempty"`
-	Next     []SignOnPolicyRuleSignOnActionsChallengeChainNext     `json:"next,omitempty"`
+type SdkSignOnPolicyRuleSignOnActionsChallengeChain struct {
+	Criteria []SdkSignOnPolicyRuleSignOnActionsChallengeChainCriteria `json:"criteria,omitempty"`
+	Next     []SdkSignOnPolicyRuleSignOnActionsChallengeChainNext     `json:"next,omitempty"`
 }
 
-type SignOnPolicyRuleSignOnActionsChallengeChainCriteria struct {
+type SdkSignOnPolicyRuleSignOnActionsChallengeChainCriteria struct {
 	Provider   string `json:"provider,omitempty"`
 	FactorType string `json:"factorType,omitempty"`
 }
 
-type SignOnPolicyRuleSignOnActionsChallengeChainNext struct {
-	Criteria []SignOnPolicyRuleSignOnActionsChallengeChainCriteria `json:"criteria,omitempty"`
+type SdkSignOnPolicyRuleSignOnActionsChallengeChainNext struct {
+	Criteria []SdkSignOnPolicyRuleSignOnActionsChallengeChainCriteria `json:"criteria,omitempty"`
 }
 
 // ListPolicyRules enumerates all policy rules.
-func (m *APISupplement) ListPolicyRules(ctx context.Context, policyID string) ([]PolicyRule, *okta.Response, error) {
+func (m *APISupplement) ListPolicyRules(ctx context.Context, policyID string) ([]SdkPolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules", policyID)
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
-	var policyRule []PolicyRule
+	var policyRule []SdkPolicyRule
 	resp, err := m.RequestExecutor.Do(ctx, req, &policyRule)
 	if err != nil {
 		return nil, resp, err
@@ -89,13 +89,13 @@ func (m *APISupplement) ListPolicyRules(ctx context.Context, policyID string) ([
 }
 
 // CreatePolicyRule creates a policy rule.
-func (m *APISupplement) CreatePolicyRule(ctx context.Context, policyID string, body PolicyRule) (*PolicyRule, *okta.Response, error) {
+func (m *APISupplement) CreatePolicyRule(ctx context.Context, policyID string, body SdkPolicyRule) (*SdkPolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules", policyID)
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
-	var policyRule *PolicyRule
+	var policyRule *SdkPolicyRule
 	resp, err := m.RequestExecutor.Do(ctx, req, &policyRule)
 	if err != nil {
 		return nil, resp, err
@@ -104,13 +104,13 @@ func (m *APISupplement) CreatePolicyRule(ctx context.Context, policyID string, b
 }
 
 // GetPolicyRule gets a policy rule.
-func (m *APISupplement) GetPolicyRule(ctx context.Context, policyID, ruleId string) (*PolicyRule, *okta.Response, error) {
+func (m *APISupplement) GetPolicyRule(ctx context.Context, policyID, ruleId string) (*SdkPolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyID, ruleId)
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
-	var policyRule *PolicyRule
+	var policyRule *SdkPolicyRule
 	resp, err := m.RequestExecutor.Do(ctx, req, &policyRule)
 	if err != nil {
 		return nil, resp, err
@@ -119,13 +119,13 @@ func (m *APISupplement) GetPolicyRule(ctx context.Context, policyID, ruleId stri
 }
 
 // UpdatePolicyRule updates a policy rule.
-func (m *APISupplement) UpdatePolicyRule(ctx context.Context, policyID, ruleId string, body PolicyRule) (*PolicyRule, *okta.Response, error) {
+func (m *APISupplement) UpdatePolicyRule(ctx context.Context, policyID, ruleId string, body SdkPolicyRule) (*SdkPolicyRule, *okta.Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyID, ruleId)
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
-	var policyRule *PolicyRule
+	var policyRule *SdkPolicyRule
 	resp, err := m.RequestExecutor.Do(ctx, req, &policyRule)
 	if err != nil {
 		return nil, resp, err

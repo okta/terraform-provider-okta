@@ -64,7 +64,7 @@ func resourcePolicySignOnDelete(ctx context.Context, d *schema.ResourceData, m i
 }
 
 // create or update a sign-on policy
-func buildSignOnPolicy(d *schema.ResourceData) sdk.Policy {
+func buildSignOnPolicy(d *schema.ResourceData) sdk.SdkPolicy {
 	template := sdk.SignOnPolicy()
 	template.Name = d.Get("name").(string)
 	template.Status = d.Get("status").(string)

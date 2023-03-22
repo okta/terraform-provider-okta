@@ -136,7 +136,7 @@ func buildMfaPolicySchema(target map[string]*schema.Schema) map[string]*schema.S
 	return schema
 }
 
-func createPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.Policy) error {
+func createPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.SdkPolicy) error {
 	logger(m).Info("creating policy", "name", template.Name, "type", template.Type)
 	if err := ensureNotDefaultPolicy(d); err != nil {
 		return err
@@ -174,7 +174,7 @@ func getGroups(d *schema.ResourceData) *okta.PolicyPeopleCondition {
 }
 
 // Grabs policy from upstream, if the resource does not exist the returned policy will be nil which is not considered an error
-func getPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) (*sdk.Policy, error) {
+func getPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) (*sdk.SdkPolicy, error) {
 	logger(m).Info("getting policy", "id", d.Id())
 	policy, resp, err := getSupplementFromMetadata(m).GetPolicy(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
@@ -207,7 +207,7 @@ func policyActivate(ctx context.Context, d *schema.ResourceData, m interface{}) 
 	return nil
 }
 
-func updatePolicy(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.Policy) error {
+func updatePolicy(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.SdkPolicy) error {
 	logger(m).Info("updating policy", "name", d.Get("name").(string))
 	if err := ensureNotDefaultPolicy(d); err != nil {
 		return err
@@ -241,7 +241,7 @@ func deletePolicy(ctx context.Context, d *schema.ResourceData, m interface{}) er
 	return nil
 }
 
-func syncPolicyFromUpstream(d *schema.ResourceData, policy *sdk.Policy) error {
+func syncPolicyFromUpstream(d *schema.ResourceData, policy *sdk.SdkPolicy) error {
 	_ = d.Set("name", policy.Name)
 	_ = d.Set("description", policy.Description)
 	_ = d.Set("status", policy.Status)

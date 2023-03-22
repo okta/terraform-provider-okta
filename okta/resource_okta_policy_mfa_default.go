@@ -59,7 +59,7 @@ func resourcePolicyMfaDefaultRead(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func buildDefaultMFAPolicy(d *schema.ResourceData) sdk.Policy {
+func buildDefaultMFAPolicy(d *schema.ResourceData) sdk.SdkPolicy {
 	policy := sdk.MfaPolicy()
 	policy.Name = d.Get("name").(string)
 	policy.Status = d.Get("status").(string)
