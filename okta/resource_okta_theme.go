@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceTheme() *schema.Resource {
@@ -111,7 +111,7 @@ func resourceThemeUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 		}
 	}
 
-	theme := okta.Theme{}
+	theme := sdk.Theme{}
 
 	if val, ok := d.GetOk("primary_color_hex"); ok {
 		theme.PrimaryColorHex = val.(string)

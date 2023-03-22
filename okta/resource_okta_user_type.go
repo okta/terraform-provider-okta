@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceUserType() *schema.Resource {
@@ -80,8 +80,8 @@ func resourceUserTypeDelete(ctx context.Context, d *schema.ResourceData, m inter
 	return nil
 }
 
-func buildUserType(d *schema.ResourceData) okta.UserType {
-	return okta.UserType{
+func buildUserType(d *schema.ResourceData) sdk.UserType {
+	return sdk.UserType{
 		Name:        d.Get("name").(string),
 		DisplayName: d.Get("display_name").(string),
 		Description: d.Get("description").(string),

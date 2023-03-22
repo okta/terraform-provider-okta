@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 type CreateCustomRoleBindingRequest struct {
@@ -18,7 +16,7 @@ type CustomRoleBinding struct {
 	Links interface{} `json:"_links,omitempty"`
 }
 
-func (m *APISupplement) CreateResourceSetBinding(ctx context.Context, resourceSetID string, body CreateCustomRoleBindingRequest) (*okta.Response, error) {
+func (m *APISupplement) CreateResourceSetBinding(ctx context.Context, resourceSetID string, body CreateCustomRoleBindingRequest) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/resource-sets/%s/bindings", resourceSetID)
 	re := m.cloneRequestExecutor()
 	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
@@ -28,7 +26,7 @@ func (m *APISupplement) CreateResourceSetBinding(ctx context.Context, resourceSe
 	return re.Do(ctx, req, nil)
 }
 
-func (m *APISupplement) GetResourceSetBinding(ctx context.Context, resourceSetID, customRoleID string) (*CustomRoleBinding, *okta.Response, error) {
+func (m *APISupplement) GetResourceSetBinding(ctx context.Context, resourceSetID, customRoleID string) (*CustomRoleBinding, *Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/resource-sets/%s/bindings/%s", resourceSetID, customRoleID)
 	re := m.cloneRequestExecutor()
 	req, err := re.NewRequest(http.MethodGet, url, nil)
@@ -43,7 +41,7 @@ func (m *APISupplement) GetResourceSetBinding(ctx context.Context, resourceSetID
 	return customRoleBinding, resp, nil
 }
 
-func (m *APISupplement) DeleteResourceSetBinding(ctx context.Context, resourceSetID, customRoleID string) (*okta.Response, error) {
+func (m *APISupplement) DeleteResourceSetBinding(ctx context.Context, resourceSetID, customRoleID string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/resource-sets/%s/bindings/%s", resourceSetID, customRoleID)
 	re := m.cloneRequestExecutor()
 	req, err := re.NewRequest(http.MethodDelete, url, nil)

@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -191,9 +190,9 @@ func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.Sdk
 	rule.System = boolPtr(true)  // read-only
 	rule.Status = statusActive
 	rule.Actions = sdk.SdkPolicyRuleActions{
-		ProfileEnrollment: &okta.ProfileEnrollmentPolicyRuleAction{
+		ProfileEnrollment: &sdk.ProfileEnrollmentPolicyRuleAction{
 			Access: d.Get("access").(string),
-			ActivationRequirements: &okta.ProfileEnrollmentPolicyRuleActivationRequirement{
+			ActivationRequirements: &sdk.ProfileEnrollmentPolicyRuleActivationRequirement{
 				EmailVerification: boolPtr(d.Get("email_verification").(bool)),
 			},
 			UnknownUserAction: d.Get("unknown_user_action").(string),
@@ -202,7 +201,7 @@ func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.Sdk
 	}
 	hook, ok := d.GetOk("inline_hook_id")
 	if ok {
-		rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks = []*okta.PreRegistrationInlineHook{{InlineHookId: hook.(string)}}
+		rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks = []*sdk.PreRegistrationInlineHook{{InlineHookId: hook.(string)}}
 	}
 	targetGroup, ok := d.GetOk("target_group_id")
 	if ok {
@@ -212,9 +211,9 @@ func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.Sdk
 	if !ok {
 		return rule
 	}
-	attributes := make([]*okta.ProfileEnrollmentPolicyRuleProfileAttribute, len(pa.([]interface{})))
+	attributes := make([]*sdk.ProfileEnrollmentPolicyRuleProfileAttribute, len(pa.([]interface{})))
 	for i := range pa.([]interface{}) {
-		attributes[i] = &okta.ProfileEnrollmentPolicyRuleProfileAttribute{
+		attributes[i] = &sdk.ProfileEnrollmentPolicyRuleProfileAttribute{
 			Label:    d.Get(fmt.Sprintf("profile_attributes.%d.label", i)).(string),
 			Name:     d.Get(fmt.Sprintf("profile_attributes.%d.name", i)).(string),
 			Required: boolPtr(d.Get(fmt.Sprintf("profile_attributes.%d.required", i)).(bool)),

@@ -10,10 +10,9 @@ import (
 	"time"
 
 	"github.com/cenkalti/backoff/v4"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceGroup() *schema.Resource {
@@ -74,11 +73,11 @@ func resourceGroup() *schema.Resource {
 						return true
 					}
 
-					var oldCustomAttrs okta.GroupProfileMap
+					var oldCustomAttrs sdk.GroupProfileMap
 					_ = json.Unmarshal([]byte(old), &oldCustomAttrs)
 					oldCustomAttrs = normalizeGroupProfile(oldCustomAttrs)
 
-					var newCustomAttrs okta.GroupProfileMap
+					var newCustomAttrs sdk.GroupProfileMap
 					_ = json.Unmarshal([]byte(new), &newCustomAttrs)
 					newCustomAttrs = normalizeGroupProfile(newCustomAttrs)
 
@@ -220,8 +219,8 @@ func updateGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}
 	return removeGroupMembers(ctx, client, d.Id(), usersToRemove)
 }
 
-func buildGroup(d *schema.ResourceData) *okta.Group {
-	var customAttrs okta.GroupProfileMap
+func buildGroup(d *schema.ResourceData) *sdk.Group {
+	var customAttrs sdk.GroupProfileMap
 	if rawAttrs, ok := d.GetOk("custom_profile_attributes"); ok {
 		str := rawAttrs.(string)
 
@@ -229,8 +228,8 @@ func buildGroup(d *schema.ResourceData) *okta.Group {
 		_ = json.Unmarshal([]byte(str), &customAttrs)
 	}
 
-	return &okta.Group{
-		Profile: &okta.GroupProfile{
+	return &sdk.Group{
+		Profile: &sdk.GroupProfile{
 			Name:            d.Get("name").(string),
 			Description:     d.Get("description").(string),
 			GroupProfileMap: normalizeGroupProfile(customAttrs),

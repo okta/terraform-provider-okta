@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceEmailCustomization() *schema.Resource {
@@ -31,7 +31,7 @@ func resourceEmailCustomizationCreate(ctx context.Context, d *schema.ResourceDat
 		return diag.Errorf("template name required to create email customization")
 	}
 
-	etcr := okta.EmailTemplateCustomizationRequest{}
+	etcr := sdk.EmailTemplateCustomizationRequest{}
 	if language, ok := d.GetOk("language"); ok {
 		etcr.Language = language.(string)
 	}
@@ -118,7 +118,7 @@ func resourceEmailCustomizationUpdate(ctx context.Context, d *schema.ResourceDat
 		return diagErr
 	}
 
-	cr := okta.EmailTemplateCustomizationRequest{}
+	cr := sdk.EmailTemplateCustomizationRequest{}
 	if language, ok := d.GetOk("language"); ok {
 		cr.Language = language.(string)
 	}

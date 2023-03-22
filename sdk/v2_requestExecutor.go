@@ -19,7 +19,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/cenkalti/backoff/v4"
-	"github.com/okta/okta-sdk-golang/v2/okta/cache"
+	"github.com/okta/terraform-provider-okta/sdk/cache"
 	goCache "github.com/patrickmn/go-cache"
 	"gopkg.in/square/go-jose.v2"
 	"gopkg.in/square/go-jose.v2/jwt"

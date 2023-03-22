@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAuthServer() *schema.Resource {
@@ -164,11 +164,11 @@ func resourceAuthServerDelete(ctx context.Context, d *schema.ResourceData, m int
 	return nil
 }
 
-func buildAuthServer(d *schema.ResourceData) *okta.AuthorizationServer {
-	return &okta.AuthorizationServer{
+func buildAuthServer(d *schema.ResourceData) *sdk.AuthorizationServer {
+	return &sdk.AuthorizationServer{
 		Audiences: convertInterfaceToStringSet(d.Get("audiences")),
-		Credentials: &okta.AuthorizationServerCredentials{
-			Signing: &okta.AuthorizationServerCredentialsSigningConfig{
+		Credentials: &sdk.AuthorizationServerCredentials{
+			Signing: &sdk.AuthorizationServerCredentialsSigningConfig{
 				RotationMode: d.Get("credentials_rotation_mode").(string),
 			},
 		},

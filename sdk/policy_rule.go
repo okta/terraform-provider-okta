@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 func PasswordPolicyRule() SdkPolicyRule {
@@ -26,33 +24,33 @@ func ProfileEnrollmentPolicyRule() SdkPolicyRule {
 }
 
 type SdkPolicyRule struct {
-	Id          string                     `json:"id,omitempty"`
-	Type        string                     `json:"type,omitempty"`
-	Name        string                     `json:"name,omitempty"`
-	Status      string                     `json:"status,omitempty"`
-	Priority    int64                      `json:"priority,omitempty"`
-	System      *bool                      `json:"system,omitempty"`
-	Created     *time.Time                 `json:"created,omitempty"`
-	LastUpdated *time.Time                 `json:"lastUpdated,omitempty"`
-	Conditions  *okta.PolicyRuleConditions `json:"conditions"`
-	Actions     SdkPolicyRuleActions       `json:"actions,omitempty"`
+	Id          string                `json:"id,omitempty"`
+	Type        string                `json:"type,omitempty"`
+	Name        string                `json:"name,omitempty"`
+	Status      string                `json:"status,omitempty"`
+	Priority    int64                 `json:"priority,omitempty"`
+	System      *bool                 `json:"system,omitempty"`
+	Created     *time.Time            `json:"created,omitempty"`
+	LastUpdated *time.Time            `json:"lastUpdated,omitempty"`
+	Conditions  *PolicyRuleConditions `json:"conditions"`
+	Actions     SdkPolicyRuleActions  `json:"actions,omitempty"`
 }
 
 type SdkPolicyRuleActions struct {
-	SignOn            *SdkSignOnPolicyRuleSignOnActions       `json:"signon,omitempty"`
-	ProfileEnrollment *okta.ProfileEnrollmentPolicyRuleAction `json:"profileEnrollment,omitempty"`
-	*okta.PasswordPolicyRuleActions
+	SignOn            *SdkSignOnPolicyRuleSignOnActions  `json:"signon,omitempty"`
+	ProfileEnrollment *ProfileEnrollmentPolicyRuleAction `json:"profileEnrollment,omitempty"`
+	*PasswordPolicyRuleActions
 }
 
 type SdkSignOnPolicyRuleSignOnActions struct {
-	Access                  string                                         `json:"access,omitempty"`
-	FactorLifetime          int64                                          `json:"factorLifetime,omitempty"`
-	FactorPromptMode        string                                         `json:"factorPromptMode,omitempty"`
-	PrimaryFactor           string                                         `json:"primaryFactor,omitempty"`
-	RememberDeviceByDefault *bool                                          `json:"rememberDeviceByDefault,omitempty"`
-	RequireFactor           *bool                                          `json:"requireFactor,omitempty"`
-	Session                 *okta.OktaSignOnPolicyRuleSignonSessionActions `json:"session,omitempty"`
-	Challenge               *SdkSignOnPolicyRuleSignOnActionsChallenge     `json:"challenge,omitempty"`
+	Access                  string                                     `json:"access,omitempty"`
+	FactorLifetime          int64                                      `json:"factorLifetime,omitempty"`
+	FactorPromptMode        string                                     `json:"factorPromptMode,omitempty"`
+	PrimaryFactor           string                                     `json:"primaryFactor,omitempty"`
+	RememberDeviceByDefault *bool                                      `json:"rememberDeviceByDefault,omitempty"`
+	RequireFactor           *bool                                      `json:"requireFactor,omitempty"`
+	Session                 *OktaSignOnPolicyRuleSignonSessionActions  `json:"session,omitempty"`
+	Challenge               *SdkSignOnPolicyRuleSignOnActionsChallenge `json:"challenge,omitempty"`
 }
 
 type SdkSignOnPolicyRuleSignOnActionsChallenge struct {
@@ -74,7 +72,7 @@ type SdkSignOnPolicyRuleSignOnActionsChallengeChainNext struct {
 }
 
 // ListPolicyRules enumerates all policy rules.
-func (m *APISupplement) ListPolicyRules(ctx context.Context, policyID string) ([]SdkPolicyRule, *okta.Response, error) {
+func (m *APISupplement) ListPolicyRules(ctx context.Context, policyID string) ([]SdkPolicyRule, *Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules", policyID)
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -89,7 +87,7 @@ func (m *APISupplement) ListPolicyRules(ctx context.Context, policyID string) ([
 }
 
 // CreatePolicyRule creates a policy rule.
-func (m *APISupplement) CreatePolicyRule(ctx context.Context, policyID string, body SdkPolicyRule) (*SdkPolicyRule, *okta.Response, error) {
+func (m *APISupplement) CreatePolicyRule(ctx context.Context, policyID string, body SdkPolicyRule) (*SdkPolicyRule, *Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules", policyID)
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
 	if err != nil {
@@ -104,7 +102,7 @@ func (m *APISupplement) CreatePolicyRule(ctx context.Context, policyID string, b
 }
 
 // GetPolicyRule gets a policy rule.
-func (m *APISupplement) GetPolicyRule(ctx context.Context, policyID, ruleId string) (*SdkPolicyRule, *okta.Response, error) {
+func (m *APISupplement) GetPolicyRule(ctx context.Context, policyID, ruleId string) (*SdkPolicyRule, *Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyID, ruleId)
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -119,7 +117,7 @@ func (m *APISupplement) GetPolicyRule(ctx context.Context, policyID, ruleId stri
 }
 
 // UpdatePolicyRule updates a policy rule.
-func (m *APISupplement) UpdatePolicyRule(ctx context.Context, policyID, ruleId string, body SdkPolicyRule) (*SdkPolicyRule, *okta.Response, error) {
+func (m *APISupplement) UpdatePolicyRule(ctx context.Context, policyID, ruleId string, body SdkPolicyRule) (*SdkPolicyRule, *Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyID, ruleId)
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
 	if err != nil {

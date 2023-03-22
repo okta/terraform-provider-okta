@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceAppSecurePasswordStore() *schema.Resource {
@@ -129,7 +129,7 @@ func resourceAppSecurePasswordStoreCreate(ctx context.Context, d *schema.Resourc
 }
 
 func resourceAppSecurePasswordStoreRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := okta.NewSecurePasswordStoreApplication()
+	app := sdk.NewSecurePasswordStoreApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get secure password store application: %v", err)
@@ -196,13 +196,13 @@ func resourceAppSecurePasswordStoreDelete(ctx context.Context, d *schema.Resourc
 	return nil
 }
 
-func buildAppSecurePasswordStore(d *schema.ResourceData) *okta.SecurePasswordStoreApplication {
+func buildAppSecurePasswordStore(d *schema.ResourceData) *sdk.SecurePasswordStoreApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
-	app := okta.NewSecurePasswordStoreApplication()
+	app := sdk.NewSecurePasswordStoreApplication()
 	app.Label = d.Get("label").(string)
 
-	app.Settings = &okta.SecurePasswordStoreApplicationSettings{
-		App: &okta.SecurePasswordStoreApplicationSettingsApplication{
+	app.Settings = &sdk.SecurePasswordStoreApplicationSettings{
+		App: &sdk.SecurePasswordStoreApplicationSettingsApplication{
 			Url:                 d.Get("url").(string),
 			PasswordField:       d.Get("password_field").(string),
 			UsernameField:       d.Get("username_field").(string),

@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceAppBookmark() *schema.Resource {
@@ -72,7 +72,7 @@ func resourceAppBookmarkCreate(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceAppBookmarkRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := okta.NewBookmarkApplication()
+	app := sdk.NewBookmarkApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get bookmark application: %v", err)
@@ -131,12 +131,12 @@ func resourceAppBookmarkDelete(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func buildAppBookmark(d *schema.ResourceData) *okta.BookmarkApplication {
-	app := okta.NewBookmarkApplication()
+func buildAppBookmark(d *schema.ResourceData) *sdk.BookmarkApplication {
+	app := sdk.NewBookmarkApplication()
 	integration := d.Get("request_integration").(bool)
 	app.Label = d.Get("label").(string)
-	app.Settings = &okta.BookmarkApplicationSettings{
-		App: &okta.BookmarkApplicationSettingsApplication{
+	app.Settings = &sdk.BookmarkApplicationSettings{
+		App: &sdk.BookmarkApplicationSettingsApplication{
 			RequestIntegration: &integration,
 			Url:                d.Get("url").(string),
 		},

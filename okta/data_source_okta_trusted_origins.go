@@ -7,8 +7,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceTrustedOrigins() *schema.Resource {
@@ -87,13 +87,13 @@ func dataSourceTrustedOriginsRead(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func collectTrustedOrigins(ctx context.Context, client *okta.Client, qp *query.Params) ([]*okta.TrustedOrigin, error) {
+func collectTrustedOrigins(ctx context.Context, client *sdk.Client, qp *query.Params) ([]*sdk.TrustedOrigin, error) {
 	trustedOrigins, resp, err := client.TrustedOrigin.ListOrigins(ctx, qp)
 	if err != nil {
 		return nil, err
 	}
 	for resp.HasNextPage() {
-		var nextTrustedOrigins []*okta.TrustedOrigin
+		var nextTrustedOrigins []*sdk.TrustedOrigin
 		resp, err = resp.Next(ctx, &nextTrustedOrigins)
 		if err != nil {
 			return nil, err

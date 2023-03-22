@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 const oidcIdp = "OIDC"
@@ -102,7 +102,7 @@ func dataSourceIdpOidcRead(ctx context.Context, d *schema.ResourceData, m interf
 	}
 	var (
 		err  error
-		oidc *okta.IdentityProvider
+		oidc *sdk.IdentityProvider
 	)
 	if id != "" {
 		oidc, err = getIdentityProviderByID(ctx, m, id, oidcIdp)

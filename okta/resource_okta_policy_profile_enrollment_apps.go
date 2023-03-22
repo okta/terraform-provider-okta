@@ -6,9 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourcePolicyProfileEnrollmentApps() *schema.Resource {
@@ -143,7 +142,7 @@ func listPolicyEnrollmentAppIDs(ctx context.Context, client *sdk.APISupplement, 
 		appIDs[i] = apps[i].Id
 	}
 	for resp.HasNextPage() {
-		var nextApps []*okta.Application
+		var nextApps []*sdk.Application
 		resp, err = resp.Next(ctx, &nextApps)
 		if err != nil {
 			return nil, err

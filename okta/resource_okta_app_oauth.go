@@ -9,9 +9,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 type (
@@ -503,7 +502,7 @@ func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := okta.NewOpenIdConnectApplication()
+	app := sdk.NewOpenIdConnectApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get OAuth application: %v", err)
@@ -585,7 +584,7 @@ func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface
 	return schema.NewSet(schema.HashResource(groupsClaimResource), []interface{}{elem}), nil
 }
 
-func setOAuthClientSettings(d *schema.ResourceData, oauthClient *okta.OpenIdConnectApplicationSettingsClient) diag.Diagnostics {
+func setOAuthClientSettings(d *schema.ResourceData, oauthClient *sdk.OpenIdConnectApplicationSettingsClient) diag.Diagnostics {
 	if oauthClient == nil {
 		return nil
 	}
@@ -707,9 +706,9 @@ func resourceAppOAuthDelete(ctx context.Context, d *schema.ResourceData, m inter
 	return nil
 }
 
-func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
+func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
-	app := okta.NewOpenIdConnectApplication()
+	app := sdk.NewOpenIdConnectApplication()
 	appType := d.Get("type").(string)
 	grantTypes := convertInterfaceToStringSet(d.Get("grant_types"))
 	responseTypes := convertInterfaceToStringSetNullable(d.Get("response_types"))
@@ -741,8 +740,8 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 
 	app.Label = d.Get("label").(string)
 	authMethod := d.Get("token_endpoint_auth_method").(string)
-	app.Credentials = &okta.OAuthApplicationCredentials{
-		OauthClient: &okta.ApplicationCredentialsOAuthClient{
+	app.Credentials = &sdk.OAuthApplicationCredentials{
+		OauthClient: &sdk.ApplicationCredentialsOAuthClient{
 			AutoKeyRotation:         boolPtr(d.Get("auto_key_rotation").(bool)),
 			ClientId:                d.Get("client_id").(string),
 			TokenEndpointAuthMethod: authMethod,
@@ -775,19 +774,19 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 		app.Credentials.OauthClient.ClientId = cid.(string)
 	}
 
-	oktaRespTypes := make([]*okta.OAuthResponseType, len(responseTypes))
+	oktaRespTypes := make([]*sdk.OAuthResponseType, len(responseTypes))
 	for i := range responseTypes {
-		rt := okta.OAuthResponseType(responseTypes[i])
+		rt := sdk.OAuthResponseType(responseTypes[i])
 		oktaRespTypes[i] = &rt
 	}
-	oktaGrantTypes := make([]*okta.OAuthGrantType, len(grantTypes))
+	oktaGrantTypes := make([]*sdk.OAuthGrantType, len(grantTypes))
 	for i := range grantTypes {
-		gt := okta.OAuthGrantType(grantTypes[i])
+		gt := sdk.OAuthGrantType(grantTypes[i])
 		oktaGrantTypes[i] = &gt
 	}
-	app.Settings = &okta.OpenIdConnectApplicationSettings{
+	app.Settings = &sdk.OpenIdConnectApplicationSettings{
 		ImplicitAssignment: boolPtr(d.Get("implicit_assignment").(bool)),
-		OauthClient: &okta.OpenIdConnectApplicationSettingsClient{
+		OauthClient: &sdk.OpenIdConnectApplicationSettingsClient{
 			ApplicationType:        appType,
 			ClientUri:              d.Get("client_uri").(string),
 			ConsentMethod:          d.Get("consent_method").(string),
@@ -800,7 +799,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 			ResponseTypes:          oktaRespTypes,
 			TosUri:                 d.Get("tos_uri").(string),
 			IssuerMode:             d.Get("issuer_mode").(string),
-			IdpInitiatedLogin: &okta.OpenIdConnectApplicationIdpInitiatedLogin{
+			IdpInitiatedLogin: &sdk.OpenIdConnectApplicationIdpInitiatedLogin{
 				DefaultScope: convertInterfaceToStringSet(d.Get("login_scopes")),
 				Mode:         d.Get("login_mode").(string),
 			},
@@ -811,19 +810,19 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 	}
 	jwks := d.Get("jwks").([]interface{})
 	if len(jwks) > 0 {
-		keys := make([]*okta.JsonWebKey, len(jwks))
+		keys := make([]*sdk.JsonWebKey, len(jwks))
 		for i := range jwks {
-			keys[i] = &okta.JsonWebKey{
+			keys[i] = &sdk.JsonWebKey{
 				Kid: d.Get(fmt.Sprintf("jwks.%d.kid", i)).(string),
 				Kty: d.Get(fmt.Sprintf("jwks.%d.kty", i)).(string),
 				E:   d.Get(fmt.Sprintf("jwks.%d.e", i)).(string),
 				N:   d.Get(fmt.Sprintf("jwks.%d.n", i)).(string),
 			}
 		}
-		app.Settings.OauthClient.Jwks = &okta.OpenIdConnectApplicationSettingsClientKeys{Keys: keys}
+		app.Settings.OauthClient.Jwks = &sdk.OpenIdConnectApplicationSettingsClientKeys{Keys: keys}
 	}
 
-	refresh := &okta.OpenIdConnectApplicationSettingsRefreshToken{}
+	refresh := &sdk.OpenIdConnectApplicationSettingsRefreshToken{}
 	hasRefresh := false
 	if rotate, ok := d.GetOk("refresh_token_rotation"); ok {
 		refresh.RotationType = rotate.(string)

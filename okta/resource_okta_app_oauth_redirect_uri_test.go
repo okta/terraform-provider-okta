@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func createRedirectURIExists(name string) resource.TestCheckFunc {
@@ -22,7 +22,7 @@ func createRedirectURIExists(name string) resource.TestCheckFunc {
 		uri := rs.Primary.ID
 		appID := rs.Primary.Attributes["app_id"]
 		client := getOktaClientFromMetadata(testAccProvider.Meta())
-		app := okta.NewOpenIdConnectApplication()
+		app := sdk.NewOpenIdConnectApplication()
 		_, response, err := client.Application.GetApplication(context.Background(), appID, app, nil)
 
 		// We don't want to consider a 404 an error in some cases and thus the delineation
@@ -47,7 +47,7 @@ func TestAccAppOAuthApplication_redirectCrud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

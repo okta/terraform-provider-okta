@@ -7,8 +7,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 const (
@@ -189,8 +189,8 @@ func resourceProfileMappingDelete(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func getDeleteProperties(d *schema.ResourceData, actual map[string]*okta.ProfileMappingProperty) map[string]*okta.ProfileMappingProperty {
-	toDelete := map[string]*okta.ProfileMappingProperty{}
+func getDeleteProperties(d *schema.ResourceData, actual map[string]*sdk.ProfileMappingProperty) map[string]*sdk.ProfileMappingProperty {
+	toDelete := map[string]*sdk.ProfileMappingProperty{}
 	config := buildMappingProperties(d.Get("mappings").(*schema.Set))
 	for key := range actual {
 		if _, ok := config[key]; !ok {
@@ -200,14 +200,14 @@ func getDeleteProperties(d *schema.ResourceData, actual map[string]*okta.Profile
 	return toDelete
 }
 
-func mergeProperties(target, b map[string]*okta.ProfileMappingProperty) map[string]*okta.ProfileMappingProperty {
+func mergeProperties(target, b map[string]*sdk.ProfileMappingProperty) map[string]*sdk.ProfileMappingProperty {
 	for k, v := range b {
 		target[k] = v
 	}
 	return target
 }
 
-func flattenMappingProperties(src map[string]*okta.ProfileMappingProperty) *schema.Set {
+func flattenMappingProperties(src map[string]*sdk.ProfileMappingProperty) *schema.Set {
 	var arr []interface{}
 	for k, v := range src {
 		arr = append(arr, map[string]interface{}{
@@ -219,13 +219,13 @@ func flattenMappingProperties(src map[string]*okta.ProfileMappingProperty) *sche
 	return schema.NewSet(schema.HashResource(mappingResource), arr)
 }
 
-func buildMappingProperties(set *schema.Set) map[string]*okta.ProfileMappingProperty {
-	res := map[string]*okta.ProfileMappingProperty{}
+func buildMappingProperties(set *schema.Set) map[string]*sdk.ProfileMappingProperty {
+	res := map[string]*sdk.ProfileMappingProperty{}
 	for _, rawMap := range set.List() {
 		if m, ok := rawMap.(map[string]interface{}); ok {
 			k := m["id"].(string)
 
-			res[k] = &okta.ProfileMappingProperty{
+			res[k] = &sdk.ProfileMappingProperty{
 				Expression: m["expression"].(string),
 				PushStatus: m["push_status"].(string),
 			}
@@ -234,14 +234,14 @@ func buildMappingProperties(set *schema.Set) map[string]*okta.ProfileMappingProp
 	return res
 }
 
-func buildMapping(d *schema.ResourceData) okta.ProfileMapping {
-	return okta.ProfileMapping{
+func buildMapping(d *schema.ResourceData) sdk.ProfileMapping {
+	return sdk.ProfileMapping{
 		Id:         d.Id(),
 		Properties: buildMappingProperties(d.Get("mappings").(*schema.Set)),
 	}
 }
 
-func applyMapping(ctx context.Context, d *schema.ResourceData, m interface{}, mapping *okta.ProfileMapping) error {
+func applyMapping(ctx context.Context, d *schema.ResourceData, m interface{}, mapping *sdk.ProfileMapping) error {
 	if !d.Get("always_apply").(bool) {
 		return nil
 	}
@@ -275,7 +275,7 @@ func applyMapping(ctx context.Context, d *schema.ResourceData, m interface{}, ma
 	return nil
 }
 
-func getProfileMappingBySourceID(ctx context.Context, sourceId, targetId string, m interface{}) (*okta.ProfileMapping, *okta.Response, error) {
+func getProfileMappingBySourceID(ctx context.Context, sourceId, targetId string, m interface{}) (*sdk.ProfileMapping, *sdk.Response, error) {
 	qp := query.Params{
 		Limit: defaultPaginationLimit,
 	}

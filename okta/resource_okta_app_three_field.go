@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceAppThreeField() *schema.Resource {
@@ -120,7 +120,7 @@ func resourceAppThreeFieldCreate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceAppThreeFieldRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := okta.NewSwaThreeFieldApplication()
+	app := sdk.NewSwaThreeFieldApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get three field application: %v", err)
@@ -186,12 +186,12 @@ func resourceAppThreeFieldDelete(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func buildAppThreeField(d *schema.ResourceData) *okta.SwaThreeFieldApplication {
-	app := okta.NewSwaThreeFieldApplication()
+func buildAppThreeField(d *schema.ResourceData) *sdk.SwaThreeFieldApplication {
+	app := sdk.NewSwaThreeFieldApplication()
 	app.Label = d.Get("label").(string)
 
-	app.Settings = &okta.SwaThreeFieldApplicationSettings{
-		App: &okta.SwaThreeFieldApplicationSettingsApplication{
+	app.Settings = &sdk.SwaThreeFieldApplicationSettings{
+		App: &sdk.SwaThreeFieldApplicationSettingsApplication{
 			TargetURL:          d.Get("url").(string),
 			ButtonSelector:     d.Get("button_selector").(string),
 			UserNameSelector:   d.Get("username_selector").(string),

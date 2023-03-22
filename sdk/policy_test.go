@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,14 +16,14 @@ func TestPolicyMarshal(t *testing.T) {
 	require.Equal(t, `{}`, string(_json))
 
 	example = SdkPolicy{
-		Policy: okta.Policy{Id: "1"},
+		Policy: Policy{Id: "1"},
 	}
 	_json, err = json.Marshal(&example)
 	require.NoError(t, err)
 	require.Equal(t, `{"id":"1"}`, string(_json))
 
 	example = SdkPolicy{
-		Policy:   okta.Policy{Id: "1"},
+		Policy:   Policy{Id: "1"},
 		Settings: &SdkPolicySettings{},
 	}
 	_json, err = json.Marshal(&example)
@@ -32,7 +31,7 @@ func TestPolicyMarshal(t *testing.T) {
 	require.Equal(t, `{"id":"1","settings":{}}`, string(_json))
 
 	example = SdkPolicy{
-		Policy: okta.Policy{Id: "1"},
+		Policy: Policy{Id: "1"},
 		Settings: &SdkPolicySettings{
 			Type: "test",
 		},

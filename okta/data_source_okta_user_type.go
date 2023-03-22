@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func dataSourceUserType() *schema.Resource {
@@ -35,7 +35,7 @@ func dataSourceUserTypeRead(ctx context.Context, d *schema.ResourceData, m inter
 		return diag.Errorf("failed to list user types: %v", err)
 	}
 	name := d.Get("name").(string)
-	var userType *okta.UserType
+	var userType *sdk.UserType
 	for _, ut := range userTypes {
 		if strings.EqualFold(name, ut.Name) {
 			userType = ut

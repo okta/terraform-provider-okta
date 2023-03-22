@@ -8,8 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceAppSaml() *schema.Resource {
@@ -288,13 +288,13 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 	if err != nil {
 		return diag.Errorf("invalid SAML app filters: %v", err)
 	}
-	var app *okta.SamlApplication
+	var app *sdk.SamlApplication
 	if filters.ID != "" {
-		respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, filters.ID, okta.NewSamlApplication(), nil)
+		respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, filters.ID, sdk.NewSamlApplication(), nil)
 		if err != nil {
 			return diag.Errorf("failed get app by ID: %v", err)
 		}
-		app = respApp.(*okta.SamlApplication)
+		app = respApp.(*sdk.SamlApplication)
 	} else {
 		re := getOktaClientFromMetadata(m).GetRequestExecutor()
 		qp := &query.Params{Limit: 1, Filter: filters.Status, Q: filters.getQ()}
@@ -302,7 +302,7 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 		if err != nil {
 			return diag.Errorf("failed to list SAML apps: %v", err)
 		}
-		var appList []*okta.SamlApplication
+		var appList []*sdk.SamlApplication
 		_, err = re.Do(ctx, req, &appList)
 		if err != nil {
 			return diag.Errorf("failed to list SAML apps: %v", err)

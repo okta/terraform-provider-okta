@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAuthServerClaim() *schema.Resource {
@@ -117,15 +117,15 @@ func resourceAuthServerClaimDelete(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func buildAuthServerClaim(d *schema.ResourceData) okta.OAuth2Claim {
-	return okta.OAuth2Claim{
+func buildAuthServerClaim(d *schema.ResourceData) sdk.OAuth2Claim {
+	return sdk.OAuth2Claim{
 		Status:               d.Get("status").(string),
 		ClaimType:            d.Get("claim_type").(string),
 		ValueType:            d.Get("value_type").(string),
 		Value:                d.Get("value").(string),
 		AlwaysIncludeInToken: boolPtr(d.Get("always_include_in_token").(bool)),
 		Name:                 d.Get("name").(string),
-		Conditions:           &okta.OAuth2ClaimConditions{Scopes: convertInterfaceToStringSetNullable(d.Get("scopes"))},
+		Conditions:           &sdk.OAuth2ClaimConditions{Scopes: convertInterfaceToStringSetNullable(d.Get("scopes"))},
 		GroupFilterType:      d.Get("group_filter_type").(string),
 	}
 }

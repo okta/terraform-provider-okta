@@ -8,7 +8,7 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/okta/okta-sdk-golang/v2/okta/cache"
+	"github.com/okta/terraform-provider-okta/sdk/cache"
 	"gopkg.in/square/go-jose.v2"
 )
 

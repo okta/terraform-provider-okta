@@ -5,7 +5,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -115,15 +114,15 @@ func resourceAuthServerPolicyDelete(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func buildAuthServerPolicy(d *schema.ResourceData) okta.AuthorizationServerPolicy {
-	return okta.AuthorizationServerPolicy{
+func buildAuthServerPolicy(d *schema.ResourceData) sdk.AuthorizationServerPolicy {
+	return sdk.AuthorizationServerPolicy{
 		Name:        d.Get("name").(string),
 		Type:        sdk.OauthAuthorizationPolicyType,
 		Status:      d.Get("status").(string),
 		PriorityPtr: int64Ptr(d.Get("priority").(int)),
 		Description: d.Get("description").(string),
-		Conditions: &okta.PolicyRuleConditions{
-			Clients: &okta.ClientPolicyCondition{
+		Conditions: &sdk.PolicyRuleConditions{
+			Clients: &sdk.ClientPolicyCondition{
 				Include: convertInterfaceToStringSet(d.Get("client_whitelist")),
 			},
 		},

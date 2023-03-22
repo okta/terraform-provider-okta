@@ -5,7 +5,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -306,8 +305,8 @@ func buildPasswordPolicy(d *schema.ResourceData) sdk.SdkPolicy {
 	if priority, ok := d.GetOk("priority"); ok {
 		template.PriorityPtr = int64Ptr(priority.(int))
 	}
-	template.Conditions = &okta.PolicyRuleConditions{
-		AuthProvider: &okta.PasswordPolicyAuthenticationProviderCondition{
+	template.Conditions = &sdk.PolicyRuleConditions{
+		AuthProvider: &sdk.PasswordPolicyAuthenticationProviderCondition{
 			Provider: d.Get("auth_provider").(string),
 		},
 		People: getGroups(d),
@@ -315,16 +314,16 @@ func buildPasswordPolicy(d *schema.ResourceData) sdk.SdkPolicy {
 	// Okta defaults
 	// we add the defaults here & not in the schema map to avoid defaults appearing in the terraform plan diff
 	template.Settings = &sdk.SdkPolicySettings{
-		Password: &okta.PasswordPolicyPasswordSettings{
-			Age: &okta.PasswordPolicyPasswordSettingsAge{
+		Password: &sdk.PasswordPolicyPasswordSettings{
+			Age: &sdk.PasswordPolicyPasswordSettingsAge{
 				ExpireWarnDaysPtr: int64Ptr(d.Get("password_expire_warn_days").(int)),
 				HistoryCountPtr:   int64Ptr(d.Get("password_history_count").(int)),
 				MaxAgeDaysPtr:     int64Ptr(d.Get("password_max_age_days").(int)),
 				MinAgeMinutesPtr:  int64Ptr(d.Get("password_min_age_minutes").(int)),
 			},
-			Complexity: &okta.PasswordPolicyPasswordSettingsComplexity{
-				Dictionary: &okta.PasswordDictionary{
-					Common: &okta.PasswordDictionaryCommon{
+			Complexity: &sdk.PasswordPolicyPasswordSettingsComplexity{
+				Dictionary: &sdk.PasswordDictionary{
+					Common: &sdk.PasswordDictionaryCommon{
 						Exclude: boolPtr(d.Get("password_dictionary_lookup").(bool)),
 					},
 				},
@@ -336,32 +335,32 @@ func buildPasswordPolicy(d *schema.ResourceData) sdk.SdkPolicy {
 				MinSymbolPtr:      int64Ptr(d.Get("password_min_symbol").(int)),
 				MinUpperCasePtr:   int64Ptr(d.Get("password_min_uppercase").(int)),
 			},
-			Lockout: &okta.PasswordPolicyPasswordSettingsLockout{
+			Lockout: &sdk.PasswordPolicyPasswordSettingsLockout{
 				AutoUnlockMinutesPtr:            int64Ptr(d.Get("password_auto_unlock_minutes").(int)),
 				MaxAttemptsPtr:                  int64Ptr(d.Get("password_max_lockout_attempts").(int)),
 				ShowLockoutFailures:             boolPtr(d.Get("password_show_lockout_failures").(bool)),
 				UserLockoutNotificationChannels: convertInterfaceToStringSet(d.Get("password_lockout_notification_channels")),
 			},
 		},
-		Recovery: &okta.PasswordPolicyRecoverySettings{
-			Factors: &okta.PasswordPolicyRecoveryFactors{
-				OktaCall: &okta.PasswordPolicyRecoveryFactorSettings{
+		Recovery: &sdk.PasswordPolicyRecoverySettings{
+			Factors: &sdk.PasswordPolicyRecoveryFactors{
+				OktaCall: &sdk.PasswordPolicyRecoveryFactorSettings{
 					Status: d.Get("call_recovery").(string),
 				},
-				OktaSms: &okta.PasswordPolicyRecoveryFactorSettings{
+				OktaSms: &sdk.PasswordPolicyRecoveryFactorSettings{
 					Status: d.Get("sms_recovery").(string),
 				},
-				OktaEmail: &okta.PasswordPolicyRecoveryEmail{
-					Properties: &okta.PasswordPolicyRecoveryEmailProperties{
-						RecoveryToken: &okta.PasswordPolicyRecoveryEmailRecoveryToken{
+				OktaEmail: &sdk.PasswordPolicyRecoveryEmail{
+					Properties: &sdk.PasswordPolicyRecoveryEmailProperties{
+						RecoveryToken: &sdk.PasswordPolicyRecoveryEmailRecoveryToken{
 							TokenLifetimeMinutesPtr: int64Ptr(d.Get("recovery_email_token").(int)),
 						},
 					},
 					Status: d.Get("email_recovery").(string),
 				},
-				RecoveryQuestion: &okta.PasswordPolicyRecoveryQuestion{
-					Properties: &okta.PasswordPolicyRecoveryQuestionProperties{
-						Complexity: &okta.PasswordPolicyRecoveryQuestionComplexity{
+				RecoveryQuestion: &sdk.PasswordPolicyRecoveryQuestion{
+					Properties: &sdk.PasswordPolicyRecoveryQuestionProperties{
+						Complexity: &sdk.PasswordPolicyRecoveryQuestionComplexity{
 							MinLengthPtr: int64Ptr(d.Get("question_min_length").(int)),
 						},
 					},
@@ -369,8 +368,8 @@ func buildPasswordPolicy(d *schema.ResourceData) sdk.SdkPolicy {
 				},
 			},
 		},
-		Delegation: &okta.PasswordPolicyDelegationSettings{
-			Options: &okta.PasswordPolicyDelegationSettingsOptions{
+		Delegation: &sdk.PasswordPolicyDelegationSettings{
+			Options: &sdk.PasswordPolicyDelegationSettingsOptions{
 				SkipUnlock: boolPtr(d.Get("skip_unlock").(bool)),
 			},
 		},

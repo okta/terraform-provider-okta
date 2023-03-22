@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func dataSourceAuthServerClaims() *schema.Resource {
@@ -80,7 +80,7 @@ func dataSourceAuthServerClaimsRead(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func flattenClaim(c *okta.OAuth2Claim) map[string]interface{} {
+func flattenClaim(c *sdk.OAuth2Claim) map[string]interface{} {
 	m := map[string]interface{}{
 		"id":                      c.Id,
 		"name":                    c.Name,

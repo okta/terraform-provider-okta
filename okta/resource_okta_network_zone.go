@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceNetworkZone() *schema.Resource {
@@ -130,9 +130,9 @@ func resourceNetworkZoneDelete(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func buildNetworkZone(d *schema.ResourceData) okta.NetworkZone {
-	var gatewaysList, proxiesList []*okta.NetworkZoneAddress
-	var locationsList []*okta.NetworkZoneLocation
+func buildNetworkZone(d *schema.ResourceData) sdk.NetworkZone {
+	var gatewaysList, proxiesList []*sdk.NetworkZoneAddress
+	var locationsList []*sdk.NetworkZoneLocation
 	zoneType := d.Get("type").(string)
 	proxyType := d.Get("dynamic_proxy_type").(string)
 
@@ -146,14 +146,14 @@ func buildNetworkZone(d *schema.ResourceData) okta.NetworkZone {
 	} else if values, ok := d.GetOk("dynamic_locations"); ok {
 		for _, value := range values.(*schema.Set).List() {
 			if strings.Contains(value.(string), "-") {
-				locationsList = append(locationsList, &okta.NetworkZoneLocation{Country: strings.Split(value.(string), "-")[0], Region: value.(string)})
+				locationsList = append(locationsList, &sdk.NetworkZoneLocation{Country: strings.Split(value.(string), "-")[0], Region: value.(string)})
 			} else {
-				locationsList = append(locationsList, &okta.NetworkZoneLocation{Country: value.(string)})
+				locationsList = append(locationsList, &sdk.NetworkZoneLocation{Country: value.(string)})
 			}
 		}
 	}
 
-	return okta.NetworkZone{
+	return sdk.NetworkZone{
 		Asns:      convertInterfaceToStringSetNullable(d.Get("asns")),
 		Name:      d.Get("name").(string),
 		Type:      zoneType,
@@ -165,21 +165,21 @@ func buildNetworkZone(d *schema.ResourceData) okta.NetworkZone {
 	}
 }
 
-func buildAddressObjList(values *schema.Set) []*okta.NetworkZoneAddress {
+func buildAddressObjList(values *schema.Set) []*sdk.NetworkZoneAddress {
 	var addressType string
-	var addressObjList []*okta.NetworkZoneAddress
+	var addressObjList []*sdk.NetworkZoneAddress
 	for _, value := range values.List() {
 		if strings.Contains(value.(string), "/") {
 			addressType = "CIDR"
 		} else {
 			addressType = "RANGE"
 		}
-		addressObjList = append(addressObjList, &okta.NetworkZoneAddress{Type: addressType, Value: value.(string)})
+		addressObjList = append(addressObjList, &sdk.NetworkZoneAddress{Type: addressType, Value: value.(string)})
 	}
 	return addressObjList
 }
 
-func flattenAddresses(gateways []*okta.NetworkZoneAddress) interface{} {
+func flattenAddresses(gateways []*sdk.NetworkZoneAddress) interface{} {
 	if len(gateways) == 0 {
 		return nil
 	}
@@ -190,7 +190,7 @@ func flattenAddresses(gateways []*okta.NetworkZoneAddress) interface{} {
 	return schema.NewSet(schema.HashString, arr)
 }
 
-func flattenDynamicLocations(locations []*okta.NetworkZoneLocation) interface{} {
+func flattenDynamicLocations(locations []*sdk.NetworkZoneLocation) interface{} {
 	if len(locations) == 0 {
 		return nil
 	}

@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceGroupRoles() *schema.Resource {
@@ -46,7 +46,7 @@ func resourceGroupRolesCreate(ctx context.Context, d *schema.ResourceData, m int
 	groupID := d.Get("group_id").(string)
 	adminRoles := convertInterfaceToStringSet(d.Get("admin_roles"))
 	for _, role := range adminRoles {
-		_, _, err := getOktaClientFromMetadata(m).Group.AssignRoleToGroup(ctx, groupID, okta.AssignRoleRequest{Type: role}, nil)
+		_, _, err := getOktaClientFromMetadata(m).Group.AssignRoleToGroup(ctx, groupID, sdk.AssignRoleRequest{Type: role}, nil)
 		if err != nil {
 			return diag.Errorf("failed to assign role %s to group %s: %v", role, groupID, err)
 		}
@@ -79,7 +79,7 @@ func resourceGroupRolesUpdate(ctx context.Context, d *schema.ResourceData, m int
 	adminRoles := convertInterfaceToStringSet(d.Get("admin_roles"))
 	rolesToAdd, rolesToRemove := splitRoles(existingRoles, adminRoles)
 	for _, role := range rolesToAdd {
-		_, _, err := client.Group.AssignRoleToGroup(ctx, groupID, okta.AssignRoleRequest{Type: role}, nil)
+		_, _, err := client.Group.AssignRoleToGroup(ctx, groupID, sdk.AssignRoleRequest{Type: role}, nil)
 		if err != nil {
 			return diag.Errorf("failed to assign role %s to group %s: %v", role, groupID, err)
 		}
@@ -109,7 +109,7 @@ func resourceGroupRolesDelete(ctx context.Context, d *schema.ResourceData, m int
 	return nil
 }
 
-func splitRoles(existingRoles []*okta.Role, expectedRoles []string) (rolesToAdd, rolesToRemove []string) {
+func splitRoles(existingRoles []*sdk.Role, expectedRoles []string) (rolesToAdd, rolesToRemove []string) {
 	for _, roleName := range expectedRoles {
 		if !containsRole(existingRoles, roleName) {
 			rolesToAdd = append(rolesToAdd, roleName)
@@ -125,7 +125,7 @@ func splitRoles(existingRoles []*okta.Role, expectedRoles []string) (rolesToAdd,
 	return
 }
 
-func containsRole(roles []*okta.Role, roleName string) bool {
+func containsRole(roles []*sdk.Role, roleName string) bool {
 	for _, role := range roles {
 		if role.Type == roleName {
 			return true

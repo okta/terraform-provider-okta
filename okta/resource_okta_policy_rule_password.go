@@ -5,7 +5,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -95,19 +94,19 @@ func buildPolicyRulePassword(d *schema.ResourceData) sdk.SdkPolicyRule {
 	if priority, ok := d.GetOk("priority"); ok {
 		template.Priority = int64(priority.(int))
 	}
-	template.Conditions = &okta.PolicyRuleConditions{
+	template.Conditions = &sdk.PolicyRuleConditions{
 		Network: buildPolicyNetworkCondition(d),
 		People:  getUsers(d),
 	}
 	template.Actions = sdk.SdkPolicyRuleActions{
-		PasswordPolicyRuleActions: &okta.PasswordPolicyRuleActions{
-			PasswordChange: &okta.PasswordPolicyRuleAction{
+		PasswordPolicyRuleActions: &sdk.PasswordPolicyRuleActions{
+			PasswordChange: &sdk.PasswordPolicyRuleAction{
 				Access: d.Get("password_change").(string),
 			},
-			SelfServicePasswordReset: &okta.PasswordPolicyRuleAction{
+			SelfServicePasswordReset: &sdk.PasswordPolicyRuleAction{
 				Access: d.Get("password_reset").(string),
 			},
-			SelfServiceUnlock: &okta.PasswordPolicyRuleAction{
+			SelfServiceUnlock: &sdk.PasswordPolicyRuleAction{
 				Access: d.Get("password_unlock").(string),
 			},
 		},

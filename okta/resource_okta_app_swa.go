@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceAppSwa() *schema.Resource {
@@ -92,7 +92,7 @@ func resourceAppSwaCreate(ctx context.Context, d *schema.ResourceData, m interfa
 }
 
 func resourceAppSwaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := okta.NewSwaApplication()
+	app := sdk.NewSwaApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get SWA application: %v", err)
@@ -155,17 +155,17 @@ func resourceAppSwaDelete(ctx context.Context, d *schema.ResourceData, m interfa
 	return nil
 }
 
-func buildAppSwa(d *schema.ResourceData) *okta.SwaApplication {
+func buildAppSwa(d *schema.ResourceData) *sdk.SwaApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
-	app := okta.NewSwaApplication()
+	app := sdk.NewSwaApplication()
 	app.Label = d.Get("label").(string)
 	name := d.Get("preconfigured_app").(string)
 	if name != "" {
 		app.Name = name
 		app.SignOnMode = "AUTO_LOGIN" // in case pre-configured app has more than one sign-on modes
 	}
-	app.Settings = &okta.SwaApplicationSettings{
-		App: &okta.SwaApplicationSettingsApplication{
+	app.Settings = &sdk.SwaApplicationSettings{
+		App: &sdk.SwaApplicationSettingsApplication{
 			ButtonField:   d.Get("button_field").(string),
 			UsernameField: d.Get("username_field").(string),
 			PasswordField: d.Get("password_field").(string),
@@ -178,7 +178,7 @@ func buildAppSwa(d *schema.ResourceData) *okta.SwaApplication {
 	}
 	app.Visibility = buildAppVisibility(d)
 	app.Accessibility = buildAppAccessibility(d)
-	app.Credentials = &okta.SchemeApplicationCredentials{
+	app.Credentials = &sdk.SchemeApplicationCredentials{
 		UserNameTemplate: buildUserNameTemplate(d),
 	}
 	return app

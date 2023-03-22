@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -267,8 +266,8 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.SdkPolicyRule {
 	if priority, ok := d.GetOk("priority"); ok {
 		template.Priority = int64(priority.(int))
 	}
-	template.Conditions = &okta.PolicyRuleConditions{
-		AuthContext: &okta.PolicyRuleAuthContextCondition{
+	template.Conditions = &sdk.PolicyRuleConditions{
+		AuthContext: &sdk.PolicyRuleAuthContextCondition{
 			AuthType: d.Get("authtype").(string),
 		},
 		Network: buildPolicyNetworkCondition(d),
@@ -277,7 +276,7 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.SdkPolicyRule {
 
 	provider, ok := d.GetOk("identity_provider")
 	if ok {
-		template.Conditions.IdentityProvider = &okta.IdentityProviderPolicyRuleCondition{
+		template.Conditions.IdentityProvider = &sdk.IdentityProviderPolicyRuleCondition{
 			Provider: provider.(string),
 			IdpIds:   convertInterfaceToStringArr(d.Get("identity_provider_ids")),
 		}
@@ -285,13 +284,13 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.SdkPolicyRule {
 
 	bi, ok := d.GetOk("behaviors")
 	if ok {
-		template.Conditions.Risk = &okta.RiskPolicyRuleCondition{
+		template.Conditions.Risk = &sdk.RiskPolicyRuleCondition{
 			Behaviors: convertInterfaceToStringSetNullable(bi),
 		}
 	}
 	ri, ok := d.GetOk("risc_level")
 	if ok {
-		template.Conditions.RiskScore = &okta.RiskScorePolicyRuleCondition{
+		template.Conditions.RiskScore = &sdk.RiskScorePolicyRuleCondition{
 			Level: ri.(string),
 		}
 	}
@@ -302,7 +301,7 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.SdkPolicyRule {
 			FactorPromptMode:        d.Get("mfa_prompt").(string),
 			RememberDeviceByDefault: boolPtr(d.Get("mfa_remember_device").(bool)),
 			RequireFactor:           boolPtr(d.Get("mfa_required").(bool)),
-			Session: &okta.OktaSignOnPolicyRuleSignonSessionActions{
+			Session: &sdk.OktaSignOnPolicyRuleSignonSessionActions{
 				MaxSessionIdleMinutesPtr:     int64Ptr(d.Get("session_idle").(int)),
 				MaxSessionLifetimeMinutesPtr: int64Ptr(d.Get("session_lifetime").(int)),
 				UsePersistentCookie:          boolPtr(d.Get("session_persistent").(bool)),

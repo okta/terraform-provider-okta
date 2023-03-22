@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func TestAccOktaEventHook_crud(t *testing.T) {
@@ -41,7 +41,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(&okta.EventSubscriptions{
+						eventSet(&sdk.EventSubscriptions{
 							Type:  "EVENT_TYPE",
 							Items: []string{"user.lifecycle.create", "user.lifecycle.delete.initiated"},
 						}),
@@ -62,7 +62,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"headers",
-						testMakeEventHookHeadersSet([]*okta.EventHookChannelConfigHeader{
+						testMakeEventHookHeadersSet([]*sdk.EventHookChannelConfigHeader{
 							{
 								Key:   "x-test-header",
 								Value: "test stuff",
@@ -76,7 +76,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(&okta.EventSubscriptions{
+						eventSet(&sdk.EventSubscriptions{
 							Type: "EVENT_TYPE",
 							Items: []string{
 								"user.lifecycle.create",
@@ -102,7 +102,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(&okta.EventSubscriptions{
+						eventSet(&sdk.EventSubscriptions{
 							Type:  "EVENT_TYPE",
 							Items: []string{"user.lifecycle.create", "user.lifecycle.delete.initiated"},
 						}),
@@ -121,7 +121,7 @@ func eventHookExists(id string) (bool, error) {
 	return eh != nil, nil
 }
 
-func testMakeEventHookHeadersSet(headers []*okta.EventHookChannelConfigHeader) *schema.Set {
+func testMakeEventHookHeadersSet(headers []*sdk.EventHookChannelConfigHeader) *schema.Set {
 	h := make([]interface{}, len(headers))
 	for i, header := range headers {
 		h[i] = map[string]interface{}{

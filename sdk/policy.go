@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 const (
@@ -52,7 +50,7 @@ func ProfileEnrollmentPolicy() SdkPolicy {
 // Policy wrapper over okta.Policy until all of the public properties are fully supported
 type SdkPolicy struct {
 	// TODO
-	okta.Policy
+	Policy
 
 	Settings *SdkPolicySettings `json:"settings,omitempty"`
 }
@@ -127,12 +125,12 @@ func (a *SdkPolicy) UnmarshalJSON(data []byte) error {
 // PolicySettings missing from okta-sdk-golang. However, there is a subset okta.PasswordPolicySettings.
 type SdkPolicySettings struct {
 	// TODO
-	Authenticators []*PolicyAuthenticator                 `json:"authenticators,omitempty"`
-	Delegation     *okta.PasswordPolicyDelegationSettings `json:"delegation,omitempty"`
-	Factors        *PolicyFactorsSettings                 `json:"factors,omitempty"`
-	Password       *okta.PasswordPolicyPasswordSettings   `json:"password,omitempty"`
-	Recovery       *okta.PasswordPolicyRecoverySettings   `json:"recovery,omitempty"`
-	Type           string                                 `json:"type,omitempty"`
+	Authenticators []*PolicyAuthenticator            `json:"authenticators,omitempty"`
+	Delegation     *PasswordPolicyDelegationSettings `json:"delegation,omitempty"`
+	Factors        *PolicyFactorsSettings            `json:"factors,omitempty"`
+	Password       *PasswordPolicyPasswordSettings   `json:"password,omitempty"`
+	Recovery       *PasswordPolicyRecoverySettings   `json:"recovery,omitempty"`
+	Type           string                            `json:"type,omitempty"`
 }
 
 // PolicyFactorsSettings is not expressed in the okta-sdk-golang yet
@@ -180,7 +178,7 @@ type Enroll struct {
 }
 
 // GetPolicy gets a policy by ID
-func (m *APISupplement) GetPolicy(ctx context.Context, policyID string) (*SdkPolicy, *okta.Response, error) {
+func (m *APISupplement) GetPolicy(ctx context.Context, policyID string) (*SdkPolicy, *Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v", policyID)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -195,7 +193,7 @@ func (m *APISupplement) GetPolicy(ctx context.Context, policyID string) (*SdkPol
 }
 
 // UpdatePolicy updates a policy.
-func (m *APISupplement) UpdatePolicy(ctx context.Context, policyID string, body SdkPolicy) (*SdkPolicy, *okta.Response, error) {
+func (m *APISupplement) UpdatePolicy(ctx context.Context, policyID string, body SdkPolicy) (*SdkPolicy, *Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v", policyID)
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
 	if err != nil {
@@ -210,7 +208,7 @@ func (m *APISupplement) UpdatePolicy(ctx context.Context, policyID string, body 
 }
 
 // CreatePolicy creates a policy.
-func (m *APISupplement) CreatePolicy(ctx context.Context, body SdkPolicy) (*SdkPolicy, *okta.Response, error) {
+func (m *APISupplement) CreatePolicy(ctx context.Context, body SdkPolicy) (*SdkPolicy, *Response, error) {
 	url := "/api/v1/policies"
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
 	if err != nil {

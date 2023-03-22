@@ -6,8 +6,8 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 type appFilters struct {
@@ -29,7 +29,7 @@ func (f *appFilters) String() string {
 	return fmt.Sprintf(`id: "%s", label: "%s", label_prefix: "%s"`, f.ID, f.Label, f.LabelPrefix)
 }
 
-func listApps(ctx context.Context, client *okta.Client, filters *appFilters, limit int64) ([]*okta.Application, error) {
+func listApps(ctx context.Context, client *sdk.Client, filters *appFilters, limit int64) ([]*sdk.Application, error) {
 	params := &query.Params{Limit: limit}
 	if filters != nil {
 		params.Filter = filters.Status
@@ -39,12 +39,12 @@ func listApps(ctx context.Context, client *okta.Client, filters *appFilters, lim
 	if err != nil {
 		return nil, err
 	}
-	resultingApps := make([]*okta.Application, len(apps))
+	resultingApps := make([]*sdk.Application, len(apps))
 	for i := range apps {
-		resultingApps[i] = apps[i].(*okta.Application)
+		resultingApps[i] = apps[i].(*sdk.Application)
 	}
 	for resp.HasNextPage() {
-		var nextApps []*okta.Application
+		var nextApps []*sdk.Application
 		resp, err = resp.Next(ctx, &nextApps)
 		if err != nil {
 			return nil, err

@@ -10,9 +10,8 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 var (
@@ -36,7 +35,7 @@ func logSweptResource(kind, id, nameOrLabel string) {
 }
 
 type testClient struct {
-	oktaClient    *okta.Client
+	oktaClient    *sdk.Client
 	apiSupplement *sdk.APISupplement
 }
 
@@ -153,7 +152,7 @@ func buildResourceNameWithPrefix(prefix string, testID int) string {
 }
 
 // sharedTestClients returns a common Okta Client for sweepers, which currently requires the original SDK and the official beta SDK
-func sharedTestClients() (*okta.Client, *sdk.APISupplement, error) {
+func sharedTestClients() (*sdk.Client, *sdk.APISupplement, error) {
 	err := accPreCheck()
 	if err != nil {
 		return nil, nil, err
@@ -163,11 +162,11 @@ func sharedTestClients() (*okta.Client, *sdk.APISupplement, error) {
 		return nil, nil, err
 	}
 	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
-	_, client, err := okta.NewClient(
+	_, client, err := sdk.NewClient(
 		context.Background(),
-		okta.WithOrgUrl(orgURL),
-		okta.WithToken(c.apiToken),
-		okta.WithRateLimitMaxRetries(20),
+		sdk.WithOrgUrl(orgURL),
+		sdk.WithToken(c.apiToken),
+		sdk.WithRateLimitMaxRetries(20),
 	)
 	if err != nil {
 		return client, nil, err
@@ -269,7 +268,7 @@ func sweepEmailCustomization(client *testClient) error {
 			continue
 		}
 		for resp.HasNextPage() {
-			var nextTemplates []*okta.EmailTemplate
+			var nextTemplates []*sdk.EmailTemplate
 			resp, err = resp.Next(ctx, &nextTemplates)
 			if err != nil {
 				continue
@@ -486,7 +485,7 @@ func sweepUsers(client *testClient) error {
 		return err
 	}
 	for resp.HasNextPage() {
-		var nextUsers []*okta.User
+		var nextUsers []*sdk.User
 		resp, err = resp.Next(context.Background(), &nextUsers)
 		if err != nil {
 			return err
@@ -555,7 +554,7 @@ func sweepPolicyByType(t string, client *testClient) error {
 		return fmt.Errorf("failed to list policies in order to properly destroy: %v", err)
 	}
 	for _, _policy := range policies {
-		policy := _policy.(*okta.Policy)
+		policy := _policy.(*sdk.Policy)
 		if strings.HasPrefix(policy.Name, testResourcePrefix) {
 			_, err = client.oktaClient.Policy.DeletePolicy(ctx, policy.Id)
 			if err != nil {
@@ -574,7 +573,7 @@ func sweepPolicyRulesByType(ruleType string, client *testClient) error {
 		return fmt.Errorf("failed to list policies in order to properly destroy rules: %v", err)
 	}
 	for _, _policy := range policies {
-		policy := _policy.(*okta.Policy)
+		policy := _policy.(*sdk.Policy)
 		rules, _, err := client.apiSupplement.ListPolicyRules(ctx, policy.Id)
 		if err != nil {
 			return err

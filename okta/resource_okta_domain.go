@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceDomain() *schema.Resource {
@@ -156,7 +156,7 @@ func resourceDomainUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 	return resourceDomainRead(ctx, d, m)
 }
 
-func validateDomain(ctx context.Context, d *schema.ResourceData, m interface{}, validationStatus string) (*okta.Domain, error) {
+func validateDomain(ctx context.Context, d *schema.ResourceData, m interface{}, validationStatus string) (*sdk.Domain, error) {
 	if validationStatus == "IN_PROGRESS" || validationStatus == "VERIFIED" || validationStatus == "COMPLETED" {
 		return nil, nil
 	}
@@ -170,8 +170,8 @@ func validateDomain(ctx context.Context, d *schema.ResourceData, m interface{}, 
 	return domain, nil
 }
 
-func buildDomain(d *schema.ResourceData) okta.Domain {
-	return okta.Domain{
+func buildDomain(d *schema.ResourceData) sdk.Domain {
+	return sdk.Domain{
 		Domain:                d.Get("name").(string),
 		CertificateSourceType: d.Get("certificate_source_type").(string),
 	}

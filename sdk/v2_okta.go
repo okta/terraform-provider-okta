@@ -10,7 +10,7 @@ import (
 	"runtime"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/okta/okta-sdk-golang/v2/okta/cache"
+	"github.com/okta/terraform-provider-okta/sdk/cache"
 	"gopkg.in/yaml.v3"
 )
 

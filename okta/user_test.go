@@ -10,11 +10,11 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func getGroupPagesJson(t *testing.T) ([]byte, []byte) {
-	firstPageOfGroups, err := json.Marshal([]*okta.Group{
+	firstPageOfGroups, err := json.Marshal([]*sdk.Group{
 		{Id: "foo"},
 		{Id: "bar"},
 	})
@@ -22,7 +22,7 @@ func getGroupPagesJson(t *testing.T) ([]byte, []byte) {
 		t.Fatalf("could not serialize first set of groups: %s", err)
 	}
 
-	secondPageOfGroups, err := json.Marshal([]*okta.Group{
+	secondPageOfGroups, err := json.Marshal([]*sdk.Group{
 		{Id: "baz"},
 		{Id: "qux"},
 	})
@@ -33,7 +33,7 @@ func getGroupPagesJson(t *testing.T) ([]byte, []byte) {
 	return firstPageOfGroups, secondPageOfGroups
 }
 
-type userGroupFunc func(ctx context.Context, d *schema.ResourceData, c *okta.Client) error
+type userGroupFunc func(ctx context.Context, d *schema.ResourceData, c *sdk.Client) error
 
 func testUserGroupFetchesAllPages(t *testing.T, fn userGroupFunc) {
 	s := dataSourceUser().Schema

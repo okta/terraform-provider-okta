@@ -3,8 +3,6 @@ package sdk
 import (
 	"context"
 	"net/http"
-
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 type ClientRateLimitMode struct {
@@ -21,7 +19,7 @@ type RateLimitingCommunications struct {
 	RateLimitNotification *bool `json:"rateLimitNotification"`
 }
 
-func (m *APISupplement) SetClientBasedRateLimiting(ctx context.Context, body ClientRateLimitMode) (*ClientRateLimitMode, *okta.Response, error) {
+func (m *APISupplement) SetClientBasedRateLimiting(ctx context.Context, body ClientRateLimitMode) (*ClientRateLimitMode, *Response, error) {
 	url := "/api/v1/internal/rateLimits/clientRateLimitMode"
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
 	if err != nil {
@@ -35,7 +33,7 @@ func (m *APISupplement) SetClientBasedRateLimiting(ctx context.Context, body Cli
 	return rateLimitMode, resp, nil
 }
 
-func (m *APISupplement) GetClientBasedRateLimiting(ctx context.Context) (*ClientRateLimitMode, *okta.Response, error) {
+func (m *APISupplement) GetClientBasedRateLimiting(ctx context.Context) (*ClientRateLimitMode, *Response, error) {
 	url := "/api/v1/internal/rateLimits/clientRateLimitMode"
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -49,7 +47,7 @@ func (m *APISupplement) GetClientBasedRateLimiting(ctx context.Context) (*Client
 	return rateLimitMode, resp, nil
 }
 
-func (m *APISupplement) SetRateLimitingCommunications(ctx context.Context, body RateLimitingCommunications) (*RateLimitingCommunications, *okta.Response, error) {
+func (m *APISupplement) SetRateLimitingCommunications(ctx context.Context, body RateLimitingCommunications) (*RateLimitingCommunications, *Response, error) {
 	url := "/api/internal/orgSettings/rateLimitNotificationSetting"
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
 	if err != nil {
@@ -63,7 +61,7 @@ func (m *APISupplement) SetRateLimitingCommunications(ctx context.Context, body 
 	return communications, resp, nil
 }
 
-func (m *APISupplement) GetRateLimitingCommunications(ctx context.Context) (*RateLimitingCommunications, *okta.Response, error) {
+func (m *APISupplement) GetRateLimitingCommunications(ctx context.Context) (*RateLimitingCommunications, *Response, error) {
 	url := "/api/internal/orgSettings/rateLimitNotificationSetting"
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {

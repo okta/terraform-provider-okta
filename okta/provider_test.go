@@ -14,14 +14,13 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 var (
 	testAccProvidersFactories map[string]func() (*schema.Provider, error)
 	testAccProvider           *schema.Provider
-	testSDKClient             *okta.Client
+	testSDKClient             *sdk.Client
 	testSupplementClient      *sdk.APISupplement
 )
 
@@ -161,7 +160,7 @@ func TestHTTPProxy(t *testing.T) {
 		w.Header().Set("x-rate-limit-limit", "0")
 		w.Header().Set("x-rate-limit-remaining", "0")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(&okta.User{
+		json.NewEncoder(w).Encode(&sdk.User{
 			Id:          "fake-user",
 			LastLogin:   &now,
 			LastUpdated: &now,

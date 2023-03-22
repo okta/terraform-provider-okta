@@ -7,7 +7,6 @@ import (
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -79,7 +78,7 @@ func buildMFAPolicy(d *schema.ResourceData) sdk.SdkPolicy {
 		policy.PriorityPtr = int64Ptr(priority.(int))
 	}
 	policy.Settings = buildSettings(d)
-	policy.Conditions = &okta.PolicyRuleConditions{
+	policy.Conditions = &sdk.PolicyRuleConditions{
 		People: getGroups(d),
 	}
 	return policy

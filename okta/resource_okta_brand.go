@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceBrand() *schema.Resource {
@@ -60,7 +60,7 @@ func resourceBrandRead(ctx context.Context, d *schema.ResourceData, m interface{
 func resourceBrandUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	logger(m).Info("updating brand", "id", d.Id())
 
-	brand := okta.Brand{}
+	brand := sdk.Brand{}
 	agree, ok := d.GetOk("agree_to_custom_privacy_policy")
 	if ok {
 		brand.AgreeToCustomPrivacyPolicy = boolPtr(agree.(bool))

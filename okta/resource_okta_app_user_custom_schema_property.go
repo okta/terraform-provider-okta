@@ -10,7 +10,7 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAppUserSchemaProperty() *schema.Resource {
@@ -208,7 +208,7 @@ func updateAppUserSubSchemaProperty(ctx context.Context, d *schema.ResourceData,
 		if err == nil {
 			return nil
 		}
-		var oktaErr *okta.Error
+		var oktaErr *sdk.Error
 		if errors.As(err, &oktaErr) {
 			for i := range oktaErr.ErrorCauses {
 				for _, sum := range oktaErr.ErrorCauses[i] {

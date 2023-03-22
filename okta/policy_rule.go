@@ -9,7 +9,6 @@ import (
 	"github.com/cenkalti/backoff/v4"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -166,8 +165,8 @@ func ensureNotDefaultRule(d *schema.ResourceData) error {
 	return ensureNotDefault(d, "Rule")
 }
 
-func buildPolicyNetworkCondition(d *schema.ResourceData) *okta.PolicyNetworkCondition {
-	return &okta.PolicyNetworkCondition{
+func buildPolicyNetworkCondition(d *schema.ResourceData) *sdk.PolicyNetworkCondition {
+	return &sdk.PolicyNetworkCondition{
 		Connection: d.Get("network_connection").(string),
 		Exclude:    convertInterfaceToStringArrNullable(d.Get("network_excludes")),
 		Include:    convertInterfaceToStringArrNullable(d.Get("network_includes")),
@@ -202,12 +201,12 @@ func getPolicyRule(ctx context.Context, d *schema.ResourceData, m interface{}) (
 	return rule, nil
 }
 
-func getUsers(d *schema.ResourceData) *okta.PolicyPeopleCondition {
-	var people *okta.PolicyPeopleCondition
+func getUsers(d *schema.ResourceData) *sdk.PolicyPeopleCondition {
+	var people *sdk.PolicyPeopleCondition
 
 	if exclude, ok := d.GetOk("users_excluded"); ok {
-		people = &okta.PolicyPeopleCondition{
-			Users: &okta.UserCondition{
+		people = &sdk.PolicyPeopleCondition{
+			Users: &sdk.UserCondition{
 				Exclude: convertInterfaceToStringSet(exclude),
 			},
 		}

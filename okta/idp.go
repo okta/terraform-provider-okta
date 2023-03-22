@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 const (
@@ -180,7 +180,7 @@ func buildIdpSchema(idpSchema map[string]*schema.Schema) map[string]*schema.Sche
 	return buildSchema(baseIdpSchema, idpSchema)
 }
 
-func getIdentityProviderByID(ctx context.Context, m interface{}, id, providerType string) (*okta.IdentityProvider, error) {
+func getIdentityProviderByID(ctx context.Context, m interface{}, id, providerType string) (*sdk.IdentityProvider, error) {
 	idp, _, err := getOktaClientFromMetadata(m).IdentityProvider.GetIdentityProvider(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get identity provider with id '%s': %v", id, err)
@@ -191,7 +191,7 @@ func getIdentityProviderByID(ctx context.Context, m interface{}, id, providerTyp
 	return idp, nil
 }
 
-func getIdpByNameAndType(ctx context.Context, m interface{}, name, providerType string) (*okta.IdentityProvider, error) {
+func getIdpByNameAndType(ctx context.Context, m interface{}, name, providerType string) (*sdk.IdentityProvider, error) {
 	queryParams := &query.Params{Limit: 1, Q: name, Type: providerType}
 	idps, _, err := getOktaClientFromMetadata(m).IdentityProvider.ListIdentityProviders(ctx, queryParams)
 	if err != nil {
@@ -216,7 +216,7 @@ func resourceIdpDelete(ctx context.Context, d *schema.ResourceData, m interface{
 	return nil
 }
 
-func setIdpStatus(ctx context.Context, d *schema.ResourceData, client *okta.Client, status string) error {
+func setIdpStatus(ctx context.Context, d *schema.ResourceData, client *sdk.Client, status string) error {
 	desiredStatus := d.Get("status").(string)
 	if status == desiredStatus {
 		return nil
@@ -230,14 +230,14 @@ func setIdpStatus(ctx context.Context, d *schema.ResourceData, client *okta.Clie
 	return err
 }
 
-func syncEndpoint(key string, e *okta.ProtocolEndpoint, d *schema.ResourceData) {
+func syncEndpoint(key string, e *sdk.ProtocolEndpoint, d *schema.ResourceData) {
 	if e != nil {
 		_ = d.Set(key+"_binding", e.Binding)
 		_ = d.Set(key+"_url", e.Url)
 	}
 }
 
-func syncGroupActions(d *schema.ResourceData, groups *okta.ProvisioningGroups) error {
+func syncGroupActions(d *schema.ResourceData, groups *sdk.ProvisioningGroups) error {
 	if groups == nil {
 		return nil
 	}
@@ -249,36 +249,36 @@ func syncGroupActions(d *schema.ResourceData, groups *okta.ProvisioningGroups) e
 	})
 }
 
-func buildPolicyAccountLink(d *schema.ResourceData) *okta.PolicyAccountLink {
+func buildPolicyAccountLink(d *schema.ResourceData) *sdk.PolicyAccountLink {
 	link := convertInterfaceToStringSet(d.Get("account_link_group_include"))
-	var filter *okta.PolicyAccountLinkFilter
+	var filter *sdk.PolicyAccountLinkFilter
 
 	if len(link) > 0 {
-		filter = &okta.PolicyAccountLinkFilter{
-			Groups: &okta.PolicyAccountLinkFilterGroups{
+		filter = &sdk.PolicyAccountLinkFilter{
+			Groups: &sdk.PolicyAccountLinkFilterGroups{
 				Include: link,
 			},
 		}
 	}
-	return &okta.PolicyAccountLink{
+	return &sdk.PolicyAccountLink{
 		Action: d.Get("account_link_action").(string),
 		Filter: filter,
 	}
 }
 
-func buildIdPProvisioning(d *schema.ResourceData) *okta.Provisioning {
-	return &okta.Provisioning{
+func buildIdPProvisioning(d *schema.ResourceData) *sdk.Provisioning {
+	return &sdk.Provisioning{
 		Action:        d.Get("provisioning_action").(string),
 		ProfileMaster: boolPtr(d.Get("profile_master").(bool)),
-		Conditions: &okta.ProvisioningConditions{
-			Deprovisioned: &okta.ProvisioningDeprovisionedCondition{
+		Conditions: &sdk.ProvisioningConditions{
+			Deprovisioned: &sdk.ProvisioningDeprovisionedCondition{
 				Action: d.Get("deprovisioned_action").(string),
 			},
-			Suspended: &okta.ProvisioningSuspendedCondition{
+			Suspended: &sdk.ProvisioningSuspendedCondition{
 				Action: d.Get("suspended_action").(string),
 			},
 		},
-		Groups: &okta.ProvisioningGroups{
+		Groups: &sdk.ProvisioningGroups{
 			Action:              d.Get("groups_action").(string),
 			Assignments:         convertInterfaceToStringSetNullable(d.Get("groups_assignment")),
 			Filter:              convertInterfaceToStringSetNullable(d.Get("groups_filter")),
@@ -287,29 +287,29 @@ func buildIdPProvisioning(d *schema.ResourceData) *okta.Provisioning {
 	}
 }
 
-func buildAlgorithms(d *schema.ResourceData) *okta.ProtocolAlgorithms {
-	return &okta.ProtocolAlgorithms{
+func buildAlgorithms(d *schema.ResourceData) *sdk.ProtocolAlgorithms {
+	return &sdk.ProtocolAlgorithms{
 		Request:  buildProtocolAlgorithmType(d, "request"),
 		Response: buildProtocolAlgorithmType(d, "response"),
 	}
 }
 
-func buildProtocolAlgorithmType(d *schema.ResourceData, key string) *okta.ProtocolAlgorithmType {
+func buildProtocolAlgorithmType(d *schema.ResourceData, key string) *sdk.ProtocolAlgorithmType {
 	scopeKey := fmt.Sprintf("%s_signature_scope", key)
 	scope, ok := d.GetOk(scopeKey)
 	if !ok || scope.(string) == "" {
 		return nil
 	}
-	return &okta.ProtocolAlgorithmType{
-		Signature: &okta.ProtocolAlgorithmTypeSignature{
+	return &sdk.ProtocolAlgorithmType{
+		Signature: &sdk.ProtocolAlgorithmTypeSignature{
 			Algorithm: d.Get(fmt.Sprintf("%s_signature_algorithm", key)).(string),
 			Scope:     scope.(string),
 		},
 	}
 }
 
-func buildProtocolEndpoints(d *schema.ResourceData) *okta.ProtocolEndpoints {
-	return &okta.ProtocolEndpoints{
+func buildProtocolEndpoints(d *schema.ResourceData) *sdk.ProtocolEndpoints {
+	return &sdk.ProtocolEndpoints{
 		Authorization: buildProtocolEndpoint(d, "authorization"),
 		Token:         buildProtocolEndpoint(d, "token"),
 		UserInfo:      buildProtocolEndpoint(d, "user_info"),
@@ -317,11 +317,11 @@ func buildProtocolEndpoints(d *schema.ResourceData) *okta.ProtocolEndpoints {
 	}
 }
 
-func buildProtocolEndpoint(d *schema.ResourceData, key string) *okta.ProtocolEndpoint {
+func buildProtocolEndpoint(d *schema.ResourceData, key string) *sdk.ProtocolEndpoint {
 	binding := d.Get(fmt.Sprintf("%s_binding", key)).(string)
 	url := d.Get(fmt.Sprintf("%s_url", key)).(string)
 	if binding != "" && url != "" {
-		return &okta.ProtocolEndpoint{
+		return &sdk.ProtocolEndpoint{
 			Binding: binding,
 			Url:     url,
 		}

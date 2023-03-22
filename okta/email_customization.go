@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 var emailCustomizationsDataSourceSchema = map[string]*schema.Schema{
@@ -102,7 +102,7 @@ var emailCustomizationResourceSchema = map[string]*schema.Schema{
 	},
 }
 
-func flattenEmailCustomization(emailCustomization *okta.EmailTemplateCustomization) map[string]interface{} {
+func flattenEmailCustomization(emailCustomization *sdk.EmailTemplateCustomization) map[string]interface{} {
 	attrs := map[string]interface{}{}
 	attrs["id"] = emailCustomization.Id
 	attrs["language"] = emailCustomization.Language

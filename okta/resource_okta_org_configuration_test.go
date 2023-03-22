@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func TestAccOktaOrgConfiguration(t *testing.T) {
@@ -82,7 +82,7 @@ func teardownResetCompanyName(name *string) resource.TestCheckFunc {
 		if *name == "" {
 			return nil
 		}
-		setting := okta.OrgSetting{
+		setting := sdk.OrgSetting{
 			CompanyName: *name + " ?",
 		}
 		getOktaClientFromMetadata(testAccProvider.Meta()).OrgSetting.PartialUpdateOrgSetting(context.Background(), setting)

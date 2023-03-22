@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 var translationSmsResource = &schema.Resource{
@@ -94,8 +94,8 @@ func resourceTemplateSmsDelete(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func buildSmsTemplate(d *schema.ResourceData) *okta.SmsTemplate {
-	trans := make(okta.SmsTemplateTranslations)
+func buildSmsTemplate(d *schema.ResourceData) *sdk.SmsTemplate {
+	trans := make(sdk.SmsTemplateTranslations)
 	rawTransList := d.Get("translations").(*schema.Set).List()
 
 	for _, val := range rawTransList {
@@ -103,7 +103,7 @@ func buildSmsTemplate(d *schema.ResourceData) *okta.SmsTemplate {
 		trans[rawTrans["language"].(string)] = rawTrans["template"]
 	}
 
-	return &okta.SmsTemplate{
+	return &sdk.SmsTemplate{
 		Name:         "Custom",
 		Type:         d.Get("type").(string),
 		Translations: &trans,
@@ -111,7 +111,7 @@ func buildSmsTemplate(d *schema.ResourceData) *okta.SmsTemplate {
 	}
 }
 
-func flattenSmsTranslations(temp okta.SmsTemplateTranslations) *schema.Set {
+func flattenSmsTranslations(temp sdk.SmsTemplateTranslations) *schema.Set {
 	var rawSet []interface{}
 	for key, val := range map[string]interface{}(temp) {
 		rawSet = append(rawSet, map[string]interface{}{

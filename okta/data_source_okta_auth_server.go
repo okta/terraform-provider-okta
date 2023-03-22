@@ -5,8 +5,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceAuthServer() *schema.Resource {
@@ -64,7 +64,7 @@ func dataSourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m int
 	if err != nil {
 		return diag.Errorf("failed to find auth server '%s': %v", name, err)
 	}
-	var authServer *okta.AuthorizationServer
+	var authServer *sdk.AuthorizationServer
 	for i := range servers {
 		if servers[i].Name == name {
 			authServer = servers[i]

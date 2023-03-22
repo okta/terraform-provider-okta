@@ -8,8 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 const (
@@ -482,7 +482,7 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interf
 }
 
 func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := okta.NewSamlApplication()
+	app := sdk.NewSamlApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get SAML application: %v", err)
@@ -621,9 +621,9 @@ func resourceAppSamlDelete(ctx context.Context, d *schema.ResourceData, m interf
 	return nil
 }
 
-func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
+func buildSamlApp(d *schema.ResourceData) (*sdk.SamlApplication, error) {
 	// Abstracts away name and SignOnMode which are constant for this app type.
-	app := okta.NewSamlApplication()
+	app := sdk.NewSamlApplication()
 	app.SignOnMode = samlVersions[d.Get("saml_version").(string)]
 	app.Label = d.Get("label").(string)
 	responseSigned := d.Get("response_signed").(bool)
@@ -647,7 +647,7 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	}
 
 	honorForce := d.Get("honor_force_authn").(bool)
-	app.Settings = &okta.SamlApplicationSettings{
+	app.Settings = &sdk.SamlApplicationSettings{
 		ImplicitAssignment: boolPtr(d.Get("implicit_assignment").(bool)),
 		Notes:              buildAppNotes(d),
 	}
@@ -656,7 +656,7 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	app.Settings.App = buildAppSettings(d)
 	// Note: You can't currently configure provisioning features via the API. Use the administrator UI.
 	// app.Features = convertInterfaceToStringSet(d.Get("features"))
-	app.Settings.SignOn = &okta.SamlApplicationSettingsSignOn{
+	app.Settings.SignOn = &sdk.SamlApplicationSettingsSignOn{
 		DefaultRelayState:        d.Get("default_relay_state").(string),
 		SsoAcsUrl:                d.Get("sso_url").(string),
 		Recipient:                d.Get("recipient").(string),
@@ -671,21 +671,21 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 		DigestAlgorithm:          d.Get("digest_algorithm").(string),
 		HonorForceAuthn:          &honorForce,
 		AuthnContextClassRef:     d.Get("authn_context_class_ref").(string),
-		Slo:                      &okta.SingleLogout{Enabled: boolPtr(false)},
+		Slo:                      &sdk.SingleLogout{Enabled: boolPtr(false)},
 		SamlSignedRequestEnabled: boolPtr(d.Get("saml_signed_request_enabled").(bool)),
 	}
 	sli := d.Get("single_logout_issuer").(string)
 	if sli != "" {
-		app.Settings.SignOn.Slo = &okta.SingleLogout{
+		app.Settings.SignOn.Slo = &sdk.SingleLogout{
 			Enabled:   boolPtr(true),
 			Issuer:    sli,
 			LogoutUrl: d.Get("single_logout_url").(string),
 		}
-		app.Settings.SignOn.SpCertificate = &okta.SpCertificate{
+		app.Settings.SignOn.SpCertificate = &sdk.SpCertificate{
 			X5c: []string{d.Get("single_logout_certificate").(string)},
 		}
 	}
-	app.Credentials = &okta.ApplicationCredentials{
+	app.Credentials = &sdk.ApplicationCredentials{
 		UserNameTemplate: buildUserNameTemplate(d),
 	}
 
@@ -695,9 +695,9 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 	// If there are acs endpoints, implies this flag should be true.
 	allowMultipleAcsEndpoints := false
 	if len(acsEndpoints) > 0 {
-		acsEndpointsObj := make([]*okta.AcsEndpoint, len(acsEndpoints))
+		acsEndpointsObj := make([]*sdk.AcsEndpoint, len(acsEndpoints))
 		for i := range acsEndpoints {
-			acsEndpointsObj[i] = &okta.AcsEndpoint{
+			acsEndpointsObj[i] = &sdk.AcsEndpoint{
 				IndexPtr: int64Ptr(i),
 				Url:      acsEndpoints[i],
 			}
@@ -709,9 +709,9 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 
 	statements := d.Get("attribute_statements").([]interface{})
 	if len(statements) > 0 {
-		samlAttr := make([]*okta.SamlAttributeStatement, len(statements))
+		samlAttr := make([]*sdk.SamlAttributeStatement, len(statements))
 		for i := range statements {
-			samlAttr[i] = &okta.SamlAttributeStatement{
+			samlAttr[i] = &sdk.SamlAttributeStatement{
 				FilterType:  d.Get(fmt.Sprintf("attribute_statements.%d.filter_type", i)).(string),
 				FilterValue: d.Get(fmt.Sprintf("attribute_statements.%d.filter_value", i)).(string),
 				Name:        d.Get(fmt.Sprintf("attribute_statements.%d.name", i)).(string),
@@ -722,24 +722,24 @@ func buildSamlApp(d *schema.ResourceData) (*okta.SamlApplication, error) {
 		}
 		app.Settings.SignOn.AttributeStatements = samlAttr
 	} else {
-		app.Settings.SignOn.AttributeStatements = []*okta.SamlAttributeStatement{}
+		app.Settings.SignOn.AttributeStatements = []*sdk.SamlAttributeStatement{}
 	}
 
 	if id, ok := d.GetOk("key_id"); ok {
-		app.Credentials.Signing = &okta.ApplicationCredentialsSigning{
+		app.Credentials.Signing = &sdk.ApplicationCredentialsSigning{
 			Kid: id.(string),
 		}
 	}
 
 	if id, ok := d.GetOk("inline_hook_id"); ok {
-		app.Settings.SignOn.InlineHooks = []*okta.SignOnInlineHook{{Id: id.(string)}}
+		app.Settings.SignOn.InlineHooks = []*sdk.SignOnInlineHook{{Id: id.(string)}}
 	}
 
 	return app, nil
 }
 
 // Keep in mind that at the time of writing this the official SDK did not support generating certs.
-func generateCertificate(ctx context.Context, d *schema.ResourceData, m interface{}, appID string) (*okta.JsonWebKey, error) {
+func generateCertificate(ctx context.Context, d *schema.ResourceData, m interface{}, appID string) (*sdk.JsonWebKey, error) {
 	requestExecutor := getRequestExecutor(m)
 	years := d.Get("key_years_valid").(int)
 	url := fmt.Sprintf("/api/v1/apps/%s/credentials/keys/generate?validityYears=%d", appID, years)
@@ -748,7 +748,7 @@ func generateCertificate(ctx context.Context, d *schema.ResourceData, m interfac
 		return nil, err
 	}
 	req = req.WithContext(ctx)
-	var key *okta.JsonWebKey
+	var key *sdk.JsonWebKey
 	_, err = requestExecutor.Do(ctx, req, &key)
 	return key, err
 }

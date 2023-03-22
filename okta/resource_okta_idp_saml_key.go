@@ -3,11 +3,10 @@ package okta
 import (
 	"context"
 
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceIdpSigningKey() *schema.Resource {
@@ -55,7 +54,7 @@ func resourceIdpSigningKey() *schema.Resource {
 }
 
 func resourceIdpSigningKeyCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	cert := okta.JsonWebKey{
+	cert := sdk.JsonWebKey{
 		X5c: convertInterfaceToStringSet(d.Get("x5c")),
 	}
 	key, _, err := getOktaClientFromMetadata(m).IdentityProvider.CreateIdentityProviderKey(ctx, cert)
@@ -91,7 +90,7 @@ func resourceIdpSigningKeyRead(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceIdpSigningKeyUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	cert := okta.JsonWebKey{
+	cert := sdk.JsonWebKey{
 		X5c: convertInterfaceToStringSet(d.Get("x5c")),
 	}
 	client := getOktaClientFromMetadata(m)

@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 type (
@@ -26,7 +25,7 @@ type (
 	}
 )
 
-func (m *APISupplement) CreateEmailTemplate(ctx context.Context, body SdkEmailTemplate, qp *query.Params) (*SdkEmailTemplate, *okta.Response, error) {
+func (m *APISupplement) CreateEmailTemplate(ctx context.Context, body SdkEmailTemplate, qp *query.Params) (*SdkEmailTemplate, *Response, error) {
 	url := "/api/v1/templates/emails"
 	if qp != nil {
 		url += qp.String()
@@ -44,7 +43,7 @@ func (m *APISupplement) CreateEmailTemplate(ctx context.Context, body SdkEmailTe
 	return temp, resp, err
 }
 
-func (m *APISupplement) UpdateEmailTemplate(ctx context.Context, id string, body SdkEmailTemplate, qp *query.Params) (*SdkEmailTemplate, *okta.Response, error) {
+func (m *APISupplement) UpdateEmailTemplate(ctx context.Context, id string, body SdkEmailTemplate, qp *query.Params) (*SdkEmailTemplate, *Response, error) {
 	url := fmt.Sprintf("/api/v1/templates/emails/%s", id)
 	if qp != nil {
 		url += qp.String()
@@ -62,7 +61,7 @@ func (m *APISupplement) UpdateEmailTemplate(ctx context.Context, id string, body
 	return temp, resp, err
 }
 
-func (m *APISupplement) GetEmailTemplate(ctx context.Context, id string) (*SdkEmailTemplate, *okta.Response, error) {
+func (m *APISupplement) GetEmailTemplate(ctx context.Context, id string) (*SdkEmailTemplate, *Response, error) {
 	url := fmt.Sprintf("/api/v1/templates/emails/%s", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -76,7 +75,7 @@ func (m *APISupplement) GetEmailTemplate(ctx context.Context, id string) (*SdkEm
 	return temp, resp, err
 }
 
-func (m *APISupplement) DeleteEmailTemplate(ctx context.Context, id string) (*okta.Response, error) {
+func (m *APISupplement) DeleteEmailTemplate(ctx context.Context, id string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/templates/emails/%s", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {

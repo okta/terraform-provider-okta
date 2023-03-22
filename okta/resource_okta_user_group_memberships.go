@@ -8,7 +8,7 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceUserGroupMemberships() *schema.Resource {
@@ -114,7 +114,7 @@ func resourceUserGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func checkIfUserHasGroups(ctx context.Context, client *okta.Client, userId string, groups []string) (bool, error) {
+func checkIfUserHasGroups(ctx context.Context, client *sdk.Client, userId string, groups []string) (bool, error) {
 	userGroups, resp, err := client.User.ListUserGroups(ctx, userId)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, fmt.Errorf("unable to return groups for user (%s) from API", userId)

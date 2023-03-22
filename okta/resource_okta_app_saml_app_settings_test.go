@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func TestAccAppSamlAppSettings_crud(t *testing.T) {
@@ -24,7 +24,7 @@ func TestAccAppSamlAppSettings_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: preconfigured,
@@ -53,12 +53,12 @@ func checkAppSamlAppSettingsExists(name string) resource.TestCheckFunc {
 		}
 		appID := rs.Primary.Attributes["app_id"]
 		client := getOktaClientFromMetadata(testAccProvider.Meta())
-		app := okta.NewSamlApplication()
+		app := sdk.NewSamlApplication()
 		_, _, err := client.Application.GetApplication(context.Background(), appID, app, nil)
 		if err != nil {
 			return err
 		}
-		settings := make(okta.ApplicationSettingsApplication)
+		settings := make(sdk.ApplicationSettingsApplication)
 		_ = json.Unmarshal([]byte(rs.Primary.Attributes["settings"]), &settings)
 		for k, v := range *app.Settings.App {
 			if v == nil {

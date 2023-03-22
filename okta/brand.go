@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 var brandResourceSchema = map[string]*schema.Schema{
@@ -78,7 +78,7 @@ var brandsDataSourceSchema = map[string]*schema.Schema{
 	},
 }
 
-func flattenBrand(brand *okta.Brand) map[string]interface{} {
+func flattenBrand(brand *sdk.Brand) map[string]interface{} {
 	attrs := map[string]interface{}{}
 
 	attrs["id"] = brand.Id

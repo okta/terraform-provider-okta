@@ -10,8 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceGroupRole() *schema.Resource {
@@ -92,7 +92,7 @@ func resourceGroupRoleCreate(ctx context.Context, d *schema.ResourceData, m inte
 	roleType := d.Get("role_type").(string)
 	client := getOktaClientFromMetadata(m)
 	logger(m).Info("assigning role to group", "group_id", groupID, "role_type", roleType)
-	role, _, err := client.Group.AssignRoleToGroup(ctx, groupID, okta.AssignRoleRequest{Type: roleType},
+	role, _, err := client.Group.AssignRoleToGroup(ctx, groupID, sdk.AssignRoleRequest{Type: roleType},
 		&query.Params{DisableNotifications: boolPtr(d.Get("disable_notifications").(bool))})
 	if err != nil {
 		return diag.Errorf("failed to assign role %s to group %s: %v", roleType, groupID, err)
@@ -173,7 +173,7 @@ func resourceGroupRoleUpdate(ctx context.Context, d *schema.ResourceData, m inte
 	roleType := d.Get("role_type").(string)
 	client := getOktaClientFromMetadata(m)
 	if d.HasChange("disable_notifications") {
-		_, _, err := client.Group.AssignRoleToGroup(ctx, groupID, okta.AssignRoleRequest{},
+		_, _, err := client.Group.AssignRoleToGroup(ctx, groupID, sdk.AssignRoleRequest{},
 			&query.Params{DisableNotifications: boolPtr(d.Get("disable_notifications").(bool))})
 		if err != nil {
 			return diag.Errorf("failed to update group's '%s' notification settings: %v", groupID, err)
@@ -236,7 +236,7 @@ func listGroupTargetsIDs(ctx context.Context, m interface{}, groupID, roleID str
 		resIDs = append(resIDs, target.Id)
 	}
 	for resp.HasNextPage() {
-		var additionalTargets []*okta.Group
+		var additionalTargets []*sdk.Group
 		resp, err = resp.Next(ctx, &additionalTargets)
 		if err != nil {
 			return nil, err
@@ -259,7 +259,7 @@ func listGroupAppsTargets(ctx context.Context, d *schema.ResourceData, m interfa
 	for {
 		for _, app := range apps {
 			if app.Id != "" {
-				a := okta.NewApplication()
+				a := sdk.NewApplication()
 				_, resp, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, app.Id, a, nil)
 				if err := suppressErrorOn404(resp, err); err != nil {
 					return nil, err
@@ -285,7 +285,7 @@ func listGroupAppsTargets(ctx context.Context, d *schema.ResourceData, m interfa
 	return resApps, nil
 }
 
-func addGroupTargetsToRole(ctx context.Context, client *okta.Client, groupID, roleID string, groupTargets []string) error {
+func addGroupTargetsToRole(ctx context.Context, client *sdk.Client, groupID, roleID string, groupTargets []string) error {
 	for i := range groupTargets {
 		_, err := client.Group.AddGroupTargetToGroupAdministratorRoleForGroup(ctx, groupID, roleID, groupTargets[i])
 		if err != nil {
@@ -295,7 +295,7 @@ func addGroupTargetsToRole(ctx context.Context, client *okta.Client, groupID, ro
 	return nil
 }
 
-func removeGroupTargetsFromRole(ctx context.Context, client *okta.Client, groupID, roleID string, groupTargets []string) error {
+func removeGroupTargetsFromRole(ctx context.Context, client *sdk.Client, groupID, roleID string, groupTargets []string) error {
 	for i := range groupTargets {
 		resp, err := client.Group.RemoveGroupTargetFromGroupAdministratorRoleGivenToGroup(ctx, groupID, roleID, groupTargets[i])
 		err = suppressErrorOn404(resp, err)
@@ -306,7 +306,7 @@ func removeGroupTargetsFromRole(ctx context.Context, client *okta.Client, groupI
 	return nil
 }
 
-func addGroupAppTargetsToRole(ctx context.Context, client *okta.Client, groupID, roleID string, apps []string) error {
+func addGroupAppTargetsToRole(ctx context.Context, client *sdk.Client, groupID, roleID string, apps []string) error {
 	for i := range apps {
 		app := strings.Split(apps[i], ".")
 		if len(app) == 1 {
@@ -326,7 +326,7 @@ func addGroupAppTargetsToRole(ctx context.Context, client *okta.Client, groupID,
 	return nil
 }
 
-func removeGroupAppTargets(ctx context.Context, client *okta.Client, groupID, roleID string, apps []string) error {
+func removeGroupAppTargets(ctx context.Context, client *sdk.Client, groupID, roleID string, apps []string) error {
 	for i := range apps {
 		app := strings.Split(apps[i], ".")
 		if len(app) == 1 {
@@ -348,7 +348,7 @@ func removeGroupAppTargets(ctx context.Context, client *okta.Client, groupID, ro
 	return nil
 }
 
-func findRole(ctx context.Context, d *schema.ResourceData, m interface{}) (*okta.Role, error) {
+func findRole(ctx context.Context, d *schema.ResourceData, m interface{}) (*sdk.Role, error) {
 	rt := d.Get("role_type").(string)
 	if rt == "" {
 		return nil, nil

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 type AuthorizationServerResource resource

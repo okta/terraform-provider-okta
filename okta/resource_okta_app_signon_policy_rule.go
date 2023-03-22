@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAppSignOnPolicyRule() *schema.Resource {
@@ -311,12 +311,12 @@ func resourceAppSignOnPolicyRuleDelete(ctx context.Context, d *schema.ResourceDa
 	return nil
 }
 
-func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
-	rule := okta.AccessPolicyRule{
-		Actions: &okta.AccessPolicyRuleActions{
-			AppSignOn: &okta.AccessPolicyRuleApplicationSignOn{
+func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
+	rule := sdk.AccessPolicyRule{
+		Actions: &sdk.AccessPolicyRuleActions{
+			AppSignOn: &sdk.AccessPolicyRuleApplicationSignOn{
 				Access: d.Get("access").(string),
-				VerificationMethod: &okta.VerificationMethod{
+				VerificationMethod: &sdk.VerificationMethod{
 					FactorMode:       d.Get("factor_mode").(string),
 					ReauthenticateIn: d.Get("re_authentication_frequency").(string),
 					InactivityPeriod: d.Get("inactivity_period").(string),
@@ -328,12 +328,12 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 		PriorityPtr: int64Ptr(d.Get("priority").(int)),
 		Type:        "ACCESS_POLICY",
 	}
-	var constraints []*okta.AccessPolicyConstraints
+	var constraints []*sdk.AccessPolicyConstraints
 	v, ok := d.GetOk("constraints")
 	if ok {
 		valueList := v.([]interface{})
 		for _, item := range valueList {
-			var constraint okta.AccessPolicyConstraints
+			var constraint sdk.AccessPolicyConstraints
 			_ = json.Unmarshal([]byte(item.(string)), &constraint)
 			constraints = append(constraints, &constraint)
 		}
@@ -343,18 +343,18 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 	if d.Get("name") == "Catch-all Rule" {
 		return rule
 	}
-	rule.Conditions = &okta.AccessPolicyRuleConditions{
+	rule.Conditions = &sdk.AccessPolicyRuleConditions{
 		Network: buildPolicyNetworkCondition(d),
-		Platform: &okta.PlatformPolicyRuleCondition{
+		Platform: &sdk.PlatformPolicyRuleCondition{
 			Include: buildAccessPolicyPlatformInclude(d),
 		},
-		ElCondition: &okta.AccessPolicyRuleCustomCondition{
+		ElCondition: &sdk.AccessPolicyRuleCustomCondition{
 			Condition: d.Get("custom_expression").(string),
 		},
 	}
 	isRegistered, ok := d.GetOk("device_is_registered")
 	if ok && isRegistered.(bool) {
-		rule.Conditions.Device = &okta.DeviceAccessPolicyRuleCondition{
+		rule.Conditions.Device = &sdk.DeviceAccessPolicyRuleCondition{
 			Managed:    boolPtr(d.Get("device_is_managed").(bool)),
 			Registered: boolPtr(isRegistered.(bool)),
 		}
@@ -362,8 +362,8 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 	usersExcluded, usersExcludedOk := d.GetOk("users_excluded")
 	usersIncluded, usersIncludedOk := d.GetOk("users_included")
 	if usersExcludedOk || usersIncludedOk {
-		rule.Conditions.People = &okta.PolicyPeopleCondition{
-			Users: &okta.UserCondition{
+		rule.Conditions.People = &sdk.PolicyPeopleCondition{
+			Users: &sdk.UserCondition{
 				Exclude: convertInterfaceToStringSetNullable(usersExcluded),
 				Include: convertInterfaceToStringSetNullable(usersIncluded),
 			},
@@ -373,9 +373,9 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 	groupsIncluded, groupsIncludedOk := d.GetOk("groups_included")
 	if groupsExcludedOk || groupsIncludedOk {
 		if rule.Conditions.People == nil {
-			rule.Conditions.People = &okta.PolicyPeopleCondition{}
+			rule.Conditions.People = &sdk.PolicyPeopleCondition{}
 		}
-		rule.Conditions.People.Groups = &okta.GroupCondition{
+		rule.Conditions.People.Groups = &sdk.GroupCondition{
 			Exclude: convertInterfaceToStringSetNullable(groupsExcluded),
 			Include: convertInterfaceToStringSetNullable(groupsIncluded),
 		}
@@ -383,7 +383,7 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 	userTypesExcluded, userTypesExcludedOk := d.GetOk("user_types_excluded")
 	userTypesIncluded, userTypesIncludedOk := d.GetOk("user_types_included")
 	if userTypesExcludedOk || userTypesIncludedOk {
-		rule.Conditions.UserType = &okta.UserTypeCondition{
+		rule.Conditions.UserType = &sdk.UserTypeCondition{
 			Exclude: convertInterfaceToStringSetNullable(userTypesExcluded),
 			Include: convertInterfaceToStringSetNullable(userTypesIncluded),
 		}
@@ -391,8 +391,8 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 	return rule
 }
 
-func buildAccessPolicyPlatformInclude(d *schema.ResourceData) []*okta.PlatformConditionEvaluatorPlatform {
-	var includeList []*okta.PlatformConditionEvaluatorPlatform
+func buildAccessPolicyPlatformInclude(d *schema.ResourceData) []*sdk.PlatformConditionEvaluatorPlatform {
+	var includeList []*sdk.PlatformConditionEvaluatorPlatform
 	v, ok := d.GetOk("platform_include")
 	if !ok {
 		return includeList
@@ -406,8 +406,8 @@ func buildAccessPolicyPlatformInclude(d *schema.ResourceData) []*okta.PlatformCo
 					expr = v
 				}
 			}
-			includeList = append(includeList, &okta.PlatformConditionEvaluatorPlatform{
-				Os: &okta.PlatformConditionEvaluatorPlatformOperatingSystem{
+			includeList = append(includeList, &sdk.PlatformConditionEvaluatorPlatform{
+				Os: &sdk.PlatformConditionEvaluatorPlatformOperatingSystem{
 					Expression: expr,
 					Type:       getMapString(value, "os_type"),
 				},
@@ -418,7 +418,7 @@ func buildAccessPolicyPlatformInclude(d *schema.ResourceData) []*okta.PlatformCo
 	return includeList
 }
 
-func flattenAccessPolicyPlatformInclude(platform *okta.PlatformPolicyRuleCondition) *schema.Set {
+func flattenAccessPolicyPlatformInclude(platform *sdk.PlatformPolicyRuleCondition) *schema.Set {
 	var flattened []interface{}
 	if platform != nil && platform.Include != nil {
 		for _, v := range platform.Include {

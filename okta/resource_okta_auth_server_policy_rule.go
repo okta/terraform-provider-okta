@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAuthServerPolicyRule() *schema.Resource {
@@ -226,36 +226,36 @@ func resourceAuthServerPolicyRuleDelete(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func buildAuthServerPolicyRule(d *schema.ResourceData) okta.AuthorizationServerPolicyRule {
-	var hook *okta.TokenAuthorizationServerPolicyRuleActionInlineHook
+func buildAuthServerPolicyRule(d *schema.ResourceData) sdk.AuthorizationServerPolicyRule {
+	var hook *sdk.TokenAuthorizationServerPolicyRuleActionInlineHook
 	inlineHook := d.Get("inline_hook_id").(string)
 	if inlineHook != "" {
-		hook = &okta.TokenAuthorizationServerPolicyRuleActionInlineHook{
+		hook = &sdk.TokenAuthorizationServerPolicyRuleActionInlineHook{
 			Id: inlineHook,
 		}
 	}
-	return okta.AuthorizationServerPolicyRule{
+	return sdk.AuthorizationServerPolicyRule{
 		Name:        d.Get("name").(string),
 		Status:      d.Get("status").(string),
 		PriorityPtr: int64Ptr(d.Get("priority").(int)),
 		Type:        d.Get("type").(string),
-		Actions: &okta.AuthorizationServerPolicyRuleActions{
-			Token: &okta.TokenAuthorizationServerPolicyRuleAction{
+		Actions: &sdk.AuthorizationServerPolicyRuleActions{
+			Token: &sdk.TokenAuthorizationServerPolicyRuleAction{
 				AccessTokenLifetimeMinutesPtr:  int64Ptr(d.Get("access_token_lifetime_minutes").(int)),
 				RefreshTokenLifetimeMinutesPtr: int64Ptr(d.Get("refresh_token_lifetime_minutes").(int)),
 				RefreshTokenWindowMinutesPtr:   int64Ptr(d.Get("refresh_token_window_minutes").(int)),
 				InlineHook:                     hook,
 			},
 		},
-		Conditions: &okta.AuthorizationServerPolicyRuleConditions{
-			GrantTypes: &okta.GrantTypePolicyRuleCondition{Include: convertInterfaceToStringSet(d.Get("grant_type_whitelist"))},
-			Scopes:     &okta.OAuth2ScopesMediationPolicyRuleCondition{Include: convertInterfaceToStringSet(d.Get("scope_whitelist"))},
-			People: &okta.PolicyPeopleCondition{
-				Groups: &okta.GroupCondition{
+		Conditions: &sdk.AuthorizationServerPolicyRuleConditions{
+			GrantTypes: &sdk.GrantTypePolicyRuleCondition{Include: convertInterfaceToStringSet(d.Get("grant_type_whitelist"))},
+			Scopes:     &sdk.OAuth2ScopesMediationPolicyRuleCondition{Include: convertInterfaceToStringSet(d.Get("scope_whitelist"))},
+			People: &sdk.PolicyPeopleCondition{
+				Groups: &sdk.GroupCondition{
 					Include: convertInterfaceToStringSet(d.Get("group_whitelist")),
 					Exclude: convertInterfaceToStringSet(d.Get("group_blacklist")),
 				},
-				Users: &okta.UserCondition{
+				Users: &sdk.UserCondition{
 					Include: convertInterfaceToStringSet(d.Get("user_whitelist")),
 					Exclude: convertInterfaceToStringSet(d.Get("user_blacklist")),
 				},
@@ -264,7 +264,7 @@ func buildAuthServerPolicyRule(d *schema.ResourceData) okta.AuthorizationServerP
 	}
 }
 
-func setPeopleAssignments(d *schema.ResourceData, c *okta.PolicyPeopleCondition) error {
+func setPeopleAssignments(d *schema.ResourceData, c *sdk.PolicyPeopleCondition) error {
 	if c.Groups != nil {
 		err := setNonPrimitives(d, map[string]interface{}{
 			"group_whitelist": convertStringSliceToSet(c.Groups.Include),

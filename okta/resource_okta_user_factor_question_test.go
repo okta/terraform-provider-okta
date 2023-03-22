@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
@@ -65,7 +65,7 @@ func createUserFactorCheckDestroy(factorType string) func(*terraform.State) erro
 }
 
 func doesUserFactorExistsUpstream(userId, factorId string) (bool, error) {
-	var uf *okta.SecurityQuestionUserFactor
+	var uf *sdk.SecurityQuestionUserFactor
 	_, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).UserFactor.GetFactor(context.Background(), userId, factorId, uf)
 	return doesResourceExist(resp, err)
 }

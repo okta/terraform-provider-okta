@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func dataSourceEmailTemplate() *schema.Resource {
@@ -26,7 +26,7 @@ func dataSourceEmailTemplate() *schema.Resource {
 }
 
 func dataSourceEmailTemplateRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var brand *okta.Brand
+	var brand *sdk.Brand
 	var err error
 	brandID, ok := d.GetOk("brand_id")
 	if ok {

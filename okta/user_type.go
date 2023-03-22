@@ -6,10 +6,10 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func getUserTypeSchemaID(ctx context.Context, client *okta.Client, id string) (string, error) {
+func getUserTypeSchemaID(ctx context.Context, client *sdk.Client, id string) (string, error) {
 	if id == "default" {
 		return "default", nil
 	}
@@ -20,7 +20,7 @@ func getUserTypeSchemaID(ctx context.Context, client *okta.Client, id string) (s
 	return userTypeSchemaID(ut), nil
 }
 
-func userTypeSchemaID(ut *okta.UserType) string {
+func userTypeSchemaID(ut *sdk.UserType) string {
 	fm, ok := ut.Links.(map[string]interface{})
 	if ok {
 		sm, ok := fm["schema"].(map[string]interface{})

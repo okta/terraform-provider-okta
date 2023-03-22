@@ -11,7 +11,7 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceUserCustomSchemaProperty() *schema.Resource {
@@ -145,12 +145,12 @@ func resourceUserSchemaRead(ctx context.Context, d *schema.ResourceData, m inter
 	return nil
 }
 
-func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index string, schema *okta.UserSchema, isDeleteOperation bool) (*okta.UserSchemaAttribute, error) {
+func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index string, schema *sdk.UserSchema, isDeleteOperation bool) (*sdk.UserSchemaAttribute, error) {
 	typeSchemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(m), userType)
 	if err != nil {
 		return nil, err
 	}
-	var schemaAttribute *okta.UserSchemaAttribute
+	var schemaAttribute *sdk.UserSchemaAttribute
 
 	bOff := backoff.NewExponentialBackOff()
 	bOff.MaxElapsedTime = time.Second * 120

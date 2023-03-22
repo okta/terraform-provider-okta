@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAuthServerClaimDefault() *schema.Resource {
@@ -150,19 +150,19 @@ func resourceAuthServerClaimDefaultUpdate(ctx context.Context, d *schema.Resourc
 	return resourceAuthServerClaimDefaultRead(ctx, d, m)
 }
 
-func buildAuthServerClaimDefault(d *schema.ResourceData) okta.OAuth2Claim {
-	return okta.OAuth2Claim{
+func buildAuthServerClaimDefault(d *schema.ResourceData) sdk.OAuth2Claim {
+	return sdk.OAuth2Claim{
 		Status:               d.Get("status").(string),
 		ClaimType:            d.Get("claim_type").(string),
 		ValueType:            d.Get("value_type").(string),
 		Value:                d.Get("value").(string),
 		AlwaysIncludeInToken: boolPtr(d.Get("always_include_in_token").(bool)),
 		Name:                 d.Get("name").(string),
-		Conditions:           &okta.OAuth2ClaimConditions{Scopes: convertInterfaceToStringSetNullable(d.Get("scopes"))},
+		Conditions:           &sdk.OAuth2ClaimConditions{Scopes: convertInterfaceToStringSetNullable(d.Get("scopes"))},
 	}
 }
 
-func findClaim(ctx context.Context, m interface{}, serverID, name string) (*okta.OAuth2Claim, error) {
+func findClaim(ctx context.Context, m interface{}, serverID, name string) (*sdk.OAuth2Claim, error) {
 	claims, resp, err := getOktaClientFromMetadata(m).AuthorizationServer.ListOAuth2Claims(ctx, serverID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list auth server claims: %v", err)
