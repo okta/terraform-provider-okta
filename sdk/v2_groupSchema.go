@@ -2,7 +2,6 @@ package sdk
 
 import (
 	"context"
-	"fmt"
 )
 
 type GroupSchemaResource resource
@@ -23,7 +22,7 @@ type GroupSchema struct {
 
 // Fetches the group schema
 func (m *GroupSchemaResource) GetGroupSchema(ctx context.Context) (*GroupSchema, *Response, error) {
-	url := fmt.Sprintf("/api/v1/meta/schemas/group/default")
+	url := "/api/v1/meta/schemas/group/default"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -44,7 +43,7 @@ func (m *GroupSchemaResource) GetGroupSchema(ctx context.Context) (*GroupSchema,
 
 // Updates, adds ore removes one or more custom Group Profile properties in the schema
 func (m *GroupSchemaResource) UpdateGroupSchema(ctx context.Context, body GroupSchema) (*GroupSchema, *Response, error) {
-	url := fmt.Sprintf("/api/v1/meta/schemas/group/default")
+	url := "/api/v1/meta/schemas/group/default"
 
 	rq := m.client.CloneRequestExecutor()
 

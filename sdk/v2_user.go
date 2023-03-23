@@ -29,7 +29,7 @@ type User struct {
 
 // Creates a new user in your Okta organization with or without credentials.
 func (m *UserResource) CreateUser(ctx context.Context, body CreateUserRequest, qp *query.Params) (*User, *Response, error) {
-	url := fmt.Sprintf("/api/v1/users")
+	url := "/api/v1/users"
 	if qp != nil {
 		url = url + qp.String()
 	}
@@ -120,7 +120,7 @@ func (m *UserResource) DeactivateOrDeleteUser(ctx context.Context, userId string
 
 // Lists users that do not have a status of &#x27;DEPROVISIONED&#x27; (by default), up to the maximum (200 for most orgs), with pagination in most cases. A subset of users can be returned that match a supported filter expression or search criteria.
 func (m *UserResource) ListUsers(ctx context.Context, qp *query.Params) ([]*User, *Response, error) {
-	url := fmt.Sprintf("/api/v1/users")
+	url := "/api/v1/users"
 	if qp != nil {
 		url = url + qp.String()
 	}

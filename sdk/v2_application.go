@@ -111,7 +111,7 @@ func (m *ApplicationResource) DeleteApplication(ctx context.Context, appId strin
 
 // Enumerates apps added to your organization with pagination. A subset of apps can be returned that match a supported filter expression or query.
 func (m *ApplicationResource) ListApplications(ctx context.Context, qp *query.Params) ([]App, *Response, error) {
-	url := fmt.Sprintf("/api/v1/apps")
+	url := "/api/v1/apps"
 	if qp != nil {
 		url = url + qp.String()
 	}
@@ -139,7 +139,7 @@ func (m *ApplicationResource) ListApplications(ctx context.Context, qp *query.Pa
 
 // Adds a new application to your Okta organization.
 func (m *ApplicationResource) CreateApplication(ctx context.Context, body App, qp *query.Params) (App, *Response, error) {
-	url := fmt.Sprintf("/api/v1/apps")
+	url := "/api/v1/apps"
 	if qp != nil {
 		url = url + qp.String()
 	}

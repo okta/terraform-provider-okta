@@ -22,7 +22,7 @@ type EventHook struct {
 }
 
 func (m *EventHookResource) CreateEventHook(ctx context.Context, body EventHook) (*EventHook, *Response, error) {
-	url := fmt.Sprintf("/api/v1/eventHooks")
+	url := "/api/v1/eventHooks"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -100,7 +100,7 @@ func (m *EventHookResource) DeleteEventHook(ctx context.Context, eventHookId str
 }
 
 func (m *EventHookResource) ListEventHooks(ctx context.Context) ([]*EventHook, *Response, error) {
-	url := fmt.Sprintf("/api/v1/eventHooks")
+	url := "/api/v1/eventHooks"
 
 	rq := m.client.CloneRequestExecutor()
 

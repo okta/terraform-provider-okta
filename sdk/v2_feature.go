@@ -40,7 +40,7 @@ func (m *FeatureResource) GetFeature(ctx context.Context, featureId string) (*Fe
 }
 
 func (m *FeatureResource) ListFeatures(ctx context.Context) ([]*Feature, *Response, error) {
-	url := fmt.Sprintf("/api/v1/features")
+	url := "/api/v1/features"
 
 	rq := m.client.CloneRequestExecutor()
 

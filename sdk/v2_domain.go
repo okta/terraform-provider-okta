@@ -18,7 +18,7 @@ type Domain struct {
 
 // List all verified custom Domains for the org.
 func (m *DomainResource) ListDomains(ctx context.Context) (*DomainListResponse, *Response, error) {
-	url := fmt.Sprintf("/api/v1/domains")
+	url := "/api/v1/domains"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -39,7 +39,7 @@ func (m *DomainResource) ListDomains(ctx context.Context) (*DomainListResponse, 
 
 // Creates your domain.
 func (m *DomainResource) CreateDomain(ctx context.Context, body Domain) (*Domain, *Response, error) {
-	url := fmt.Sprintf("/api/v1/domains")
+	url := "/api/v1/domains"
 
 	rq := m.client.CloneRequestExecutor()
 

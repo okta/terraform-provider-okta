@@ -3,7 +3,7 @@ package sdk
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"os/user"
 	"path"
 	"path/filepath"
@@ -176,7 +176,7 @@ func setConfigDefaults(c *config) {
 }
 
 func readConfigFromFile(location string, c config) (*config, error) {
-	yamlConfig, err := ioutil.ReadFile(location)
+	yamlConfig, err := os.ReadFile(location)
 	if err != nil {
 		return nil, err
 	}

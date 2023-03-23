@@ -2,7 +2,6 @@ package sdk
 
 import (
 	"errors"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -190,7 +189,7 @@ func WithScopes(scopes []string) ConfigSetter {
 func WithPrivateKey(privateKey string) ConfigSetter {
 	return func(c *config) {
 		if fileExists(privateKey) {
-			content, err := ioutil.ReadFile(privateKey)
+			content, err := os.ReadFile(privateKey)
 			if err != nil {
 				log.Fatalf("failed to read from provided private key file path: %v", err)
 			}

@@ -61,7 +61,7 @@ func (m *ProfileMappingResource) UpdateProfileMapping(ctx context.Context, mappi
 
 // Enumerates Profile Mappings in your organization with pagination.
 func (m *ProfileMappingResource) ListProfileMappings(ctx context.Context, qp *query.Params) ([]*ProfileMapping, *Response, error) {
-	url := fmt.Sprintf("/api/v1/mappings")
+	url := "/api/v1/mappings"
 	if qp != nil {
 		url = url + qp.String()
 	}

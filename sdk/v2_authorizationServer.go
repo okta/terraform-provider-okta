@@ -26,7 +26,7 @@ type AuthorizationServer struct {
 }
 
 func (m *AuthorizationServerResource) CreateAuthorizationServer(ctx context.Context, body AuthorizationServer) (*AuthorizationServer, *Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers")
+	url := "/api/v1/authorizationServers"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -104,7 +104,7 @@ func (m *AuthorizationServerResource) DeleteAuthorizationServer(ctx context.Cont
 }
 
 func (m *AuthorizationServerResource) ListAuthorizationServers(ctx context.Context, qp *query.Params) ([]*AuthorizationServer, *Response, error) {
-	url := fmt.Sprintf("/api/v1/authorizationServers")
+	url := "/api/v1/authorizationServers"
 	if qp != nil {
 		url = url + qp.String()
 	}

@@ -64,7 +64,7 @@ func (m *GroupResource) DeleteGroup(ctx context.Context, groupId string) (*Respo
 
 // Enumerates groups in your organization with pagination. A subset of groups can be returned that match a supported filter expression or query.
 func (m *GroupResource) ListGroups(ctx context.Context, qp *query.Params) ([]*Group, *Response, error) {
-	url := fmt.Sprintf("/api/v1/groups")
+	url := "/api/v1/groups"
 	if qp != nil {
 		url = url + qp.String()
 	}
@@ -88,7 +88,7 @@ func (m *GroupResource) ListGroups(ctx context.Context, qp *query.Params) ([]*Gr
 
 // Adds a new group with &#x60;OKTA_GROUP&#x60; type to your organization.
 func (m *GroupResource) CreateGroup(ctx context.Context, body Group) (*Group, *Response, error) {
-	url := fmt.Sprintf("/api/v1/groups")
+	url := "/api/v1/groups"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -109,7 +109,7 @@ func (m *GroupResource) CreateGroup(ctx context.Context, body Group) (*Group, *R
 
 // Lists all group rules for your organization.
 func (m *GroupResource) ListGroupRules(ctx context.Context, qp *query.Params) ([]*GroupRule, *Response, error) {
-	url := fmt.Sprintf("/api/v1/groups/rules")
+	url := "/api/v1/groups/rules"
 	if qp != nil {
 		url = url + qp.String()
 	}
@@ -133,7 +133,7 @@ func (m *GroupResource) ListGroupRules(ctx context.Context, qp *query.Params) ([
 
 // Creates a group rule to dynamically add users to the specified group if they match the condition
 func (m *GroupResource) CreateGroupRule(ctx context.Context, body GroupRule) (*GroupRule, *Response, error) {
-	url := fmt.Sprintf("/api/v1/groups/rules")
+	url := "/api/v1/groups/rules"
 
 	rq := m.client.CloneRequestExecutor()
 

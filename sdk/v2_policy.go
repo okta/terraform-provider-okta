@@ -105,7 +105,7 @@ func (m *PolicyResource) DeletePolicy(ctx context.Context, policyId string) (*Re
 
 // Gets all policies with the specified type.
 func (m *PolicyResource) ListPolicies(ctx context.Context, qp *query.Params) ([]Policies, *Response, error) {
-	url := fmt.Sprintf("/api/v1/policies")
+	url := "/api/v1/policies"
 	if qp != nil {
 		url = url + qp.String()
 	}
@@ -133,7 +133,7 @@ func (m *PolicyResource) ListPolicies(ctx context.Context, qp *query.Params) ([]
 
 // Creates a policy.
 func (m *PolicyResource) CreatePolicy(ctx context.Context, body Policies, qp *query.Params) (Policies, *Response, error) {
-	url := fmt.Sprintf("/api/v1/policies")
+	url := "/api/v1/policies"
 	if qp != nil {
 		url = url + qp.String()
 	}

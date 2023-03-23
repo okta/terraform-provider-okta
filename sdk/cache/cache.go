@@ -1,8 +1,7 @@
 package cache
 
 import (
-	"bytes"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -23,12 +22,7 @@ func CreateCacheKey(req *http.Request) string {
 
 func CopyResponse(resp *http.Response) *http.Response {
 	c := *resp
-	respBody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return resp
-	}
-
-	c.Body = ioutil.NopCloser(bytes.NewBuffer(respBody))
+	c.Body = io.NopCloser(resp.Body)
 
 	return &c
 }

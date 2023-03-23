@@ -65,7 +65,7 @@ func (m *BrandResource) UpdateBrand(ctx context.Context, brandId string, body Br
 
 // List all the brands in your org.
 func (m *BrandResource) ListBrands(ctx context.Context) ([]*Brand, *Response, error) {
-	url := fmt.Sprintf("/api/v1/brands")
+	url := "/api/v1/brands"
 
 	rq := m.client.CloneRequestExecutor()
 

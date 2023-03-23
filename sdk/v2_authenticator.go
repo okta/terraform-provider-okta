@@ -66,7 +66,7 @@ func (m *AuthenticatorResource) UpdateAuthenticator(ctx context.Context, authent
 
 // List Authenticators
 func (m *AuthenticatorResource) ListAuthenticators(ctx context.Context) ([]*Authenticator, *Response, error) {
-	url := fmt.Sprintf("/api/v1/authenticators")
+	url := "/api/v1/authenticators"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -87,7 +87,7 @@ func (m *AuthenticatorResource) ListAuthenticators(ctx context.Context) ([]*Auth
 
 // Create Authenticator
 func (m *AuthenticatorResource) CreateAuthenticator(ctx context.Context, body Authenticator, qp *query.Params) (*Authenticator, *Response, error) {
-	url := fmt.Sprintf("/api/v1/authenticators")
+	url := "/api/v1/authenticators"
 	if qp != nil {
 		url = url + qp.String()
 	}

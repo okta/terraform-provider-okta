@@ -14,7 +14,7 @@ type LinkedObject struct {
 }
 
 func (m *LinkedObjectResource) AddLinkedObjectDefinition(ctx context.Context, body LinkedObject) (*LinkedObject, *Response, error) {
-	url := fmt.Sprintf("/api/v1/meta/schemas/user/linkedObjects")
+	url := "/api/v1/meta/schemas/user/linkedObjects"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -72,7 +72,7 @@ func (m *LinkedObjectResource) DeleteLinkedObjectDefinition(ctx context.Context,
 }
 
 func (m *LinkedObjectResource) ListLinkedObjectDefinitions(ctx context.Context) ([]*LinkedObject, *Response, error) {
-	url := fmt.Sprintf("/api/v1/meta/schemas/user/linkedObjects")
+	url := "/api/v1/meta/schemas/user/linkedObjects"
 
 	rq := m.client.CloneRequestExecutor()
 

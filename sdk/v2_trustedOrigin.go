@@ -24,7 +24,7 @@ type TrustedOrigin struct {
 }
 
 func (m *TrustedOriginResource) CreateOrigin(ctx context.Context, body TrustedOrigin) (*TrustedOrigin, *Response, error) {
-	url := fmt.Sprintf("/api/v1/trustedOrigins")
+	url := "/api/v1/trustedOrigins"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -102,7 +102,7 @@ func (m *TrustedOriginResource) DeleteOrigin(ctx context.Context, trustedOriginI
 }
 
 func (m *TrustedOriginResource) ListOrigins(ctx context.Context, qp *query.Params) ([]*TrustedOrigin, *Response, error) {
-	url := fmt.Sprintf("/api/v1/trustedOrigins")
+	url := "/api/v1/trustedOrigins"
 	if qp != nil {
 		url = url + qp.String()
 	}

@@ -90,7 +90,7 @@ func (m *NetworkZoneResource) DeleteNetworkZone(ctx context.Context, zoneId stri
 
 // Enumerates network zones added to your organization with pagination. A subset of zones can be returned that match a supported filter expression or query.
 func (m *NetworkZoneResource) ListNetworkZones(ctx context.Context, qp *query.Params) ([]*NetworkZone, *Response, error) {
-	url := fmt.Sprintf("/api/v1/zones")
+	url := "/api/v1/zones"
 	if qp != nil {
 		url = url + qp.String()
 	}
@@ -114,7 +114,7 @@ func (m *NetworkZoneResource) ListNetworkZones(ctx context.Context, qp *query.Pa
 
 // Adds a new network zone to your Okta organization.
 func (m *NetworkZoneResource) CreateNetworkZone(ctx context.Context, body NetworkZone) (*NetworkZone, *Response, error) {
-	url := fmt.Sprintf("/api/v1/zones")
+	url := "/api/v1/zones"
 
 	rq := m.client.CloneRequestExecutor()
 

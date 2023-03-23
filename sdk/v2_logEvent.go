@@ -2,7 +2,6 @@ package sdk
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/okta/terraform-provider-okta/sdk/query"
@@ -31,7 +30,7 @@ type LogEvent struct {
 
 // The Okta System Log API provides read access to your organization’s system log. This API provides more functionality than the Events API
 func (m *LogEventResource) GetLogs(ctx context.Context, qp *query.Params) ([]*LogEvent, *Response, error) {
-	url := fmt.Sprintf("/api/v1/logs")
+	url := "/api/v1/logs"
 	if qp != nil {
 		url = url + qp.String()
 	}

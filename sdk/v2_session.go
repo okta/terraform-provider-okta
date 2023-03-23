@@ -63,7 +63,7 @@ func (m *SessionResource) EndSession(ctx context.Context, sessionId string) (*Re
 
 // Creates a new session for a user with a valid session token. Use this API if, for example, you want to set the session cookie yourself instead of allowing Okta to set it, or want to hold the session ID in order to delete a session via the API instead of visiting the logout URL.
 func (m *SessionResource) CreateSession(ctx context.Context, body CreateSessionRequest) (*Session, *Response, error) {
-	url := fmt.Sprintf("/api/v1/sessions")
+	url := "/api/v1/sessions"
 
 	rq := m.client.CloneRequestExecutor()
 

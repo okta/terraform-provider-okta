@@ -23,7 +23,7 @@ type InlineHook struct {
 }
 
 func (m *InlineHookResource) CreateInlineHook(ctx context.Context, body InlineHook) (*InlineHook, *Response, error) {
-	url := fmt.Sprintf("/api/v1/inlineHooks")
+	url := "/api/v1/inlineHooks"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -104,7 +104,7 @@ func (m *InlineHookResource) DeleteInlineHook(ctx context.Context, inlineHookId 
 }
 
 func (m *InlineHookResource) ListInlineHooks(ctx context.Context, qp *query.Params) ([]*InlineHook, *Response, error) {
-	url := fmt.Sprintf("/api/v1/inlineHooks")
+	url := "/api/v1/inlineHooks"
 	if qp != nil {
 		url = url + qp.String()
 	}

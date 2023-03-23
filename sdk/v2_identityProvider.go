@@ -25,7 +25,7 @@ type IdentityProvider struct {
 
 // Adds a new IdP to your organization.
 func (m *IdentityProviderResource) CreateIdentityProvider(ctx context.Context, body IdentityProvider) (*IdentityProvider, *Response, error) {
-	url := fmt.Sprintf("/api/v1/idps")
+	url := "/api/v1/idps"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -107,7 +107,7 @@ func (m *IdentityProviderResource) DeleteIdentityProvider(ctx context.Context, i
 
 // Enumerates IdPs in your organization with pagination. A subset of IdPs can be returned that match a supported filter expression or query.
 func (m *IdentityProviderResource) ListIdentityProviders(ctx context.Context, qp *query.Params) ([]*IdentityProvider, *Response, error) {
-	url := fmt.Sprintf("/api/v1/idps")
+	url := "/api/v1/idps"
 	if qp != nil {
 		url = url + qp.String()
 	}
@@ -131,7 +131,7 @@ func (m *IdentityProviderResource) ListIdentityProviders(ctx context.Context, qp
 
 // Enumerates IdP key credentials.
 func (m *IdentityProviderResource) ListIdentityProviderKeys(ctx context.Context, qp *query.Params) ([]*JsonWebKey, *Response, error) {
-	url := fmt.Sprintf("/api/v1/idps/credentials/keys")
+	url := "/api/v1/idps/credentials/keys"
 	if qp != nil {
 		url = url + qp.String()
 	}
@@ -155,7 +155,7 @@ func (m *IdentityProviderResource) ListIdentityProviderKeys(ctx context.Context,
 
 // Adds a new X.509 certificate credential to the IdP key store.
 func (m *IdentityProviderResource) CreateIdentityProviderKey(ctx context.Context, body JsonWebKey) (*JsonWebKey, *Response, error) {
-	url := fmt.Sprintf("/api/v1/idps/credentials/keys")
+	url := "/api/v1/idps/credentials/keys"
 
 	rq := m.client.CloneRequestExecutor()
 

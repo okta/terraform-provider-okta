@@ -35,7 +35,7 @@ type OrgSetting struct {
 
 // Get settings of your organization.
 func (m *OrgSettingResource) GetOrgSettings(ctx context.Context) (*OrgSetting, *Response, error) {
-	url := fmt.Sprintf("/api/v1/org")
+	url := "/api/v1/org"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -56,7 +56,7 @@ func (m *OrgSettingResource) GetOrgSettings(ctx context.Context) (*OrgSetting, *
 
 // Update settings of your organization.
 func (m *OrgSettingResource) UpdateOrgSetting(ctx context.Context, body OrgSetting) (*OrgSetting, *Response, error) {
-	url := fmt.Sprintf("/api/v1/org")
+	url := "/api/v1/org"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -77,7 +77,7 @@ func (m *OrgSettingResource) UpdateOrgSetting(ctx context.Context, body OrgSetti
 
 // Partial update settings of your organization.
 func (m *OrgSettingResource) PartialUpdateOrgSetting(ctx context.Context, body OrgSetting) (*OrgSetting, *Response, error) {
-	url := fmt.Sprintf("/api/v1/org")
+	url := "/api/v1/org"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -98,7 +98,7 @@ func (m *OrgSettingResource) PartialUpdateOrgSetting(ctx context.Context, body O
 
 // Gets Contact Types of your organization.
 func (m *OrgSettingResource) GetOrgContactTypes(ctx context.Context) ([]*OrgContactTypeObj, *Response, error) {
-	url := fmt.Sprintf("/api/v1/org/contacts")
+	url := "/api/v1/org/contacts"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -161,7 +161,7 @@ func (m *OrgSettingResource) UpdateOrgContactUser(ctx context.Context, contactTy
 
 // Updates the logo for your organization.
 func (m *OrgSettingResource) UpdateOrgLogo(ctx context.Context, file string) (*Response, error) {
-	url := fmt.Sprintf("/api/v1/org/logo")
+	url := "/api/v1/org/logo"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -197,7 +197,7 @@ func (m *OrgSettingResource) UpdateOrgLogo(ctx context.Context, file string) (*R
 
 // Gets preferences of your organization.
 func (m *OrgSettingResource) GetOrgPreferences(ctx context.Context) (*OrgPreferences, *Response, error) {
-	url := fmt.Sprintf("/api/v1/org/preferences")
+	url := "/api/v1/org/preferences"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -218,7 +218,7 @@ func (m *OrgSettingResource) GetOrgPreferences(ctx context.Context) (*OrgPrefere
 
 // Hide the Okta UI footer for all end users of your organization.
 func (m *OrgSettingResource) HideOktaUIFooter(ctx context.Context) (*OrgPreferences, *Response, error) {
-	url := fmt.Sprintf("/api/v1/org/preferences/hideEndUserFooter")
+	url := "/api/v1/org/preferences/hideEndUserFooter"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -239,7 +239,7 @@ func (m *OrgSettingResource) HideOktaUIFooter(ctx context.Context) (*OrgPreferen
 
 // Makes the Okta UI footer visible for all end users of your organization.
 func (m *OrgSettingResource) ShowOktaUIFooter(ctx context.Context) (*OrgPreferences, *Response, error) {
-	url := fmt.Sprintf("/api/v1/org/preferences/showEndUserFooter")
+	url := "/api/v1/org/preferences/showEndUserFooter"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -260,7 +260,7 @@ func (m *OrgSettingResource) ShowOktaUIFooter(ctx context.Context) (*OrgPreferen
 
 // Gets Okta Communication Settings of your organization.
 func (m *OrgSettingResource) GetOktaCommunicationSettings(ctx context.Context) (*OrgOktaCommunicationSetting, *Response, error) {
-	url := fmt.Sprintf("/api/v1/org/privacy/oktaCommunication")
+	url := "/api/v1/org/privacy/oktaCommunication"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -281,7 +281,7 @@ func (m *OrgSettingResource) GetOktaCommunicationSettings(ctx context.Context) (
 
 // Opts in all users of this org to Okta Communication emails.
 func (m *OrgSettingResource) OptInUsersToOktaCommunicationEmails(ctx context.Context) (*OrgOktaCommunicationSetting, *Response, error) {
-	url := fmt.Sprintf("/api/v1/org/privacy/oktaCommunication/optIn")
+	url := "/api/v1/org/privacy/oktaCommunication/optIn"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -302,7 +302,7 @@ func (m *OrgSettingResource) OptInUsersToOktaCommunicationEmails(ctx context.Con
 
 // Opts out all users of this org from Okta Communication emails.
 func (m *OrgSettingResource) OptOutUsersFromOktaCommunicationEmails(ctx context.Context) (*OrgOktaCommunicationSetting, *Response, error) {
-	url := fmt.Sprintf("/api/v1/org/privacy/oktaCommunication/optOut")
+	url := "/api/v1/org/privacy/oktaCommunication/optOut"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -323,7 +323,7 @@ func (m *OrgSettingResource) OptOutUsersFromOktaCommunicationEmails(ctx context.
 
 // Gets Okta Support Settings of your organization.
 func (m *OrgSettingResource) GetOrgOktaSupportSettings(ctx context.Context) (*OrgOktaSupportSettingsObj, *Response, error) {
-	url := fmt.Sprintf("/api/v1/org/privacy/oktaSupport")
+	url := "/api/v1/org/privacy/oktaSupport"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -344,7 +344,7 @@ func (m *OrgSettingResource) GetOrgOktaSupportSettings(ctx context.Context) (*Or
 
 // Extends the length of time that Okta Support can access your org by 24 hours. This means that 24 hours are added to the remaining access time.
 func (m *OrgSettingResource) ExtendOktaSupport(ctx context.Context) (*OrgOktaSupportSettingsObj, *Response, error) {
-	url := fmt.Sprintf("/api/v1/org/privacy/oktaSupport/extend")
+	url := "/api/v1/org/privacy/oktaSupport/extend"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -365,7 +365,7 @@ func (m *OrgSettingResource) ExtendOktaSupport(ctx context.Context) (*OrgOktaSup
 
 // Enables you to temporarily allow Okta Support to access your org as an administrator for eight hours.
 func (m *OrgSettingResource) GrantOktaSupport(ctx context.Context) (*OrgOktaSupportSettingsObj, *Response, error) {
-	url := fmt.Sprintf("/api/v1/org/privacy/oktaSupport/grant")
+	url := "/api/v1/org/privacy/oktaSupport/grant"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -386,7 +386,7 @@ func (m *OrgSettingResource) GrantOktaSupport(ctx context.Context) (*OrgOktaSupp
 
 // Revokes Okta Support access to your organization.
 func (m *OrgSettingResource) RevokeOktaSupport(ctx context.Context) (*OrgOktaSupportSettingsObj, *Response, error) {
-	url := fmt.Sprintf("/api/v1/org/privacy/oktaSupport/revoke")
+	url := "/api/v1/org/privacy/oktaSupport/revoke"
 
 	rq := m.client.CloneRequestExecutor()
 

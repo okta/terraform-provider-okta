@@ -2,7 +2,6 @@ package sdk
 
 import (
 	"context"
-	"fmt"
 	"time"
 )
 
@@ -18,7 +17,7 @@ type ThreatInsightConfiguration struct {
 
 // Gets current ThreatInsight configuration
 func (m *ThreatInsightConfigurationResource) GetCurrentConfiguration(ctx context.Context) (*ThreatInsightConfiguration, *Response, error) {
-	url := fmt.Sprintf("/api/v1/threats/configuration")
+	url := "/api/v1/threats/configuration"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -39,7 +38,7 @@ func (m *ThreatInsightConfigurationResource) GetCurrentConfiguration(ctx context
 
 // Updates ThreatInsight configuration
 func (m *ThreatInsightConfigurationResource) UpdateConfiguration(ctx context.Context, body ThreatInsightConfiguration) (*ThreatInsightConfiguration, *Response, error) {
-	url := fmt.Sprintf("/api/v1/threats/configuration")
+	url := "/api/v1/threats/configuration"
 
 	rq := m.client.CloneRequestExecutor()
 

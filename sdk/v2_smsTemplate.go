@@ -22,7 +22,7 @@ type SmsTemplate struct {
 
 // Adds a new custom SMS template to your organization.
 func (m *SmsTemplateResource) CreateSmsTemplate(ctx context.Context, body SmsTemplate) (*SmsTemplate, *Response, error) {
-	url := fmt.Sprintf("/api/v1/templates/sms")
+	url := "/api/v1/templates/sms"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -104,7 +104,7 @@ func (m *SmsTemplateResource) DeleteSmsTemplate(ctx context.Context, templateId 
 
 // Enumerates custom SMS templates in your organization. A subset of templates can be returned that match a template type.
 func (m *SmsTemplateResource) ListSmsTemplates(ctx context.Context, qp *query.Params) ([]*SmsTemplate, *Response, error) {
-	url := fmt.Sprintf("/api/v1/templates/sms")
+	url := "/api/v1/templates/sms"
 	if qp != nil {
 		url = url + qp.String()
 	}

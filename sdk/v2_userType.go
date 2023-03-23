@@ -23,7 +23,7 @@ type UserType struct {
 
 // Creates a new User Type. A default User Type is automatically created along with your org, and you may add another 9 User Types for a maximum of 10.
 func (m *UserTypeResource) CreateUserType(ctx context.Context, body UserType) (*UserType, *Response, error) {
-	url := fmt.Sprintf("/api/v1/meta/types/user")
+	url := "/api/v1/meta/types/user"
 
 	rq := m.client.CloneRequestExecutor()
 
@@ -105,7 +105,7 @@ func (m *UserTypeResource) DeleteUserType(ctx context.Context, typeId string) (*
 
 // Fetches all User Types in your org
 func (m *UserTypeResource) ListUserTypes(ctx context.Context) ([]*UserType, *Response, error) {
-	url := fmt.Sprintf("/api/v1/meta/types/user")
+	url := "/api/v1/meta/types/user"
 
 	rq := m.client.CloneRequestExecutor()
 
