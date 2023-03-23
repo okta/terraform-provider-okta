@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 var emailTemplatesDataSourceSchema = map[string]*schema.Schema{
@@ -31,7 +31,7 @@ var emailTemplateDataSourceSchema = map[string]*schema.Schema{
 	},
 }
 
-func flattenEmailTemplate(emailTemplate *okta.EmailTemplate) map[string]interface{} {
+func flattenEmailTemplate(emailTemplate *sdk.EmailTemplate) map[string]interface{} {
 	attrs := map[string]interface{}{}
 	attrs["name"] = emailTemplate.Name
 	links, _ := json.Marshal(emailTemplate.Links)

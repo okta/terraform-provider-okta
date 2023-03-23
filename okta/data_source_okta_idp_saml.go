@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 const saml2Idp = "SAML2"
@@ -85,7 +85,7 @@ func dataSourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 	}
 	var (
 		err error
-		idp *okta.IdentityProvider
+		idp *sdk.IdentityProvider
 	)
 	if id != "" {
 		idp, err = getIdentityProviderByID(ctx, m, id, saml2Idp)

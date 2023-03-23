@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 // Ensure conditional require logic causes this plan to fail
@@ -23,7 +23,7 @@ func TestAccAppSaml_conditionalRequire(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -42,7 +42,7 @@ func TestAccAppSaml_invalidURL(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -65,12 +65,12 @@ func TestAccAppSaml_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: allFields,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "sso_url", "http://google.com"),
 					resource.TestCheckResourceAttr(resourceName, "recipient", "http://here.com"),
@@ -99,7 +99,7 @@ func TestAccAppSaml_crud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "sso_url", "http://google.com"),
@@ -164,12 +164,12 @@ func TestAccAppSaml_preconfigured(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: preconfigured,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "preconfigured_app", "office365"),
 					resource.TestCheckResourceAttr(resourceName, "saml_version", "1.1"),
@@ -246,12 +246,12 @@ func TestAccAppSaml_userGroups(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "users.#", "2"),
@@ -262,7 +262,7 @@ func TestAccAppSaml_userGroups(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttrSet(resourceName, "key_id"),
@@ -285,12 +285,12 @@ func TestAccAppSaml_inlineHook(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttrSet(resourceName, "inline_hook_id"),
@@ -318,12 +318,12 @@ func TestAccAppSaml_federationBroker(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "false"),
@@ -332,7 +332,7 @@ func TestAccAppSaml_federationBroker(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "true"),
@@ -403,12 +403,12 @@ resource "okta_app_saml" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config, ri),
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewAutoLoginApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.read", "2h"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.update", "30m"),
@@ -430,12 +430,12 @@ func TestAccAppSaml_certdiff(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(okta.NewSamlApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "sso_url", "http://google.com"),
@@ -462,7 +462,7 @@ func TestAccAppSaml_certdiff(t *testing.T) {
 			{
 				Config: config2,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSamlApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "sso_url", "http://google.com"),

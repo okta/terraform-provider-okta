@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAppGroupAssignments() *schema.Resource {
@@ -172,7 +172,7 @@ func resourceAppGroupAssignmentsDelete(ctx context.Context, d *schema.ResourceDa
 	return nil
 }
 
-func syncGroups(d *schema.ResourceData, groups []interface{}, assignments []*okta.ApplicationGroupAssignment) []interface{} {
+func syncGroups(d *schema.ResourceData, groups []interface{}, assignments []*sdk.ApplicationGroupAssignment) []interface{} {
 	var newGroups []interface{}
 	for i := range groups {
 		present := false
@@ -192,7 +192,7 @@ func syncGroups(d *schema.ResourceData, groups []interface{}, assignments []*okt
 	return newGroups
 }
 
-func buildProfile(d *schema.ResourceData, i int, assignment *okta.ApplicationGroupAssignment) string {
+func buildProfile(d *schema.ResourceData, i int, assignment *sdk.ApplicationGroupAssignment) string {
 	if i < 0 || assignment == nil {
 		return ""
 	}
@@ -231,7 +231,7 @@ func buildProfile(d *schema.ResourceData, i int, assignment *okta.ApplicationGro
 	return string(jsonProfile)
 }
 
-func splitAssignmentsTargets(expectedAssignments, existingAssignments []*okta.ApplicationGroupAssignment) (toAssign, toRemove []*okta.ApplicationGroupAssignment) {
+func splitAssignmentsTargets(expectedAssignments, existingAssignments []*sdk.ApplicationGroupAssignment) (toAssign, toRemove []*sdk.ApplicationGroupAssignment) {
 	for i := range expectedAssignments {
 		if !containsEqualAssignment(existingAssignments, expectedAssignments[i]) {
 			toAssign = append(toAssign, expectedAssignments[i])
@@ -245,7 +245,7 @@ func splitAssignmentsTargets(expectedAssignments, existingAssignments []*okta.Ap
 	return
 }
 
-func containsAssignment(assignments []*okta.ApplicationGroupAssignment, assignment *okta.ApplicationGroupAssignment) bool {
+func containsAssignment(assignments []*sdk.ApplicationGroupAssignment, assignment *sdk.ApplicationGroupAssignment) bool {
 	for i := range assignments {
 		if assignments[i].Id == assignment.Id {
 			return true
@@ -254,7 +254,7 @@ func containsAssignment(assignments []*okta.ApplicationGroupAssignment, assignme
 	return false
 }
 
-func containsEqualAssignment(assignments []*okta.ApplicationGroupAssignment, assignment *okta.ApplicationGroupAssignment) bool {
+func containsEqualAssignment(assignments []*sdk.ApplicationGroupAssignment, assignment *sdk.ApplicationGroupAssignment) bool {
 	for i := range assignments {
 		if assignments[i].Id == assignment.Id && reflect.DeepEqual(assignments[i].Profile, assignment.Profile) {
 			if assignments[i].PriorityPtr != nil && assignment.PriorityPtr != nil {
@@ -266,7 +266,7 @@ func containsEqualAssignment(assignments []*okta.ApplicationGroupAssignment, ass
 	return false
 }
 
-func groupAssignmentToTFGroup(assignment *okta.ApplicationGroupAssignment) map[string]interface{} {
+func groupAssignmentToTFGroup(assignment *sdk.ApplicationGroupAssignment) map[string]interface{} {
 	jsonProfile, _ := json.Marshal(assignment.Profile)
 	profile := "{}"
 	if string(jsonProfile) != "" {
@@ -282,13 +282,13 @@ func groupAssignmentToTFGroup(assignment *okta.ApplicationGroupAssignment) map[s
 	return result
 }
 
-func tfGroupsToGroupAssignments(d *schema.ResourceData) []*okta.ApplicationGroupAssignment {
-	assignments := make([]*okta.ApplicationGroupAssignment, len(d.Get("group").([]interface{})))
+func tfGroupsToGroupAssignments(d *schema.ResourceData) []*sdk.ApplicationGroupAssignment {
+	assignments := make([]*sdk.ApplicationGroupAssignment, len(d.Get("group").([]interface{})))
 	for i := range d.Get("group").([]interface{}) {
 		rawProfile := d.Get(fmt.Sprintf("group.%d.profile", i))
 		var profile interface{}
 		_ = json.Unmarshal([]byte(rawProfile.(string)), &profile)
-		a := &okta.ApplicationGroupAssignment{
+		a := &sdk.ApplicationGroupAssignment{
 			Id:      d.Get(fmt.Sprintf("group.%d.id", i)).(string),
 			Profile: profile,
 		}
@@ -303,10 +303,10 @@ func tfGroupsToGroupAssignments(d *schema.ResourceData) []*okta.ApplicationGroup
 
 // addGroupAssignments adds all group assignments
 func addGroupAssignments(
-	add func(context.Context, string, string, okta.ApplicationGroupAssignment) (*okta.ApplicationGroupAssignment, *okta.Response, error),
+	add func(context.Context, string, string, sdk.ApplicationGroupAssignment) (*sdk.ApplicationGroupAssignment, *sdk.Response, error),
 	ctx context.Context,
 	appID string,
-	assignments []*okta.ApplicationGroupAssignment,
+	assignments []*sdk.ApplicationGroupAssignment,
 ) error {
 	for _, assignment := range assignments {
 		_, _, err := add(ctx, appID, assignment.Id, *assignment)
@@ -319,10 +319,10 @@ func addGroupAssignments(
 
 // deleteGroupAssignments deletes all group assignments
 func deleteGroupAssignments(
-	delete func(context.Context, string, string) (*okta.Response, error),
+	delete func(context.Context, string, string) (*sdk.Response, error),
 	ctx context.Context,
 	appID string,
-	assignments []*okta.ApplicationGroupAssignment,
+	assignments []*sdk.ApplicationGroupAssignment,
 ) error {
 	for i := range assignments {
 		_, err := delete(ctx, appID, assignments[i].Id)

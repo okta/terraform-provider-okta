@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func dataSourceAuthenticator() *schema.Resource {
@@ -87,7 +87,7 @@ func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m 
 		return diag.Errorf("config must provide either 'id', 'name' or 'key' to retrieve the authenticator")
 	}
 	var (
-		authenticator *okta.Authenticator
+		authenticator *sdk.Authenticator
 		err           error
 	)
 	if id != "" {
@@ -137,7 +137,7 @@ func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func findAuthenticator(ctx context.Context, m interface{}, name, key string) (*okta.Authenticator, error) {
+func findAuthenticator(ctx context.Context, m interface{}, name, key string) (*sdk.Authenticator, error) {
 	authenticators, _, err := getOktaClientFromMetadata(m).Authenticator.ListAuthenticators(ctx)
 	if err != nil {
 		return nil, err

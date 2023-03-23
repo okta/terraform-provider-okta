@@ -10,7 +10,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 type checkUpstream func(string) (bool, error)
@@ -87,16 +87,16 @@ func newTestHttpClient(fn roundTripFunc) *http.Client {
 	}
 }
 
-func newTestOktaClientWithResponse(response roundTripFunc) (context.Context, *okta.Client, error) {
+func newTestOktaClientWithResponse(response roundTripFunc) (context.Context, *sdk.Client, error) {
 	ctx := context.Background()
 
 	h := newTestHttpClient(response)
 
-	oktaCtx, c, err := okta.NewClient(
+	oktaCtx, c, err := sdk.NewClient(
 		ctx,
-		okta.WithOrgUrl("https://foo.okta.com"),
-		okta.WithToken("f0oT0k3n"),
-		okta.WithHttpClientPtr(h),
+		sdk.WithOrgUrl("https://foo.okta.com"),
+		sdk.WithToken("f0oT0k3n"),
+		sdk.WithHttpClientPtr(h),
 	)
 	if err != nil {
 		return nil, nil, err

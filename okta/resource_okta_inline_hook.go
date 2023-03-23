@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 var headerSchema = &schema.Resource{
@@ -209,8 +209,8 @@ func resourceInlineHookDelete(ctx context.Context, d *schema.ResourceData, m int
 	return nil
 }
 
-func buildInlineHook(d *schema.ResourceData) okta.InlineHook {
-	return okta.InlineHook{
+func buildInlineHook(d *schema.ResourceData) sdk.InlineHook {
+	return sdk.InlineHook{
 		Name:    d.Get("name").(string),
 		Status:  d.Get("status").(string),
 		Type:    d.Get("type").(string),
@@ -219,24 +219,24 @@ func buildInlineHook(d *schema.ResourceData) okta.InlineHook {
 	}
 }
 
-func buildInlineChannel(d *schema.ResourceData) *okta.InlineHookChannel {
-	var headerList []*okta.InlineHookChannelConfigHeaders
+func buildInlineChannel(d *schema.ResourceData) *sdk.InlineHookChannel {
+	var headerList []*sdk.InlineHookChannelConfigHeaders
 	if raw, ok := d.GetOk("headers"); ok {
 		for _, header := range raw.(*schema.Set).List() {
 			h, ok := header.(map[string]interface{})
 			if ok {
-				headerList = append(headerList, &okta.InlineHookChannelConfigHeaders{Key: h["key"].(string), Value: h["value"].(string)})
+				headerList = append(headerList, &sdk.InlineHookChannelConfigHeaders{Key: h["key"].(string), Value: h["value"].(string)})
 			}
 		}
 	}
-	var auth *okta.InlineHookChannelConfigAuthScheme
+	var auth *sdk.InlineHookChannelConfigAuthScheme
 	if rawAuth, ok := d.GetOk("auth"); ok {
 		a := rawAuth.(map[string]interface{})
 		_, ok := a["type"]
 		if !ok {
 			a["type"] = "HEADER"
 		}
-		auth = &okta.InlineHookChannelConfigAuthScheme{}
+		auth = &sdk.InlineHookChannelConfigAuthScheme{}
 		if key, ok := a["key"]; ok && key != nil {
 			auth.Key = key.(string)
 		}
@@ -256,8 +256,8 @@ func buildInlineChannel(d *schema.ResourceData) *okta.InlineHookChannel {
 	if !ok {
 		rawChannel["type"] = "HTTP"
 	}
-	return &okta.InlineHookChannel{
-		Config: &okta.InlineHookChannelConfig{
+	return &sdk.InlineHookChannel{
+		Config: &sdk.InlineHookChannelConfig{
 			Uri:        rawChannel["uri"].(string),
 			AuthScheme: auth,
 			Headers:    headerList,
@@ -268,7 +268,7 @@ func buildInlineChannel(d *schema.ResourceData) *okta.InlineHookChannel {
 	}
 }
 
-func flattenInlineHookAuth(d *schema.ResourceData, c *okta.InlineHookChannel) map[string]interface{} {
+func flattenInlineHookAuth(d *schema.ResourceData, c *sdk.InlineHookChannel) map[string]interface{} {
 	auth := map[string]interface{}{}
 	if c.Config.AuthScheme != nil {
 		auth = map[string]interface{}{
@@ -281,7 +281,7 @@ func flattenInlineHookAuth(d *schema.ResourceData, c *okta.InlineHookChannel) ma
 	return auth
 }
 
-func flattenInlineHookChannel(c *okta.InlineHookChannel) map[string]interface{} {
+func flattenInlineHookChannel(c *sdk.InlineHookChannel) map[string]interface{} {
 	return map[string]interface{}{
 		"type":    c.Type,
 		"version": c.Version,
@@ -290,7 +290,7 @@ func flattenInlineHookChannel(c *okta.InlineHookChannel) map[string]interface{} 
 	}
 }
 
-func flattenInlineHookHeaders(c *okta.InlineHookChannel) *schema.Set {
+func flattenInlineHookHeaders(c *sdk.InlineHookChannel) *schema.Set {
 	headers := make([]interface{}, len(c.Config.Headers))
 	for i, header := range c.Config.Headers {
 		headers[i] = map[string]interface{}{
@@ -301,7 +301,7 @@ func flattenInlineHookHeaders(c *okta.InlineHookChannel) *schema.Set {
 	return schema.NewSet(schema.HashResource(headerSchema), headers)
 }
 
-func setInlineHookStatus(ctx context.Context, d *schema.ResourceData, client *okta.Client, status string) error {
+func setInlineHookStatus(ctx context.Context, d *schema.ResourceData, client *sdk.Client, status string) error {
 	desiredStatus := d.Get("status").(string)
 	if status == desiredStatus {
 		return nil

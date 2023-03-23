@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 const (
@@ -21,47 +19,47 @@ const (
 )
 
 // PasswordPolicy returns policy of PASSWORD type
-func PasswordPolicy() Policy {
+func PasswordPolicy() SdkPolicy {
 	// Initialize a policy with password data
-	p := Policy{}
+	p := SdkPolicy{}
 	p.Type = PasswordPolicyType
 	return p
 }
 
 // SignOnPolicy returns policy of OKTA_SIGN_ON type
-func SignOnPolicy() Policy {
-	p := Policy{}
+func SignOnPolicy() SdkPolicy {
+	p := SdkPolicy{}
 	p.Type = SignOnPolicyType
 	return p
 }
 
 // MfaPolicy returns policy of MFA_ENROLL type
-func MfaPolicy() Policy {
-	p := Policy{}
+func MfaPolicy() SdkPolicy {
+	p := SdkPolicy{}
 	p.Type = MfaPolicyType
 	return p
 }
 
 // ProfileEnrollmentPolicy returns policy of PROFILE_ENROLLMENT type
-func ProfileEnrollmentPolicy() Policy {
-	p := Policy{}
+func ProfileEnrollmentPolicy() SdkPolicy {
+	p := SdkPolicy{}
 	p.Type = ProfileEnrollmentPolicyType
 	return p
 }
 
 // Policy wrapper over okta.Policy until all of the public properties are fully supported
-type Policy struct {
+type SdkPolicy struct {
 	// TODO
-	okta.Policy
+	Policy
 
-	Settings *PolicySettings `json:"settings,omitempty"`
+	Settings *SdkPolicySettings `json:"settings,omitempty"`
 }
 
 // MarshalJSON Deal with the embedded struct okta.Policy having its own
 // marshaler. okta.Policy doens't support a policy settings fully so we have a
 // local implementation of it here.
 // https://developer.okta.com/docs/reference/api/policy/#policy-settings-object
-func (a *Policy) MarshalJSON() ([]byte, error) {
+func (a *SdkPolicy) MarshalJSON() ([]byte, error) {
 	// This technique is derived from
 	// https://jhall.io/posts/go-json-tricks-embedded-marshaler/
 	policyJSON, err := a.Policy.MarshalJSON()
@@ -71,7 +69,7 @@ func (a *Policy) MarshalJSON() ([]byte, error) {
 
 	var settingsJSON []byte
 	if a.Settings != nil {
-		type Alias PolicySettings
+		type Alias SdkPolicySettings
 		type local struct {
 			*Alias
 		}
@@ -100,8 +98,8 @@ func (a *Policy) MarshalJSON() ([]byte, error) {
 	return []byte(_json), nil
 }
 
-func (a *Policy) UnmarshalJSON(data []byte) error {
-	type Alias Policy
+func (a *SdkPolicy) UnmarshalJSON(data []byte) error {
+	type Alias SdkPolicy
 	result := &struct {
 		*Alias
 	}{
@@ -114,7 +112,7 @@ func (a *Policy) UnmarshalJSON(data []byte) error {
 	// Need to get around multiple embedded structs issue when unmarshalling so
 	// make use of an anonymous struct so only settings are unmarshaled
 	settings := struct {
-		Settings PolicySettings `json:"settings,omitempty"`
+		Settings SdkPolicySettings `json:"settings,omitempty"`
 	}{}
 	if err := json.Unmarshal(data, &settings); err != nil {
 		return err
@@ -125,14 +123,14 @@ func (a *Policy) UnmarshalJSON(data []byte) error {
 }
 
 // PolicySettings missing from okta-sdk-golang. However, there is a subset okta.PasswordPolicySettings.
-type PolicySettings struct {
+type SdkPolicySettings struct {
 	// TODO
-	Authenticators []*PolicyAuthenticator                 `json:"authenticators,omitempty"`
-	Delegation     *okta.PasswordPolicyDelegationSettings `json:"delegation,omitempty"`
-	Factors        *PolicyFactorsSettings                 `json:"factors,omitempty"`
-	Password       *okta.PasswordPolicyPasswordSettings   `json:"password,omitempty"`
-	Recovery       *okta.PasswordPolicyRecoverySettings   `json:"recovery,omitempty"`
-	Type           string                                 `json:"type,omitempty"`
+	Authenticators []*PolicyAuthenticator            `json:"authenticators,omitempty"`
+	Delegation     *PasswordPolicyDelegationSettings `json:"delegation,omitempty"`
+	Factors        *PolicyFactorsSettings            `json:"factors,omitempty"`
+	Password       *PasswordPolicyPasswordSettings   `json:"password,omitempty"`
+	Recovery       *PasswordPolicyRecoverySettings   `json:"recovery,omitempty"`
+	Type           string                            `json:"type,omitempty"`
 }
 
 // PolicyFactorsSettings is not expressed in the okta-sdk-golang yet
@@ -180,13 +178,13 @@ type Enroll struct {
 }
 
 // GetPolicy gets a policy by ID
-func (m *APISupplement) GetPolicy(ctx context.Context, policyID string) (*Policy, *okta.Response, error) {
+func (m *APISupplement) GetPolicy(ctx context.Context, policyID string) (*SdkPolicy, *Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v", policyID)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
-	var policy *Policy
+	var policy *SdkPolicy
 	resp, err := m.RequestExecutor.Do(ctx, req, &policy)
 	if err != nil {
 		return nil, resp, err
@@ -195,13 +193,13 @@ func (m *APISupplement) GetPolicy(ctx context.Context, policyID string) (*Policy
 }
 
 // UpdatePolicy updates a policy.
-func (m *APISupplement) UpdatePolicy(ctx context.Context, policyID string, body Policy) (*Policy, *okta.Response, error) {
+func (m *APISupplement) UpdatePolicy(ctx context.Context, policyID string, body SdkPolicy) (*SdkPolicy, *Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v", policyID)
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
-	var policy *Policy
+	var policy *SdkPolicy
 	resp, err := m.RequestExecutor.Do(ctx, req, &policy)
 	if err != nil {
 		return nil, resp, err
@@ -210,13 +208,13 @@ func (m *APISupplement) UpdatePolicy(ctx context.Context, policyID string, body 
 }
 
 // CreatePolicy creates a policy.
-func (m *APISupplement) CreatePolicy(ctx context.Context, body Policy) (*Policy, *okta.Response, error) {
+func (m *APISupplement) CreatePolicy(ctx context.Context, body SdkPolicy) (*SdkPolicy, *Response, error) {
 	url := "/api/v1/policies"
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
-	var policy *Policy
+	var policy *SdkPolicy
 	resp, err := m.RequestExecutor.Do(ctx, req, &policy)
 	if err != nil {
 		return nil, resp, err

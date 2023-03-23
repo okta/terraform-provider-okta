@@ -5,8 +5,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceAppGroupAssignments() *schema.Resource {
@@ -39,7 +39,7 @@ func dataSourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceDa
 	}
 
 	for {
-		var moreAssignments []*okta.ApplicationGroupAssignment
+		var moreAssignments []*sdk.ApplicationGroupAssignment
 		if resp.HasNextPage() {
 			resp, err = resp.Next(ctx, &moreAssignments)
 			if err != nil {

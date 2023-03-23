@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 var themeResourceSchema = map[string]*schema.Schema{
@@ -204,7 +204,7 @@ var themeDataSourceSchema = map[string]*schema.Schema{
 	},
 }
 
-func flattenTheme(brandID string, theme *okta.ThemeResponse) map[string]interface{} {
+func flattenTheme(brandID string, theme *sdk.ThemeResponse) map[string]interface{} {
 	attrs := map[string]interface{}{}
 
 	attrs["id"] = theme.Id

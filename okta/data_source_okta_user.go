@@ -9,8 +9,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 var userSearchSchemaDescription = "Filter to find " +
@@ -100,7 +100,7 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 	}
 
 	client := getOktaClientFromMetadata(m)
-	var user *okta.User
+	var user *sdk.User
 	var err error
 	userID, ok := d.GetOk("user_id")
 	_, searchCriteriaOk := d.GetOk("search")
@@ -111,7 +111,7 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 			return diag.Errorf("failed to get user: %v", err)
 		}
 	} else if searchCriteriaOk {
-		var users []*okta.User
+		var users []*sdk.User
 		sc := getSearchCriteria(d)
 		logger(m).Info("reading user using search", "search", sc)
 		users, _, err = client.User.ListUsers(ctx, &query.Params{Search: sc, Limit: 1})

@@ -8,8 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 // All profile properties here so we can do a diff against the config to see if any have changed before making the
@@ -433,16 +433,16 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 		qp = query.NewQueryParams(query.WithActivate(false))
 	}
 
-	uc := &okta.UserCredentials{
-		Password: &okta.PasswordCredential{
+	uc := &sdk.UserCredentials{
+		Password: &sdk.PasswordCredential{
 			Value: d.Get("password").(string),
 			Hash:  buildPasswordCredentialHash(d.Get("password_hash")),
 		},
 	}
 	pih := d.Get("password_inline_hook").(string)
 	if pih != "" {
-		uc.Password = &okta.PasswordCredential{
-			Hook: &okta.PasswordCredentialHook{
+		uc.Password = &sdk.PasswordCredential{
+			Hook: &sdk.PasswordCredentialHook{
 				Type: pih,
 			},
 		}
@@ -450,13 +450,13 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 	recoveryQuestion := d.Get("recovery_question").(string)
 	recoveryAnswer := d.Get("recovery_answer").(string)
 	if recoveryQuestion != "" {
-		uc.RecoveryQuestion = &okta.RecoveryQuestionCredential{
+		uc.RecoveryQuestion = &sdk.RecoveryQuestionCredential{
 			Question: recoveryQuestion,
 			Answer:   recoveryAnswer,
 		}
 	}
 
-	userBody := okta.CreateUserRequest{
+	userBody := sdk.CreateUserRequest{
 		Profile:     profile,
 		Credentials: uc,
 	}
@@ -595,21 +595,21 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 
 	if userChange || passwordHashChange || passwordHookChange {
 		profile := populateUserProfile(d)
-		userBody := okta.User{
+		userBody := sdk.User{
 			Profile: profile,
 		}
 		if passwordHashChange {
-			userBody.Credentials = &okta.UserCredentials{
-				Password: &okta.PasswordCredential{
+			userBody.Credentials = &sdk.UserCredentials{
+				Password: &sdk.PasswordCredential{
 					Hash: buildPasswordCredentialHash(d.Get("password_hash")),
 				},
 			}
 		}
 		pih := d.Get("password_inline_hook").(string)
 		if passwordHookChange && pih != "" {
-			userBody.Credentials = &okta.UserCredentials{
-				Password: &okta.PasswordCredential{
-					Hook: &okta.PasswordCredentialHook{
+			userBody.Credentials = &sdk.UserCredentials{
+				Password: &sdk.PasswordCredential{
+					Hook: &sdk.PasswordCredentialHook{
 						Type: pih,
 					},
 				},
@@ -668,13 +668,13 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 			oldPassword = old
 		}
 		if oldPasswordExist {
-			op := &okta.PasswordCredential{
+			op := &sdk.PasswordCredential{
 				Value: oldPassword.(string),
 			}
-			np := &okta.PasswordCredential{
+			np := &sdk.PasswordCredential{
 				Value: newPassword.(string),
 			}
-			npr := &okta.ChangePasswordRequest{
+			npr := &sdk.ChangePasswordRequest{
 				OldPassword: op,
 				NewPassword: np,
 			}
@@ -685,9 +685,9 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 		}
 		if !oldPasswordExist {
 			password, _ := newPassword.(string)
-			user := okta.User{
-				Credentials: &okta.UserCredentials{
-					Password: &okta.PasswordCredential{
+			user := sdk.User{
+				Credentials: &sdk.UserCredentials{
+					Password: &sdk.PasswordCredential{
 						Value: password,
 					},
 				},
@@ -700,11 +700,11 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	}
 
 	if recoveryQuestionChange || recoveryAnswerChange {
-		nuc := &okta.UserCredentials{
-			Password: &okta.PasswordCredential{
+		nuc := &sdk.UserCredentials{
+			Password: &sdk.PasswordCredential{
 				Value: d.Get("password").(string),
 			},
-			RecoveryQuestion: &okta.RecoveryQuestionCredential{
+			RecoveryQuestion: &sdk.RecoveryQuestionCredential{
 				Question: d.Get("recovery_question").(string),
 				Answer:   d.Get("recovery_answer").(string),
 			},
@@ -729,14 +729,14 @@ func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface
 	return nil
 }
 
-func buildPasswordCredentialHash(rawPasswordHash interface{}) *okta.PasswordCredentialHash {
+func buildPasswordCredentialHash(rawPasswordHash interface{}) *sdk.PasswordCredentialHash {
 	if rawPasswordHash == nil || len(rawPasswordHash.(*schema.Set).List()) == 0 {
 		return nil
 	}
 	passwordHash := rawPasswordHash.(*schema.Set).List()
 	hash := passwordHash[0].(map[string]interface{})
 	wf, _ := hash["work_factor"].(int)
-	h := &okta.PasswordCredentialHash{
+	h := &sdk.PasswordCredentialHash{
 		Algorithm:     hash["algorithm"].(string),
 		Value:         hash["value"].(string),
 		WorkFactorPtr: int64Ptr(wf),
@@ -758,7 +758,7 @@ func hasProfileChange(d *schema.ResourceData) bool {
 	return false
 }
 
-func ensureUserDelete(ctx context.Context, id, status string, client *okta.Client) error {
+func ensureUserDelete(ctx context.Context, id, status string, client *sdk.Client) error {
 	// only deprovisioned users can be deleted fully from okta
 	// make two passes on the user if they aren't deprovisioned already to deprovision them first
 	passes := 2

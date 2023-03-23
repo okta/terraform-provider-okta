@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func dataSourceApp() *schema.Resource {
@@ -70,13 +70,13 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 	if err != nil {
 		return diag.Errorf("invalid app filters: %v", err)
 	}
-	var app *okta.Application
+	var app *sdk.Application
 	if filters.ID != "" {
-		respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, filters.ID, okta.NewApplication(), nil)
+		respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, filters.ID, sdk.NewApplication(), nil)
 		if err != nil {
 			return diag.Errorf("failed get app by ID: %v", err)
 		}
-		app = respApp.(*okta.Application)
+		app = respApp.(*sdk.Application)
 	} else {
 		appList, err := listApps(ctx, getOktaClientFromMetadata(m), filters, 1)
 		if err != nil {

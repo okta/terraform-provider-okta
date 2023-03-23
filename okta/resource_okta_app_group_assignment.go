@@ -10,7 +10,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAppGroupAssignment() *schema.Resource {
@@ -154,11 +154,11 @@ func resourceAppGroupAssignmentDelete(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func buildAppGroupAssignment(d *schema.ResourceData) okta.ApplicationGroupAssignment {
+func buildAppGroupAssignment(d *schema.ResourceData) sdk.ApplicationGroupAssignment {
 	var profile interface{}
 	rawProfile := d.Get("profile").(string)
 	_ = json.Unmarshal([]byte(rawProfile), &profile)
-	assignment := okta.ApplicationGroupAssignment{
+	assignment := sdk.ApplicationGroupAssignment{
 		Profile: profile,
 	}
 	p, ok := d.GetOk("priority")

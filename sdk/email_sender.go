@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 type (
@@ -42,7 +40,7 @@ type (
 	}
 )
 
-func (m *APISupplement) CreateEmailSender(ctx context.Context, body EmailSender) (*EmailSender, *okta.Response, error) {
+func (m *APISupplement) CreateEmailSender(ctx context.Context, body EmailSender) (*EmailSender, *Response, error) {
 	url := "/api/v1/org/email/sender"
 	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, body)
 	if err != nil {
@@ -56,7 +54,7 @@ func (m *APISupplement) CreateEmailSender(ctx context.Context, body EmailSender)
 	return sender, resp, err
 }
 
-func (m *APISupplement) UpdateEmailSender(ctx context.Context, body EmailSender) (*EmailSender, *okta.Response, error) {
+func (m *APISupplement) UpdateEmailSender(ctx context.Context, body EmailSender) (*EmailSender, *Response, error) {
 	url := "/api/v1/org/email/sender"
 	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, body)
 	if err != nil {
@@ -70,7 +68,7 @@ func (m *APISupplement) UpdateEmailSender(ctx context.Context, body EmailSender)
 	return sender, resp, err
 }
 
-func (m *APISupplement) GetEmailSender(ctx context.Context, id string) (*EmailSender, *okta.Response, error) {
+func (m *APISupplement) GetEmailSender(ctx context.Context, id string) (*EmailSender, *Response, error) {
 	url := fmt.Sprintf("/api/v1/org/email/sender/%s", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -84,7 +82,7 @@ func (m *APISupplement) GetEmailSender(ctx context.Context, id string) (*EmailSe
 	return sender, resp, err
 }
 
-func (m *APISupplement) DisableVerifiedEmailSender(ctx context.Context, body DisableActiveEmailSender) (*okta.Response, error) {
+func (m *APISupplement) DisableVerifiedEmailSender(ctx context.Context, body DisableActiveEmailSender) (*Response, error) {
 	url := `/api/v1/org/email/sender/disable`
 	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, body)
 	if err != nil {
@@ -93,7 +91,7 @@ func (m *APISupplement) DisableVerifiedEmailSender(ctx context.Context, body Dis
 	return m.RequestExecutor.Do(ctx, req, nil)
 }
 
-func (m *APISupplement) DisableUnverifiedEmailSender(ctx context.Context, body DisableInactiveEmailSender) (*okta.Response, error) {
+func (m *APISupplement) DisableUnverifiedEmailSender(ctx context.Context, body DisableInactiveEmailSender) (*Response, error) {
 	url := `/api/v1/org/email/sender/disable`
 	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, body)
 	if err != nil {
@@ -102,7 +100,7 @@ func (m *APISupplement) DisableUnverifiedEmailSender(ctx context.Context, body D
 	return m.RequestExecutor.Do(ctx, req, nil)
 }
 
-func (m *APISupplement) ValidateEmailSender(ctx context.Context, id string, body EmailSenderValidation) (*okta.Response, error) {
+func (m *APISupplement) ValidateEmailSender(ctx context.Context, id string, body EmailSenderValidation) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/org/email/sender/%s/validate", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodPost, url, body)
 	if err != nil {

@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 type Behavior struct {
@@ -18,7 +17,7 @@ type Behavior struct {
 }
 
 // ListBehaviors Gets all behaviors based on the query params
-func (m *APISupplement) ListBehaviors(ctx context.Context, qp *query.Params) ([]*Behavior, *okta.Response, error) {
+func (m *APISupplement) ListBehaviors(ctx context.Context, qp *query.Params) ([]*Behavior, *Response, error) {
 	url := "/api/v1/behaviors"
 	if qp != nil {
 		url += qp.String()
@@ -36,7 +35,7 @@ func (m *APISupplement) ListBehaviors(ctx context.Context, qp *query.Params) ([]
 }
 
 // GetBehavior gets behavior by ID
-func (m *APISupplement) GetBehavior(ctx context.Context, id string) (*Behavior, *okta.Response, error) {
+func (m *APISupplement) GetBehavior(ctx context.Context, id string) (*Behavior, *Response, error) {
 	url := fmt.Sprintf("/api/v1/behaviors/%s", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -51,7 +50,7 @@ func (m *APISupplement) GetBehavior(ctx context.Context, id string) (*Behavior, 
 }
 
 // CreateBehavior creates behavior
-func (m *APISupplement) CreateBehavior(ctx context.Context, body Behavior) (*Behavior, *okta.Response, error) {
+func (m *APISupplement) CreateBehavior(ctx context.Context, body Behavior) (*Behavior, *Response, error) {
 	url := "/api/v1/behaviors"
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
 	if err != nil {
@@ -66,7 +65,7 @@ func (m *APISupplement) CreateBehavior(ctx context.Context, body Behavior) (*Beh
 }
 
 // UpdateBehavior updates behavior
-func (m *APISupplement) UpdateBehavior(ctx context.Context, id string, body Behavior) (*Behavior, *okta.Response, error) {
+func (m *APISupplement) UpdateBehavior(ctx context.Context, id string, body Behavior) (*Behavior, *Response, error) {
 	url := fmt.Sprintf("/api/v1/behaviors/%s", id)
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
 	if err != nil {
@@ -81,7 +80,7 @@ func (m *APISupplement) UpdateBehavior(ctx context.Context, id string, body Beha
 }
 
 // DeleteBehavior deletes behavior by ID
-func (m *APISupplement) DeleteBehavior(ctx context.Context, id string) (*okta.Response, error) {
+func (m *APISupplement) DeleteBehavior(ctx context.Context, id string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/behaviors/%s", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
@@ -90,15 +89,15 @@ func (m *APISupplement) DeleteBehavior(ctx context.Context, id string) (*okta.Re
 	return m.RequestExecutor.Do(ctx, req, nil)
 }
 
-func (m *APISupplement) ActivateBehavior(ctx context.Context, id string) (*okta.Response, error) {
+func (m *APISupplement) ActivateBehavior(ctx context.Context, id string) (*Response, error) {
 	return m.changeBehaviorLifecycle(ctx, id, "activate")
 }
 
-func (m *APISupplement) DeactivateBehavior(ctx context.Context, id string) (*okta.Response, error) {
+func (m *APISupplement) DeactivateBehavior(ctx context.Context, id string) (*Response, error) {
 	return m.changeBehaviorLifecycle(ctx, id, "deactivate")
 }
 
-func (m *APISupplement) changeBehaviorLifecycle(ctx context.Context, id, action string) (*okta.Response, error) {
+func (m *APISupplement) changeBehaviorLifecycle(ctx context.Context, id, action string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/behaviors/%s/lifecycle/%s", id, action)
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, nil)
 	if err != nil {

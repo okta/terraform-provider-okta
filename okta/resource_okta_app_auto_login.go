@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceAppAutoLogin() *schema.Resource {
@@ -107,7 +107,7 @@ func resourceAppAutoLoginCreate(ctx context.Context, d *schema.ResourceData, m i
 }
 
 func resourceAppAutoLoginRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := okta.NewAutoLoginApplication()
+	app := sdk.NewAutoLoginApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get auto login application: %v", err)
@@ -176,17 +176,17 @@ func resourceAppAutoLoginDelete(ctx context.Context, d *schema.ResourceData, m i
 	return nil
 }
 
-func buildAppAutoLogin(d *schema.ResourceData) *okta.AutoLoginApplication {
+func buildAppAutoLogin(d *schema.ResourceData) *sdk.AutoLoginApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
-	app := okta.NewAutoLoginApplication()
+	app := sdk.NewAutoLoginApplication()
 	app.Label = d.Get("label").(string)
 	name := d.Get("preconfigured_app").(string)
 
 	if name != "" {
 		app.Name = name
 	}
-	app.Settings = &okta.AutoLoginApplicationSettings{
-		SignOn: &okta.AutoLoginApplicationSettingsSignOn{
+	app.Settings = &sdk.AutoLoginApplicationSettings{
+		SignOn: &sdk.AutoLoginApplicationSettingsSignOn{
 			LoginUrl:    d.Get("sign_on_url").(string),
 			RedirectUrl: d.Get("sign_on_redirect_url").(string),
 		},

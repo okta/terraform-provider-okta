@@ -8,8 +8,8 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceGroupMembership() *schema.Resource {
@@ -99,7 +99,7 @@ func resourceGroupMembershipDelete(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func checkIfUserInGroup(ctx context.Context, client *okta.Client, groupId, userId string) (bool, error) {
+func checkIfUserInGroup(ctx context.Context, client *sdk.Client, groupId, userId string) (bool, error) {
 	users, resp, err := client.Group.ListGroupUsers(ctx, groupId, &query.Params{Limit: defaultPaginationLimit})
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, err

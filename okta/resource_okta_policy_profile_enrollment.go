@@ -105,7 +105,7 @@ func resourcePolicyProfileEnrollmentDelete(ctx context.Context, d *schema.Resour
 }
 
 // build profile enrollment policy from schema data
-func buildPolicyProfileEnrollment(d *schema.ResourceData) sdk.Policy {
+func buildPolicyProfileEnrollment(d *schema.ResourceData) sdk.SdkPolicy {
 	policy := sdk.ProfileEnrollmentPolicy()
 	policy.Name = d.Get("name").(string)
 	policy.Status = d.Get("status").(string)

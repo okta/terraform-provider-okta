@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceUserFactorQuestion() *schema.Resource {
@@ -68,7 +68,7 @@ func resourceUserFactorQuestionCreate(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceUserFactorQuestionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var uf okta.SecurityQuestionUserFactor
+	var uf sdk.SecurityQuestionUserFactor
 	_, resp, err := getOktaClientFromMetadata(m).UserFactor.GetFactor(ctx, d.Get("user_id").(string), d.Id(), &uf)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get user question factor: %v", err)
@@ -89,8 +89,8 @@ func resourceUserFactorQuestionUpdate(ctx context.Context, d *schema.ResourceDat
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	sq := &okta.SecurityQuestionUserFactor{
-		Profile: &okta.SecurityQuestionUserFactorProfile{
+	sq := &sdk.SecurityQuestionUserFactor{
+		Profile: &sdk.SecurityQuestionUserFactorProfile{
 			Answer:   d.Get("answer").(string),
 			Question: d.Get("key").(string),
 		},
@@ -114,11 +114,11 @@ func resourceUserFactorQuestionDelete(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func buildUserFactorQuestion(d *schema.ResourceData) *okta.SecurityQuestionUserFactor {
-	return &okta.SecurityQuestionUserFactor{
+func buildUserFactorQuestion(d *schema.ResourceData) *sdk.SecurityQuestionUserFactor {
+	return &sdk.SecurityQuestionUserFactor{
 		FactorType: "question",
 		Provider:   "OKTA",
-		Profile: &okta.SecurityQuestionUserFactorProfile{
+		Profile: &sdk.SecurityQuestionUserFactorProfile{
 			Answer:   d.Get("answer").(string),
 			Question: d.Get("key").(string),
 		},

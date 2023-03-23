@@ -7,9 +7,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceAdminRoleCustomAssignments() *schema.Resource {
@@ -125,7 +124,7 @@ func flattenAdminRoleCustomAssignments(members []*sdk.CustomRoleBindingMember) *
 	return schema.NewSet(schema.HashString, arr)
 }
 
-func listResourceSetBindingMembers(ctx context.Context, client *sdk.APISupplement, resourceSetID, customRoleID string) ([]*sdk.CustomRoleBindingMember, *okta.Response, error) {
+func listResourceSetBindingMembers(ctx context.Context, client *sdk.APISupplement, resourceSetID, customRoleID string) ([]*sdk.CustomRoleBindingMember, *sdk.Response, error) {
 	var resMembers []*sdk.CustomRoleBindingMember
 	resources, resp, err := client.ListResourceSetBindingMembers(ctx, resourceSetID, customRoleID, &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {

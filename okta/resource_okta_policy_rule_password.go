@@ -5,7 +5,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -88,26 +87,26 @@ func resourcePolicyPasswordRuleDelete(ctx context.Context, d *schema.ResourceDat
 }
 
 // build password policy rule from schema data
-func buildPolicyRulePassword(d *schema.ResourceData) sdk.PolicyRule {
+func buildPolicyRulePassword(d *schema.ResourceData) sdk.SdkPolicyRule {
 	template := sdk.PasswordPolicyRule()
 	template.Name = d.Get("name").(string)
 	template.Status = d.Get("status").(string)
 	if priority, ok := d.GetOk("priority"); ok {
 		template.Priority = int64(priority.(int))
 	}
-	template.Conditions = &okta.PolicyRuleConditions{
+	template.Conditions = &sdk.PolicyRuleConditions{
 		Network: buildPolicyNetworkCondition(d),
 		People:  getUsers(d),
 	}
-	template.Actions = sdk.PolicyRuleActions{
-		PasswordPolicyRuleActions: &okta.PasswordPolicyRuleActions{
-			PasswordChange: &okta.PasswordPolicyRuleAction{
+	template.Actions = sdk.SdkPolicyRuleActions{
+		PasswordPolicyRuleActions: &sdk.PasswordPolicyRuleActions{
+			PasswordChange: &sdk.PasswordPolicyRuleAction{
 				Access: d.Get("password_change").(string),
 			},
-			SelfServicePasswordReset: &okta.PasswordPolicyRuleAction{
+			SelfServicePasswordReset: &sdk.PasswordPolicyRuleAction{
 				Access: d.Get("password_reset").(string),
 			},
-			SelfServiceUnlock: &okta.PasswordPolicyRuleAction{
+			SelfServiceUnlock: &sdk.PasswordPolicyRuleAction{
 				Access: d.Get("password_unlock").(string),
 			},
 		},

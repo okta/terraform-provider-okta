@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 // validScopes is a list of supported scopes as per https://developer.okta.com/docs/guides/implement-oauth-for-okta/scopes/.
@@ -170,16 +170,16 @@ func resourceAppOAuthAPIScopeDelete(ctx context.Context, d *schema.ResourceData,
 
 // Resource Helpers
 // Creates a new OAuth2ScopeConsentGrant struct
-func newOAuthApiScope(scopeId, issuer string) *okta.OAuth2ScopeConsentGrant {
-	return &okta.OAuth2ScopeConsentGrant{
+func newOAuthApiScope(scopeId, issuer string) *sdk.OAuth2ScopeConsentGrant {
+	return &sdk.OAuth2ScopeConsentGrant{
 		Issuer:  issuer,
 		ScopeId: scopeId,
 	}
 }
 
 // Creates a list of OAuth2ScopeConsentGrant structs from a string list with scope names
-func getOAuthApiScopeList(scopeIds []string, issuer string) []*okta.OAuth2ScopeConsentGrant {
-	result := make([]*okta.OAuth2ScopeConsentGrant, len(scopeIds))
+func getOAuthApiScopeList(scopeIds []string, issuer string) []*sdk.OAuth2ScopeConsentGrant {
+	result := make([]*sdk.OAuth2ScopeConsentGrant, len(scopeIds))
 	for i, scopeId := range scopeIds {
 		result[i] = newOAuthApiScope(scopeId, issuer)
 	}
@@ -200,7 +200,7 @@ func getOAuthApiScopeIdMap(ctx context.Context, d *schema.ResourceData, m interf
 }
 
 // set resource schema from a list scopes
-func setOAuthApiScopes(d *schema.ResourceData, to []*okta.OAuth2ScopeConsentGrant) error {
+func setOAuthApiScopes(d *schema.ResourceData, to []*sdk.OAuth2ScopeConsentGrant) error {
 	scopes := make([]string, len(to))
 	for i, scope := range to {
 		scopes[i] = scope.ScopeId
@@ -211,7 +211,7 @@ func setOAuthApiScopes(d *schema.ResourceData, to []*okta.OAuth2ScopeConsentGran
 }
 
 // Grant a list of scopes to an OAuth application. For convenience this function takes a list of OAuth2ScopeConsentGrant structs.
-func grantOAuthApiScopes(ctx context.Context, d *schema.ResourceData, m interface{}, scopeGrants []*okta.OAuth2ScopeConsentGrant) error {
+func grantOAuthApiScopes(ctx context.Context, d *schema.ResourceData, m interface{}, scopeGrants []*sdk.OAuth2ScopeConsentGrant) error {
 	for _, scopeGrant := range scopeGrants {
 		_, _, err := getOktaClientFromMetadata(m).Application.GrantConsentToScope(ctx, d.Get("app_id").(string), *scopeGrant)
 		if err != nil {
@@ -233,7 +233,7 @@ func revokeOAuthApiScope(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 // Diff function to identify which scope needs to be added or removed to the application
-func getOAuthApiScopeUpdateLists(d *schema.ResourceData, from []*okta.OAuth2ScopeConsentGrant) (grantList, revokeList []string) {
+func getOAuthApiScopeUpdateLists(d *schema.ResourceData, from []*sdk.OAuth2ScopeConsentGrant) (grantList, revokeList []string) {
 	desiredScopes := make([]string, 0)
 	currentScopes := make([]string, 0)
 

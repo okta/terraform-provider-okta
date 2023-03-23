@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func TestAccAppBookmarkApplication_crud(t *testing.T) {
@@ -20,12 +20,12 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(okta.NewBookmarkApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewBookmarkApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
@@ -36,7 +36,7 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewBookmarkApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
@@ -66,12 +66,12 @@ resource "okta_app_bookmark" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(okta.NewBookmarkApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config, ri),
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewAutoLoginApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.read", "2h"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.update", "30m"),
@@ -123,12 +123,12 @@ resource "okta_app_bookmark" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(okta.NewBookmarkApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config, ri),
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewAutoLoginApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),

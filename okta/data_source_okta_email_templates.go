@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceEmailTemplates() *schema.Resource {
@@ -27,7 +27,7 @@ func dataSourceEmailTemplates() *schema.Resource {
 }
 
 func dataSourceEmailTemplatesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var brand *okta.Brand
+	var brand *sdk.Brand
 	var err error
 	brandID, ok := d.GetOk("brand_id")
 	if ok {
@@ -60,13 +60,13 @@ func dataSourceEmailTemplatesRead(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func collectEmailTempates(ctx context.Context, client *okta.Client, brand *okta.Brand, qp *query.Params) ([]*okta.EmailTemplate, error) {
+func collectEmailTempates(ctx context.Context, client *sdk.Client, brand *sdk.Brand, qp *query.Params) ([]*sdk.EmailTemplate, error) {
 	templates, resp, err := client.Brand.ListEmailTemplates(ctx, brand.Id, qp)
 	if err != nil {
 		return nil, err
 	}
 	for resp.HasNextPage() {
-		var nextTemplates []*okta.EmailTemplate
+		var nextTemplates []*sdk.EmailTemplate
 		resp, err = resp.Next(ctx, &nextTemplates)
 		if err != nil {
 			return nil, err

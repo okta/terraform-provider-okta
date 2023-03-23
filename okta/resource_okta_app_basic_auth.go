@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceAppBasicAuth() *schema.Resource {
@@ -63,7 +63,7 @@ func resourceAppBasicAuthCreate(ctx context.Context, d *schema.ResourceData, m i
 }
 
 func resourceAppBasicAuthRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := okta.NewBasicAuthApplication()
+	app := sdk.NewBasicAuthApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get basic auth application: %v", err)
@@ -117,13 +117,13 @@ func resourceAppBasicAuthDelete(ctx context.Context, d *schema.ResourceData, m i
 	return nil
 }
 
-func buildAppBasicAuth(d *schema.ResourceData) *okta.BasicAuthApplication {
+func buildAppBasicAuth(d *schema.ResourceData) *sdk.BasicAuthApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
-	app := okta.NewBasicAuthApplication()
+	app := sdk.NewBasicAuthApplication()
 	app.Label = d.Get("label").(string)
 
-	app.Settings = &okta.BasicApplicationSettings{
-		App: &okta.BasicApplicationSettingsApplication{
+	app.Settings = &sdk.BasicApplicationSettings{
+		App: &sdk.BasicApplicationSettingsApplication{
 			AuthURL: d.Get("auth_url").(string),
 			Url:     d.Get("url").(string),
 		},

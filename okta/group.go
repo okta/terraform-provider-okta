@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func listGroupUsers(ctx context.Context, m interface{}, id string) ([]*okta.User, error) {
-	var resUsers []*okta.User
+func listGroupUsers(ctx context.Context, m interface{}, id string) ([]*sdk.User, error) {
+	var resUsers []*sdk.User
 	users, resp, err := getOktaClientFromMetadata(m).Group.ListGroupUsers(ctx, id, &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return nil, err
@@ -17,7 +17,7 @@ func listGroupUsers(ctx context.Context, m interface{}, id string) ([]*okta.User
 	for {
 		resUsers = append(resUsers, users...)
 		if resp.HasNextPage() {
-			users = []*okta.User{}
+			users = []*sdk.User{}
 			resp, err = resp.Next(ctx, &users)
 			if err != nil {
 				return nil, err
@@ -42,14 +42,14 @@ func listGroupUserIDs(ctx context.Context, m interface{}, id string) ([]string, 
 	return resUsers, nil
 }
 
-func listGroups(ctx context.Context, client *okta.Client, qp *query.Params) ([]*okta.Group, error) {
+func listGroups(ctx context.Context, client *sdk.Client, qp *query.Params) ([]*sdk.Group, error) {
 	groups, resp, err := client.Group.ListGroups(ctx, qp)
 	if err != nil {
 		return nil, err
 	}
 	for {
 		if resp.HasNextPage() {
-			var nextGroups []*okta.Group
+			var nextGroups []*sdk.Group
 			resp, err = resp.Next(ctx, &nextGroups)
 			if err != nil {
 				return nil, err
@@ -63,7 +63,7 @@ func listGroups(ctx context.Context, client *okta.Client, qp *query.Params) ([]*
 }
 
 // Group Primary Key Operations (Use when # groups < # users in operations)
-func addGroupMembers(ctx context.Context, client *okta.Client, groupId string, users []string) error {
+func addGroupMembers(ctx context.Context, client *sdk.Client, groupId string, users []string) error {
 	for _, user := range users {
 		resp, err := client.Group.AddUserToGroup(ctx, groupId, user)
 		if err != nil {
@@ -77,7 +77,7 @@ func addGroupMembers(ctx context.Context, client *okta.Client, groupId string, u
 	return nil
 }
 
-func removeGroupMembers(ctx context.Context, client *okta.Client, groupId string, users []string) error {
+func removeGroupMembers(ctx context.Context, client *sdk.Client, groupId string, users []string) error {
 	for _, user := range users {
 		resp, err := client.Group.RemoveUserFromGroup(ctx, groupId, user)
 		err = suppressErrorOn404(resp, err)
@@ -89,7 +89,7 @@ func removeGroupMembers(ctx context.Context, client *okta.Client, groupId string
 }
 
 // User Primary Key Operations (use when # users < # groups in operations)
-func addUserToGroups(ctx context.Context, client *okta.Client, userId string, groups []string) error {
+func addUserToGroups(ctx context.Context, client *sdk.Client, userId string, groups []string) error {
 	for _, group := range groups {
 		resp, err := client.Group.AddUserToGroup(ctx, group, userId)
 		exists, err := doesResourceExist(resp, err)
@@ -103,7 +103,7 @@ func addUserToGroups(ctx context.Context, client *okta.Client, userId string, gr
 	return nil
 }
 
-func removeUserFromGroups(ctx context.Context, client *okta.Client, userId string, groups []string) error {
+func removeUserFromGroups(ctx context.Context, client *sdk.Client, userId string, groups []string) error {
 	for _, group := range groups {
 		resp, err := client.Group.RemoveUserFromGroup(ctx, group, userId)
 		err = suppressErrorOn404(resp, err)

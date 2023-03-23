@@ -3,8 +3,6 @@ package sdk
 import (
 	"context"
 	"net/http"
-
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 type OrgWideCaptchaSettings struct {
@@ -13,7 +11,7 @@ type OrgWideCaptchaSettings struct {
 	Links        interface{} `json:"_links,omitempty"`
 }
 
-func (m *APISupplement) GetOrgWideCaptchaSettings(ctx context.Context) (*OrgWideCaptchaSettings, *okta.Response, error) {
+func (m *APISupplement) GetOrgWideCaptchaSettings(ctx context.Context) (*OrgWideCaptchaSettings, *Response, error) {
 	url := "/api/v1/org/captcha"
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -27,7 +25,7 @@ func (m *APISupplement) GetOrgWideCaptchaSettings(ctx context.Context) (*OrgWide
 	return captcha, resp, nil
 }
 
-func (m *APISupplement) UpdateOrgWideCaptchaSettings(ctx context.Context, body OrgWideCaptchaSettings) (*OrgWideCaptchaSettings, *okta.Response, error) {
+func (m *APISupplement) UpdateOrgWideCaptchaSettings(ctx context.Context, body OrgWideCaptchaSettings) (*OrgWideCaptchaSettings, *Response, error) {
 	url := "/api/v1/org/captcha"
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
 	if err != nil {
@@ -41,7 +39,7 @@ func (m *APISupplement) UpdateOrgWideCaptchaSettings(ctx context.Context, body O
 	return captcha, resp, nil
 }
 
-func (m *APISupplement) DeleteOrgWideCaptchaSettings(ctx context.Context) (*okta.Response, error) {
+func (m *APISupplement) DeleteOrgWideCaptchaSettings(ctx context.Context) (*Response, error) {
 	url := "/api/v1/org/captcha"
 	req, err := m.RequestExecutor.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {

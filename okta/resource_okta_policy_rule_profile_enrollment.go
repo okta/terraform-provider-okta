@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -183,17 +182,17 @@ func resourcePolicyProfileEnrollmentRuleDelete(ctx context.Context, d *schema.Re
 }
 
 // build profile enrollment policy rule from schema data
-func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.PolicyRule {
+func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.SdkPolicyRule {
 	rule := sdk.ProfileEnrollmentPolicyRule()
 	rule.Id = id
 	rule.Name = "Catch-all Rule" // read-only
 	rule.Priority = 99           // read-only
 	rule.System = boolPtr(true)  // read-only
 	rule.Status = statusActive
-	rule.Actions = sdk.PolicyRuleActions{
-		ProfileEnrollment: &okta.ProfileEnrollmentPolicyRuleAction{
+	rule.Actions = sdk.SdkPolicyRuleActions{
+		ProfileEnrollment: &sdk.ProfileEnrollmentPolicyRuleAction{
 			Access: d.Get("access").(string),
-			ActivationRequirements: &okta.ProfileEnrollmentPolicyRuleActivationRequirement{
+			ActivationRequirements: &sdk.ProfileEnrollmentPolicyRuleActivationRequirement{
 				EmailVerification: boolPtr(d.Get("email_verification").(bool)),
 			},
 			UnknownUserAction: d.Get("unknown_user_action").(string),
@@ -202,7 +201,7 @@ func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.Pol
 	}
 	hook, ok := d.GetOk("inline_hook_id")
 	if ok {
-		rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks = []*okta.PreRegistrationInlineHook{{InlineHookId: hook.(string)}}
+		rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks = []*sdk.PreRegistrationInlineHook{{InlineHookId: hook.(string)}}
 	}
 	targetGroup, ok := d.GetOk("target_group_id")
 	if ok {
@@ -212,9 +211,9 @@ func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.Pol
 	if !ok {
 		return rule
 	}
-	attributes := make([]*okta.ProfileEnrollmentPolicyRuleProfileAttribute, len(pa.([]interface{})))
+	attributes := make([]*sdk.ProfileEnrollmentPolicyRuleProfileAttribute, len(pa.([]interface{})))
 	for i := range pa.([]interface{}) {
-		attributes[i] = &okta.ProfileEnrollmentPolicyRuleProfileAttribute{
+		attributes[i] = &sdk.ProfileEnrollmentPolicyRuleProfileAttribute{
 			Label:    d.Get(fmt.Sprintf("profile_attributes.%d.label", i)).(string),
 			Name:     d.Get(fmt.Sprintf("profile_attributes.%d.name", i)).(string),
 			Required: boolPtr(d.Get(fmt.Sprintf("profile_attributes.%d.required", i)).(bool)),

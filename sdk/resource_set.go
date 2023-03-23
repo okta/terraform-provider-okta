@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 type ResourceSet struct {
@@ -20,7 +18,7 @@ type ListResourceSetsResponse struct {
 }
 
 // ListResourceSets Gets all ResourceSets
-func (m *APISupplement) ListResourceSets(ctx context.Context) (*ListResourceSetsResponse, *okta.Response, error) {
+func (m *APISupplement) ListResourceSets(ctx context.Context) (*ListResourceSetsResponse, *Response, error) {
 	url := "/api/v1/iam/resource-sets"
 	re := m.cloneRequestExecutor()
 	req, err := re.NewRequest(http.MethodGet, url, nil)
@@ -36,7 +34,7 @@ func (m *APISupplement) ListResourceSets(ctx context.Context) (*ListResourceSets
 }
 
 // GetResourceSet gets ResourceSet by ID
-func (m *APISupplement) GetResourceSet(ctx context.Context, resourceSetID string) (*ResourceSet, *okta.Response, error) {
+func (m *APISupplement) GetResourceSet(ctx context.Context, resourceSetID string) (*ResourceSet, *Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/resource-sets/%s", resourceSetID)
 	re := m.cloneRequestExecutor()
 	req, err := re.NewRequest(http.MethodGet, url, nil)
@@ -52,7 +50,7 @@ func (m *APISupplement) GetResourceSet(ctx context.Context, resourceSetID string
 }
 
 // CreateResourceSet creates ResourceSet
-func (m *APISupplement) CreateResourceSet(ctx context.Context, body ResourceSet) (*ResourceSet, *okta.Response, error) {
+func (m *APISupplement) CreateResourceSet(ctx context.Context, body ResourceSet) (*ResourceSet, *Response, error) {
 	url := "/api/v1/iam/resource-sets"
 	re := m.cloneRequestExecutor()
 	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
@@ -68,7 +66,7 @@ func (m *APISupplement) CreateResourceSet(ctx context.Context, body ResourceSet)
 }
 
 // UpdateResourceSet updates ResourceSet
-func (m *APISupplement) UpdateResourceSet(ctx context.Context, resourceSetID string, body ResourceSet) (*ResourceSet, *okta.Response, error) {
+func (m *APISupplement) UpdateResourceSet(ctx context.Context, resourceSetID string, body ResourceSet) (*ResourceSet, *Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/resource-sets/%s", resourceSetID)
 	re := m.cloneRequestExecutor()
 	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
@@ -84,7 +82,7 @@ func (m *APISupplement) UpdateResourceSet(ctx context.Context, resourceSetID str
 }
 
 // DeleteResourceSet deletes ResourceSet by ID
-func (m *APISupplement) DeleteResourceSet(ctx context.Context, resourceSetID string) (*okta.Response, error) {
+func (m *APISupplement) DeleteResourceSet(ctx context.Context, resourceSetID string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/resource-sets/%s", resourceSetID)
 	re := m.cloneRequestExecutor()
 	req, err := re.NewRequest(http.MethodDelete, url, nil)

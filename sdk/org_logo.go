@@ -7,12 +7,10 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
-
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 // UploadOrgLogo uploads app's logo
-func (m *APISupplement) UploadOrgLogo(ctx context.Context, filename string) (*okta.Response, error) {
+func (m *APISupplement) UploadOrgLogo(ctx context.Context, filename string) (*Response, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err

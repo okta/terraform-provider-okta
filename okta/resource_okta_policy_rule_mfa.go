@@ -5,7 +5,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -93,22 +92,22 @@ func resourcePolicyMfaRuleDelete(ctx context.Context, d *schema.ResourceData, m 
 }
 
 // build password policy rule from schema data
-func buildMfaPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
+func buildMfaPolicyRule(d *schema.ResourceData) sdk.SdkPolicyRule {
 	rule := sdk.MfaPolicyRule()
 	rule.Name = d.Get("name").(string)
 	rule.Status = d.Get("status").(string)
 	if priority, ok := d.GetOk("priority"); ok {
 		rule.Priority = int64(priority.(int))
 	}
-	rule.Conditions = &okta.PolicyRuleConditions{
+	rule.Conditions = &sdk.PolicyRuleConditions{
 		Network: buildPolicyNetworkCondition(d),
 		People:  getUsers(d),
 		App:     buildMFAPolicyAppCondition(d),
 	}
 	if enroll, ok := d.GetOk("enroll"); ok {
-		rule.Actions = sdk.PolicyRuleActions{
-			PasswordPolicyRuleActions: &okta.PasswordPolicyRuleActions{
-				Enroll: &okta.PolicyRuleActionsEnroll{
+		rule.Actions = sdk.SdkPolicyRuleActions{
+			PasswordPolicyRuleActions: &sdk.PasswordPolicyRuleActions{
+				Enroll: &sdk.PolicyRuleActionsEnroll{
 					Self: enroll.(string),
 				},
 			},
@@ -117,19 +116,19 @@ func buildMfaPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 	return rule
 }
 
-func buildMFAPolicyAppCondition(d *schema.ResourceData) *okta.AppAndInstancePolicyRuleCondition {
+func buildMFAPolicyAppCondition(d *schema.ResourceData) *sdk.AppAndInstancePolicyRuleCondition {
 	incl, okInclude := d.GetOk("app_include")
 	excl, okExclude := d.GetOk("app_exclude")
 	if !okInclude && !okExclude {
 		return nil
 	}
-	rc := &okta.AppAndInstancePolicyRuleCondition{}
+	rc := &sdk.AppAndInstancePolicyRuleCondition{}
 	if okInclude {
 		valueList := incl.(*schema.Set).List()
-		var includeList []*okta.AppAndInstanceConditionEvaluatorAppOrInstance
+		var includeList []*sdk.AppAndInstanceConditionEvaluatorAppOrInstance
 		for _, item := range valueList {
 			if value, ok := item.(map[string]interface{}); ok {
-				includeList = append(includeList, &okta.AppAndInstanceConditionEvaluatorAppOrInstance{
+				includeList = append(includeList, &sdk.AppAndInstanceConditionEvaluatorAppOrInstance{
 					Id:   getMapString(value, "id"),
 					Type: getMapString(value, "type"),
 					Name: getMapString(value, "name"),
@@ -140,10 +139,10 @@ func buildMFAPolicyAppCondition(d *schema.ResourceData) *okta.AppAndInstancePoli
 	}
 	if okExclude {
 		valueList := excl.(*schema.Set).List()
-		var excludeList []*okta.AppAndInstanceConditionEvaluatorAppOrInstance
+		var excludeList []*sdk.AppAndInstanceConditionEvaluatorAppOrInstance
 		for _, item := range valueList {
 			if value, ok := item.(map[string]interface{}); ok {
-				excludeList = append(excludeList, &okta.AppAndInstanceConditionEvaluatorAppOrInstance{
+				excludeList = append(excludeList, &sdk.AppAndInstanceConditionEvaluatorAppOrInstance{
 					Id:   getMapString(value, "id"),
 					Type: getMapString(value, "type"),
 					Name: getMapString(value, "name"),
@@ -155,7 +154,7 @@ func buildMFAPolicyAppCondition(d *schema.ResourceData) *okta.AppAndInstancePoli
 	return rc
 }
 
-func flattenApps(appObj []*okta.AppAndInstanceConditionEvaluatorAppOrInstance) *schema.Set {
+func flattenApps(appObj []*sdk.AppAndInstanceConditionEvaluatorAppOrInstance) *schema.Set {
 	var flattened []interface{}
 	for _, v := range appObj {
 		flattened = append(flattened, map[string]interface{}{

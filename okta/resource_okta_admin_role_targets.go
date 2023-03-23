@@ -9,8 +9,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 var rolesWithTargets = []string{"APP_ADMIN", "GROUP_MEMBERSHIP_ADMIN", "HELP_DESK_ADMIN", "USER_ADMIN"}
@@ -211,7 +211,7 @@ func removeAllTargets(ctx context.Context, d *schema.ResourceData, m interface{}
 	}
 	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusConflict, http.StatusBadRequest})
 	role, _, err := getOktaClientFromMetadata(m).User.AssignRoleToUser(ctx, d.Get("user_id").(string),
-		okta.AssignRoleRequest{Type: d.Get("role_type").(string)}, nil)
+		sdk.AssignRoleRequest{Type: d.Get("role_type").(string)}, nil)
 	if err != nil {
 		d.SetId("")
 		return "", fmt.Errorf("failed to assign '%s' role back to user: %v", d.Get("role_type").(string), err)
@@ -319,7 +319,7 @@ func listUserApplicationTargets(ctx context.Context, d *schema.ResourceData, m i
 	for {
 		for _, app := range apps {
 			if app.Id != "" {
-				a := okta.NewApplication()
+				a := sdk.NewApplication()
 				_, resp, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, app.Id, a, nil)
 				if err := suppressErrorOn404(resp, err); err != nil {
 					return nil, err

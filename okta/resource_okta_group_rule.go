@@ -8,8 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 const statusInvalid = "INVALID"
@@ -175,20 +175,20 @@ func resourceGroupRuleDelete(ctx context.Context, d *schema.ResourceData, m inte
 	return nil
 }
 
-func buildGroupRule(d *schema.ResourceData) *okta.GroupRule {
-	return &okta.GroupRule{
-		Actions: &okta.GroupRuleAction{
-			AssignUserToGroups: &okta.GroupRuleGroupAssignment{
+func buildGroupRule(d *schema.ResourceData) *sdk.GroupRule {
+	return &sdk.GroupRule{
+		Actions: &sdk.GroupRuleAction{
+			AssignUserToGroups: &sdk.GroupRuleGroupAssignment{
 				GroupIds: convertInterfaceToStringSet(d.Get("group_assignments")),
 			},
 		},
-		Conditions: &okta.GroupRuleConditions{
-			Expression: &okta.GroupRuleExpression{
+		Conditions: &sdk.GroupRuleConditions{
+			Expression: &sdk.GroupRuleExpression{
 				Type:  d.Get("expression_type").(string),
 				Value: d.Get("expression_value").(string),
 			},
-			People: &okta.GroupRulePeopleCondition{
-				Users: &okta.GroupRuleUserCondition{
+			People: &sdk.GroupRulePeopleCondition{
+				Users: &sdk.GroupRuleUserCondition{
 					Exclude: convertInterfaceToStringSet(d.Get("users_excluded")),
 				},
 			},

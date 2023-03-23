@@ -6,8 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 type AddResourceSetResourcesRequest struct {
@@ -27,7 +26,7 @@ type ResourceSetResource struct {
 }
 
 // ListResourceSetResources lists the resources that make up a Resource Set
-func (m *APISupplement) ListResourceSetResources(ctx context.Context, resourceSetID string, qp *query.Params) (*ListResourceSetResourcesResponse, *okta.Response, error) {
+func (m *APISupplement) ListResourceSetResources(ctx context.Context, resourceSetID string, qp *query.Params) (*ListResourceSetResourcesResponse, *Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/resource-sets/%s/resources", resourceSetID)
 	if qp != nil {
 		url += qp.String()
@@ -46,7 +45,7 @@ func (m *APISupplement) ListResourceSetResources(ctx context.Context, resourceSe
 }
 
 // AddResourceSetResources adds more resources to a Resource Set
-func (m *APISupplement) AddResourceSetResources(ctx context.Context, resourceSetID string, body AddResourceSetResourcesRequest) (*okta.Response, error) {
+func (m *APISupplement) AddResourceSetResources(ctx context.Context, resourceSetID string, body AddResourceSetResourcesRequest) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/resource-sets/%s/resources", resourceSetID)
 	re := m.cloneRequestExecutor()
 	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPatch, url, body)
@@ -57,7 +56,7 @@ func (m *APISupplement) AddResourceSetResources(ctx context.Context, resourceSet
 }
 
 // DeleteResourceSetResource Removes a resource from a Resource Set
-func (m *APISupplement) DeleteResourceSetResource(ctx context.Context, resourceSetID, resourceID string) (*okta.Response, error) {
+func (m *APISupplement) DeleteResourceSetResource(ctx context.Context, resourceSetID, resourceID string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/resource-sets/%s/resources/%s", resourceSetID, resourceID)
 	re := m.cloneRequestExecutor()
 	req, err := re.NewRequest(http.MethodDelete, url, nil)

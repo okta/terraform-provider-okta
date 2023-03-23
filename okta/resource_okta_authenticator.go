@@ -7,9 +7,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceAuthenticator() *schema.Resource {
@@ -261,41 +260,41 @@ func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func buildAuthenticator(d *schema.ResourceData) (*okta.Authenticator, error) {
-	authenticator := okta.Authenticator{
+func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
+	authenticator := sdk.Authenticator{
 		Type: d.Get("type").(string),
 		Id:   d.Id(),
 		Key:  d.Get("key").(string),
 		Name: d.Get("name").(string),
 	}
 	if d.Get("type").(string) == "security_key" {
-		authenticator.Provider = &okta.AuthenticatorProvider{
+		authenticator.Provider = &sdk.AuthenticatorProvider{
 			Type: d.Get("provider_type").(string),
-			Configuration: &okta.AuthenticatorProviderConfiguration{
+			Configuration: &sdk.AuthenticatorProviderConfiguration{
 				HostName:     d.Get("provider_hostname").(string),
 				AuthPortPtr:  int64Ptr(d.Get("provider_auth_port").(int)),
 				InstanceId:   d.Get("provider_instance_id").(string),
 				SharedSecret: d.Get("provider_shared_secret").(string),
-				UserNameTemplate: &okta.AuthenticatorProviderConfigurationUserNamePlate{
+				UserNameTemplate: &sdk.AuthenticatorProviderConfigurationUserNamePlate{
 					Template: "",
 				},
 			},
 		}
 	} else if d.Get("type").(string) == "DUO" {
-		authenticator.Provider = &okta.AuthenticatorProvider{
+		authenticator.Provider = &sdk.AuthenticatorProvider{
 			Type: d.Get("provider_type").(string),
-			Configuration: &okta.AuthenticatorProviderConfiguration{
+			Configuration: &sdk.AuthenticatorProviderConfiguration{
 				Host:           d.Get("provider_host").(string),
 				SecretKey:      d.Get("provider_secret_key").(string),
 				IntegrationKey: d.Get("provider_integration_key").(string),
-				UserNameTemplate: &okta.AuthenticatorProviderConfigurationUserNamePlate{
+				UserNameTemplate: &sdk.AuthenticatorProviderConfigurationUserNamePlate{
 					Template: d.Get("provider_user_name_template").(string),
 				},
 			},
 		}
 	} else {
 		if s, ok := d.GetOk("settings"); ok {
-			var settings okta.AuthenticatorSettings
+			var settings sdk.AuthenticatorSettings
 			err := json.Unmarshal([]byte(s.(string)), &settings)
 			if err != nil {
 				return nil, err
@@ -305,7 +304,7 @@ func buildAuthenticator(d *schema.ResourceData) (*okta.Authenticator, error) {
 	}
 
 	if p, ok := d.GetOk("provider_json"); ok {
-		var provider okta.AuthenticatorProvider
+		var provider sdk.AuthenticatorProvider
 		err := json.Unmarshal([]byte(p.(string)), &provider)
 		if err != nil {
 			return nil, err
@@ -343,7 +342,7 @@ func validateAuthenticator(d *schema.ResourceData) error {
 	return nil
 }
 
-func establishAuthenticator(authenticator *okta.Authenticator, d *schema.ResourceData) {
+func establishAuthenticator(authenticator *sdk.Authenticator, d *schema.ResourceData) {
 	_ = d.Set("key", authenticator.Key)
 	_ = d.Set("name", authenticator.Name)
 	_ = d.Set("status", authenticator.Status)

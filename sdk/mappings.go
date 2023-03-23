@@ -4,12 +4,10 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 // FIXME uses internal api
-func (m *APISupplement) ApplyMappings(ctx context.Context, sourceID, targetID string) (*okta.Response, error) {
+func (m *APISupplement) ApplyMappings(ctx context.Context, sourceID, targetID string) (*Response, error) {
 	url := fmt.Sprintf("/api/internal/v1/mappings/reapply?source=%s&target=%s", sourceID, targetID)
 	re := m.cloneRequestExecutor()
 	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, nil)

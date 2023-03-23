@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceIdpSocial() *schema.Resource {
@@ -192,28 +192,28 @@ func resourceIdpSocialUpdate(ctx context.Context, d *schema.ResourceData, m inte
 	return resourceIdpSocialRead(ctx, d, m)
 }
 
-func buildIdPSocial(d *schema.ResourceData) okta.IdentityProvider {
-	idp := okta.IdentityProvider{
+func buildIdPSocial(d *schema.ResourceData) sdk.IdentityProvider {
+	idp := sdk.IdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       d.Get("type").(string),
 		IssuerMode: d.Get("issuer_mode").(string),
-		Policy: &okta.IdentityProviderPolicy{
+		Policy: &sdk.IdentityProviderPolicy{
 			AccountLink:     buildPolicyAccountLink(d),
 			MaxClockSkewPtr: int64Ptr(d.Get("max_clock_skew").(int)),
 			Provisioning:    buildIdPProvisioning(d),
-			Subject: &okta.PolicySubject{
+			Subject: &sdk.PolicySubject{
 				MatchType:      d.Get("subject_match_type").(string),
 				MatchAttribute: d.Get("subject_match_attribute").(string),
-				UserNameTemplate: &okta.PolicyUserNameTemplate{
+				UserNameTemplate: &sdk.PolicyUserNameTemplate{
 					Template: d.Get("username_template").(string),
 				},
 			},
 		},
-		Protocol: &okta.Protocol{
+		Protocol: &sdk.Protocol{
 			Scopes: convertInterfaceToStringSet(d.Get("scopes")),
 			Type:   d.Get("protocol_type").(string),
-			Credentials: &okta.IdentityProviderCredentials{
-				Client: &okta.IdentityProviderCredentialsClient{
+			Credentials: &sdk.IdentityProviderCredentials{
+				Client: &sdk.IdentityProviderCredentialsClient{
 					ClientId:     d.Get("client_id").(string),
 					ClientSecret: d.Get("client_secret").(string),
 				},
@@ -221,7 +221,7 @@ func buildIdPSocial(d *schema.ResourceData) okta.IdentityProvider {
 		},
 	}
 	if idp.Type == "APPLE" {
-		idp.Protocol.Credentials.Signing = &okta.IdentityProviderCredentialsSigning{
+		idp.Protocol.Credentials.Signing = &sdk.IdentityProviderCredentialsSigning{
 			Kid:        "",
 			PrivateKey: d.Get("apple_private_key").(string),
 			TeamId:     d.Get("apple_team_id").(string),

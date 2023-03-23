@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func dataSourceAuthServerScopes() *schema.Resource {
@@ -79,7 +79,7 @@ func dataSourceAuthServerScopesRead(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func flattenScope(s *okta.OAuth2Scope) map[string]interface{} {
+func flattenScope(s *sdk.OAuth2Scope) map[string]interface{} {
 	return map[string]interface{}{
 		"id":               s.Id,
 		"name":             s.Name,

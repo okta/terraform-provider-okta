@@ -13,7 +13,6 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/okta/internal/apimutex"
 	"github.com/okta/terraform-provider-okta/okta/internal/transport"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -49,7 +48,7 @@ type (
 		logLevel         int
 		requestTimeout   int
 		maxAPICapacity   int // experimental
-		oktaClient       *okta.Client
+		oktaClient       *sdk.Client
 		supplementClient *sdk.APISupplement
 		client           *http.Client
 		logger           hclog.Logger
@@ -89,7 +88,7 @@ func providerLogger(c *Config) hclog.Logger {
 	})
 }
 
-func oktaSDKClient(c *Config) (client *okta.Client, err error) {
+func oktaSDKClient(c *Config) (client *sdk.Client, err error) {
 	var httpClient *http.Client
 	logLevel := strings.ToLower(os.Getenv("TF_LOG"))
 	debugHttpRequests := (logLevel == "1" || logLevel == "debug" || logLevel == "trace")
@@ -140,43 +139,43 @@ func oktaSDKClient(c *Config) (client *okta.Client, err error) {
 		orgUrl = fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
 	}
 
-	setters := []okta.ConfigSetter{
-		okta.WithOrgUrl(orgUrl),
-		okta.WithCache(false),
-		okta.WithHttpClientPtr(httpClient),
-		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
-		okta.WithRequestTimeout(int64(c.requestTimeout)),
-		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
-		okta.WithUserAgentExtra("okta-terraform/3.44.0"),
+	setters := []sdk.ConfigSetter{
+		sdk.WithOrgUrl(orgUrl),
+		sdk.WithCache(false),
+		sdk.WithHttpClientPtr(httpClient),
+		sdk.WithRateLimitMaxBackOff(int64(c.maxWait)),
+		sdk.WithRequestTimeout(int64(c.requestTimeout)),
+		sdk.WithRateLimitMaxRetries(int32(c.retryCount)),
+		sdk.WithUserAgentExtra("okta-terraform/3.44.0"),
 	}
 
 	switch {
 	case c.accessToken != "":
 		setters = append(
 			setters,
-			okta.WithToken(c.accessToken), okta.WithAuthorizationMode("Bearer"),
+			sdk.WithToken(c.accessToken), sdk.WithAuthorizationMode("Bearer"),
 		)
 
 	case c.apiToken != "":
 		setters = append(
 			setters,
-			okta.WithToken(c.apiToken), okta.WithAuthorizationMode("SSWS"),
+			sdk.WithToken(c.apiToken), sdk.WithAuthorizationMode("SSWS"),
 		)
 
 	case c.privateKey != "":
 		setters = append(
 			setters,
-			okta.WithPrivateKey(c.privateKey), okta.WithPrivateKeyId(c.privateKeyId), okta.WithScopes(c.scopes), okta.WithClientId(c.clientID), okta.WithAuthorizationMode("PrivateKey"),
+			sdk.WithPrivateKey(c.privateKey), sdk.WithPrivateKeyId(c.privateKeyId), sdk.WithScopes(c.scopes), sdk.WithClientId(c.clientID), sdk.WithAuthorizationMode("PrivateKey"),
 		)
 	}
 
 	if disableHTTPS {
-		setters = append(setters, okta.WithTestingDisableHttpsCheck(true))
+		setters = append(setters, sdk.WithTestingDisableHttpsCheck(true))
 	}
 
 	c.client = httpClient
 
-	_, client, err = okta.NewClient(
+	_, client, err = sdk.NewClient(
 		context.Background(),
 		setters...,
 	)
@@ -188,9 +187,9 @@ func errHandler(resp *http.Response, err error, numTries int) (*http.Response, e
 		return resp, err
 	}
 	defer resp.Body.Close()
-	err = okta.CheckResponseForError(resp)
+	err = sdk.CheckResponseForError(resp)
 	if err != nil {
-		var oErr *okta.Error
+		var oErr *sdk.Error
 		if errors.As(err, &oErr) {
 			oErr.ErrorSummary = fmt.Sprintf("%s, giving up after %d attempt(s)", oErr.ErrorSummary, numTries)
 			return resp, oErr

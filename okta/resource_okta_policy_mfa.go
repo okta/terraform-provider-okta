@@ -7,7 +7,6 @@ import (
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -70,7 +69,7 @@ func resourcePolicyMfaDelete(ctx context.Context, d *schema.ResourceData, m inte
 }
 
 // create or update a MFA policy
-func buildMFAPolicy(d *schema.ResourceData) sdk.Policy {
+func buildMFAPolicy(d *schema.ResourceData) sdk.SdkPolicy {
 	policy := sdk.MfaPolicy()
 	policy.Name = d.Get("name").(string)
 	policy.Status = d.Get("status").(string)
@@ -79,14 +78,14 @@ func buildMFAPolicy(d *schema.ResourceData) sdk.Policy {
 		policy.PriorityPtr = int64Ptr(priority.(int))
 	}
 	policy.Settings = buildSettings(d)
-	policy.Conditions = &okta.PolicyRuleConditions{
+	policy.Conditions = &sdk.PolicyRuleConditions{
 		People: getGroups(d),
 	}
 	return policy
 }
 
 // Opposite of syncSettings(): Build the corresponding sdk.PolicySettings based on the schema.ResourceData
-func buildSettings(d *schema.ResourceData) *sdk.PolicySettings {
+func buildSettings(d *schema.ResourceData) *sdk.SdkPolicySettings {
 	if d.Get("is_oie") == true {
 		authenticators := []*sdk.PolicyAuthenticator{}
 
@@ -105,13 +104,13 @@ func buildSettings(d *schema.ResourceData) *sdk.PolicySettings {
 			authenticators = append(authenticators, authenticator)
 		}
 
-		return &sdk.PolicySettings{
+		return &sdk.SdkPolicySettings{
 			Type:           "AUTHENTICATORS",
 			Authenticators: authenticators,
 		}
 	}
 
-	return &sdk.PolicySettings{
+	return &sdk.SdkPolicySettings{
 		Type: "FACTORS",
 		Factors: &sdk.PolicyFactorsSettings{
 			Duo:          buildFactorProvider(d, sdk.DuoFactor),
@@ -151,7 +150,7 @@ func buildFactorProvider(d *schema.ResourceData, key string) *sdk.PolicyFactor {
 }
 
 // Syncs either classic factors or OIE authenticators into the resource data.
-func syncSettings(d *schema.ResourceData, settings *sdk.PolicySettings) {
+func syncSettings(d *schema.ResourceData, settings *sdk.SdkPolicySettings) {
 	if settings == nil {
 		// NOTE when sdk/policy.go is gone we probably won't need this guard
 		return

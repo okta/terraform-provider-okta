@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -160,7 +160,7 @@ func TestBuildEnum(t *testing.T) {
 }
 
 func TestNormalizeGroupProfile(t *testing.T) {
-	profileWithNils := okta.GroupProfileMap{
+	profileWithNils := sdk.GroupProfileMap{
 		"test1": "test",
 		"test2": nil,
 		"test3": true,
@@ -169,7 +169,7 @@ func TestNormalizeGroupProfile(t *testing.T) {
 		"test6": 1234,
 	}
 	normalizedProfile := normalizeGroupProfile(profileWithNils)
-	expectedProfile := okta.GroupProfileMap{
+	expectedProfile := sdk.GroupProfileMap{
 		"test1": "test",
 		"test3": true,
 		"test5": []string{"a", "b", "c"},
