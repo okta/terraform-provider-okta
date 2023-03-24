@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -131,15 +132,11 @@ func flattenResourceSetResources(resources []*sdk.ResourceSetResource) *schema.S
 	var arr []interface{}
 	for _, res := range resources {
 		if res.Links != nil {
-			links := res.Links.(map[string]interface{})
-			var url string
-			for _, v := range links {
-				for _, link := range v.(map[string]interface{}) {
-					url = link.(string)
-					break
-				}
-			}
+			url := encodeResourceSetResourceLink(linksValue(res.Links, "self", "href"))
 			arr = append(arr, url)
+		} else if res.Orn != "" {
+			var orn = res.Orn
+			arr = append(arr, orn)
 		}
 	}
 	return schema.NewSet(schema.HashString, arr)
@@ -182,7 +179,12 @@ func addResourcesToResourceSet(ctx context.Context, client *sdk.APISupplement, r
 	if len(links) == 0 {
 		return nil
 	}
-	_, err := client.AddResourceSetResources(ctx, resourceSetID, sdk.AddResourceSetResourcesRequest{Additions: links})
+
+	var encodedLinks []string
+	for _, link := range links {
+		encodedLinks = append(encodedLinks, encodeResourceSetResourceLink(link))
+	}
+	_, err := client.AddResourceSetResources(ctx, resourceSetID, sdk.AddResourceSetResourcesRequest{Additions: encodedLinks})
 	if err != nil {
 		return fmt.Errorf("failed to add resources to the resource set: %v", err)
 	}
@@ -194,16 +196,21 @@ func removeResourcesFromResourceSet(ctx context.Context, client *sdk.APISuppleme
 	if err != nil {
 		return fmt.Errorf("failed to get list of resource set resources: %v", err)
 	}
+	var escapedUrls []string
+	for _, u := range urls {
+		escapedUrls = append(escapedUrls, escapeResourceSetResourceLink(u))
+	}
 	for _, res := range resources {
-		links := res.Links.(map[string]interface{})
-		var url string
-		for _, v := range links {
-			for _, link := range v.(map[string]interface{}) {
-				url = link.(string)
-				break
-			}
+		orn := res.Orn
+		toDelete := false
+
+		if res.Links != nil {
+			url := linksValue(res.Links, "self", "href")
+			toDelete = contains(escapedUrls, url)
 		}
-		if contains(urls, url) {
+		toDelete = toDelete || contains(escapedUrls, orn)
+
+		if toDelete {
 			_, err := client.DeleteResourceSetResource(ctx, resourceSetID, res.Id)
 			if err != nil {
 				return fmt.Errorf("failed to remove %s resource from the resource set: %v", res.Id, err)
@@ -211,4 +218,12 @@ func removeResourcesFromResourceSet(ctx context.Context, client *sdk.APISuppleme
 		}
 	}
 	return nil
+}
+
+func encodeResourceSetResourceLink(link string) string {
+	return strings.Replace(link, "\"", "%22", -1)
+}
+
+func escapeResourceSetResourceLink(link string) string {
+	return strings.Replace(link, "%22", "\"", -1)
 }

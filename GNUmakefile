@@ -20,6 +20,7 @@ dep: # Download required dependencies
 
 build: fmtcheck
 	go install
+	go build -o ~/.terraform.d/plugins/terraform.local/local/okta/3.44.0/darwin_amd64/terraform-provider-okta .
 
 clean:
 	go clean -cache -testcache ./...

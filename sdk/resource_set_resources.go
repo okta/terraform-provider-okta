@@ -21,6 +21,7 @@ type ListResourceSetResourcesResponse struct {
 
 type ResourceSetResource struct {
 	Id          string      `json:"id"`
+	Orn         string      `json:"orn"`
 	Created     time.Time   `json:"created"`
 	LastUpdated time.Time   `json:"lastUpdated"`
 	Links       interface{} `json:"_links"`
