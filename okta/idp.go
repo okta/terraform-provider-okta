@@ -122,7 +122,7 @@ var (
 		Type:             schema.TypeString,
 		Optional:         true,
 		Description:      "The HMAC Signature Algorithm used when signing an authorization request",
-		ValidateDiagFunc: elemInSlice([]string{"HS256", "HS384", "HS512"}),
+		ValidateDiagFunc: elemInSlice([]string{"HS256", "HS384", "HS512", "SHA-256", "RS256", "RS384", "RS512"}),
 		Default:          "HS256",
 	}
 
