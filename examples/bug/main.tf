@@ -21,8 +21,8 @@ resource "okta_resource_set" "my_resources" {
 
   resources = [
     "https://${var.org_name}.${var.partition}.com/api/v1/groups",
-    "orn:oktapreview:idp:${var.org_id}:customizations",
-    # "orn:oktapreview:idp:${var.org_id}:apps:workday",
+    "orn:${var.partition}:idp:${var.org_id}:customizations",
+    # "orn:${var.partition}:idp:${var.org_id}:apps:workday",
     "https://${var.org_name}.${var.partition}.com/api/v1/apps?filter=name+eq+%22workday%22",
     # "https://${var.org_name}.${var.partition}.com/api/v1/apps?filter=name+eq+\"workday\"",
   ]
