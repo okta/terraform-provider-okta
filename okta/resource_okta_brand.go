@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
 func resourceBrand() *schema.Resource {
@@ -24,8 +24,8 @@ func resourceBrand() *schema.Resource {
 func resourceBrandCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	brandId := d.Get("brand_id").(string)
 	// check that the brand exists, create is short circuited as a reader
-	brand, resp, err := getOktaClientFromMetadata(m).Brand.GetBrand(ctx, brandId)
-	if err := suppressErrorOn404(resp, err); err != nil {
+	brand, resp, err := getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrand(ctx, brandId).Execute()
+	if err := v3suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get brand %q: %v", brandId, err)
 	}
 	logger(m).Info("setting brand id", "id", brandId)
@@ -40,8 +40,8 @@ func resourceBrandCreate(ctx context.Context, d *schema.ResourceData, m interfac
 
 func resourceBrandRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	logger(m).Info("reading brand", "id", d.Id())
-	brand, resp, err := getOktaClientFromMetadata(m).Brand.GetBrand(ctx, d.Id())
-	if err := suppressErrorOn404(resp, err); err != nil {
+	brand, resp, err := getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrand(ctx, d.Id()).Execute()
+	if err := v3suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get brand: %v", err)
 	}
 	if brand == nil {
@@ -60,26 +60,26 @@ func resourceBrandRead(ctx context.Context, d *schema.ResourceData, m interface{
 func resourceBrandUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	logger(m).Info("updating brand", "id", d.Id())
 
-	brand := sdk.Brand{}
+	brandRequest := okta.BrandRequest{}
 	agree, ok := d.GetOk("agree_to_custom_privacy_policy")
 	if ok {
-		brand.AgreeToCustomPrivacyPolicy = boolPtr(agree.(bool))
+		brandRequest.AgreeToCustomPrivacyPolicy = boolPtr(agree.(bool))
 	} else {
-		brand.AgreeToCustomPrivacyPolicy = boolPtr(false)
+		brandRequest.AgreeToCustomPrivacyPolicy = boolPtr(false)
 	}
 	if val, ok := d.GetOk("custom_privacy_policy_url"); ok {
-		brand.CustomPrivacyPolicyUrl = val.(string)
+		brandRequest.CustomPrivacyPolicyUrl = stringPtr(val.(string))
 	}
 	if val, ok := d.GetOk("remove_powered_by_okta"); ok {
-		brand.RemovePoweredByOkta = boolPtr(val.(bool))
+		brandRequest.RemovePoweredByOkta = boolPtr(val.(bool))
 	}
-	_, _, err := getOktaClientFromMetadata(m).Brand.UpdateBrand(ctx, d.Id(), brand)
+	updatedBrand, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.ReplaceBrand(ctx, d.Id()).Brand(brandRequest).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update brand: %v", err)
 	}
 
 	// NOTE: don't do a tail call on resource read, populate the result here
-	rawMap := flattenBrand(&brand)
+	rawMap := flattenBrand(updatedBrand)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {
 		return diag.Errorf("failed to set brand's properties in update: %v", err)
@@ -98,12 +98,12 @@ func resourceBrandImportStateContext(ctx context.Context, d *schema.ResourceData
 	if _, ok := d.GetOk("brand_id"); !ok {
 		_ = d.Set("brand_id", d.Id())
 	}
-	brand, _, err := getOktaClientFromMetadata(m).Brand.GetBrand(ctx, d.Id())
+	brand, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrand(ctx, d.Id()).Execute()
 	if err != nil {
 		return nil, err
 	}
 
-	d.SetId(brand.Id)
+	d.SetId(brand.GetId())
 	rawMap := flattenBrand(brand)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
 var themeResourceSchema = map[string]*schema.Schema{
@@ -204,27 +204,27 @@ var themeDataSourceSchema = map[string]*schema.Schema{
 	},
 }
 
-func flattenTheme(brandID string, theme *sdk.ThemeResponse) map[string]interface{} {
+func flattenTheme(brandID string, theme *okta.ThemeResponse) map[string]interface{} {
 	attrs := map[string]interface{}{}
 
-	attrs["id"] = theme.Id
+	attrs["id"] = theme.GetId()
 	if brandID != "" {
 		attrs["brand_id"] = brandID
 	}
 
-	attrs["logo_url"] = theme.Logo
-	attrs["favicon_url"] = theme.Favicon
-	attrs["background_image_url"] = theme.BackgroundImage
-	attrs["primary_color_hex"] = theme.PrimaryColorHex
-	attrs["primary_color_contrast_hex"] = theme.PrimaryColorContrastHex
-	attrs["secondary_color_hex"] = theme.SecondaryColorHex
-	attrs["secondary_color_contrast_hex"] = theme.SecondaryColorContrastHex
-	attrs["sign_in_page_touch_point_variant"] = theme.SignInPageTouchPointVariant
-	attrs["end_user_dashboard_touch_point_variant"] = theme.EndUserDashboardTouchPointVariant
-	attrs["error_page_touch_point_variant"] = theme.ErrorPageTouchPointVariant
-	attrs["email_template_touch_point_variant"] = theme.EmailTemplateTouchPointVariant
+	attrs["logo_url"] = theme.GetLogo()
+	attrs["favicon_url"] = theme.GetFavicon()
+	attrs["background_image_url"] = theme.GetBackgroundImage()
+	attrs["primary_color_hex"] = theme.GetPrimaryColorHex()
+	attrs["primary_color_contrast_hex"] = theme.GetPrimaryColorContrastHex()
+	attrs["secondary_color_hex"] = theme.GetSecondaryColorHex()
+	attrs["secondary_color_contrast_hex"] = theme.GetSecondaryColorContrastHex()
+	attrs["sign_in_page_touch_point_variant"] = string(theme.GetSignInPageTouchPointVariant())
+	attrs["end_user_dashboard_touch_point_variant"] = string(theme.GetEndUserDashboardTouchPointVariant())
+	attrs["error_page_touch_point_variant"] = string(theme.GetErrorPageTouchPointVariant())
+	attrs["email_template_touch_point_variant"] = string(theme.GetEmailTemplateTouchPointVariant())
 
-	links, _ := json.Marshal(theme.Links)
+	links, _ := json.Marshal(theme.GetLinks())
 	attrs["links"] = string(links)
 
 	return attrs

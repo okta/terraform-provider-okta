@@ -41,12 +41,12 @@ func dataSourceThemeRead(ctx context.Context, d *schema.ResourceData, m interfac
 	}
 	themeID := tid.(string)
 
-	theme, _, err := getOktaClientFromMetadata(m).Brand.GetBrandTheme(ctx, brandID, themeID)
+	theme, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrandTheme(ctx, brandID, themeID).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get email template: %v", err)
 	}
 
-	d.SetId(theme.Id)
+	d.SetId(theme.GetId())
 	rawMap := flattenTheme(brandID, theme)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {

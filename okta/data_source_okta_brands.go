@@ -15,7 +15,7 @@ func dataSourceBrands() *schema.Resource {
 }
 
 func dataSourceBrandsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	brands, _, err := getOktaClientFromMetadata(m).Brand.ListBrands(ctx)
+	brands, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.ListBrands(ctx).Execute()
 	if err != nil {
 		return diag.Errorf("failed to list brands: %v", err)
 	}
@@ -23,8 +23,8 @@ func dataSourceBrandsRead(ctx context.Context, d *schema.ResourceData, m interfa
 	d.SetId("brands")
 	arr := make([]interface{}, len(brands))
 	for i, brand := range brands {
-		rawMap := flattenBrand(brand)
-		rawMap["id"] = brand.Id
+		rawMap := flattenBrand(&brand)
+		rawMap["id"] = brand.GetId()
 		arr[i] = rawMap
 	}
 	brandDataSource := &schema.Resource{
