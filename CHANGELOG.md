@@ -1,5 +1,38 @@
 # Changelog
 
+## 3.45.0 (March 29, 2023)
+
+### BUG FIXES:
+
+* Update algorithm signature values and documentation for IdP OIDC
+  [#1506](https://github.com/okta/terraform-provider-okta/pull/1506).  Thanks,
+  [@monde](https://github.com/monde)!
+* Update OAuth API scopes
+  [#1494](https://github.com/okta/terraform-provider-okta/pull/1494).  Thanks,
+  [@awagneratzendesk](https://github.com/awagneratzendesk)!
+
+### PROJECT IMPROVEMENTS:
+
+* tfplugindocs document generation from schema
+  [#1498](https://github.com/okta/terraform-provider-okta/pull/1498). Thanks,
+  [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+### NOTICES
+
+We are [getting ready for the v4.0.0
+release](https://github.com/okta/terraform-provider-okta/issues/1338) of the
+Okta Terraform Provider. That release will include the following items.
+
+- Removal of [deprecated resources, data sources, and
+  arguments](https://developer.hashicorp.com/terraform/plugin/sdkv2/best-practices/deprecations)
+- Removal of artificial input validation, let the Okta API do the input
+  validation
+- Fast running acceptance tests that will better block broken functionality
+  from being published as a release
+- A more consistent means of generating documentation published at the
+  [Terraform
+  Registry](https://registry.terraform.io/providers/okta/okta/latest/docs)
+
 ## 3.44.0 (March 10, 2023)
 
 ### BUG FIXES:
