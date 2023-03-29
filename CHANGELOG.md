@@ -1,47 +1,48 @@
 # Changelog
 
+## 3.45.0 (March 29, 2023)
+
+### BUG FIXES:
+
+* Update algorithm signature values and documentation for IdP OIDC [#1506](https://github.com/okta/terraform-provider-okta/pull/1506).  Thanks, [@monde](https://github.com/monde)!
+* Update OAuth API scopes [#1494](https://github.com/okta/terraform-provider-okta/pull/1494).  Thanks, [@awagneratzendesk](https://github.com/awagneratzendesk)!
+
+### PROJECT IMPROVEMENTS:
+
+* tfplugindocs document generation from schema [#1498](https://github.com/okta/terraform-provider-okta/pull/1498). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+### NOTICES:
+
+We are [getting ready for the v4.0.0 release](https://github.com/okta/terraform-provider-okta/issues/1338) of the Okta Terraform Provider. That release will include the following items.
+
+- Removal of [deprecated resources, data sources, and arguments](https://developer.hashicorp.com/terraform/plugin/sdkv2/best-practices/deprecations)
+- Removal of artificial input validation, let the Okta API do the input validation
+- Fast running acceptance tests that will better block broken functionality from being published as a release
+- A more consistent means of generating documentation published at the [Terraform Registry](https://registry.terraform.io/providers/okta/okta/latest/docs)
+
 ## 3.44.0 (March 10, 2023)
 
 ### BUG FIXES:
 
-* Improve JSON serialization of 0 integer values affecting a number of open
-  issues [#1484](https://github.com/okta/terraform-provider-okta/pull/1484).
-  Thanks, [@monde](https://github.com/monde)!
-* Fix panic in `okta_app_saml` when `embed_url` is missing for
-  `preconfigured_app` apps
-  [#1480](https://github.com/okta/terraform-provider-okta/pull/1480).  Thanks,
-  [@monde](https://github.com/monde)!
+* Improve JSON serialization of 0 integer values affecting a number of open issues [#1484](https://github.com/okta/terraform-provider-okta/pull/1484).  Thanks, [@monde](https://github.com/monde)!
+* Fix panic in `okta_app_saml` when `embed_url` is missing for `preconfigured_app` apps [#1480](https://github.com/okta/terraform-provider-okta/pull/1480).  Thanks, [@monde](https://github.com/monde)!
 
 ## 3.43.0 (March 7, 2023)
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
 
-* Resource `okta_user` supports ignoring custom profile attributes
-  [#1476](https://github.com/okta/terraform-provider-okta/pull/1476). Thanks,
-  [@virgofx](https://github.com/virgofx)!
-* Adding `settings.signOn.samlSignedRequestEnabled` as
-  `saml_signed_request_enabled` argument on resource `okta_app_saml`
-  [#1475](https://github.com/okta/terraform-provider-okta/pull/1475). Thanks,
-  [@monde](https://github.com/monde)!
+* Resource `okta_user` supports ignoring custom profile attributes [#1476](https://github.com/okta/terraform-provider-okta/pull/1476). Thanks, [@virgofx](https://github.com/virgofx)!
+* Adding `settings.signOn.samlSignedRequestEnabled` as `saml_signed_request_enabled` argument on resource `okta_app_saml` [#1475](https://github.com/okta/terraform-provider-okta/pull/1475). Thanks, [@monde](https://github.com/monde)!
 
 ### PROJECT IMPROVEMENTS:
 
-* Resource `okta_user_schema_property` documentation update
-  [#1468](https://github.com/okta/terraform-provider-okta/pull/1468) Thanks,
-  [@pro4tlzz](https://github.com/pro4tlzz)!
+* Resource `okta_user_schema_property` documentation update [#1468](https://github.com/okta/terraform-provider-okta/pull/1468) Thanks, [@pro4tlzz](https://github.com/pro4tlzz)!
 
 ### BUG FIXES:
 
-* Add correct import functionality for `okta_email_customization`
-  [#1471](https://github.com/okta/terraform-provider-okta/pull/1471) Thanks,
-  [@samcook](https://github.com/samcook)!
-* Fixed `authentication_policy` change detection
-  [#1470](https://github.com/okta/terraform-provider-okta/pull/1470). Thanks,
-  [@monde](https://github.com/monde)!
-* Correctly handle zero "0" integer values in API calls for resources
-  `okta_policy_password` and `okta_policy_password_default`
-  [#1477](https://github.com/okta/terraform-provider-okta/pull/1477). Thanks,
-  [@monde](https://github.com/monde)!
+* Add correct import functionality for `okta_email_customization` [#1471](https://github.com/okta/terraform-provider-okta/pull/1471) Thanks, [@samcook](https://github.com/samcook)!
+* Fixed `authentication_policy` change detection [#1470](https://github.com/okta/terraform-provider-okta/pull/1470). Thanks, [@monde](https://github.com/monde)!
+* Correctly handle zero "0" integer values in API calls for resources `okta_policy_password` and `okta_policy_password_default` [#1477](https://github.com/okta/terraform-provider-okta/pull/1477). Thanks, [@monde](https://github.com/monde)!
   - Attributes:
   - `password_auto_unlock_minutes`
   - `password_expire_warn_days`
