@@ -44,9 +44,8 @@ func resourcePolicyRuleIdpDiscovery() *schema.Resource {
 				Optional: true,
 			},
 			"user_identifier_type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"IDENTIFIER", "ATTRIBUTE", ""}),
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 			"user_identifier_attribute": {
 				Type:     schema.TypeString,
@@ -232,16 +231,14 @@ var (
 	platformIncludeResource = &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Default:          "ANY",
-				ValidateDiagFunc: elemInSlice([]string{"ANY", "MOBILE", "DESKTOP"}),
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "ANY",
 			},
 			"os_type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Default:          "ANY",
-				ValidateDiagFunc: elemInSlice([]string{"ANY", "IOS", "WINDOWS", "ANDROID", "OTHER", "OSX", "MACOS", "CHROMEOS"}),
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "ANY",
 			},
 			"os_expression": {
 				Type:        schema.TypeString,
@@ -254,9 +251,8 @@ var (
 	userIDPatternResource = &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"match_type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"SUFFIX", "EQUALS", "STARTS_WITH", "CONTAINS", "EXPRESSION"}),
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 			"value": {
 				Type:     schema.TypeString,

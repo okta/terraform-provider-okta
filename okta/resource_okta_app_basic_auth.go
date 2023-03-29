@@ -21,16 +21,14 @@ func resourceAppBasicAuth() *schema.Resource {
 		},
 		Schema: buildAppSchemaWithVisibility(map[string]*schema.Schema{
 			"auth_url": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "Login button field",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Login button field",
 			},
 			"url": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "Login password field",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Login password field",
 			},
 		}),
 		Timeouts: &schema.ResourceTimeout{

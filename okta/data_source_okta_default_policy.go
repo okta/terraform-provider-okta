@@ -15,15 +15,7 @@ func dataSourceDefaultPolicy() *schema.Resource {
 		ReadContext: dataSourceDefaultPolicyRead,
 		Schema: map[string]*schema.Schema{
 			"type": {
-				Type: schema.TypeString,
-				ValidateDiagFunc: elemInSlice([]string{
-					sdk.SignOnPolicyType,
-					sdk.PasswordPolicyType,
-					sdk.MfaPolicyType,
-					sdk.IdpDiscoveryType,
-					sdk.AccessPolicyType,
-					sdk.ProfileEnrollmentPolicyType,
-				}),
+				Type:        schema.TypeString,
 				Description: fmt.Sprintf("Policy type: %s, %s, %s, or %s", sdk.SignOnPolicyType, sdk.PasswordPolicyType, sdk.MfaPolicyType, sdk.IdpDiscoveryType),
 				Required:    true,
 			},

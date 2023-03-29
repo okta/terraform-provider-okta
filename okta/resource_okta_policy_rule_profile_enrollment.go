@@ -44,10 +44,9 @@ func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 				Description: "The ID of a Group that this User should be added to",
 			},
 			"unknown_user_action": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: elemInSlice([]string{"DENY", "REGISTER"}),
-				Description:      "Which action should be taken if this User is new",
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Which action should be taken if this User is new",
 			},
 			"ui_schema_id": {
 				Type:        schema.TypeString,
@@ -61,11 +60,10 @@ func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 				Default:     true,
 			},
 			"access": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ALLOW", "DENY"}),
-				Description:      "Allow or deny access based on the rule conditions: ALLOW or DENY",
-				Default:          "ALLOW",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Allow or deny access based on the rule conditions: ALLOW or DENY",
+				Default:     "ALLOW",
 			},
 			"profile_attributes": {
 				Type:        schema.TypeList,

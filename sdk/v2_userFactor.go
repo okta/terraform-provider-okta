@@ -35,7 +35,7 @@ func (a *UserFactor) IsUserFactorInstance() bool {
 }
 
 // Unenrolls an existing factor for the specified user, allowing the user to enroll a new factor.
-func (m *UserFactorResource) DeleteFactor(ctx context.Context, userId string, factorId string) (*Response, error) {
+func (m *UserFactorResource) DeleteFactor(ctx context.Context, userId, factorId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/factors/%v", userId, factorId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -149,7 +149,7 @@ func (m *UserFactorResource) ListSupportedSecurityQuestions(ctx context.Context,
 }
 
 // Fetches a factor for the specified user
-func (m *UserFactorResource) GetFactor(ctx context.Context, userId string, factorId string, factorInstance Factor) (Factor, *Response, error) {
+func (m *UserFactorResource) GetFactor(ctx context.Context, userId, factorId string, factorInstance Factor) (Factor, *Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/factors/%v", userId, factorId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -170,7 +170,7 @@ func (m *UserFactorResource) GetFactor(ctx context.Context, userId string, facto
 }
 
 // The &#x60;sms&#x60; and &#x60;token:software:totp&#x60; factor types require activation to complete the enrollment process.
-func (m *UserFactorResource) ActivateFactor(ctx context.Context, userId string, factorId string, body ActivateFactorRequest, factorInstance Factor) (Factor, *Response, error) {
+func (m *UserFactorResource) ActivateFactor(ctx context.Context, userId, factorId string, body ActivateFactorRequest, factorInstance Factor) (Factor, *Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/factors/%v/lifecycle/activate", userId, factorId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -191,7 +191,7 @@ func (m *UserFactorResource) ActivateFactor(ctx context.Context, userId string, 
 }
 
 // Polls factors verification transaction for status.
-func (m *UserFactorResource) GetFactorTransactionStatus(ctx context.Context, userId string, factorId string, transactionId string) (*VerifyUserFactorResponse, *Response, error) {
+func (m *UserFactorResource) GetFactorTransactionStatus(ctx context.Context, userId, factorId, transactionId string) (*VerifyUserFactorResponse, *Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/factors/%v/transactions/%v", userId, factorId, transactionId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -212,7 +212,7 @@ func (m *UserFactorResource) GetFactorTransactionStatus(ctx context.Context, use
 }
 
 // Verifies an OTP for a &#x60;token&#x60; or &#x60;token:hardware&#x60; factor
-func (m *UserFactorResource) VerifyFactor(ctx context.Context, userId string, factorId string, body VerifyFactorRequest, factorInstance Factor, qp *query.Params) (*VerifyUserFactorResponse, *Response, error) {
+func (m *UserFactorResource) VerifyFactor(ctx context.Context, userId, factorId string, body VerifyFactorRequest, factorInstance Factor, qp *query.Params) (*VerifyUserFactorResponse, *Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/factors/%v/verify", userId, factorId)
 	if qp != nil {
 		url = url + qp.String()

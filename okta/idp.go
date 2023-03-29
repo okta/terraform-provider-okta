@@ -34,18 +34,16 @@ var (
 			Optional: true,
 		},
 		"provisioning_action": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			ValidateDiagFunc: elemInSlice([]string{"AUTO", "DISABLED", ""}),
-			Default:          "AUTO",
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "AUTO",
 		},
 		"deprovisioned_action": actionSchema,
 		"suspended_action":     actionSchema,
 		"groups_action": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          "NONE",
-			ValidateDiagFunc: elemInSlice([]string{"NONE", "SYNC", "APPEND", "ASSIGN"}),
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "NONE",
 		},
 		"groups_attribute": {
 			Type:     schema.TypeString,
@@ -67,10 +65,9 @@ var (
 			Default:  "idpuser.email",
 		},
 		"subject_match_type": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          "USERNAME",
-			ValidateDiagFunc: elemInSlice([]string{"USERNAME", "EMAIL", "USERNAME_OR_EMAIL", "CUSTOM_ATTRIBUTE"}),
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "USERNAME",
 		},
 		"subject_match_attribute": {
 			Type:     schema.TypeString,
@@ -89,49 +86,43 @@ var (
 	}
 
 	samlRequestSignatureAlgorithmSchema = &schema.Schema{
-		Type:             schema.TypeString,
-		Optional:         true,
-		Description:      "The XML digital Signature Algorithm used when signing an <AuthnRequest> message",
-		ValidateDiagFunc: elemInSlice([]string{"SHA-256", "SHA-1"}),
-		Default:          "SHA-256",
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "The XML digital Signature Algorithm used when signing an <AuthnRequest> message",
+		Default:     "SHA-256",
 	}
 	samlRequestSignatureScopeSchema = &schema.Schema{
-		Type:             schema.TypeString,
-		Optional:         true,
-		Description:      "Specifies whether to digitally sign <AuthnRequest> messages to the IdP",
-		ValidateDiagFunc: elemInSlice([]string{"REQUEST", "NONE"}),
-		Default:          "REQUEST",
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Specifies whether to digitally sign <AuthnRequest> messages to the IdP",
+		Default:     "REQUEST",
 	}
 
 	samlResponseSignatureAlgorithmSchema = &schema.Schema{
-		Type:             schema.TypeString,
-		Optional:         true,
-		Description:      "The minimum XML digital Signature Algorithm allowed when verifying a <SAMLResponse> message or <Assertion> element",
-		ValidateDiagFunc: elemInSlice([]string{"SHA-256", "SHA-1"}),
-		Default:          "SHA-256",
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "The minimum XML digital Signature Algorithm allowed when verifying a <SAMLResponse> message or <Assertion> element",
+		Default:     "SHA-256",
 	}
 	samlResponseSignatureScopeSchema = &schema.Schema{
-		Type:             schema.TypeString,
-		Optional:         true,
-		Description:      "Specifies whether to verify a <SAMLResponse> message or <Assertion> element XML digital signature",
-		ValidateDiagFunc: elemInSlice([]string{"RESPONSE", "ASSERTION", "ANY"}),
-		Default:          "ANY",
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Specifies whether to verify a <SAMLResponse> message or <Assertion> element XML digital signature",
+		Default:     "ANY",
 	}
 
 	oidcRequestSignatureAlgorithmSchema = &schema.Schema{
-		Type:             schema.TypeString,
-		Optional:         true,
-		Description:      "The HMAC Signature Algorithm used when signing an authorization request",
-		ValidateDiagFunc: elemInSlice([]string{"HS256", "HS384", "HS512"}),
-		Default:          "HS256",
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "The HMAC Signature Algorithm used when signing an authorization request",
+		Default:     "HS256",
 	}
 
 	oidcRequestSignatureScopeSchema = &schema.Schema{
-		Type:             schema.TypeString,
-		Optional:         true,
-		Description:      "Specifies whether to digitally sign an authorization request to the IdP",
-		ValidateDiagFunc: elemInSlice([]string{"REQUEST", "NONE"}),
-		Default:          "REQUEST",
+		Type:        schema.TypeString,
+		Optional:    true,
+		Description: "Specifies whether to digitally sign an authorization request to the IdP",
+		Default:     "REQUEST",
 	}
 
 	optBindingSchema = &schema.Schema{
@@ -150,29 +141,25 @@ var (
 	}
 
 	bindingSchema = &schema.Schema{
-		Type:             schema.TypeString,
-		Required:         true,
-		ValidateDiagFunc: elemInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}),
+		Type:     schema.TypeString,
+		Required: true,
 	}
 
 	optionalBindingSchema = &schema.Schema{
-		Type:             schema.TypeString,
-		Optional:         true,
-		ValidateDiagFunc: elemInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}),
+		Type:     schema.TypeString,
+		Optional: true,
 	}
 
 	issuerMode = &schema.Schema{
-		Type:             schema.TypeString,
-		Description:      "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
-		ValidateDiagFunc: elemInSlice([]string{"ORG_URL", "CUSTOM_URL_DOMAIN"}),
-		Default:          "ORG_URL",
-		Optional:         true,
+		Type:        schema.TypeString,
+		Description: "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
+		Default:     "ORG_URL",
+		Optional:    true,
 	}
 
 	urlSchema = &schema.Schema{
-		Type:             schema.TypeString,
-		Required:         true,
-		ValidateDiagFunc: stringIsURL(validURLSchemes...),
+		Type:     schema.TypeString,
+		Required: true,
 	}
 )
 

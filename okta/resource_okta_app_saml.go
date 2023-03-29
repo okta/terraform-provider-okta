@@ -75,10 +75,9 @@ func resourceAppSaml() *schema.Resource {
 				Computed:    true,
 			},
 			"key_years_valid": {
-				Type:             schema.TypeInt,
-				Optional:         true,
-				ValidateDiagFunc: intBetween(2, 10),
-				Description:      "Number of years the certificate is valid.",
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Number of years the certificate is valid.",
 			},
 			"keys": {
 				Type:        schema.TypeList,
@@ -205,22 +204,19 @@ func resourceAppSaml() *schema.Resource {
 				Description: "Identifies a specific application resource in an IDP initiated SSO scenario.",
 			},
 			"sso_url": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Single Sign On URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Single Sign On URL",
 			},
 			"recipient": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "The location where the app may present the SAML assertion",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The location where the app may present the SAML assertion",
 			},
 			"destination": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Identifies the location where the SAML response is intended to be sent inside of the SAML assertion",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Identifies the location where the SAML response is intended to be sent inside of the SAML assertion",
 			},
 			"audience": {
 				Type:        schema.TypeString,
@@ -247,13 +243,6 @@ func resourceAppSaml() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Identifies the SAML processing rules.",
-				ValidateDiagFunc: elemInSlice([]string{
-					"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
-					"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
-					"urn:oasis:names:tc:SAML:1.1:nameid-format:x509SubjectName",
-					"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
-					"urn:oasis:names:tc:SAML:2.0:nameid-format:transient",
-				}),
 			},
 			"response_signed": {
 				Type:        schema.TypeBool,
@@ -271,16 +260,14 @@ func resourceAppSaml() *schema.Resource {
 				Description: "Determines whether the SAML assertion is digitally signed",
 			},
 			"signature_algorithm": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Signature algorithm used ot digitally sign the assertion and response",
-				ValidateDiagFunc: elemInSlice([]string{"RSA_SHA256", "RSA_SHA1"}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Signature algorithm used ot digitally sign the assertion and response",
 			},
 			"digest_algorithm": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Determines the digest algorithm used to digitally sign the SAML assertion and response",
-				ValidateDiagFunc: elemInSlice([]string{"SHA256", "SHA1"}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Determines the digest algorithm used to digitally sign the SAML assertion and response",
 			},
 			"honor_force_authn": {
 				Type:        schema.TypeBool,
@@ -326,10 +313,9 @@ func resourceAppSaml() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"filter_type": {
-							Type:             schema.TypeString,
-							Optional:         true,
-							Description:      "Type of group attribute filter",
-							ValidateDiagFunc: elemInSlice([]string{"STARTS_WITH", "EQUALS", "CONTAINS", "REGEX"}),
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Type of group attribute filter",
 						},
 						"filter_value": {
 							Type:        schema.TypeString,
@@ -342,22 +328,16 @@ func resourceAppSaml() *schema.Resource {
 							Description: "The reference name of the attribute statement",
 						},
 						"namespace": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Default:  "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
-							ValidateDiagFunc: elemInSlice([]string{
-								"urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
-								"urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
-								"urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
-							}),
+							Type:        schema.TypeString,
+							Optional:    true,
+							Default:     "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
 							Description: "The name format of the attribute",
 						},
 						"type": {
-							Type:             schema.TypeString,
-							Optional:         true,
-							Default:          "EXPRESSION",
-							ValidateDiagFunc: elemInSlice([]string{"GROUP", "EXPRESSION"}),
-							Description:      "The type of attribute statements object",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Default:     "EXPRESSION",
+							Description: "The type of attribute statements object",
 						},
 						"values": {
 							Type:     schema.TypeList,
@@ -374,11 +354,10 @@ func resourceAppSaml() *schema.Resource {
 				RequiredWith: []string{"single_logout_url", "single_logout_certificate"},
 			},
 			"single_logout_url": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "The location where the logout response is sent",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
-				RequiredWith:     []string{"single_logout_issuer", "single_logout_certificate"},
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "The location where the logout response is sent",
+				RequiredWith: []string{"single_logout_issuer", "single_logout_certificate"},
 			},
 			"single_logout_certificate": {
 				Type:         schema.TypeString,
@@ -401,11 +380,10 @@ func resourceAppSaml() *schema.Resource {
 				},
 			},
 			"saml_version": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Default:          saml20,
-				Description:      "SAML version for the app's sign-on mode",
-				ValidateDiagFunc: elemInSlice([]string{saml20, saml11}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     saml20,
+				Description: "SAML version for the app's sign-on mode",
 			},
 			"authentication_policy": {
 				Type:        schema.TypeString,

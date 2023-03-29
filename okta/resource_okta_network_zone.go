@@ -27,10 +27,9 @@ func resourceNetworkZone() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"dynamic_proxy_type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"Any", "TorAnonymizer", "NotTorAnonymizer"}),
-				Description:      "Type of proxy being controlled by this network zone",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Type of proxy being controlled by this network zone",
 			},
 			"gateways": {
 				Type:        schema.TypeSet,
@@ -50,17 +49,15 @@ func resourceNetworkZone() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"type": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: elemInSlice([]string{"IP", "DYNAMIC"}),
-				Description:      "Type of the Network Zone - can either be IP or DYNAMIC only",
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Type of the Network Zone - can either be IP or DYNAMIC only",
 			},
 			"usage": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Zone's purpose: POLICY or BLOCKLIST",
-				ValidateDiagFunc: elemInSlice([]string{"POLICY", "BLOCKLIST"}),
-				Default:          "POLICY",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Zone's purpose: POLICY or BLOCKLIST",
+				Default:     "POLICY",
 			},
 			"asns": {
 				Type:        schema.TypeSet,

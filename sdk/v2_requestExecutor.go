@@ -328,7 +328,7 @@ func NewRequestExecutor(httpClient *http.Client, cache cache.Cache, config *conf
 	return &re
 }
 
-func (re *RequestExecutor) NewRequest(method string, url string, body interface{}) (*http.Request, error) {
+func (re *RequestExecutor) NewRequest(method, url string, body interface{}) (*http.Request, error) {
 	var buff io.ReadWriter
 	if body != nil {
 		switch v := body.(type) {

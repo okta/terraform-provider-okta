@@ -73,16 +73,15 @@ var (
 			Deprecated:  "The direct configuration of groups in this app resource is deprecated, please ensure you use the resource `okta_app_group_assignments` for this functionality.",
 		},
 		"status": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          statusActive,
-			ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
-			Description:      "Status of application.",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     statusActive,
+			Description: "Status of application.",
 		},
 		"logo": {
 			Type:             schema.TypeString,
 			Optional:         true,
-			ValidateDiagFunc: logoValid(),
+			ValidateDiagFunc: logoFileIsValid(),
 			Description:      "Local path to logo of the application.",
 			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 				return new == ""
@@ -181,17 +180,15 @@ var (
 			Description: "Username template suffix",
 		},
 		"user_name_template_type": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          "BUILT_IN",
-			Description:      "Username template type",
-			ValidateDiagFunc: elemInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     "BUILT_IN",
+			Description: "Username template type",
 		},
 		"user_name_template_push_status": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Description:      "Push username on update",
-			ValidateDiagFunc: elemInSlice([]string{"DONT_PUSH", "PUSH", ""}),
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Push username on update",
 			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 				return new == ""
 			},

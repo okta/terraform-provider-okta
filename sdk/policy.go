@@ -84,7 +84,6 @@ func (a *SdkPolicy) MarshalJSON() ([]byte, error) {
 		separator := ","
 		if string(policyJSON) == "{}" {
 			separator = ""
-
 		}
 		settingsJSON = []byte(fmt.Sprintf("%s\"settings\":%s}", separator, settingsJSON))
 	}

@@ -221,7 +221,7 @@ func Provider() *schema.Provider {
 				Type:             schema.TypeInt,
 				Optional:         true,
 				Default:          5,
-				ValidateDiagFunc: intAtMost(100), // Have to cut it off somewhere right?
+				ValidateDiagFunc: intAtMost(100),
 				Description:      "maximum number of retries to attempt before erroring out.",
 			},
 			"parallelism": {

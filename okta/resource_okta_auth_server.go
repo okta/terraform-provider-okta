@@ -38,11 +38,10 @@ func resourceAuthServer() *schema.Resource {
 				Computed: true,
 			},
 			"credentials_rotation_mode": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"AUTO", "MANUAL"}),
-				Default:          "AUTO",
-				Description:      "Credential rotation mode, in many cases you cannot set this to MANUAL, the API will ignore the value and you will get a perpetual diff. This should rarely be used.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "AUTO",
+				Description: "Credential rotation mode, in many cases you cannot set this to MANUAL, the API will ignore the value and you will get a perpetual diff. This should rarely be used.",
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -58,11 +57,10 @@ func resourceAuthServer() *schema.Resource {
 				Description: "allows you to use a custom issuer URL",
 			},
 			"issuer_mode": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"CUSTOM_URL", "ORG_URL", "DYNAMIC"}),
-				Default:          "ORG_URL",
-				Description:      "*Early Access Property*. Indicates which value is specified in the issuer of the tokens that a Custom Authorization Server returns: the original Okta org domain URL or a custom domain URL",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "ORG_URL",
+				Description: "*Early Access Property*. Indicates which value is specified in the issuer of the tokens that a Custom Authorization Server returns: the original Okta org domain URL or a custom domain URL",
 			},
 		},
 	}

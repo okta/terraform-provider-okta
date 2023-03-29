@@ -19,18 +19,16 @@ func resourcePolicySignOnRule() *schema.Resource {
 		Importer:      createPolicyRuleImporter(),
 		Schema: buildRuleSchema(map[string]*schema.Schema{
 			"authtype": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ANY", "RADIUS", "LDAP_INTERFACE"}),
-				Description:      "Authentication entrypoint: ANY, RADIUS or LDAP_INTERFACE",
-				Default:          "ANY",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Authentication entrypoint: ANY, RADIUS or LDAP_INTERFACE",
+				Default:     "ANY",
 			},
 			"access": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ALLOW", "DENY", "CHALLENGE"}),
-				Description:      "Allow or deny access based on the rule conditions: ALLOW, DENY or CHALLENGE.",
-				Default:          "ALLOW",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Allow or deny access based on the rule conditions: ALLOW, DENY or CHALLENGE.",
+				Default:     "ALLOW",
 			},
 			"mfa_required": {
 				Type:        schema.TypeBool,
@@ -39,10 +37,9 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Default:     false,
 			},
 			"mfa_prompt": { // mfa_require must be true
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"DEVICE", "SESSION", "ALWAYS"}),
-				Description:      "Prompt for MFA based on the device used, a factor session lifetime, or every sign-on attempt: DEVICE, SESSION or ALWAYS",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Prompt for MFA based on the device used, a factor session lifetime, or every sign-on attempt: DEVICE, SESSION or ALWAYS",
 			},
 			"mfa_remember_device": {
 				Type:        schema.TypeBool,
@@ -74,11 +71,10 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Default:     false,
 			},
 			"risc_level": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"", "ANY", "LOW", "MEDIUM", "HIGH"}),
-				Description:      "Risc level: ANY, LOW, MEDIUM or HIGH",
-				Default:          "ANY",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Risc level: ANY, LOW, MEDIUM or HIGH",
+				Default:     "ANY",
 			},
 			"behaviors": {
 				Type:        schema.TypeSet,
@@ -87,11 +83,10 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"primary_factor": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Computed:         true,
-				Description:      "Primary factor.",
-				ValidateDiagFunc: elemInSlice([]string{"PASSWORD_IDP", "PASSWORD_IDP_ANY_FACTOR"}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				Description: "Primary factor.",
 			},
 			"factor_sequence": {
 				Type:     schema.TypeList,
@@ -130,11 +125,10 @@ func resourcePolicySignOnRule() *schema.Resource {
 				},
 			},
 			"identity_provider": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ANY", "OKTA", "SPECIFIC_IDP"}),
-				Description:      "Apply rule based on the IdP used: ANY, OKTA or SPECIFIC_IDP.",
-				Default:          "ANY",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Apply rule based on the IdP used: ANY, OKTA or SPECIFIC_IDP.",
+				Default:     "ANY",
 			},
 			"identity_provider_ids": { // identity_provider must be SPECIFIC_IDP
 				Type:        schema.TypeList,

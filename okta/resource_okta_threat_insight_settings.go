@@ -19,10 +19,9 @@ func resourceThreatInsightSettings() *schema.Resource {
 		Importer:      &schema.ResourceImporter{StateContext: schema.ImportStatePassthroughContext},
 		Schema: map[string]*schema.Schema{
 			"action": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: elemInSlice([]string{"none", "audit", "block"}),
-				Description:      "Specifies how Okta responds to authentication requests from suspicious IPs",
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Specifies how Okta responds to authentication requests from suspicious IPs",
 			},
 			"network_excludes": {
 				Type:        schema.TypeList,

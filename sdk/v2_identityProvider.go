@@ -257,7 +257,7 @@ func (m *IdentityProviderResource) GenerateCsrForIdentityProvider(ctx context.Co
 }
 
 // Revoke a Certificate Signing Request and delete the key pair from the IdP
-func (m *IdentityProviderResource) RevokeCsrForIdentityProvider(ctx context.Context, idpId string, csrId string) (*Response, error) {
+func (m *IdentityProviderResource) RevokeCsrForIdentityProvider(ctx context.Context, idpId, csrId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/idps/%v/credentials/csrs/%v", idpId, csrId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -276,7 +276,7 @@ func (m *IdentityProviderResource) RevokeCsrForIdentityProvider(ctx context.Cont
 }
 
 // Gets a specific Certificate Signing Request model by id
-func (m *IdentityProviderResource) GetCsrForIdentityProvider(ctx context.Context, idpId string, csrId string) (*Csr, *Response, error) {
+func (m *IdentityProviderResource) GetCsrForIdentityProvider(ctx context.Context, idpId, csrId string) (*Csr, *Response, error) {
 	url := fmt.Sprintf("/api/v1/idps/%v/credentials/csrs/%v", idpId, csrId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -297,7 +297,7 @@ func (m *IdentityProviderResource) GetCsrForIdentityProvider(ctx context.Context
 }
 
 // Update the Certificate Signing Request with a signed X.509 certificate and add it into the signing key credentials for the IdP.
-func (m *IdentityProviderResource) PublishCerCertForIdentityProvider(ctx context.Context, idpId string, csrId string, body string) (*JsonWebKey, *Response, error) {
+func (m *IdentityProviderResource) PublishCerCertForIdentityProvider(ctx context.Context, idpId, csrId, body string) (*JsonWebKey, *Response, error) {
 	url := fmt.Sprintf("/api/v1/idps/%v/credentials/csrs/%v/lifecycle/publish", idpId, csrId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -318,7 +318,7 @@ func (m *IdentityProviderResource) PublishCerCertForIdentityProvider(ctx context
 }
 
 // Update the Certificate Signing Request with a signed X.509 certificate and add it into the signing key credentials for the IdP.
-func (m *IdentityProviderResource) PublishBinaryCerCertForIdentityProvider(ctx context.Context, idpId string, csrId string, body string) (*JsonWebKey, *Response, error) {
+func (m *IdentityProviderResource) PublishBinaryCerCertForIdentityProvider(ctx context.Context, idpId, csrId, body string) (*JsonWebKey, *Response, error) {
 	url := fmt.Sprintf("/api/v1/idps/%v/credentials/csrs/%v/lifecycle/publish", idpId, csrId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -339,7 +339,7 @@ func (m *IdentityProviderResource) PublishBinaryCerCertForIdentityProvider(ctx c
 }
 
 // Update the Certificate Signing Request with a signed X.509 certificate and add it into the signing key credentials for the IdP.
-func (m *IdentityProviderResource) PublishDerCertForIdentityProvider(ctx context.Context, idpId string, csrId string, body string) (*JsonWebKey, *Response, error) {
+func (m *IdentityProviderResource) PublishDerCertForIdentityProvider(ctx context.Context, idpId, csrId, body string) (*JsonWebKey, *Response, error) {
 	url := fmt.Sprintf("/api/v1/idps/%v/credentials/csrs/%v/lifecycle/publish", idpId, csrId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -360,7 +360,7 @@ func (m *IdentityProviderResource) PublishDerCertForIdentityProvider(ctx context
 }
 
 // Update the Certificate Signing Request with a signed X.509 certificate and add it into the signing key credentials for the IdP.
-func (m *IdentityProviderResource) PublishBinaryDerCertForIdentityProvider(ctx context.Context, idpId string, csrId string, body string) (*JsonWebKey, *Response, error) {
+func (m *IdentityProviderResource) PublishBinaryDerCertForIdentityProvider(ctx context.Context, idpId, csrId, body string) (*JsonWebKey, *Response, error) {
 	url := fmt.Sprintf("/api/v1/idps/%v/credentials/csrs/%v/lifecycle/publish", idpId, csrId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -381,7 +381,7 @@ func (m *IdentityProviderResource) PublishBinaryDerCertForIdentityProvider(ctx c
 }
 
 // Update the Certificate Signing Request with a signed X.509 certificate and add it into the signing key credentials for the IdP.
-func (m *IdentityProviderResource) PublishBinaryPemCertForIdentityProvider(ctx context.Context, idpId string, csrId string, body string) (*JsonWebKey, *Response, error) {
+func (m *IdentityProviderResource) PublishBinaryPemCertForIdentityProvider(ctx context.Context, idpId, csrId, body string) (*JsonWebKey, *Response, error) {
 	url := fmt.Sprintf("/api/v1/idps/%v/credentials/csrs/%v/lifecycle/publish", idpId, csrId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -447,7 +447,7 @@ func (m *IdentityProviderResource) GenerateIdentityProviderSigningKey(ctx contex
 }
 
 // Gets a specific IdP Key Credential by &#x60;kid&#x60;
-func (m *IdentityProviderResource) GetIdentityProviderSigningKey(ctx context.Context, idpId string, keyId string) (*JsonWebKey, *Response, error) {
+func (m *IdentityProviderResource) GetIdentityProviderSigningKey(ctx context.Context, idpId, keyId string) (*JsonWebKey, *Response, error) {
 	url := fmt.Sprintf("/api/v1/idps/%v/credentials/keys/%v", idpId, keyId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -468,7 +468,7 @@ func (m *IdentityProviderResource) GetIdentityProviderSigningKey(ctx context.Con
 }
 
 // Clones a X.509 certificate for an IdP signing key credential from a source IdP to target IdP
-func (m *IdentityProviderResource) CloneIdentityProviderKey(ctx context.Context, idpId string, keyId string, qp *query.Params) (*JsonWebKey, *Response, error) {
+func (m *IdentityProviderResource) CloneIdentityProviderKey(ctx context.Context, idpId, keyId string, qp *query.Params) (*JsonWebKey, *Response, error) {
 	url := fmt.Sprintf("/api/v1/idps/%v/credentials/keys/%v/clone", idpId, keyId)
 	if qp != nil {
 		url = url + qp.String()
@@ -555,7 +555,7 @@ func (m *IdentityProviderResource) ListIdentityProviderApplicationUsers(ctx cont
 }
 
 // Removes the link between the Okta user and the IdP user.
-func (m *IdentityProviderResource) UnlinkUserFromIdentityProvider(ctx context.Context, idpId string, userId string) (*Response, error) {
+func (m *IdentityProviderResource) UnlinkUserFromIdentityProvider(ctx context.Context, idpId, userId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/idps/%v/users/%v", idpId, userId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -574,7 +574,7 @@ func (m *IdentityProviderResource) UnlinkUserFromIdentityProvider(ctx context.Co
 }
 
 // Fetches a linked IdP user by ID
-func (m *IdentityProviderResource) GetIdentityProviderApplicationUser(ctx context.Context, idpId string, userId string) (*IdentityProviderApplicationUser, *Response, error) {
+func (m *IdentityProviderResource) GetIdentityProviderApplicationUser(ctx context.Context, idpId, userId string) (*IdentityProviderApplicationUser, *Response, error) {
 	url := fmt.Sprintf("/api/v1/idps/%v/users/%v", idpId, userId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -595,7 +595,7 @@ func (m *IdentityProviderResource) GetIdentityProviderApplicationUser(ctx contex
 }
 
 // Links an Okta user to an existing Social Identity Provider. This does not support the SAML2 Identity Provider Type
-func (m *IdentityProviderResource) LinkUserToIdentityProvider(ctx context.Context, idpId string, userId string, body UserIdentityProviderLinkRequest) (*IdentityProviderApplicationUser, *Response, error) {
+func (m *IdentityProviderResource) LinkUserToIdentityProvider(ctx context.Context, idpId, userId string, body UserIdentityProviderLinkRequest) (*IdentityProviderApplicationUser, *Response, error) {
 	url := fmt.Sprintf("/api/v1/idps/%v/users/%v", idpId, userId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -616,7 +616,7 @@ func (m *IdentityProviderResource) LinkUserToIdentityProvider(ctx context.Contex
 }
 
 // Fetches the tokens minted by the Social Authentication Provider when the user authenticates with Okta via Social Auth.
-func (m *IdentityProviderResource) ListSocialAuthTokens(ctx context.Context, idpId string, userId string) ([]*SocialAuthToken, *Response, error) {
+func (m *IdentityProviderResource) ListSocialAuthTokens(ctx context.Context, idpId, userId string) ([]*SocialAuthToken, *Response, error) {
 	url := fmt.Sprintf("/api/v1/idps/%v/users/%v/credentials/tokens", idpId, userId)
 
 	rq := m.client.CloneRequestExecutor()

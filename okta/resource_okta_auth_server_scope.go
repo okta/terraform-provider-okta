@@ -42,11 +42,10 @@ func resourceAuthServerScope() *schema.Resource {
 				Description: "EA Feature and thus it is simply ignored if the feature is off",
 			},
 			"metadata_publish": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Default:          "ALL_CLIENTS",
-				Description:      "Whether to publish metadata or not, matching API type despite the fact it could just be a boolean",
-				ValidateDiagFunc: elemInSlice([]string{"ALL_CLIENTS", "NO_CLIENTS"}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "ALL_CLIENTS",
+				Description: "Whether to publish metadata or not, matching API type despite the fact it could just be a boolean",
 			},
 			"default": {
 				Type:        schema.TypeBool,

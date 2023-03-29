@@ -24,7 +24,7 @@ type AuthorizationServerPolicyRule struct {
 }
 
 // Updates the configuration of the Policy Rule defined in the specified Custom Authorization Server and Policy.
-func (m *AuthorizationServerPolicyRuleResource) UpdateAuthorizationServerPolicyRule(ctx context.Context, authServerId string, policyId string, ruleId string, body AuthorizationServerPolicyRule) (*AuthorizationServerPolicyRule, *Response, error) {
+func (m *AuthorizationServerPolicyRuleResource) UpdateAuthorizationServerPolicyRule(ctx context.Context, authServerId, policyId, ruleId string, body AuthorizationServerPolicyRule) (*AuthorizationServerPolicyRule, *Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%v/policies/%v/rules/%v", authServerId, policyId, ruleId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -45,7 +45,7 @@ func (m *AuthorizationServerPolicyRuleResource) UpdateAuthorizationServerPolicyR
 }
 
 // Deletes a Policy Rule defined in the specified Custom Authorization Server and Policy.
-func (m *AuthorizationServerPolicyRuleResource) DeleteAuthorizationServerPolicyRule(ctx context.Context, authServerId string, policyId string, ruleId string) (*Response, error) {
+func (m *AuthorizationServerPolicyRuleResource) DeleteAuthorizationServerPolicyRule(ctx context.Context, authServerId, policyId, ruleId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%v/policies/%v/rules/%v", authServerId, policyId, ruleId)
 
 	rq := m.client.CloneRequestExecutor()

@@ -28,7 +28,7 @@ type AppUser struct {
 }
 
 // Updates a user&#x27;s profile for an application
-func (m *AppUserResource) UpdateApplicationUser(ctx context.Context, appId string, userId string, body AppUser) (*AppUser, *Response, error) {
+func (m *AppUserResource) UpdateApplicationUser(ctx context.Context, appId, userId string, body AppUser) (*AppUser, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/users/%v", appId, userId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -49,7 +49,7 @@ func (m *AppUserResource) UpdateApplicationUser(ctx context.Context, appId strin
 }
 
 // Removes an assignment for a user from an application.
-func (m *AppUserResource) DeleteApplicationUser(ctx context.Context, appId string, userId string, qp *query.Params) (*Response, error) {
+func (m *AppUserResource) DeleteApplicationUser(ctx context.Context, appId, userId string, qp *query.Params) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/users/%v", appId, userId)
 	if qp != nil {
 		url = url + qp.String()

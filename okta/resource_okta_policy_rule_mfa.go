@@ -17,11 +17,10 @@ func resourcePolicyMfaRule() *schema.Resource {
 		Importer:      createPolicyRuleImporter(),
 		Schema: buildRuleSchema(map[string]*schema.Schema{
 			"enroll": {
-				Type:             schema.TypeString,
-				ValidateDiagFunc: elemInSlice([]string{"CHALLENGE", "LOGIN", "NEVER"}),
-				Default:          "CHALLENGE",
-				Optional:         true,
-				Description:      "Should the user be enrolled the first time they LOGIN, the next time they are CHALLENGED, or NEVER?",
+				Type:        schema.TypeString,
+				Default:     "CHALLENGE",
+				Optional:    true,
+				Description: "Should the user be enrolled the first time they LOGIN, the next time they are CHALLENGED, or NEVER?",
 			},
 			"app_include": {
 				Type:        schema.TypeSet,

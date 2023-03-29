@@ -21,7 +21,7 @@ type Theme struct {
 }
 
 // Fetches a theme for a brand
-func (m *ThemeResource) GetBrandTheme(ctx context.Context, brandId string, themeId string) (*ThemeResponse, *Response, error) {
+func (m *ThemeResource) GetBrandTheme(ctx context.Context, brandId, themeId string) (*ThemeResponse, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/themes/%v", brandId, themeId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -42,7 +42,7 @@ func (m *ThemeResource) GetBrandTheme(ctx context.Context, brandId string, theme
 }
 
 // Updates a theme for a brand
-func (m *ThemeResource) UpdateBrandTheme(ctx context.Context, brandId string, themeId string, body Theme) (*ThemeResponse, *Response, error) {
+func (m *ThemeResource) UpdateBrandTheme(ctx context.Context, brandId, themeId string, body Theme) (*ThemeResponse, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/themes/%v", brandId, themeId)
 
 	rq := m.client.CloneRequestExecutor()

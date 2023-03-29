@@ -15,9 +15,8 @@ var translationSmsResource = &schema.Resource{
 			Required: true,
 		},
 		"template": {
-			Type:             schema.TypeString,
-			Required:         true,
-			ValidateDiagFunc: stringLenBetween(1, 161),
+			Type:     schema.TypeString,
+			Required: true,
 		},
 	},
 }
@@ -38,10 +37,9 @@ func resourceTemplateSms() *schema.Resource {
 				Description: "SMS template type",
 			},
 			"template": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "SMS default template",
-				ValidateDiagFunc: stringLenBetween(1, 161),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "SMS default template",
 			},
 			"translations": {
 				Type:     schema.TypeSet,

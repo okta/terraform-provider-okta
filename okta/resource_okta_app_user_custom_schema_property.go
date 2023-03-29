@@ -38,19 +38,16 @@ func resourceAppUserSchemaProperty() *schema.Resource {
 					ConflictsWith: []string{"enum"},
 				},
 				"scope": {
-					Type:             schema.TypeString,
-					Optional:         true,
-					Default:          "NONE",
-					ValidateDiagFunc: elemInSlice([]string{"SELF", "NONE", ""}),
-					ForceNew:         true, // since the `scope` is read-only attribute, the resource should be recreated
-				},
-				"master": {
 					Type:     schema.TypeString,
 					Optional: true,
-					// Accepting an empty value to allow for zero value (when provisioning is off)
-					ValidateDiagFunc: elemInSlice([]string{"PROFILE_MASTER", "OKTA", ""}),
-					Description:      "SubSchema profile manager, if not set it will inherit its setting.",
-					Default:          "PROFILE_MASTER",
+					Default:  "NONE",
+					ForceNew: true, // since the `scope` is read-only attribute, the resource should be recreated
+				},
+				"master": {
+					Type:        schema.TypeString,
+					Optional:    true,
+					Description: "SubSchema profile manager, if not set it will inherit its setting.",
+					Default:     "PROFILE_MASTER",
 				},
 			}),
 		SchemaVersion: 2,
@@ -82,11 +79,10 @@ func resourceAppUserSchemaResourceV1() *schema.Resource {
 			Required: true,
 		},
 		"scope": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          "NONE",
-			ValidateDiagFunc: elemInSlice([]string{"SELF", "NONE", ""}),
-			ForceNew:         true, // since the `scope` is read-only attribute, the resource should be recreated
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "NONE",
+			ForceNew: true, // since the `scope` is read-only attribute, the resource should be recreated
 		},
 	}, userSchemaSchema, userBaseSchemaSchema, userTypeSchema, userPatternSchema)}
 }
@@ -98,11 +94,10 @@ func resourceAppUserSchemaResourceV0() *schema.Resource {
 			Required: true,
 		},
 		"scope": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          "NONE",
-			ValidateDiagFunc: elemInSlice([]string{"SELF", "NONE", ""}),
-			ForceNew:         true, // since the `scope` is read-only attribute, the resource should be recreated
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "NONE",
+			ForceNew: true, // since the `scope` is read-only attribute, the resource should be recreated
 		},
 	}, userSchemaSchema, userBaseSchemaSchema)}
 }

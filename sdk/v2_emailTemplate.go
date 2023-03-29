@@ -13,7 +13,7 @@ type EmailTemplate struct {
 }
 
 // Fetch an email template by templateName
-func (m *EmailTemplateResource) GetEmailTemplate(ctx context.Context, brandId string, templateName string) (*EmailTemplate, *Response, error) {
+func (m *EmailTemplateResource) GetEmailTemplate(ctx context.Context, brandId, templateName string) (*EmailTemplate, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/templates/email/%v", brandId, templateName)
 
 	rq := m.client.CloneRequestExecutor()

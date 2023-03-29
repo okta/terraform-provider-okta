@@ -30,11 +30,10 @@ var (
 			DiffSuppressFunc: createValueDiffSuppression("0"),
 		},
 		"status": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          statusActive,
-			ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
-			Description:      "Policy Status: ACTIVE or INACTIVE.",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     statusActive,
+			Description: "Policy Status: ACTIVE or INACTIVE.",
 		},
 		"groups_included": {
 			Type:        schema.TypeSet,
@@ -75,10 +74,9 @@ var (
 	}
 
 	statusSchema = &schema.Schema{
-		Type:             schema.TypeString,
-		Optional:         true,
-		Default:          statusActive,
-		ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
+		Type:     schema.TypeString,
+		Optional: true,
+		Default:  statusActive,
 	}
 
 	isOieSchema = &schema.Schema{

@@ -13,16 +13,14 @@ func dataSourceRoleSubscription() *schema.Resource {
 		ReadContext: dataSourceRoleSubscriptionRead,
 		Schema: map[string]*schema.Schema{
 			"role_type": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: elemInSlice(validAdminRoles),
-				Description:      "Type of the role",
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Type of the role",
 			},
 			"notification_type": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: elemInSlice(validNotificationTypes),
-				Description:      "Type of the notification",
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Type of the notification",
 			},
 			"status": {
 				Type:        schema.TypeString,

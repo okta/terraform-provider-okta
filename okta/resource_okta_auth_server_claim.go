@@ -38,15 +38,13 @@ func resourceAuthServerClaim() *schema.Resource {
 				Required: true,
 			},
 			"value_type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"EXPRESSION", "GROUPS", "SYSTEM"}),
-				Default:          "EXPRESSION",
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "EXPRESSION",
 			},
 			"claim_type": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: elemInSlice([]string{"RESOURCE", "IDENTITY"}),
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"always_include_in_token": {
 				Type:     schema.TypeBool,
@@ -54,10 +52,9 @@ func resourceAuthServerClaim() *schema.Resource {
 				Default:  true,
 			},
 			"group_filter_type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"STARTS_WITH", "EQUALS", "CONTAINS", "REGEX"}),
-				Description:      "Required when value_type is GROUPS",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Required when value_type is GROUPS",
 			},
 		},
 	}

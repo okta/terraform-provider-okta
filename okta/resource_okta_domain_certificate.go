@@ -23,10 +23,9 @@ func resourceDomainCertificate() *schema.Resource {
 				ForceNew:    true,
 			},
 			"type": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "Certificate type",
-				ValidateDiagFunc: elemInSlice([]string{"PEM"}),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Certificate type",
 				DefaultFunc: func() (interface{}, error) {
 					return "PEM", nil
 				},

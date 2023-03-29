@@ -22,11 +22,10 @@ func resourcePolicyProfileEnrollment() *schema.Resource {
 				Description: "Name of the policy",
 			},
 			"status": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
-				Description:      "Status of the policy",
-				Default:          statusActive,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Status of the policy",
+				Default:     statusActive,
 			},
 		},
 	}

@@ -10,35 +10,6 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-// validScopes is a list of supported scopes as per https://developer.okta.com/docs/guides/implement-oauth-for-okta/scopes/.
-var validScopes = []string{
-	"okta.apps.manage", "okta.apps.read",
-	"okta.authorizationServers.manage", "okta.authorizationServers.read",
-	"okta.authenticators.manage", "okta.authenticators.read",
-	"okta.brands.manage", "okta.brands.read",
-	"okta.captchas.manage", "okta.captchas.read",
-	"okta.clients.manage", "okta.clients.read", "okta.clients.register",
-	"okta.devices.manage", "okta.devices.read",
-	"okta.domains.manage", "okta.domains.read",
-	"okta.eventHooks.manage", "okta.eventHooks.read",
-	"okta.events.read",
-	"okta.factors.manage", "okta.factors.read",
-	"okta.groups.manage", "okta.groups.read",
-	"okta.idps.manage", "okta.idps.read",
-	"okta.inlineHooks.manage", "okta.inlineHooks.read",
-	"okta.linkedObjects.manage", "okta.linkedObjects.read",
-	"okta.logs.read",
-	"okta.policies.manage", "okta.policies.read",
-	"okta.profileMappings.manage", "okta.profileMappings.read",
-	"okta.roles.manage", "okta.roles.read",
-	"okta.schemas.manage", "okta.schemas.read",
-	"okta.sessions.manage", "okta.sessions.read",
-	"okta.templates.manage", "okta.templates.read",
-	"okta.trustedOrigins.manage", "okta.trustedOrigins.read",
-	"okta.users.manage", "okta.users.read", "okta.users.manage.self", "okta.users.read.self",
-	"okta.userTypes.manage", "okta.userTypes.read",
-}
-
 func resourceAppOAuthAPIScope() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppOAuthAPIScopeCreate,
@@ -82,8 +53,7 @@ func resourceAppOAuthAPIScope() *schema.Resource {
 				Type:     schema.TypeSet,
 				Required: true,
 				Elem: &schema.Schema{
-					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice(validScopes),
+					Type: schema.TypeString,
 				},
 				Description: "Scopes of the application for which consent is granted.",
 			},

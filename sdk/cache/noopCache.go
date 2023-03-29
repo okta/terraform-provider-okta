@@ -19,7 +19,7 @@ func (c NoOpCache) GetString(key string) string {
 	return ""
 }
 
-func (c NoOpCache) SetString(key string, value string) {
+func (c NoOpCache) SetString(key, value string) {
 }
 
 func (c NoOpCache) Delete(key string) {
