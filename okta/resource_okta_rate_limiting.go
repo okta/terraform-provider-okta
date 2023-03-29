@@ -19,16 +19,14 @@ func resourceRateLimiting() *schema.Resource {
 		},
 		Schema: map[string]*schema.Schema{
 			"login": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ENFORCE", "DISABLE", "PREVIEW"}),
-				Description:      "Called when accessing the Okta hosted login page.",
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Called when accessing the Okta hosted login page.",
 			},
 			"authorize": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ENFORCE", "DISABLE", "PREVIEW"}),
-				Description:      "Called during authentication.",
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Called during authentication.",
 			},
 			"communications_enabled": {
 				Type:        schema.TypeBool,

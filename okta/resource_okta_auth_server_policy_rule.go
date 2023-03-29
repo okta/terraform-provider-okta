@@ -49,8 +49,7 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 				Type:     schema.TypeSet,
 				Required: true,
 				Elem: &schema.Schema{
-					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, clientCredentials, saml2Bearer, tokenExchange, deviceCode, interactionCode}),
+					Type: schema.TypeString,
 				},
 				Description: "Accepted grant type values: authorization_code, implicit, password, client_credentials",
 			},
@@ -62,9 +61,7 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 			"access_token_lifetime_minutes": {
 				Type:     schema.TypeInt,
 				Optional: true,
-				// 5 minutes - 1 day
-				ValidateDiagFunc: intBetween(5, 1440),
-				Default:          60,
+				Default:  60,
 			},
 			"refresh_token_lifetime_minutes": {
 				Type:     schema.TypeInt,
@@ -73,9 +70,7 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 			"refresh_token_window_minutes": {
 				Type:     schema.TypeInt,
 				Optional: true,
-				// 5 minutes - 5 years
-				ValidateDiagFunc: intBetween(5, 2628000),
-				Default:          10080,
+				Default:  10080,
 			},
 			"inline_hook_id": {
 				Type:     schema.TypeString,

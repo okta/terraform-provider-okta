@@ -109,7 +109,7 @@ func (m *BrandResource) ListEmailTemplates(ctx context.Context, brandId string, 
 }
 
 // Fetch an email template by templateName
-func (m *BrandResource) GetEmailTemplate(ctx context.Context, brandId string, templateName string) (*EmailTemplate, *Response, error) {
+func (m *BrandResource) GetEmailTemplate(ctx context.Context, brandId, templateName string) (*EmailTemplate, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/templates/email/%v", brandId, templateName)
 
 	rq := m.client.CloneRequestExecutor()
@@ -130,7 +130,7 @@ func (m *BrandResource) GetEmailTemplate(ctx context.Context, brandId string, te
 }
 
 // Delete all customizations for an email template. Also known as “Reset to Default”.
-func (m *BrandResource) DeleteEmailTemplateCustomizations(ctx context.Context, brandId string, templateName string) (*Response, error) {
+func (m *BrandResource) DeleteEmailTemplateCustomizations(ctx context.Context, brandId, templateName string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/templates/email/%v/customizations", brandId, templateName)
 
 	rq := m.client.CloneRequestExecutor()
@@ -149,7 +149,7 @@ func (m *BrandResource) DeleteEmailTemplateCustomizations(ctx context.Context, b
 }
 
 // List all email customizations for an email template
-func (m *BrandResource) ListEmailTemplateCustomizations(ctx context.Context, brandId string, templateName string) ([]*EmailTemplateCustomization, *Response, error) {
+func (m *BrandResource) ListEmailTemplateCustomizations(ctx context.Context, brandId, templateName string) ([]*EmailTemplateCustomization, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/templates/email/%v/customizations", brandId, templateName)
 
 	rq := m.client.CloneRequestExecutor()
@@ -170,7 +170,7 @@ func (m *BrandResource) ListEmailTemplateCustomizations(ctx context.Context, bra
 }
 
 // Create an email customization
-func (m *BrandResource) CreateEmailTemplateCustomization(ctx context.Context, brandId string, templateName string, body EmailTemplateCustomizationRequest) (*EmailTemplateCustomization, *Response, error) {
+func (m *BrandResource) CreateEmailTemplateCustomization(ctx context.Context, brandId, templateName string, body EmailTemplateCustomizationRequest) (*EmailTemplateCustomization, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/templates/email/%v/customizations", brandId, templateName)
 
 	rq := m.client.CloneRequestExecutor()
@@ -191,7 +191,7 @@ func (m *BrandResource) CreateEmailTemplateCustomization(ctx context.Context, br
 }
 
 // Delete an email customization
-func (m *BrandResource) DeleteEmailTemplateCustomization(ctx context.Context, brandId string, templateName string, customizationId string) (*Response, error) {
+func (m *BrandResource) DeleteEmailTemplateCustomization(ctx context.Context, brandId, templateName, customizationId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/templates/email/%v/customizations/%v", brandId, templateName, customizationId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -210,7 +210,7 @@ func (m *BrandResource) DeleteEmailTemplateCustomization(ctx context.Context, br
 }
 
 // Fetch an email customization by id.
-func (m *BrandResource) GetEmailTemplateCustomization(ctx context.Context, brandId string, templateName string, customizationId string) (*EmailTemplateCustomization, *Response, error) {
+func (m *BrandResource) GetEmailTemplateCustomization(ctx context.Context, brandId, templateName, customizationId string) (*EmailTemplateCustomization, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/templates/email/%v/customizations/%v", brandId, templateName, customizationId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -231,7 +231,7 @@ func (m *BrandResource) GetEmailTemplateCustomization(ctx context.Context, brand
 }
 
 // Update an email customization
-func (m *BrandResource) UpdateEmailTemplateCustomization(ctx context.Context, brandId string, templateName string, customizationId string, body EmailTemplateCustomizationRequest) (*EmailTemplateCustomization, *Response, error) {
+func (m *BrandResource) UpdateEmailTemplateCustomization(ctx context.Context, brandId, templateName, customizationId string, body EmailTemplateCustomizationRequest) (*EmailTemplateCustomization, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/templates/email/%v/customizations/%v", brandId, templateName, customizationId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -252,7 +252,7 @@ func (m *BrandResource) UpdateEmailTemplateCustomization(ctx context.Context, br
 }
 
 // Get a preview of an email template customization.
-func (m *BrandResource) GetEmailTemplateCustomizationPreview(ctx context.Context, brandId string, templateName string, customizationId string) (*EmailTemplateContent, *Response, error) {
+func (m *BrandResource) GetEmailTemplateCustomizationPreview(ctx context.Context, brandId, templateName, customizationId string) (*EmailTemplateContent, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/templates/email/%v/customizations/%v/preview", brandId, templateName, customizationId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -273,7 +273,7 @@ func (m *BrandResource) GetEmailTemplateCustomizationPreview(ctx context.Context
 }
 
 // Fetch the default content for an email template.
-func (m *BrandResource) GetEmailTemplateDefaultContent(ctx context.Context, brandId string, templateName string) (*EmailTemplateContent, *Response, error) {
+func (m *BrandResource) GetEmailTemplateDefaultContent(ctx context.Context, brandId, templateName string) (*EmailTemplateContent, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/templates/email/%v/default-content", brandId, templateName)
 
 	rq := m.client.CloneRequestExecutor()
@@ -294,7 +294,7 @@ func (m *BrandResource) GetEmailTemplateDefaultContent(ctx context.Context, bran
 }
 
 // Fetch a preview of an email template&#x27;s default content by populating velocity references with the current user&#x27;s environment.
-func (m *BrandResource) GetEmailTemplateDefaultContentPreview(ctx context.Context, brandId string, templateName string) (*EmailTemplateContent, *Response, error) {
+func (m *BrandResource) GetEmailTemplateDefaultContentPreview(ctx context.Context, brandId, templateName string) (*EmailTemplateContent, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/templates/email/%v/default-content/preview", brandId, templateName)
 
 	rq := m.client.CloneRequestExecutor()
@@ -315,7 +315,7 @@ func (m *BrandResource) GetEmailTemplateDefaultContentPreview(ctx context.Contex
 }
 
 // Send a test email to the current users primary and secondary email addresses. The email content is selected based on the following priority: An email customization specifically for the users locale. The default language of email customizations. The email templates default content.
-func (m *BrandResource) SendTestEmail(ctx context.Context, brandId string, templateName string, body EmailTemplateTestRequest) (*Response, error) {
+func (m *BrandResource) SendTestEmail(ctx context.Context, brandId, templateName string, body EmailTemplateTestRequest) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/templates/email/%v/test", brandId, templateName)
 
 	rq := m.client.CloneRequestExecutor()
@@ -355,7 +355,7 @@ func (m *BrandResource) ListBrandThemes(ctx context.Context, brandId string) ([]
 }
 
 // Fetches a theme for a brand
-func (m *BrandResource) GetBrandTheme(ctx context.Context, brandId string, themeId string) (*ThemeResponse, *Response, error) {
+func (m *BrandResource) GetBrandTheme(ctx context.Context, brandId, themeId string) (*ThemeResponse, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/themes/%v", brandId, themeId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -376,7 +376,7 @@ func (m *BrandResource) GetBrandTheme(ctx context.Context, brandId string, theme
 }
 
 // Updates a theme for a brand
-func (m *BrandResource) UpdateBrandTheme(ctx context.Context, brandId string, themeId string, body Theme) (*ThemeResponse, *Response, error) {
+func (m *BrandResource) UpdateBrandTheme(ctx context.Context, brandId, themeId string, body Theme) (*ThemeResponse, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/themes/%v", brandId, themeId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -397,7 +397,7 @@ func (m *BrandResource) UpdateBrandTheme(ctx context.Context, brandId string, th
 }
 
 // Deletes a Theme background image
-func (m *BrandResource) DeleteBrandThemeBackgroundImage(ctx context.Context, brandId string, themeId string) (*Response, error) {
+func (m *BrandResource) DeleteBrandThemeBackgroundImage(ctx context.Context, brandId, themeId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/themes/%v/background-image", brandId, themeId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -416,7 +416,7 @@ func (m *BrandResource) DeleteBrandThemeBackgroundImage(ctx context.Context, bra
 }
 
 // Updates the background image for your Theme
-func (m *BrandResource) UploadBrandThemeBackgroundImage(ctx context.Context, brandId string, themeId string, file string) (*ImageUploadResponse, *Response, error) {
+func (m *BrandResource) UploadBrandThemeBackgroundImage(ctx context.Context, brandId, themeId, file string) (*ImageUploadResponse, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/themes/%v/background-image", brandId, themeId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -454,7 +454,7 @@ func (m *BrandResource) UploadBrandThemeBackgroundImage(ctx context.Context, bra
 }
 
 // Deletes a Theme favicon. The org then uses the Okta default favicon.
-func (m *BrandResource) DeleteBrandThemeFavicon(ctx context.Context, brandId string, themeId string) (*Response, error) {
+func (m *BrandResource) DeleteBrandThemeFavicon(ctx context.Context, brandId, themeId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/themes/%v/favicon", brandId, themeId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -473,7 +473,7 @@ func (m *BrandResource) DeleteBrandThemeFavicon(ctx context.Context, brandId str
 }
 
 // Updates the favicon for your theme
-func (m *BrandResource) UploadBrandThemeFavicon(ctx context.Context, brandId string, themeId string, file string) (*ImageUploadResponse, *Response, error) {
+func (m *BrandResource) UploadBrandThemeFavicon(ctx context.Context, brandId, themeId, file string) (*ImageUploadResponse, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/themes/%v/favicon", brandId, themeId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -511,7 +511,7 @@ func (m *BrandResource) UploadBrandThemeFavicon(ctx context.Context, brandId str
 }
 
 // Deletes a Theme logo. The org then uses the Okta default logo.
-func (m *BrandResource) DeleteBrandThemeLogo(ctx context.Context, brandId string, themeId string) (*Response, error) {
+func (m *BrandResource) DeleteBrandThemeLogo(ctx context.Context, brandId, themeId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/themes/%v/logo", brandId, themeId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -530,7 +530,7 @@ func (m *BrandResource) DeleteBrandThemeLogo(ctx context.Context, brandId string
 }
 
 // Updates the logo for your Theme
-func (m *BrandResource) UploadBrandThemeLogo(ctx context.Context, brandId string, themeId string, file string) (*ImageUploadResponse, *Response, error) {
+func (m *BrandResource) UploadBrandThemeLogo(ctx context.Context, brandId, themeId, file string) (*ImageUploadResponse, *Response, error) {
 	url := fmt.Sprintf("/api/v1/brands/%v/themes/%v/logo", brandId, themeId)
 
 	rq := m.client.CloneRequestExecutor()

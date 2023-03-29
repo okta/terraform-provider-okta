@@ -85,7 +85,7 @@ func resourceOrgConfiguration() *schema.Resource {
 			"logo": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: logoValid(),
+				ValidateDiagFunc: logoFileIsValid(),
 				Description:      "Local path to logo of the org.",
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return new == ""

@@ -2,9 +2,7 @@ package okta
 
 import (
 	"context"
-	"net/http"
 
-	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -44,19 +42,10 @@ func resourceInlineHook() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-				ValidateDiagFunc: elemInSlice([]string{
-					"com.okta.import.transform",
-					"com.okta.oauth2.tokens.transform",
-					"com.okta.saml.tokens.transform",
-					"com.okta.telephony.provider",
-					"com.okta.user.pre-registration",
-					"com.okta.user.credential.password.import",
-				}),
 			},
 			"version": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: stringIsVersion,
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"headers": {
 				Type:     schema.TypeSet,
@@ -75,23 +64,6 @@ func resourceInlineHook() *schema.Resource {
 					}
 					return false
 				},
-				ValidateDiagFunc: func(i interface{}, path cty.Path) diag.Diagnostics {
-					var errs diag.Diagnostics
-					m := i.(map[string]interface{})
-					if _, ok := m["key"]; !ok {
-						errs = append(errs, diag.Errorf("auth 'key' should not be empty")...)
-					}
-					if t, ok := m["type"]; ok {
-						dErr := elemInSlice([]string{"HEADER"})(t, cty.GetAttrPath("type"))
-						if dErr != nil {
-							errs = append(errs, dErr...)
-						}
-					}
-					if _, ok := m["value"]; !ok {
-						errs = append(errs, diag.Errorf("auth 'value' should not be empty")...)
-					}
-					return errs
-				},
 			},
 			"channel": {
 				Type:     schema.TypeMap,
@@ -107,37 +79,6 @@ func resourceInlineHook() *schema.Resource {
 						return true
 					}
 					return false
-				},
-				ValidateDiagFunc: func(i interface{}, path cty.Path) diag.Diagnostics {
-					var errs diag.Diagnostics
-					m := i.(map[string]interface{})
-					if t, ok := m["type"]; ok {
-						dErr := elemInSlice([]string{"HTTP"})(t, cty.GetAttrPath("type"))
-						if dErr != nil {
-							errs = append(errs, dErr...)
-						}
-					}
-					dErr := stringIsURL("https")(m["uri"], cty.GetAttrPath("uri"))
-					if dErr != nil {
-						errs = append(errs, dErr...)
-					}
-					dErr = stringIsVersion(m["version"], cty.GetAttrPath("version"))
-					if dErr != nil {
-						errs = append(errs, dErr...)
-					}
-					if method, ok := m["method"]; ok {
-						dErr = elemInSlice([]string{
-							http.MethodPost,
-							http.MethodGet,
-							http.MethodPut,
-							http.MethodDelete,
-							http.MethodPatch,
-						})(method, cty.GetAttrPath("method"))
-						if dErr != nil {
-							errs = append(errs, dErr...)
-						}
-					}
-					return errs
 				},
 			},
 		},

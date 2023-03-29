@@ -47,11 +47,10 @@ func resourceAdminRoleTargets() *schema.Resource {
 				ForceNew:    true,
 			},
 			"role_type": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "Type of the role that is assigned to the user and supports optional targets",
-				ForceNew:         true,
-				ValidateDiagFunc: elemInSlice(rolesWithTargets),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Type of the role that is assigned to the user and supports optional targets",
+				ForceNew:    true,
 			},
 			"role_id": {
 				Type:        schema.TypeString,

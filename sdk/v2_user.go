@@ -142,7 +142,7 @@ func (m *UserResource) ListUsers(ctx context.Context, qp *query.Params) ([]*User
 	return user, resp, nil
 }
 
-func (m *UserResource) SetLinkedObjectForUser(ctx context.Context, associatedUserId string, primaryRelationshipName string, primaryUserId string) (*Response, error) {
+func (m *UserResource) SetLinkedObjectForUser(ctx context.Context, associatedUserId, primaryRelationshipName, primaryUserId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/linkedObjects/%v/%v", associatedUserId, primaryRelationshipName, primaryUserId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -227,7 +227,7 @@ func (m *UserResource) ListUserClients(ctx context.Context, userId string) ([]*O
 }
 
 // Revokes all grants for the specified user and client
-func (m *UserResource) RevokeGrantsForUserAndClient(ctx context.Context, userId string, clientId string) (*Response, error) {
+func (m *UserResource) RevokeGrantsForUserAndClient(ctx context.Context, userId, clientId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/clients/%v/grants", userId, clientId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -246,7 +246,7 @@ func (m *UserResource) RevokeGrantsForUserAndClient(ctx context.Context, userId 
 }
 
 // Lists all grants for a specified user and client
-func (m *UserResource) ListGrantsForUserAndClient(ctx context.Context, userId string, clientId string, qp *query.Params) ([]*OAuth2ScopeConsentGrant, *Response, error) {
+func (m *UserResource) ListGrantsForUserAndClient(ctx context.Context, userId, clientId string, qp *query.Params) ([]*OAuth2ScopeConsentGrant, *Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/clients/%v/grants", userId, clientId)
 	if qp != nil {
 		url = url + qp.String()
@@ -270,7 +270,7 @@ func (m *UserResource) ListGrantsForUserAndClient(ctx context.Context, userId st
 }
 
 // Revokes all refresh tokens issued for the specified User and Client.
-func (m *UserResource) RevokeTokensForUserAndClient(ctx context.Context, userId string, clientId string) (*Response, error) {
+func (m *UserResource) RevokeTokensForUserAndClient(ctx context.Context, userId, clientId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/clients/%v/tokens", userId, clientId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -289,7 +289,7 @@ func (m *UserResource) RevokeTokensForUserAndClient(ctx context.Context, userId 
 }
 
 // Lists all refresh tokens issued for the specified User and Client.
-func (m *UserResource) ListRefreshTokensForUserAndClient(ctx context.Context, userId string, clientId string, qp *query.Params) ([]*OAuth2RefreshToken, *Response, error) {
+func (m *UserResource) ListRefreshTokensForUserAndClient(ctx context.Context, userId, clientId string, qp *query.Params) ([]*OAuth2RefreshToken, *Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/clients/%v/tokens", userId, clientId)
 	if qp != nil {
 		url = url + qp.String()
@@ -313,7 +313,7 @@ func (m *UserResource) ListRefreshTokensForUserAndClient(ctx context.Context, us
 }
 
 // Revokes the specified refresh token.
-func (m *UserResource) RevokeTokenForUserAndClient(ctx context.Context, userId string, clientId string, tokenId string) (*Response, error) {
+func (m *UserResource) RevokeTokenForUserAndClient(ctx context.Context, userId, clientId, tokenId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/clients/%v/tokens/%v", userId, clientId, tokenId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -332,7 +332,7 @@ func (m *UserResource) RevokeTokenForUserAndClient(ctx context.Context, userId s
 }
 
 // Gets a refresh token issued for the specified User and Client.
-func (m *UserResource) GetRefreshTokenForUserAndClient(ctx context.Context, userId string, clientId string, tokenId string, qp *query.Params) (*OAuth2RefreshToken, *Response, error) {
+func (m *UserResource) GetRefreshTokenForUserAndClient(ctx context.Context, userId, clientId, tokenId string, qp *query.Params) (*OAuth2RefreshToken, *Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/clients/%v/tokens/%v", userId, clientId, tokenId)
 	if qp != nil {
 		url = url + qp.String()
@@ -492,7 +492,7 @@ func (m *UserResource) ListUserGrants(ctx context.Context, userId string, qp *qu
 }
 
 // Revokes one grant for a specified user
-func (m *UserResource) RevokeUserGrant(ctx context.Context, userId string, grantId string) (*Response, error) {
+func (m *UserResource) RevokeUserGrant(ctx context.Context, userId, grantId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/grants/%v", userId, grantId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -511,7 +511,7 @@ func (m *UserResource) RevokeUserGrant(ctx context.Context, userId string, grant
 }
 
 // Gets a grant for the specified user
-func (m *UserResource) GetUserGrant(ctx context.Context, userId string, grantId string, qp *query.Params) (*OAuth2ScopeConsentGrant, *Response, error) {
+func (m *UserResource) GetUserGrant(ctx context.Context, userId, grantId string, qp *query.Params) (*OAuth2ScopeConsentGrant, *Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/grants/%v", userId, grantId)
 	if qp != nil {
 		url = url + qp.String()
@@ -789,7 +789,7 @@ func (m *UserResource) UnsuspendUser(ctx context.Context, userId string) (*Respo
 }
 
 // Delete linked objects for a user, relationshipName can be ONLY a primary relationship name
-func (m *UserResource) RemoveLinkedObjectForUser(ctx context.Context, userId string, relationshipName string) (*Response, error) {
+func (m *UserResource) RemoveLinkedObjectForUser(ctx context.Context, userId, relationshipName string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/linkedObjects/%v", userId, relationshipName)
 
 	rq := m.client.CloneRequestExecutor()
@@ -808,7 +808,7 @@ func (m *UserResource) RemoveLinkedObjectForUser(ctx context.Context, userId str
 }
 
 // Get linked objects for a user, relationshipName can be a primary or associated relationship name
-func (m *UserResource) GetLinkedObjectsForUser(ctx context.Context, userId string, relationshipName string, qp *query.Params) ([]*ResponseLinks, *Response, error) {
+func (m *UserResource) GetLinkedObjectsForUser(ctx context.Context, userId, relationshipName string, qp *query.Params) ([]*ResponseLinks, *Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/linkedObjects/%v", userId, relationshipName)
 	if qp != nil {
 		url = url + qp.String()
@@ -880,7 +880,7 @@ func (m *UserResource) AssignRoleToUser(ctx context.Context, userId string, body
 }
 
 // Unassigns a role from a user.
-func (m *UserResource) RemoveRoleFromUser(ctx context.Context, userId string, roleId string) (*Response, error) {
+func (m *UserResource) RemoveRoleFromUser(ctx context.Context, userId, roleId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/roles/%v", userId, roleId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -899,7 +899,7 @@ func (m *UserResource) RemoveRoleFromUser(ctx context.Context, userId string, ro
 }
 
 // Gets role that is assigne to user.
-func (m *UserResource) GetUserRole(ctx context.Context, userId string, roleId string) (*Role, *Response, error) {
+func (m *UserResource) GetUserRole(ctx context.Context, userId, roleId string) (*Role, *Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/roles/%v", userId, roleId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -920,7 +920,7 @@ func (m *UserResource) GetUserRole(ctx context.Context, userId string, roleId st
 }
 
 // Lists all App targets for an &#x60;APP_ADMIN&#x60; Role assigned to a User. This methods return list may include full Applications or Instances. The response for an instance will have an &#x60;ID&#x60; value, while Application will not have an ID.
-func (m *UserResource) ListApplicationTargetsForApplicationAdministratorRoleForUser(ctx context.Context, userId string, roleId string, qp *query.Params) ([]*CatalogApplication, *Response, error) {
+func (m *UserResource) ListApplicationTargetsForApplicationAdministratorRoleForUser(ctx context.Context, userId, roleId string, qp *query.Params) ([]*CatalogApplication, *Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/roles/%v/targets/catalog/apps", userId, roleId)
 	if qp != nil {
 		url = url + qp.String()
@@ -943,7 +943,7 @@ func (m *UserResource) ListApplicationTargetsForApplicationAdministratorRoleForU
 	return catalogApplication, resp, nil
 }
 
-func (m *UserResource) AddAllAppsAsTargetToRole(ctx context.Context, userId string, roleId string) (*Response, error) {
+func (m *UserResource) AddAllAppsAsTargetToRole(ctx context.Context, userId, roleId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/roles/%v/targets/catalog/apps", userId, roleId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -961,7 +961,7 @@ func (m *UserResource) AddAllAppsAsTargetToRole(ctx context.Context, userId stri
 	return resp, nil
 }
 
-func (m *UserResource) RemoveApplicationTargetFromApplicationAdministratorRoleForUser(ctx context.Context, userId string, roleId string, appName string) (*Response, error) {
+func (m *UserResource) RemoveApplicationTargetFromApplicationAdministratorRoleForUser(ctx context.Context, userId, roleId, appName string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/roles/%v/targets/catalog/apps/%v", userId, roleId, appName)
 
 	rq := m.client.CloneRequestExecutor()
@@ -979,7 +979,7 @@ func (m *UserResource) RemoveApplicationTargetFromApplicationAdministratorRoleFo
 	return resp, nil
 }
 
-func (m *UserResource) AddApplicationTargetToAdminRoleForUser(ctx context.Context, userId string, roleId string, appName string) (*Response, error) {
+func (m *UserResource) AddApplicationTargetToAdminRoleForUser(ctx context.Context, userId, roleId, appName string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/roles/%v/targets/catalog/apps/%v", userId, roleId, appName)
 
 	rq := m.client.CloneRequestExecutor()
@@ -998,7 +998,7 @@ func (m *UserResource) AddApplicationTargetToAdminRoleForUser(ctx context.Contex
 }
 
 // Remove App Instance Target to App Administrator Role given to a User
-func (m *UserResource) RemoveApplicationTargetFromAdministratorRoleForUser(ctx context.Context, userId string, roleId string, appName string, applicationId string) (*Response, error) {
+func (m *UserResource) RemoveApplicationTargetFromAdministratorRoleForUser(ctx context.Context, userId, roleId, appName, applicationId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/roles/%v/targets/catalog/apps/%v/%v", userId, roleId, appName, applicationId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -1017,7 +1017,7 @@ func (m *UserResource) RemoveApplicationTargetFromAdministratorRoleForUser(ctx c
 }
 
 // Add App Instance Target to App Administrator Role given to a User
-func (m *UserResource) AddApplicationTargetToAppAdminRoleForUser(ctx context.Context, userId string, roleId string, appName string, applicationId string) (*Response, error) {
+func (m *UserResource) AddApplicationTargetToAppAdminRoleForUser(ctx context.Context, userId, roleId, appName, applicationId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/roles/%v/targets/catalog/apps/%v/%v", userId, roleId, appName, applicationId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -1035,7 +1035,7 @@ func (m *UserResource) AddApplicationTargetToAppAdminRoleForUser(ctx context.Con
 	return resp, nil
 }
 
-func (m *UserResource) ListGroupTargetsForRole(ctx context.Context, userId string, roleId string, qp *query.Params) ([]*Group, *Response, error) {
+func (m *UserResource) ListGroupTargetsForRole(ctx context.Context, userId, roleId string, qp *query.Params) ([]*Group, *Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/roles/%v/targets/groups", userId, roleId)
 	if qp != nil {
 		url = url + qp.String()
@@ -1058,7 +1058,7 @@ func (m *UserResource) ListGroupTargetsForRole(ctx context.Context, userId strin
 	return group, resp, nil
 }
 
-func (m *UserResource) RemoveGroupTargetFromRole(ctx context.Context, userId string, roleId string, groupId string) (*Response, error) {
+func (m *UserResource) RemoveGroupTargetFromRole(ctx context.Context, userId, roleId, groupId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/roles/%v/targets/groups/%v", userId, roleId, groupId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -1076,7 +1076,7 @@ func (m *UserResource) RemoveGroupTargetFromRole(ctx context.Context, userId str
 	return resp, nil
 }
 
-func (m *UserResource) AddGroupTargetToRole(ctx context.Context, userId string, roleId string, groupId string) (*Response, error) {
+func (m *UserResource) AddGroupTargetToRole(ctx context.Context, userId, roleId, groupId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/roles/%v/targets/groups/%v", userId, roleId, groupId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -1138,7 +1138,7 @@ func (m *UserResource) ListUserSubscriptions(ctx context.Context, userId string)
 }
 
 // Get the subscriptions of a User with a specific notification type. Only gets subscriptions for current user. An AccessDeniedException message is sent if requests are made from other users.
-func (m *UserResource) GetUserSubscriptionByNotificationType(ctx context.Context, userId string, notificationType string) (*Subscription, *Response, error) {
+func (m *UserResource) GetUserSubscriptionByNotificationType(ctx context.Context, userId, notificationType string) (*Subscription, *Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/subscriptions/%v", userId, notificationType)
 
 	rq := m.client.CloneRequestExecutor()

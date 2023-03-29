@@ -25,7 +25,7 @@ type AuthorizationServerPolicy struct {
 	Type        string                `json:"type,omitempty"`
 }
 
-func (m *AuthorizationServerPolicyResource) GetAuthorizationServerPolicy(ctx context.Context, authServerId string, policyId string) (*AuthorizationServerPolicy, *Response, error) {
+func (m *AuthorizationServerPolicyResource) GetAuthorizationServerPolicy(ctx context.Context, authServerId, policyId string) (*AuthorizationServerPolicy, *Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%v/policies/%v", authServerId, policyId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -45,7 +45,7 @@ func (m *AuthorizationServerPolicyResource) GetAuthorizationServerPolicy(ctx con
 	return authorizationServerPolicy, resp, nil
 }
 
-func (m *AuthorizationServerPolicyResource) UpdateAuthorizationServerPolicy(ctx context.Context, authServerId string, policyId string, body AuthorizationServerPolicy) (*AuthorizationServerPolicy, *Response, error) {
+func (m *AuthorizationServerPolicyResource) UpdateAuthorizationServerPolicy(ctx context.Context, authServerId, policyId string, body AuthorizationServerPolicy) (*AuthorizationServerPolicy, *Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%v/policies/%v", authServerId, policyId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -65,7 +65,7 @@ func (m *AuthorizationServerPolicyResource) UpdateAuthorizationServerPolicy(ctx 
 	return authorizationServerPolicy, resp, nil
 }
 
-func (m *AuthorizationServerPolicyResource) DeleteAuthorizationServerPolicy(ctx context.Context, authServerId string, policyId string) (*Response, error) {
+func (m *AuthorizationServerPolicyResource) DeleteAuthorizationServerPolicy(ctx context.Context, authServerId, policyId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/authorizationServers/%v/policies/%v", authServerId, policyId)
 
 	rq := m.client.CloneRequestExecutor()

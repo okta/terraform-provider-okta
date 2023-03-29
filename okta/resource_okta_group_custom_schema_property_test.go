@@ -17,7 +17,7 @@ func TestAccOktaGroupSchema_crud(t *testing.T) {
 	mgr := newFixtureManager(groupSchemaProperty)
 	config := mgr.GetFixtures("basic.tf", ri, t)
 	updated := mgr.GetFixtures("basic_updated.tf", ri, t)
-	//unique := mgr.GetFixtures("unique.tf", ri, t)
+	// unique := mgr.GetFixtures("unique.tf", ri, t)
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 
 	resource.Test(t, resource.TestCase{

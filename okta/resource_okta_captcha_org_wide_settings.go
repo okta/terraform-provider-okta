@@ -27,8 +27,7 @@ func resourceCaptchaOrgWideSettings() *schema.Resource {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
-					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice([]string{"SSR", "SSPR", "SIGN_IN"}),
+					Type: schema.TypeString,
 				},
 				Description:  "Set of pages that have CAPTCHA enabled",
 				RequiredWith: []string{"captcha_id"},

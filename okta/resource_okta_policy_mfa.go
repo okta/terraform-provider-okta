@@ -4,7 +4,6 @@ import (
 	"context"
 	"strings"
 
-	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -214,23 +213,6 @@ func buildFactorSchemaProviders() map[string]*schema.Schema {
 			},
 			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 				return strings.HasSuffix(k, ".%") || new == ""
-			},
-			ValidateDiagFunc: func(i interface{}, path cty.Path) diag.Diagnostics {
-				var errs diag.Diagnostics
-				m := i.(map[string]interface{})
-				if enroll, ok := m["enroll"]; ok {
-					dErr := elemInSlice([]string{"NOT_ALLOWED", "OPTIONAL", "REQUIRED"})(enroll, cty.GetAttrPath("enroll"))
-					if dErr != nil {
-						errs = append(errs, dErr...)
-					}
-				}
-				if consentType, ok := m["consent_type"]; ok {
-					dErr := elemInSlice([]string{"NONE", "TERMS_OF_SERVICE"})(consentType, cty.GetAttrPath("consent_type"))
-					if dErr != nil {
-						errs = append(errs, dErr...)
-					}
-				}
-				return errs
 			},
 		}
 	}

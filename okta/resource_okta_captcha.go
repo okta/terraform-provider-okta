@@ -24,11 +24,10 @@ func resourceCaptcha() *schema.Resource {
 				Description: "Name of the CAPTCHA",
 			},
 			"type": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ForceNew:         true,
-				ValidateDiagFunc: elemInSlice([]string{"HCAPTCHA", "RECAPTCHA_V2"}),
-				Description:      "Captcha type",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "Captcha type",
 			},
 			"site_key": {
 				Type:        schema.TypeString,

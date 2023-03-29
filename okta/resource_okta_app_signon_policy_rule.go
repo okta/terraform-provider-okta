@@ -30,11 +30,10 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				Description: "ID of the policy",
 			},
 			"status": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
-				Description:      "Status of the rule",
-				Default:          statusActive,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Status of the rule",
+				Default:     statusActive,
 			},
 			"priority": {
 				Type:     schema.TypeInt,
@@ -69,11 +68,10 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"network_connection": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ANYWHERE", "ZONE", "ON_NETWORK", "OFF_NETWORK"}),
-				Description:      "Network selection mode: ANYWHERE, ZONE, ON_NETWORK, or OFF_NETWORK.",
-				Default:          "ANYWHERE",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Network selection mode: ANYWHERE, ZONE, ON_NETWORK, or OFF_NETWORK.",
+				Default:     "ANYWHERE",
 			},
 			"network_includes": {
 				Type:          schema.TypeList,
@@ -94,6 +92,9 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				Optional:    true,
 				Description: "If the device is registered. A device is registered if the User enrolls with Okta Verify that is installed on the device.",
 				ValidateDiagFunc: func(i interface{}, path cty.Path) diag.Diagnostics {
+					// Note: Keep this validator as it is enforcing payload
+					// format the API is expecting and the side effects related
+					// to that.
 					if i == nil {
 						return nil
 					}
@@ -133,39 +134,34 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"access": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ALLOW", "DENY"}),
-				Description:      "Allow or deny access based on the rule conditions: ALLOW or DENY",
-				Default:          "ALLOW",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Allow or deny access based on the rule conditions: ALLOW or DENY",
+				Default:     "ALLOW",
 			},
 			"factor_mode": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"1FA", "2FA"}),
-				Description:      "The number of factors required to satisfy this assurance level",
-				Default:          "2FA",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The number of factors required to satisfy this assurance level",
+				Default:     "2FA",
 			},
 			"type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ASSURANCE"}),
-				Description:      "The Verification Method type",
-				Default:          "ASSURANCE",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The Verification Method type",
+				Default:     "ASSURANCE",
 			},
 			"re_authentication_frequency": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: stringIsPeriod,
-				Description:      "The duration after which the end user must re-authenticate, regardless of user activity. Use the ISO 8601 Period format for recurring time intervals. PT0S - Every sign-in attempt, PT43800H - Once per session",
-				Default:          "PT2H",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The duration after which the end user must re-authenticate, regardless of user activity. Use the ISO 8601 Period format for recurring time intervals. PT0S - Every sign-in attempt, PT43800H - Once per session",
+				Default:     "PT2H",
 			},
 			"inactivity_period": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: stringIsPeriod,
-				Description:      "The inactivity duration after which the end user must re-authenticate. Use the ISO 8601 Period format for recurring time intervals.",
-				Default:          "PT1H",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The inactivity duration after which the end user must re-authenticate. Use the ISO 8601 Period format for recurring time intervals.",
+				Default:     "PT1H",
 			},
 			"constraints": {
 				Type: schema.TypeList,

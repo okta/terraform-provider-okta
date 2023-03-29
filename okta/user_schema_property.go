@@ -13,11 +13,10 @@ import (
 var (
 	userSchemaSchema = map[string]*schema.Schema{
 		"array_type": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			ValidateDiagFunc: elemInSlice([]string{"string", "number", "integer", "boolean", "reference"}),
-			Description:      "Subschema array type: string, number, integer, reference. Type field must be an array.",
-			ForceNew:         true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Subschema array type: string, number, integer, reference. Type field must be an array.",
+			ForceNew:    true,
 		},
 		"array_enum": {
 			Type:        schema.TypeList,
@@ -50,16 +49,14 @@ var (
 			Description: "Custom Subschema description",
 		},
 		"min_length": {
-			Type:             schema.TypeInt,
-			Optional:         true,
-			Description:      "Subschema of type string minimum length",
-			ValidateDiagFunc: intAtLeast(1),
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Description: "Subschema of type string minimum length",
 		},
 		"max_length": {
-			Type:             schema.TypeInt,
-			Optional:         true,
-			Description:      "Subschema of type string maximum length",
-			ValidateDiagFunc: intAtLeast(1),
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Description: "Subschema of type string maximum length",
 		},
 		"enum": {
 			Type:          schema.TypeList,
@@ -101,12 +98,11 @@ var (
 			ForceNew:    true,
 		},
 		"unique": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Description:      "Subschema unique restriction",
-			ValidateDiagFunc: elemInSlice([]string{"UNIQUE_VALIDATED", "NOT_UNIQUE"}),
-			ConflictsWith:    []string{"one_of", "enum", "array_type"},
-			ForceNew:         true,
+			Type:          schema.TypeString,
+			Optional:      true,
+			Description:   "Subschema unique restriction",
+			ConflictsWith: []string{"one_of", "enum", "array_type"},
+			ForceNew:      true,
 		},
 	}
 
@@ -123,18 +119,16 @@ var (
 			Description: "Subschema title (display name)",
 		},
 		"type": {
-			Type:             schema.TypeString,
-			Required:         true,
-			ValidateDiagFunc: elemInSlice([]string{"string", "boolean", "number", "integer", "array", "object"}),
-			Description:      "Subschema type: string, boolean, number, integer, array, or object",
-			ForceNew:         true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Subschema type: string, boolean, number, integer, array, or object",
+			ForceNew:    true,
 		},
 		"permissions": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			ValidateDiagFunc: elemInSlice([]string{"HIDE", "READ_ONLY", "READ_WRITE"}),
-			Description:      "SubSchema permissions: HIDE, READ_ONLY, or READ_WRITE.",
-			Default:          "READ_ONLY",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "SubSchema permissions: HIDE, READ_ONLY, or READ_WRITE.",
+			Default:     "READ_ONLY",
 		},
 		"required": {
 			Type:        schema.TypeBool,
@@ -145,11 +139,10 @@ var (
 
 	userTypeSchema = map[string]*schema.Schema{
 		"user_type": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Description:      "Custom subschema user type",
-			Default:          "default",
-			ValidateDiagFunc: stringAtLeast(7),
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Custom subschema user type",
+			Default:     "default",
 		},
 	}
 

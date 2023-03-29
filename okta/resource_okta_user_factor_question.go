@@ -32,11 +32,10 @@ func resourceUserFactorQuestion() *schema.Resource {
 				Description: "Unique key for question",
 			},
 			"answer": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Sensitive:        true,
-				ValidateDiagFunc: stringLenBetween(4, 1000),
-				Description:      "User password security answer",
+				Type:        schema.TypeString,
+				Required:    true,
+				Sensitive:   true,
+				Description: "User password security answer",
 			},
 			"text": {
 				Type:        schema.TypeString,

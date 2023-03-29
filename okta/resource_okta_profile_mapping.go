@@ -81,10 +81,9 @@ var mappingResource = &schema.Resource{
 			Required: true,
 		},
 		"push_status": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          dontPush,
-			ValidateDiagFunc: elemInSlice([]string{push, dontPush}),
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  dontPush,
 		},
 	},
 }

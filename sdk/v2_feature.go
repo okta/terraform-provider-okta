@@ -99,7 +99,7 @@ func (m *FeatureResource) ListFeatureDependents(ctx context.Context, featureId s
 	return feature, resp, nil
 }
 
-func (m *FeatureResource) UpdateFeatureLifecycle(ctx context.Context, featureId string, lifecycle string, qp *query.Params) (*Feature, *Response, error) {
+func (m *FeatureResource) UpdateFeatureLifecycle(ctx context.Context, featureId, lifecycle string, qp *query.Params) (*Feature, *Response, error) {
 	url := fmt.Sprintf("/api/v1/features/%v/%v", featureId, lifecycle)
 	if qp != nil {
 		url = url + qp.String()

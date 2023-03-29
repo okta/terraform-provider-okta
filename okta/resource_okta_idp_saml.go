@@ -24,30 +24,26 @@ func resourceIdpSaml() *schema.Resource {
 				Computed: true,
 			},
 			"acs_binding": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}),
-				Deprecated:       "This property will be removed in the future, as it can only be set to 'HTTP-POST'",
+				Type:       schema.TypeString,
+				Optional:   true,
+				Deprecated: "This property will be removed in the future, as it can only be set to 'HTTP-POST'",
 				DiffSuppressFunc: func(string, string, string, *schema.ResourceData) bool {
 					return true
 				},
 			},
 			"acs_type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Default:          "INSTANCE",
-				ValidateDiagFunc: elemInSlice([]string{"INSTANCE", "ORG"}),
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "INSTANCE",
 			},
 			"sso_url": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"sso_binding": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{postBindingAlias, redirectBindingAlias}),
-				Default:          postBindingAlias,
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  postBindingAlias,
 			},
 			"sso_destination": {
 				Type:     schema.TypeString,

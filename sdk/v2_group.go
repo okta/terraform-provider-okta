@@ -354,7 +354,7 @@ func (m *GroupResource) AssignRoleToGroup(ctx context.Context, groupId string, b
 }
 
 // Unassigns a Role from a Group
-func (m *GroupResource) RemoveRoleFromGroup(ctx context.Context, groupId string, roleId string) (*Response, error) {
+func (m *GroupResource) RemoveRoleFromGroup(ctx context.Context, groupId, roleId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/groups/%v/roles/%v", groupId, roleId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -372,7 +372,7 @@ func (m *GroupResource) RemoveRoleFromGroup(ctx context.Context, groupId string,
 	return resp, nil
 }
 
-func (m *GroupResource) GetRole(ctx context.Context, groupId string, roleId string) (*Role, *Response, error) {
+func (m *GroupResource) GetRole(ctx context.Context, groupId, roleId string) (*Role, *Response, error) {
 	url := fmt.Sprintf("/api/v1/groups/%v/roles/%v", groupId, roleId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -393,7 +393,7 @@ func (m *GroupResource) GetRole(ctx context.Context, groupId string, roleId stri
 }
 
 // Lists all App targets for an &#x60;APP_ADMIN&#x60; Role assigned to a Group. This methods return list may include full Applications or Instances. The response for an instance will have an &#x60;ID&#x60; value, while Application will not have an ID.
-func (m *GroupResource) ListApplicationTargetsForApplicationAdministratorRoleForGroup(ctx context.Context, groupId string, roleId string, qp *query.Params) ([]*CatalogApplication, *Response, error) {
+func (m *GroupResource) ListApplicationTargetsForApplicationAdministratorRoleForGroup(ctx context.Context, groupId, roleId string, qp *query.Params) ([]*CatalogApplication, *Response, error) {
 	url := fmt.Sprintf("/api/v1/groups/%v/roles/%v/targets/catalog/apps", groupId, roleId)
 	if qp != nil {
 		url = url + qp.String()
@@ -416,7 +416,7 @@ func (m *GroupResource) ListApplicationTargetsForApplicationAdministratorRoleFor
 	return catalogApplication, resp, nil
 }
 
-func (m *GroupResource) RemoveApplicationTargetFromApplicationAdministratorRoleGivenToGroup(ctx context.Context, groupId string, roleId string, appName string) (*Response, error) {
+func (m *GroupResource) RemoveApplicationTargetFromApplicationAdministratorRoleGivenToGroup(ctx context.Context, groupId, roleId, appName string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/groups/%v/roles/%v/targets/catalog/apps/%v", groupId, roleId, appName)
 
 	rq := m.client.CloneRequestExecutor()
@@ -434,7 +434,7 @@ func (m *GroupResource) RemoveApplicationTargetFromApplicationAdministratorRoleG
 	return resp, nil
 }
 
-func (m *GroupResource) AddApplicationTargetToAdminRoleGivenToGroup(ctx context.Context, groupId string, roleId string, appName string) (*Response, error) {
+func (m *GroupResource) AddApplicationTargetToAdminRoleGivenToGroup(ctx context.Context, groupId, roleId, appName string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/groups/%v/roles/%v/targets/catalog/apps/%v", groupId, roleId, appName)
 
 	rq := m.client.CloneRequestExecutor()
@@ -453,7 +453,7 @@ func (m *GroupResource) AddApplicationTargetToAdminRoleGivenToGroup(ctx context.
 }
 
 // Remove App Instance Target to App Administrator Role given to a Group
-func (m *GroupResource) RemoveApplicationTargetFromAdministratorRoleGivenToGroup(ctx context.Context, groupId string, roleId string, appName string, applicationId string) (*Response, error) {
+func (m *GroupResource) RemoveApplicationTargetFromAdministratorRoleGivenToGroup(ctx context.Context, groupId, roleId, appName, applicationId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/groups/%v/roles/%v/targets/catalog/apps/%v/%v", groupId, roleId, appName, applicationId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -472,7 +472,7 @@ func (m *GroupResource) RemoveApplicationTargetFromAdministratorRoleGivenToGroup
 }
 
 // Add App Instance Target to App Administrator Role given to a Group
-func (m *GroupResource) AddApplicationInstanceTargetToAppAdminRoleGivenToGroup(ctx context.Context, groupId string, roleId string, appName string, applicationId string) (*Response, error) {
+func (m *GroupResource) AddApplicationInstanceTargetToAppAdminRoleGivenToGroup(ctx context.Context, groupId, roleId, appName, applicationId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/groups/%v/roles/%v/targets/catalog/apps/%v/%v", groupId, roleId, appName, applicationId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -490,7 +490,7 @@ func (m *GroupResource) AddApplicationInstanceTargetToAppAdminRoleGivenToGroup(c
 	return resp, nil
 }
 
-func (m *GroupResource) ListGroupTargetsForGroupRole(ctx context.Context, groupId string, roleId string, qp *query.Params) ([]*Group, *Response, error) {
+func (m *GroupResource) ListGroupTargetsForGroupRole(ctx context.Context, groupId, roleId string, qp *query.Params) ([]*Group, *Response, error) {
 	url := fmt.Sprintf("/api/v1/groups/%v/roles/%v/targets/groups", groupId, roleId)
 	if qp != nil {
 		url = url + qp.String()
@@ -513,7 +513,7 @@ func (m *GroupResource) ListGroupTargetsForGroupRole(ctx context.Context, groupI
 	return group, resp, nil
 }
 
-func (m *GroupResource) RemoveGroupTargetFromGroupAdministratorRoleGivenToGroup(ctx context.Context, groupId string, roleId string, targetGroupId string) (*Response, error) {
+func (m *GroupResource) RemoveGroupTargetFromGroupAdministratorRoleGivenToGroup(ctx context.Context, groupId, roleId, targetGroupId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/groups/%v/roles/%v/targets/groups/%v", groupId, roleId, targetGroupId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -531,7 +531,7 @@ func (m *GroupResource) RemoveGroupTargetFromGroupAdministratorRoleGivenToGroup(
 	return resp, nil
 }
 
-func (m *GroupResource) AddGroupTargetToGroupAdministratorRoleForGroup(ctx context.Context, groupId string, roleId string, targetGroupId string) (*Response, error) {
+func (m *GroupResource) AddGroupTargetToGroupAdministratorRoleForGroup(ctx context.Context, groupId, roleId, targetGroupId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/groups/%v/roles/%v/targets/groups/%v", groupId, roleId, targetGroupId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -574,7 +574,7 @@ func (m *GroupResource) ListGroupUsers(ctx context.Context, groupId string, qp *
 }
 
 // Removes a user from a group with &#x27;OKTA_GROUP&#x27; type.
-func (m *GroupResource) RemoveUserFromGroup(ctx context.Context, groupId string, userId string) (*Response, error) {
+func (m *GroupResource) RemoveUserFromGroup(ctx context.Context, groupId, userId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/groups/%v/users/%v", groupId, userId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -593,7 +593,7 @@ func (m *GroupResource) RemoveUserFromGroup(ctx context.Context, groupId string,
 }
 
 // Adds a user to a group with &#x27;OKTA_GROUP&#x27; type.
-func (m *GroupResource) AddUserToGroup(ctx context.Context, groupId string, userId string) (*Response, error) {
+func (m *GroupResource) AddUserToGroup(ctx context.Context, groupId, userId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/groups/%v/users/%v", groupId, userId)
 
 	rq := m.client.CloneRequestExecutor()

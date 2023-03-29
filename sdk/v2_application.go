@@ -286,7 +286,7 @@ func (m *ApplicationResource) GenerateCsrForApplication(ctx context.Context, app
 	return csr, resp, nil
 }
 
-func (m *ApplicationResource) RevokeCsrFromApplication(ctx context.Context, appId string, csrId string) (*Response, error) {
+func (m *ApplicationResource) RevokeCsrFromApplication(ctx context.Context, appId, csrId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/credentials/csrs/%v", appId, csrId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -304,7 +304,7 @@ func (m *ApplicationResource) RevokeCsrFromApplication(ctx context.Context, appI
 	return resp, nil
 }
 
-func (m *ApplicationResource) GetCsrForApplication(ctx context.Context, appId string, csrId string) (*Csr, *Response, error) {
+func (m *ApplicationResource) GetCsrForApplication(ctx context.Context, appId, csrId string) (*Csr, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/credentials/csrs/%v", appId, csrId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -324,7 +324,7 @@ func (m *ApplicationResource) GetCsrForApplication(ctx context.Context, appId st
 	return csr, resp, nil
 }
 
-func (m *ApplicationResource) PublishCerCert(ctx context.Context, appId string, csrId string, body string) (*JsonWebKey, *Response, error) {
+func (m *ApplicationResource) PublishCerCert(ctx context.Context, appId, csrId, body string) (*JsonWebKey, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/credentials/csrs/%v/lifecycle/publish", appId, csrId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -344,7 +344,7 @@ func (m *ApplicationResource) PublishCerCert(ctx context.Context, appId string, 
 	return jsonWebKey, resp, nil
 }
 
-func (m *ApplicationResource) PublishBinaryCerCert(ctx context.Context, appId string, csrId string, body string) (*JsonWebKey, *Response, error) {
+func (m *ApplicationResource) PublishBinaryCerCert(ctx context.Context, appId, csrId, body string) (*JsonWebKey, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/credentials/csrs/%v/lifecycle/publish", appId, csrId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -364,7 +364,7 @@ func (m *ApplicationResource) PublishBinaryCerCert(ctx context.Context, appId st
 	return jsonWebKey, resp, nil
 }
 
-func (m *ApplicationResource) PublishDerCert(ctx context.Context, appId string, csrId string, body string) (*JsonWebKey, *Response, error) {
+func (m *ApplicationResource) PublishDerCert(ctx context.Context, appId, csrId, body string) (*JsonWebKey, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/credentials/csrs/%v/lifecycle/publish", appId, csrId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -384,7 +384,7 @@ func (m *ApplicationResource) PublishDerCert(ctx context.Context, appId string, 
 	return jsonWebKey, resp, nil
 }
 
-func (m *ApplicationResource) PublishBinaryDerCert(ctx context.Context, appId string, csrId string, body string) (*JsonWebKey, *Response, error) {
+func (m *ApplicationResource) PublishBinaryDerCert(ctx context.Context, appId, csrId, body string) (*JsonWebKey, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/credentials/csrs/%v/lifecycle/publish", appId, csrId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -404,7 +404,7 @@ func (m *ApplicationResource) PublishBinaryDerCert(ctx context.Context, appId st
 	return jsonWebKey, resp, nil
 }
 
-func (m *ApplicationResource) PublishBinaryPemCert(ctx context.Context, appId string, csrId string, body string) (*JsonWebKey, *Response, error) {
+func (m *ApplicationResource) PublishBinaryPemCert(ctx context.Context, appId, csrId, body string) (*JsonWebKey, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/credentials/csrs/%v/lifecycle/publish", appId, csrId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -470,7 +470,7 @@ func (m *ApplicationResource) GenerateApplicationKey(ctx context.Context, appId 
 }
 
 // Gets a specific application key credential by kid
-func (m *ApplicationResource) GetApplicationKey(ctx context.Context, appId string, keyId string) (*JsonWebKey, *Response, error) {
+func (m *ApplicationResource) GetApplicationKey(ctx context.Context, appId, keyId string) (*JsonWebKey, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/credentials/keys/%v", appId, keyId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -491,7 +491,7 @@ func (m *ApplicationResource) GetApplicationKey(ctx context.Context, appId strin
 }
 
 // Clones a X.509 certificate for an application key credential from a source application to target application.
-func (m *ApplicationResource) CloneApplicationKey(ctx context.Context, appId string, keyId string, qp *query.Params) (*JsonWebKey, *Response, error) {
+func (m *ApplicationResource) CloneApplicationKey(ctx context.Context, appId, keyId string, qp *query.Params) (*JsonWebKey, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/credentials/keys/%v/clone", appId, keyId)
 	if qp != nil {
 		url = url + qp.String()
@@ -557,7 +557,7 @@ func (m *ApplicationResource) CreateNewClientSecretForApplication(ctx context.Co
 }
 
 // Removes a secret from the client&#x27;s collection of secrets.
-func (m *ApplicationResource) DeleteClientSecretForApplication(ctx context.Context, appId string, secretId string) (*Response, error) {
+func (m *ApplicationResource) DeleteClientSecretForApplication(ctx context.Context, appId, secretId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/credentials/secrets/%v", appId, secretId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -576,7 +576,7 @@ func (m *ApplicationResource) DeleteClientSecretForApplication(ctx context.Conte
 }
 
 // Gets a specific client secret by secretId
-func (m *ApplicationResource) GetClientSecretForApplication(ctx context.Context, appId string, secretId string) (*ClientSecret, *Response, error) {
+func (m *ApplicationResource) GetClientSecretForApplication(ctx context.Context, appId, secretId string) (*ClientSecret, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/credentials/secrets/%v", appId, secretId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -597,7 +597,7 @@ func (m *ApplicationResource) GetClientSecretForApplication(ctx context.Context,
 }
 
 // Activates a specific client secret by secretId
-func (m *ApplicationResource) ActivateClientSecretForApplication(ctx context.Context, appId string, secretId string) (*ClientSecret, *Response, error) {
+func (m *ApplicationResource) ActivateClientSecretForApplication(ctx context.Context, appId, secretId string) (*ClientSecret, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/credentials/secrets/%v/lifecycle/activate", appId, secretId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -618,7 +618,7 @@ func (m *ApplicationResource) ActivateClientSecretForApplication(ctx context.Con
 }
 
 // Deactivates a specific client secret by secretId
-func (m *ApplicationResource) DeactivateClientSecretForApplication(ctx context.Context, appId string, secretId string) (*ClientSecret, *Response, error) {
+func (m *ApplicationResource) DeactivateClientSecretForApplication(ctx context.Context, appId, secretId string) (*ClientSecret, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/credentials/secrets/%v/lifecycle/deactivate", appId, secretId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -660,7 +660,7 @@ func (m *ApplicationResource) ListFeaturesForApplication(ctx context.Context, ap
 }
 
 // Fetches a Feature object for an application.
-func (m *ApplicationResource) GetFeatureForApplication(ctx context.Context, appId string, name string) (*ApplicationFeature, *Response, error) {
+func (m *ApplicationResource) GetFeatureForApplication(ctx context.Context, appId, name string) (*ApplicationFeature, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/features/%v", appId, name)
 
 	rq := m.client.CloneRequestExecutor()
@@ -681,7 +681,7 @@ func (m *ApplicationResource) GetFeatureForApplication(ctx context.Context, appI
 }
 
 // Updates a Feature object for an application.
-func (m *ApplicationResource) UpdateFeatureForApplication(ctx context.Context, appId string, name string, body CapabilitiesObject) (*ApplicationFeature, *Response, error) {
+func (m *ApplicationResource) UpdateFeatureForApplication(ctx context.Context, appId, name string, body CapabilitiesObject) (*ApplicationFeature, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/features/%v", appId, name)
 
 	rq := m.client.CloneRequestExecutor()
@@ -747,7 +747,7 @@ func (m *ApplicationResource) GrantConsentToScope(ctx context.Context, appId str
 }
 
 // Revokes permission for the application to request the given scope
-func (m *ApplicationResource) RevokeScopeConsentGrant(ctx context.Context, appId string, grantId string) (*Response, error) {
+func (m *ApplicationResource) RevokeScopeConsentGrant(ctx context.Context, appId, grantId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/grants/%v", appId, grantId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -766,7 +766,7 @@ func (m *ApplicationResource) RevokeScopeConsentGrant(ctx context.Context, appId
 }
 
 // Fetches a single scope consent grant for the application
-func (m *ApplicationResource) GetScopeConsentGrant(ctx context.Context, appId string, grantId string, qp *query.Params) (*OAuth2ScopeConsentGrant, *Response, error) {
+func (m *ApplicationResource) GetScopeConsentGrant(ctx context.Context, appId, grantId string, qp *query.Params) (*OAuth2ScopeConsentGrant, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/grants/%v", appId, grantId)
 	if qp != nil {
 		url = url + qp.String()
@@ -814,7 +814,7 @@ func (m *ApplicationResource) ListApplicationGroupAssignments(ctx context.Contex
 }
 
 // Removes a group assignment from an application.
-func (m *ApplicationResource) DeleteApplicationGroupAssignment(ctx context.Context, appId string, groupId string) (*Response, error) {
+func (m *ApplicationResource) DeleteApplicationGroupAssignment(ctx context.Context, appId, groupId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/groups/%v", appId, groupId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -833,7 +833,7 @@ func (m *ApplicationResource) DeleteApplicationGroupAssignment(ctx context.Conte
 }
 
 // Fetches an application group assignment
-func (m *ApplicationResource) GetApplicationGroupAssignment(ctx context.Context, appId string, groupId string, qp *query.Params) (*ApplicationGroupAssignment, *Response, error) {
+func (m *ApplicationResource) GetApplicationGroupAssignment(ctx context.Context, appId, groupId string, qp *query.Params) (*ApplicationGroupAssignment, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/groups/%v", appId, groupId)
 	if qp != nil {
 		url = url + qp.String()
@@ -857,7 +857,7 @@ func (m *ApplicationResource) GetApplicationGroupAssignment(ctx context.Context,
 }
 
 // Assigns a group to an application
-func (m *ApplicationResource) CreateApplicationGroupAssignment(ctx context.Context, appId string, groupId string, body ApplicationGroupAssignment) (*ApplicationGroupAssignment, *Response, error) {
+func (m *ApplicationResource) CreateApplicationGroupAssignment(ctx context.Context, appId, groupId string, body ApplicationGroupAssignment) (*ApplicationGroupAssignment, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/groups/%v", appId, groupId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -916,7 +916,7 @@ func (m *ApplicationResource) DeactivateApplication(ctx context.Context, appId s
 }
 
 // Update the logo for an application.
-func (m *ApplicationResource) UploadApplicationLogo(ctx context.Context, appId string, file string) (*Response, error) {
+func (m *ApplicationResource) UploadApplicationLogo(ctx context.Context, appId, file string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/logo", appId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -952,7 +952,7 @@ func (m *ApplicationResource) UploadApplicationLogo(ctx context.Context, appId s
 }
 
 // Assign an application to a specific policy. This unassigns the application from its currently assigned policy.
-func (m *ApplicationResource) UpdateApplicationPolicy(ctx context.Context, appId string, policyId string) (*Response, error) {
+func (m *ApplicationResource) UpdateApplicationPolicy(ctx context.Context, appId, policyId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/policies/%v", appId, policyId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -1036,7 +1036,7 @@ func (m *ApplicationResource) ListOAuth2TokensForApplication(ctx context.Context
 }
 
 // Revokes the specified token for the specified application
-func (m *ApplicationResource) RevokeOAuth2TokenForApplication(ctx context.Context, appId string, tokenId string) (*Response, error) {
+func (m *ApplicationResource) RevokeOAuth2TokenForApplication(ctx context.Context, appId, tokenId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/tokens/%v", appId, tokenId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -1055,7 +1055,7 @@ func (m *ApplicationResource) RevokeOAuth2TokenForApplication(ctx context.Contex
 }
 
 // Gets a token for the specified application
-func (m *ApplicationResource) GetOAuth2TokenForApplication(ctx context.Context, appId string, tokenId string, qp *query.Params) (*OAuth2Token, *Response, error) {
+func (m *ApplicationResource) GetOAuth2TokenForApplication(ctx context.Context, appId, tokenId string, qp *query.Params) (*OAuth2Token, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/tokens/%v", appId, tokenId)
 	if qp != nil {
 		url = url + qp.String()
@@ -1124,7 +1124,7 @@ func (m *ApplicationResource) AssignUserToApplication(ctx context.Context, appId
 }
 
 // Removes an assignment for a user from an application.
-func (m *ApplicationResource) DeleteApplicationUser(ctx context.Context, appId string, userId string, qp *query.Params) (*Response, error) {
+func (m *ApplicationResource) DeleteApplicationUser(ctx context.Context, appId, userId string, qp *query.Params) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/users/%v", appId, userId)
 	if qp != nil {
 		url = url + qp.String()
@@ -1146,7 +1146,7 @@ func (m *ApplicationResource) DeleteApplicationUser(ctx context.Context, appId s
 }
 
 // Fetches a specific user assignment for application by &#x60;id&#x60;.
-func (m *ApplicationResource) GetApplicationUser(ctx context.Context, appId string, userId string, qp *query.Params) (*AppUser, *Response, error) {
+func (m *ApplicationResource) GetApplicationUser(ctx context.Context, appId, userId string, qp *query.Params) (*AppUser, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/users/%v", appId, userId)
 	if qp != nil {
 		url = url + qp.String()
@@ -1170,7 +1170,7 @@ func (m *ApplicationResource) GetApplicationUser(ctx context.Context, appId stri
 }
 
 // Updates a user&#x27;s profile for an application
-func (m *ApplicationResource) UpdateApplicationUser(ctx context.Context, appId string, userId string, body AppUser) (*AppUser, *Response, error) {
+func (m *ApplicationResource) UpdateApplicationUser(ctx context.Context, appId, userId string, body AppUser) (*AppUser, *Response, error) {
 	url := fmt.Sprintf("/api/v1/apps/%v/users/%v", appId, userId)
 
 	rq := m.client.CloneRequestExecutor()

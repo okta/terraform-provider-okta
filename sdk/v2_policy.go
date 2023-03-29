@@ -236,7 +236,7 @@ func (m *PolicyResource) CreatePolicyRule(ctx context.Context, policyId string, 
 }
 
 // Removes a policy rule.
-func (m *PolicyResource) DeletePolicyRule(ctx context.Context, policyId string, ruleId string) (*Response, error) {
+func (m *PolicyResource) DeletePolicyRule(ctx context.Context, policyId, ruleId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyId, ruleId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -255,7 +255,7 @@ func (m *PolicyResource) DeletePolicyRule(ctx context.Context, policyId string, 
 }
 
 // Gets a policy rule.
-func (m *PolicyResource) GetPolicyRule(ctx context.Context, policyId string, ruleId string) (*SdkPolicyRule, *Response, error) {
+func (m *PolicyResource) GetPolicyRule(ctx context.Context, policyId, ruleId string) (*SdkPolicyRule, *Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyId, ruleId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -276,7 +276,7 @@ func (m *PolicyResource) GetPolicyRule(ctx context.Context, policyId string, rul
 }
 
 // Updates a policy rule.
-func (m *PolicyResource) UpdatePolicyRule(ctx context.Context, policyId string, ruleId string, body SdkPolicyRule) (*SdkPolicyRule, *Response, error) {
+func (m *PolicyResource) UpdatePolicyRule(ctx context.Context, policyId, ruleId string, body SdkPolicyRule) (*SdkPolicyRule, *Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyId, ruleId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -297,7 +297,7 @@ func (m *PolicyResource) UpdatePolicyRule(ctx context.Context, policyId string, 
 }
 
 // Activates a policy rule.
-func (m *PolicyResource) ActivatePolicyRule(ctx context.Context, policyId string, ruleId string) (*Response, error) {
+func (m *PolicyResource) ActivatePolicyRule(ctx context.Context, policyId, ruleId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v/lifecycle/activate", policyId, ruleId)
 
 	rq := m.client.CloneRequestExecutor()
@@ -316,7 +316,7 @@ func (m *PolicyResource) ActivatePolicyRule(ctx context.Context, policyId string
 }
 
 // Deactivates a policy rule.
-func (m *PolicyResource) DeactivatePolicyRule(ctx context.Context, policyId string, ruleId string) (*Response, error) {
+func (m *PolicyResource) DeactivatePolicyRule(ctx context.Context, policyId, ruleId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v/lifecycle/deactivate", policyId, ruleId)
 
 	rq := m.client.CloneRequestExecutor()

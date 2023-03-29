@@ -59,11 +59,10 @@ func resourceGroupRole() *schema.Resource {
 				ForceNew:    true,
 			},
 			"role_type": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "Type of Role to assign",
-				ForceNew:         true,
-				ValidateDiagFunc: elemInSlice(validAdminRoles),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Type of Role to assign",
+				ForceNew:    true,
 			},
 			"target_group_list": {
 				Type:        schema.TypeSet,

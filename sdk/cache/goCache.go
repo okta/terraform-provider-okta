@@ -16,7 +16,7 @@ type GoCache struct {
 	rootLibrary *patrickmnGoCache.Cache
 }
 
-func NewGoCache(ttl int32, tti int32) GoCache {
+func NewGoCache(ttl, tti int32) GoCache {
 	c := patrickmnGoCache.New(time.Duration(ttl)*time.Second, time.Duration(tti)*time.Second)
 
 	gc := GoCache{
@@ -54,7 +54,7 @@ func (c GoCache) GetString(key string) string {
 	return ""
 }
 
-func (c GoCache) SetString(key string, value string) {
+func (c GoCache) SetString(key, value string) {
 	c.rootLibrary.Set(key, value, c.ttl)
 }
 

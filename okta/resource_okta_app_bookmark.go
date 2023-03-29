@@ -23,9 +23,8 @@ func resourceAppBookmark() *schema.Resource {
 		// the examples in the documentation
 		Schema: buildAppSchemaWithVisibility(map[string]*schema.Schema{
 			"url": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"request_integration": {
 				Type:     schema.TypeBool,

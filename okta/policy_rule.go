@@ -51,18 +51,16 @@ var (
 			DiffSuppressFunc: createValueDiffSuppression("0"),
 		},
 		"status": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          statusActive,
-			ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
-			Description:      "Policy Rule Status: ACTIVE or INACTIVE.",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     statusActive,
+			Description: "Policy Rule Status: ACTIVE or INACTIVE.",
 		},
 		"network_connection": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			ValidateDiagFunc: elemInSlice([]string{"ANYWHERE", "ZONE", "ON_NETWORK", "OFF_NETWORK"}),
-			Description:      "Network selection mode: ANYWHERE, ZONE, ON_NETWORK, or OFF_NETWORK.",
-			Default:          "ANYWHERE",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Network selection mode: ANYWHERE, ZONE, ON_NETWORK, or OFF_NETWORK.",
+			Default:     "ANYWHERE",
 		},
 		"network_includes": {
 			Type:          schema.TypeList,
@@ -83,9 +81,8 @@ var (
 	appResource = &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"type": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: elemInSlice([]string{"APP", "APP_TYPE"}),
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"name": {
 				Type:     schema.TypeString,

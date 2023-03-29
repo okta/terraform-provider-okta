@@ -81,8 +81,7 @@ func resourceUser() *schema.Resource {
 				Description: "User Okta admin roles - ie. ['APP_ADMIN', 'USER_ADMIN']",
 				Deprecated:  "The `admin_roles` field is now deprecated for the resource `okta_user`, please replace all uses of this with: `okta_user_admin_roles`",
 				Elem: &schema.Schema{
-					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice(validAdminRoles),
+					Type: schema.TypeString,
 				},
 			},
 			"skip_roles": {
@@ -139,10 +138,9 @@ func resourceUser() *schema.Resource {
 				Description: "User division",
 			},
 			"email": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "User primary email address",
-				ValidateDiagFunc: stringIsEmail,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "User primary email address",
 			},
 			"employee_number": {
 				Type:        schema.TypeString,
@@ -232,16 +230,14 @@ func resourceUser() *schema.Resource {
 				Description: "User primary phone number",
 			},
 			"profile_url": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "User online profile (web page)",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "User online profile (web page)",
 			},
 			"second_email": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "User secondary email address, used for account recovery",
-				ValidateDiagFunc: stringIsEmail,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "User secondary email address, used for account recovery",
 			},
 			"state": {
 				Type:        schema.TypeString,
@@ -249,11 +245,10 @@ func resourceUser() *schema.Resource {
 				Description: "User state or region",
 			},
 			"status": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "The status of the User in Okta - remove to set user back to active/provisioned",
-				Default:          statusActive,
-				ValidateDiagFunc: elemInSlice([]string{statusActive, userStatusStaged, userStatusDeprovisioned, userStatusSuspended}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The status of the User in Okta - remove to set user back to active/provisioned",
+				Default:     statusActive,
 				// ignore diff changing to ACTIVE if state is set to PROVISIONED or PASSWORD_EXPIRED
 				// since this is a similar status in Okta terms
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
@@ -304,11 +299,10 @@ func resourceUser() *schema.Resource {
 				RequiredWith: []string{"password"},
 			},
 			"password_inline_hook": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"default"}),
-				Description:      "When specified, the Password Inline Hook is triggered to handle verification of the end user's password the first time the user tries to sign in",
-				ConflictsWith:    []string{"password", "password_hash"},
+				Type:          schema.TypeString,
+				Optional:      true,
+				Description:   "When specified, the Password Inline Hook is triggered to handle verification of the end user's password the first time the user tries to sign in",
+				ConflictsWith: []string{"password", "password_hash"},
 			},
 			"old_password": {
 				Type:        schema.TypeString,
@@ -322,11 +316,10 @@ func resourceUser() *schema.Resource {
 				Description: "User Password Recovery Question",
 			},
 			"recovery_answer": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Sensitive:        true,
-				ValidateDiagFunc: stringLenBetween(4, 1000),
-				Description:      "User Password Recovery Answer",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Sensitive:   true,
+				Description: "User Password Recovery Answer",
 			},
 			"password_hash": {
 				Type:        schema.TypeSet,
@@ -345,16 +338,14 @@ func resourceUser() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"algorithm": {
-							Description:      "The algorithm used to generate the hash using the password",
-							Type:             schema.TypeString,
-							Required:         true,
-							ValidateDiagFunc: elemInSlice([]string{"BCRYPT", "SHA-512", "SHA-256", "SHA-1", "MD5"}),
+							Description: "The algorithm used to generate the hash using the password",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 						"work_factor": {
-							Description:      "Governs the strength of the hash and the time required to compute it. Only required for BCRYPT algorithm",
-							Type:             schema.TypeInt,
-							Optional:         true,
-							ValidateDiagFunc: intBetween(1, 20),
+							Description: "Governs the strength of the hash and the time required to compute it. Only required for BCRYPT algorithm",
+							Type:        schema.TypeInt,
+							Optional:    true,
 						},
 						"salt": {
 							Description: "Only required for salted hashes",
@@ -362,10 +353,9 @@ func resourceUser() *schema.Resource {
 							Optional:    true,
 						},
 						"salt_order": {
-							Description:      "Specifies whether salt was pre- or postfixed to the password before hashing",
-							Type:             schema.TypeString,
-							Optional:         true,
-							ValidateDiagFunc: elemInSlice([]string{"PREFIX", "POSTFIX"}),
+							Description: "Specifies whether salt was pre- or postfixed to the password before hashing",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 						"value": {
 							Description: "For SHA-512, SHA-256, SHA-1, MD5, This is the actual base64-encoded hash of the password (and salt, if used). This is the " +

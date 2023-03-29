@@ -24,10 +24,9 @@ func resourceAppOAuthPostLogoutRedirectURI() *schema.Resource {
 				ForceNew: true,
 			},
 			"uri": {
-				Required:         true,
-				Type:             schema.TypeString,
-				Description:      "Post Logout Redirect URI to append to Okta OIDC application.",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Required:    true,
+				Type:        schema.TypeString,
+				Description: "Post Logout Redirect URI to append to Okta OIDC application.",
 			},
 		},
 	}

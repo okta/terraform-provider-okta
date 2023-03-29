@@ -41,10 +41,9 @@ func resourceAppSharedCredentials() *schema.Resource {
 				Description: "Login username field",
 			},
 			"url": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Login URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Login URL",
 			},
 			"url_regex": {
 				Type:        schema.TypeString,

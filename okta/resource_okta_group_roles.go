@@ -33,8 +33,7 @@ func resourceGroupRoles() *schema.Resource {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
-					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice(validAdminRoles),
+					Type: schema.TypeString,
 				},
 				Description: "Admin roles associated with the group. This can also be done per user.",
 			},

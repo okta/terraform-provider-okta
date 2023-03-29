@@ -49,10 +49,9 @@ func resourceAppThreeField() *schema.Resource {
 				Description: "Value for extra form field",
 			},
 			"url": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "Login URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Login URL",
 			},
 			"url_regex": {
 				Type:        schema.TypeString,
@@ -60,17 +59,9 @@ func resourceAppThreeField() *schema.Resource {
 				Description: "A regex that further restricts URL to the specified regex",
 			},
 			"credentials_scheme": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "EDIT_USERNAME_AND_PASSWORD",
-				ValidateDiagFunc: elemInSlice(
-					[]string{
-						"EDIT_USERNAME_AND_PASSWORD",
-						"ADMIN_SETS_CREDENTIALS",
-						"EDIT_PASSWORD_ONLY",
-						"EXTERNAL_PASSWORD_SYNC",
-						"SHARED_USERNAME_AND_PASSWORD",
-					}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "EDIT_USERNAME_AND_PASSWORD",
 				Description: "Application credentials scheme",
 			},
 			"reveal_password": {

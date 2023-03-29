@@ -22,11 +22,10 @@ func resourceAuthenticator() *schema.Resource {
 		},
 		Schema: map[string]*schema.Schema{
 			"key": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ForceNew:         true,
-				Description:      "A human-readable string that identifies the Authenticator",
-				ValidateDiagFunc: elemInSlice(sdk.AuthenticatorProviders),
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "A human-readable string that identifies the Authenticator",
 			},
 			"name": {
 				Type:        schema.TypeString,
@@ -68,11 +67,10 @@ func resourceAuthenticator() *schema.Resource {
 				},
 			},
 			"status": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Default:          statusActive,
-				ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
-				Description:      "Authenticator status: ACTIVE or INACTIVE",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     statusActive,
+				Description: "Authenticator status: ACTIVE or INACTIVE",
 			},
 			"type": {
 				Type:        schema.TypeString,

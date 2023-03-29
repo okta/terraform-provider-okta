@@ -34,10 +34,9 @@ func resourceAppSecurePasswordStore() *schema.Resource {
 				Description: "Login username field",
 			},
 			"url": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "Login URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Login URL",
 			},
 			"optional_field1": {
 				Type:        schema.TypeString,
@@ -70,17 +69,9 @@ func resourceAppSecurePasswordStore() *schema.Resource {
 				Description: "Name of optional value in login form",
 			},
 			"credentials_scheme": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "EDIT_USERNAME_AND_PASSWORD",
-				ValidateDiagFunc: elemInSlice(
-					[]string{
-						"EDIT_USERNAME_AND_PASSWORD",
-						"ADMIN_SETS_CREDENTIALS",
-						"EDIT_PASSWORD_ONLY",
-						"EXTERNAL_PASSWORD_SYNC",
-						"SHARED_USERNAME_AND_PASSWORD",
-					}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "EDIT_USERNAME_AND_PASSWORD",
 				Description: "Application credentials scheme",
 			},
 			"reveal_password": {

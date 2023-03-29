@@ -8,72 +8,22 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-var (
-	translationResource = &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"language": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"subject": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"template": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
+var translationResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"language": {
+			Type:     schema.TypeString,
+			Required: true,
 		},
-	}
-	// NOTE: update values from GET {{url}}/api/v1/templates/emails
-	validEmailTemplateTypes = []string{
-		"email.accountLockout",
-		"email.ad.forgotPassword",
-		"email.ad.forgotPasswordReset",
-		"email.ad.selfServiceUnlock",
-		"email.ad.welcome",
-		"email.adminUsersListScheduledLifecycleStatusChange",
-		"email.authenticatorEnrollment",
-		"email.authenticatorReset",
-		"email.automation",
-		"email.emailActivation",
-		"email.emailChangeConfirmation",
-		"email.emailLinkAuthenticationTransaction",
-		"email.emailLinkFactorVerification",
-		"email.emailLinkRecoveryAdResetFactor",
-		"email.emailLinkRecoveryAdResetPwdFactor",
-		"email.emailLinkRecoveryAdUnlockFactor",
-		"email.emailLinkRecoveryAdUnlockPwdFactor",
-		"email.emailLinkRecoveryLdapResetPwdFactor",
-		"email.emailLinkRecoveryLdapUnlockPwdFactor",
-		"email.emailLinkRecoveryResetFactor",
-		"email.emailLinkRecoveryResetPwdFactor",
-		"email.emailLinkRecoveryUnlockFactor",
-		"email.emailLinkRecoveryUnlockPwdFactor",
-		"email.emailNewAlreadyChangedNotification",
-		"email.emailNewChangeNotification",
-		"email.emailTransactionVerification",
-		"email.endUserScheduledLifecycleStatusChange",
-		"email.factorEnrollment",
-		"email.factorReset",
-		"email.forgotPassword",
-		"email.forgotPasswordDenied",
-		"email.idpMyAccountChangeConfirmation",
-		"email.passwordChanged",
-		"email.pushVerifyActivation",
-		"email.registrationActivation",
-		"email.registrationEmailVerification",
-		"email.selfServiceUnlock",
-		"email.selfServiceUnlockOnUnlockedAccount",
-		"email.signInFromNewDevice",
-		"email.sunone.forgotPassword",
-		"email.sunone.forgotPasswordDenied",
-		"email.sunone.selfServiceUnlock",
-		"email.sunone.welcome",
-		"email.tempPassword",
-		"email.welcome",
-	}
-)
+		"subject": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"template": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+	},
+}
 
 func resourceTemplateEmail() *schema.Resource {
 	return &schema.Resource{
@@ -92,11 +42,10 @@ func resourceTemplateEmail() *schema.Resource {
 				Default:  "en",
 			},
 			"type": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "Email template type",
-				ForceNew:         true,
-				ValidateDiagFunc: elemInSlice(validEmailTemplateTypes),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Email template type",
+				ForceNew:    true,
 			},
 			"translations": {
 				Type:     schema.TypeSet,

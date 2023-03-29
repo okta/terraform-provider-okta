@@ -36,7 +36,7 @@ func (m *SubscriptionResource) ListRoleSubscriptions(ctx context.Context, roleTy
 }
 
 // When roleType Get subscriptions of a Role with a specific notification type. Else when roleId Get subscription of a Custom Role with a specific notification type.
-func (m *SubscriptionResource) GetRoleSubscriptionByNotificationType(ctx context.Context, roleTypeOrRoleId string, notificationType string) (*Subscription, *Response, error) {
+func (m *SubscriptionResource) GetRoleSubscriptionByNotificationType(ctx context.Context, roleTypeOrRoleId, notificationType string) (*Subscription, *Response, error) {
 	url := fmt.Sprintf("/api/v1/roles/%v/subscriptions/%v", roleTypeOrRoleId, notificationType)
 
 	rq := m.client.CloneRequestExecutor()
@@ -57,7 +57,7 @@ func (m *SubscriptionResource) GetRoleSubscriptionByNotificationType(ctx context
 }
 
 // When roleType Subscribes a Role to a specific notification type. When you change the subscription status of a Role, it overrides the subscription of any individual user of that Role. Else when roleId Subscribes a Custom Role to a specific notification type. When you change the subscription status of a Custom Role, it overrides the subscription of any individual user of that Custom Role.
-func (m *SubscriptionResource) SubscribeRoleSubscriptionByNotificationType(ctx context.Context, roleTypeOrRoleId string, notificationType string) (*Response, error) {
+func (m *SubscriptionResource) SubscribeRoleSubscriptionByNotificationType(ctx context.Context, roleTypeOrRoleId, notificationType string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/roles/%v/subscriptions/%v/subscribe", roleTypeOrRoleId, notificationType)
 
 	rq := m.client.CloneRequestExecutor()
@@ -76,7 +76,7 @@ func (m *SubscriptionResource) SubscribeRoleSubscriptionByNotificationType(ctx c
 }
 
 // When roleType Unsubscribes a Role from a specific notification type. When you change the subscription status of a Role, it overrides the subscription of any individual user of that Role. Else when roleId Unsubscribes a Custom Role from a specific notification type. When you change the subscription status of a Custom Role, it overrides the subscription of any individual user of that Custom Role.
-func (m *SubscriptionResource) UnsubscribeRoleSubscriptionByNotificationType(ctx context.Context, roleTypeOrRoleId string, notificationType string) (*Response, error) {
+func (m *SubscriptionResource) UnsubscribeRoleSubscriptionByNotificationType(ctx context.Context, roleTypeOrRoleId, notificationType string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/roles/%v/subscriptions/%v/unsubscribe", roleTypeOrRoleId, notificationType)
 
 	rq := m.client.CloneRequestExecutor()
@@ -95,7 +95,7 @@ func (m *SubscriptionResource) UnsubscribeRoleSubscriptionByNotificationType(ctx
 }
 
 // Subscribes a User to a specific notification type. Only the current User can subscribe to a specific notification type. An AccessDeniedException message is sent if requests are made from other users.
-func (m *SubscriptionResource) SubscribeUserSubscriptionByNotificationType(ctx context.Context, userId string, notificationType string) (*Response, error) {
+func (m *SubscriptionResource) SubscribeUserSubscriptionByNotificationType(ctx context.Context, userId, notificationType string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/subscriptions/%v/subscribe", userId, notificationType)
 
 	rq := m.client.CloneRequestExecutor()
@@ -114,7 +114,7 @@ func (m *SubscriptionResource) SubscribeUserSubscriptionByNotificationType(ctx c
 }
 
 // Unsubscribes a User from a specific notification type. Only the current User can unsubscribe from a specific notification type. An AccessDeniedException message is sent if requests are made from other users.
-func (m *SubscriptionResource) UnsubscribeUserSubscriptionByNotificationType(ctx context.Context, userId string, notificationType string) (*Response, error) {
+func (m *SubscriptionResource) UnsubscribeUserSubscriptionByNotificationType(ctx context.Context, userId, notificationType string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/users/%v/subscriptions/%v/unsubscribe", userId, notificationType)
 
 	rq := m.client.CloneRequestExecutor()

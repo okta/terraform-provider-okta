@@ -36,12 +36,10 @@ func resourceUserBaseSchemaProperty() *schema.Resource {
 			userPatternSchema,
 			map[string]*schema.Schema{
 				"master": {
-					Type:     schema.TypeString,
-					Optional: true,
-					// Accepting an empty value to allow for zero value (when provisioning is off)
-					ValidateDiagFunc: elemInSlice([]string{"PROFILE_MASTER", "OKTA", "OVERRIDE", ""}),
-					Description:      "SubSchema profile manager, if not set it will inherit its setting.",
-					Default:          "PROFILE_MASTER",
+					Type:        schema.TypeString,
+					Optional:    true,
+					Description: "SubSchema profile manager, if not set it will inherit its setting.",
+					Default:     "PROFILE_MASTER",
 				},
 			},
 		),

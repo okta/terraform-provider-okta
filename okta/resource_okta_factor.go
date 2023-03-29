@@ -25,11 +25,10 @@ func resourceFactor() *schema.Resource {
 		},
 		Schema: map[string]*schema.Schema{
 			"provider_id": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: elemInSlice(sdk.FactorProviders),
-				Description:      "Factor provider ID",
-				ForceNew:         true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Factor provider ID",
+				ForceNew:    true,
 			},
 			"active": {
 				Type:        schema.TypeBool,
