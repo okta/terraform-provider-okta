@@ -97,9 +97,10 @@ The following arguments are supported:
 
 - `profile_master` - (Optional) Determines if the IdP should act as a source of truth for user profile attributes.
 
-- `request_signature_algorithm` - (Optional) The HMAC Signature Algorithm used when signing an authorization request. It can be `"HS256"`, `"HS384"`, or `"HS512"`.
+- `request_signature_algorithm` - (Optional) The HMAC Signature Algorithm used when signing an authorization request. Defaults to `"HS256"`. It can be `"HS256"`, `"HS384"`, `"HS512"`, `"SHA-256"`. `"RS256"`, `"RS384"`, or `"RS512"`. NOTE: `"SHA-256"` an undocumented legacy value and not continue to be valid. See API docs https://developer.okta.com/docs/reference/api/idps/#oidc-request-signature-algorithm-object
 
-- `request_signature_scope` - (Optional) Specifies whether to digitally sign an AuthnRequest messages to the IdP. It can be `"REQUEST"` or `"NONE"`.
+
+- `request_signature_scope` - (Optional) Specifies whether to digitally sign an AuthnRequest messages to the IdP. Defaults to `"REQUEST"`. It can be `"REQUEST"` or `"NONE"`.
 
 ## Attributes Reference
 
