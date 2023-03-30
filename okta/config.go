@@ -190,7 +190,7 @@ func oktaSDKClient(c *Config) (client *sdk.Client, err error) {
 	return
 }
 
-// TODU remove err???
+// TODO switch to oktaSDKClient when migration complete
 func oktaV3SDKClient(c *Config) (client *okta.APIClient, err error) {
 	var httpClient *http.Client
 	logLevel := strings.ToLower(os.Getenv("TF_LOG"))
@@ -245,8 +245,7 @@ func oktaV3SDKClient(c *Config) (client *okta.APIClient, err error) {
 	setters := []okta.ConfigSetter{
 		okta.WithOrgUrl(orgUrl),
 		okta.WithCache(false),
-		// TODU
-		// okta.WithHttpClientPtr(httpClient),
+		okta.WithHttpClientPtr(httpClient),
 		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
 		okta.WithRequestTimeout(int64(c.requestTimeout)),
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
