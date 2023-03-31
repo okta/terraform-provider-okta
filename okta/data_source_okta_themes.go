@@ -22,7 +22,7 @@ func dataSourceThemesRead(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.Errorf("brand_id required for themes: %v", err)
 	}
 
-	themes, _, err := getOktaClientFromMetadata(m).Brand.ListBrandThemes(ctx, brandID.(string))
+	themes, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.ListBrandThemes(ctx, brandID.(string)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to list brand themes: %v", err)
 	}
@@ -30,7 +30,7 @@ func dataSourceThemesRead(ctx context.Context, d *schema.ResourceData, m interfa
 	d.SetId(fmt.Sprintf("themes-%s", brandID.(string)))
 	arr := make([]interface{}, len(themes))
 	for i, theme := range themes {
-		rawMap := flattenTheme("", theme)
+		rawMap := flattenTheme("", &theme)
 		arr[i] = rawMap
 	}
 

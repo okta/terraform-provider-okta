@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 	"github.com/okta/terraform-provider-okta/okta/internal/apimutex"
 	"github.com/okta/terraform-provider-okta/okta/internal/transport"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -49,6 +50,7 @@ type (
 		requestTimeout   int
 		maxAPICapacity   int // experimental
 		oktaClient       *sdk.Client
+		v3Client         *okta.APIClient
 		supplementClient *sdk.APISupplement
 		client           *http.Client
 		logger           hclog.Logger
@@ -73,6 +75,12 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 	c.supplementClient = &sdk.APISupplement{
 		RequestExecutor: client.CloneRequestExecutor(),
 	}
+	// TODO switch to oktaSDKClient when migration complete
+	v3Client, err := oktaV3SDKClient(c)
+	if err != nil {
+		return err
+	}
+	c.v3Client = v3Client
 	return nil
 }
 
@@ -179,6 +187,98 @@ func oktaSDKClient(c *Config) (client *sdk.Client, err error) {
 		context.Background(),
 		setters...,
 	)
+	return
+}
+
+// TODO switch to oktaSDKClient when migration complete
+func oktaV3SDKClient(c *Config) (client *okta.APIClient, err error) {
+	var httpClient *http.Client
+	logLevel := strings.ToLower(os.Getenv("TF_LOG"))
+	debugHttpRequests := (logLevel == "1" || logLevel == "debug" || logLevel == "trace")
+	if c.backoff {
+		retryableClient := retryablehttp.NewClient()
+		retryableClient.RetryWaitMin = time.Second * time.Duration(c.minWait)
+		retryableClient.RetryWaitMax = time.Second * time.Duration(c.maxWait)
+		retryableClient.RetryMax = c.retryCount
+		retryableClient.Logger = c.logger
+		if debugHttpRequests {
+			// Needed for pretty printing http protocol in a local developer environment, ignore deprecation warnings.
+			//lint:ignore SA1019 used in developer mode only
+			retryableClient.HTTPClient.Transport = logging.NewTransport("Okta", retryableClient.HTTPClient.Transport)
+		} else {
+			retryableClient.HTTPClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", retryableClient.HTTPClient.Transport)
+		}
+		retryableClient.ErrorHandler = errHandler
+		retryableClient.CheckRetry = checkRetry
+		httpClient = retryableClient.StandardClient()
+		c.logger.Info(fmt.Sprintf("running with backoff http client, wait min %d, wait max %d, retry max %d", retryableClient.RetryWaitMin, retryableClient.RetryWaitMax, retryableClient.RetryMax))
+	} else {
+		httpClient = cleanhttp.DefaultClient()
+		if debugHttpRequests {
+			// Needed for pretty printing http protocol in a local developer environment, ignore deprecation warnings.
+			//lint:ignore SA1019 used in developer mode only
+			httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
+		} else {
+			httpClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", httpClient.Transport)
+		}
+		c.logger.Info("running with default http client")
+	}
+
+	// adds transport governor to retryable or default client
+	if c.maxAPICapacity > 0 && c.maxAPICapacity < 100 {
+		c.logger.Info(fmt.Sprintf("running with experimental max_api_capacity configuration at %d%%", c.maxAPICapacity))
+		apiMutex, err := apimutex.NewAPIMutex(c.maxAPICapacity)
+		if err != nil {
+			return nil, err
+		}
+		httpClient.Transport = transport.NewGovernedTransport(httpClient.Transport, apiMutex, c.logger)
+	}
+	var orgUrl string
+	var disableHTTPS bool
+	if c.httpProxy != "" {
+		orgUrl = strings.TrimSuffix(c.httpProxy, "/")
+		disableHTTPS = strings.HasPrefix(orgUrl, "http://")
+	} else {
+		orgUrl = fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
+	}
+
+	setters := []okta.ConfigSetter{
+		okta.WithOrgUrl(orgUrl),
+		okta.WithCache(false),
+		okta.WithHttpClientPtr(httpClient),
+		okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
+		okta.WithRequestTimeout(int64(c.requestTimeout)),
+		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
+		okta.WithUserAgentExtra("okta-terraform/3.44.0"),
+	}
+
+	switch {
+	case c.accessToken != "":
+		setters = append(
+			setters,
+			okta.WithToken(c.accessToken), okta.WithAuthorizationMode("Bearer"),
+		)
+
+	case c.apiToken != "":
+		setters = append(
+			setters,
+			okta.WithToken(c.apiToken), okta.WithAuthorizationMode("SSWS"),
+		)
+
+	case c.privateKey != "":
+		setters = append(
+			setters,
+			okta.WithPrivateKey(c.privateKey), okta.WithPrivateKeyId(c.privateKeyId), okta.WithScopes(c.scopes), okta.WithClientId(c.clientID), okta.WithAuthorizationMode("PrivateKey"),
+		)
+	}
+
+	if disableHTTPS {
+		setters = append(setters, okta.WithTestingDisableHttpsCheck(true))
+	}
+
+	c.client = httpClient
+	config := okta.NewConfiguration(setters...)
+	client = okta.NewAPIClient(config)
 	return
 }
 

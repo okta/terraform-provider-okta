@@ -3,11 +3,12 @@ package okta
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
 func resourceTheme() *schema.Resource {
@@ -43,12 +44,12 @@ func resourceThemeCreate(ctx context.Context, d *schema.ResourceData, m interfac
 		return diag.Errorf("theme_id required to create theme")
 	}
 
-	theme, _, err := getOktaClientFromMetadata(m).Brand.GetBrandTheme(ctx, brandID, themeID)
+	theme, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrandTheme(ctx, brandID, themeID).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get theme: %v", err)
 	}
 
-	d.SetId(theme.Id)
+	d.SetId(theme.GetId())
 	rawMap := flattenTheme(brandID, theme)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {
@@ -67,7 +68,7 @@ func resourceThemeRead(ctx context.Context, d *schema.ResourceData, m interface{
 	}
 	brandID := bid.(string)
 
-	theme, _, err := getOktaClientFromMetadata(m).Brand.GetBrandTheme(ctx, brandID, d.Id())
+	theme, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrandTheme(ctx, brandID, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get theme: %v", err)
 	}
@@ -111,41 +112,49 @@ func resourceThemeUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 		}
 	}
 
-	theme := sdk.Theme{}
+	theme := okta.Theme{}
 
 	if val, ok := d.GetOk("primary_color_hex"); ok {
-		theme.PrimaryColorHex = val.(string)
+		theme.PrimaryColorHex = stringPtr(val.(string))
 	}
 
 	if val, ok := d.GetOk("primary_color_contrast_hex"); ok {
-		theme.PrimaryColorContrastHex = val.(string)
+		theme.PrimaryColorContrastHex = stringPtr(val.(string))
 	}
 
 	if val, ok := d.GetOk("secondary_color_hex"); ok {
-		theme.SecondaryColorHex = val.(string)
+		theme.SecondaryColorHex = stringPtr(val.(string))
 	}
 
 	if val, ok := d.GetOk("secondary_color_contrast_hex"); ok {
-		theme.SecondaryColorContrastHex = val.(string)
+		theme.SecondaryColorContrastHex = stringPtr(val.(string))
 	}
 
 	if val, ok := d.GetOk("sign_in_page_touch_point_variant"); ok {
-		theme.SignInPageTouchPointVariant = val.(string)
+		if siptpv, err := okta.NewSignInPageTouchPointVariantFromValue(val.(string)); err == nil {
+			theme.SignInPageTouchPointVariant = siptpv
+		}
 	}
 
 	if val, ok := d.GetOk("end_user_dashboard_touch_point_variant"); ok {
-		theme.EndUserDashboardTouchPointVariant = val.(string)
+		if eudtpv, err := okta.NewEndUserDashboardTouchPointVariantFromValue(val.(string)); err == nil {
+			theme.EndUserDashboardTouchPointVariant = eudtpv
+		}
 	}
 
 	if val, ok := d.GetOk("error_page_touch_point_variant"); ok {
-		theme.ErrorPageTouchPointVariant = val.(string)
+		if eptpv, err := okta.NewErrorPageTouchPointVariantFromValue(val.(string)); err == nil {
+			theme.ErrorPageTouchPointVariant = eptpv
+		}
 	}
 
 	if val, ok := d.GetOk("email_template_touch_point_variant"); ok {
-		theme.EmailTemplateTouchPointVariant = val.(string)
+		if ettpv, err := okta.NewEmailTemplateTouchPointVariantFromValue(val.(string)); err == nil {
+			theme.EmailTemplateTouchPointVariant = ettpv
+		}
 	}
 
-	themeResp, _, err := getOktaClientFromMetadata(m).Brand.UpdateBrandTheme(ctx, brandID, d.Id(), theme)
+	themeResp, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.ReplaceBrandTheme(ctx, brandID, d.Id()).Theme(theme).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update theme: %v", err)
 	}
@@ -173,12 +182,12 @@ func resourceThemeImportStateContext(ctx context.Context, d *schema.ResourceData
 	brandID := parts[0]
 	themeID := parts[1]
 
-	theme, _, err := getOktaClientFromMetadata(m).Brand.GetBrandTheme(ctx, brandID, themeID)
+	theme, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrandTheme(ctx, brandID, themeID).Execute()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get theme: %v", err)
 	}
 
-	d.SetId(theme.Id)
+	d.SetId(theme.GetId())
 	rawMap := flattenTheme(brandID, theme)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {
@@ -191,29 +200,44 @@ func resourceThemeImportStateContext(ctx context.Context, d *schema.ResourceData
 func handleThemeLogo(ctx context.Context, d *schema.ResourceData, m interface{}, brandID, themeID string) error {
 	_, newPath := d.GetChange("logo")
 	if newPath == "" {
-		_, err := getOktaClientFromMetadata(m).Brand.DeleteBrandThemeLogo(ctx, brandID, themeID)
+		_, err := getOktaV3ClientFromMetadata(m).CustomizationApi.DeleteBrandThemeLogo(ctx, brandID, themeID).Execute()
 		return err
 	}
-	_, _, err := getOktaClientFromMetadata(m).Brand.UploadBrandThemeLogo(ctx, brandID, themeID, newPath.(string))
+	fo, err := os.Open(newPath.(string))
+	if err != nil {
+		return err
+	}
+	defer fo.Close()
+	_, _, err = getOktaV3ClientFromMetadata(m).CustomizationApi.UploadBrandThemeLogo(ctx, brandID, themeID).File(fo).Execute()
 	return err
 }
 
 func handleThemeFavicon(ctx context.Context, d *schema.ResourceData, m interface{}, brandID, themeID string) error {
 	_, newPath := d.GetChange("favicon")
 	if newPath == "" {
-		_, err := getOktaClientFromMetadata(m).Brand.DeleteBrandThemeFavicon(ctx, brandID, themeID)
+		_, err := getOktaV3ClientFromMetadata(m).CustomizationApi.DeleteBrandThemeFavicon(ctx, brandID, themeID).Execute()
 		return err
 	}
-	_, _, err := getOktaClientFromMetadata(m).Brand.UploadBrandThemeFavicon(ctx, brandID, themeID, newPath.(string))
+	fo, err := os.Open(newPath.(string))
+	if err != nil {
+		return err
+	}
+	defer fo.Close()
+	_, _, err = getOktaV3ClientFromMetadata(m).CustomizationApi.UploadBrandThemeFavicon(ctx, brandID, themeID).File(fo).Execute()
 	return err
 }
 
 func handleThemeBackgroundImage(ctx context.Context, d *schema.ResourceData, m interface{}, brandID, themeID string) error {
 	_, newPath := d.GetChange("background_image")
 	if newPath == "" {
-		_, err := getOktaClientFromMetadata(m).Brand.DeleteBrandThemeBackgroundImage(ctx, brandID, themeID)
+		_, err := getOktaV3ClientFromMetadata(m).CustomizationApi.DeleteBrandThemeBackgroundImage(ctx, brandID, themeID).Execute()
 		return err
 	}
-	_, _, err := getOktaClientFromMetadata(m).Brand.UploadBrandThemeBackgroundImage(ctx, brandID, themeID, newPath.(string))
+	fo, err := os.Open(newPath.(string))
+	if err != nil {
+		return err
+	}
+	defer fo.Close()
+	_, _, err = getOktaV3ClientFromMetadata(m).CustomizationApi.UploadBrandThemeBackgroundImage(ctx, brandID, themeID).File(fo).Execute()
 	return err
 }

@@ -20,6 +20,7 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -286,6 +287,14 @@ func suppressErrorOn404(resp *sdk.Response, err error) error {
 	return responseErr(resp, err)
 }
 
+// TODO switch to suppressErrorOn404 when migration complete
+func v3suppressErrorOn404(resp *okta.APIResponse, err error) error {
+	if resp != nil && resp.StatusCode == http.StatusNotFound {
+		return nil
+	}
+	return v3responseErr(resp, err)
+}
+
 // Useful shortcut for suppressing errors from Okta's SDK when a Org does not
 // have permission to access a feature.
 func suppressErrorOn401(what string, meta interface{}, resp *sdk.Response, err error) error {
@@ -312,6 +321,11 @@ func getParallelismFromMetadata(meta interface{}) int {
 
 func getOktaClientFromMetadata(meta interface{}) *sdk.Client {
 	return meta.(*Config).oktaClient
+}
+
+// TODO switch to getOktaClientFromMetadata when migration complete
+func getOktaV3ClientFromMetadata(meta interface{}) *okta.APIClient {
+	return meta.(*Config).v3Client
 }
 
 func getSupplementFromMetadata(meta interface{}) *sdk.APISupplement {
@@ -379,6 +393,18 @@ func setNonPrimitives(d *schema.ResourceData, valueMap map[string]interface{}) e
 // The status should help with debugability. Potentially also could check for an empty error and omit
 // it when it occurs and build some more context.
 func responseErr(resp *sdk.Response, err error) error {
+	if err != nil {
+		msg := err.Error()
+		if resp != nil {
+			msg += fmt.Sprintf(", Status: %s", resp.Status)
+		}
+		return errors.New(msg)
+	}
+	return nil
+}
+
+// TODO switch to responseErr when migration complete
+func v3responseErr(resp *okta.APIResponse, err error) error {
 	if err != nil {
 		msg := err.Error()
 		if resp != nil {
