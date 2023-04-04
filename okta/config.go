@@ -52,7 +52,6 @@ type (
 		oktaClient       *sdk.Client
 		v3Client         *okta.APIClient
 		supplementClient *sdk.APISupplement
-		client           *http.Client
 		logger           hclog.Logger
 		classicOrg       bool
 	}
@@ -181,8 +180,6 @@ func oktaSDKClient(c *Config) (client *sdk.Client, err error) {
 		setters = append(setters, sdk.WithTestingDisableHttpsCheck(true))
 	}
 
-	c.client = httpClient
-
 	_, client, err = sdk.NewClient(
 		context.Background(),
 		setters...,
@@ -276,7 +273,6 @@ func oktaV3SDKClient(c *Config) (client *okta.APIClient, err error) {
 		setters = append(setters, okta.WithTestingDisableHttpsCheck(true))
 	}
 
-	c.client = httpClient
 	config := okta.NewConfiguration(setters...)
 	client = okta.NewAPIClient(config)
 	return

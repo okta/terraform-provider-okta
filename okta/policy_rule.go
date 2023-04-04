@@ -119,7 +119,7 @@ func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 	}
 	var rule *sdk.SdkPolicyRule
 	err = backoff.Retry(func() error {
-		ruleObj, resp, err := getSupplementFromMetadata(m).CreatePolicyRule(ctx, policyID, template)
+		ruleObj, resp, err := getAPISupplementFromMetadata(m).CreatePolicyRule(ctx, policyID, template)
 		if resp.StatusCode == http.StatusInternalServerError {
 			return err
 		}
@@ -171,7 +171,7 @@ func buildPolicyNetworkCondition(d *schema.ResourceData) *sdk.PolicyNetworkCondi
 }
 
 func getPolicyRule(ctx context.Context, d *schema.ResourceData, m interface{}) (*sdk.SdkPolicyRule, error) {
-	client := getSupplementFromMetadata(m)
+	client := getAPISupplementFromMetadata(m)
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
 		policyID = d.Get("policyid").(string)
@@ -246,7 +246,7 @@ func updateRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 	if policyID == "" {
 		return fmt.Errorf("either 'policyid' or 'policy_id' field should be set")
 	}
-	rule, _, err := getSupplementFromMetadata(m).UpdatePolicyRule(ctx, policyID, d.Id(), template)
+	rule, _, err := getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, policyID, d.Id(), template)
 	if err != nil {
 		return err
 	}

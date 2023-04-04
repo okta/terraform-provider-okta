@@ -6,23 +6,21 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func TestAccAppOAuthApplication_apiScope(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuthAPIScope)
-	plainConfig := mgr.GetFixtures("basic.tf", ri, t)
-	plainUpdatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(appOAuthAPIScope, t.Name())
+	plainConfig := mgr.GetFixtures("basic.tf", t)
+	plainUpdatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test_app_scopes", appOAuthAPIScope)
 
 	// Replace example org url with actual url to prevent API error
 	config := strings.ReplaceAll(plainConfig, "https://your.okta.org", getOktaDomainName())
 	updatedConfig := strings.ReplaceAll(plainUpdatedConfig, "https://your.okta.org", getOktaDomainName())
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -31,7 +29,7 @@ func TestAccAppOAuthApplication_apiScope(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, apiScopeExists()),
+					ensureResourceExists(resourceName, apiScopeExists),
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "issuer"),
 					resource.TestCheckTypeSetElemAttr(resourceName, "scopes.*", "okta.users.read"),
@@ -40,7 +38,7 @@ func TestAccAppOAuthApplication_apiScope(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, apiScopeExists()),
+					ensureResourceExists(resourceName, apiScopeExists),
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "issuer"),
 					resource.TestCheckTypeSetElemAttr(resourceName, "scopes.*", "okta.users.read"),
@@ -51,17 +49,16 @@ func TestAccAppOAuthApplication_apiScope(t *testing.T) {
 	})
 }
 
-func apiScopeExists() func(string) (bool, error) {
-	return func(id string) (bool, error) {
-		scopes, _, err := getOktaClientFromMetadata(testAccProvider.Meta()).Application.ListScopeConsentGrants(context.Background(), id, nil)
-		if err != nil {
-			return false, fmt.Errorf("failed to get application scope consent grants: %v", err)
-		}
-		if len(scopes) > 0 {
-			return true, nil
-		}
-		return false, nil
+func apiScopeExists(id string) (bool, error) {
+	client := oktaClientForTest()
+	scopes, _, err := client.Application.ListScopeConsentGrants(context.Background(), id, nil)
+	if err != nil {
+		return false, fmt.Errorf("failed to get application scope consent grants: %v", err)
 	}
+	if len(scopes) > 0 {
+		return true, nil
+	}
+	return false, nil
 }
 
 func getOktaDomainName() string {

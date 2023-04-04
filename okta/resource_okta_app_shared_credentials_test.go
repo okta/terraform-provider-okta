@@ -4,21 +4,19 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func TestAccAppSharedCredentials_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSharedCredentials)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(appSharedCredentials, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSharedCredentials)
 
 	// NOTE: will fail unless self service apps and allow swa feature flags are
 	// enabled
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -28,7 +26,7 @@ func TestAccAppSharedCredentials_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBrowserPluginApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "button_field", "btn-login"),
 					resource.TestCheckResourceAttr(resourceName, "username_field", "txtbox-username"),
@@ -53,7 +51,7 @@ func TestAccAppSharedCredentials_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBrowserPluginApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "button_field", "btn-login-updated"),
 					resource.TestCheckResourceAttr(resourceName, "username_field", "txtbox-username-updated"),
@@ -79,8 +77,7 @@ func TestAccAppSharedCredentials_crud(t *testing.T) {
 }
 
 func TestAccAppSharedCredentials_timeouts(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSharedCredentials)
+	mgr := newFixtureManager(appSharedCredentials, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appSharedCredentials)
 	config := `
 resource "okta_app_shared_credentials" "test" {
@@ -97,14 +94,15 @@ resource "okta_app_shared_credentials" "test" {
     update = "30m"
   }
 }`
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSharedCredentials, createDoesAppExist(sdk.NewBrowserPluginApplication())),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				// TODU
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),

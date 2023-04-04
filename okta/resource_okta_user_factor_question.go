@@ -94,7 +94,7 @@ func resourceUserFactorQuestionUpdate(ctx context.Context, d *schema.ResourceDat
 			Question: d.Get("key").(string),
 		},
 	}
-	_, err = getSupplementFromMetadata(m).UpdateUserFactor(ctx, d.Get("user_id").(string), d.Id(), sq)
+	_, err = getAPISupplementFromMetadata(m).UpdateUserFactor(ctx, d.Get("user_id").(string), d.Id(), sq)
 	if err != nil {
 		return diag.Errorf("failed to update user question factor: %v", err)
 	}

@@ -16,17 +16,16 @@ import (
 )
 
 func TestAccOktaUser_customProfileAttributes(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
-	config := mgr.GetFixtures("custom_attributes.tf", ri, t)
-	arrayAttrConfig := mgr.GetFixtures("custom_attributes_array.tf", ri, t)
-	ignoreConfig := mgr.GetFixtures("custom_attributes_to_ignore.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("remove_custom_attributes.tf", ri, t)
-	importConfig := mgr.GetFixtures("import.tf", ri, t)
+	mgr := newFixtureManager(user, t.Name())
+	config := mgr.GetFixtures("custom_attributes.tf", t)
+	arrayAttrConfig := mgr.GetFixtures("custom_attributes_array.tf", t)
+	ignoreConfig := mgr.GetFixtures("custom_attributes_to_ignore.tf", t)
+	updatedConfig := mgr.GetFixtures("remove_custom_attributes.tf", t)
+	importConfig := mgr.GetFixtures("import.tf", t)
 	resourceName := fmt.Sprintf("%s.test", user)
-	email := fmt.Sprintf("testAcc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -100,14 +99,13 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 }
 
 func TestAccOktaUser_groupMembership(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
-	config := mgr.GetFixtures("group_assigned.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("group_unassigned.tf", ri, t)
+	mgr := newFixtureManager(user, t.Name())
+	config := mgr.GetFixtures("group_assigned.tf", t)
+	updatedConfig := mgr.GetFixtures("group_unassigned.tf", t)
 	resourceName := fmt.Sprintf("%s.test", user)
-	email := fmt.Sprintf("testAcc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -150,7 +148,7 @@ func TestAccOktaUser_groupMembership(t *testing.T) {
 func TestAccOktaUser_invalidCustomProfileAttribute(t *testing.T) {
 	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -165,15 +163,14 @@ func TestAccOktaUser_invalidCustomProfileAttribute(t *testing.T) {
 }
 
 func TestAccOktaUser_updateAllAttributes(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
-	config := mgr.GetFixtures("staged.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("all_attributes.tf", ri, t)
-	minimalConfig := mgr.GetFixtures("basic.tf", ri, t)
+	mgr := newFixtureManager(user, t.Name())
+	config := mgr.GetFixtures("staged.tf", t)
+	updatedConfig := mgr.GetFixtures("all_attributes.tf", t)
+	minimalConfig := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", user)
-	email := fmt.Sprintf("testAcc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -215,7 +212,7 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "preferred_language", "en-us"),
 					resource.TestCheckResourceAttr(resourceName, "primary_phone", "4445556666"),
 					resource.TestCheckResourceAttr(resourceName, "profile_url", "http://www.example.com/profile"),
-					resource.TestCheckResourceAttr(resourceName, "second_email", fmt.Sprintf("test2-%d@example.com", ri)),
+					resource.TestCheckResourceAttr(resourceName, "second_email", fmt.Sprintf("test2-%d@example.com", mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "state", "NY"),
 					resource.TestCheckResourceAttr(resourceName, "street_address", "5678 Testing Ave."),
 					resource.TestCheckResourceAttr(resourceName, "timezone", "America/New_York"),
@@ -238,15 +235,14 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 }
 
 func TestAccOktaUser_updateCredentials(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
-	config := mgr.GetFixtures("basic_with_credentials.tf", ri, t)
-	minimalConfigWithCredentials := mgr.GetFixtures("basic_with_credentials_updated.tf", ri, t)
-	minimalConfigWithCredentialsOldPassword := mgr.GetFixtures("basic_with_credentials_updated_old_password.tf", ri, t)
+	mgr := newFixtureManager(user, t.Name())
+	config := mgr.GetFixtures("basic_with_credentials.tf", t)
+	minimalConfigWithCredentials := mgr.GetFixtures("basic_with_credentials_updated.tf", t)
+	minimalConfigWithCredentialsOldPassword := mgr.GetFixtures("basic_with_credentials_updated_old_password.tf", t)
 	resourceName := fmt.Sprintf("%s.test", user)
-	email := fmt.Sprintf("testAcc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -291,14 +287,13 @@ func TestAccOktaUser_updateCredentials(t *testing.T) {
 }
 
 func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
-	statusChanged := mgr.GetFixtures("deprovisioned.tf", ri, t)
-	config := mgr.GetFixtures("staged.tf", ri, t)
+	mgr := newFixtureManager(user, t.Name())
+	statusChanged := mgr.GetFixtures("deprovisioned.tf", t)
+	config := mgr.GetFixtures("staged.tf", t)
 	resourceName := fmt.Sprintf("%s.test", user)
-	email := fmt.Sprintf("testAcc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -322,14 +317,13 @@ func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
 }
 
 func TestAccOktaUserHashedPassword(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
-	config := mgr.GetFixtures("password_hash.tf", ri, t)
-	configUpdated := mgr.GetFixtures("password_hash_updated.tf", ri, t)
+	mgr := newFixtureManager(user, t.Name())
+	config := mgr.GetFixtures("password_hash.tf", t)
+	configUpdated := mgr.GetFixtures("password_hash_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", user)
-	email := fmt.Sprintf("testAcc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -362,11 +356,10 @@ func TestAccOktaUserHashedPassword(t *testing.T) {
 }
 
 func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
-	config := mgr.GetFixtures("deprovisioned.tf", ri, t)
+	mgr := newFixtureManager(user, t.Name())
+	config := mgr.GetFixtures("deprovisioned.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -376,7 +369,7 @@ func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
 				Config: config,
 			},
 			{
-				Config:      testOktaUserConfigUpdateDeprovisioned(strconv.Itoa(ri)),
+				Config:      testOktaUserConfigUpdateDeprovisioned(strconv.Itoa(mgr.Seed)),
 				ExpectError: regexp.MustCompile(".*Only the status of a DEPROVISIONED user can be updated, we detected other change"),
 			},
 		},
@@ -384,16 +377,15 @@ func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
 }
 
 func TestAccOktaUser_loginUpdates(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedLogin := mgr.GetFixtures("login_changed.tf", ri, t)
+	mgr := newFixtureManager(user, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedLogin := mgr.GetFixtures("login_changed.tf", t)
 
 	resourceName := fmt.Sprintf("%s.test", user)
-	email := fmt.Sprintf("testAcc-%d@example.com", ri)
-	updatedEmail := fmt.Sprintf("testAccUpdated-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
+	updatedEmail := fmt.Sprintf("testAccUpdated-%d@example.com", mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -412,7 +404,7 @@ func TestAccOktaUser_loginUpdates(t *testing.T) {
 }
 
 func testAccCheckUserDestroy(s *terraform.State) error {
-	client := getOktaClientFromMetadata(testAccProvider.Meta())
+	client := oktaClientForTest()
 	for _, r := range s.RootModule().Resources {
 		if _, resp, err := client.User.GetUser(context.Background(), r.Primary.ID); err != nil {
 			if resp != nil && resp.Response.StatusCode == http.StatusNotFound {
@@ -462,8 +454,7 @@ func TestIssue1216Suppress403Errors(t *testing.T) {
 	if !orgAdminOnlyTest(t) {
 		return
 	}
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
+	mgr := newFixtureManager(user, t.Name())
 	config := `
 resource "okta_user" "test" {
   first_name = "TestAcc"
@@ -471,11 +462,11 @@ resource "okta_user" "test" {
   login      = "testAcc-replace_with_uuid@example.com"
   email      = "testAcc-replace_with_uuid@example.com"
 }`
-	config = mgr.ConfigReplace(config, ri)
+	config = mgr.ConfigReplace(config)
 	resourceName := fmt.Sprintf("%s.test", user)
-	email := fmt.Sprintf("testAcc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -496,8 +487,7 @@ resource "okta_user" "test" {
 }
 
 func TestAccOktaUser_skip_roles(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
+	mgr := newFixtureManager(user, t.Name())
 	config := `
 resource "okta_user" "test" {
   first_name = "TestAcc"
@@ -506,11 +496,11 @@ resource "okta_user" "test" {
   email      = "testAcc-replace_with_uuid@example.com"
   skip_roles = true
 }`
-	config = mgr.ConfigReplace(config, ri)
+	config = mgr.ConfigReplace(config)
 	resourceName := fmt.Sprintf("%s.test", user)
-	email := fmt.Sprintf("testAcc-%d@example.com", ri)
+	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,

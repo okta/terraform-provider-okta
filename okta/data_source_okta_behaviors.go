@@ -58,7 +58,7 @@ func dataSourceBehaviorsRead(ctx context.Context, d *schema.ResourceData, m inte
 	if ok {
 		qp.Q = q.(string)
 	}
-	behaviors, _, err := getSupplementFromMetadata(m).ListBehaviors(ctx, qp)
+	behaviors, _, err := getAPISupplementFromMetadata(m).ListBehaviors(ctx, qp)
 	if err != nil {
 		return diag.Errorf("failed to list behaviors: %v", err)
 	}

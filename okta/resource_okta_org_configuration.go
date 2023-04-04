@@ -134,7 +134,7 @@ func resourceOrgSettingsCreate(ctx context.Context, d *schema.ResourceData, m in
 	d.SetId(settings.Id)
 	logo, ok := d.GetOk("logo")
 	if ok {
-		_, err := getSupplementFromMetadata(m).UploadOrgLogo(ctx, logo.(string))
+		_, err := getAPISupplementFromMetadata(m).UploadOrgLogo(ctx, logo.(string))
 		if err != nil {
 			return diag.Errorf("failed to upload org logo: %v", err)
 		}
@@ -190,7 +190,7 @@ func resourceOrgSettingsUpdate(ctx context.Context, d *schema.ResourceData, m in
 	}
 	logo, ok := d.GetOk("logo")
 	if ok {
-		_, err := getSupplementFromMetadata(m).UploadOrgLogo(ctx, logo.(string))
+		_, err := getAPISupplementFromMetadata(m).UploadOrgLogo(ctx, logo.(string))
 		if err != nil {
 			return diag.Errorf("failed to upload org logo: %v", err)
 		}

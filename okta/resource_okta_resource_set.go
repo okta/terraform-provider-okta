@@ -48,7 +48,7 @@ func resourceResourceSetCreate(ctx context.Context, d *schema.ResourceData, m in
 	if err != nil {
 		return diag.Errorf("failed to create resource set: %v", err)
 	}
-	rs, _, err := getSupplementFromMetadata(m).CreateResourceSet(ctx, *set)
+	rs, _, err := getAPISupplementFromMetadata(m).CreateResourceSet(ctx, *set)
 	if err != nil {
 		return diag.Errorf("failed to create resource set: %v", err)
 	}
@@ -57,7 +57,7 @@ func resourceResourceSetCreate(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceResourceSetRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	rs, resp, err := getSupplementFromMetadata(m).GetResourceSet(ctx, d.Id())
+	rs, resp, err := getAPISupplementFromMetadata(m).GetResourceSet(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get resource set: %v", err)
 	}
@@ -67,7 +67,7 @@ func resourceResourceSetRead(ctx context.Context, d *schema.ResourceData, m inte
 	}
 	_ = d.Set("label", rs.Label)
 	_ = d.Set("description", rs.Description)
-	resources, err := listResourceSetResources(ctx, getSupplementFromMetadata(m), d.Id())
+	resources, err := listResourceSetResources(ctx, getAPISupplementFromMetadata(m), d.Id())
 	if err != nil {
 		return diag.Errorf("failed to get list of resource set resources: %v", err)
 	}
@@ -76,7 +76,7 @@ func resourceResourceSetRead(ctx context.Context, d *schema.ResourceData, m inte
 }
 
 func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getSupplementFromMetadata(m)
+	client := getAPISupplementFromMetadata(m)
 	if d.HasChanges("label", "description") {
 		set, _ := buildResourceSet(d, false)
 		_, _, err := client.UpdateResourceSet(ctx, d.Id(), *set)
@@ -104,7 +104,7 @@ func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceResourceSetDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	resp, err := getSupplementFromMetadata(m).DeleteResourceSet(ctx, d.Id())
+	resp, err := getAPISupplementFromMetadata(m).DeleteResourceSet(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete resource set: %v", err)
 	}

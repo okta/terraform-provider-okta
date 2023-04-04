@@ -5,18 +5,16 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaSmsTemplate_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", templateSms)
-	mgr := newFixtureManager(templateSms)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(templateSms, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -49,6 +47,7 @@ func TestAccOktaSmsTemplate_crud(t *testing.T) {
 }
 
 func doesSmsTemplateExist(id string) (bool, error) {
-	_, response, err := getOktaClientFromMetadata(testAccProvider.Meta()).SmsTemplate.GetSmsTemplate(context.Background(), id)
+	client := oktaClientForTest()
+	_, response, err := client.SmsTemplate.GetSmsTemplate(context.Background(), id)
 	return doesResourceExist(response, err)
 }

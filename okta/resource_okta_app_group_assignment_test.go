@@ -6,23 +6,20 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccAppGroupAssignment_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName0 := fmt.Sprintf("%s.test.0", appGroupAssignment)
 	resourceName1 := fmt.Sprintf("%s.test.1", appGroupAssignment)
 	resourceName3 := fmt.Sprintf("%s.test3", appGroupAssignment)
-	mgr := newFixtureManager(appGroupAssignment)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
-
+	mgr := newFixtureManager(appGroupAssignment, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	// TF concurrency will cause this test to flap if the groups and assigned
 	// priorities aren't executed in proper order
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -113,15 +110,14 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 }
 
 func TestAccAppGroupAssignment_retain(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", appGroupAssignment)
 	appName := fmt.Sprintf("%s.test", appOAuth)
 	groupName := fmt.Sprintf("%s.test", group)
-	mgr := newFixtureManager(appGroupAssignment)
-	retainAssignment := mgr.GetFixtures("retain_assignment.tf", ri, t)
-	retainAssignmentDestroy := mgr.GetFixtures("retain_assignment_destroy.tf", ri, t)
+	mgr := newFixtureManager(appGroupAssignment, t.Name())
+	retainAssignment := mgr.GetFixtures("retain_assignment.tf", t)
+	retainAssignmentDestroy := mgr.GetFixtures("retain_assignment_destroy.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -149,8 +145,7 @@ func TestAccAppGroupAssignment_retain(t *testing.T) {
 }
 
 func TestAccAppGroupAssignment_timeouts(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appGroupAssignment)
+	mgr := newFixtureManager(appGroupAssignment, t.Name())
 	resourceName0 := fmt.Sprintf("%s.test.0", appGroupAssignment)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -188,14 +183,15 @@ resource "okta_app_group_assignment" "test" {
   }
 }
 `
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				// TODU
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName0, "timeouts.create", "60m"),
 					resource.TestCheckResourceAttr(resourceName0, "timeouts.read", "2h"),
@@ -206,17 +202,17 @@ resource "okta_app_group_assignment" "test" {
 	})
 }
 
-func ensureAppGroupAssignmentExists(name string) resource.TestCheckFunc {
+func ensureAppGroupAssignmentExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		missingErr := fmt.Errorf("resource not found: %s", name)
-		rs, ok := s.RootModule().Resources[name]
+		missingErr := fmt.Errorf("resource not found: %s", resourceName)
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return missingErr
 		}
 
 		appID := rs.Primary.Attributes["app_id"]
 		groupID := rs.Primary.Attributes["group_id"]
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
+		client := oktaClientForTest()
 
 		g, _, err := client.Application.GetApplicationGroupAssignment(context.Background(), appID, groupID, nil)
 		if err != nil {
@@ -245,7 +241,7 @@ func ensureAppGroupAssignmentRetained(appName, groupName string) resource.TestCh
 
 		appID := appRes.Primary.ID
 		groupID := groupRes.Primary.ID
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
+		client := oktaClientForTest()
 
 		g, _, err := client.Application.GetApplicationGroupAssignment(context.Background(), appID, groupID, nil)
 		if err != nil {

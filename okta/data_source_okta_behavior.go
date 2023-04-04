@@ -46,7 +46,7 @@ func dataSourceBehaviorRead(ctx context.Context, d *schema.ResourceData, m inter
 	var behavior *sdk.Behavior
 	behaviorID, ok := d.GetOk("id")
 	if ok {
-		respBehavior, _, err := getSupplementFromMetadata(m).GetBehavior(ctx, behaviorID.(string))
+		respBehavior, _, err := getAPISupplementFromMetadata(m).GetBehavior(ctx, behaviorID.(string))
 		if err != nil {
 			return diag.Errorf("failed get behavior by ID: %v", err)
 		}
@@ -55,7 +55,7 @@ func dataSourceBehaviorRead(ctx context.Context, d *schema.ResourceData, m inter
 		name := d.Get("name").(string)
 		searchParams := &query.Params{Q: name, Limit: 1}
 		logger(m).Info("looking for behavior", "query", searchParams.String())
-		behaviors, _, err := getSupplementFromMetadata(m).ListBehaviors(ctx, searchParams)
+		behaviors, _, err := getAPISupplementFromMetadata(m).ListBehaviors(ctx, searchParams)
 		switch {
 		case err != nil:
 			return diag.Errorf("failed to query for behaviors: %v", err)

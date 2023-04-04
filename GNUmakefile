@@ -41,6 +41,12 @@ test:
 testacc:
 	TF_ACC=1 go test $(TEST) -v $(TESTARGS) $(TEST_FILTER) -timeout 120m
 
+test-play-vcr-acc:
+	OKTA_VCR_TF_ACC=play TF_ACC=1 go test $(TEST) -v $(TESTARGS) $(TEST_FILTER) -timeout 120m
+
+test-record-vcr-acc:
+	OKTA_VCR_TF_ACC=record TF_ACC=1 go test $(TEST) -v $(TESTARGS) $(TEST_FILTER) -timeout 120m
+
 vet:
 	@echo "==> Checking source code against go vet and staticcheck"
 	@go vet ./...

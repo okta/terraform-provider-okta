@@ -7,19 +7,17 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccAppUserSchemas_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appUserSchemaProperty)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -29,7 +27,7 @@ func TestAccAppUserSchemas_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test"),
@@ -49,7 +47,7 @@ func TestAccAppUserSchemas_crud(t *testing.T) {
 				Config: updated,
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test updated 001"),
@@ -63,8 +61,7 @@ func TestAccAppUserSchemas_crud(t *testing.T) {
 }
 
 func TestAccAppUserSchemas_array_enum_number(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appUserSchemaProperty)
+	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -100,14 +97,15 @@ resource "okta_app_user_schema_property" "test" {
 	}
 }
 `
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				// TODU
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
@@ -129,8 +127,7 @@ resource "okta_app_user_schema_property" "test" {
 }
 
 func TestAccAppUserSchemas_enum_number(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appUserSchemaProperty)
+	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -165,14 +162,15 @@ resource "okta_app_user_schema_property" "test" {
 	}
 }
 `
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				// TODU
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "number"),
@@ -193,8 +191,7 @@ resource "okta_app_user_schema_property" "test" {
 }
 
 func TestAccAppUserSchemas_array_enum_integer(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appUserSchemaProperty)
+	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -230,14 +227,15 @@ resource "okta_app_user_schema_property" "test" {
 	}
 }
 `
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				// TODU
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
@@ -259,8 +257,7 @@ resource "okta_app_user_schema_property" "test" {
 }
 
 func TestAccAppUserSchemas_enum_integer(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appUserSchemaProperty)
+	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -295,14 +292,15 @@ resource "okta_app_user_schema_property" "test" {
 	}
 }
 `
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				// TODU
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "integer"),
@@ -324,8 +322,7 @@ resource "okta_app_user_schema_property" "test" {
 
 func TestAccAppUserSchemas_array_enum_boolean(t *testing.T) {
 	t.Skip("The test is failing due to core issue. Similar test TestAccResourceOktaGroupSchema_array_enum_boolean has passed in the past")
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appUserSchemaProperty)
+	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -357,14 +354,15 @@ resource "okta_app_user_schema_property" "test" {
 	}
 }
 `
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				// TODU
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
@@ -384,8 +382,7 @@ resource "okta_app_user_schema_property" "test" {
 
 func TestAccAppUserSchemas_enum_boolean(t *testing.T) {
 	t.Skip("The test is failing due to core issue. Similar test TestAccResourceOktaGroupSchema_enum_boolean has passed in the past")
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appUserSchemaProperty)
+	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -416,14 +413,15 @@ resource "okta_app_user_schema_property" "test" {
 	}
 }
 `
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				// TODU
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "boolean"),
@@ -441,8 +439,7 @@ resource "okta_app_user_schema_property" "test" {
 }
 
 func TestAccAppUserSchemas_array_enum_string(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appUserSchemaProperty)
+	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -478,14 +475,15 @@ resource "okta_app_user_schema_property" "test" {
 	}
 }
 `
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				// TODU
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
@@ -507,8 +505,7 @@ resource "okta_app_user_schema_property" "test" {
 }
 
 func TestAccAppUserSchemas_enum_string(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appUserSchemaProperty)
+	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -543,14 +540,15 @@ resource "okta_app_user_schema_property" "test" {
 	}
 }
 `
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				// TODU
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
@@ -570,12 +568,12 @@ resource "okta_app_user_schema_property" "test" {
 	})
 }
 
-func testAppUserSchemasExists(name string) resource.TestCheckFunc {
+func testAppUserSchemasExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
-		rs, ok := s.RootModule().Resources[name]
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
-			return fmt.Errorf("not found: %s", name)
+			return fmt.Errorf("not found: %s", resourceName)
 		}
 
 		if exists, _ := testAppUserSchemaExists(rs.Primary.ID); !exists {
@@ -587,8 +585,8 @@ func testAppUserSchemasExists(name string) resource.TestCheckFunc {
 
 func testAppUserSchemaExists(index string) (bool, error) {
 	ids := strings.Split(index, "/")
-	schema, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).UserSchema.
-		GetApplicationUserSchema(context.Background(), ids[0])
+	client := oktaClientForTest()
+	schema, resp, err := client.UserSchema.GetApplicationUserSchema(context.Background(), ids[0])
 	if err != nil {
 		if resp != nil && resp.StatusCode == 404 {
 			return false, nil
@@ -650,8 +648,7 @@ resource "okta_app_user_schema_property" "five" {
 	permissions = "%s"
 }
 `
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appUserSchemaProperty)
+	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	ro := make([]interface{}, 5)
 	for i := 0; i < 5; i++ {
 		ro[i] = "READ_ONLY"
@@ -661,10 +658,12 @@ resource "okta_app_user_schema_property" "five" {
 		rw[i] = "READ_WRITE"
 	}
 	roConfig := fmt.Sprintf(config, ro...)
-	roConfig = mgr.ConfigReplace(roConfig, ri)
+	// TODU
+	roConfig = mgr.ConfigReplace(roConfig)
 	rwConfig := fmt.Sprintf(config, rw...)
-	rwConfig = mgr.ConfigReplace(rwConfig, ri)
-	resource.Test(t, resource.TestCase{
+	// TODU
+	rwConfig = mgr.ConfigReplace(rwConfig)
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,

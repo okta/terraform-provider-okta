@@ -50,7 +50,7 @@ resource "okta_domain_certificate" "test" {
 		domainFile, certFile, pkFile, chainFile)
 	resourceName := fmt.Sprintf("%s.test", domainCertificate)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,

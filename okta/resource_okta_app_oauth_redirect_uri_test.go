@@ -5,45 +5,18 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func createRedirectURIExists(name string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		missingErr := fmt.Errorf("resource not found: %s", name)
-		rs, ok := s.RootModule().Resources[name]
-		if !ok {
-			return missingErr
-		}
-
-		uri := rs.Primary.ID
-		appID := rs.Primary.Attributes["app_id"]
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
-		app := sdk.NewOpenIdConnectApplication()
-		_, response, err := client.Application.GetApplication(context.Background(), appID, app, nil)
-
-		// We don't want to consider a 404 an error in some cases and thus the delineation
-		if response != nil && response.StatusCode == 404 {
-			return missingErr
-		} else if err != nil && contains(app.Settings.OauthClient.RedirectUris, uri) {
-			return nil
-		}
-
-		return err
-	}
-}
-
 func TestAccAppOAuthApplication_redirectCrud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuthRedirectURI)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(appOAuthRedirectURI, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appOAuthRedirectURI)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -69,4 +42,29 @@ func TestAccAppOAuthApplication_redirectCrud(t *testing.T) {
 			},
 		},
 	})
+}
+
+func createRedirectURIExists(resourceName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		missingErr := fmt.Errorf("resource not found: %s", resourceName)
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return missingErr
+		}
+
+		uri := rs.Primary.ID
+		appID := rs.Primary.Attributes["app_id"]
+		client := oktaClientForTest()
+		app := sdk.NewOpenIdConnectApplication()
+		_, response, err := client.Application.GetApplication(context.Background(), appID, app, nil)
+
+		// We don't want to consider a 404 an error in some cases and thus the delineation
+		if response != nil && response.StatusCode == 404 {
+			return missingErr
+		} else if err != nil && contains(app.Settings.OauthClient.RedirectUris, uri) {
+			return nil
+		}
+
+		return err
+	}
 }

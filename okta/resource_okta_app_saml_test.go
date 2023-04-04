@@ -19,7 +19,7 @@ func TestAccAppSaml_conditionalRequire(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSamlConfigMissingFields(ri)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -35,10 +35,10 @@ func TestAccAppSaml_conditionalRequire(t *testing.T) {
 
 // Ensure conditional require logic causes this plan to fail
 func TestAccAppSaml_invalidURL(t *testing.T) {
-	ri := acctest.RandInt()
-	config := buildTestSamlConfigInvalidURL(ri)
+	mgr := newFixtureManager(appSaml, t.Name())
+	config := buildTestSamlConfigMissingFields(mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -53,15 +53,14 @@ func TestAccAppSaml_invalidURL(t *testing.T) {
 }
 
 func TestAccAppSaml_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSaml)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	allFields := mgr.GetFixtures("updated.tf", ri, t)
-	importConfig := mgr.GetFixtures("import.tf", ri, t)
-	importSAML11Config := mgr.GetFixtures("import_saml_1_1.tf", ri, t)
+	mgr := newFixtureManager(appSaml, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	allFields := mgr.GetFixtures("updated.tf", t)
+	importConfig := mgr.GetFixtures("import.tf", t)
+	importSAML11Config := mgr.GetFixtures("import_saml_1_1.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -71,7 +70,7 @@ func TestAccAppSaml_crud(t *testing.T) {
 				Config: allFields,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "sso_url", "http://google.com"),
 					resource.TestCheckResourceAttr(resourceName, "recipient", "http://here.com"),
 					resource.TestCheckResourceAttr(resourceName, "destination", "http://its-about-the-journey.com"),
@@ -100,7 +99,7 @@ func TestAccAppSaml_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "sso_url", "http://google.com"),
 					resource.TestCheckResourceAttr(resourceName, "recipient", "http://here.com"),
@@ -155,12 +154,11 @@ func TestAccAppSaml_crud(t *testing.T) {
 }
 
 func TestAccAppSaml_preconfigured(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSaml)
-	preconfigured := mgr.GetFixtures("preconfigured.tf", ri, t)
+	mgr := newFixtureManager(appSaml, t.Name())
+	preconfigured := mgr.GetFixtures("preconfigured.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -170,7 +168,7 @@ func TestAccAppSaml_preconfigured(t *testing.T) {
 				Config: preconfigured,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "preconfigured_app", "office365"),
 					resource.TestCheckResourceAttr(resourceName, "saml_version", "1.1"),
 					testAppSamlJson(resourceName, `{
@@ -236,13 +234,12 @@ func areJSONStringsEqual(a, b string) bool {
 
 // Add and remove groups/users
 func TestAccAppSaml_userGroups(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSaml)
-	config := mgr.GetFixtures("user_groups.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("user_groups_updated.tf", ri, t)
+	mgr := newFixtureManager(appSaml, t.Name())
+	config := mgr.GetFixtures("user_groups.tf", t)
+	updatedConfig := mgr.GetFixtures("user_groups_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -252,7 +249,7 @@ func TestAccAppSaml_userGroups(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "users.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "groups.#", "3"),
@@ -263,7 +260,7 @@ func TestAccAppSaml_userGroups(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttrSet(resourceName, "key_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "keys.#"),
@@ -276,12 +273,11 @@ func TestAccAppSaml_userGroups(t *testing.T) {
 }
 
 func TestAccAppSaml_inlineHook(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSaml)
-	config := mgr.GetFixtures("basic_inline_hook.tf", ri, t)
+	mgr := newFixtureManager(appSaml, t.Name())
+	config := mgr.GetFixtures("basic_inline_hook.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -291,7 +287,7 @@ func TestAccAppSaml_inlineHook(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttrSet(resourceName, "inline_hook_id"),
 				),
@@ -308,13 +304,12 @@ func TestAccAppSaml_federationBroker(t *testing.T) {
 	//       SEE https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm
 	t.Skip("This is an 'Early Access Feature' and needs to be enabled by Okta, skipping this test as it fails when this feature is not available")
 
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSaml)
-	config := mgr.GetFixtures("federation_broker_off.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("federation_broker_on.tf", ri, t)
+	mgr := newFixtureManager(appSaml, t.Name())
+	config := mgr.GetFixtures("federation_broker_off.tf", t)
+	updatedConfig := mgr.GetFixtures("federation_broker_on.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -324,7 +319,7 @@ func TestAccAppSaml_federationBroker(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "false"),
 				),
@@ -333,7 +328,7 @@ func TestAccAppSaml_federationBroker(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "true"),
 				),
@@ -366,8 +361,7 @@ resource "%s" "%s" {
 }
 
 func TestAccResourceOktaAppSaml_timeouts(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSaml)
+	mgr := newFixtureManager(appSaml, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 	config := `
 resource "okta_app_saml" "test" {
@@ -399,14 +393,15 @@ resource "okta_app_saml" "test" {
   }
 }
 `
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				// TODU
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),
@@ -420,10 +415,9 @@ resource "okta_app_saml" "test" {
 
 // Test to ensure that certificate logic returns no-op / no-change upon apply and future plans
 func TestAccAppSaml_certdiff(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSaml)
-	config := mgr.GetFixtures("basic_cert_plain.tf", ri, t)
-	config2 := mgr.GetFixtures("basic_cert_file.tf", ri, t)
+	mgr := newFixtureManager(appSaml, t.Name())
+	config := mgr.GetFixtures("basic_cert_plain.tf", t)
+	config2 := mgr.GetFixtures("basic_cert_file.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -436,7 +430,7 @@ func TestAccAppSaml_certdiff(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "sso_url", "http://google.com"),
 					resource.TestCheckResourceAttr(resourceName, "recipient", "http://here.com"),
@@ -463,7 +457,7 @@ func TestAccAppSaml_certdiff(t *testing.T) {
 				Config: config2,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "sso_url", "http://google.com"),
 					resource.TestCheckResourceAttr(resourceName, "recipient", "http://here.com"),

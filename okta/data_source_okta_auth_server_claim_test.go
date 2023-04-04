@@ -4,17 +4,15 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaDataSourceAuthServerClaim(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(authServerClaim)
-	config := mgr.GetFixtures("datasource.tf", ri, t)
-	createUser := mgr.GetFixtures("datasource_create_auth_server.tf", ri, t)
+	mgr := newFixtureManager(authServerClaim, t.Name())
+	config := mgr.GetFixtures("datasource.tf", t)
+	createUser := mgr.GetFixtures("datasource_create_auth_server.tf", t)
 	resourceName := fmt.Sprintf("data.%s.test", authServerClaim)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,

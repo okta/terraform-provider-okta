@@ -456,9 +456,16 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		return nil, diag.Errorf("[ERROR] invalid configuration: %v", err)
 	}
 
-	// Discover if the Okta Org is Classic or OIE
-	if org, _, err := config.supplementClient.GetWellKnownOktaOrganization(ctx); err == nil {
-		config.classicOrg = (org.Pipeline == "v1") // v1 == Classic, idx == OIE
+	// NOTE: Don't make this call when VCR is playing/recording as it will occur
+	// outsite of the VCR transport
+	if os.Getenv("OKTA_VCR_TF_ACC") == "" {
+		// NOTE: validate credentials during initial config with a call to
+		// /api/v1/users/me
+		if config.apiToken != "" {
+			if _, _, err := config.oktaClient.User.GetUser(ctx, "me"); err != nil {
+				return err, diag.Errorf("[ERROR] : api_token is not correct %v", err)
+			}
+		}
 	}
 
 	return &config, nil

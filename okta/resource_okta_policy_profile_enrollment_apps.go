@@ -71,7 +71,7 @@ func resourcePolicyProfileEnrollmentAppsRead(ctx context.Context, d *schema.Reso
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	apps, err := listPolicyEnrollmentAppIDs(ctx, getSupplementFromMetadata(m), d.Id())
+	apps, err := listPolicyEnrollmentAppIDs(ctx, getAPISupplementFromMetadata(m), d.Id())
 	if err != nil {
 		return diag.Errorf("failed to get list of enrollment policy apps: %v", err)
 	}

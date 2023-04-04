@@ -4,19 +4,17 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSignOnPolicy)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
-	renamedConfig := mgr.GetFixtures("basic_renamed.tf", ri, t)
+	mgr := newFixtureManager(appSignOnPolicy, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	renamedConfig := mgr.GetFixtures("basic_renamed.tf", t)
 	resourceName := fmt.Sprintf("%v.test", appSignOnPolicy)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -26,7 +24,7 @@ func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("testAcc_Test_App", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("testAcc_Test_App", mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "description", "The app signon policy used by our test app."),
 				),
 			},
@@ -34,7 +32,7 @@ func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("testAcc_Test_App", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("testAcc_Test_App", mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "description", "The updated app signon policy used by our test app."),
 				),
 			},
@@ -42,7 +40,7 @@ func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
 				Config: renamedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("testAcc_Test_App_Renamed", ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("testAcc_Test_App_Renamed", mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "description", "The app signon policy used by our test app."),
 				),
 			},
@@ -51,15 +49,15 @@ func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
 }
 
 func TestAccOktaAppSignOnPolicy_destroy(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(groupSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaGroupSchemasDestroy(),
+		CheckDestroy:      checkOktaGroupSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
+				// TODU
 				Config: mgr.ConfigReplace(`
 # We create a sign on policy and two apps that have that sign on policy as their
 # authentication policy.
@@ -105,13 +103,14 @@ data "okta_app_signon_policy" "test1" {
 data "okta_app_signon_policy" "test2" {
 	app_id = okta_app_oauth.test2.id
 }
-`, ri),
+`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrPair("data.okta_app_signon_policy.test1", "id", "data.okta_app_signon_policy.test2", "id"),
 					resource.TestCheckResourceAttrPair("okta_app_signon_policy.test", "id", "data.okta_app_signon_policy.test1", "id"),
 				),
 			},
 			{
+				// TODU
 				Config: mgr.ConfigReplace(`
 
 # We destroy the sign on policy then check that both apps have been assigned to
@@ -148,7 +147,7 @@ data "okta_app_signon_policy" "testA" {
 data "okta_app_signon_policy" "testB" {
 	app_id = okta_app_oauth.test2.id
 }
-`, ri),
+`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrPair("data.okta_app_signon_policy.testA", "id", "data.okta_app_signon_policy.testB", "id"),
 					resource.TestCheckResourceAttrPair("data.okta_policy.test", "id", "data.okta_app_signon_policy.testA", "id"),

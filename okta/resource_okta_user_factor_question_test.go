@@ -5,24 +5,22 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(userFactorQuestion)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(userFactorQuestion, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", userFactorQuestion)
-	resource.Test(
+	oktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:          testClassicOnlyAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      createUserFactorCheckDestroy(userFactorQuestion),
+			CheckDestroy:      createUserFactorCheckDestroy(t.Name(), userFactorQuestion),
 			Steps: []resource.TestStep{
 				{
 					Config: config,
@@ -44,7 +42,7 @@ func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
 		})
 }
 
-func createUserFactorCheckDestroy(factorType string) func(*terraform.State) error {
+func createUserFactorCheckDestroy(testName, factorType string) func(*terraform.State) error {
 	return func(s *terraform.State) error {
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != factorType {
@@ -66,6 +64,7 @@ func createUserFactorCheckDestroy(factorType string) func(*terraform.State) erro
 
 func doesUserFactorExistsUpstream(userId, factorId string) (bool, error) {
 	var uf *sdk.SecurityQuestionUserFactor
-	_, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).UserFactor.GetFactor(context.Background(), userId, factorId, uf)
+	client := oktaClientForTest()
+	_, resp, err := client.UserFactor.GetFactor(context.Background(), userId, factorId, uf)
 	return doesResourceExist(resp, err)
 }

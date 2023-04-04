@@ -8,23 +8,22 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
+// TODU
 // Tests a standard OAuth application with an updated type. This tests the ForceNew on type and tests creating an
 // ACTIVE and INACTIVE application via the create action.
 func TestAccResourceOktaAppOauth_basic(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuth)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(appOAuth, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -34,7 +33,7 @@ func TestAccResourceOktaAppOauth_basic(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "web"),
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "1"),
@@ -56,7 +55,7 @@ func TestAccResourceOktaAppOauth_basic(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
 					resource.TestCheckResourceAttr(resourceName, "hide_ios", "true"),
@@ -91,13 +90,12 @@ func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 	//       If this feature is enabled or Okta releases this to all this test should be enabled.
 	//       SEE https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm
 	t.Skip("This is an 'Early Access Feature' and needs to be enabled by Okta, skipping this test as it fails when this feature is not available")
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuth)
-	config := mgr.GetFixtures("refresh.tf", ri, t)
-	update := mgr.GetFixtures("refresh_update.tf", ri, t)
+	mgr := newFixtureManager(appOAuth, t.Name())
+	config := mgr.GetFixtures("refresh.tf", t)
+	update := mgr.GetFixtures("refresh_update.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -107,7 +105,7 @@ func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "refresh_token_rotation", "STATIC"),
@@ -118,7 +116,7 @@ func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 				Config: update,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "refresh_token_rotation", "ROTATE"),
@@ -131,13 +129,12 @@ func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 
 // Tests creation of service app and updates it to native
 func TestAccResourceOktaAppOauth_serviceNative(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuth)
-	config := mgr.GetFixtures("service.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("native.tf", ri, t)
+	mgr := newFixtureManager(appOAuth, t.Name())
+	config := mgr.GetFixtures("service.tf", t)
+	updatedConfig := mgr.GetFixtures("native.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -147,7 +144,7 @@ func TestAccResourceOktaAppOauth_serviceNative(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "service"),
 				),
@@ -156,7 +153,7 @@ func TestAccResourceOktaAppOauth_serviceNative(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "native"),
 				),
@@ -173,13 +170,12 @@ func TestAccResourceOktaAppOauth_federationBroker(t *testing.T) {
 	//       SEE https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm
 	t.Skip("This is an 'Early Access Feature' and needs to be enabled by Okta, skipping this test as it fails when this feature is not available")
 
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuth)
-	config := mgr.GetFixtures("federation_broker_off.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("federation_broker_on.tf", ri, t)
+	mgr := newFixtureManager(appOAuth, t.Name())
+	config := mgr.GetFixtures("federation_broker_off.tf", t)
+	updatedConfig := mgr.GetFixtures("federation_broker_on.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -189,7 +185,7 @@ func TestAccResourceOktaAppOauth_federationBroker(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "web"),
 					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "false"),
@@ -199,7 +195,7 @@ func TestAccResourceOktaAppOauth_federationBroker(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "web"),
 					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "true"),
@@ -211,14 +207,13 @@ func TestAccResourceOktaAppOauth_federationBroker(t *testing.T) {
 
 // Tests an OAuth application with profile attributes. This tests with a nested JSON object as well as an array.
 func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuth)
-	config := mgr.GetFixtures("custom_attributes.tf", ri, t)
-	groupWhitelistConfig := mgr.GetFixtures("group_for_groups_claim.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("remove_custom_attributes.tf", ri, t)
+	mgr := newFixtureManager(appOAuth, t.Name())
+	config := mgr.GetFixtures("custom_attributes.tf", t)
+	groupWhitelistConfig := mgr.GetFixtures("group_for_groups_claim.tf", t)
+	updatedConfig := mgr.GetFixtures("remove_custom_attributes.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -228,7 +223,7 @@ func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "profile", "{\"customAttribute123\":\"testing-custom-attribute\"}"),
 				),
@@ -237,16 +232,16 @@ func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 				Config: groupWhitelistConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
-					resource.TestCheckResourceAttr(resourceName, "profile", fmt.Sprintf("{\"groups\":{\"whitelist\":[\"%s_%d\"]}}", testResourcePrefix, ri)),
+					resource.TestCheckResourceAttr(resourceName, "profile", fmt.Sprintf("{\"groups\":{\"whitelist\":[\"%s_%d\"]}}", testResourcePrefix, mgr.Seed)),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "profile", ""),
 				),
@@ -258,10 +253,10 @@ func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 // Tests various expected properties of client_id and custom_client_id
 // TODO: remove when custom_client_id is removed
 func TestAccResourceOktaAppOauth_customClientID(t *testing.T) {
-	ri := acctest.RandInt()
+	mgr := newFixtureManager(appOAuth, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -269,20 +264,20 @@ func TestAccResourceOktaAppOauth_customClientID(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				// Create App with custom_client_id set
-				Config: buildTestOAuthAppCustomClientID(ri),
+				Config: buildTestOAuthAppCustomClientID(mgr.Seed),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "custom_client_id", buildResourceName(ri)),
-					resource.TestCheckResourceAttr(resourceName, "client_id", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "custom_client_id", buildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "client_id", buildResourceName(mgr.Seed)),
 				),
 			},
 			{
 				// Replace custom_client_id with client_id
-				Config: buildTestOAuthAppClientID(ri),
+				Config: buildTestOAuthAppClientID(mgr.Seed),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "custom_client_id", ""),
-					resource.TestCheckResourceAttr(resourceName, "client_id", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "client_id", buildResourceName(mgr.Seed)),
 				),
 			},
 		},
@@ -291,16 +286,16 @@ func TestAccResourceOktaAppOauth_customClientID(t *testing.T) {
 
 // TODO: remove when custom_client_id is removed
 func TestAccResourceOktaAppOauth_customClientIDError(t *testing.T) {
-	ri := acctest.RandInt()
+	mgr := newFixtureManager(appOAuth, t.Name())
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
-				Config:      buildTestOAuthAppCustomClientIDBadConfig(ri),
+				Config:      buildTestOAuthAppCustomClientIDBadConfig(mgr.Seed),
 				ExpectError: regexp.MustCompile(`"custom_client_id": conflicts with client_id`),
 			},
 		},
@@ -309,12 +304,11 @@ func TestAccResourceOktaAppOauth_customClientIDError(t *testing.T) {
 
 // Tests an OAuth application with profile attributes. This tests with a nested JSON object as well as an array.
 func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuth)
-	config := mgr.GetFixtures("service_with_jwks.tf", ri, t)
+	mgr := newFixtureManager(appOAuth, t.Name())
+	config := mgr.GetFixtures("service_with_jwks.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -336,7 +330,7 @@ func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
 
 func createDoesAppExist(app sdk.App) func(string) (bool, error) {
 	return func(id string) (bool, error) {
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
+		client := oktaClientForTest()
 		_, response, err := client.Application.GetApplication(context.Background(), id, app, &query.Params{})
 
 		// We don't want to consider a 404 an error in some cases and thus the delineation
@@ -402,7 +396,7 @@ resource "%s" "test" {
 // https://github.com/okta/terraform-provider-okta/issues/1170
 func TestAccResourceOktaAppOauth_redirect_uris(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -439,7 +433,7 @@ func TestAccResourceOktaAppOauth_redirect_uris(t *testing.T) {
 func TestAccResourceOktaAppOauth_groups_claim(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -480,8 +474,7 @@ func TestAccResourceOktaAppOauth_groups_claim(t *testing.T) {
 }
 
 func TestAccResourceOktaAppOauth_timeouts(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuth)
+	mgr := newFixtureManager(appOAuth, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -497,14 +490,15 @@ resource "okta_app_oauth" "test" {
   }
 }
 `
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				// TODU
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),
@@ -517,8 +511,7 @@ resource "okta_app_oauth" "test" {
 }
 
 func TestAccResourceOktaAppOauth_pkce_required(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuth)
+	mgr := newFixtureManager(appOAuth, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -530,14 +523,15 @@ resource "okta_app_oauth" "test" {
   response_types = ["code"]
 }
 `
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				// TODU
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
 					resource.TestCheckResourceAttr(resourceName, "pkce_required", "true"),
@@ -554,7 +548,7 @@ resource "okta_app_oauth" "test" {
 //
 // https://developer.okta.com/docs/reference/api/apps/#username-template-object
 func TestAccResourceOktaAppOauth_config_combinations(t *testing.T) {
-	mgr := newFixtureManager(appOAuth)
+	mgr := newFixtureManager(appOAuth, t.Name())
 
 	cases := []struct {
 		name               string
@@ -863,7 +857,6 @@ func TestAccResourceOktaAppOauth_config_combinations(t *testing.T) {
 		},
 	}
 	for _, test := range cases {
-		ri := acctest.RandInt()
 		resourceName := fmt.Sprintf("%s.%s", appOAuth, test.name)
 		config := fmt.Sprintf(test.config, test.name)
 		testFuncs := []resource.TestCheckFunc{
@@ -885,14 +878,15 @@ func TestAccResourceOktaAppOauth_config_combinations(t *testing.T) {
 			}
 		}
 
-		resource.Test(t, resource.TestCase{
+		oktaResourceTest(t, resource.TestCase{
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        errorCheck,
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 			Steps: []resource.TestStep{
 				{
-					Config: mgr.ConfigReplace(config, ri),
+					// TODU
+					Config: mgr.ConfigReplace(config),
 					Check:  resource.ComposeTestCheckFunc(testFuncs...),
 				},
 			},

@@ -41,7 +41,7 @@ func resourceFactor() *schema.Resource {
 }
 
 func resourceFactorPut(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	factor, _, err := getSupplementFromMetadata(m).GetOrgFactor(ctx, d.Get("provider_id").(string))
+	factor, _, err := getAPISupplementFromMetadata(m).GetOrgFactor(ctx, d.Get("provider_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to find factor: %v", err)
 	}
@@ -57,7 +57,7 @@ func resourceFactorPut(ctx context.Context, d *schema.ResourceData, m interface{
 }
 
 func resourceFactorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	factor, resp, err := getSupplementFromMetadata(m).GetOrgFactor(ctx, d.Id())
+	factor, resp, err := getAPISupplementFromMetadata(m).GetOrgFactor(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to find factor: %v", err)
 	}
@@ -74,7 +74,7 @@ func resourceFactorDelete(ctx context.Context, d *schema.ResourceData, m interfa
 	if !d.Get("active").(bool) {
 		return nil
 	}
-	_, resp, err := getSupplementFromMetadata(m).DeactivateOrgFactor(ctx, d.Id())
+	_, resp, err := getAPISupplementFromMetadata(m).DeactivateOrgFactor(ctx, d.Id())
 	// http.StatusBadRequest means that factor can not be deactivated
 	if resp != nil && resp.StatusCode == http.StatusBadRequest {
 		return nil
@@ -89,9 +89,9 @@ func activateFactor(ctx context.Context, d *schema.ResourceData, m interface{}) 
 	var err error
 	id := d.Get("provider_id").(string)
 	if d.Get("active").(bool) {
-		_, _, err = getSupplementFromMetadata(m).ActivateOrgFactor(ctx, id)
+		_, _, err = getAPISupplementFromMetadata(m).ActivateOrgFactor(ctx, id)
 	} else {
-		_, _, err = getSupplementFromMetadata(m).DeactivateOrgFactor(ctx, id)
+		_, _, err = getAPISupplementFromMetadata(m).DeactivateOrgFactor(ctx, id)
 	}
 	return err
 }

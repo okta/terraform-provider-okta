@@ -37,7 +37,7 @@ func resourcePolicyMfaDefaultCreateOrUpdate(ctx context.Context, d *schema.Resou
 		}
 		id = policy.Id
 	}
-	_, _, err := getSupplementFromMetadata(m).UpdatePolicy(ctx, id, buildDefaultMFAPolicy(d))
+	_, _, err := getAPISupplementFromMetadata(m).UpdatePolicy(ctx, id, buildDefaultMFAPolicy(d))
 	if err != nil {
 		return diag.Errorf("failed to update default MFA policy: %v", err)
 	}

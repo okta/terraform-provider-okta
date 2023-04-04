@@ -36,7 +36,7 @@ func resourcePolicyProfileEnrollmentCreate(ctx context.Context, d *schema.Resour
 		return resourceOIEOnlyFeatureError(policyProfileEnrollment)
 	}
 
-	policy, _, err := getSupplementFromMetadata(m).CreatePolicy(ctx, buildPolicyProfileEnrollment(d))
+	policy, _, err := getAPISupplementFromMetadata(m).CreatePolicy(ctx, buildPolicyProfileEnrollment(d))
 	if err != nil {
 		return diag.Errorf("failed to create profile enrollment policy: %v", err)
 	}
@@ -73,7 +73,7 @@ func resourcePolicyProfileEnrollmentUpdate(ctx context.Context, d *schema.Resour
 		return resourceOIEOnlyFeatureError(policyProfileEnrollment)
 	}
 
-	_, _, err := getSupplementFromMetadata(m).UpdatePolicy(ctx, d.Id(), buildPolicyProfileEnrollment(d))
+	_, _, err := getAPISupplementFromMetadata(m).UpdatePolicy(ctx, d.Id(), buildPolicyProfileEnrollment(d))
 	if err != nil {
 		return diag.Errorf("failed to update profile enrollment policy: %v", err)
 	}

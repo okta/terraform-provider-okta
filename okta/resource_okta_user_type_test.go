@@ -6,19 +6,17 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccOktaUserType_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", userType)
-	mgr := newFixtureManager(userType)
-	config := mgr.GetFixtures("okta_user_type.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("okta_user_type_updated.tf", ri, t)
+	mgr := newFixtureManager(userType, t.Name())
+	config := mgr.GetFixtures("okta_user_type.tf", t)
+	updatedConfig := mgr.GetFixtures("okta_user_type_updated.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -27,14 +25,14 @@ func TestAccOktaUserType_crud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "display_name", "Terraform Acceptance Test User Type"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test User Type")),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "display_name", "Terraform Acceptance Test User Type Updated"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test User Type Updated")),
 			},
@@ -54,6 +52,7 @@ func TestAccOktaUserType_crud(t *testing.T) {
 }
 
 func doesUserTypeExist(id string) (bool, error) {
-	_, response, err := getOktaClientFromMetadata(testAccProvider.Meta()).UserType.GetUserType(context.Background(), id)
+	client := oktaClientForTest()
+	_, response, err := client.UserType.GetUserType(context.Background(), id)
 	return doesResourceExist(response, err)
 }

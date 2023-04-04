@@ -5,24 +5,22 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccResourceOktaBrand_import_update(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(brand)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
-	importConfig := mgr.GetFixtures("import.tf", ri, t)
+	mgr := newFixtureManager(brand, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
+	importConfig := mgr.GetFixtures("import.tf", t)
 
 	// okta_brand is read and update only, so set up the test by importing the brand first
 
 	// NOTE this test will only pass on an org that hasn't had any of its brand
 	// values changed in the Admin UI. Need to look into making this more
 	// robust.
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
