@@ -57,7 +57,6 @@ func TestAccOktaAppSignOnPolicy_destroy(t *testing.T) {
 		CheckDestroy:      checkOktaGroupSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(`
 # We create a sign on policy and two apps that have that sign on policy as their
 # authentication policy.
@@ -110,7 +109,6 @@ data "okta_app_signon_policy" "test2" {
 				),
 			},
 			{
-				// TODU
 				Config: mgr.ConfigReplace(`
 
 # We destroy the sign on policy then check that both apps have been assigned to

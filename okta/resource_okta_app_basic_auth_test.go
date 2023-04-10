@@ -69,7 +69,6 @@ resource "okta_app_basic_auth" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appBasicAuth, createDoesAppExist(sdk.NewBasicAuthApplication())),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),

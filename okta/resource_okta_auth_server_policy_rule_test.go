@@ -77,7 +77,6 @@ resource "okta_auth_server_policy" "test" {
 			CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
 			Steps: []resource.TestStep{
 				{
-					// TODU
 					Config: mgr.ConfigReplace(config),
 					Check: resource.ComposeTestCheckFunc(
 						// Just check if policy rule 09 exists. We only care

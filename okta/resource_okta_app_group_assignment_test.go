@@ -190,7 +190,6 @@ resource "okta_app_group_assignment" "test" {
 		CheckDestroy:      testAccCheckUserDestroy,
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName0, "timeouts.create", "60m"),

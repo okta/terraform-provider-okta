@@ -101,7 +101,6 @@ resource "okta_app_shared_credentials" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appSharedCredentials, createDoesAppExist(sdk.NewBrowserPluginApplication())),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),

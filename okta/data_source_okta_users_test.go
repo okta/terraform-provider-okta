@@ -13,7 +13,6 @@ var (
 	allGroupMembershipsRegexp, _ = regexp.Compile("00g[a-z,A-Z,0-9]{17}, 00g[a-z,A-Z,0-9]{17}")
 )
 
-// TODU
 func TestAccOktaDataSourceUsers_read(t *testing.T) {
 	mgr := newFixtureManager(users, t.Name())
 	users := mgr.GetFixtures("users.tf", t)
@@ -129,7 +128,6 @@ func TestAccDataSourceOktaUsers_IncludeNone(t *testing.T) {
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(testOktaUsersRolesGroupsConfig(false, false)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_users.test", "users.#", "1"),
@@ -152,7 +150,6 @@ func TestAccDataSourceOktaUsers_IncludeGroups(t *testing.T) {
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(testOktaUsersRolesGroupsConfig(true, false)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_users.test", "users.#", "1"),
@@ -175,7 +172,6 @@ func TestAccDataSourceOktaUsers_IncludeRoles(t *testing.T) {
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(testOktaUsersRolesGroupsConfig(false, true)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_users.test", "users.#", "1"),
@@ -198,7 +194,6 @@ func TestAccDataSourceOktaUsers_IncludeAll(t *testing.T) {
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(testOktaUsersRolesGroupsConfig(true, true)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_users.test", "users.#", "1"),

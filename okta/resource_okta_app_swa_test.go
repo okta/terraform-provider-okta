@@ -106,7 +106,6 @@ resource "okta_app_swa" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),

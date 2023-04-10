@@ -69,7 +69,6 @@ func TestAccDataSourceOktaUser_SkipAdminRoles(t *testing.T) {
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(false, true)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckNoResourceAttr("data.okta_user.test", "admin_roles.#"),          // skipped
@@ -90,7 +89,6 @@ func TestAccDataSourceOktaUser_SkipGroups(t *testing.T) {
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(true, false)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_user.test", "admin_roles.#", "2"),       // SUPER_ADMIN, APP_ADMIN
@@ -111,7 +109,6 @@ func TestAccDataSourceOktaUser_SkipGroupsSkipRoles(t *testing.T) {
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(true, true)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_user.test", "admin_roles.#", "0"),       // skipped
@@ -134,7 +131,6 @@ func TestAccDataSourceOktaUser_NoSkips(t *testing.T) {
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(false, false)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_user.test", "admin_roles.#", "2"),       // SUPER_ADMIN, APP_ADMIN

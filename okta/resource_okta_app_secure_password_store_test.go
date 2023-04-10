@@ -70,7 +70,6 @@ resource "okta_app_secure_password_store" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),

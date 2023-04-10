@@ -66,7 +66,6 @@ resource "okta_app_bookmark" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
@@ -123,7 +122,6 @@ resource "okta_app_bookmark" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),

@@ -14,7 +14,6 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-// TODU
 // Tests a standard OAuth application with an updated type. This tests the ForceNew on type and tests creating an
 // ACTIVE and INACTIVE application via the create action.
 func TestAccResourceOktaAppOauth_basic(t *testing.T) {
@@ -497,7 +496,6 @@ resource "okta_app_oauth" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
@@ -530,7 +528,6 @@ resource "okta_app_oauth" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
@@ -885,7 +882,6 @@ func TestAccResourceOktaAppOauth_config_combinations(t *testing.T) {
 			CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 			Steps: []resource.TestStep{
 				{
-					// TODU
 					Config: mgr.ConfigReplace(config),
 					Check:  resource.ComposeTestCheckFunc(testFuncs...),
 				},

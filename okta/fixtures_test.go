@@ -1,9 +1,10 @@
 package okta
 
 import (
+	"bytes"
 	"fmt"
 	"hash/fnv"
-	"io/ioutil"
+	"io"
 	"os"
 	"path"
 	"strings"
@@ -50,12 +51,12 @@ func (manager *fixtureManager) GetFixtures(fixtureName string, t *testing.T) str
 		t.Fatalf("failed to load terraform fixtures for ACC test, err: %v", err)
 	}
 	defer file.Close()
-	// TODU
-	rawFile, err := ioutil.ReadAll(file)
+	var rawFile bytes.Buffer
+	_, err = io.Copy(&rawFile, file)
 	if err != nil {
 		t.Fatalf("failed to load terraform fixtures for ACC test, err: %v", err)
 	}
-	tfConfig := string(rawFile)
+	tfConfig := rawFile.String()
 	if strings.Count(tfConfig, uuidPattern) == 0 {
 		return tfConfig
 	}

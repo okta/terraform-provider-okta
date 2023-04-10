@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -402,7 +402,7 @@ func getCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 			log.Printf("[DEBUG] Failed to read request body from cassette: %v", err)
 			return false
 		}
-		r.Body = ioutil.NopCloser(&b)
+		r.Body = io.NopCloser(&b)
 		reqBody := b.String()
 		// If body matches identically, we are done
 		if reqBody == i.Body {
@@ -542,7 +542,7 @@ func (m *vcrManager) ValidMode() bool {
 
 // HasCassettesToPlay VCR is in play mode and there are cassette files to play.
 func (m *vcrManager) HasCassettesToPlay() bool {
-	files, err := ioutil.ReadDir(m.CassettesPath)
+	files, err := os.ReadDir(m.CassettesPath)
 	if err != nil {
 		return false
 	}
@@ -592,7 +592,7 @@ func (m *vcrManager) Cassettes() []string {
 	}
 
 	cassettes := []string{}
-	files, err := ioutil.ReadDir(path.Join(m.CassettesPath))
+	files, err := os.ReadDir(path.Join(m.CassettesPath))
 	if err != nil {
 		return cassettes
 	}

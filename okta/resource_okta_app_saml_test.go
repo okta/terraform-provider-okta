@@ -400,7 +400,6 @@ resource "okta_app_saml" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),

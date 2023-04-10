@@ -104,7 +104,6 @@ resource "okta_app_user_schema_property" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
@@ -169,7 +168,7 @@ resource "okta_app_user_schema_property" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				// TODU
+
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
@@ -234,7 +233,6 @@ resource "okta_app_user_schema_property" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
@@ -299,7 +297,6 @@ resource "okta_app_user_schema_property" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
@@ -361,7 +358,6 @@ resource "okta_app_user_schema_property" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
@@ -420,7 +416,6 @@ resource "okta_app_user_schema_property" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
@@ -482,7 +477,6 @@ resource "okta_app_user_schema_property" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
@@ -547,7 +541,6 @@ resource "okta_app_user_schema_property" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-				// TODU
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
@@ -658,10 +651,8 @@ resource "okta_app_user_schema_property" "five" {
 		rw[i] = "READ_WRITE"
 	}
 	roConfig := fmt.Sprintf(config, ro...)
-	// TODU
 	roConfig = mgr.ConfigReplace(roConfig)
 	rwConfig := fmt.Sprintf(config, rw...)
-	// TODU
 	rwConfig = mgr.ConfigReplace(rwConfig)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
