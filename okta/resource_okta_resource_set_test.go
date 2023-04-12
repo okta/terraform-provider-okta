@@ -6,17 +6,15 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaResourceSet(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(resourceSet)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(resourceSet, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resourceSet)
-	resource.Test(
+	oktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
@@ -26,7 +24,7 @@ func TestAccOktaResourceSet(t *testing.T) {
 				{
 					Config: config,
 					Check: resource.ComposeTestCheckFunc(
-						resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+						resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 						resource.TestCheckResourceAttr(resourceName, "description", "testing, testing"),
 						resource.TestCheckResourceAttr(resourceName, "resources.#", "3"),
 					),
@@ -34,18 +32,13 @@ func TestAccOktaResourceSet(t *testing.T) {
 				{
 					Config: updated,
 					Check: resource.ComposeTestCheckFunc(
-						resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+						resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 						resource.TestCheckResourceAttr(resourceName, "description", "testing, testing updated"),
 						resource.TestCheckResourceAttr(resourceName, "resources.#", "2"),
 					),
 				},
 			},
 		})
-}
-
-func doesResourceSetExist(id string) (bool, error) {
-	_, response, err := getSupplementFromMetadata(testAccProvider.Meta()).GetResourceSet(context.Background(), id)
-	return doesResourceExist(response, err)
 }
 
 // TestAccResrouceOktaResourceSet_Issue1097_Pagination deals with resolving a
@@ -76,10 +69,9 @@ func TestAccResrouceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 					"https://%s.%s/api/v1/groups/${group.id}"
 			]
 		}`, orgName, baseUrl)
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(resourceSet)
+	mgr := newFixtureManager(resourceSet, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resourceSet)
-	resource.Test(
+	oktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
@@ -87,9 +79,9 @@ func TestAccResrouceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 			CheckDestroy:      createCheckResourceDestroy(resourceSet, doesResourceSetExist),
 			Steps: []resource.TestStep{
 				{
-					Config: mgr.ConfigReplace(config, ri),
+					Config: mgr.ConfigReplace(config),
 					Check: resource.ComposeTestCheckFunc(
-						resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+						resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 						// NOTE: before bug fix test would error out on having a
 						// detected change of extra items in the resources list
 						// beyond the first 100 resources.
@@ -100,4 +92,10 @@ func TestAccResrouceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 				},
 			},
 		})
+}
+
+func doesResourceSetExist(id string) (bool, error) {
+	client := apiSupplementForTest()
+	_, response, err := client.GetResourceSet(context.Background(), id)
+	return doesResourceExist(response, err)
 }

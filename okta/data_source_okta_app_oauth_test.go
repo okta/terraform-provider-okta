@@ -4,17 +4,15 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaDataSourceAppOauth_read(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuth)
-	config := mgr.GetFixtures("datasource.tf", ri, t)
-	appCreate := buildTestAppOauth(ri)
+	mgr := newFixtureManager(appOAuth, t.Name())
+	config := mgr.GetFixtures("datasource.tf", t)
+	appCreate := buildTestAppOauth(mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -30,8 +28,8 @@ func TestAccOktaDataSourceAppOauth_read(t *testing.T) {
 					resource.TestCheckResourceAttrSet("data.okta_app_oauth.test", "grant_types.#"),
 					resource.TestCheckResourceAttrSet("data.okta_app_oauth.test", "redirect_uris.#"),
 					resource.TestCheckResourceAttrSet("data.okta_app_oauth.test", "type"),
-					resource.TestCheckResourceAttr("data.okta_app_oauth.test", "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr("data.okta_app_oauth.test_label", "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr("data.okta_app_oauth.test", "label", buildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr("data.okta_app_oauth.test_label", "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr("data.okta_app_oauth.test", "status", statusActive),
 					resource.TestCheckResourceAttr("data.okta_app_oauth.test_label", "status", statusActive),
 				),

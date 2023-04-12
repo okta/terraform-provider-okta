@@ -328,7 +328,7 @@ func getOktaV3ClientFromMetadata(meta interface{}) *okta.APIClient {
 	return meta.(*Config).v3Client
 }
 
-func getSupplementFromMetadata(meta interface{}) *sdk.APISupplement {
+func getAPISupplementFromMetadata(meta interface{}) *sdk.APISupplement {
 	return meta.(*Config).supplementClient
 }
 

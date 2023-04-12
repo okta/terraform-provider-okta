@@ -9,22 +9,21 @@ import (
 )
 
 func TestAccOktaIdpSaml_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(idpSaml)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(idpSaml, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", idpSaml)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpSaml, createDoesIdpExist()),
+		CheckDestroy:      createCheckResourceDestroy(idpSaml, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "acs_type", "INSTANCE"),
 					resource.TestCheckResourceAttrSet(resourceName, "audience"),
 					resource.TestCheckResourceAttr(resourceName, "sso_url", "https://idp.example.com"),
@@ -42,7 +41,7 @@ func TestAccOktaIdpSaml_crud(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "max_clock_skew", "60"),
 					resource.TestCheckResourceAttr(resourceName, "acs_type", "INSTANCE"),
 					resource.TestCheckResourceAttrSet(resourceName, "audience"),
@@ -68,7 +67,7 @@ func TestAccOktaIdpSaml_crud(t *testing.T) {
 // the feature was enabled.
 func TestAccOktaIdpSaml_minimal_example(t *testing.T) {
 	ri := acctest.RandInt()
-	mgr := newFixtureManager(idpSaml)
+	mgr := newFixtureManager(idpSaml, t.Name())
 	config := `
 resource "okta_app_saml" "test" {
 	label                    = "testAcc_replace_with_uuid"
@@ -102,14 +101,14 @@ resource "okta_idp_saml" "test" {
 	`
 	resourceName := fmt.Sprintf("%s.test", idpSaml)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpSaml, createDoesIdpExist()),
+		CheckDestroy:      createCheckResourceDestroy(idpSaml, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
 					resource.TestCheckResourceAttr(resourceName, "acs_type", "INSTANCE"),

@@ -4,19 +4,17 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func TestAccAppBookmarkApplication_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appBookmark)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(appBookmark, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appBookmark)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -26,7 +24,7 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
 					resource.TestCheckResourceAttr(resourceName, "groups.#", "1"),
@@ -37,7 +35,7 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
 					resource.TestCheckResourceAttr(resourceName, "users.#", "1"),
@@ -49,8 +47,7 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 }
 
 func TestAccAppBookmarkApplication_timeouts(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appBookmark)
+	mgr := newFixtureManager(appBookmark, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appBookmark)
 	config := `
 resource "okta_app_bookmark" "test" {
@@ -62,14 +59,14 @@ resource "okta_app_bookmark" "test" {
     update = "30m"
   }
 }`
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),
@@ -84,8 +81,7 @@ resource "okta_app_bookmark" "test" {
 // TestAccAppBookmarkApplication_PR1366 Test for @jakezarobsky-8451 PR #1366
 // https://github.com/okta/terraform-provider-okta/pull/1366
 func TestAccAppBookmarkApplication_PR1366_authentication_policy(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appBookmark)
+	mgr := newFixtureManager(appBookmark, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appBookmark)
 	config := `
 resource "okta_group" "group" {
@@ -119,17 +115,17 @@ resource "okta_app_bookmark" "test" {
   }
   authentication_policy = okta_app_signon_policy.test.id
 }`
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
 					resource.TestCheckResourceAttr(resourceName, "groups.#", "1"),

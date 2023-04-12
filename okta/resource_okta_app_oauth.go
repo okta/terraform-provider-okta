@@ -464,7 +464,7 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m inter
 	} else {
 		gc.ValueType = gct
 	}
-	_, err := getSupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
+	_, err := getAPISupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
 	return err
 }
 
@@ -477,7 +477,7 @@ func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m in
 		gc := &sdk.AppOauthGroupClaim{
 			IssuerMode: d.Get("issuer_mode").(string),
 		}
-		_, err := getSupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
+		_, err := getAPISupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
 		return err
 	}
 	return setAppOauthGroupsClaim(ctx, d, m)
@@ -546,7 +546,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 }
 
 func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface{}) (*schema.Set, error) {
-	gc, resp, err := getSupplementFromMetadata(m).GetAppOauthGroupsClaim(ctx, d.Id())
+	gc, resp, err := getAPISupplementFromMetadata(m).GetAppOauthGroupsClaim(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return nil, fmt.Errorf("failed to get groups claim for OAuth application: %w", err)
 	}

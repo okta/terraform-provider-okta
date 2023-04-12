@@ -5,16 +5,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaLinkDefinition(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(linkDefinition)
-	config := mgr.GetFixtures("basic.tf", ri, t)
+	mgr := newFixtureManager(linkDefinition, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", linkDefinition)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -23,7 +21,7 @@ func TestAccOktaLinkDefinition(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "primary_name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "primary_name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "primary_title", "Manager"),
 					resource.TestCheckResourceAttr(resourceName, "primary_description", "Manager link property"),
 					resource.TestCheckResourceAttr(resourceName, "associated_name", "testAcc_subordinate"),
@@ -36,7 +34,8 @@ func TestAccOktaLinkDefinition(t *testing.T) {
 }
 
 func doesLinkDefinitionExist(id string) (bool, error) {
-	_, response, err := getOktaClientFromMetadata(testAccProvider.Meta()).LinkedObject.GetLinkedObjectDefinition(context.Background(), id)
+	client := oktaClientForTest()
+	_, response, err := client.LinkedObject.GetLinkedObjectDefinition(context.Background(), id)
 	return doesResourceExist(response, err)
 }
 
@@ -48,8 +47,7 @@ func doesLinkDefinitionExist(id string) (bool, error) {
 // calling mutex in the resource to impose the equivelent of `terraform
 // -parallelism=1`
 func TestAccResourceOktaLinkDefinition_parallel_api_calls(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(linkDefinition)
+	mgr := newFixtureManager(linkDefinition, t.Name())
 	config := `
 resource "okta_link_definition" "one" {
 	primary_name           = "testAcc_replace_with_uuid_one"
@@ -92,8 +90,8 @@ resource "okta_link_definition" "five" {
 	associated_description = "five_a"
 }
 `
-	config = mgr.ConfigReplace(config, ri)
-	resource.Test(t, resource.TestCase{
+	config = mgr.ConfigReplace(config)
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,

@@ -1,0 +1,70 @@
+---
+version: 1
+interactions:
+- request:
+    body: |
+      {"associated":{"description":"Subordinate link property","name":"testAcc_subordinate","title":"Subordinate","type":"USER"},"primary":{"description":"Manager link property","name":"testAcc_3823543266","title":"Manager","type":"USER"}}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.17.0 golang/go1.20.2 darwin/arm64 okta-terraform/3.44.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/linkedObjects
+    method: POST
+  response:
+    body: '{"primary":{"name":"testAcc_3823543266","title":"Manager","description":"Manager link property","type":"USER"},"associated":{"name":"testAcc_subordinate","title":"Subordinate","description":"Subordinate link property","type":"USER"},"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/linkedObjects/testAcc_3823543266"}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 06 Apr 2023 19:53:38 GMT
+    status: 201 Created
+    code: 201
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.17.0 golang/go1.20.2 darwin/arm64 okta-terraform/3.44.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/linkedObjects/testAcc_3823543266
+    method: GET
+  response:
+    body: '{"primary":{"name":"testAcc_3823543266","title":"Manager","description":"Manager link property","type":"USER"},"associated":{"name":"testAcc_subordinate","title":"Subordinate","description":"Subordinate link property","type":"USER"},"_links":{"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/linkedObjects/testAcc_3823543266"}}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 06 Apr 2023 19:53:38 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.17.0 golang/go1.20.2 darwin/arm64 okta-terraform/3.44.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/meta/schemas/user/linkedObjects/testAcc_3823543266
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Date:
+      - Thu, 06 Apr 2023 19:53:38 GMT
+    status: 204 No Content
+    code: 204
+    duration: ""

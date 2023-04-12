@@ -32,6 +32,7 @@ ability to merge PRs and respond to the issues.
     - [Acceptance Testing Guidelines](#acceptance-testing-guidelines)
   - [Writing Acceptance Tests](#writing-acceptance-tests)
     - [Acceptance Tests Often Cost Money to Run](#acceptance-tests-often-cost-money-to-run)
+    - [Acceptance Tests With VCR](#acceptance-tests-with-vcr)
     - [Running an Acceptance Test](#running-an-acceptance-test)
     - [Writing an Acceptance Test](#writing-an-acceptance-test)
 
@@ -351,6 +352,64 @@ pull request. We will happily accept "best effort" implementations of
 acceptance tests and run them for you on our side. This might mean that your PR
 takes a bit longer to merge, but it most definitely is not a blocker for
 contributions.
+
+#### Acceptance Tests With VCR
+
+The provider's acceptance tests are integrated with
+[go-vcr](https://github.com/dnaeon/go-vcr) to allow running, fast, valid, off
+the wire acceptance tests. The signal for VCR mode is the ENV var
+`OKTA_VCR_TF_ACC` with a value of `record` or `play`. If the mode is `play`
+then the named test is run for each of the cassettes (YAML files) in the
+`test/fixtures/vcr/{test-name}/` directory. If the mode is `record` then the
+ENV var `OKTA_VCR_CASSETTE` with a value for the cassette name must be set. All
+of the HTTP requests/responses are recorded to that cassette file. Finally, if
+the `test/fixtures/vcr/{test-name}/` directory or
+`test/fixtures/vcr/{test-name}/{cassete-name}`file does not exist then that
+named test is marked a skip.
+
+The harness will not overwrite an existing cassette file when it is in record
+mode.  The developer must delete that cassette from the file system first
+before it is re-recorded.
+
+An important subtlety to be called out here is that cassettes can be recorded
+for different orgs. Therefore using an intelligent naming convention for
+`OKTA_VCR_CASSETTE` new cassettes can be recorded an org with specific feature
+flags enabled on it. Thereafter, that org doesn't need to be live any further
+to have its tests run as they are replayed with VCR. If you add new cassettes
+to the repo please add notes about them in the `test/fixtures/vcr/CASSETTES.md`
+file.
+
+Examples:
+
+Run all VCR enabled tests
+```
+OKTA_VCR_TF_ACC=play make testacc
+# or
+make test-play-vcr-acc
+```
+
+Run a single VCR enabled test
+```
+OKTA_VCR_TF_ACC=play make testacc TEST=./okta TESTARGS='-run=TestAccOktaGroup_crud'
+# or
+make test-play-vcr-acc TEST=./okta TESTARGS='-run=TestAccOktaGroup_crud'
+```
+
+Record a new VCR cassette for specific test
+```
+OKTA_VCR_CASSETTE=oie-with-feature-x OKTA_VCR_TF_ACC=record make testacc TEST=./okta TESTARGS='-run=TestAccOktaGroup_crud'
+# or
+OKTA_VCR_CASSETTE=oie-with-feature-x make test-record-vcr-acc TEST=./okta TESTARGS='-run=TestAccOktaGroup_crud'
+# NOTE cassette file dropped in:
+# test/fixtures/vcr/TestAccOktaGroup_crud/oie-with-feature-x.yaml
+```
+
+Record a new VCR cassette for all tests
+```
+OKTA_VCR_CASSETTE=oie-with-feature-x OKTA_VCR_TF_ACC=record make testacc
+# or
+OKTA_VCR_CASSETTE=oie-with-feature-x make test-record-vcr-acc
+```
 
 #### Running an Acceptance Test
 

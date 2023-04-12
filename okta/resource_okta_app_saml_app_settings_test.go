@@ -7,20 +7,18 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func TestAccAppSamlAppSettings_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSamlAppSettings)
-	preconfigured := mgr.GetFixtures("preconfigured.tf", ri, t)
-	updated := mgr.GetFixtures("preconfigured_updated.tf", ri, t)
+	mgr := newFixtureManager(appSamlAppSettings, t.Name())
+	preconfigured := mgr.GetFixtures("preconfigured.tf", t)
+	updated := mgr.GetFixtures("preconfigured_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSamlAppSettings)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -44,15 +42,15 @@ func TestAccAppSamlAppSettings_crud(t *testing.T) {
 	})
 }
 
-func checkAppSamlAppSettingsExists(name string) resource.TestCheckFunc {
+func checkAppSamlAppSettingsExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		missingErr := fmt.Errorf("resource not found: %s", name)
-		rs, ok := s.RootModule().Resources[name]
+		missingErr := fmt.Errorf("resource not found: %s", resourceName)
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return missingErr
 		}
 		appID := rs.Primary.Attributes["app_id"]
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
+		client := oktaClientForTest()
 		app := sdk.NewSamlApplication()
 		_, _, err := client.Application.GetApplication(context.Background(), appID, app, nil)
 		if err != nil {

@@ -4,18 +4,16 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaAuthServerClaim_create(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", authServerClaim)
-	mgr := newFixtureManager(authServerClaim)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(authServerClaim, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -46,13 +44,12 @@ func TestAccOktaAuthServerClaim_create(t *testing.T) {
 }
 
 func TestAccOktaAuthServerClaim_groupType(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", authServerClaim)
 	swResourceName := fmt.Sprintf("%s.test_sw", authServerClaim)
-	mgr := newFixtureManager(authServerClaim)
-	config := mgr.GetFixtures("basic_group.tf", ri, t)
+	mgr := newFixtureManager(authServerClaim, t.Name())
+	config := mgr.GetFixtures("basic_group.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,

@@ -6,23 +6,21 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func TestAccOktaOrgConfiguration(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", orgConfiguration)
-	mgr := newFixtureManager(orgConfiguration)
-	config := mgr.GetFixtures("standard.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("standard_updated.tf", ri, t)
+	mgr := newFixtureManager(orgConfiguration, t.Name())
+	config := mgr.GetFixtures("standard.tf", t)
+	updatedConfig := mgr.GetFixtures("standard_updated.tf", t)
 	var originalCompanyName string
-	companyName := fmt.Sprintf("testAcc-%d Hashicorp CI Terraform Provider Okta", ri)
-	companyNameUpdated := fmt.Sprintf("testAcc-%d Hashicorp CI Terraform Provider Okta Updated", ri)
+	companyName := fmt.Sprintf("testAcc-%d Hashicorp CI Terraform Provider Okta", mgr.Seed)
+	companyNameUpdated := fmt.Sprintf("testAcc-%d Hashicorp CI Terraform Provider Okta Updated", mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -51,7 +49,7 @@ func TestAccOktaOrgConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "company_name", companyNameUpdated),
 					resource.TestCheckResourceAttr(resourceName, "website", "https://terraform.com"),
-					resource.TestCheckResourceAttr(resourceName, "phone_number", strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "phone_number", strconv.Itoa(mgr.Seed)),
 				),
 			},
 			{
@@ -85,7 +83,7 @@ func teardownResetCompanyName(name *string) resource.TestCheckFunc {
 		setting := sdk.OrgSetting{
 			CompanyName: *name + " ?",
 		}
-		getOktaClientFromMetadata(testAccProvider.Meta()).OrgSetting.PartialUpdateOrgSetting(context.Background(), setting)
+		oktaClientForTest().OrgSetting.PartialUpdateOrgSetting(context.Background(), setting)
 		return nil
 	}
 }
@@ -94,7 +92,7 @@ func teardownResetCompanyName(name *string) resource.TestCheckFunc {
 // back at teardown.
 func setupGetOriginalCompanyName(companyName *string) resource.TestCheckFunc {
 	return func(t *terraform.State) error {
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
+		client := oktaClientForTest()
 		if settings, _, err := client.OrgSetting.GetOrgSettings(context.Background()); err == nil {
 			*companyName = settings.CompanyName
 		}

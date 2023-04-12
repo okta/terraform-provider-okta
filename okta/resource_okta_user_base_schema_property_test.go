@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -16,14 +15,13 @@ const (
 )
 
 func TestAccOktaUserBaseSchema_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(userBaseSchemaProperty)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("updated.tf", ri, t)
-	nonDefault := mgr.GetFixtures("non_default_user_type.tf", ri, t)
+	mgr := newFixtureManager(userBaseSchemaProperty, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
+	nonDefault := mgr.GetFixtures("non_default_user_type.tf", t)
 	resourceName := fmt.Sprintf("%s.%s", userBaseSchemaProperty, firstNameTestProp)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -76,13 +74,12 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 }
 
 func TestAccOktaUserBaseSchemaLogin_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(userBaseSchemaProperty)
-	config := mgr.GetFixtures("basic_login.tf", ri, t)
-	updated := mgr.GetFixtures("login_updated.tf", ri, t)
+	mgr := newFixtureManager(userBaseSchemaProperty, t.Name())
+	config := mgr.GetFixtures("basic_login.tf", t)
+	updated := mgr.GetFixtures("login_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.%s", userBaseSchemaProperty, loginTestProp)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -125,12 +122,12 @@ func TestAccOktaUserBaseSchemaLogin_crud(t *testing.T) {
 	})
 }
 
-func testOktaUserBaseSchemasExists(name string) resource.TestCheckFunc {
+func testOktaUserBaseSchemasExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
-		rs, ok := s.RootModule().Resources[name]
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
-			return fmt.Errorf("not found: %s", name)
+			return fmt.Errorf("not found: %s", resourceName)
 		}
 		schemaUserType := "default"
 		if rs.Primary.Attributes["user_type"] != "" {
@@ -198,7 +195,7 @@ resource "okta_user_base_schema_property" "mobilephone" {
 	}
 	roConfig := fmt.Sprintf(config, ro...)
 	rwConfig := fmt.Sprintf(config, rw...)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,

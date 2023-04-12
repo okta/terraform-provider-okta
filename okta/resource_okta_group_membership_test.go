@@ -6,19 +6,16 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaGroupMembership_crud(t *testing.T) {
-	ri := acctest.RandInt()
+	mgr := newFixtureManager(groupMembership, t.Name())
+	config := mgr.GetFixtures("okta_group_membership.tf", t)
+	updatedConfig := mgr.GetFixtures("okta_group_membership_updated.tf", t)
+	removedConfig := mgr.GetFixtures("okta_group_membership_removed.tf", t)
 
-	mgr := newFixtureManager(groupMembership)
-	config := mgr.GetFixtures("okta_group_membership.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("okta_group_membership_updated.tf", ri, t)
-	removedConfig := mgr.GetFixtures("okta_group_membership_removed.tf", ri, t)
-
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -41,7 +38,7 @@ func checkMembershipState(id string) (bool, error) {
 	ids := strings.Split(id, "+")
 	groupId := ids[0]
 	userId := ids[1]
-	client := getOktaClientFromMetadata(testAccProvider.Meta())
+	client := oktaClientForTest()
 	state, err := checkIfUserInGroup(context.Background(), client, groupId, userId)
 	if err != nil {
 		if strings.Contains(err.Error(), fmt.Sprintf("Resource not found: %s (UserGroup)", groupId)) {

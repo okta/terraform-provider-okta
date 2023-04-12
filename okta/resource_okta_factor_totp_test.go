@@ -5,16 +5,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaFactorTOTP(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", factorTotp)
-	mgr := newFixtureManager(factorTotp)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	resource.Test(t, resource.TestCase{
+	mgr := newFixtureManager(factorTotp, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -23,7 +21,7 @@ func TestAccOktaFactorTOTP(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "otp_length", "10"),
 					resource.TestCheckResourceAttr(resourceName, "hmac_algorithm", "HMacSHA256"),
 					resource.TestCheckResourceAttr(resourceName, "time_step", "30"),
@@ -36,6 +34,7 @@ func TestAccOktaFactorTOTP(t *testing.T) {
 }
 
 func doesFactorTOTPExist(id string) (bool, error) {
-	_, response, err := getSupplementFromMetadata(testAccProvider.Meta()).GetHotpFactorProfile(context.Background(), id)
+	client := apiSupplementForTest()
+	_, response, err := client.GetHotpFactorProfile(context.Background(), id)
 	return doesResourceExist(response, err)
 }

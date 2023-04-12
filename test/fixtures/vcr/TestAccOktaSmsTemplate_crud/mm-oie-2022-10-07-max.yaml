@@ -1,0 +1,185 @@
+---
+version: 1
+interactions:
+- request:
+    body: |
+      {"name":"Custom","template":"${org.name} code is: ${code}","translations":{"en":"${org.name} code is: ${code}","es":"${org.name} es: ${code}."},"type":"SMS_VERIFY_CODE"}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.17.0 golang/go1.20.2 darwin/arm64 okta-terraform/3.44.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/templates/sms
+    method: POST
+  response:
+    body: '{"id":"cst7l8twn9h3PcAHX1d7","name":"Custom","type":"SMS_VERIFY_CODE","template":"${org.name} code is: ${code}","created":"2023-04-06T20:05:13.000Z","lastUpdated":"2023-04-06T20:05:13.000Z","translations":{"en":"${org.name} code is: ${code}","es":"${org.name} es: ${code}."}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 06 Apr 2023 20:05:13 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.17.0 golang/go1.20.2 darwin/arm64 okta-terraform/3.44.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/templates/sms/cst7l8twn9h3PcAHX1d7
+    method: GET
+  response:
+    body: '{"id":"cst7l8twn9h3PcAHX1d7","name":"Custom","type":"SMS_VERIFY_CODE","template":"${org.name} code is: ${code}","created":"2023-04-06T20:05:13.000Z","lastUpdated":"2023-04-06T20:05:13.000Z","translations":{"en":"${org.name} code is: ${code}","es":"${org.name} es: ${code}."}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 06 Apr 2023 20:05:14 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.17.0 golang/go1.20.2 darwin/arm64 okta-terraform/3.44.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/templates/sms/cst7l8twn9h3PcAHX1d7
+    method: GET
+  response:
+    body: '{"id":"cst7l8twn9h3PcAHX1d7","name":"Custom","type":"SMS_VERIFY_CODE","template":"${org.name} code is: ${code}","created":"2023-04-06T20:05:13.000Z","lastUpdated":"2023-04-06T20:05:13.000Z","translations":{"en":"${org.name} code is: ${code}","es":"${org.name} es: ${code}."}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 06 Apr 2023 20:05:14 GMT
+      Report-To:
+      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.17.0 golang/go1.20.2 darwin/arm64 okta-terraform/3.44.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/templates/sms/cst7l8twn9h3PcAHX1d7
+    method: GET
+  response:
+    body: '{"id":"cst7l8twn9h3PcAHX1d7","name":"Custom","type":"SMS_VERIFY_CODE","template":"${org.name} code is: ${code}","created":"2023-04-06T20:05:13.000Z","lastUpdated":"2023-04-06T20:05:13.000Z","translations":{"en":"${org.name} code is: ${code}","es":"${org.name} es: ${code}."}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 06 Apr 2023 20:05:14 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: |
+      {"name":"Custom","template":"${org.name} updated code is: ${code}","translations":{"en":"${org.name} updated code is: ${code}","es":"${org.name} es: ${code}.","fr":"${org.name} est: ${code}."},"type":"SMS_VERIFY_CODE"}
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+      User-Agent:
+      - okta-sdk-golang/2.17.0 golang/go1.20.2 darwin/arm64 okta-terraform/3.44.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/templates/sms/cst7l8twn9h3PcAHX1d7
+    method: PUT
+  response:
+    body: '{"id":"cst7l8twn9h3PcAHX1d7","name":"Custom","type":"SMS_VERIFY_CODE","template":"${org.name} updated code is: ${code}","created":"2023-04-06T20:05:13.000Z","lastUpdated":"2023-04-06T20:05:14.000Z"}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 06 Apr 2023 20:05:14 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.17.0 golang/go1.20.2 darwin/arm64 okta-terraform/3.44.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/templates/sms/cst7l8twn9h3PcAHX1d7
+    method: GET
+  response:
+    body: '{"id":"cst7l8twn9h3PcAHX1d7","name":"Custom","type":"SMS_VERIFY_CODE","template":"${org.name} updated code is: ${code}","created":"2023-04-06T20:05:13.000Z","lastUpdated":"2023-04-06T20:05:14.000Z","translations":{"en":"${org.name} updated code is: ${code}","fr":"${org.name} est: ${code}.","es":"${org.name} es: ${code}."}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 06 Apr 2023 20:05:15 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.17.0 golang/go1.20.2 darwin/arm64 okta-terraform/3.44.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/templates/sms/cst7l8twn9h3PcAHX1d7
+    method: GET
+  response:
+    body: '{"id":"cst7l8twn9h3PcAHX1d7","name":"Custom","type":"SMS_VERIFY_CODE","template":"${org.name} updated code is: ${code}","created":"2023-04-06T20:05:13.000Z","lastUpdated":"2023-04-06T20:05:14.000Z","translations":{"en":"${org.name} updated code is: ${code}","fr":"${org.name} est: ${code}.","es":"${org.name} es: ${code}."}}'
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 06 Apr 2023 20:05:15 GMT
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      User-Agent:
+      - okta-sdk-golang/2.17.0 golang/go1.20.2 darwin/arm64 okta-terraform/3.44.0
+    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/templates/sms/cst7l8twn9h3PcAHX1d7
+    method: DELETE
+  response:
+    body: ""
+    headers:
+      Date:
+      - Thu, 06 Apr 2023 20:05:15 GMT
+    status: 204 No Content
+    code: 204
+    duration: ""

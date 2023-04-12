@@ -253,7 +253,7 @@ func applyMapping(ctx context.Context, d *schema.ResourceData, m interface{}, ma
 	if mapping.Target.Type == "appuser" {
 		appID = mapping.Target.Id
 	}
-	appUserTypes, _, err := getSupplementFromMetadata(m).GetAppUserTypes(ctx, appID)
+	appUserTypes, _, err := getAPISupplementFromMetadata(m).GetAppUserTypes(ctx, appID)
 	if err != nil {
 		return fmt.Errorf("failed to list app user types: %v", err)
 	}
@@ -267,7 +267,7 @@ func applyMapping(ctx context.Context, d *schema.ResourceData, m interface{}, ma
 		target = appUserTypes[0].Id
 	}
 	// FIXME uses internal api
-	_, err = getSupplementFromMetadata(m).ApplyMappings(ctx, source, target)
+	_, err = getAPISupplementFromMetadata(m).ApplyMappings(ctx, source, target)
 	if err != nil {
 		return fmt.Errorf("failed to apply mappings for source '%s' and target '%s': %v", source, target, err)
 	}

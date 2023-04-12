@@ -68,7 +68,7 @@ func resourceEmailSender() *schema.Resource {
 }
 
 func resourceEmailSenderCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	sender, _, err := getSupplementFromMetadata(m).CreateEmailSender(ctx, buildEmailSender(d))
+	sender, _, err := getAPISupplementFromMetadata(m).CreateEmailSender(ctx, buildEmailSender(d))
 	if err != nil {
 		return diag.Errorf("failed to create custom email sender: %v", err)
 	}
@@ -77,7 +77,7 @@ func resourceEmailSenderCreate(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceEmailSenderRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	sender, resp, err := getSupplementFromMetadata(m).GetEmailSender(ctx, d.Id())
+	sender, resp, err := getAPISupplementFromMetadata(m).GetEmailSender(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get custom email sender: %v", err)
 	}
@@ -105,7 +105,7 @@ func resourceEmailSenderRead(ctx context.Context, d *schema.ResourceData, m inte
 }
 
 func resourceEmailSenderUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getSupplementFromMetadata(m).UpdateEmailSender(ctx, buildEmailSender(d))
+	_, _, err := getAPISupplementFromMetadata(m).UpdateEmailSender(ctx, buildEmailSender(d))
 	if err != nil {
 		return diag.Errorf("failed to update custom email sender: %v", err)
 	}
@@ -113,7 +113,7 @@ func resourceEmailSenderUpdate(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceEmailSenderDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	sender, resp, err := getSupplementFromMetadata(m).GetEmailSender(ctx, d.Id())
+	sender, resp, err := getAPISupplementFromMetadata(m).GetEmailSender(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get custom email sender: %v", err)
 	}
@@ -121,9 +121,9 @@ func resourceEmailSenderDelete(ctx context.Context, d *schema.ResourceData, m in
 		return nil
 	}
 	if sender.Status == "VERIFIED" {
-		resp, err = getSupplementFromMetadata(m).DisableVerifiedEmailSender(ctx, sdk.DisableActiveEmailSender{ActiveID: sender.ID})
+		resp, err = getAPISupplementFromMetadata(m).DisableVerifiedEmailSender(ctx, sdk.DisableActiveEmailSender{ActiveID: sender.ID})
 	} else {
-		resp, err = getSupplementFromMetadata(m).DisableUnverifiedEmailSender(ctx, sdk.DisableInactiveEmailSender{
+		resp, err = getAPISupplementFromMetadata(m).DisableUnverifiedEmailSender(ctx, sdk.DisableInactiveEmailSender{
 			PendingID: sender.ID,
 		})
 	}

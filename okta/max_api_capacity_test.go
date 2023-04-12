@@ -4,14 +4,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestMaxApiCapacity(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appGroupAssignments)
-	config := mgr.GetFixtures("datasource.tf", ri, t)
+func TestAccMaxApiCapacity(t *testing.T) {
+	mgr := newFixtureManager(appGroupAssignments, t.Name())
+	config := mgr.GetFixtures("datasource.tf", t)
 
 	oldApiCapacity := os.Getenv("MAX_API_CAPACITY")
 	t.Cleanup(func() {
@@ -19,7 +17,7 @@ func TestMaxApiCapacity(t *testing.T) {
 	})
 	// hack max api capacity value is enabled by env var
 	os.Setenv("MAX_API_CAPACITY", "50")
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
