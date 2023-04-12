@@ -376,7 +376,7 @@ for different orgs. Therefore using an intelligent naming convention for
 `OKTA_VCR_CASSETTE` new cassettes can be recorded an org with specific feature
 flags enabled on it. Thereafter, that org doesn't need to be live any further
 to have its tests run as they are replayed with VCR. If you add new cassettes
-to the repo please notes about them in the `test/fixtures/vcr/CASSETTES.md`
+to the repo please add notes about them in the `test/fixtures/vcr/CASSETTES.md`
 file.
 
 Examples:
