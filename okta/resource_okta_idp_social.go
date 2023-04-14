@@ -230,5 +230,8 @@ func buildIdPSocial(d *schema.ResourceData) okta.IdentityProvider {
 			idp.Protocol.Credentials.Signing.Kid = kid.(string)
 		}
 	}
+	if d.Get("status") != nil {
+		idp.Status = d.Get("status").(string)
+	}
 	return idp
 }
