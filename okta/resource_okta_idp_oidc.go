@@ -178,7 +178,7 @@ func buildIdPOidc(d *schema.ResourceData) (okta.IdentityProvider, error) {
 		len(d.Get("subject_match_attribute").(string)) > 0 {
 		return okta.IdentityProvider{}, errors.New("you can only provide 'subject_match_attribute' with 'subject_match_type' set to 'CUSTOM_ATTRIBUTE'")
 	}
-	return okta.IdentityProvider{
+	idp := okta.IdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       "OIDC",
 		IssuerMode: d.Get("issuer_mode").(string),
@@ -209,7 +209,11 @@ func buildIdPOidc(d *schema.ResourceData) (okta.IdentityProvider, error) {
 				Url: d.Get("issuer_url").(string),
 			},
 		},
-	}, nil
+	}
+	if d.Get("status") != nil {
+		idp.Status = d.Get("status").(string)
+	}
+	return idp, nil
 }
 
 func syncIdpOidcAlgo(d *schema.ResourceData, alg *okta.ProtocolAlgorithms) {
