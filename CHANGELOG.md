@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.46.0 (April 14, 2023)
+
+### BUG FIXES
+
+* Update status for Idp OIDC, Idp SAML and Idp Social [#1526](https://github.com/okta/terraform-provider-okta/pull/1526). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
 ## 3.45.0 (March 29, 2023)
 
 ### BUG FIXES:
