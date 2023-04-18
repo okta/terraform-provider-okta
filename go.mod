@@ -12,7 +12,7 @@ require (
 	github.com/hashicorp/go-retryablehttp v0.7.2
 	github.com/hashicorp/terraform-plugin-docs v0.14.1
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.26.1
-	github.com/okta/okta-sdk-golang/v2 v2.17.0
+	github.com/okta/okta-sdk-golang/v2 v2.18.0
 	github.com/stretchr/testify v1.8.1
 )
 
