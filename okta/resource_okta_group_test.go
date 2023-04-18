@@ -14,7 +14,6 @@ func TestAccOktaGroup_crud(t *testing.T) {
 	mgr := newFixtureManager(group, t.Name())
 	config := mgr.GetFixtures("okta_group.tf", t)
 	updatedConfig := mgr.GetFixtures("okta_group_updated.tf", t)
-	addUsersConfig := mgr.GetFixtures("okta_group_with_users.tf", t)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -31,13 +30,6 @@ func TestAccOktaGroup_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "testAccDifferent")),
-			},
-			{
-				Config: addUsersConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "testAcc"),
-					resource.TestCheckResourceAttr(resourceName, "users.#", "4"),
-				),
 			},
 		},
 	})

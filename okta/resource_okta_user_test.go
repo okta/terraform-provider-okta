@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+// TODU
 func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 	mgr := newFixtureManager(user, t.Name())
 	config := mgr.GetFixtures("custom_attributes.tf", t)
@@ -64,7 +65,6 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", "{\"customAttribute1234\":\"testing-custom-attribute\"}"), // Note: "customAttribute123" is ignored and should not be present
 				),
 			},
-
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
@@ -93,53 +93,6 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 					}
 					return
 				},
-			},
-		},
-	})
-}
-
-func TestAccOktaUser_groupMembership(t *testing.T) {
-	mgr := newFixtureManager(user, t.Name())
-	config := mgr.GetFixtures("group_assigned.tf", t)
-	updatedConfig := mgr.GetFixtures("group_unassigned.tf", t)
-	resourceName := fmt.Sprintf("%s.test", user)
-	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
-
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
-					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
-					resource.TestCheckResourceAttr(resourceName, "login", email),
-					resource.TestCheckResourceAttr(resourceName, "email", email),
-					resource.TestCheckResourceAttr(resourceName, "group_memberships.#", "1"),
-				),
-			},
-			{
-				Config: updatedConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
-					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
-					resource.TestCheckResourceAttr(resourceName, "login", email),
-					resource.TestCheckResourceAttr(resourceName, "email", email),
-					resource.TestCheckResourceAttr(resourceName, "group_memberships.#", "0"),
-				),
-			},
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
-					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
-					resource.TestCheckResourceAttr(resourceName, "login", email),
-					resource.TestCheckResourceAttr(resourceName, "email", email),
-					resource.TestCheckResourceAttr(resourceName, "group_memberships.#", "1"),
-				),
 			},
 		},
 	})
@@ -480,40 +433,6 @@ resource "okta_user" "test" {
 					resource.TestCheckResourceAttr(resourceName, "login", email),
 					resource.TestCheckResourceAttr(resourceName, "email", email),
 					resource.TestCheckResourceAttr(resourceName, "admin_roles.#", "0"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccOktaUser_skip_roles(t *testing.T) {
-	mgr := newFixtureManager(user, t.Name())
-	config := `
-resource "okta_user" "test" {
-  first_name = "TestAcc"
-  last_name  = "Smith"
-  login      = "testAcc-replace_with_uuid@example.com"
-  email      = "testAcc-replace_with_uuid@example.com"
-  skip_roles = true
-}`
-	config = mgr.ConfigReplace(config)
-	resourceName := fmt.Sprintf("%s.test", user)
-	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
-
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
-					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
-					resource.TestCheckResourceAttr(resourceName, "login", email),
-					resource.TestCheckResourceAttr(resourceName, "email", email),
-					resource.TestCheckNoResourceAttr(resourceName, "admin_roles.#"),
 				),
 			},
 		},

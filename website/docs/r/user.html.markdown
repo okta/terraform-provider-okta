@@ -12,16 +12,6 @@ Creates an Okta User.
 
 This resource allows you to create and configure an Okta User.
 
-~> **IMPORTANT** If the provider is executed with a non-super user API token a
-403 occurs when the provider attempts to inspect the user's admin roles. This
-403 is swallowed and a warning is logged allowing the resource to continue
-without this error hindering it. An empty `admin_roles` array will be present in
-the resource state.
-
-~> **IMPORTANT** Use `skip_roles=true` to avoid `admin_roles` being present in
-resource state. This also prevents the underlying API call for those values to
-be made.
-
 ## Example Usage
 
 Full profile:
@@ -92,9 +82,6 @@ The following arguments are supported:
 managed by Terraform. This is useful in situations where specific custom fields may contain sensitive information and
 should be managed outside of Terraform.
 
-- `admin_roles` - (Optional) Administrator roles assigned to User.
-  - `DEPRECATED`: Please replace usage with the `okta_user_admin_roles` resource.
-
 - `city` - (Optional) User profile property.
 
 - `cost_center` - (Optional) User profile property.
@@ -108,8 +95,6 @@ should be managed outside of Terraform.
 - `division` - (Optional) User profile property.
 
 - `employee_number` - (Optional) User profile property.
-
-- `group_memberships` - (Optional) User profile property.
 
 - `honorific_prefix` - (Optional) User profile property.
 
@@ -138,8 +123,6 @@ should be managed outside of Terraform.
 - `profile_url` - (Optional) User profile property.
 
 - `second_email` - (Optional) User profile property.
-
-- `skip_roles` - (Optional) Additional API call to collect user's roles will not be made. `admin_roles` will not be written to state if skipping roles.
 
 - `state` - (Optional) User profile property.
 

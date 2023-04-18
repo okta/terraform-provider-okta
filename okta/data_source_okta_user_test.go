@@ -38,12 +38,6 @@ func TestAccDataSourceOktaUser_read(t *testing.T) {
 					resource.TestCheckResourceAttr("data.okta_user.read_by_id", "first_name", "TestAcc"),
 					resource.TestCheckResourceAttr("data.okta_user.read_by_id", "last_name", "Smith"),
 
-					resource.TestCheckResourceAttrSet("data.okta_user.read_by_id_with_skip", "id"),
-					resource.TestCheckResourceAttrSet("data.okta_user.read_by_id_with_skip", "skip_groups"),
-					resource.TestCheckResourceAttrSet("data.okta_user.read_by_id_with_skip", "skip_roles"),
-					resource.TestCheckResourceAttr("data.okta_user.read_by_id_with_skip", "skip_groups", "true"),
-					resource.TestCheckResourceAttr("data.okta_user.read_by_id_with_skip", "skip_roles", "true"),
-
 					resource.TestCheckResourceAttrSet("data.okta_user.compound_search", "id"),
 					resource.TestCheckResourceAttrSet("data.okta_user.compound_search", "compound_search_operator"),
 					resource.TestCheckResourceAttr("data.okta_user.compound_search", "compound_search_operator", "or"),

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"regexp"
 	"strings"
 	"testing"
 
@@ -244,58 +243,6 @@ func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "profile", ""),
 				),
-			},
-		},
-	})
-}
-
-// Tests various expected properties of client_id and custom_client_id
-// TODO: remove when custom_client_id is removed
-func TestAccResourceOktaAppOauth_customClientID(t *testing.T) {
-	mgr := newFixtureManager(appOAuth, t.Name())
-	resourceName := fmt.Sprintf("%s.test", appOAuth)
-
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-		Steps: []resource.TestStep{
-			{
-				// Create App with custom_client_id set
-				Config: buildTestOAuthAppCustomClientID(mgr.Seed),
-				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "custom_client_id", buildResourceName(mgr.Seed)),
-					resource.TestCheckResourceAttr(resourceName, "client_id", buildResourceName(mgr.Seed)),
-				),
-			},
-			{
-				// Replace custom_client_id with client_id
-				Config: buildTestOAuthAppClientID(mgr.Seed),
-				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "custom_client_id", ""),
-					resource.TestCheckResourceAttr(resourceName, "client_id", buildResourceName(mgr.Seed)),
-				),
-			},
-		},
-	})
-}
-
-// TODO: remove when custom_client_id is removed
-func TestAccResourceOktaAppOauth_customClientIDError(t *testing.T) {
-	mgr := newFixtureManager(appOAuth, t.Name())
-
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-		Steps: []resource.TestStep{
-			{
-				Config:      buildTestOAuthAppCustomClientIDBadConfig(mgr.Seed),
-				ExpectError: regexp.MustCompile(`"custom_client_id": conflicts with client_id`),
 			},
 		},
 	})

@@ -199,9 +199,6 @@ The following arguments are supported:
 
 - `features` - (Optional) features enabled. Notice: you can't currently configure provisioning features via the API.
 
-- `groups` - (Optional) Groups associated with the application.
-  - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
-
 - `hide_ios` - (Optional) Do not display application icon on mobile app. Default is: `false`
 
 - `hide_web` - (Optional) Do not display application icon to users. Default is: `false`
@@ -210,7 +207,7 @@ The following arguments are supported:
 
 - `idp_issuer` - (Optional) SAML issuer ID.
 
-- `implicit_assignment` - (Optional) _Early Access Property_. Enables [Federation Broker Mode](https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm). When this mode is enabled, `users` and `groups` arguments are ignored.
+- `implicit_assignment` - (Optional) _Early Access Property_. Enables [Federation Broker Mode](https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm).
 
 - `inline_hook_id` - (Optional) Saml Inline Hook associated with the application.
 
@@ -251,10 +248,6 @@ The following arguments are supported:
 
 - `single_logout_url` - (Optional) The location where the logout response is sent.
 
-- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it can also be provided during import). Default is `false`.
-
-- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it can also be provided during import). Default is `false`.
-
 - `sp_issuer` - (Optional) SAML service provider issuer.
 
 - `sso_url` - (Optional) Single Sign-on Url.
@@ -272,9 +265,6 @@ The following arguments are supported:
 - `user_name_template_type` - (Optional) Username template type. Default is: `"BUILT_IN"`.
 
 - `user_name_template` - (Optional) Username template. Default is: `"${source.login}"`
-
-- `users` - (Optional) Users associated with the application.
-  - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
 ## Attributes Reference
 
@@ -322,11 +312,11 @@ The following arguments are supported:
 
 The `timeouts` block allows you to specify custom [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions: 
 
-- `create` - Create timeout if syncing users/groups (default 1 hour).
+- `create` - Create timeout (default 1 hour).
 
-- `update` - Update timeout if syncing users/groups (default 1 hour).
+- `update` - Update timeout (default 1 hour).
 
-- `read` - Read timeout if syncing users/groups (default 1 hour).
+- `read` - Read timeout (default 1 hour).
 
 ## Import
 
@@ -338,10 +328,4 @@ $ terraform import okta_app_saml.example &#60;app id&#62;
 
 It's also possible to import app without groups or/and users. In this case ID may look like this:
 
-```
-$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_users
-
-$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_users/skip_groups
-
-$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_groups
 ```

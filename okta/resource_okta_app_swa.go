@@ -79,10 +79,6 @@ func resourceAppSwaCreate(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.Errorf("failed to create SWA application: %v", err)
 	}
 	d.SetId(app.Id)
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for SWA application: %v", err)
-	}
 	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for SWA application: %v", err)
@@ -113,10 +109,6 @@ func resourceAppSwaRead(ctx context.Context, d *schema.ResourceData, m interface
 	_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
-	err = syncGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to sync groups and users for SWA application: %v", err)
-	}
 	return nil
 }
 
@@ -130,10 +122,6 @@ func resourceAppSwaUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
 		return diag.Errorf("failed to set SWA application status: %v", err)
-	}
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for SWA application: %v", err)
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)

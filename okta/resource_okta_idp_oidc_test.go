@@ -35,6 +35,7 @@ func TestAccOktaIdpOidc_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "client_secret", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
 					resource.TestCheckResourceAttr(resourceName, "issuer_url", "https://id.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "username_template", "idpuser.email"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 				),
 			},
 			{
@@ -53,6 +54,7 @@ func TestAccOktaIdpOidc_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "client_secret", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
 					resource.TestCheckResourceAttr(resourceName, "issuer_url", "https://id.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "username_template", "idpuser.email"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 				),
 			},
 		},

@@ -77,17 +77,6 @@ data "okta_user" "read_by_id" {
   ]
 }
 
-data "okta_user" "read_by_id_with_skip" {
-  user_id = okta_user.test.id
-  skip_groups = true
-  skip_roles = true
-
-  depends_on = [
-    okta_user.test,
-    okta_user.other
-  ]
-}
-
 data "okta_user" "compound_search" {
   compound_search_operator = "or"
 

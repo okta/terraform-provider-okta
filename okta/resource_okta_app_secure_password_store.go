@@ -108,10 +108,6 @@ func resourceAppSecurePasswordStoreCreate(ctx context.Context, d *schema.Resourc
 		return diag.Errorf("failed to create secure password store application: %v", err)
 	}
 	d.SetId(app.Id)
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for secure password store application: %v", err)
-	}
 	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for secure password store application: %v", err)
@@ -146,10 +142,6 @@ func resourceAppSecurePasswordStoreRead(ctx context.Context, d *schema.ResourceD
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
-	err = syncGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to sync groups and users for secure password store application: %v", err)
-	}
 	return nil
 }
 
@@ -163,10 +155,6 @@ func resourceAppSecurePasswordStoreUpdate(ctx context.Context, d *schema.Resourc
 	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
 		return diag.Errorf("failed to set secure password store application status: %v", err)
-	}
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for secure password store application: %v", err)
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)

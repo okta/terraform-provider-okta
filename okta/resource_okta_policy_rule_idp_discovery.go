@@ -67,10 +67,7 @@ func resourcePolicyRuleIdpDiscoveryCreate(ctx context.Context, d *schema.Resourc
 	}
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
-		policyID = d.Get("policyid").(string)
-	}
-	if policyID == "" {
-		return diag.Errorf("either 'policyid' or 'policy_id' field should be set")
+		return diag.Errorf("'policy_id' field should be set")
 	}
 	logger(m).Info("creating IdP discovery policy rule", "policy_id", policyID)
 	newRule := buildIdpDiscoveryRule(d)
@@ -89,10 +86,7 @@ func resourcePolicyRuleIdpDiscoveryCreate(ctx context.Context, d *schema.Resourc
 func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
-		policyID = d.Get("policyid").(string)
-	}
-	if policyID == "" {
-		return diag.Errorf("either 'policyid' or 'policy_id' field should be set")
+		return diag.Errorf("'policy_id' field should be set")
 	}
 	logger(m).Info("reading IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
 	rule, resp, err := getAPISupplementFromMetadata(m).GetIdpDiscoveryRule(ctx, policyID, d.Id())
@@ -135,10 +129,7 @@ func resourcePolicyRuleIdpDiscoveryUpdate(ctx context.Context, d *schema.Resourc
 	}
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
-		policyID = d.Get("policyid").(string)
-	}
-	if policyID == "" {
-		return diag.Errorf("either 'policyid' or 'policy_id' field should be set")
+		return diag.Errorf("'policy_id' field should be set")
 	}
 	logger(m).Info("updating IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
 	newRule := buildIdpDiscoveryRule(d)
@@ -156,10 +147,7 @@ func resourcePolicyRuleIdpDiscoveryUpdate(ctx context.Context, d *schema.Resourc
 func resourcePolicyRuleIdpDiscoveryDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
-		policyID = d.Get("policyid").(string)
-	}
-	if policyID == "" {
-		return diag.Errorf("either 'policyid' or 'policy_id' field should be set")
+		return diag.Errorf("'policy_id' field should be set")
 	}
 	logger(m).Info("deleting IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
 	_, err := getOktaClientFromMetadata(m).Policy.DeletePolicyRule(ctx, policyID, d.Id())
@@ -176,10 +164,7 @@ func setRuleStatus(ctx context.Context, d *schema.ResourceData, m interface{}, s
 	}
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
-		policyID = d.Get("policyid").(string)
-	}
-	if policyID == "" {
-		return fmt.Errorf("either 'policyid' or 'policy_id' field should be set")
+		return fmt.Errorf("'policy_id' field should be set")
 	}
 	logger(m).Info("setting IdP discovery policy rule status", "id", d.Id(),
 		"policy_id", policyID, "status", desiredStatus)

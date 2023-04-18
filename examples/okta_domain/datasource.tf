@@ -1,6 +1,5 @@
 resource "okta_domain" "test" {
   name   = "www.example.com"
-  verify = false
 }
 
 data "okta_domain" "by-id" {

@@ -35,10 +35,6 @@ data "okta_app_oauth" "test" {
 
 - `active_only` - (Optional) tells the provider to query for only `ACTIVE` applications.
 
-- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync. Default is `false`.
-
-- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync. Default is `false`.
-
 ## Attributes Reference
 
 - `id` - ID of application.
@@ -82,9 +78,3 @@ data "okta_app_oauth" "test" {
 - `policy_uri` - URI to web page providing client policy document.
 
 - `links` - generic JSON containing discoverable resources related to the app
-
-- `users` - List of users IDs assigned to the application.
-  - `DEPRECATED`: Please replace all usage of this field with the data source `okta_app_user_assignments`.
-
-- `groups` - List of groups IDs assigned to the application.
-  - `DEPRECATED`: Please replace all usage of this field with the data source `okta_app_group_assignments`.

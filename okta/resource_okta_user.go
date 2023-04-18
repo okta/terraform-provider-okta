@@ -67,29 +67,10 @@ func resourceUser() *schema.Resource {
 					return nil, err
 				}
 				d.SetId(user.Id)
-				err = setAdminRoles(ctx, d, m)
-				if err != nil {
-					return nil, fmt.Errorf("failed to set user's roles: %v", err)
-				}
 				return []*schema.ResourceData{d}, nil
 			},
 		},
 		Schema: map[string]*schema.Schema{
-			"admin_roles": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Description: "User Okta admin roles - ie. ['APP_ADMIN', 'USER_ADMIN']",
-				Deprecated:  "The `admin_roles` field is now deprecated for the resource `okta_user`, please replace all uses of this with: `okta_user_admin_roles`",
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
-			"skip_roles": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Do not populate user roles information (prevents additional API call)",
-			},
 			"city": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -151,13 +132,6 @@ func resourceUser() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "User first name",
-			},
-			"group_memberships": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Description: "The groups that you want this user to be a part of. This can also be done via the group using the `users` property.",
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Deprecated:  "The `group_memberships` field is now deprecated for the resource `okta_user`, please replace all uses of this with: `okta_user_group_memberships`",
 			},
 			"honorific_prefix": {
 				Type:        schema.TypeString,
@@ -458,27 +432,6 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 	// set the user id into state before setting roles and status in case they fail
 	d.SetId(user.Id)
 
-	// role assigning can only happen after the user is created so order matters here
-	// Only sync admin roles when it is set by a consumer as field is deprecated
-	if _, exists := d.GetOk("admin_roles"); exists {
-		roles := convertInterfaceToStringSetNullable(d.Get("admin_roles"))
-		if roles != nil {
-			err = assignAdminRolesToUser(ctx, user.Id, roles, false, client)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-		}
-	}
-
-	// Only sync when there is opt in, consumers can chose which route they want to take
-	if _, exists := d.GetOk("group_memberships"); exists {
-		groups := convertInterfaceToStringSetNullable(d.Get("group_memberships"))
-		err = assignGroupsToUser(ctx, user.Id, groups, client)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	}
-
 	// status changing can only happen after user is created as well
 	if d.Get("status").(string) == userStatusSuspended || d.Get("status").(string) == userStatusDeprovisioned {
 		err := updateUserStatus(ctx, user.Id, d.Get("status").(string), client)
@@ -519,22 +472,7 @@ func resourceUserReadFilterCustomAttributes(ctx context.Context, d *schema.Resou
 	if err != nil {
 		return diag.Errorf("failed to set user's properties: %v", err)
 	}
-	if val := d.Get("skip_roles"); val != nil {
-		if skip, ok := val.(bool); ok && !skip {
-			err = setAdminRoles(ctx, d, m)
-			if err != nil {
-				return diag.Errorf("failed to set user's admin roles: %v", err)
-			}
-		}
-	}
 
-	// Only sync when it is outlined, an empty list will remove all membership
-	if _, exists := d.GetOk("group_memberships"); exists {
-		err = setGroupUserMemberships(ctx, d, client)
-		if err != nil {
-			return diag.Errorf("failed to set user's groups: %v", err)
-		}
-	}
 	return nil
 }
 
@@ -548,8 +486,6 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	}
 
 	// There are a few requests here so just making sure the state gets updated per successful downstream change
-	roleChange := d.HasChange("admin_roles")
-	groupChange := d.HasChange("group_memberships")
 	userChange := hasProfileChange(d)
 	passwordChange := d.HasChange("password")
 	passwordHashChange := d.HasChange("password_hash")
@@ -608,46 +544,6 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 		_, _, err := client.User.UpdateUser(ctx, d.Id(), userBody, nil)
 		if err != nil {
 			return diag.Errorf("failed to update user: %v", err)
-		}
-	}
-
-	if roleChange {
-		oldRoles, newRoles := d.GetChange("admin_roles")
-		oldSet := oldRoles.(*schema.Set)
-		newSet := newRoles.(*schema.Set)
-		rolesToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
-		rolesToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
-		roles, _, err := listUserOnlyRoles(ctx, client, d.Id())
-		if err != nil {
-			return diag.Errorf("failed to list user's roles: %v", err)
-		}
-		for _, role := range roles {
-			if contains(rolesToRemove, role.Type) {
-				resp, err := client.User.RemoveRoleFromUser(ctx, d.Id(), role.Id)
-				if err := suppressErrorOn404(resp, err); err != nil {
-					return diag.Errorf("failed to remove user's role: %v", err)
-				}
-			}
-		}
-		err = assignAdminRolesToUser(ctx, d.Id(), rolesToAdd, false, client)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	}
-
-	if groupChange {
-		oldGM, newGM := d.GetChange("group_memberships")
-		oldSet := oldGM.(*schema.Set)
-		newSet := newGM.(*schema.Set)
-		groupsToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
-		groupsToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
-		err := addUserToGroups(ctx, client, d.Id(), groupsToAdd)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		err = removeUserFromGroups(ctx, client, d.Id(), groupsToRemove)
-		if err != nil {
-			return diag.FromErr(err)
 		}
 	}
 

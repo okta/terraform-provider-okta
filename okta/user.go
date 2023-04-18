@@ -356,52 +356,6 @@ func getGroupsForUser(ctx context.Context, id string, c *sdk.Client) ([]string, 
 	return groupIDs, nil
 }
 
-// set all groups currently attached to the user
-func setAllGroups(ctx context.Context, d *schema.ResourceData, c *sdk.Client) error {
-	groupIDs, err := getGroupsForUser(ctx, d.Id(), c)
-	if err != nil {
-		return err
-	}
-	gids := convertStringSliceToInterfaceSlice(groupIDs)
-	return setNonPrimitives(d, map[string]interface{}{
-		"group_memberships": schema.NewSet(schema.HashString, gids),
-	})
-}
-
-// set groups attached to the user that can be changed
-func setGroupUserMemberships(ctx context.Context, d *schema.ResourceData, c *sdk.Client) error {
-	groups, response, err := c.User.ListUserGroups(ctx, d.Id())
-	if err != nil {
-		return fmt.Errorf("failed to list user groups: %v", err)
-	}
-
-	groupIDs := make([]interface{}, 0)
-
-	for {
-		// ignore saving build-in or app groups into state so we don't end up with perpetual diffs,
-		// because it's impossible to remove user from build-in or app group via API
-		for _, group := range groups {
-			if group.Type != "BUILT_IN" && group.Type != "APP_GROUP" {
-				groupIDs = append(groupIDs, group.Id)
-			}
-		}
-
-		if !response.HasNextPage() {
-			break
-		}
-
-		response, err = response.Next(ctx, &groups)
-
-		if err != nil {
-			return fmt.Errorf("failed to list user groups: %v", err)
-		}
-	}
-
-	return setNonPrimitives(d, map[string]interface{}{
-		"group_memberships": schema.NewSet(schema.HashString, groupIDs),
-	})
-}
-
 func isCustomUserAttr(key string) bool {
 	return !contains(profileKeys, key)
 }

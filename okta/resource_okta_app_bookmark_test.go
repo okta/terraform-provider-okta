@@ -27,7 +27,6 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
-					resource.TestCheckResourceAttr(resourceName, "groups.#", "1"),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
@@ -37,8 +36,7 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
-					resource.TestCheckResourceAttr(resourceName, "users.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://example.com"),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
@@ -84,9 +82,6 @@ func TestAccAppBookmarkApplication_PR1366_authentication_policy(t *testing.T) {
 	mgr := newFixtureManager(appBookmark, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appBookmark)
 	config := `
-resource "okta_group" "group" {
-  name = "testAcc_replace_with_uuid"
-}
 data "okta_policy" "test" {
   name = "Any two factors"
   type = "ACCESS_POLICY"
@@ -98,21 +93,9 @@ resource "okta_app_signon_policy" "test" {
     data.okta_policy.test
   ]
 }
-resource "okta_user" "user" {
-  admin_roles = ["APP_ADMIN", "USER_ADMIN"]
-  first_name  = "TestAcc"
-  last_name   = "blah"
-  login       = "testAcc-replace_with_uuid@example.com"
-  email       = "testAcc-replace_with_uuid@example.com"
-}
 resource "okta_app_bookmark" "test" {
   label  = "testAcc_replace_with_uuid"
   url    = "https://test.com"
-  groups = [okta_group.group.id]
-  users {
-    id       = okta_user.user.id
-    username = okta_user.user.email
-  }
   authentication_policy = okta_app_signon_policy.test.id
 }`
 	oktaResourceTest(t, resource.TestCase{
@@ -128,8 +111,6 @@ resource "okta_app_bookmark" "test" {
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
-					resource.TestCheckResourceAttr(resourceName, "groups.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "users.#", "1"),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 					resource.TestCheckResourceAttrSet(resourceName, "authentication_policy"),
 				),

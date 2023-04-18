@@ -1,7 +1,3 @@
-resource "okta_group" "group" {
-  name = "testAcc_replace_with_uuid"
-}
-
 data "okta_policy" "test" {
   name = "Any two factors"
   type = "ACCESS_POLICY"
@@ -18,6 +14,5 @@ resource "okta_app_signon_policy" "test" {
 resource "okta_app_bookmark" "test" {
   label                 = "testAcc_replace_with_uuid"
   url                   = "https://test.com"
-  groups                = [okta_group.group.id]
   authentication_policy = okta_app_signon_policy.test.id
 }

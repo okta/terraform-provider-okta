@@ -28,9 +28,6 @@ The following arguments are supported:
 
   ~> **WARNING**: Use of `OKTA_MANAGED` requires a feature flag to be enabled.
 
-- `verify` - (Optional) Indicates whether the domain should be verified.
-  - `DEPRECATED`: Please use `okta_domain_verification` resource instead.
-
 ## Attributes Reference
 
 - `id` - Domain ID

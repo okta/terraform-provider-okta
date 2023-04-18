@@ -91,8 +91,6 @@ resource "okta_policy_rule_signon" "example" {
 ## Argument Reference
 
 The following arguments are supported:
-
-- `policyid` - (Deprecated) Policy ID.
   
 - `policy_id` - (Required) Policy ID.
 
@@ -152,8 +150,6 @@ The following arguments are supported:
 ## Attributes Reference
 
 - `id` - ID of the Rule.
-
-- `policyid` - (Deprecated) Policy ID.
   
 - `policy_id` - Policy ID.
 

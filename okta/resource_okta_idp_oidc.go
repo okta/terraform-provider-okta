@@ -171,7 +171,7 @@ func buildIdPOidc(d *schema.ResourceData) (sdk.IdentityProvider, error) {
 		len(d.Get("subject_match_attribute").(string)) > 0 {
 		return sdk.IdentityProvider{}, errors.New("you can only provide 'subject_match_attribute' with 'subject_match_type' set to 'CUSTOM_ATTRIBUTE'")
 	}
-	return sdk.IdentityProvider{
+	idp := sdk.IdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       "OIDC",
 		IssuerMode: d.Get("issuer_mode").(string),
@@ -202,7 +202,11 @@ func buildIdPOidc(d *schema.ResourceData) (sdk.IdentityProvider, error) {
 				Url: d.Get("issuer_url").(string),
 			},
 		},
-	}, nil
+	}
+	if d.Get("status") != nil {
+		idp.Status = d.Get("status").(string)
+	}
+	return idp, nil
 }
 
 func syncIdpOidcAlgo(d *schema.ResourceData, alg *sdk.ProtocolAlgorithms) {
