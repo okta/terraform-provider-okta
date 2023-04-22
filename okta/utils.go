@@ -172,6 +172,15 @@ func createCustomNestedResourceImporter(fields []string, errMessage string) *sch
 	return &schema.ResourceImporter{
 		StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 			parts := strings.Split(d.Id(), "/")
+
+			if len(parts) != len(fields) {
+				for i, field := range fields {
+					fields[i] = "<" + field + ">"
+				}
+				resourceIdFormat := strings.Join(fields[:], "/")
+				return nil, errors.New("invalid structure of nested resource ID. Expected: " + resourceIdFormat)
+			}
+
 			for i, field := range fields {
 				if field == "id" {
 					d.SetId(parts[i])
