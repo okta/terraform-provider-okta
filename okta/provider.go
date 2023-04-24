@@ -414,18 +414,6 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		config.scopes = strings.Split(v, ",")
 	}
 
-	// NOTE: Don't make this call when VCR is playing/recording as it will occur
-	// outsite of the VCR transport
-	if os.Getenv("OKTA_VCR_TF_ACC") == "" {
-		// NOTE: validate credentials during initial config with a call to
-		// /api/v1/users/me
-		if config.apiToken != "" {
-			if _, _, err := config.oktaClient.User.GetUser(ctx, "me"); err != nil {
-				return err, diag.Errorf("[ERROR] : api_token is not correct %v", err)
-			}
-		}
-	}
-
 	if err := config.loadAndValidate(ctx); err != nil {
 		return nil, diag.Errorf("[ERROR] invalid configuration: %v", err)
 	}
