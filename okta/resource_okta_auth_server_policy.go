@@ -16,16 +16,6 @@ func resourceAuthServerPolicy() *schema.Resource {
 		DeleteContext: resourceAuthServerPolicyDelete,
 		Importer:      createNestedResourceImporter([]string{"auth_server_id", "id"}),
 		Schema: map[string]*schema.Schema{
-			"type": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     sdk.OauthAuthorizationPolicyType,
-				Description: "Auth server policy type, unlikely this will be anything other then the default",
-				Deprecated:  "Policy type can only be of value 'OAUTH_AUTHORIZATION_POLICY', so this will be removed in the future, or set as 'Computed' value",
-				DiffSuppressFunc: func(string, string, string, *schema.ResourceData) bool {
-					return true
-				},
-			},
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,

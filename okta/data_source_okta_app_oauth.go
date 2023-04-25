@@ -15,7 +15,7 @@ import (
 func dataSourceAppOauth() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppOauthRead,
-		Schema: buildSchema(skipUsersAndGroupsSchema, map[string]*schema.Schema{
+		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
 				Optional:      true,
@@ -135,26 +135,12 @@ func dataSourceAppOauth() *schema.Resource {
 				Computed:    true,
 				Description: "Discoverable resources related to the app",
 			},
-			"groups": {
-				Type:        schema.TypeSet,
-				Computed:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "Groups associated with the application",
-				Deprecated:  "The `groups` field is now deprecated for the data source `okta_app_oauth`, please replace all uses of this with: `okta_app_group_assignments`",
-			},
-			"users": {
-				Type:        schema.TypeSet,
-				Computed:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "Users associated with the application",
-				Deprecated:  "The `users` field is now deprecated for the data source `okta_app_oauth`, please replace all uses of this with: `okta_app_user_assignments`",
-			},
 			"wildcard_redirect": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "Indicates if the client is allowed to use wildcard matching of redirect_uris",
 			},
-		}),
+		},
 	}
 }
 
@@ -190,10 +176,6 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 		}
 		logger(m).Info("found multiple OAuth applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
-	}
-	err = setAppUsersIDsAndGroupsIDs(ctx, d, getOktaClientFromMetadata(m), app.Id)
-	if err != nil {
-		return diag.Errorf("failed to list OAuth's app groups and users: %v", err)
 	}
 
 	d.SetId(app.Id)

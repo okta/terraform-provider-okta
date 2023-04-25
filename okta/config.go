@@ -65,11 +65,18 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 		return err
 	}
 
-	if c.apiToken != "" {
-		if _, _, err := client.User.GetUser(ctx, "me"); err != nil {
-			return err
+	// NOTE: Don't make this call when VCR is playing/recording as it will occur
+	// outsite of the VCR transport
+	if os.Getenv("OKTA_VCR_TF_ACC") == "" {
+		// NOTE: validate credentials during initial config with a call to
+		// /api/v1/users/me
+		if c.apiToken != "" {
+			if _, _, err := c.oktaClient.User.GetUser(ctx, "me"); err != nil {
+				return err
+			}
 		}
 	}
+
 	c.oktaClient = client
 	c.supplementClient = &sdk.APISupplement{
 		RequestExecutor: client.CloneRequestExecutor(),

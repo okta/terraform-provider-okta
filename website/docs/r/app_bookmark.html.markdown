@@ -39,9 +39,6 @@ The following arguments are supported:
 
 - `enduser_note` - (Optional) Application notes for end users.
 
-- `groups` - (Optional) Groups associated with the application.
-  - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
-
 - `hide_ios` - (Optional) Do not display application icon on mobile app.
 
 - `hide_web` - (Optional) Do not display application icon to users.
@@ -52,16 +49,9 @@ The following arguments are supported:
 
 - `request_integration` - (Optional) Would you like Okta to add an integration for this app?
 
-- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it's also can be provided during import). Default is `false`.
-
-- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it's also can be provided during import). Default is `false`.
-
 - `status` - (Optional) Status of application. (`"ACTIVE"` or `"INACTIVE"`).
 
 - `url` - (Optional) The URL of the bookmark.
-
-- `users` - (Optional) Users associated with the application.
-  - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
 ## Attributes Reference
 
@@ -77,11 +67,11 @@ The following arguments are supported:
 
 The `timeouts` block allows you to specify custom [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions: 
 
-- `create` - Create timeout if syncing users/groups (default 1 hour).
+- `create` - Create timeout (default 1 hour).
 
-- `update` - Update timeout if syncing users/groups (default 1 hour).
+- `update` - Update timeout (default 1 hour).
 
-- `read` - Read timeout if syncing users/groups (default 1 hour).
+- `read` - Read timeout (default 1 hour).
 
 ## Import
 
@@ -89,14 +79,4 @@ A Bookmark App can be imported via the Okta ID.
 
 ```
 $ terraform import okta_app_bookmark.example &#60;app id&#62;
-```
-
-It's also possible to import app without groups or/and users. In this case ID may look like this:
-
-```
-$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_users
-
-$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_users/skip_groups
-
-$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_groups
 ```

@@ -32,7 +32,6 @@ the provider, but we don't quite have the manpower yet to do so.
 - [okta_auth_server_policy](./okta_auth_server_policy) Supports the management of Okta Authorization servers policies.
 - [okta_auth_server_scope](./okta_auth_server_scope) Supports the management of Okta Authorization servers scopes.
 - [okta_auth_server](./okta_auth_server) Supports the management of Okta Authorization servers.
-- [okta_group_roles](./okta_group_roles) Supports the management of Okta Group Administrator Roles.
 - [okta_group_rule](./okta_group_rule) Supports the management of Okta Group Rules.
 - [okta_group](./okta_group) Supports the management of Okta Groups.
 - [okta_event_hook](./okta_event_hook) Supports the management of Okta Event Hooks.
@@ -47,7 +46,6 @@ the provider, but we don't quite have the manpower yet to do so.
 - [okta_policy_password](./okta_policy_password) Supports the management of password policies.
 - [okta_policy_rule_signon](./okta_policy_rule_signon) Supports the management of sign-on policy rules.
 - [okta_policy_signon](./okta_policy_signon) Supports the management of sign-on policies.
-- [okta_template_email](./okta_template_email) Supports the management of custom email templates.
 - [okta_trusted_origin](./okta_trusted_origin) Supports the management of Okta Trusted Sources and Origins.
 - [okta_user_base_schema_property](./okta_user_base_schema_property) Supports the management of Okta User Profile
   Attribute Schemas.

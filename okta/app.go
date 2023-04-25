@@ -4,10 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"net/http"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/cenkalti/backoff"
@@ -57,20 +54,6 @@ var (
 			Type:        schema.TypeString,
 			Computed:    true,
 			Description: "Sign on mode of application.",
-		},
-		"users": {
-			Type:        schema.TypeSet,
-			Optional:    true,
-			Elem:        appUserResource,
-			Description: "Users associated with the application",
-			Deprecated:  "The direct configuration of users in this app resource is deprecated, please ensure you use the resource `okta_app_user` for this functionality.",
-		},
-		"groups": {
-			Type:        schema.TypeSet,
-			Optional:    true,
-			Elem:        &schema.Schema{Type: schema.TypeString},
-			Description: "Groups associated with the application",
-			Deprecated:  "The direct configuration of groups in this app resource is deprecated, please ensure you use the resource `okta_app_group_assignments` for this functionality.",
 		},
 		"status": {
 			Type:        schema.TypeString,
@@ -128,21 +111,6 @@ var (
 			Type:        schema.TypeString,
 			Optional:    true,
 			Description: "Custom error page URL",
-		},
-	}
-
-	skipUsersAndGroupsSchema = map[string]*schema.Schema{
-		"skip_users": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Description: "Ignore users sync. This is a temporary solution until 'users' field is supported in all the app-like resources",
-			Default:     false,
-		},
-		"skip_groups": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Description: "Ignore groups sync. This is a temporary solution until 'groups' field is supported in all the app-like resources",
-			Default:     false,
 		},
 	}
 
@@ -211,9 +179,6 @@ func appImporter(_ context.Context, d *schema.ResourceData, m interface{}) ([]*s
 	}
 	d.SetId(importID[0])
 	for _, v := range importID[1:] {
-		if !isValidSkipArg(v) {
-			return nil, fmt.Errorf("'%s' is invalid value to be used as part of import ID, it must be either 'skip_users' or 'skip_groups'", v)
-		}
 		_ = d.Set(v, true)
 	}
 	return []*schema.ResourceData{d}, nil
@@ -242,15 +207,15 @@ func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *s
 }
 
 func buildAppSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, baseAppSwaSchema, appSchema)
+	return buildSchema(baseAppSchema, baseAppSwaSchema, appSchema)
 }
 
 func buildAppSchemaWithVisibility(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, appVisibilitySchema, appSchema)
+	return buildSchema(baseAppSchema, appVisibilitySchema, appSchema)
 }
 
 func buildAppSwaSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, appVisibilitySchema, baseAppSwaSchema, appSchema)
+	return buildSchema(baseAppSchema, appVisibilitySchema, baseAppSwaSchema, appSchema)
 }
 
 func buildSchemeAppCreds(d *schema.ResourceData) *sdk.SchemeApplicationCredentials {
@@ -340,39 +305,6 @@ func updateAppByID(ctx context.Context, id string, m interface{}, app sdk.App) e
 	return suppressErrorOn404(resp, err)
 }
 
-func handleAppGroups(ctx context.Context, id string, d *schema.ResourceData, client *sdk.Client) []func() error {
-	if !d.HasChange("groups") {
-		return nil
-	}
-	// temp solution until 'groups' field is supported
-	if d.Get("skip_groups").(bool) {
-		return nil
-	}
-	var asyncActionList []func() error
-
-	oldGs, newGs := d.GetChange("groups")
-	oldSet := oldGs.(*schema.Set)
-	newSet := newGs.(*schema.Set)
-	groupsToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
-	groupsToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
-
-	for i := range groupsToAdd {
-		gID := groupsToAdd[i]
-		asyncActionList = append(asyncActionList, func() error {
-			_, resp, err := client.Application.CreateApplicationGroupAssignment(ctx, id,
-				gID, sdk.ApplicationGroupAssignment{})
-			return responseErr(resp, err)
-		})
-	}
-	for i := range groupsToRemove {
-		gID := groupsToRemove[i]
-		asyncActionList = append(asyncActionList, func() error {
-			return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(ctx, id, gID))
-		})
-	}
-	return asyncActionList
-}
-
 func listApplicationGroupAssignments(ctx context.Context, client *sdk.Client, id string) ([]*sdk.ApplicationGroupAssignment, *sdk.Response, error) {
 	groups, resp, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
@@ -410,21 +342,6 @@ func shouldUpdateUser(userList []*sdk.AppUser, id, username string) bool {
 	return false
 }
 
-// Handles the assigning of groups and users to Applications. Does so asynchronously.
-func handleAppGroupsAndUsers(ctx context.Context, id string, d *schema.ResourceData, m interface{}) error {
-	var wg sync.WaitGroup
-	resultChan := make(chan []*result, 1)
-	client := getOktaClientFromMetadata(m)
-
-	groupHandlers := handleAppGroups(ctx, id, d, client)
-	userHandlers := handleAppUsers(ctx, id, d, client)
-	con := getParallelismFromMetadata(m)
-	promiseAll(con, &wg, resultChan, append(groupHandlers, userHandlers...)...)
-	wg.Wait()
-
-	return getPromiseError(<-resultChan, "failed to associate user or groups with application")
-}
-
 func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, appID string, links interface{}) error {
 	l, ok := d.GetOk("logo")
 	if !ok {
@@ -432,74 +349,6 @@ func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, a
 	}
 	_, err := getOktaClientFromMetadata(m).Application.UploadApplicationLogo(ctx, appID, l.(string))
 	return err
-}
-
-func handleAppUsers(ctx context.Context, id string, d *schema.ResourceData, client *sdk.Client) []func() error {
-	if !d.HasChange("users") {
-		return nil
-	}
-	// temp solution until 'users' field is supported
-	if d.Get("skip_users").(bool) {
-		return nil
-	}
-	existingUsers, err := listApplicationUsers(ctx, client, id)
-	if err != nil {
-		return []func() error{
-			func() error { return err },
-		}
-	}
-
-	var asyncActionList []func() error
-
-	oldUs, newUs := d.GetChange("users")
-	oldSet := oldUs.(*schema.Set)
-	newSet := newUs.(*schema.Set)
-	usersToAdd := newSet.Difference(oldSet).List()
-	usersToRemove := oldSet.Difference(newSet).List()
-
-	for i := range usersToAdd {
-		userProfile := usersToAdd[i].(map[string]interface{})
-		uID := userProfile["id"].(string)
-		username := userProfile["username"].(string)
-		password := userProfile["password"].(string)
-		if shouldUpdateUser(existingUsers, uID, username) {
-			asyncActionList = append(asyncActionList, func() error {
-				_, _, err := client.Application.UpdateApplicationUser(ctx, id, uID, sdk.AppUser{
-					Id: uID,
-					Credentials: &sdk.AppUserCredentials{
-						UserName: username,
-						Password: &sdk.AppUserPasswordCredential{
-							Value: password,
-						},
-					},
-				})
-				return err
-			})
-		} else {
-			asyncActionList = append(asyncActionList, func() error {
-				_, _, err := client.Application.AssignUserToApplication(ctx, id, sdk.AppUser{
-					Id: uID,
-					Credentials: &sdk.AppUserCredentials{
-						UserName: username,
-						Password: &sdk.AppUserPasswordCredential{
-							Value: password,
-						},
-					},
-				})
-				return err
-			})
-		}
-	}
-
-	for i := range usersToRemove {
-		uID := usersToRemove[i].(map[string]interface{})["id"].(string)
-		if containsAppUser(existingUsers, uID) {
-			asyncActionList = append(asyncActionList, func() error {
-				return suppressErrorOn404(client.Application.DeleteApplicationUser(ctx, id, uID, nil))
-			})
-		}
-	}
-	return asyncActionList
 }
 
 func listApplicationUsers(ctx context.Context, client *sdk.Client, id string) ([]*sdk.AppUser, error) {
@@ -532,59 +381,6 @@ func setAppStatus(ctx context.Context, d *schema.ResourceData, client *sdk.Clien
 		return responseErr(client.Application.DeactivateApplication(ctx, d.Id()))
 	}
 	return responseErr(client.Application.ActivateApplication(ctx, d.Id()))
-}
-
-func syncGroupsAndUsers(ctx context.Context, id string, d *schema.ResourceData, m interface{}) error {
-	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusNotFound})
-
-	logger(m).Info("skip values",
-		"skip_users", d.Get("skip_users").(bool),
-		"skip_groups", d.Get("skip_groups").(bool))
-
-	flatMap := map[string]interface{}{}
-	if skipUsers := d.Get("skip_users").(bool); !skipUsers {
-		appUsers, err := listApplicationUsers(ctx, getOktaClientFromMetadata(m), id)
-		if err != nil {
-			return err
-		}
-		var flattenedUserList []interface{}
-		for _, user := range appUsers {
-			if user.Scope != userScope {
-				continue
-			}
-			var un, up string
-			if user.Credentials != nil {
-				getOktaClientFromMetadata(m)
-				un = user.Credentials.UserName
-				if user.Credentials.Password != nil {
-					up = user.Credentials.Password.Value
-				}
-			}
-			flattenedUserList = append(flattenedUserList, map[string]interface{}{
-				"id":       user.Id,
-				"username": un,
-				"scope":    user.Scope,
-				"password": up,
-			})
-		}
-		if len(flattenedUserList) > 0 {
-			flatMap["users"] = schema.NewSet(schema.HashResource(appUserResource), flattenedUserList)
-		}
-	}
-	if skipGroups := d.Get("skip_groups").(bool); !skipGroups {
-		appGroups, _, err := listApplicationGroupAssignments(ctx, getOktaClientFromMetadata(m), id)
-		if err != nil {
-			return err
-		}
-		flatGroupList := make([]interface{}, len(appGroups))
-		for i := range appGroups {
-			flatGroupList[i] = appGroups[i].Id
-		}
-		if len(flatGroupList) > 0 {
-			flatMap["groups"] = schema.NewSet(schema.HashString, flatGroupList)
-		}
-	}
-	return setNonPrimitives(d, flatMap)
 }
 
 // setAppSettings available preconfigured SAML and OAuth applications vary wildly on potential app settings, thus
@@ -691,32 +487,6 @@ func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{
 	}, b)
 
 	return err
-}
-
-func setAppUsersIDsAndGroupsIDs(ctx context.Context, d *schema.ResourceData, client *sdk.Client, id string) error {
-	if skipGroups := d.Get("skip_groups").(bool); !skipGroups {
-		groups, _, err := listApplicationGroupAssignments(ctx, client, id)
-		if err != nil {
-			return err
-		}
-		groupsIDs := make([]string, len(groups))
-		for i := range groups {
-			groupsIDs[i] = groups[i].Id
-		}
-		_ = d.Set("groups", convertStringSliceToSet(groupsIDs))
-	}
-	if skipUsers := d.Get("skip_users").(bool); !skipUsers {
-		users, err := listApplicationUsers(ctx, client, id)
-		if err != nil {
-			return err
-		}
-		usersIDs := make([]string, len(users))
-		for i := range users {
-			usersIDs[i] = users[i].Id
-		}
-		_ = d.Set("users", convertStringSliceToSet(usersIDs))
-	}
-	return nil
 }
 
 // fetchAppKeys returns the keys from `/api/v1/apps/${applicationId}/credentials/keys` for a given app. Not all fields on the JsonWebKey

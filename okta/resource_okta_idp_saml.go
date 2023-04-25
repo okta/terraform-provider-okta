@@ -24,12 +24,8 @@ func resourceIdpSaml() *schema.Resource {
 				Computed: true,
 			},
 			"acs_binding": {
-				Type:       schema.TypeString,
-				Optional:   true,
-				Deprecated: "This property will be removed in the future, as it can only be set to 'HTTP-POST'",
-				DiffSuppressFunc: func(string, string, string, *schema.ResourceData) bool {
-					return true
-				},
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"acs_type": {
 				Type:     schema.TypeString,
@@ -119,6 +115,7 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		return nil
 	}
 	_ = d.Set("name", idp.Name)
+	_ = d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
 	_ = d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
 	if idp.Policy.MaxClockSkewPtr != nil {
 		_ = d.Set("max_clock_skew", *idp.Policy.MaxClockSkewPtr)

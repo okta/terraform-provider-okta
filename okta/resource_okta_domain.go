@@ -31,13 +31,6 @@ func resourceDomain() *schema.Resource {
 				Description: "Optional. Certificate source type that indicates whether the certificate is provided by the user or Okta. Accepted values: MANUAL, OKTA_MANAGED. Warning: Use of OKTA_MANAGED requires a feature flag to be enabled. Default value = MANUAL",
 				Default:     "MANUAL",
 			},
-			"verify": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Description: "Indicates whether the domain should be verified during creation",
-				Default:     false,
-				Deprecated:  "The direct validation for the domain resource is deprecated, please use the `okta_domain_verification` resource for this functionality.",
-			},
 			"validation_status": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -83,12 +76,6 @@ func resourceDomainCreate(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.Errorf("failed to create domain: %v", err)
 	}
 	d.SetId(domain.Id)
-	if d.Get("verify").(bool) {
-		_, _, err := getOktaClientFromMetadata(m).Domain.VerifyDomain(ctx, domain.Id)
-		if err != nil {
-			return diag.Errorf("failed to verify domain: %v", err)
-		}
-	}
 	return resourceDomainRead(ctx, d, m)
 }
 
@@ -129,12 +116,6 @@ func resourceDomainRead(ctx context.Context, d *schema.ResourceData, m interface
 	if domain.ValidationStatus == "IN_PROGRESS" || domain.ValidationStatus == "VERIFIED" || domain.ValidationStatus == "COMPLETED" {
 		return nil
 	}
-	if d.Get("verify").(bool) {
-		_, _, err := getOktaClientFromMetadata(m).Domain.VerifyDomain(ctx, d.Id())
-		if err != nil {
-			return diag.Errorf("failed to verify domain: %v", err)
-		}
-	}
 
 	return nil
 }
@@ -158,9 +139,6 @@ func resourceDomainUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 
 func validateDomain(ctx context.Context, d *schema.ResourceData, m interface{}, validationStatus string) (*sdk.Domain, error) {
 	if validationStatus == "IN_PROGRESS" || validationStatus == "VERIFIED" || validationStatus == "COMPLETED" {
-		return nil, nil
-	}
-	if !d.Get("verify").(bool) {
 		return nil, nil
 	}
 	domain, _, err := getOktaClientFromMetadata(m).Domain.VerifyDomain(ctx, d.Id())

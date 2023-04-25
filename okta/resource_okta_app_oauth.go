@@ -132,13 +132,6 @@ func resourceAppOAuth() *schema.Resource {
 				Computed:    true,
 				Description: "OAuth client ID. If set during creation, app is created with this id.",
 			},
-			"custom_client_id": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ConflictsWith: []string{"client_id"},
-				Description:   "**Deprecated** This property allows you to set your client_id during creation. NOTE: updating after creation will be a no-op, use client_id for that behavior instead.",
-				Deprecated:    "This field is being replaced by client_id. Please set that field instead.",
-			},
 			"omit_secret": {
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -336,10 +329,9 @@ func resourceAppOAuth() *schema.Resource {
 				},
 			},
 			"implicit_assignment": {
-				Type:          schema.TypeBool,
-				Optional:      true,
-				Description:   "*Early Access Property*. Enable Federation Broker Mode.",
-				ConflictsWith: []string{"groups", "users"},
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "*Early Access Property*. Enable Federation Broker Mode.",
 			},
 			"groups_claim": {
 				Type:        schema.TypeSet,
@@ -420,14 +412,6 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	d.SetId(app.Id)
 	if !d.Get("omit_secret").(bool) {
 		_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
-	}
-	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-	// So Skip setting assignments while this is on
-	if !d.Get("implicit_assignment").(bool) {
-		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-		if err != nil {
-			return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
-		}
 	}
 	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 	if err != nil {
@@ -527,13 +511,6 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	// If this is ever changed omit it.
 	if d.Get("omit_secret").(bool) {
 		_ = d.Set("client_secret", "")
-	}
-	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-	// So Skip setting assignments while this is on
-	if !d.Get("implicit_assignment").(bool) {
-		if err = syncGroupsAndUsers(ctx, app.Id, d, m); err != nil {
-			return diag.Errorf("failed to sync groups and users for OAuth application: %v", err)
-		}
 	}
 	if _, exists := d.GetOk("groups_claim"); exists {
 		gc, err := flattenGroupsClaim(ctx, d, m)
@@ -653,14 +630,6 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.Errorf("failed to set OAuth application status: %v", err)
 	}
-	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-	// So Skip setting assignments while this is on
-	if !d.Get("implicit_assignment").(bool) {
-		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-		if err != nil {
-			return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
-		}
-	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 		if err != nil {
@@ -750,10 +719,6 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 
 	if sec, ok := d.GetOk("client_basic_secret"); ok {
 		app.Credentials.OauthClient.ClientSecret = sec.(string)
-	}
-
-	if cid, ok := d.GetOk("custom_client_id"); ok {
-		app.Credentials.OauthClient.ClientId = cid.(string)
 	}
 
 	oktaRespTypes := make([]*sdk.OAuthResponseType, len(responseTypes))

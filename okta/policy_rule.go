@@ -24,13 +24,6 @@ var (
 
 	// Basis of policy rules
 	baseRuleSchema = map[string]*schema.Schema{
-		"policyid": {
-			Type:        schema.TypeString,
-			ForceNew:    true,
-			Optional:    true,
-			Description: "Policy ID of the Rule",
-			Deprecated:  "Because of incorrect naming, 'policyid' field will be deprecated and then removed in the next versions of the provider. Please use 'policy_id' instead",
-		},
 		"policy_id": {
 			Type:        schema.TypeString,
 			ForceNew:    true,
@@ -112,10 +105,7 @@ func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 	}
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
-		policyID = d.Get("policyid").(string)
-	}
-	if policyID == "" {
-		return fmt.Errorf("either 'policyid' or 'policy_id' field should be set")
+		return fmt.Errorf("'policy_id' field should be set")
 	}
 	var rule *sdk.SdkPolicyRule
 	err = backoff.Retry(func() error {
@@ -174,10 +164,7 @@ func getPolicyRule(ctx context.Context, d *schema.ResourceData, m interface{}) (
 	client := getAPISupplementFromMetadata(m)
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
-		policyID = d.Get("policyid").(string)
-	}
-	if policyID == "" {
-		return nil, fmt.Errorf("either 'policyid' or 'policy_id' field should be set")
+		return nil, fmt.Errorf("'policy_id' field should be set")
 	}
 	policy, resp, err := client.GetPolicy(ctx, policyID)
 	if err := suppressErrorOn404(resp, err); err != nil {
@@ -241,10 +228,7 @@ func updateRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 	}
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
-		policyID = d.Get("policyid").(string)
-	}
-	if policyID == "" {
-		return fmt.Errorf("either 'policyid' or 'policy_id' field should be set")
+		return fmt.Errorf("'policy_id' field should be set")
 	}
 	rule, _, err := getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, policyID, d.Id(), template)
 	if err != nil {
@@ -262,10 +246,7 @@ func policyRuleActivate(ctx context.Context, d *schema.ResourceData, m interface
 	client := getOktaClientFromMetadata(m).Policy
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
-		policyID = d.Get("policyid").(string)
-	}
-	if policyID == "" {
-		return fmt.Errorf("either 'policyid' or 'policy_id' field should be set")
+		return fmt.Errorf("'policy_id' field should be set")
 	}
 	if d.Get("status").(string) == statusActive {
 		_, err := client.ActivatePolicyRule(ctx, policyID, d.Id())
@@ -304,10 +285,7 @@ func deleteRule(ctx context.Context, d *schema.ResourceData, m interface{}, chec
 	if shouldRemove {
 		policyID := d.Get("policy_id").(string)
 		if policyID == "" {
-			policyID = d.Get("policyid").(string)
-		}
-		if policyID == "" {
-			return fmt.Errorf("either 'policyid' or 'policy_id' field should be set")
+			return fmt.Errorf("'policy_id' field should be set")
 		}
 		_, err = getOktaClientFromMetadata(m).Policy.DeletePolicyRule(ctx, policyID, d.Id())
 		if err != nil {

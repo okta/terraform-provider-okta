@@ -232,46 +232,6 @@ func areJSONStringsEqual(a, b string) bool {
 	return reflect.DeepEqual(aM, bM)
 }
 
-// Add and remove groups/users
-func TestAccAppSaml_userGroups(t *testing.T) {
-	mgr := newFixtureManager(appSaml, t.Name())
-	config := mgr.GetFixtures("user_groups.tf", t)
-	updatedConfig := mgr.GetFixtures("user_groups_updated.tf", t)
-	resourceName := fmt.Sprintf("%s.test", appSaml)
-
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
-					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
-					resource.TestCheckResourceAttr(resourceName, "users.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "groups.#", "3"),
-					resource.TestCheckResourceAttr(resourceName, "key_years_valid", "3"),
-				),
-			},
-			{
-				Config: updatedConfig,
-				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
-					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
-					resource.TestCheckResourceAttrSet(resourceName, "key_id"),
-					resource.TestCheckResourceAttrSet(resourceName, "keys.#"),
-					resource.TestCheckResourceAttr(resourceName, "groups.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "users.#", "1"),
-				),
-			},
-		},
-	})
-}
-
 func TestAccAppSaml_inlineHook(t *testing.T) {
 	mgr := newFixtureManager(appSaml, t.Name())
 	config := mgr.GetFixtures("basic_inline_hook.tf", t)

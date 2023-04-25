@@ -38,10 +38,6 @@ var (
 	}
 )
 
-func isValidSkipArg(s string) bool {
-	return s == "skip_users" || s == "skip_groups"
-}
-
 func resourceAppSaml() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppSamlCreate,
@@ -193,10 +189,9 @@ func resourceAppSaml() *schema.Resource {
 				Description: "Do not display application icon to users",
 			},
 			"implicit_assignment": {
-				Type:          schema.TypeBool,
-				Optional:      true,
-				Description:   "*Early Access Property*. Enable Federation Broker Mode.",
-				ConflictsWith: []string{"groups", "users"},
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "*Early Access Property*. Enable Federation Broker Mode.",
 			},
 			"default_relay_state": {
 				Type:        schema.TypeString,
@@ -430,18 +425,10 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interf
 	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
 	// So Skip setting assignments while this is on
 	if !d.Get("implicit_assignment").(bool) {
-		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-		if err != nil {
-			return diag.Errorf("failed to handle groups and users for SAML application: %v", err)
-		}
 	}
 	err = tryCreateCertificate(ctx, d, m, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to create new certificate for SAML application: %v", err)
-	}
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for SAML application: %v", err)
 	}
 	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 	if err != nil {
@@ -534,13 +521,6 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	} else {
 		_ = d.Set("saml_version", saml20)
 	}
-	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-	// So Skip setting assignments while this is on
-	if !d.Get("implicit_assignment").(bool) {
-		if err = syncGroupsAndUsers(ctx, app.Id, d, m); err != nil {
-			return diag.Errorf("failed to sync groups and users for OAuth application: %v", err)
-		}
-	}
 	return nil
 }
 
@@ -571,10 +551,6 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
 	// So Skip setting assignments while this is on
 	if !d.Get("implicit_assignment").(bool) {
-		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-		if err != nil {
-			return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
-		}
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)

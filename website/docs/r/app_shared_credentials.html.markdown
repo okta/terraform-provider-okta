@@ -57,9 +57,6 @@ The following arguments are supported:
 
 - `enduser_note` - (Optional) Application notes for end users.
 
-- `groups` - (Optional) Groups associated with the application. See `okta_app_group_assignment` for a more flexible approach.
-  - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
-
 - `hide_ios` - (Optional) Do not display application icon on mobile app.
 
 - `hide_web` - (Optional) Do not display application icon to users.
@@ -78,10 +75,6 @@ The following arguments are supported:
 
 - `shared_username` - (Optional) Shared username, required for certain schemes.
 
-- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it's also can be provided during import). Default is `false`.
-
-- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it's also can be provided during import). Default is `false`.
-
 - `status` - (Optional) The status of the application, by default, it is `"ACTIVE"`.
 
 - `url` - (Optional) The URL of the sign-in page for this app.
@@ -97,9 +90,6 @@ The following arguments are supported:
 - `user_name_template_type` - (Optional) Username template type. Default: `"BUILT_IN"`.
 
 - `username_field` - (Optional) CSS selector for the username field.
-
-- `users` - (Optional) The users assigned to the application. See `okta_app_user` for a more flexible approach.
-  - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
 
 ## Attributes Reference
 
@@ -117,11 +107,11 @@ The following arguments are supported:
 
 The `timeouts` block allows you to specify custom [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions: 
 
-- `create` - Create timeout if syncing users/groups (default 1 hour).
+- `create` - Create timeout (default 1 hour).
 
-- `update` - Update timeout if syncing users/groups (default 1 hour).
+- `update` - Update timeout (default 1 hour).
 
-- `read` - Read timeout if syncing users/groups (default 1 hour).
+- `read` - Read timeout (default 1 hour).
 
 ## Import
 
@@ -130,14 +120,3 @@ Okta SWA Shared Credentials App can be imported via the Okta ID.
 ```
 $ terraform import okta_app_shared_credentials.example &#60;app id&#62;
 ```
-
-It's also possible to import app without groups or/and users. In this case ID may look like this:
-
-```
-$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_users
-
-$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_users/skip_groups
-
-$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_groups
-```
-

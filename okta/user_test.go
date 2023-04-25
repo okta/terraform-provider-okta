@@ -95,11 +95,3 @@ func testUserGroupFetchesAllPages(t *testing.T, fn userGroupFunc) {
 		t.Fatalf("expected %s; got %s", expected, groups)
 	}
 }
-
-func TestUserSetAllGroups(t *testing.T) {
-	testUserGroupFetchesAllPages(t, setAllGroups)
-}
-
-func TestUserSetGroups(t *testing.T) {
-	testUserGroupFetchesAllPages(t, setGroupUserMemberships)
-}
