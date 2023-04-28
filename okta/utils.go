@@ -315,10 +315,6 @@ func suppressErrorOn403(what string, meta interface{}, resp *sdk.Response, err e
 	return responseErr(resp, err)
 }
 
-func getParallelismFromMetadata(meta interface{}) int {
-	return meta.(*Config).parallelism
-}
-
 func getOktaClientFromMetadata(meta interface{}) *sdk.Client {
 	return meta.(*Config).oktaClient
 }

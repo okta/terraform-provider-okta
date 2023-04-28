@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.0.0 (April 28, 2023)
+
+### FEATURE
+* Removal of [deprecated resources, data sources, and attributes](https://github.com/okta/terraform-provider-okta/issues/1338)
+* Removal of artificial input validation, let the Okta API do the input validation
+* Fast running acceptance tests that will better block broken functionality from being published using [vcr](https://pkg.go.dev/github.com/dnaeon/go-vcr@v1.2.0)
+* Bringing in [Go Sdk v3](https://github.com/okta/okta-sdk-golang/releases/tag/v3.0.2)
+* A more consistent means of generating documentation published at the [Terraform Registry](https://registry.terraform.io/providers/okta/okta/latest/docs) using [tfplugindocs](https://github.com/hashicorp/terraform-plugin-docs)
+
 ## 3.46.0 (April 14, 2023)
 
 ### BUG FIXES

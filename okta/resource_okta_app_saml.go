@@ -422,10 +422,6 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interf
 	}
 	// Make sure to track in terraform prior to the creation of cert in case there is an error.
 	d.SetId(app.Id)
-	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-	// So Skip setting assignments while this is on
-	if !d.Get("implicit_assignment").(bool) {
-	}
 	err = tryCreateCertificate(ctx, d, m, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to create new certificate for SAML application: %v", err)
@@ -547,10 +543,6 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 		if err != nil {
 			return diag.Errorf("failed to create new certificate for SAML application: %v", err)
 		}
-	}
-	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-	// So Skip setting assignments while this is on
-	if !d.Get("implicit_assignment").(bool) {
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)

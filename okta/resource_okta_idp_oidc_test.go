@@ -92,20 +92,19 @@ resource "okta_idp_oidc" "test" {
   request_signature_scope = "REQUEST"
 }`
 
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(idpOidc)
+	mgr := newFixtureManager(idpOidc, t.Name())
 	resourceName := fmt.Sprintf("%s.test", idpOidc)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpOidc, createDoesIdpExist()),
+		CheckDestroy:      createCheckResourceDestroy(idpOidc, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "authorization_url", "https://idp.example.com/authorize"),
 					resource.TestCheckResourceAttr(resourceName, "authorization_binding", "HTTP-REDIRECT"),
 					resource.TestCheckResourceAttr(resourceName, "token_url", "https://idp.example.com/token"),
