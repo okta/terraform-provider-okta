@@ -199,16 +199,6 @@ func assignAdminRolesToUser(ctx context.Context, userID string, roles []string, 
 	return nil
 }
 
-func assignGroupsToUser(ctx context.Context, userID string, groups []string, c *sdk.Client) error {
-	for _, group := range groups {
-		_, err := c.Group.AddUserToGroup(ctx, group, userID)
-		if err != nil {
-			return fmt.Errorf("failed to assign group '%s' to user '%s': %w", group, userID, err)
-		}
-	}
-	return nil
-}
-
 func populateUserProfile(d *schema.ResourceData) *sdk.UserProfile {
 	profile := sdk.UserProfile{}
 

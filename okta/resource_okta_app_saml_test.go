@@ -308,18 +308,6 @@ resource "%s" "%s" {
 `, appSaml, name, name)
 }
 
-func buildTestSamlConfigInvalidURL(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  label         		= "%s"
-  status 	    	    = "INACTIVE"
-  sso_url      			= "123"
-}
-`, appSaml, name, name)
-}
-
 func TestAccResourceOktaAppSaml_timeouts(t *testing.T) {
 	mgr := newFixtureManager(appSaml, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appSaml)

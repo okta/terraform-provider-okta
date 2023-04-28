@@ -292,49 +292,6 @@ func createDoesAppExist(app sdk.App) func(string) (bool, error) {
 	}
 }
 
-func buildTestOAuthAppClientID(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "test" {
-  label          = "%s"
-  type           = "service"
-  response_types = ["token"]
-  grant_types    = ["implicit", "client_credentials"]
-  redirect_uris  = ["http://test.com"]
-  client_id      = "%s"
-}`, appOAuth, name, name)
-}
-
-func buildTestOAuthAppCustomClientID(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "test" {
-  label            = "%s"
-  type             = "service"
-  response_types   = ["token"]
-  grant_types      = ["implicit", "client_credentials"]
-  redirect_uris    = ["http://test.com"]
-  custom_client_id = "%s"
-}`, appOAuth, name, name)
-}
-
-func buildTestOAuthAppCustomClientIDBadConfig(rInt int) string {
-	name := buildResourceName(rInt)
-
-	return fmt.Sprintf(`
-resource "%s" "test" {
-  label            = "%s"
-  type             = "service"
-  response_types   = ["token"]
-  grant_types      = ["implicit", "client_credentials"]
-  redirect_uris    = ["http://test.com"]
-  custom_client_id = "%s"
-  client_id        = "%s"
-}`, appOAuth, name, name, name)
-}
-
 // TestAccResourceOktaAppOauth_redirect_uris relates to issue 1170
 //
 //	Enable terraform to maintain order of redirect_uris

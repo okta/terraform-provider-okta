@@ -14,31 +14,6 @@ import (
 )
 
 var (
-	appUserResource = &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"scope": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Scope of application user.",
-			},
-			"id": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "User ID.",
-			},
-			"username": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Username for user.",
-			},
-			"password": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Password for user application.",
-			},
-		},
-	}
-
 	baseAppSchema = map[string]*schema.Schema{
 		"name": {
 			Type:        schema.TypeString,
@@ -321,27 +296,6 @@ func listApplicationGroupAssignments(ctx context.Context, client *sdk.Client, id
 	return groups, resp, nil
 }
 
-func containsAppUser(userList []*sdk.AppUser, id string) bool {
-	for _, user := range userList {
-		if user.Id == id && user.Scope == userScope {
-			return true
-		}
-	}
-	return false
-}
-
-func shouldUpdateUser(userList []*sdk.AppUser, id, username string) bool {
-	for _, user := range userList {
-		if user.Id == id &&
-			user.Scope == userScope &&
-			user.Credentials != nil &&
-			user.Credentials.UserName != username {
-			return true
-		}
-	}
-	return false
-}
-
 func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, appID string, links interface{}) error {
 	l, ok := d.GetOk("logo")
 	if !ok {
@@ -349,27 +303,6 @@ func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, a
 	}
 	_, err := getOktaClientFromMetadata(m).Application.UploadApplicationLogo(ctx, appID, l.(string))
 	return err
-}
-
-func listApplicationUsers(ctx context.Context, client *sdk.Client, id string) ([]*sdk.AppUser, error) {
-	var resUsers []*sdk.AppUser
-	users, resp, err := client.Application.ListApplicationUsers(ctx, id, &query.Params{Limit: defaultPaginationLimit})
-	if err != nil {
-		return nil, err
-	}
-	for {
-		resUsers = append(resUsers, users...)
-		if resp.HasNextPage() {
-			resp, err = resp.Next(ctx, &users)
-			if err != nil {
-				return nil, err
-			}
-			continue
-		} else {
-			break
-		}
-	}
-	return resUsers, nil
 }
 
 func setAppStatus(ctx context.Context, d *schema.ResourceData, client *sdk.Client, status string) error {
