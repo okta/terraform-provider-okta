@@ -119,6 +119,18 @@ func checkIfUserHasGroups(ctx context.Context, client *okta.Client, userId strin
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, fmt.Errorf("unable to return groups for user (%s) from API", userId)
 	}
+	var nextUserGroups []*okta.Group
+
+	for resp.HasNextPage() {
+		resp, err = resp.Next(ctx, &nextUserGroups)
+
+		if err := suppressErrorOn404(resp, err); err != nil {
+			return false, fmt.Errorf("unable to get next page of groups for user (%s) from API", userId)
+		}
+
+		userGroups = append(userGroups, nextUserGroups...)
+	}
+
 	if len(userGroups) == 0 {
 		return false, nil
 	}
