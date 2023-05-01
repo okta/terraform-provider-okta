@@ -20,7 +20,7 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -252,7 +252,7 @@ func stringPtr(s string) (ptr *string) {
 	return
 }
 
-func doesResourceExist(response *okta.Response, err error) (bool, error) {
+func doesResourceExist(response *sdk.Response, err error) (bool, error) {
 	if response == nil {
 		return false, err
 	}
@@ -280,16 +280,24 @@ func doesResourceExist(response *okta.Response, err error) (bool, error) {
 
 // Useful shortcut for suppressing errors from Okta's SDK when a resource does not exist. Usually used during deletion
 // of nested resources.
-func suppressErrorOn404(resp *okta.Response, err error) error {
+func suppressErrorOn404(resp *sdk.Response, err error) error {
 	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return nil
 	}
 	return responseErr(resp, err)
 }
 
+// TODO switch to suppressErrorOn404 when migration complete
+func v3suppressErrorOn404(resp *okta.APIResponse, err error) error {
+	if resp != nil && resp.StatusCode == http.StatusNotFound {
+		return nil
+	}
+	return v3responseErr(resp, err)
+}
+
 // Useful shortcut for suppressing errors from Okta's SDK when a Org does not
 // have permission to access a feature.
-func suppressErrorOn401(what string, meta interface{}, resp *okta.Response, err error) error {
+func suppressErrorOn401(what string, meta interface{}, resp *sdk.Response, err error) error {
 	if resp != nil && resp.StatusCode == http.StatusUnauthorized {
 		logger(meta).Warn(fmt.Sprintf("Suppressing %q on %q", "401 Unauthorized", what))
 		return nil
@@ -299,7 +307,7 @@ func suppressErrorOn401(what string, meta interface{}, resp *okta.Response, err 
 
 // Useful shortcut for suppressing errors from Okta's SDK when a Org does not
 // have permission to access a feature.
-func suppressErrorOn403(what string, meta interface{}, resp *okta.Response, err error) error {
+func suppressErrorOn403(what string, meta interface{}, resp *sdk.Response, err error) error {
 	if resp != nil && resp.StatusCode == http.StatusForbidden {
 		logger(meta).Warn(fmt.Sprintf("Suppressing %q on %q", "403 Forbidden", what))
 		return nil
@@ -307,23 +315,24 @@ func suppressErrorOn403(what string, meta interface{}, resp *okta.Response, err 
 	return responseErr(resp, err)
 }
 
-func getParallelismFromMetadata(meta interface{}) int {
-	return meta.(*Config).parallelism
-}
-
-func getOktaClientFromMetadata(meta interface{}) *okta.Client {
+func getOktaClientFromMetadata(meta interface{}) *sdk.Client {
 	return meta.(*Config).oktaClient
 }
 
-func getSupplementFromMetadata(meta interface{}) *sdk.APISupplement {
+// TODO switch to getOktaClientFromMetadata when migration complete
+func getOktaV3ClientFromMetadata(meta interface{}) *okta.APIClient {
+	return meta.(*Config).v3Client
+}
+
+func getAPISupplementFromMetadata(meta interface{}) *sdk.APISupplement {
 	return meta.(*Config).supplementClient
 }
 
-func getRequestExecutor(m interface{}) *okta.RequestExecutor {
+func getRequestExecutor(m interface{}) *sdk.RequestExecutor {
 	return getOktaClientFromMetadata(m).GetRequestExecutor()
 }
 
-func is404(resp *okta.Response) bool {
+func is404(resp *sdk.Response) bool {
 	return resp != nil && resp.StatusCode == http.StatusNotFound
 }
 
@@ -342,8 +351,8 @@ func normalizeDataJSON(val interface{}) string {
 }
 
 // Removes nulls from group profile map and returns, since Okta does not render nulls in profile
-func normalizeGroupProfile(profile okta.GroupProfileMap) okta.GroupProfileMap {
-	trimedProfile := make(okta.GroupProfileMap)
+func normalizeGroupProfile(profile sdk.GroupProfileMap) sdk.GroupProfileMap {
+	trimedProfile := make(sdk.GroupProfileMap)
 	for k, v := range profile {
 		if v != nil {
 			trimedProfile[k] = v
@@ -379,7 +388,19 @@ func setNonPrimitives(d *schema.ResourceData, valueMap map[string]interface{}) e
 // Okta SDK will (not often) return just `Okta API has returned an error: ""“ when the error is not valid JSON.
 // The status should help with debugability. Potentially also could check for an empty error and omit
 // it when it occurs and build some more context.
-func responseErr(resp *okta.Response, err error) error {
+func responseErr(resp *sdk.Response, err error) error {
+	if err != nil {
+		msg := err.Error()
+		if resp != nil {
+			msg += fmt.Sprintf(", Status: %s", resp.Status)
+		}
+		return errors.New(msg)
+	}
+	return nil
+}
+
+// TODO switch to responseErr when migration complete
+func v3responseErr(resp *okta.APIResponse, err error) error {
 	if err != nil {
 		msg := err.Error()
 		if resp != nil {

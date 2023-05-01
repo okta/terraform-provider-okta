@@ -9,12 +9,11 @@ import (
 )
 
 func TestAccOktaDataSourceApp_read(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(app)
-	config := mgr.GetFixtures("datasource.tf", ri, t)
-	appCreate := buildTestApp(ri)
+	mgr := newFixtureManager(app, t.Name())
+	config := mgr.GetFixtures("datasource.tf", t)
+	appCreate := buildTestApp(mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -26,9 +25,9 @@ func TestAccOktaDataSourceApp_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("okta_app_oauth.test", "id"),
-					resource.TestCheckResourceAttr("data.okta_app.test", "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr("data.okta_app.test2", "label", buildResourceName(ri)),
-					resource.TestCheckResourceAttr("data.okta_app.test3", "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr("data.okta_app.test", "label", buildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr("data.okta_app.test2", "label", buildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr("data.okta_app.test3", "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr("data.okta_app.test", "status", statusActive),
 					resource.TestCheckResourceAttr("data.okta_app.test2", "status", statusActive),
 					resource.TestCheckResourceAttr("data.okta_app.test3", "status", statusActive),
@@ -55,7 +54,7 @@ func TestAccOktaDataSourceAppLabelTest_read(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testLabelConfig(ri)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,

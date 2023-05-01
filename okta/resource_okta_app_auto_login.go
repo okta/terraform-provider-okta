@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceAppAutoLogin() *schema.Resource {
@@ -26,28 +26,18 @@ func resourceAppAutoLogin() *schema.Resource {
 				Description: "Preconfigured app name",
 			},
 			"sign_on_url": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Login URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Login URL",
 			},
 			"sign_on_redirect_url": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Post login redirect URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Post login redirect URL",
 			},
 			"credentials_scheme": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ValidateDiagFunc: elemInSlice(
-					[]string{
-						"EDIT_USERNAME_AND_PASSWORD",
-						"ADMIN_SETS_CREDENTIALS",
-						"EDIT_PASSWORD_ONLY",
-						"EXTERNAL_PASSWORD_SYNC",
-						"SHARED_USERNAME_AND_PASSWORD",
-					}),
+				Type:        schema.TypeString,
+				Optional:    true,
 				Default:     "EDIT_USERNAME_AND_PASSWORD",
 				Description: "Application credentials scheme",
 			},
@@ -95,10 +85,6 @@ func resourceAppAutoLoginCreate(ctx context.Context, d *schema.ResourceData, m i
 		return diag.Errorf("failed to create auto login application: %v", err)
 	}
 	d.SetId(app.Id)
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for auto login application: %v", err)
-	}
 	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for auto login application: %v", err)
@@ -107,7 +93,7 @@ func resourceAppAutoLoginCreate(ctx context.Context, d *schema.ResourceData, m i
 }
 
 func resourceAppAutoLoginRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := okta.NewAutoLoginApplication()
+	app := sdk.NewAutoLoginApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get auto login application: %v", err)
@@ -135,10 +121,6 @@ func resourceAppAutoLoginRead(ctx context.Context, d *schema.ResourceData, m int
 	_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
-	err = syncGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to sync groups and users for auto login application: %v", err)
-	}
 	return nil
 }
 
@@ -152,10 +134,6 @@ func resourceAppAutoLoginUpdate(ctx context.Context, d *schema.ResourceData, m i
 	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
 		return diag.Errorf("failed to set auto login application status: %v", err)
-	}
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for auto login application: %v", err)
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
@@ -176,17 +154,17 @@ func resourceAppAutoLoginDelete(ctx context.Context, d *schema.ResourceData, m i
 	return nil
 }
 
-func buildAppAutoLogin(d *schema.ResourceData) *okta.AutoLoginApplication {
+func buildAppAutoLogin(d *schema.ResourceData) *sdk.AutoLoginApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
-	app := okta.NewAutoLoginApplication()
+	app := sdk.NewAutoLoginApplication()
 	app.Label = d.Get("label").(string)
 	name := d.Get("preconfigured_app").(string)
 
 	if name != "" {
 		app.Name = name
 	}
-	app.Settings = &okta.AutoLoginApplicationSettings{
-		SignOn: &okta.AutoLoginApplicationSettingsSignOn{
+	app.Settings = &sdk.AutoLoginApplicationSettings{
+		SignOn: &sdk.AutoLoginApplicationSettingsSignOn{
 			LoginUrl:    d.Get("sign_on_url").(string),
 			RedirectUrl: d.Get("sign_on_redirect_url").(string),
 		},

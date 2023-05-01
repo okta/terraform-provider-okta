@@ -9,9 +9,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 type (
@@ -117,11 +116,10 @@ func resourceAppOAuth() *schema.Resource {
 		// the examples in the documentation
 		Schema: buildAppSchema(map[string]*schema.Schema{
 			"type": {
-				Type:             schema.TypeString,
-				ValidateDiagFunc: elemInSlice([]string{"", "web", "native", "browser", "service"}),
-				Required:         true,
-				ForceNew:         true,
-				Description:      "The type of client application.",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "The type of client application.",
 			},
 			"client_id": {
 				Type: schema.TypeString,
@@ -133,13 +131,6 @@ func resourceAppOAuth() *schema.Resource {
 				ForceNew:    true,
 				Computed:    true,
 				Description: "OAuth client ID. If set during creation, app is created with this id.",
-			},
-			"custom_client_id": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ConflictsWith: []string{"client_id"},
-				Description:   "**Deprecated** This property allows you to set your client_id during creation. NOTE: updating after creation will be a no-op, use client_id for that behavior instead.",
-				Deprecated:    "This field is being replaced by client_id. Please set that field instead.",
 			},
 			"omit_secret": {
 				Type:     schema.TypeBool,
@@ -161,11 +152,10 @@ func resourceAppOAuth() *schema.Resource {
 				Description: "OAuth client secret key, this can be set when token_endpoint_auth_method is client_secret_basic.",
 			},
 			"token_endpoint_auth_method": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"none", "client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"}),
-				Default:          "client_secret_basic",
-				Description:      "Requested authentication method for the token endpoint.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "client_secret_basic",
+				Description: "Requested authentication method for the token endpoint.",
 			},
 			// API docs say that auto_key_rotation will alwas be set true if it
 			// is missing on input therefore we can declare it's default to be
@@ -177,16 +167,14 @@ func resourceAppOAuth() *schema.Resource {
 				Description: "Requested key rotation mode.",
 			},
 			"client_uri": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "URI to a web page providing information about the client.",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "URI to a web page providing information about the client.",
 			},
 			"logo_uri": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "URI that references a logo for the client.",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "URI that references a logo for the client.",
 			},
 			"login_uri": {
 				Type:        schema.TypeString,
@@ -194,18 +182,16 @@ func resourceAppOAuth() *schema.Resource {
 				Description: "URI that initiates login.",
 			},
 			"login_mode": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "The type of Idp-Initiated login that the client supports, if any",
-				Default:          "DISABLED",
-				ValidateDiagFunc: elemInSlice([]string{"DISABLED", "SPEC", "OKTA"}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The type of Idp-Initiated login that the client supports, if any",
+				Default:     "DISABLED",
 			},
 			"login_scopes": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
-					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice([]string{"openid", "profile", "email", "address", "phone"}),
+					Type: schema.TypeString,
 				},
 				Description: "List of scopes to use for the request",
 			},
@@ -228,11 +214,10 @@ func resourceAppOAuth() *schema.Resource {
 				Description: "List of URIs for use in the redirect-based flow. This is required for all application types except service. Note: see okta_app_oauth_redirect_uri for appending to this list in a decentralized way.",
 			},
 			"wildcard_redirect": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "*Early Access Property*. Indicates if the client is allowed to use wildcard matching of redirect_uris",
-				Default:          "DISABLED",
-				ValidateDiagFunc: elemInSlice([]string{"DISABLED", "SUBDOMAIN"}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "*Early Access Property*. Indicates if the client is allowed to use wildcard matching of redirect_uris",
+				Default:     "DISABLED",
 			},
 			"post_logout_redirect_uris": {
 				Type:        schema.TypeSet,
@@ -243,8 +228,7 @@ func resourceAppOAuth() *schema.Resource {
 			"response_types": {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
-					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice([]string{"code", "token", "id_token"}),
+					Type: schema.TypeString,
 				},
 				Optional:    true,
 				Description: "List of OAuth 2.0 response type strings.",
@@ -252,51 +236,44 @@ func resourceAppOAuth() *schema.Resource {
 			"grant_types": {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
-					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice([]string{authorizationCode, implicit, password, refreshToken, clientCredentials, saml2Bearer, tokenExchange, deviceCode, interactionCode}),
+					Type: schema.TypeString,
 				},
 				Optional:    true,
 				Description: "List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.",
 			},
 			"tos_uri": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "URI to web page providing client tos (terms of service).",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "URI to web page providing client tos (terms of service).",
 			},
 			"policy_uri": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "URI to web page providing client policy document.",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "URI to web page providing client policy document.",
 			},
 			"consent_method": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Default:          "TRUSTED",
-				ValidateDiagFunc: elemInSlice([]string{"REQUIRED", "TRUSTED"}),
-				Description:      "*Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "TRUSTED",
+				Description: "*Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED",
 			},
 			"issuer_mode": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"CUSTOM_URL", "ORG_URL", "DYNAMIC"}),
-				Default:          "ORG_URL",
-				Description:      "*Early Access Property*. Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "ORG_URL",
+				Description: "*Early Access Property*. Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.",
 			},
 			"refresh_token_rotation": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Computed:         true,
-				ValidateDiagFunc: elemInSlice([]string{"STATIC", "ROTATE"}),
-				Description:      "*Early Access Property* Refresh token rotation behavior",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				Description: "*Early Access Property* Refresh token rotation behavior",
 			},
 			"refresh_token_leeway": {
-				Type:             schema.TypeInt,
-				Optional:         true,
-				Computed:         true,
-				ValidateDiagFunc: intBetween(0, 60),
-				Description:      "*Early Access Property* Grace period for token rotation",
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Computed:    true,
+				Description: "*Early Access Property* Grace period for token rotation",
 			},
 			"auto_submit_toolbar": {
 				Type:        schema.TypeBool,
@@ -334,10 +311,9 @@ func resourceAppOAuth() *schema.Resource {
 							Description: "Key ID",
 						},
 						"kty": {
-							Type:             schema.TypeString,
-							Required:         true,
-							Description:      "Key type",
-							ValidateDiagFunc: elemInSlice([]string{"RSA"}),
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "Key type",
 						},
 						"e": {
 							Type:        schema.TypeString,
@@ -353,10 +329,9 @@ func resourceAppOAuth() *schema.Resource {
 				},
 			},
 			"implicit_assignment": {
-				Type:          schema.TypeBool,
-				Optional:      true,
-				Description:   "*Early Access Property*. Enable Federation Broker Mode.",
-				ConflictsWith: []string{"groups", "users"},
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "*Early Access Property*. Enable Federation Broker Mode.",
 			},
 			"groups_claim": {
 				Type:        schema.TypeSet,
@@ -392,16 +367,14 @@ func resourceAppOAuth() *schema.Resource {
 var groupsClaimResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"type": {
-			Description:      "Groups claim type.",
-			Type:             schema.TypeString,
-			Required:         true,
-			ValidateDiagFunc: elemInSlice([]string{"FILTER", "EXPRESSION"}),
+			Description: "Groups claim type.",
+			Type:        schema.TypeString,
+			Required:    true,
 		},
 		"filter_type": {
-			Description:      "Groups claim filter. Can only be set if type is FILTER.",
-			Type:             schema.TypeString,
-			Optional:         true,
-			ValidateDiagFunc: elemInSlice([]string{"EQUALS", "STARTS_WITH", "CONTAINS", "REGEX"}),
+			Description: "Groups claim filter. Can only be set if type is FILTER.",
+			Type:        schema.TypeString,
+			Optional:    true,
 		},
 		"name": {
 			Description: "Name of the claim that will be used in the token.",
@@ -440,14 +413,6 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if !d.Get("omit_secret").(bool) {
 		_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
 	}
-	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-	// So Skip setting assignments while this is on
-	if !d.Get("implicit_assignment").(bool) {
-		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-		if err != nil {
-			return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
-		}
-	}
 	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for OAuth application: %v", err)
@@ -483,7 +448,7 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m inter
 	} else {
 		gc.ValueType = gct
 	}
-	_, err := getSupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
+	_, err := getAPISupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
 	return err
 }
 
@@ -496,14 +461,14 @@ func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m in
 		gc := &sdk.AppOauthGroupClaim{
 			IssuerMode: d.Get("issuer_mode").(string),
 		}
-		_, err := getSupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
+		_, err := getAPISupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
 		return err
 	}
 	return setAppOauthGroupsClaim(ctx, d, m)
 }
 
 func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := okta.NewOpenIdConnectApplication()
+	app := sdk.NewOpenIdConnectApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get OAuth application: %v", err)
@@ -547,13 +512,6 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	if d.Get("omit_secret").(bool) {
 		_ = d.Set("client_secret", "")
 	}
-	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-	// So Skip setting assignments while this is on
-	if !d.Get("implicit_assignment").(bool) {
-		if err = syncGroupsAndUsers(ctx, app.Id, d, m); err != nil {
-			return diag.Errorf("failed to sync groups and users for OAuth application: %v", err)
-		}
-	}
 	if _, exists := d.GetOk("groups_claim"); exists {
 		gc, err := flattenGroupsClaim(ctx, d, m)
 		if err != nil {
@@ -565,7 +523,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 }
 
 func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface{}) (*schema.Set, error) {
-	gc, resp, err := getSupplementFromMetadata(m).GetAppOauthGroupsClaim(ctx, d.Id())
+	gc, resp, err := getAPISupplementFromMetadata(m).GetAppOauthGroupsClaim(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return nil, fmt.Errorf("failed to get groups claim for OAuth application: %w", err)
 	}
@@ -585,7 +543,7 @@ func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface
 	return schema.NewSet(schema.HashResource(groupsClaimResource), []interface{}{elem}), nil
 }
 
-func setOAuthClientSettings(d *schema.ResourceData, oauthClient *okta.OpenIdConnectApplicationSettingsClient) diag.Diagnostics {
+func setOAuthClientSettings(d *schema.ResourceData, oauthClient *sdk.OpenIdConnectApplicationSettingsClient) diag.Diagnostics {
 	if oauthClient == nil {
 		return nil
 	}
@@ -672,14 +630,6 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.Errorf("failed to set OAuth application status: %v", err)
 	}
-	// When the implicit_assignment is turned on, calls to the user/group assignments will error with a bad request
-	// So Skip setting assignments while this is on
-	if !d.Get("implicit_assignment").(bool) {
-		err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-		if err != nil {
-			return diag.Errorf("failed to handle groups and users for OAuth application: %v", err)
-		}
-	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 		if err != nil {
@@ -707,9 +657,9 @@ func resourceAppOAuthDelete(ctx context.Context, d *schema.ResourceData, m inter
 	return nil
 }
 
-func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
+func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
-	app := okta.NewOpenIdConnectApplication()
+	app := sdk.NewOpenIdConnectApplication()
 	appType := d.Get("type").(string)
 	grantTypes := convertInterfaceToStringSet(d.Get("grant_types"))
 	responseTypes := convertInterfaceToStringSetNullable(d.Get("response_types"))
@@ -741,8 +691,8 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 
 	app.Label = d.Get("label").(string)
 	authMethod := d.Get("token_endpoint_auth_method").(string)
-	app.Credentials = &okta.OAuthApplicationCredentials{
-		OauthClient: &okta.ApplicationCredentialsOAuthClient{
+	app.Credentials = &sdk.OAuthApplicationCredentials{
+		OauthClient: &sdk.ApplicationCredentialsOAuthClient{
 			AutoKeyRotation:         boolPtr(d.Get("auto_key_rotation").(bool)),
 			ClientId:                d.Get("client_id").(string),
 			TokenEndpointAuthMethod: authMethod,
@@ -771,23 +721,19 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 		app.Credentials.OauthClient.ClientSecret = sec.(string)
 	}
 
-	if cid, ok := d.GetOk("custom_client_id"); ok {
-		app.Credentials.OauthClient.ClientId = cid.(string)
-	}
-
-	oktaRespTypes := make([]*okta.OAuthResponseType, len(responseTypes))
+	oktaRespTypes := make([]*sdk.OAuthResponseType, len(responseTypes))
 	for i := range responseTypes {
-		rt := okta.OAuthResponseType(responseTypes[i])
+		rt := sdk.OAuthResponseType(responseTypes[i])
 		oktaRespTypes[i] = &rt
 	}
-	oktaGrantTypes := make([]*okta.OAuthGrantType, len(grantTypes))
+	oktaGrantTypes := make([]*sdk.OAuthGrantType, len(grantTypes))
 	for i := range grantTypes {
-		gt := okta.OAuthGrantType(grantTypes[i])
+		gt := sdk.OAuthGrantType(grantTypes[i])
 		oktaGrantTypes[i] = &gt
 	}
-	app.Settings = &okta.OpenIdConnectApplicationSettings{
+	app.Settings = &sdk.OpenIdConnectApplicationSettings{
 		ImplicitAssignment: boolPtr(d.Get("implicit_assignment").(bool)),
-		OauthClient: &okta.OpenIdConnectApplicationSettingsClient{
+		OauthClient: &sdk.OpenIdConnectApplicationSettingsClient{
 			ApplicationType:        appType,
 			ClientUri:              d.Get("client_uri").(string),
 			ConsentMethod:          d.Get("consent_method").(string),
@@ -800,7 +746,7 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 			ResponseTypes:          oktaRespTypes,
 			TosUri:                 d.Get("tos_uri").(string),
 			IssuerMode:             d.Get("issuer_mode").(string),
-			IdpInitiatedLogin: &okta.OpenIdConnectApplicationIdpInitiatedLogin{
+			IdpInitiatedLogin: &sdk.OpenIdConnectApplicationIdpInitiatedLogin{
 				DefaultScope: convertInterfaceToStringSet(d.Get("login_scopes")),
 				Mode:         d.Get("login_mode").(string),
 			},
@@ -811,19 +757,19 @@ func buildAppOAuth(d *schema.ResourceData) *okta.OpenIdConnectApplication {
 	}
 	jwks := d.Get("jwks").([]interface{})
 	if len(jwks) > 0 {
-		keys := make([]*okta.JsonWebKey, len(jwks))
+		keys := make([]*sdk.JsonWebKey, len(jwks))
 		for i := range jwks {
-			keys[i] = &okta.JsonWebKey{
+			keys[i] = &sdk.JsonWebKey{
 				Kid: d.Get(fmt.Sprintf("jwks.%d.kid", i)).(string),
 				Kty: d.Get(fmt.Sprintf("jwks.%d.kty", i)).(string),
 				E:   d.Get(fmt.Sprintf("jwks.%d.e", i)).(string),
 				N:   d.Get(fmt.Sprintf("jwks.%d.n", i)).(string),
 			}
 		}
-		app.Settings.OauthClient.Jwks = &okta.OpenIdConnectApplicationSettingsClientKeys{Keys: keys}
+		app.Settings.OauthClient.Jwks = &sdk.OpenIdConnectApplicationSettingsClientKeys{Keys: keys}
 	}
 
-	refresh := &okta.OpenIdConnectApplicationSettingsRefreshToken{}
+	refresh := &sdk.OpenIdConnectApplicationSettingsRefreshToken{}
 	hasRefresh := false
 	if rotate, ok := d.GetOk("refresh_token_rotation"); ok {
 		refresh.RotationType = rotate.(string)

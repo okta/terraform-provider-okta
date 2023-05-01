@@ -5,9 +5,8 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
 	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 // Basis of policy schema
@@ -31,11 +30,10 @@ var (
 			DiffSuppressFunc: createValueDiffSuppression("0"),
 		},
 		"status": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          statusActive,
-			ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
-			Description:      "Policy Status: ACTIVE or INACTIVE.",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     statusActive,
+			Description: "Policy Status: ACTIVE or INACTIVE.",
 		},
 		"groups_included": {
 			Type:        schema.TypeSet,
@@ -76,10 +74,9 @@ var (
 	}
 
 	statusSchema = &schema.Schema{
-		Type:             schema.TypeString,
-		Optional:         true,
-		Default:          statusActive,
-		ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
+		Type:     schema.TypeString,
+		Optional: true,
+		Default:  statusActive,
 	}
 
 	isOieSchema = &schema.Schema{
@@ -90,7 +87,7 @@ var (
 	}
 )
 
-func setDefaultPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, policyType string) (*okta.Policy, error) {
+func setDefaultPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, policyType string) (*sdk.Policy, error) {
 	policy, err := findSystemPolicyByType(ctx, m, policyType)
 	if err != nil {
 		return nil, err
@@ -136,12 +133,12 @@ func buildMfaPolicySchema(target map[string]*schema.Schema) map[string]*schema.S
 	return schema
 }
 
-func createPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.Policy) error {
+func createPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.SdkPolicy) error {
 	logger(m).Info("creating policy", "name", template.Name, "type", template.Type)
 	if err := ensureNotDefaultPolicy(d); err != nil {
 		return err
 	}
-	policy, _, err := getSupplementFromMetadata(m).CreatePolicy(ctx, template)
+	policy, _, err := getAPISupplementFromMetadata(m).CreatePolicy(ctx, template)
 	if err != nil {
 		return err
 	}
@@ -161,11 +158,11 @@ func ensureNotDefaultPolicy(d *schema.ResourceData) error {
 	return ensureNotDefault(d, "Policy")
 }
 
-func getGroups(d *schema.ResourceData) *okta.PolicyPeopleCondition {
-	var people *okta.PolicyPeopleCondition
+func getGroups(d *schema.ResourceData) *sdk.PolicyPeopleCondition {
+	var people *sdk.PolicyPeopleCondition
 	if include, ok := d.GetOk("groups_included"); ok {
-		people = &okta.PolicyPeopleCondition{
-			Groups: &okta.GroupCondition{
+		people = &sdk.PolicyPeopleCondition{
+			Groups: &sdk.GroupCondition{
 				Include: convertInterfaceToStringSet(include),
 			},
 		}
@@ -174,9 +171,9 @@ func getGroups(d *schema.ResourceData) *okta.PolicyPeopleCondition {
 }
 
 // Grabs policy from upstream, if the resource does not exist the returned policy will be nil which is not considered an error
-func getPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) (*sdk.Policy, error) {
+func getPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) (*sdk.SdkPolicy, error) {
 	logger(m).Info("getting policy", "id", d.Id())
-	policy, resp, err := getSupplementFromMetadata(m).GetPolicy(ctx, d.Id())
+	policy, resp, err := getAPISupplementFromMetadata(m).GetPolicy(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return nil, err
 	}
@@ -207,12 +204,12 @@ func policyActivate(ctx context.Context, d *schema.ResourceData, m interface{}) 
 	return nil
 }
 
-func updatePolicy(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.Policy) error {
+func updatePolicy(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.SdkPolicy) error {
 	logger(m).Info("updating policy", "name", d.Get("name").(string))
 	if err := ensureNotDefaultPolicy(d); err != nil {
 		return err
 	}
-	policy, _, err := getSupplementFromMetadata(m).UpdatePolicy(ctx, d.Id(), template)
+	policy, _, err := getAPISupplementFromMetadata(m).UpdatePolicy(ctx, d.Id(), template)
 	if err != nil {
 		return err
 	}
@@ -241,7 +238,7 @@ func deletePolicy(ctx context.Context, d *schema.ResourceData, m interface{}) er
 	return nil
 }
 
-func syncPolicyFromUpstream(d *schema.ResourceData, policy *sdk.Policy) error {
+func syncPolicyFromUpstream(d *schema.ResourceData, policy *sdk.SdkPolicy) error {
 	_ = d.Set("name", policy.Name)
 	_ = d.Set("description", policy.Description)
 	_ = d.Set("status", policy.Status)
@@ -259,7 +256,7 @@ func syncPolicyFromUpstream(d *schema.ResourceData, policy *sdk.Policy) error {
 	return nil
 }
 
-func findDefaultAccessPolicy(ctx context.Context, m interface{}) (*okta.Policy, error) {
+func findDefaultAccessPolicy(ctx context.Context, m interface{}) (*sdk.Policy, error) {
 	// OIE only
 	if config, ok := m.(*Config); ok && config.classicOrg {
 		return nil, nil
@@ -273,7 +270,7 @@ func findDefaultAccessPolicy(ctx context.Context, m interface{}) (*okta.Policy, 
 }
 
 // findSystemPolicyByType System policy is the default policy regardless of name
-func findSystemPolicyByType(ctx context.Context, m interface{}, _type string) (*okta.Policy, error) {
+func findSystemPolicyByType(ctx context.Context, m interface{}, _type string) (*sdk.Policy, error) {
 	client := getOktaClientFromMetadata(m)
 	qp := query.NewQueryParams(query.WithType(_type))
 	policies, _, err := client.Policy.ListPolicies(ctx, qp)
@@ -282,7 +279,7 @@ func findSystemPolicyByType(ctx context.Context, m interface{}, _type string) (*
 	}
 
 	for _, p := range policies {
-		policy := p.(*okta.Policy)
+		policy := p.(*sdk.Policy)
 		if *policy.System {
 			return policy, nil
 		}
@@ -291,14 +288,14 @@ func findSystemPolicyByType(ctx context.Context, m interface{}, _type string) (*
 	return nil, fmt.Errorf("default system %q policy not found", _type)
 }
 
-func findPolicyByNameAndType(ctx context.Context, m interface{}, name, policyType string) (*okta.Policy, error) {
+func findPolicyByNameAndType(ctx context.Context, m interface{}, name, policyType string) (*sdk.Policy, error) {
 	policies, resp, err := getOktaClientFromMetadata(m).Policy.ListPolicies(ctx, &query.Params{Type: policyType})
 	if err != nil {
 		return nil, fmt.Errorf("failed to list policies: %v", err)
 	}
 	for {
 		for _, _policy := range policies {
-			policy := _policy.(*okta.Policy)
+			policy := _policy.(*sdk.Policy)
 			if policy.Name == name {
 				return policy, nil
 			}

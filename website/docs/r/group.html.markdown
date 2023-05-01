@@ -21,15 +21,6 @@ resource "okta_group" "example" {
 }
 ```
 
-Ignore users sync
-```hcl
-resource "okta_group" "example_skip" {
-  name        = "Example"
-  description = "My Example Group"
-  skip_users  = true
-}
-```
-
 Custom profile attributes
 ```hcl
 resource "okta_group" "example" {
@@ -51,11 +42,6 @@ The following arguments are supported:
 
 - `description` - (Optional) The description of the Okta Group.
 
-- `users` - (Optional) The users associated with the group. This can also be done per user.
-`DEPRECATED`: Please replace usage with the `okta_group_memberships` resource.
-
-- `skip_users` - (Optional) Indicator that allows a group to skip `users` sync (it's also can be provided during import). Default is `false`.
-
 - `custom_profile_attributes` - (Optional) raw JSON containing all custom profile attributes.
 
 ## Attributes Reference
@@ -68,10 +54,4 @@ An Okta Group can be imported via the Okta ID.
 
 ```
 $ terraform import okta_group.example &#60;group id&#62;
-```
-
-It's also possible to import group without users. In this case ID will look like this:
-
-```
-$ terraform import okta_group.example &#60;group id&#62;/skip_users
 ```

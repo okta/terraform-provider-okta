@@ -5,7 +5,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -38,7 +37,7 @@ func resourcePolicyMfaDefaultCreateOrUpdate(ctx context.Context, d *schema.Resou
 		}
 		id = policy.Id
 	}
-	_, _, err := getSupplementFromMetadata(m).UpdatePolicy(ctx, id, buildDefaultMFAPolicy(d))
+	_, _, err := getAPISupplementFromMetadata(m).UpdatePolicy(ctx, id, buildDefaultMFAPolicy(d))
 	if err != nil {
 		return diag.Errorf("failed to update default MFA policy: %v", err)
 	}
@@ -59,16 +58,16 @@ func resourcePolicyMfaDefaultRead(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func buildDefaultMFAPolicy(d *schema.ResourceData) sdk.Policy {
+func buildDefaultMFAPolicy(d *schema.ResourceData) sdk.SdkPolicy {
 	policy := sdk.MfaPolicy()
 	policy.Name = d.Get("name").(string)
 	policy.Status = d.Get("status").(string)
 	policy.Description = d.Get("description").(string)
 	policy.PriorityPtr = int64Ptr(d.Get("priority").(int))
 	policy.Settings = buildSettings(d)
-	policy.Conditions = &okta.PolicyRuleConditions{
-		People: &okta.PolicyPeopleCondition{
-			Groups: &okta.GroupCondition{
+	policy.Conditions = &sdk.PolicyRuleConditions{
+		People: &sdk.PolicyPeopleCondition{
+			Groups: &sdk.GroupCondition{
 				Include: []string{d.Get("default_included_group_id").(string)},
 			},
 		},

@@ -6,34 +6,33 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/stretchr/testify/require"
 )
 
 func TestPolicyMarshal(t *testing.T) {
-	example := Policy{}
+	example := SdkPolicy{}
 	_json, err := json.Marshal(&example)
 	require.NoError(t, err)
 	require.Equal(t, `{}`, string(_json))
 
-	example = Policy{
-		Policy: okta.Policy{Id: "1"},
+	example = SdkPolicy{
+		Policy: Policy{Id: "1"},
 	}
 	_json, err = json.Marshal(&example)
 	require.NoError(t, err)
 	require.Equal(t, `{"id":"1"}`, string(_json))
 
-	example = Policy{
-		Policy:   okta.Policy{Id: "1"},
-		Settings: &PolicySettings{},
+	example = SdkPolicy{
+		Policy:   Policy{Id: "1"},
+		Settings: &SdkPolicySettings{},
 	}
 	_json, err = json.Marshal(&example)
 	require.NoError(t, err)
 	require.Equal(t, `{"id":"1","settings":{}}`, string(_json))
 
-	example = Policy{
-		Policy: okta.Policy{Id: "1"},
-		Settings: &PolicySettings{
+	example = SdkPolicy{
+		Policy: Policy{Id: "1"},
+		Settings: &SdkPolicySettings{
 			Type: "test",
 		},
 	}
@@ -45,7 +44,7 @@ func TestPolicyMarshal(t *testing.T) {
 func TestPolicyUnmarshal(t *testing.T) {
 	_json := `{"id":"1","priority":7,"settings":{"type":"test"}}`
 
-	var policy Policy
+	var policy SdkPolicy
 	err := json.Unmarshal([]byte(_json), &policy)
 	require.NoError(t, err)
 	require.NotNil(t, policy.Settings)
@@ -62,7 +61,7 @@ func TestPolicyUnmarshalAdvanced(t *testing.T) {
 	policyJSON, err := os.ReadFile(policyPath)
 	require.NoError(t, err)
 
-	var policy Policy
+	var policy SdkPolicy
 	err = json.Unmarshal(policyJSON, &policy)
 
 	// make sure the marshaling from okta SDK is correct

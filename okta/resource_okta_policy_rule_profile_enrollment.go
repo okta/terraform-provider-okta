@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -45,10 +44,9 @@ func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 				Description: "The ID of a Group that this User should be added to",
 			},
 			"unknown_user_action": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: elemInSlice([]string{"DENY", "REGISTER"}),
-				Description:      "Which action should be taken if this User is new",
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Which action should be taken if this User is new",
 			},
 			"ui_schema_id": {
 				Type:        schema.TypeString,
@@ -62,11 +60,10 @@ func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 				Default:     true,
 			},
 			"access": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ALLOW", "DENY"}),
-				Description:      "Allow or deny access based on the rule conditions: ALLOW or DENY",
-				Default:          "ALLOW",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Allow or deny access based on the rule conditions: ALLOW or DENY",
+				Default:     "ALLOW",
 			},
 			"profile_attributes": {
 				Type:        schema.TypeList,
@@ -102,21 +99,21 @@ func resourcePolicyProfileEnrollmentRuleCreate(ctx context.Context, d *schema.Re
 		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
 	}
 
-	policy, _, err := getSupplementFromMetadata(m).GetPolicy(ctx, d.Get("policy_id").(string))
+	policy, _, err := getAPISupplementFromMetadata(m).GetPolicy(ctx, d.Get("policy_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to get profile enrollment policy: %v", err)
 	}
 	if policy.Type != sdk.ProfileEnrollmentPolicyType {
 		return diag.Errorf("provided policy is not of type %s", sdk.ProfileEnrollmentPolicyType)
 	}
-	rules, _, err := getSupplementFromMetadata(m).ListPolicyRules(ctx, d.Get("policy_id").(string))
+	rules, _, err := getAPISupplementFromMetadata(m).ListPolicyRules(ctx, d.Get("policy_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to get list profile enrollment policy rules: %v", err)
 	}
 	if len(rules) == 0 {
 		return diag.Errorf("this policy should contain one default Catch-All rule, but it doesn't")
 	}
-	rule, _, err := getSupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), rules[0].Id, buildPolicyRuleProfileEnrollment(d, rules[0].Id))
+	rule, _, err := getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), rules[0].Id, buildPolicyRuleProfileEnrollment(d, rules[0].Id))
 	if err != nil {
 		return diag.Errorf("failed to create profile enrollment policy rule: %v", err)
 	}
@@ -129,7 +126,7 @@ func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.Reso
 		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
 	}
 
-	rule, resp, err := getSupplementFromMetadata(m).GetPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+	rule, resp, err := getAPISupplementFromMetadata(m).GetPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get profile enrollment policy rule: %v", err)
 	}
@@ -166,7 +163,7 @@ func resourcePolicyProfileEnrollmentRuleUpdate(ctx context.Context, d *schema.Re
 		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
 	}
 
-	_, _, err := getSupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), d.Id(), buildPolicyRuleProfileEnrollment(d, d.Id()))
+	_, _, err := getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), d.Id(), buildPolicyRuleProfileEnrollment(d, d.Id()))
 	if err != nil {
 		return diag.Errorf("failed to update profile enrollment policy rule: %v", err)
 	}
@@ -183,17 +180,17 @@ func resourcePolicyProfileEnrollmentRuleDelete(ctx context.Context, d *schema.Re
 }
 
 // build profile enrollment policy rule from schema data
-func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.PolicyRule {
+func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.SdkPolicyRule {
 	rule := sdk.ProfileEnrollmentPolicyRule()
 	rule.Id = id
 	rule.Name = "Catch-all Rule" // read-only
 	rule.Priority = 99           // read-only
 	rule.System = boolPtr(true)  // read-only
 	rule.Status = statusActive
-	rule.Actions = sdk.PolicyRuleActions{
-		ProfileEnrollment: &okta.ProfileEnrollmentPolicyRuleAction{
+	rule.Actions = sdk.SdkPolicyRuleActions{
+		ProfileEnrollment: &sdk.ProfileEnrollmentPolicyRuleAction{
 			Access: d.Get("access").(string),
-			ActivationRequirements: &okta.ProfileEnrollmentPolicyRuleActivationRequirement{
+			ActivationRequirements: &sdk.ProfileEnrollmentPolicyRuleActivationRequirement{
 				EmailVerification: boolPtr(d.Get("email_verification").(bool)),
 			},
 			UnknownUserAction: d.Get("unknown_user_action").(string),
@@ -202,7 +199,7 @@ func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.Pol
 	}
 	hook, ok := d.GetOk("inline_hook_id")
 	if ok {
-		rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks = []*okta.PreRegistrationInlineHook{{InlineHookId: hook.(string)}}
+		rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks = []*sdk.PreRegistrationInlineHook{{InlineHookId: hook.(string)}}
 	}
 	targetGroup, ok := d.GetOk("target_group_id")
 	if ok {
@@ -212,9 +209,9 @@ func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.Pol
 	if !ok {
 		return rule
 	}
-	attributes := make([]*okta.ProfileEnrollmentPolicyRuleProfileAttribute, len(pa.([]interface{})))
+	attributes := make([]*sdk.ProfileEnrollmentPolicyRuleProfileAttribute, len(pa.([]interface{})))
 	for i := range pa.([]interface{}) {
-		attributes[i] = &okta.ProfileEnrollmentPolicyRuleProfileAttribute{
+		attributes[i] = &sdk.ProfileEnrollmentPolicyRuleProfileAttribute{
 			Label:    d.Get(fmt.Sprintf("profile_attributes.%d.label", i)).(string),
 			Name:     d.Get(fmt.Sprintf("profile_attributes.%d.name", i)).(string),
 			Required: boolPtr(d.Get(fmt.Sprintf("profile_attributes.%d.required", i)).(bool)),

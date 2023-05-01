@@ -11,10 +11,10 @@ import (
 )
 
 func TestAccOktaDataSourceDefaultPolicy_readPasswordPolicy(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testAccDataSourceDefaultPolicy(ri, sdk.PasswordPolicyType)
+	mgr := newFixtureManager(defaultPolicy, t.Name())
+	config := testAccDataSourceDefaultPolicy(mgr.Seed, sdk.PasswordPolicyType)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -22,7 +22,7 @@ func TestAccOktaDataSourceDefaultPolicy_readPasswordPolicy(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_default_policy.default-"+strconv.Itoa(ri), "id"),
+					resource.TestCheckResourceAttrSet("data.okta_default_policy.default-"+strconv.Itoa(mgr.Seed), "id"),
 				),
 			},
 		},
@@ -33,7 +33,7 @@ func TestAccOktaDataSourceDefaultPolicy_readIdpPolicy(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccDataSourceDefaultPolicy(ri, sdk.IdpDiscoveryType)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,

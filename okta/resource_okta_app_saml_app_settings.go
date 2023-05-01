@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAppSamlAppSettings() *schema.Resource {
@@ -47,7 +47,7 @@ func resourceAppSamlSettingsCreate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceAppSamlSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := okta.NewSamlApplication()
+	app := sdk.NewSamlApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get SAML application: %v", err)
@@ -81,7 +81,7 @@ func resourceAppSamlSettingsUpdate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func updateOrCreateAppSettings(ctx context.Context, d *schema.ResourceData, m interface{}) (string, error) {
-	app := okta.NewSamlApplication()
+	app := sdk.NewSamlApplication()
 	appID := d.Get("app_id").(string)
 	err := fetchAppByID(ctx, appID, m, app)
 	if err != nil {
@@ -90,7 +90,7 @@ func updateOrCreateAppSettings(ctx context.Context, d *schema.ResourceData, m in
 	if app.Id == "" {
 		return "", fmt.Errorf("application with id %s does not exist", appID)
 	}
-	settings := make(okta.ApplicationSettingsApplication)
+	settings := make(sdk.ApplicationSettingsApplication)
 	_ = json.Unmarshal([]byte(d.Get("settings").(string)), &settings)
 	app.Settings.App = &settings
 	_, _, err = getOktaClientFromMetadata(m).Application.UpdateApplication(ctx, appID, app)

@@ -10,9 +10,9 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 var (
@@ -36,8 +36,9 @@ func logSweptResource(kind, id, nameOrLabel string) {
 }
 
 type testClient struct {
-	oktaClient    *okta.Client
+	oktaClient    *sdk.Client
 	apiSupplement *sdk.APISupplement
+	oktaV3Client  *okta.APIClient
 }
 
 var testResourcePrefix = "testAcc"
@@ -89,10 +90,11 @@ func TestRunForcedSweeper(t *testing.T) {
 		return
 	}
 
-	client, apiSupplement, err := sharedTestClients()
+	client, apiSupplement, v3Client, err := sharedTestClients()
 	testClient := &testClient{
 		oktaClient:    client,
 		apiSupplement: apiSupplement,
+		oktaV3Client:  v3Client,
 	}
 	if err != nil {
 		t.Error(err)
@@ -130,11 +132,11 @@ func setupSweeper(resourceType string, del func(*testClient) error) {
 	resource.AddTestSweepers(resourceType, &resource.Sweeper{
 		Name: resourceType,
 		F: func(_ string) error {
-			client, apiSupplement, err := sharedTestClients()
+			client, apiSupplement, v3Client, err := sharedTestClients()
 			if err != nil {
 				return err
 			}
-			return del(&testClient{oktaClient: client, apiSupplement: apiSupplement})
+			return del(&testClient{oktaClient: client, apiSupplement: apiSupplement, oktaV3Client: v3Client})
 		},
 	})
 }
@@ -153,28 +155,36 @@ func buildResourceNameWithPrefix(prefix string, testID int) string {
 }
 
 // sharedTestClients returns a common Okta Client for sweepers, which currently requires the original SDK and the official beta SDK
-func sharedTestClients() (*okta.Client, *sdk.APISupplement, error) {
+func sharedTestClients() (*sdk.Client, *sdk.APISupplement, *okta.APIClient, error) {
 	err := accPreCheck()
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	c, err := oktaConfig()
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
-	_, client, err := okta.NewClient(
+	_, client, err := sdk.NewClient(
 		context.Background(),
-		okta.WithOrgUrl(orgURL),
-		okta.WithToken(c.apiToken),
-		okta.WithRateLimitMaxRetries(20),
+		sdk.WithOrgUrl(orgURL),
+		sdk.WithToken(c.apiToken),
+		sdk.WithRateLimitMaxRetries(20),
 	)
 	if err != nil {
-		return client, nil, err
+		return client, nil, nil, err
 	}
 	api := &sdk.APISupplement{RequestExecutor: client.GetRequestExecutor()}
+	setters := []okta.ConfigSetter{
+		okta.WithOrgUrl(orgURL),
+		okta.WithCache(false),
+		okta.WithToken(c.apiToken),
+		okta.WithRateLimitMaxRetries(20),
+	}
+	config := okta.NewConfiguration(setters...)
+	v3Client := okta.NewAPIClient(config)
 
-	return client, api, nil
+	return client, api, v3Client, nil
 }
 
 func sweepCustomRoles(client *testClient) error {
@@ -258,19 +268,18 @@ func sweepBehaviors(client *testClient) error {
 
 func sweepEmailCustomization(client *testClient) error {
 	ctx := context.Background()
-	brands, _, err := client.oktaClient.Brand.ListBrands(ctx)
+	brands, _, err := client.oktaV3Client.CustomizationApi.ListBrands(ctx).Execute()
 	if err != nil {
 		return err
 	}
 	for _, brand := range brands {
-		qp := &query.Params{Limit: defaultPaginationLimit}
-		templates, resp, err := client.oktaClient.Brand.ListEmailTemplates(ctx, brand.Id, qp)
+		templates, resp, err := client.oktaV3Client.CustomizationApi.ListEmailTemplates(ctx, brand.GetId()).Limit(int32(defaultPaginationLimit)).Execute()
 		if err != nil {
 			continue
 		}
 		for resp.HasNextPage() {
-			var nextTemplates []*okta.EmailTemplate
-			resp, err = resp.Next(ctx, &nextTemplates)
+			var nextTemplates []okta.EmailTemplate
+			resp, err = resp.Next(&nextTemplates)
 			if err != nil {
 				continue
 			}
@@ -278,7 +287,7 @@ func sweepEmailCustomization(client *testClient) error {
 		}
 
 		for _, template := range templates {
-			_, _ = client.oktaClient.Brand.DeleteEmailTemplateCustomizations(context.Background(), brand.Id, template.Name)
+			_, _ = client.oktaV3Client.CustomizationApi.DeleteAllCustomizations(context.Background(), brand.GetId(), template.GetName()).Execute()
 		}
 	}
 
@@ -486,7 +495,7 @@ func sweepUsers(client *testClient) error {
 		return err
 	}
 	for resp.HasNextPage() {
-		var nextUsers []*okta.User
+		var nextUsers []*sdk.User
 		resp, err = resp.Next(context.Background(), &nextUsers)
 		if err != nil {
 			return err
@@ -555,7 +564,7 @@ func sweepPolicyByType(t string, client *testClient) error {
 		return fmt.Errorf("failed to list policies in order to properly destroy: %v", err)
 	}
 	for _, _policy := range policies {
-		policy := _policy.(*okta.Policy)
+		policy := _policy.(*sdk.Policy)
 		if strings.HasPrefix(policy.Name, testResourcePrefix) {
 			_, err = client.oktaClient.Policy.DeletePolicy(ctx, policy.Id)
 			if err != nil {
@@ -574,7 +583,7 @@ func sweepPolicyRulesByType(ruleType string, client *testClient) error {
 		return fmt.Errorf("failed to list policies in order to properly destroy rules: %v", err)
 	}
 	for _, _policy := range policies {
-		policy := _policy.(*okta.Policy)
+		policy := _policy.(*sdk.Policy)
 		rules, _, err := client.apiSupplement.ListPolicyRules(ctx, policy.Id)
 		if err != nil {
 			return err

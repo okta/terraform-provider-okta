@@ -47,8 +47,6 @@ The following arguments are supported:
 
 - `auth_server_id` - (Required) The ID of the Auth Server.
 
-- `type` - The type of the Auth Server Policy.
-
 ## Import
 
 Authorization Server Policy can be imported via the Auth Server ID and Policy ID.

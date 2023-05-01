@@ -10,41 +10,6 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-var validCustomRolePermissions = []string{
-	"okta.authzServers.manage",
-	"okta.authzServers.read",
-	"okta.apps.assignment.manage",
-	"okta.apps.manage",
-	"okta.apps.read",
-	"okta.customizations.manage",
-	"okta.customizations.read",
-	"okta.groups.appAssignment.manage",
-	"okta.groups.create",
-	"okta.groups.manage",
-	"okta.groups.members.manage",
-	"okta.groups.read",
-	"okta.profilesources.import.run",
-	"okta.users.appAssignment.manage",
-	"okta.users.create",
-	"okta.users.credentials.expirePassword",
-	"okta.users.credentials.manage",
-	"okta.users.credentials.resetFactors",
-	"okta.users.credentials.resetPassword",
-	"okta.users.groupMembership.manage",
-	"okta.users.lifecycle.activate",
-	"okta.users.lifecycle.clearSessions",
-	"okta.users.lifecycle.deactivate",
-	"okta.users.lifecycle.delete",
-	"okta.users.lifecycle.manage",
-	"okta.users.lifecycle.suspend",
-	"okta.users.lifecycle.unlock",
-	"okta.users.lifecycle.unsuspend",
-	"okta.users.manage",
-	"okta.users.read",
-	"okta.users.userprofile.manage",
-	"okta.workflows.invoke",
-}
-
 func resourceAdminRoleCustom() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAdminRoleCustomCreate,
@@ -71,8 +36,7 @@ func resourceAdminRoleCustom() *schema.Resource {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
-					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice(validCustomRolePermissions),
+					Type: schema.TypeString,
 				},
 				Description: "The permissions that the new Role grants.",
 			},
@@ -85,7 +49,7 @@ func resourceAdminRoleCustomCreate(ctx context.Context, d *schema.ResourceData, 
 	if err != nil {
 		return diag.Errorf("failed to create custom admin role: %v", err)
 	}
-	role, _, err := getSupplementFromMetadata(m).CreateCustomRole(ctx, *cr)
+	role, _, err := getAPISupplementFromMetadata(m).CreateCustomRole(ctx, *cr)
 	if err != nil {
 		return diag.Errorf("failed to create custom admin role: %v", err)
 	}
@@ -94,7 +58,7 @@ func resourceAdminRoleCustomCreate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceAdminRoleCustomRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	role, resp, err := getSupplementFromMetadata(m).GetCustomRole(ctx, d.Id())
+	role, resp, err := getAPISupplementFromMetadata(m).GetCustomRole(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to find custom admin role: %v", err)
 	}
@@ -108,7 +72,7 @@ func resourceAdminRoleCustomRead(ctx context.Context, d *schema.ResourceData, m 
 	}
 	_ = d.Set("label", role.Label)
 	_ = d.Set("description", role.Description)
-	perms, _, err := getSupplementFromMetadata(m).ListCustomRolePermissions(ctx, d.Id())
+	perms, _, err := getAPISupplementFromMetadata(m).ListCustomRolePermissions(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to list permissions for custom admin role: %v", err)
 	}
@@ -117,7 +81,7 @@ func resourceAdminRoleCustomRead(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceAdminRoleCustomUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getSupplementFromMetadata(m)
+	client := getAPISupplementFromMetadata(m)
 	if d.HasChanges("label", "description") {
 		cr, _ := buildCustomAdminRole(d, false)
 		_, _, err := client.UpdateCustomRole(ctx, d.Id(), *cr)
@@ -147,7 +111,7 @@ func resourceAdminRoleCustomUpdate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceAdminRoleCustomDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	resp, err := getSupplementFromMetadata(m).DeleteCustomRole(ctx, d.Id())
+	resp, err := getAPISupplementFromMetadata(m).DeleteCustomRole(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete admin custom role: %v", err)
 	}

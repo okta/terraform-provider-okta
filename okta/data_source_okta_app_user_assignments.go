@@ -5,8 +5,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceAppUserAssignments() *schema.Resource {
@@ -39,7 +39,7 @@ func dataSourceAppUserAssignmentsRead(ctx context.Context, d *schema.ResourceDat
 	}
 
 	for resp.HasNextPage() {
-		var moreAssignments []*okta.AppUser
+		var moreAssignments []*sdk.AppUser
 		resp, err = resp.Next(ctx, &moreAssignments)
 		if err != nil {
 			return diag.Errorf("unable to query for users from app (%s): %s", id, err)

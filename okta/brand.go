@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
 var brandResourceSchema = map[string]*schema.Schema{
@@ -80,17 +80,16 @@ var brandsDataSourceSchema = map[string]*schema.Schema{
 
 func flattenBrand(brand *okta.Brand) map[string]interface{} {
 	attrs := map[string]interface{}{}
-
-	attrs["id"] = brand.Id
+	attrs["id"] = brand.GetId()
 	attrs["custom_privacy_policy_url"] = ""
-	if brand.CustomPrivacyPolicyUrl != "" {
-		attrs["custom_privacy_policy_url"] = brand.CustomPrivacyPolicyUrl
+	if brand.GetCustomPrivacyPolicyUrl() != "" {
+		attrs["custom_privacy_policy_url"] = brand.GetCustomPrivacyPolicyUrl()
 	}
-	links, _ := json.Marshal(brand.Links)
+	links, _ := json.Marshal(brand.GetLinks())
 	attrs["links"] = string(links)
 	attrs["remove_powered_by_okta"] = false
 	if brand.RemovePoweredByOkta != nil {
-		attrs["remove_powered_by_okta"] = *brand.RemovePoweredByOkta
+		attrs["remove_powered_by_okta"] = brand.GetRemovePoweredByOkta()
 	}
 
 	return attrs

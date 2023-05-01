@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 type ListPermissionsResponse struct {
@@ -17,7 +15,7 @@ type Permission struct {
 	Links interface{} `json:"links"`
 }
 
-func (m *APISupplement) ListCustomRolePermissions(ctx context.Context, roleIdOrLabel string) (*ListPermissionsResponse, *okta.Response, error) {
+func (m *APISupplement) ListCustomRolePermissions(ctx context.Context, roleIdOrLabel string) (*ListPermissionsResponse, *Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/roles/%s/permissions", roleIdOrLabel)
 	re := m.cloneRequestExecutor()
 	req, err := re.NewRequest(http.MethodGet, url, nil)
@@ -32,7 +30,7 @@ func (m *APISupplement) ListCustomRolePermissions(ctx context.Context, roleIdOrL
 	return listPermissionsResponse, resp, nil
 }
 
-func (m *APISupplement) AddCustomRolePermission(ctx context.Context, roleIdOrLabel, permissionType string) (*Permission, *okta.Response, error) {
+func (m *APISupplement) AddCustomRolePermission(ctx context.Context, roleIdOrLabel, permissionType string) (*Permission, *Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/roles/%s/permissions/%s", roleIdOrLabel, permissionType)
 	re := m.cloneRequestExecutor()
 	req, err := re.NewRequest(http.MethodPost, url, nil)
@@ -47,7 +45,7 @@ func (m *APISupplement) AddCustomRolePermission(ctx context.Context, roleIdOrLab
 	return permission, resp, nil
 }
 
-func (m *APISupplement) DeleteCustomRolePermission(ctx context.Context, roleIdOrLabel, permissionType string) (*okta.Response, error) {
+func (m *APISupplement) DeleteCustomRolePermission(ctx context.Context, roleIdOrLabel, permissionType string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/roles/%s/permissions/%s", roleIdOrLabel, permissionType)
 	re := m.cloneRequestExecutor()
 	req, err := re.NewRequest(http.MethodDelete, url, nil)

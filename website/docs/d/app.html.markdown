@@ -33,10 +33,6 @@ data "okta_app" "example" {
 
 - `active_only` - (Optional) tells the provider to query for only `ACTIVE` applications.
 
-- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync. Default is `false`.
-
-- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync. Default is `false`.
-
 ## Attributes Reference
 
 - `id` - Application ID.
@@ -48,9 +44,3 @@ data "okta_app" "example" {
 - `status` - Application status.
  
 - `links` - Generic JSON containing discoverable resources related to the app.
-
-- `users` - List of users IDs assigned to the application.
-  - `DEPRECATED`: Please replace all usage of this field with the data source `okta_app_user_assignments`.
-
-- `groups` - List of groups IDs assigned to the application.
-  - `DEPRECATED`: Please replace all usage of this field with the data source `okta_app_group_assignments`.

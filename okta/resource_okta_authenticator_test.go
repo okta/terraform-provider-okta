@@ -4,18 +4,16 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaAuthenticator_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", authenticator)
-	mgr := newFixtureManager(authenticator)
-	config := mgr.GetFixtures("security_question.tf", ri, t)
-	configUpdated := mgr.GetFixtures("security_question_updated.tf", ri, t)
+	mgr := newFixtureManager(authenticator, t.Name())
+	config := mgr.GetFixtures("security_question.tf", t)
+	configUpdated := mgr.GetFixtures("security_question_updated.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -78,7 +76,7 @@ resource "okta_authenticator" "google_otp" {
 `
 	resourceName := fmt.Sprintf("%s.google_otp", authenticator)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -123,7 +121,7 @@ resource "okta_authenticator" "test" {
 }`
 	resourceName := fmt.Sprintf("%s.test", authenticator)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,

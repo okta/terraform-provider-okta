@@ -8,8 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 // All profile properties here so we can do a diff against the config to see if any have changed before making the
@@ -67,30 +67,10 @@ func resourceUser() *schema.Resource {
 					return nil, err
 				}
 				d.SetId(user.Id)
-				err = setAdminRoles(ctx, d, m)
-				if err != nil {
-					return nil, fmt.Errorf("failed to set user's roles: %v", err)
-				}
 				return []*schema.ResourceData{d}, nil
 			},
 		},
 		Schema: map[string]*schema.Schema{
-			"admin_roles": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Description: "User Okta admin roles - ie. ['APP_ADMIN', 'USER_ADMIN']",
-				Deprecated:  "The `admin_roles` field is now deprecated for the resource `okta_user`, please replace all uses of this with: `okta_user_admin_roles`",
-				Elem: &schema.Schema{
-					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice(validAdminRoles),
-				},
-			},
-			"skip_roles": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Do not populate user roles information (prevents additional API call)",
-			},
 			"city": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -139,10 +119,9 @@ func resourceUser() *schema.Resource {
 				Description: "User division",
 			},
 			"email": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "User primary email address",
-				ValidateDiagFunc: stringIsEmail,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "User primary email address",
 			},
 			"employee_number": {
 				Type:        schema.TypeString,
@@ -153,13 +132,6 @@ func resourceUser() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "User first name",
-			},
-			"group_memberships": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Description: "The groups that you want this user to be a part of. This can also be done via the group using the `users` property.",
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Deprecated:  "The `group_memberships` field is now deprecated for the resource `okta_user`, please replace all uses of this with: `okta_user_group_memberships`",
 			},
 			"honorific_prefix": {
 				Type:        schema.TypeString,
@@ -232,16 +204,14 @@ func resourceUser() *schema.Resource {
 				Description: "User primary phone number",
 			},
 			"profile_url": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "User online profile (web page)",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "User online profile (web page)",
 			},
 			"second_email": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "User secondary email address, used for account recovery",
-				ValidateDiagFunc: stringIsEmail,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "User secondary email address, used for account recovery",
 			},
 			"state": {
 				Type:        schema.TypeString,
@@ -249,11 +219,10 @@ func resourceUser() *schema.Resource {
 				Description: "User state or region",
 			},
 			"status": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "The status of the User in Okta - remove to set user back to active/provisioned",
-				Default:          statusActive,
-				ValidateDiagFunc: elemInSlice([]string{statusActive, userStatusStaged, userStatusDeprovisioned, userStatusSuspended}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The status of the User in Okta - remove to set user back to active/provisioned",
+				Default:     statusActive,
 				// ignore diff changing to ACTIVE if state is set to PROVISIONED or PASSWORD_EXPIRED
 				// since this is a similar status in Okta terms
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
@@ -304,11 +273,10 @@ func resourceUser() *schema.Resource {
 				RequiredWith: []string{"password"},
 			},
 			"password_inline_hook": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"default"}),
-				Description:      "When specified, the Password Inline Hook is triggered to handle verification of the end user's password the first time the user tries to sign in",
-				ConflictsWith:    []string{"password", "password_hash"},
+				Type:          schema.TypeString,
+				Optional:      true,
+				Description:   "When specified, the Password Inline Hook is triggered to handle verification of the end user's password the first time the user tries to sign in",
+				ConflictsWith: []string{"password", "password_hash"},
 			},
 			"old_password": {
 				Type:        schema.TypeString,
@@ -322,11 +290,10 @@ func resourceUser() *schema.Resource {
 				Description: "User Password Recovery Question",
 			},
 			"recovery_answer": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Sensitive:        true,
-				ValidateDiagFunc: stringLenBetween(4, 1000),
-				Description:      "User Password Recovery Answer",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Sensitive:   true,
+				Description: "User Password Recovery Answer",
 			},
 			"password_hash": {
 				Type:        schema.TypeSet,
@@ -345,16 +312,14 @@ func resourceUser() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"algorithm": {
-							Description:      "The algorithm used to generate the hash using the password",
-							Type:             schema.TypeString,
-							Required:         true,
-							ValidateDiagFunc: elemInSlice([]string{"BCRYPT", "SHA-512", "SHA-256", "SHA-1", "MD5"}),
+							Description: "The algorithm used to generate the hash using the password",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 						"work_factor": {
-							Description:      "Governs the strength of the hash and the time required to compute it. Only required for BCRYPT algorithm",
-							Type:             schema.TypeInt,
-							Optional:         true,
-							ValidateDiagFunc: intBetween(1, 20),
+							Description: "Governs the strength of the hash and the time required to compute it. Only required for BCRYPT algorithm",
+							Type:        schema.TypeInt,
+							Optional:    true,
 						},
 						"salt": {
 							Description: "Only required for salted hashes",
@@ -362,10 +327,9 @@ func resourceUser() *schema.Resource {
 							Optional:    true,
 						},
 						"salt_order": {
-							Description:      "Specifies whether salt was pre- or postfixed to the password before hashing",
-							Type:             schema.TypeString,
-							Optional:         true,
-							ValidateDiagFunc: elemInSlice([]string{"PREFIX", "POSTFIX"}),
+							Description: "Specifies whether salt was pre- or postfixed to the password before hashing",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 						"value": {
 							Description: "For SHA-512, SHA-256, SHA-1, MD5, This is the actual base64-encoded hash of the password (and salt, if used). This is the " +
@@ -433,16 +397,16 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 		qp = query.NewQueryParams(query.WithActivate(false))
 	}
 
-	uc := &okta.UserCredentials{
-		Password: &okta.PasswordCredential{
+	uc := &sdk.UserCredentials{
+		Password: &sdk.PasswordCredential{
 			Value: d.Get("password").(string),
 			Hash:  buildPasswordCredentialHash(d.Get("password_hash")),
 		},
 	}
 	pih := d.Get("password_inline_hook").(string)
 	if pih != "" {
-		uc.Password = &okta.PasswordCredential{
-			Hook: &okta.PasswordCredentialHook{
+		uc.Password = &sdk.PasswordCredential{
+			Hook: &sdk.PasswordCredentialHook{
 				Type: pih,
 			},
 		}
@@ -450,13 +414,13 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 	recoveryQuestion := d.Get("recovery_question").(string)
 	recoveryAnswer := d.Get("recovery_answer").(string)
 	if recoveryQuestion != "" {
-		uc.RecoveryQuestion = &okta.RecoveryQuestionCredential{
+		uc.RecoveryQuestion = &sdk.RecoveryQuestionCredential{
 			Question: recoveryQuestion,
 			Answer:   recoveryAnswer,
 		}
 	}
 
-	userBody := okta.CreateUserRequest{
+	userBody := sdk.CreateUserRequest{
 		Profile:     profile,
 		Credentials: uc,
 	}
@@ -467,27 +431,6 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 	}
 	// set the user id into state before setting roles and status in case they fail
 	d.SetId(user.Id)
-
-	// role assigning can only happen after the user is created so order matters here
-	// Only sync admin roles when it is set by a consumer as field is deprecated
-	if _, exists := d.GetOk("admin_roles"); exists {
-		roles := convertInterfaceToStringSetNullable(d.Get("admin_roles"))
-		if roles != nil {
-			err = assignAdminRolesToUser(ctx, user.Id, roles, false, client)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-		}
-	}
-
-	// Only sync when there is opt in, consumers can chose which route they want to take
-	if _, exists := d.GetOk("group_memberships"); exists {
-		groups := convertInterfaceToStringSetNullable(d.Get("group_memberships"))
-		err = assignGroupsToUser(ctx, user.Id, groups, client)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	}
 
 	// status changing can only happen after user is created as well
 	if d.Get("status").(string) == userStatusSuspended || d.Get("status").(string) == userStatusDeprovisioned {
@@ -529,22 +472,7 @@ func resourceUserReadFilterCustomAttributes(ctx context.Context, d *schema.Resou
 	if err != nil {
 		return diag.Errorf("failed to set user's properties: %v", err)
 	}
-	if val := d.Get("skip_roles"); val != nil {
-		if skip, ok := val.(bool); ok && !skip {
-			err = setAdminRoles(ctx, d, m)
-			if err != nil {
-				return diag.Errorf("failed to set user's admin roles: %v", err)
-			}
-		}
-	}
 
-	// Only sync when it is outlined, an empty list will remove all membership
-	if _, exists := d.GetOk("group_memberships"); exists {
-		err = setGroupUserMemberships(ctx, d, client)
-		if err != nil {
-			return diag.Errorf("failed to set user's groups: %v", err)
-		}
-	}
 	return nil
 }
 
@@ -558,8 +486,6 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	}
 
 	// There are a few requests here so just making sure the state gets updated per successful downstream change
-	roleChange := d.HasChange("admin_roles")
-	groupChange := d.HasChange("group_memberships")
 	userChange := hasProfileChange(d)
 	passwordChange := d.HasChange("password")
 	passwordHashChange := d.HasChange("password_hash")
@@ -595,21 +521,21 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 
 	if userChange || passwordHashChange || passwordHookChange {
 		profile := populateUserProfile(d)
-		userBody := okta.User{
+		userBody := sdk.User{
 			Profile: profile,
 		}
 		if passwordHashChange {
-			userBody.Credentials = &okta.UserCredentials{
-				Password: &okta.PasswordCredential{
+			userBody.Credentials = &sdk.UserCredentials{
+				Password: &sdk.PasswordCredential{
 					Hash: buildPasswordCredentialHash(d.Get("password_hash")),
 				},
 			}
 		}
 		pih := d.Get("password_inline_hook").(string)
 		if passwordHookChange && pih != "" {
-			userBody.Credentials = &okta.UserCredentials{
-				Password: &okta.PasswordCredential{
-					Hook: &okta.PasswordCredentialHook{
+			userBody.Credentials = &sdk.UserCredentials{
+				Password: &sdk.PasswordCredential{
+					Hook: &sdk.PasswordCredentialHook{
 						Type: pih,
 					},
 				},
@@ -621,46 +547,6 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 		}
 	}
 
-	if roleChange {
-		oldRoles, newRoles := d.GetChange("admin_roles")
-		oldSet := oldRoles.(*schema.Set)
-		newSet := newRoles.(*schema.Set)
-		rolesToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
-		rolesToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
-		roles, _, err := listUserOnlyRoles(ctx, client, d.Id())
-		if err != nil {
-			return diag.Errorf("failed to list user's roles: %v", err)
-		}
-		for _, role := range roles {
-			if contains(rolesToRemove, role.Type) {
-				resp, err := client.User.RemoveRoleFromUser(ctx, d.Id(), role.Id)
-				if err := suppressErrorOn404(resp, err); err != nil {
-					return diag.Errorf("failed to remove user's role: %v", err)
-				}
-			}
-		}
-		err = assignAdminRolesToUser(ctx, d.Id(), rolesToAdd, false, client)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	}
-
-	if groupChange {
-		oldGM, newGM := d.GetChange("group_memberships")
-		oldSet := oldGM.(*schema.Set)
-		newSet := newGM.(*schema.Set)
-		groupsToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
-		groupsToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
-		err := addUserToGroups(ctx, client, d.Id(), groupsToAdd)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		err = removeUserFromGroups(ctx, client, d.Id(), groupsToRemove)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-	}
-
 	if passwordChange {
 		oldPassword, newPassword := d.GetChange("password")
 		old, oldPasswordExist := d.GetOk("old_password")
@@ -668,13 +554,13 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 			oldPassword = old
 		}
 		if oldPasswordExist {
-			op := &okta.PasswordCredential{
+			op := &sdk.PasswordCredential{
 				Value: oldPassword.(string),
 			}
-			np := &okta.PasswordCredential{
+			np := &sdk.PasswordCredential{
 				Value: newPassword.(string),
 			}
-			npr := &okta.ChangePasswordRequest{
+			npr := &sdk.ChangePasswordRequest{
 				OldPassword: op,
 				NewPassword: np,
 			}
@@ -685,9 +571,9 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 		}
 		if !oldPasswordExist {
 			password, _ := newPassword.(string)
-			user := okta.User{
-				Credentials: &okta.UserCredentials{
-					Password: &okta.PasswordCredential{
+			user := sdk.User{
+				Credentials: &sdk.UserCredentials{
+					Password: &sdk.PasswordCredential{
 						Value: password,
 					},
 				},
@@ -700,11 +586,11 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	}
 
 	if recoveryQuestionChange || recoveryAnswerChange {
-		nuc := &okta.UserCredentials{
-			Password: &okta.PasswordCredential{
+		nuc := &sdk.UserCredentials{
+			Password: &sdk.PasswordCredential{
 				Value: d.Get("password").(string),
 			},
-			RecoveryQuestion: &okta.RecoveryQuestionCredential{
+			RecoveryQuestion: &sdk.RecoveryQuestionCredential{
 				Question: d.Get("recovery_question").(string),
 				Answer:   d.Get("recovery_answer").(string),
 			},
@@ -729,14 +615,14 @@ func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface
 	return nil
 }
 
-func buildPasswordCredentialHash(rawPasswordHash interface{}) *okta.PasswordCredentialHash {
+func buildPasswordCredentialHash(rawPasswordHash interface{}) *sdk.PasswordCredentialHash {
 	if rawPasswordHash == nil || len(rawPasswordHash.(*schema.Set).List()) == 0 {
 		return nil
 	}
 	passwordHash := rawPasswordHash.(*schema.Set).List()
 	hash := passwordHash[0].(map[string]interface{})
 	wf, _ := hash["work_factor"].(int)
-	h := &okta.PasswordCredentialHash{
+	h := &sdk.PasswordCredentialHash{
 		Algorithm:     hash["algorithm"].(string),
 		Value:         hash["value"].(string),
 		WorkFactorPtr: int64Ptr(wf),
@@ -758,7 +644,7 @@ func hasProfileChange(d *schema.ResourceData) bool {
 	return false
 }
 
-func ensureUserDelete(ctx context.Context, id, status string, client *okta.Client) error {
+func ensureUserDelete(ctx context.Context, id, status string, client *sdk.Client) error {
 	// only deprovisioned users can be deleted fully from okta
 	// make two passes on the user if they aren't deprovisioned already to deprovision them first
 	passes := 2

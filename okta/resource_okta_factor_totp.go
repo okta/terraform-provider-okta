@@ -24,44 +24,39 @@ func resourceFactorTOTP() *schema.Resource {
 				Description: "Factor name",
 			},
 			"otp_length": {
-				Type:             schema.TypeInt,
-				Default:          6,
-				Optional:         true,
-				Description:      "Factor name",
-				ValidateDiagFunc: elemInSlice([]int{6, 8, 10}),
-				ForceNew:         true,
+				Type:        schema.TypeInt,
+				Default:     6,
+				Optional:    true,
+				Description: "Factor name",
+				ForceNew:    true,
 			},
 			"hmac_algorithm": {
-				Type:             schema.TypeString,
-				Default:          "HMacSHA512",
-				Optional:         true,
-				Description:      "Hash-based message authentication code algorithm",
-				ValidateDiagFunc: elemInSlice([]string{"HMacSHA1", "HMacSHA256", "HMacSHA512"}),
-				ForceNew:         true,
+				Type:        schema.TypeString,
+				Default:     "HMacSHA512",
+				Optional:    true,
+				Description: "Hash-based message authentication code algorithm",
+				ForceNew:    true,
 			},
 			"time_step": {
-				Type:             schema.TypeInt,
-				Default:          15,
-				Optional:         true,
-				Description:      "Time step in seconds",
-				ValidateDiagFunc: elemInSlice([]int{15, 30, 60}),
-				ForceNew:         true,
+				Type:        schema.TypeInt,
+				Default:     15,
+				Optional:    true,
+				Description: "Time step in seconds",
+				ForceNew:    true,
 			},
 			"clock_drift_interval": {
-				Type:             schema.TypeInt,
-				Default:          3,
-				Optional:         true,
-				Description:      "Clock drift interval",
-				ValidateDiagFunc: elemInSlice([]int{3, 5, 10}),
-				ForceNew:         true,
+				Type:        schema.TypeInt,
+				Default:     3,
+				Optional:    true,
+				Description: "Clock drift interval",
+				ForceNew:    true,
 			},
 			"shared_secret_encoding": {
-				Type:             schema.TypeString,
-				Default:          "base32",
-				Optional:         true,
-				Description:      "Shared secret encoding",
-				ValidateDiagFunc: elemInSlice([]string{"base32", "base64", "hexadecimal"}),
-				ForceNew:         true,
+				Type:        schema.TypeString,
+				Default:     "base32",
+				Optional:    true,
+				Description: "Shared secret encoding",
+				ForceNew:    true,
 			},
 		},
 	}
@@ -69,7 +64,7 @@ func resourceFactorTOTP() *schema.Resource {
 
 func resourceFactorTOTPCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	profile := buildTotpFactorProfile(d)
-	responseProfile, _, err := getSupplementFromMetadata(m).CreateHotpFactorProfile(ctx, *profile)
+	responseProfile, _, err := getAPISupplementFromMetadata(m).CreateHotpFactorProfile(ctx, *profile)
 	if err != nil {
 		return diag.Errorf("failed to create TOTP factor: %v", err)
 	}
@@ -79,7 +74,7 @@ func resourceFactorTOTPCreate(ctx context.Context, d *schema.ResourceData, m int
 
 func resourceFactorTOTPUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	profile := buildTotpFactorProfile(d)
-	_, _, err := getSupplementFromMetadata(m).UpdateHotpFactorProfile(ctx, d.Id(), *profile)
+	_, _, err := getAPISupplementFromMetadata(m).UpdateHotpFactorProfile(ctx, d.Id(), *profile)
 	if err != nil {
 		return diag.Errorf("failed to update TOTP factor: %v", err)
 	}
@@ -88,7 +83,7 @@ func resourceFactorTOTPUpdate(ctx context.Context, d *schema.ResourceData, m int
 }
 
 func resourceFactorTOTPRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	profile, resp, err := getSupplementFromMetadata(m).GetHotpFactorProfile(ctx, d.Id())
+	profile, resp, err := getAPISupplementFromMetadata(m).GetHotpFactorProfile(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get TOTP factor: %v", err)
 	}
@@ -106,7 +101,7 @@ func resourceFactorTOTPRead(ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func resourceFactorTOTPDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, err := getSupplementFromMetadata(m).DeleteHotpFactorProfile(ctx, d.Id())
+	_, err := getAPISupplementFromMetadata(m).DeleteHotpFactorProfile(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete TOTP factor: %v", err)
 	}

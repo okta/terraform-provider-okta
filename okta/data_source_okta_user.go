@@ -9,8 +9,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 var userSearchSchemaDescription = "Filter to find " +
@@ -60,24 +60,11 @@ func dataSourceUser() *schema.Resource {
 					Schema: userSearchSchema,
 				},
 			},
-			"skip_groups": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Do not populate user groups information (prevents additional API call)",
-			},
-			"skip_roles": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Do not populate user roles information (prevents additional API call)",
-			},
 			"compound_search_operator": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Default:          "and",
-				ValidateDiagFunc: elemInSlice([]string{"and", "or"}),
-				Description:      "Search operator used when joining mulitple search clauses",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "and",
+				Description: "Search operator used when joining mulitple search clauses",
 			},
 			"delay_read_seconds": {
 				Type:        schema.TypeString,
@@ -100,7 +87,7 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 	}
 
 	client := getOktaClientFromMetadata(m)
-	var user *okta.User
+	var user *sdk.User
 	var err error
 	userID, ok := d.GetOk("user_id")
 	_, searchCriteriaOk := d.GetOk("search")
@@ -111,7 +98,7 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 			return diag.Errorf("failed to get user: %v", err)
 		}
 	} else if searchCriteriaOk {
-		var users []*okta.User
+		var users []*sdk.User
 		sc := getSearchCriteria(d)
 		logger(m).Info("reading user using search", "search", sc)
 		users, _, err = client.User.ListUsers(ctx, &query.Params{Search: sc, Limit: 1})
@@ -128,27 +115,9 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 	if err != nil {
 		return diag.Errorf("failed to set user's properties: %v", err)
 	}
-
-	if val := d.Get("skip_roles"); val != nil {
-		if skip, ok := val.(bool); ok && !skip {
-			err = setAdminRoles(ctx, d, m)
-			if err != nil {
-				return diag.Errorf("failed to set user's admin roles: %v", err)
-			}
-			err = setRoles(ctx, d, m)
-			if err != nil {
-				return diag.Errorf("failed to set user's roles: %v", err)
-			}
-		}
-	}
-
-	if val := d.Get("skip_groups"); val != nil {
-		if skip, ok := val.(bool); ok && !skip {
-			err = setAllGroups(ctx, d, client)
-			if err != nil {
-				return diag.Errorf("failed to set user's groups: %v", err)
-			}
-		}
+	err = setRoles(ctx, d, m)
+	if err != nil {
+		return diag.Errorf("failed to set user's roles: %v", err)
 	}
 
 	return nil

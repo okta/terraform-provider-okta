@@ -4,44 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"net/http"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/cenkalti/backoff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 var (
-	appUserResource = &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"scope": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Scope of application user.",
-			},
-			"id": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "User ID.",
-			},
-			"username": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Username for user.",
-			},
-			"password": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Password for user application.",
-			},
-		},
-	}
-
 	baseAppSchema = map[string]*schema.Schema{
 		"name": {
 			Type:        schema.TypeString,
@@ -58,31 +30,16 @@ var (
 			Computed:    true,
 			Description: "Sign on mode of application.",
 		},
-		"users": {
-			Type:        schema.TypeSet,
-			Optional:    true,
-			Elem:        appUserResource,
-			Description: "Users associated with the application",
-			Deprecated:  "The direct configuration of users in this app resource is deprecated, please ensure you use the resource `okta_app_user` for this functionality.",
-		},
-		"groups": {
-			Type:        schema.TypeSet,
-			Optional:    true,
-			Elem:        &schema.Schema{Type: schema.TypeString},
-			Description: "Groups associated with the application",
-			Deprecated:  "The direct configuration of groups in this app resource is deprecated, please ensure you use the resource `okta_app_group_assignments` for this functionality.",
-		},
 		"status": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          statusActive,
-			ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
-			Description:      "Status of application.",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     statusActive,
+			Description: "Status of application.",
 		},
 		"logo": {
 			Type:             schema.TypeString,
 			Optional:         true,
-			ValidateDiagFunc: logoValid(),
+			ValidateDiagFunc: logoFileIsValid(),
 			Description:      "Local path to logo of the application.",
 			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 				return new == ""
@@ -132,21 +89,6 @@ var (
 		},
 	}
 
-	skipUsersAndGroupsSchema = map[string]*schema.Schema{
-		"skip_users": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Description: "Ignore users sync. This is a temporary solution until 'users' field is supported in all the app-like resources",
-			Default:     false,
-		},
-		"skip_groups": {
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Description: "Ignore groups sync. This is a temporary solution until 'groups' field is supported in all the app-like resources",
-			Default:     false,
-		},
-	}
-
 	appVisibilitySchema = map[string]*schema.Schema{
 		"auto_submit_toolbar": {
 			Type:        schema.TypeBool,
@@ -181,17 +123,15 @@ var (
 			Description: "Username template suffix",
 		},
 		"user_name_template_type": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          "BUILT_IN",
-			Description:      "Username template type",
-			ValidateDiagFunc: elemInSlice([]string{"NONE", "CUSTOM", "BUILT_IN"}),
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     "BUILT_IN",
+			Description: "Username template type",
 		},
 		"user_name_template_push_status": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Description:      "Push username on update",
-			ValidateDiagFunc: elemInSlice([]string{"DONT_PUSH", "PUSH", ""}),
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Push username on update",
 			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 				return new == ""
 			},
@@ -214,16 +154,13 @@ func appImporter(_ context.Context, d *schema.ResourceData, m interface{}) ([]*s
 	}
 	d.SetId(importID[0])
 	for _, v := range importID[1:] {
-		if !isValidSkipArg(v) {
-			return nil, fmt.Errorf("'%s' is invalid value to be used as part of import ID, it must be either 'skip_users' or 'skip_groups'", v)
-		}
 		_ = d.Set(v, true)
 	}
 	return []*schema.ResourceData{d}, nil
 }
 
-func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *okta.ApplicationAccessibility,
-	vis *okta.ApplicationVisibility, notes *okta.ApplicationSettingsNotes,
+func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *sdk.ApplicationAccessibility,
+	vis *sdk.ApplicationVisibility, notes *sdk.ApplicationSettingsNotes,
 ) {
 	_ = d.Set("name", name)
 	_ = d.Set("status", status)
@@ -245,32 +182,32 @@ func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *o
 }
 
 func buildAppSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, baseAppSwaSchema, appSchema)
+	return buildSchema(baseAppSchema, baseAppSwaSchema, appSchema)
 }
 
 func buildAppSchemaWithVisibility(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, appVisibilitySchema, appSchema)
+	return buildSchema(baseAppSchema, appVisibilitySchema, appSchema)
 }
 
 func buildAppSwaSchema(appSchema map[string]*schema.Schema) map[string]*schema.Schema {
-	return buildSchema(baseAppSchema, skipUsersAndGroupsSchema, appVisibilitySchema, baseAppSwaSchema, appSchema)
+	return buildSchema(baseAppSchema, appVisibilitySchema, baseAppSwaSchema, appSchema)
 }
 
-func buildSchemeAppCreds(d *schema.ResourceData) *okta.SchemeApplicationCredentials {
+func buildSchemeAppCreds(d *schema.ResourceData) *sdk.SchemeApplicationCredentials {
 	revealPass := d.Get("reveal_password").(bool)
-	return &okta.SchemeApplicationCredentials{
+	return &sdk.SchemeApplicationCredentials{
 		RevealPassword:   &revealPass,
 		Scheme:           d.Get("credentials_scheme").(string),
 		UserNameTemplate: buildUserNameTemplate(d),
 		UserName:         d.Get("shared_username").(string),
-		Password: &okta.PasswordCredential{
+		Password: &sdk.PasswordCredential{
 			Value: d.Get("shared_password").(string),
 		},
 	}
 }
 
-func buildUserNameTemplate(d *schema.ResourceData) *okta.ApplicationCredentialsUsernameTemplate {
-	return &okta.ApplicationCredentialsUsernameTemplate{
+func buildUserNameTemplate(d *schema.ResourceData) *sdk.ApplicationCredentialsUsernameTemplate {
+	return &sdk.ApplicationCredentialsUsernameTemplate{
 		Template:   d.Get("user_name_template").(string),
 		Type:       d.Get("user_name_template_type").(string),
 		Suffix:     d.Get("user_name_template_suffix").(string),
@@ -278,21 +215,21 @@ func buildUserNameTemplate(d *schema.ResourceData) *okta.ApplicationCredentialsU
 	}
 }
 
-func buildAppAccessibility(d *schema.ResourceData) *okta.ApplicationAccessibility {
-	return &okta.ApplicationAccessibility{
+func buildAppAccessibility(d *schema.ResourceData) *sdk.ApplicationAccessibility {
+	return &sdk.ApplicationAccessibility{
 		SelfService:      boolPtr(d.Get("accessibility_self_service").(bool)),
 		ErrorRedirectUrl: d.Get("accessibility_error_redirect_url").(string),
 		LoginRedirectUrl: d.Get("accessibility_login_redirect_url").(string),
 	}
 }
 
-func buildAppVisibility(d *schema.ResourceData) *okta.ApplicationVisibility {
+func buildAppVisibility(d *schema.ResourceData) *sdk.ApplicationVisibility {
 	autoSubmit := d.Get("auto_submit_toolbar").(bool)
 	hideMobile := d.Get("hide_ios").(bool)
 	hideWeb := d.Get("hide_web").(bool)
-	appVis := &okta.ApplicationVisibility{
+	appVis := &sdk.ApplicationVisibility{
 		AutoSubmitToolbar: &autoSubmit,
-		Hide: &okta.ApplicationVisibilityHide{
+		Hide: &sdk.ApplicationVisibilityHide{
 			IOS: &hideMobile,
 			Web: &hideWeb,
 		},
@@ -303,8 +240,8 @@ func buildAppVisibility(d *schema.ResourceData) *okta.ApplicationVisibility {
 	return appVis
 }
 
-func buildAppNotes(d *schema.ResourceData) *okta.ApplicationSettingsNotes {
-	n := &okta.ApplicationSettingsNotes{}
+func buildAppNotes(d *schema.ResourceData) *sdk.ApplicationSettingsNotes {
+	n := &sdk.ApplicationSettingsNotes{}
 	admin, ok := d.GetOk("admin_note")
 	if ok {
 		n.Admin = stringPtr(admin.(string))
@@ -316,8 +253,8 @@ func buildAppNotes(d *schema.ResourceData) *okta.ApplicationSettingsNotes {
 	return n
 }
 
-func buildAppSettings(d *schema.ResourceData) *okta.ApplicationSettingsApplication {
-	settings := okta.ApplicationSettingsApplication(map[string]interface{}{})
+func buildAppSettings(d *schema.ResourceData) *sdk.ApplicationSettingsApplication {
+	settings := sdk.ApplicationSettingsApplication(map[string]interface{}{})
 	if appSettings, ok := d.GetOk("app_settings_json"); ok {
 		payload := map[string]interface{}{}
 		_ = json.Unmarshal([]byte(appSettings.(string)), &payload)
@@ -326,63 +263,30 @@ func buildAppSettings(d *schema.ResourceData) *okta.ApplicationSettingsApplicati
 	return &settings
 }
 
-func fetchApp(ctx context.Context, d *schema.ResourceData, m interface{}, app okta.App) error {
+func fetchApp(ctx context.Context, d *schema.ResourceData, m interface{}, app sdk.App) error {
 	return fetchAppByID(ctx, d.Id(), m, app)
 }
 
-func fetchAppByID(ctx context.Context, id string, m interface{}, app okta.App) error {
+func fetchAppByID(ctx context.Context, id string, m interface{}, app sdk.App) error {
 	_, resp, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, id, app, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation.
 	// Check if app's ID is set to ensure that app exists
 	return suppressErrorOn404(resp, err)
 }
 
-func updateAppByID(ctx context.Context, id string, m interface{}, app okta.App) error {
+func updateAppByID(ctx context.Context, id string, m interface{}, app sdk.App) error {
 	_, resp, err := getOktaClientFromMetadata(m).Application.UpdateApplication(ctx, id, app)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
 	return suppressErrorOn404(resp, err)
 }
 
-func handleAppGroups(ctx context.Context, id string, d *schema.ResourceData, client *okta.Client) []func() error {
-	if !d.HasChange("groups") {
-		return nil
-	}
-	// temp solution until 'groups' field is supported
-	if d.Get("skip_groups").(bool) {
-		return nil
-	}
-	var asyncActionList []func() error
-
-	oldGs, newGs := d.GetChange("groups")
-	oldSet := oldGs.(*schema.Set)
-	newSet := newGs.(*schema.Set)
-	groupsToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
-	groupsToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
-
-	for i := range groupsToAdd {
-		gID := groupsToAdd[i]
-		asyncActionList = append(asyncActionList, func() error {
-			_, resp, err := client.Application.CreateApplicationGroupAssignment(ctx, id,
-				gID, okta.ApplicationGroupAssignment{})
-			return responseErr(resp, err)
-		})
-	}
-	for i := range groupsToRemove {
-		gID := groupsToRemove[i]
-		asyncActionList = append(asyncActionList, func() error {
-			return suppressErrorOn404(client.Application.DeleteApplicationGroupAssignment(ctx, id, gID))
-		})
-	}
-	return asyncActionList
-}
-
-func listApplicationGroupAssignments(ctx context.Context, client *okta.Client, id string) ([]*okta.ApplicationGroupAssignment, *okta.Response, error) {
+func listApplicationGroupAssignments(ctx context.Context, client *sdk.Client, id string) ([]*sdk.ApplicationGroupAssignment, *sdk.Response, error) {
 	groups, resp, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return nil, resp, err
 	}
 	for resp.HasNextPage() {
-		var additionalGroups []*okta.ApplicationGroupAssignment
+		var additionalGroups []*sdk.ApplicationGroupAssignment
 		resp, err = resp.Next(ctx, &additionalGroups)
 		if err != nil {
 			return nil, resp, err
@@ -390,42 +294,6 @@ func listApplicationGroupAssignments(ctx context.Context, client *okta.Client, i
 		groups = append(groups, additionalGroups...)
 	}
 	return groups, resp, nil
-}
-
-func containsAppUser(userList []*okta.AppUser, id string) bool {
-	for _, user := range userList {
-		if user.Id == id && user.Scope == userScope {
-			return true
-		}
-	}
-	return false
-}
-
-func shouldUpdateUser(userList []*okta.AppUser, id, username string) bool {
-	for _, user := range userList {
-		if user.Id == id &&
-			user.Scope == userScope &&
-			user.Credentials != nil &&
-			user.Credentials.UserName != username {
-			return true
-		}
-	}
-	return false
-}
-
-// Handles the assigning of groups and users to Applications. Does so asynchronously.
-func handleAppGroupsAndUsers(ctx context.Context, id string, d *schema.ResourceData, m interface{}) error {
-	var wg sync.WaitGroup
-	resultChan := make(chan []*result, 1)
-	client := getOktaClientFromMetadata(m)
-
-	groupHandlers := handleAppGroups(ctx, id, d, client)
-	userHandlers := handleAppUsers(ctx, id, d, client)
-	con := getParallelismFromMetadata(m)
-	promiseAll(con, &wg, resultChan, append(groupHandlers, userHandlers...)...)
-	wg.Wait()
-
-	return getPromiseError(<-resultChan, "failed to associate user or groups with application")
 }
 
 func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, appID string, links interface{}) error {
@@ -437,96 +305,7 @@ func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, a
 	return err
 }
 
-func handleAppUsers(ctx context.Context, id string, d *schema.ResourceData, client *okta.Client) []func() error {
-	if !d.HasChange("users") {
-		return nil
-	}
-	// temp solution until 'users' field is supported
-	if d.Get("skip_users").(bool) {
-		return nil
-	}
-	existingUsers, err := listApplicationUsers(ctx, client, id)
-	if err != nil {
-		return []func() error{
-			func() error { return err },
-		}
-	}
-
-	var asyncActionList []func() error
-
-	oldUs, newUs := d.GetChange("users")
-	oldSet := oldUs.(*schema.Set)
-	newSet := newUs.(*schema.Set)
-	usersToAdd := newSet.Difference(oldSet).List()
-	usersToRemove := oldSet.Difference(newSet).List()
-
-	for i := range usersToAdd {
-		userProfile := usersToAdd[i].(map[string]interface{})
-		uID := userProfile["id"].(string)
-		username := userProfile["username"].(string)
-		password := userProfile["password"].(string)
-		if shouldUpdateUser(existingUsers, uID, username) {
-			asyncActionList = append(asyncActionList, func() error {
-				_, _, err := client.Application.UpdateApplicationUser(ctx, id, uID, okta.AppUser{
-					Id: uID,
-					Credentials: &okta.AppUserCredentials{
-						UserName: username,
-						Password: &okta.AppUserPasswordCredential{
-							Value: password,
-						},
-					},
-				})
-				return err
-			})
-		} else {
-			asyncActionList = append(asyncActionList, func() error {
-				_, _, err := client.Application.AssignUserToApplication(ctx, id, okta.AppUser{
-					Id: uID,
-					Credentials: &okta.AppUserCredentials{
-						UserName: username,
-						Password: &okta.AppUserPasswordCredential{
-							Value: password,
-						},
-					},
-				})
-				return err
-			})
-		}
-	}
-
-	for i := range usersToRemove {
-		uID := usersToRemove[i].(map[string]interface{})["id"].(string)
-		if containsAppUser(existingUsers, uID) {
-			asyncActionList = append(asyncActionList, func() error {
-				return suppressErrorOn404(client.Application.DeleteApplicationUser(ctx, id, uID, nil))
-			})
-		}
-	}
-	return asyncActionList
-}
-
-func listApplicationUsers(ctx context.Context, client *okta.Client, id string) ([]*okta.AppUser, error) {
-	var resUsers []*okta.AppUser
-	users, resp, err := client.Application.ListApplicationUsers(ctx, id, &query.Params{Limit: defaultPaginationLimit})
-	if err != nil {
-		return nil, err
-	}
-	for {
-		resUsers = append(resUsers, users...)
-		if resp.HasNextPage() {
-			resp, err = resp.Next(ctx, &users)
-			if err != nil {
-				return nil, err
-			}
-			continue
-		} else {
-			break
-		}
-	}
-	return resUsers, nil
-}
-
-func setAppStatus(ctx context.Context, d *schema.ResourceData, client *okta.Client, status string) error {
+func setAppStatus(ctx context.Context, d *schema.ResourceData, client *sdk.Client, status string) error {
 	desiredStatus := d.Get("status").(string)
 	if status == desiredStatus {
 		return nil
@@ -537,62 +316,9 @@ func setAppStatus(ctx context.Context, d *schema.ResourceData, client *okta.Clie
 	return responseErr(client.Application.ActivateApplication(ctx, d.Id()))
 }
 
-func syncGroupsAndUsers(ctx context.Context, id string, d *schema.ResourceData, m interface{}) error {
-	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusNotFound})
-
-	logger(m).Info("skip values",
-		"skip_users", d.Get("skip_users").(bool),
-		"skip_groups", d.Get("skip_groups").(bool))
-
-	flatMap := map[string]interface{}{}
-	if skipUsers := d.Get("skip_users").(bool); !skipUsers {
-		appUsers, err := listApplicationUsers(ctx, getOktaClientFromMetadata(m), id)
-		if err != nil {
-			return err
-		}
-		var flattenedUserList []interface{}
-		for _, user := range appUsers {
-			if user.Scope != userScope {
-				continue
-			}
-			var un, up string
-			if user.Credentials != nil {
-				getOktaClientFromMetadata(m)
-				un = user.Credentials.UserName
-				if user.Credentials.Password != nil {
-					up = user.Credentials.Password.Value
-				}
-			}
-			flattenedUserList = append(flattenedUserList, map[string]interface{}{
-				"id":       user.Id,
-				"username": un,
-				"scope":    user.Scope,
-				"password": up,
-			})
-		}
-		if len(flattenedUserList) > 0 {
-			flatMap["users"] = schema.NewSet(schema.HashResource(appUserResource), flattenedUserList)
-		}
-	}
-	if skipGroups := d.Get("skip_groups").(bool); !skipGroups {
-		appGroups, _, err := listApplicationGroupAssignments(ctx, getOktaClientFromMetadata(m), id)
-		if err != nil {
-			return err
-		}
-		flatGroupList := make([]interface{}, len(appGroups))
-		for i := range appGroups {
-			flatGroupList[i] = appGroups[i].Id
-		}
-		if len(flatGroupList) > 0 {
-			flatMap["groups"] = schema.NewSet(schema.HashString, flatGroupList)
-		}
-	}
-	return setNonPrimitives(d, flatMap)
-}
-
 // setAppSettings available preconfigured SAML and OAuth applications vary wildly on potential app settings, thus
 // it is a generic map. This logic simply weeds out any empty string values.
-func setAppSettings(d *schema.ResourceData, settings *okta.ApplicationSettingsApplication) error {
+func setAppSettings(d *schema.ResourceData, settings *sdk.ApplicationSettingsApplication) error {
 	flatMap := map[string]interface{}{}
 	for key, val := range *settings {
 		if str, ok := val.(string); ok {
@@ -615,7 +341,7 @@ func setAppLinks(d *schema.ResourceData, appLinks map[string]bool) error {
 	return d.Set("app_links_json", string(payload))
 }
 
-func setSamlSettings(d *schema.ResourceData, signOn *okta.SamlApplicationSettingsSignOn) error {
+func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettingsSignOn) error {
 	_ = d.Set("default_relay_state", signOn.DefaultRelayState)
 	_ = d.Set("sso_url", signOn.SsoAcsUrl)
 	_ = d.Set("recipient", signOn.Recipient)
@@ -696,36 +422,10 @@ func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{
 	return err
 }
 
-func setAppUsersIDsAndGroupsIDs(ctx context.Context, d *schema.ResourceData, client *okta.Client, id string) error {
-	if skipGroups := d.Get("skip_groups").(bool); !skipGroups {
-		groups, _, err := listApplicationGroupAssignments(ctx, client, id)
-		if err != nil {
-			return err
-		}
-		groupsIDs := make([]string, len(groups))
-		for i := range groups {
-			groupsIDs[i] = groups[i].Id
-		}
-		_ = d.Set("groups", convertStringSliceToSet(groupsIDs))
-	}
-	if skipUsers := d.Get("skip_users").(bool); !skipUsers {
-		users, err := listApplicationUsers(ctx, client, id)
-		if err != nil {
-			return err
-		}
-		usersIDs := make([]string, len(users))
-		for i := range users {
-			usersIDs[i] = users[i].Id
-		}
-		_ = d.Set("users", convertStringSliceToSet(usersIDs))
-	}
-	return nil
-}
-
 // fetchAppKeys returns the keys from `/api/v1/apps/${applicationId}/credentials/keys` for a given app. Not all fields on the JsonWebKey
 // will be set, please consult the documentation (https://developer.okta.com/docs/reference/api/apps/#list-key-credentials-for-application)
 // for more information.
-func fetchAppKeys(ctx context.Context, m interface{}, appID string) ([]*okta.JsonWebKey, error) {
+func fetchAppKeys(ctx context.Context, m interface{}, appID string) ([]*sdk.JsonWebKey, error) {
 	keys, _, err := getOktaClientFromMetadata(m).Application.ListApplicationKeys(ctx, appID)
 	if err != nil {
 		return nil, err
@@ -735,7 +435,7 @@ func fetchAppKeys(ctx context.Context, m interface{}, appID string) ([]*okta.Jso
 }
 
 // setAppKeys sets the JWKs return by fetchAppKeys on the given resource.
-func setAppKeys(d *schema.ResourceData, keys []*okta.JsonWebKey) error {
+func setAppKeys(d *schema.ResourceData, keys []*sdk.JsonWebKey) error {
 	arr := make([]map[string]interface{}, len(keys))
 
 	for i, key := range keys {

@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceThreatInsightSettings() *schema.Resource {
@@ -19,10 +19,9 @@ func resourceThreatInsightSettings() *schema.Resource {
 		Importer:      &schema.ResourceImporter{StateContext: schema.ImportStatePassthroughContext},
 		Schema: map[string]*schema.Schema{
 			"action": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: elemInSlice([]string{"none", "audit", "block"}),
-				Description:      "Specifies how Okta responds to authentication requests from suspicious IPs",
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Specifies how Okta responds to authentication requests from suspicious IPs",
 			},
 			"network_excludes": {
 				Type:        schema.TypeList,
@@ -99,15 +98,15 @@ func resourceThreatInsightSettingsUpdate(ctx context.Context, d *schema.Resource
 }
 
 func resourceThreatInsightSettingsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getOktaClientFromMetadata(m).ThreatInsightConfiguration.UpdateConfiguration(ctx, okta.ThreatInsightConfiguration{Action: "none"})
+	_, _, err := getOktaClientFromMetadata(m).ThreatInsightConfiguration.UpdateConfiguration(ctx, sdk.ThreatInsightConfiguration{Action: "none"})
 	if err != nil {
 		return diag.Errorf("failed to set default threat insight configuration: %v", err)
 	}
 	return nil
 }
 
-func buildThreatInsightSettings(d *schema.ResourceData) okta.ThreatInsightConfiguration {
-	return okta.ThreatInsightConfiguration{
+func buildThreatInsightSettings(d *schema.ResourceData) sdk.ThreatInsightConfiguration {
+	return sdk.ThreatInsightConfiguration{
 		Action:       d.Get("action").(string),
 		ExcludeZones: convertInterfaceToStringArrNullable(d.Get("network_excludes")),
 	}

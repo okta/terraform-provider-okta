@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
 func dataSourceEmailTemplate() *schema.Resource {
@@ -31,7 +31,7 @@ func dataSourceEmailTemplateRead(ctx context.Context, d *schema.ResourceData, m 
 	brandID, ok := d.GetOk("brand_id")
 	if ok {
 		logger(m).Info("reading brand by ID", "id", brandID.(string))
-		brand, _, err = getOktaClientFromMetadata(m).Brand.GetBrand(ctx, brandID.(string))
+		brand, _, err = getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrand(ctx, brandID.(string)).Execute()
 		if err != nil {
 			return diag.Errorf("failed to get brand for email template: %v", err)
 		}
@@ -44,12 +44,12 @@ func dataSourceEmailTemplateRead(ctx context.Context, d *schema.ResourceData, m 
 		return diag.Errorf("name required for email template: %v", err)
 	}
 
-	template, _, err := getOktaClientFromMetadata(m).Brand.GetEmailTemplate(ctx, brandID.(string), templateName.(string))
+	template, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.GetEmailTemplate(ctx, brandID.(string), templateName.(string)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get email template: %v", err)
 	}
 
-	d.SetId(fmt.Sprintf("email_template-%s-%s", templateName, brand.Id))
+	d.SetId(fmt.Sprintf("email_template-%s-%s", templateName, brand.GetId()))
 	rawMap := flattenEmailTemplate(template)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {

@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
 var emailCustomizationsDataSourceSchema = map[string]*schema.Schema{
@@ -102,17 +102,17 @@ var emailCustomizationResourceSchema = map[string]*schema.Schema{
 	},
 }
 
-func flattenEmailCustomization(emailCustomization *okta.EmailTemplateCustomization) map[string]interface{} {
+func flattenEmailCustomization(emailCustomization *okta.EmailCustomization) map[string]interface{} {
 	attrs := map[string]interface{}{}
-	attrs["id"] = emailCustomization.Id
-	attrs["language"] = emailCustomization.Language
+	attrs["id"] = emailCustomization.GetId()
+	attrs["language"] = emailCustomization.GetLanguage()
 	attrs["is_default"] = false
 	if emailCustomization.IsDefault != nil {
-		attrs["is_default"] = emailCustomization.IsDefault
+		attrs["is_default"] = emailCustomization.GetIsDefault()
 	}
-	attrs["subject"] = emailCustomization.Subject
-	attrs["body"] = emailCustomization.Body
-	links, _ := json.Marshal(emailCustomization.Links)
+	attrs["subject"] = emailCustomization.GetSubject()
+	attrs["body"] = emailCustomization.GetBody()
+	links, _ := json.Marshal(emailCustomization.GetLinks())
 	attrs["links"] = string(links)
 
 	return attrs

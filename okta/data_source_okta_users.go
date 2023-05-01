@@ -9,8 +9,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceUsers() *schema.Resource {
@@ -58,11 +58,10 @@ func dataSourceUsers() *schema.Resource {
 				},
 			},
 			"compound_search_operator": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Default:          "and",
-				ValidateDiagFunc: elemInSlice([]string{"and", "or"}),
-				Description:      "Search operator used when joining mulitple search clauses",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "and",
+				Description: "Search operator used when joining mulitple search clauses",
 			},
 			"delay_read_seconds": {
 				Type:        schema.TypeString,
@@ -85,7 +84,7 @@ func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interfac
 	}
 
 	var (
-		users []*okta.User
+		users []*sdk.User
 		id    string
 		err   error
 	)
@@ -134,13 +133,13 @@ func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interfac
 	return nil
 }
 
-func collectUsers(ctx context.Context, client *okta.Client, qp *query.Params) ([]*okta.User, error) {
+func collectUsers(ctx context.Context, client *sdk.Client, qp *query.Params) ([]*sdk.User, error) {
 	users, resp, err := client.User.ListUsers(ctx, qp)
 	if err != nil {
 		return nil, err
 	}
 	for resp.HasNextPage() {
-		var nextUsers []*okta.User
+		var nextUsers []*sdk.User
 		resp, err = resp.Next(ctx, &nextUsers)
 		if err != nil {
 			return nil, err

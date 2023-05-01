@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceAppSecurePasswordStore() *schema.Resource {
@@ -34,10 +34,9 @@ func resourceAppSecurePasswordStore() *schema.Resource {
 				Description: "Login username field",
 			},
 			"url": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "Login URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Login URL",
 			},
 			"optional_field1": {
 				Type:        schema.TypeString,
@@ -70,17 +69,9 @@ func resourceAppSecurePasswordStore() *schema.Resource {
 				Description: "Name of optional value in login form",
 			},
 			"credentials_scheme": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "EDIT_USERNAME_AND_PASSWORD",
-				ValidateDiagFunc: elemInSlice(
-					[]string{
-						"EDIT_USERNAME_AND_PASSWORD",
-						"ADMIN_SETS_CREDENTIALS",
-						"EDIT_PASSWORD_ONLY",
-						"EXTERNAL_PASSWORD_SYNC",
-						"SHARED_USERNAME_AND_PASSWORD",
-					}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "EDIT_USERNAME_AND_PASSWORD",
 				Description: "Application credentials scheme",
 			},
 			"reveal_password": {
@@ -117,10 +108,6 @@ func resourceAppSecurePasswordStoreCreate(ctx context.Context, d *schema.Resourc
 		return diag.Errorf("failed to create secure password store application: %v", err)
 	}
 	d.SetId(app.Id)
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for secure password store application: %v", err)
-	}
 	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for secure password store application: %v", err)
@@ -129,7 +116,7 @@ func resourceAppSecurePasswordStoreCreate(ctx context.Context, d *schema.Resourc
 }
 
 func resourceAppSecurePasswordStoreRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := okta.NewSecurePasswordStoreApplication()
+	app := sdk.NewSecurePasswordStoreApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get secure password store application: %v", err)
@@ -155,10 +142,6 @@ func resourceAppSecurePasswordStoreRead(ctx context.Context, d *schema.ResourceD
 	_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
 	_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
-	err = syncGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to sync groups and users for secure password store application: %v", err)
-	}
 	return nil
 }
 
@@ -172,10 +155,6 @@ func resourceAppSecurePasswordStoreUpdate(ctx context.Context, d *schema.Resourc
 	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
 		return diag.Errorf("failed to set secure password store application status: %v", err)
-	}
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for secure password store application: %v", err)
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
@@ -196,13 +175,13 @@ func resourceAppSecurePasswordStoreDelete(ctx context.Context, d *schema.Resourc
 	return nil
 }
 
-func buildAppSecurePasswordStore(d *schema.ResourceData) *okta.SecurePasswordStoreApplication {
+func buildAppSecurePasswordStore(d *schema.ResourceData) *sdk.SecurePasswordStoreApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
-	app := okta.NewSecurePasswordStoreApplication()
+	app := sdk.NewSecurePasswordStoreApplication()
 	app.Label = d.Get("label").(string)
 
-	app.Settings = &okta.SecurePasswordStoreApplicationSettings{
-		App: &okta.SecurePasswordStoreApplicationSettingsApplication{
+	app.Settings = &sdk.SecurePasswordStoreApplicationSettings{
+		App: &sdk.SecurePasswordStoreApplicationSettingsApplication{
 			Url:                 d.Get("url").(string),
 			PasswordField:       d.Get("password_field").(string),
 			UsernameField:       d.Get("username_field").(string),

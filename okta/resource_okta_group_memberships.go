@@ -8,8 +8,8 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceGroupMemberships() *schema.Resource {
@@ -155,7 +155,7 @@ func resourceGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData,
 // changed and the returned user ids should be considered the new set of users.
 // Returns error for API errors. Returns false if no users have changed and the
 // slice of returned strings will be empty.
-func checkIfUsersHaveChanged(ctx context.Context, client *okta.Client, groupId string, users *[]string) (bool, *[]string, error) {
+func checkIfUsersHaveChanged(ctx context.Context, client *sdk.Client, groupId string, users *[]string) (bool, *[]string, error) {
 	noop := []string{}
 	if users == nil || len(*users) == 0 {
 		return false, &noop, nil
@@ -212,7 +212,7 @@ func checkIfUsersHaveChanged(ctx context.Context, client *okta.Client, groupId s
 // removed and the subset of returned user ids should be considered the new set
 // of users. Returns error for API errors. Returns false if no users have been
 // removed and the slice of returned strings will be empty.
-func checkIfUsersHaveBeenRemoved(ctx context.Context, client *okta.Client, groupId string, users *[]string) (bool, *[]string, error) {
+func checkIfUsersHaveBeenRemoved(ctx context.Context, client *sdk.Client, groupId string, users *[]string) (bool, *[]string, error) {
 	noop := []string{}
 	if users == nil || len(*users) == 0 {
 		return false, &noop, nil
@@ -269,7 +269,7 @@ func checkIfUsersHaveBeenRemoved(ctx context.Context, client *okta.Client, group
 	return true, &newUsers, nil
 }
 
-func checkIfGroupHasUsers(ctx context.Context, client *okta.Client, groupId string, users []string) (bool, error) {
+func checkIfGroupHasUsers(ctx context.Context, client *sdk.Client, groupId string, users []string) (bool, error) {
 	groupUsers, resp, err := client.Group.ListGroupUsers(ctx, groupId, &query.Params{Limit: defaultPaginationLimit})
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, fmt.Errorf("unable to return membership for group (%s) from API", groupId)

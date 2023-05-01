@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceOrgConfiguration() *schema.Resource {
@@ -85,7 +85,7 @@ func resourceOrgConfiguration() *schema.Resource {
 			"logo": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: logoValid(),
+				ValidateDiagFunc: logoFileIsValid(),
 				Description:      "Local path to logo of the org.",
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return new == ""
@@ -134,7 +134,7 @@ func resourceOrgSettingsCreate(ctx context.Context, d *schema.ResourceData, m in
 	d.SetId(settings.Id)
 	logo, ok := d.GetOk("logo")
 	if ok {
-		_, err := getSupplementFromMetadata(m).UploadOrgLogo(ctx, logo.(string))
+		_, err := getAPISupplementFromMetadata(m).UploadOrgLogo(ctx, logo.(string))
 		if err != nil {
 			return diag.Errorf("failed to upload org logo: %v", err)
 		}
@@ -190,7 +190,7 @@ func resourceOrgSettingsUpdate(ctx context.Context, d *schema.ResourceData, m in
 	}
 	logo, ok := d.GetOk("logo")
 	if ok {
-		_, err := getSupplementFromMetadata(m).UploadOrgLogo(ctx, logo.(string))
+		_, err := getAPISupplementFromMetadata(m).UploadOrgLogo(ctx, logo.(string))
 		if err != nil {
 			return diag.Errorf("failed to upload org logo: %v", err)
 		}
@@ -233,7 +233,7 @@ func updateContactUsers(ctx context.Context, d *schema.ResourceData, m interface
 	billing, ok := d.GetOk("billing_contact_user")
 	if ok && billingContact.UserId != billing.(string) {
 		_, _, err := getOktaClientFromMetadata(m).OrgSetting.UpdateOrgContactUser(ctx,
-			"BILLING", okta.UserIdString{UserId: billing.(string)})
+			"BILLING", sdk.UserIdString{UserId: billing.(string)})
 		if err != nil {
 			return fmt.Errorf("failed to update billing contact user: %v", err)
 		}
@@ -245,7 +245,7 @@ func updateContactUsers(ctx context.Context, d *schema.ResourceData, m interface
 	technical, ok := d.GetOk("technical_contact_user")
 	if ok && technicalContact.UserId != technical.(string) {
 		_, _, err := getOktaClientFromMetadata(m).OrgSetting.UpdateOrgContactUser(ctx,
-			"TECHNICAL", okta.UserIdString{UserId: technical.(string)})
+			"TECHNICAL", sdk.UserIdString{UserId: technical.(string)})
 		if err != nil {
 			return fmt.Errorf("failed to update technical contact user: %v", err)
 		}
@@ -253,7 +253,7 @@ func updateContactUsers(ctx context.Context, d *schema.ResourceData, m interface
 	return nil
 }
 
-func setOrgSettings(d *schema.ResourceData, settings *okta.OrgSetting) {
+func setOrgSettings(d *schema.ResourceData, settings *sdk.OrgSetting) {
 	_ = d.Set("address_1", settings.Address1)
 	_ = d.Set("address_2", settings.Address2)
 	_ = d.Set("city", settings.City)
@@ -271,8 +271,8 @@ func setOrgSettings(d *schema.ResourceData, settings *okta.OrgSetting) {
 	}
 }
 
-func buildOrgSettings(d *schema.ResourceData, previous *okta.OrgSetting) okta.OrgSetting {
-	setting := okta.OrgSetting{}
+func buildOrgSettings(d *schema.ResourceData, previous *sdk.OrgSetting) sdk.OrgSetting {
+	setting := sdk.OrgSetting{}
 	if previous != nil {
 		if setting.Address1 == "" && previous.Address1 != "" {
 			setting.Address1 = previous.Address1

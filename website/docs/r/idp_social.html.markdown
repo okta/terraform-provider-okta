@@ -28,8 +28,6 @@ resource "okta_idp_social" "example" {
   client_id         = "abcd123"
   client_secret     = "abcd123"
   username_template = "idpuser.email"
-  match_type        = "CUSTOM_ATTRIBUTE"
-  match_attribute   = "customfieldId"
 }
 ```
 

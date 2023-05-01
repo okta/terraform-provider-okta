@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceDomainCertificate() *schema.Resource {
@@ -23,10 +23,9 @@ func resourceDomainCertificate() *schema.Resource {
 				ForceNew:    true,
 			},
 			"type": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "Certificate type",
-				ValidateDiagFunc: elemInSlice([]string{"PEM"}),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Certificate type",
 				DefaultFunc: func() (interface{}, error) {
 					return "PEM", nil
 				},
@@ -69,8 +68,8 @@ func resourceDomainCertificateUpdate(ctx context.Context, d *schema.ResourceData
 	return nil
 }
 
-func buildDomainCertificate(d *schema.ResourceData) okta.DomainCertificate {
-	return okta.DomainCertificate{
+func buildDomainCertificate(d *schema.ResourceData) sdk.DomainCertificate {
+	return sdk.DomainCertificate{
 		Certificate:      d.Get("certificate").(string),
 		CertificateChain: d.Get("certificate_chain").(string),
 		PrivateKey:       d.Get("private_key").(string),

@@ -33,8 +33,7 @@ func resourceUserAdminRoles() *schema.Resource {
 				Required:    true,
 				Description: "User Okta admin roles - ie. ['APP_ADMIN', 'USER_ADMIN']",
 				Elem: &schema.Schema{
-					Type:             schema.TypeString,
-					ValidateDiagFunc: elemInSlice(validAdminRoles),
+					Type: schema.TypeString,
 				},
 			},
 			"disable_notifications": {

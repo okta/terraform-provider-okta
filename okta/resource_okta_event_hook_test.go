@@ -6,22 +6,20 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func TestAccOktaEventHook_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := "okta_event_hook.test"
-	mgr := newFixtureManager(eventHook)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
-	activatedConfig := mgr.GetFixtures("basic_activated.tf", ri, t)
+	mgr := newFixtureManager(eventHook, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	activatedConfig := mgr.GetFixtures("basic_activated.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -31,7 +29,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, eventHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
@@ -41,7 +39,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(&okta.EventSubscriptions{
+						eventSet(&sdk.EventSubscriptions{
 							Type:  "EVENT_TYPE",
 							Items: []string{"user.lifecycle.create", "user.lifecycle.delete.initiated"},
 						}),
@@ -52,7 +50,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, eventHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
@@ -62,7 +60,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"headers",
-						testMakeEventHookHeadersSet([]*okta.EventHookChannelConfigHeader{
+						testMakeEventHookHeadersSet([]*sdk.EventHookChannelConfigHeader{
 							{
 								Key:   "x-test-header",
 								Value: "test stuff",
@@ -76,7 +74,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(&okta.EventSubscriptions{
+						eventSet(&sdk.EventSubscriptions{
 							Type: "EVENT_TYPE",
 							Items: []string{
 								"user.lifecycle.create",
@@ -92,7 +90,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 				Config: activatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, eventHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
@@ -102,7 +100,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(&okta.EventSubscriptions{
+						eventSet(&sdk.EventSubscriptions{
 							Type:  "EVENT_TYPE",
 							Items: []string{"user.lifecycle.create", "user.lifecycle.delete.initiated"},
 						}),
@@ -114,14 +112,15 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 }
 
 func eventHookExists(id string) (bool, error) {
-	eh, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).EventHook.GetEventHook(context.Background(), id)
+	client := oktaClientForTest()
+	eh, resp, err := client.EventHook.GetEventHook(context.Background(), id)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, err
 	}
 	return eh != nil, nil
 }
 
-func testMakeEventHookHeadersSet(headers []*okta.EventHookChannelConfigHeader) *schema.Set {
+func testMakeEventHookHeadersSet(headers []*sdk.EventHookChannelConfigHeader) *schema.Set {
 	h := make([]interface{}, len(headers))
 	for i, header := range headers {
 		h[i] = map[string]interface{}{

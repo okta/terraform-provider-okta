@@ -5,19 +5,17 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccOktaTrustedOrigin_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(trustedOrigin)
-	config := mgr.GetFixtures("okta_trusted_origin.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("okta_trusted_origin_updated.tf", ri, t)
-	resourceName := fmt.Sprintf("%s.testAcc_%d", trustedOrigin, ri)
+	mgr := newFixtureManager(trustedOrigin, t.Name())
+	config := mgr.GetFixtures("okta_trusted_origin.tf", t)
+	updatedConfig := mgr.GetFixtures("okta_trusted_origin_updated.tf", t)
+	resourceName := fmt.Sprintf("%s.testAcc_%d", trustedOrigin, mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -29,7 +27,7 @@ func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "origin", fmt.Sprintf("https://example2-%d.com", ri)),
+					resource.TestCheckResourceAttr(resourceName, "origin", fmt.Sprintf("https://example2-%d.com", mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "active", "false"),
 				),
 			},
@@ -38,7 +36,7 @@ func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 }
 
 func testAccCheckTrustedOriginDestroy(s *terraform.State) error {
-	client := getOktaClientFromMetadata(testAccProvider.Meta())
+	client := oktaClientForTest()
 
 	for _, r := range s.RootModule().Resources {
 		_, resp, err := client.TrustedOrigin.GetOrigin(context.Background(), r.Primary.ID)

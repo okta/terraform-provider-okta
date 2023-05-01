@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 const (
@@ -181,30 +181,16 @@ var userProfileDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var validAdminRoles = []string{
-	"API_ACCESS_MANAGEMENT_ADMIN",
-	"APP_ADMIN",
-	"CUSTOM",
-	"GROUP_MEMBERSHIP_ADMIN",
-	"HELP_DESK_ADMIN",
-	"MOBILE_ADMIN",
-	"ORG_ADMIN",
-	"READ_ONLY_ADMIN",
-	"REPORT_ADMIN",
-	"SUPER_ADMIN",
-	"USER_ADMIN",
-}
-
 func buildUserDataSourceSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
 	return buildSchema(userProfileDataSchema, target)
 }
 
-func assignAdminRolesToUser(ctx context.Context, userID string, roles []string, disableNotifications bool, client *okta.Client) error {
+func assignAdminRolesToUser(ctx context.Context, userID string, roles []string, disableNotifications bool, client *sdk.Client) error {
 	for _, role := range roles {
 		if role == "CUSTOM" {
 			continue
 		}
-		_, _, err := client.User.AssignRoleToUser(ctx, userID, okta.AssignRoleRequest{Type: role},
+		_, _, err := client.User.AssignRoleToUser(ctx, userID, sdk.AssignRoleRequest{Type: role},
 			&query.Params{DisableNotifications: boolPtr(disableNotifications)})
 		if err != nil {
 			return fmt.Errorf("failed to assign role '%s' to user '%s': %w", role, userID, err)
@@ -213,18 +199,8 @@ func assignAdminRolesToUser(ctx context.Context, userID string, roles []string, 
 	return nil
 }
 
-func assignGroupsToUser(ctx context.Context, userID string, groups []string, c *okta.Client) error {
-	for _, group := range groups {
-		_, err := c.Group.AddUserToGroup(ctx, group, userID)
-		if err != nil {
-			return fmt.Errorf("failed to assign group '%s' to user '%s': %w", group, userID, err)
-		}
-	}
-	return nil
-}
-
-func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
-	profile := okta.UserProfile{}
+func populateUserProfile(d *schema.ResourceData) *sdk.UserProfile {
+	profile := sdk.UserProfile{}
 
 	if rawAttrs, ok := d.GetOk("custom_profile_attributes"); ok {
 		var attrs map[string]interface{}
@@ -266,7 +242,7 @@ func populateUserProfile(d *schema.ResourceData) *okta.UserProfile {
 	return &profile
 }
 
-func listUserRoles(ctx context.Context, c *okta.Client, userID string) (userOnlyRoles []*okta.Role, resp *okta.Response, err error) {
+func listUserRoles(ctx context.Context, c *sdk.Client, userID string) (userOnlyRoles []*sdk.Role, resp *sdk.Response, err error) {
 	roles, resp, err := c.User.ListAssignedRolesForUser(ctx, userID, nil)
 	if err != nil {
 		return
@@ -275,7 +251,7 @@ func listUserRoles(ctx context.Context, c *okta.Client, userID string) (userOnly
 	return
 }
 
-func getRoles(ctx context.Context, id string, c *okta.Client) ([]interface{}, error) {
+func getRoles(ctx context.Context, id string, c *sdk.Client) ([]interface{}, error) {
 	roleTypes := make([]interface{}, 0)
 	roles, resp, err := listUserRoles(ctx, c, id)
 	if err != nil {
@@ -303,7 +279,7 @@ func setRoles(ctx context.Context, d *schema.ResourceData, m interface{}) error 
 	})
 }
 
-func listUserOnlyRoles(ctx context.Context, c *okta.Client, userID string) (userOnlyRoles []*okta.Role, resp *okta.Response, err error) {
+func listUserOnlyRoles(ctx context.Context, c *sdk.Client, userID string) (userOnlyRoles []*sdk.Role, resp *sdk.Response, err error) {
 	roles, resp, err := c.User.ListAssignedRolesForUser(ctx, userID, nil)
 	if err != nil {
 		return
@@ -316,7 +292,7 @@ func listUserOnlyRoles(ctx context.Context, c *okta.Client, userID string) (user
 	return
 }
 
-func getAdminRoles(ctx context.Context, id string, c *okta.Client) ([]interface{}, *okta.Response, error) {
+func getAdminRoles(ctx context.Context, id string, c *sdk.Client) ([]interface{}, *sdk.Response, error) {
 	roleTypes := make([]interface{}, 0)
 	roles, resp, err := listUserOnlyRoles(ctx, c, id)
 
@@ -343,7 +319,7 @@ func setAdminRoles(ctx context.Context, d *schema.ResourceData, m interface{}) e
 	})
 }
 
-func getGroupsForUser(ctx context.Context, id string, c *okta.Client) ([]string, error) {
+func getGroupsForUser(ctx context.Context, id string, c *sdk.Client) ([]string, error) {
 	groups, response, err := c.User.ListUserGroups(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list user groups: %v", err)
@@ -370,57 +346,11 @@ func getGroupsForUser(ctx context.Context, id string, c *okta.Client) ([]string,
 	return groupIDs, nil
 }
 
-// set all groups currently attached to the user
-func setAllGroups(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
-	groupIDs, err := getGroupsForUser(ctx, d.Id(), c)
-	if err != nil {
-		return err
-	}
-	gids := convertStringSliceToInterfaceSlice(groupIDs)
-	return setNonPrimitives(d, map[string]interface{}{
-		"group_memberships": schema.NewSet(schema.HashString, gids),
-	})
-}
-
-// set groups attached to the user that can be changed
-func setGroupUserMemberships(ctx context.Context, d *schema.ResourceData, c *okta.Client) error {
-	groups, response, err := c.User.ListUserGroups(ctx, d.Id())
-	if err != nil {
-		return fmt.Errorf("failed to list user groups: %v", err)
-	}
-
-	groupIDs := make([]interface{}, 0)
-
-	for {
-		// ignore saving build-in or app groups into state so we don't end up with perpetual diffs,
-		// because it's impossible to remove user from build-in or app group via API
-		for _, group := range groups {
-			if group.Type != "BUILT_IN" && group.Type != "APP_GROUP" {
-				groupIDs = append(groupIDs, group.Id)
-			}
-		}
-
-		if !response.HasNextPage() {
-			break
-		}
-
-		response, err = response.Next(ctx, &groups)
-
-		if err != nil {
-			return fmt.Errorf("failed to list user groups: %v", err)
-		}
-	}
-
-	return setNonPrimitives(d, map[string]interface{}{
-		"group_memberships": schema.NewSet(schema.HashString, groupIDs),
-	})
-}
-
 func isCustomUserAttr(key string) bool {
 	return !contains(profileKeys, key)
 }
 
-func flattenUser(u *okta.User, filteredCustomAttributes []string) map[string]interface{} {
+func flattenUser(u *sdk.User, filteredCustomAttributes []string) map[string]interface{} {
 	customAttributes := make(map[string]interface{})
 	attrs := map[string]interface{}{}
 
@@ -470,7 +400,7 @@ func flattenUser(u *okta.User, filteredCustomAttributes []string) map[string]int
 // handle setting of user status based on what the current status is because okta
 // only allows transitions to certain statuses from other statuses - consult okta User API docs for more info
 // https://developer.okta.com/docs/api/resources/users#lifecycle-operations
-func updateUserStatus(ctx context.Context, uid, desiredStatus string, c *okta.Client) error {
+func updateUserStatus(ctx context.Context, uid, desiredStatus string, c *sdk.Client) error {
 	user, _, err := c.User.GetUser(ctx, uid)
 	if err != nil {
 		return fmt.Errorf("failed to get user: %v", err)
@@ -502,7 +432,7 @@ func updateUserStatus(ctx context.Context, uid, desiredStatus string, c *okta.Cl
 
 // need to wait for user.TransitioningToStatus field to be empty before allowing Terraform to continue
 // so the proper current status gets set in the state during the Read operation after a Status update
-func waitForStatusTransition(ctx context.Context, u string, c *okta.Client) error {
+func waitForStatusTransition(ctx context.Context, u string, c *sdk.Client) error {
 	user, _, err := c.User.GetUser(ctx, u)
 	if err != nil {
 		return fmt.Errorf("failed to get user: %v", err)

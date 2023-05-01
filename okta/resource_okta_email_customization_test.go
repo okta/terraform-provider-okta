@@ -7,20 +7,18 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.forgot_password_en", emailCustomization)
-	mgr := newFixtureManager(emailCustomization)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
-	updatedConfigChangeIsDefault := mgr.GetFixtures("updated_change_is_default.tf", ri, t)
+	mgr := newFixtureManager(emailCustomization, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
+	updatedConfigChangeIsDefault := mgr.GetFixtures("updated_change_is_default.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -96,8 +94,8 @@ func createCheckResourceEmailCustomizationDestroy(s *terraform.State) error {
 		ID := rs.Primary.ID
 		brandID := rs.Primary.Attributes["brand_id"]
 		templateName := rs.Primary.Attributes["template_name"]
-
-		_, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).Brand.GetEmailTemplateCustomization(context.Background(), brandID, templateName, ID)
+		client := oktaV3ClientForTest()
+		_, resp, err := client.CustomizationApi.GetEmailCustomization(context.Background(), brandID, templateName, ID).Execute()
 		if err != nil || resp.StatusCode == http.StatusNotFound {
 			return nil
 		}

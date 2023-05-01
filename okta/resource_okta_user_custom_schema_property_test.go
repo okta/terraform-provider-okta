@@ -7,31 +7,29 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccResourceOktaUserSchema_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(userSchemaProperty)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("updated.tf", ri, t)
-	unique := mgr.GetFixtures("unique.tf", ri, t)
-	nonDefault := mgr.GetFixtures("non_default_user_type.tf", ri, t)
-	resourceName := buildResourceFQN(userSchemaProperty, ri)
+	mgr := newFixtureManager(userSchemaProperty, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
+	unique := mgr.GetFixtures("unique.tf", t)
+	nonDefault := mgr.GetFixtures("non_default_user_type.tf", t)
+	resourceName := buildResourceFQN(userSchemaProperty, mgr.Seed)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test"),
@@ -52,7 +50,7 @@ func TestAccResourceOktaUserSchema_crud(t *testing.T) {
 				Config: updated,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test updated 004"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test updated 004"),
@@ -75,7 +73,7 @@ func TestAccResourceOktaUserSchema_crud(t *testing.T) {
 				Config: unique,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test setting unique attribute to UNIQUE_VALIDATED 007"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					// FIXME when the schema is updated and set to true why does this cause the a prompt:
@@ -94,7 +92,7 @@ func TestAccResourceOktaUserSchema_crud(t *testing.T) {
 				Config: nonDefault,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test"),
@@ -116,25 +114,24 @@ func TestAccResourceOktaUserSchema_crud(t *testing.T) {
 }
 
 func TestAccResourceOktaUserSchema_array_enum(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	mgr := newFixtureManager(userSchemaProperty)
-	config := mgr.GetFixtures("array_string.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("array_string_updated.tf", ri, t)
-	arrayEnum := mgr.GetFixtures("array_enum.tf", ri, t)
-	arrayNumber := mgr.GetFixtures("array_number.tf", ri, t)
+	mgr := newFixtureManager(userSchemaProperty, t.Name())
+	config := mgr.GetFixtures("array_string.tf", t)
+	updatedConfig := mgr.GetFixtures("array_string_updated.tf", t)
+	arrayEnum := mgr.GetFixtures("array_enum.tf", t)
+	arrayNumber := mgr.GetFixtures("array_number.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test"),
@@ -148,7 +145,7 @@ func TestAccResourceOktaUserSchema_array_enum(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test updated 005"),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					// FIXME when the schema is updated and set to true why does this cause the a prompt:
@@ -165,7 +162,7 @@ func TestAccResourceOktaUserSchema_array_enum(t *testing.T) {
 				Config: arrayEnum,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "string"),
@@ -183,7 +180,7 @@ func TestAccResourceOktaUserSchema_array_enum(t *testing.T) {
 				Config: arrayNumber,
 				Check: resource.ComposeTestCheckFunc(
 					testOktaUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(ri)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "number"),
@@ -212,31 +209,14 @@ func TestAccResourceOktaUserSchema_array_enum(t *testing.T) {
 	})
 }
 
-func checkOktaUserSchemasDestroy() resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		for _, rs := range s.RootModule().Resources {
-			schemaUserType := "default"
-			if rs.Primary.Attributes["user_type"] != "" {
-				schemaUserType = rs.Primary.Attributes["user_type"]
-			}
-			exists, _ := testUserSchemaPropertyExists(schemaUserType, rs.Primary.ID, customSchema)
-			if exists {
-				return fmt.Errorf("resource still exists, ID: %s", rs.Primary.ID)
-			}
-		}
-		return nil
-	}
-}
-
 func TestAccResourceOktaUserSchema_array_enum_number(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(userSchemaProperty)
+	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -261,7 +241,7 @@ func TestAccResourceOktaUserSchema_array_enum_number(t *testing.T) {
 			    title = "number point oh three"
 			    const = "0.03"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "number"),
@@ -300,7 +280,7 @@ func TestAccResourceOktaUserSchema_array_enum_number(t *testing.T) {
 			    title = "number point oh three three"
 			    const = "0.033"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "number"),
@@ -321,14 +301,13 @@ func TestAccResourceOktaUserSchema_array_enum_number(t *testing.T) {
 }
 
 func TestAccResourceOktaUserSchema_enum_number(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(userSchemaProperty)
+	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -352,7 +331,7 @@ func TestAccResourceOktaUserSchema_enum_number(t *testing.T) {
 			    title = "number point oh three"
 			    const = "0.03"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "number"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "0.01"),
@@ -389,7 +368,7 @@ func TestAccResourceOktaUserSchema_enum_number(t *testing.T) {
 			    title = "number point oh three three"
 			    const = "0.033"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "number"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "0.011"),
@@ -409,14 +388,13 @@ func TestAccResourceOktaUserSchema_enum_number(t *testing.T) {
 }
 
 func TestAccResourceOktaUserSchema_array_enum_integer(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(userSchemaProperty)
+	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -441,7 +419,7 @@ func TestAccResourceOktaUserSchema_array_enum_integer(t *testing.T) {
 			    title = "integer three"
 			    const = "3"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "integer"),
@@ -480,7 +458,7 @@ func TestAccResourceOktaUserSchema_array_enum_integer(t *testing.T) {
 			    title = "integer six"
 			    const = "6"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "integer"),
@@ -501,14 +479,13 @@ func TestAccResourceOktaUserSchema_array_enum_integer(t *testing.T) {
 }
 
 func TestAccResourceOktaUserSchema_enum_integer(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(userSchemaProperty)
+	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -532,7 +509,7 @@ func TestAccResourceOktaUserSchema_enum_integer(t *testing.T) {
 			    title = "integer three"
 			    const = "3"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "integer"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "1"),
@@ -569,7 +546,7 @@ func TestAccResourceOktaUserSchema_enum_integer(t *testing.T) {
 			    title = "integer six"
 			    const = "6"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "integer"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "4"),
@@ -592,14 +569,13 @@ func TestAccResourceOktaUserSchema_array_enum_boolean(t *testing.T) {
 	t.Skip("TODO deal with apparent monolith bug")
 	// TODO deal with apparent monolith bug:
 	// "the API returned an error: Array specified in enum field must match const values specified in oneOf field."
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(userSchemaProperty)
+	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -620,7 +596,7 @@ func TestAccResourceOktaUserSchema_array_enum_boolean(t *testing.T) {
 			    title = "boolean False"
 			    const = "false"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "boolean"),
@@ -652,7 +628,7 @@ func TestAccResourceOktaUserSchema_array_enum_boolean(t *testing.T) {
 			    title = "boolean TRUE"
 			    const = "true"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "boolean"),
@@ -673,14 +649,13 @@ func TestAccResourceOktaUserSchema_enum_boolean(t *testing.T) {
 	t.Skip("TODO deal with apparent monolith bug")
 	// TODO deal with apparent monolith bug:
 	// "the API returned an error: Array specified in enum field must match const values specified in oneOf field."
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(userSchemaProperty)
+	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -700,7 +675,7 @@ func TestAccResourceOktaUserSchema_enum_boolean(t *testing.T) {
 			    title = "boolean False"
 			    const = "false"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "boolean"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "true"),
@@ -730,7 +705,7 @@ func TestAccResourceOktaUserSchema_enum_boolean(t *testing.T) {
 			    title = "boolean TRUE"
 			    const = "true"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "boolean"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "false"),
@@ -747,14 +722,13 @@ func TestAccResourceOktaUserSchema_enum_boolean(t *testing.T) {
 }
 
 func TestAccResourceOktaUserSchema_array_enum_string(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(userSchemaProperty)
+	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -779,7 +753,7 @@ func TestAccResourceOktaUserSchema_array_enum_string(t *testing.T) {
 			    title = "string Three"
 			    const = "three"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "string"),
@@ -818,7 +792,7 @@ func TestAccResourceOktaUserSchema_array_enum_string(t *testing.T) {
 			    title = "STRING THREE"
 			    const = "THREE"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "string"),
@@ -839,14 +813,13 @@ func TestAccResourceOktaUserSchema_array_enum_string(t *testing.T) {
 }
 
 func TestAccResourceOktaUserSchema_enum_string(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(userSchemaProperty)
+	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaUserSchemasDestroy(),
+		CheckDestroy:      checkOktaUserSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -870,7 +843,7 @@ func TestAccResourceOktaUserSchema_enum_string(t *testing.T) {
 			    title = "string Three"
 			    const = "three"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "one"),
@@ -907,7 +880,7 @@ func TestAccResourceOktaUserSchema_enum_string(t *testing.T) {
 			    title = "STRING THREE"
 			    const = "THREE"
 			  }
-			}`, ri),
+			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "ONE"),
@@ -926,12 +899,12 @@ func TestAccResourceOktaUserSchema_enum_string(t *testing.T) {
 	})
 }
 
-func testOktaUserSchemasExists(name string) resource.TestCheckFunc {
+func testOktaUserSchemasExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
-		rs, ok := s.RootModule().Resources[name]
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
-			return fmt.Errorf("not found: %s", name)
+			return fmt.Errorf("not found: %s", resourceName)
 		}
 
 		schemaUserType := "default"
@@ -950,11 +923,12 @@ func testOktaUserSchemasExists(name string) resource.TestCheckFunc {
 }
 
 func testUserSchemaPropertyExists(schemaUserType, index, resolutionScope string) (bool, error) {
-	typeSchemaID, err := getUserTypeSchemaID(context.Background(), getOktaClientFromMetadata(testAccProvider.Meta()), schemaUserType)
+	client := oktaClientForTest()
+	typeSchemaID, err := getUserTypeSchemaID(context.Background(), client, schemaUserType)
 	if err != nil {
 		return false, err
 	}
-	us, _, err := getOktaClientFromMetadata(testAccProvider.Meta()).UserSchema.GetUserSchema(context.Background(), typeSchemaID)
+	us, _, err := client.UserSchema.GetUserSchema(context.Background(), typeSchemaID)
 	if err != nil {
 		return false, fmt.Errorf("failed to get user schema: %v", err)
 	}
@@ -974,8 +948,7 @@ func testUserSchemaPropertyExists(schemaUserType, index, resolutionScope string)
 // backoff in create and update for okta_ser_schema_property resource is
 // operating correctly.
 func TestAccResourceOktaUserSchema_parallel_api_calls(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(userSchemaProperty)
+	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	config := `
 resource "okta_user_schema_property" "one" {
 	index       = "testAcc_replace_with_uuid_one"
@@ -1016,9 +989,9 @@ resource "okta_user_schema_property" "five" {
 	for i := 0; i < 5; i++ {
 		rw[i] = "READ_WRITE"
 	}
-	roConfig := mgr.ConfigReplace(fmt.Sprintf(config, ro...), ri)
-	rwConfig := mgr.ConfigReplace(fmt.Sprintf(config, rw...), ri)
-	resource.Test(t, resource.TestCase{
+	roConfig := mgr.ConfigReplace(fmt.Sprintf(config, ro...))
+	rwConfig := mgr.ConfigReplace(fmt.Sprintf(config, rw...))
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -1045,4 +1018,18 @@ resource "okta_user_schema_property" "five" {
 			},
 		},
 	})
+}
+
+func checkOktaUserSchemasDestroy(s *terraform.State) error {
+	for _, rs := range s.RootModule().Resources {
+		schemaUserType := "default"
+		if rs.Primary.Attributes["user_type"] != "" {
+			schemaUserType = rs.Primary.Attributes["user_type"]
+		}
+		exists, _ := testUserSchemaPropertyExists(schemaUserType, rs.Primary.ID, customSchema)
+		if exists {
+			return fmt.Errorf("resource still exists, ID: %s", rs.Primary.ID)
+		}
+	}
+	return nil
 }

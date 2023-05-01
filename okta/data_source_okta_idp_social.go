@@ -7,8 +7,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceIdpSocial() *schema.Resource {
@@ -144,7 +144,7 @@ func dataSourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m inte
 	}
 	var (
 		err error
-		idp *okta.IdentityProvider
+		idp *sdk.IdentityProvider
 	)
 	if id != "" {
 		idp, _, err = getOktaClientFromMetadata(m).IdentityProvider.GetIdentityProvider(ctx, id)
@@ -201,7 +201,7 @@ func dataSourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m inte
 	return nil
 }
 
-func getSocialIdPByName(ctx context.Context, m interface{}, name string) (*okta.IdentityProvider, error) {
+func getSocialIdPByName(ctx context.Context, m interface{}, name string) (*sdk.IdentityProvider, error) {
 	idps, _, err := getOktaClientFromMetadata(m).IdentityProvider.
 		ListIdentityProviders(ctx, &query.Params{Q: name, Limit: defaultPaginationLimit})
 	if err != nil {

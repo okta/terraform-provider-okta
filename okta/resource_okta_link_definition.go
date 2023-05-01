@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceLinkDefinition() *schema.Resource {
@@ -62,14 +62,14 @@ func resourceLinkDefinitionCreate(ctx context.Context, d *schema.ResourceData, m
 	oktaMutexKV.Lock(linkDefinition)
 	defer oktaMutexKV.Unlock(linkDefinition)
 
-	linkedObject := okta.LinkedObject{
-		Primary: &okta.LinkedObjectDetails{
+	linkedObject := sdk.LinkedObject{
+		Primary: &sdk.LinkedObjectDetails{
 			Name:        d.Get("primary_name").(string),
 			Title:       d.Get("primary_title").(string),
 			Description: d.Get("primary_description").(string),
 			Type:        "USER",
 		},
-		Associated: &okta.LinkedObjectDetails{
+		Associated: &sdk.LinkedObjectDetails{
 			Name:        d.Get("associated_name").(string),
 			Title:       d.Get("associated_title").(string),
 			Description: d.Get("associated_description").(string),

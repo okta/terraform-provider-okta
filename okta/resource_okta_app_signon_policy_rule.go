@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAppSignOnPolicyRule() *schema.Resource {
@@ -30,11 +30,10 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				Description: "ID of the policy",
 			},
 			"status": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
-				Description:      "Status of the rule",
-				Default:          statusActive,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Status of the rule",
+				Default:     statusActive,
 			},
 			"priority": {
 				Type:     schema.TypeInt,
@@ -69,11 +68,10 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"network_connection": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ANYWHERE", "ZONE", "ON_NETWORK", "OFF_NETWORK"}),
-				Description:      "Network selection mode: ANYWHERE, ZONE, ON_NETWORK, or OFF_NETWORK.",
-				Default:          "ANYWHERE",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Network selection mode: ANYWHERE, ZONE, ON_NETWORK, or OFF_NETWORK.",
+				Default:     "ANYWHERE",
 			},
 			"network_includes": {
 				Type:          schema.TypeList,
@@ -94,6 +92,9 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				Optional:    true,
 				Description: "If the device is registered. A device is registered if the User enrolls with Okta Verify that is installed on the device.",
 				ValidateDiagFunc: func(i interface{}, path cty.Path) diag.Diagnostics {
+					// Note: Keep this validator as it is enforcing payload
+					// format the API is expecting and the side effects related
+					// to that.
 					if i == nil {
 						return nil
 					}
@@ -133,39 +134,34 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"access": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ALLOW", "DENY"}),
-				Description:      "Allow or deny access based on the rule conditions: ALLOW or DENY",
-				Default:          "ALLOW",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Allow or deny access based on the rule conditions: ALLOW or DENY",
+				Default:     "ALLOW",
 			},
 			"factor_mode": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"1FA", "2FA"}),
-				Description:      "The number of factors required to satisfy this assurance level",
-				Default:          "2FA",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The number of factors required to satisfy this assurance level",
+				Default:     "2FA",
 			},
 			"type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ASSURANCE"}),
-				Description:      "The Verification Method type",
-				Default:          "ASSURANCE",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The Verification Method type",
+				Default:     "ASSURANCE",
 			},
 			"re_authentication_frequency": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: stringIsPeriod,
-				Description:      "The duration after which the end user must re-authenticate, regardless of user activity. Use the ISO 8601 Period format for recurring time intervals. PT0S - Every sign-in attempt, PT43800H - Once per session",
-				Default:          "PT2H",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The duration after which the end user must re-authenticate, regardless of user activity. Use the ISO 8601 Period format for recurring time intervals. PT0S - Every sign-in attempt, PT43800H - Once per session",
+				Default:     "PT2H",
 			},
 			"inactivity_period": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: stringIsPeriod,
-				Description:      "The inactivity duration after which the end user must re-authenticate. Use the ISO 8601 Period format for recurring time intervals.",
-				Default:          "PT1H",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The inactivity duration after which the end user must re-authenticate. Use the ISO 8601 Period format for recurring time intervals.",
+				Default:     "PT1H",
 			},
 			"constraints": {
 				Type: schema.TypeList,
@@ -186,14 +182,14 @@ func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceDa
 		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
 	}
 
-	rule, _, err := getSupplementFromMetadata(m).CreateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), buildAppSignOnPolicyRule(d))
+	rule, _, err := getAPISupplementFromMetadata(m).CreateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), buildAppSignOnPolicyRule(d))
 	if err != nil {
 		return diag.Errorf("failed to create app sign on policy rule: %v", err)
 	}
 	d.SetId(rule.Id)
 	if status, ok := d.GetOk("status"); ok {
 		if status.(string) == statusInactive {
-			_, err = getSupplementFromMetadata(m).DeactivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+			_, err = getAPISupplementFromMetadata(m).DeactivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 			if err != nil {
 				return diag.Errorf("failed to deactivate app sign on policy rule: %v", err)
 			}
@@ -207,7 +203,7 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
 	}
 
-	rule, resp, err := getSupplementFromMetadata(m).GetAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+	rule, resp, err := getAPISupplementFromMetadata(m).GetAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get app sign on policy rule: %v", err)
 	}
@@ -277,16 +273,16 @@ func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceDa
 		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
 	}
 
-	_, _, err := getSupplementFromMetadata(m).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), buildAppSignOnPolicyRule(d))
+	_, _, err := getAPISupplementFromMetadata(m).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), buildAppSignOnPolicyRule(d))
 	if err != nil {
 		return diag.Errorf("failed to create app sign on policy rule: %v", err)
 	}
 	oldStatus, newStatus := d.GetChange("status")
 	if oldStatus != newStatus {
 		if newStatus == statusActive {
-			_, err = getSupplementFromMetadata(m).ActivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+			_, err = getAPISupplementFromMetadata(m).ActivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 		} else {
-			_, err = getSupplementFromMetadata(m).DeactivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+			_, err = getAPISupplementFromMetadata(m).DeactivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 		}
 		if err != nil {
 			return diag.Errorf("failed to change app sign on policy rule status: %v", err)
@@ -304,19 +300,19 @@ func resourceAppSignOnPolicyRuleDelete(ctx context.Context, d *schema.ResourceDa
 		// You cannot delete a default rule in a policy
 		return nil
 	}
-	_, err := getSupplementFromMetadata(m).DeleteAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+	_, err := getAPISupplementFromMetadata(m).DeleteAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete app sign-on policy rule: %v", err)
 	}
 	return nil
 }
 
-func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
-	rule := okta.AccessPolicyRule{
-		Actions: &okta.AccessPolicyRuleActions{
-			AppSignOn: &okta.AccessPolicyRuleApplicationSignOn{
+func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
+	rule := sdk.AccessPolicyRule{
+		Actions: &sdk.AccessPolicyRuleActions{
+			AppSignOn: &sdk.AccessPolicyRuleApplicationSignOn{
 				Access: d.Get("access").(string),
-				VerificationMethod: &okta.VerificationMethod{
+				VerificationMethod: &sdk.VerificationMethod{
 					FactorMode:       d.Get("factor_mode").(string),
 					ReauthenticateIn: d.Get("re_authentication_frequency").(string),
 					InactivityPeriod: d.Get("inactivity_period").(string),
@@ -328,12 +324,12 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 		PriorityPtr: int64Ptr(d.Get("priority").(int)),
 		Type:        "ACCESS_POLICY",
 	}
-	var constraints []*okta.AccessPolicyConstraints
+	var constraints []*sdk.AccessPolicyConstraints
 	v, ok := d.GetOk("constraints")
 	if ok {
 		valueList := v.([]interface{})
 		for _, item := range valueList {
-			var constraint okta.AccessPolicyConstraints
+			var constraint sdk.AccessPolicyConstraints
 			_ = json.Unmarshal([]byte(item.(string)), &constraint)
 			constraints = append(constraints, &constraint)
 		}
@@ -343,18 +339,18 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 	if d.Get("name") == "Catch-all Rule" {
 		return rule
 	}
-	rule.Conditions = &okta.AccessPolicyRuleConditions{
+	rule.Conditions = &sdk.AccessPolicyRuleConditions{
 		Network: buildPolicyNetworkCondition(d),
-		Platform: &okta.PlatformPolicyRuleCondition{
+		Platform: &sdk.PlatformPolicyRuleCondition{
 			Include: buildAccessPolicyPlatformInclude(d),
 		},
-		ElCondition: &okta.AccessPolicyRuleCustomCondition{
+		ElCondition: &sdk.AccessPolicyRuleCustomCondition{
 			Condition: d.Get("custom_expression").(string),
 		},
 	}
 	isRegistered, ok := d.GetOk("device_is_registered")
 	if ok && isRegistered.(bool) {
-		rule.Conditions.Device = &okta.DeviceAccessPolicyRuleCondition{
+		rule.Conditions.Device = &sdk.DeviceAccessPolicyRuleCondition{
 			Managed:    boolPtr(d.Get("device_is_managed").(bool)),
 			Registered: boolPtr(isRegistered.(bool)),
 		}
@@ -362,8 +358,8 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 	usersExcluded, usersExcludedOk := d.GetOk("users_excluded")
 	usersIncluded, usersIncludedOk := d.GetOk("users_included")
 	if usersExcludedOk || usersIncludedOk {
-		rule.Conditions.People = &okta.PolicyPeopleCondition{
-			Users: &okta.UserCondition{
+		rule.Conditions.People = &sdk.PolicyPeopleCondition{
+			Users: &sdk.UserCondition{
 				Exclude: convertInterfaceToStringSetNullable(usersExcluded),
 				Include: convertInterfaceToStringSetNullable(usersIncluded),
 			},
@@ -373,9 +369,9 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 	groupsIncluded, groupsIncludedOk := d.GetOk("groups_included")
 	if groupsExcludedOk || groupsIncludedOk {
 		if rule.Conditions.People == nil {
-			rule.Conditions.People = &okta.PolicyPeopleCondition{}
+			rule.Conditions.People = &sdk.PolicyPeopleCondition{}
 		}
-		rule.Conditions.People.Groups = &okta.GroupCondition{
+		rule.Conditions.People.Groups = &sdk.GroupCondition{
 			Exclude: convertInterfaceToStringSetNullable(groupsExcluded),
 			Include: convertInterfaceToStringSetNullable(groupsIncluded),
 		}
@@ -383,7 +379,7 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 	userTypesExcluded, userTypesExcludedOk := d.GetOk("user_types_excluded")
 	userTypesIncluded, userTypesIncludedOk := d.GetOk("user_types_included")
 	if userTypesExcludedOk || userTypesIncludedOk {
-		rule.Conditions.UserType = &okta.UserTypeCondition{
+		rule.Conditions.UserType = &sdk.UserTypeCondition{
 			Exclude: convertInterfaceToStringSetNullable(userTypesExcluded),
 			Include: convertInterfaceToStringSetNullable(userTypesIncluded),
 		}
@@ -391,8 +387,8 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) okta.AccessPolicyRule {
 	return rule
 }
 
-func buildAccessPolicyPlatformInclude(d *schema.ResourceData) []*okta.PlatformConditionEvaluatorPlatform {
-	var includeList []*okta.PlatformConditionEvaluatorPlatform
+func buildAccessPolicyPlatformInclude(d *schema.ResourceData) []*sdk.PlatformConditionEvaluatorPlatform {
+	var includeList []*sdk.PlatformConditionEvaluatorPlatform
 	v, ok := d.GetOk("platform_include")
 	if !ok {
 		return includeList
@@ -406,8 +402,8 @@ func buildAccessPolicyPlatformInclude(d *schema.ResourceData) []*okta.PlatformCo
 					expr = v
 				}
 			}
-			includeList = append(includeList, &okta.PlatformConditionEvaluatorPlatform{
-				Os: &okta.PlatformConditionEvaluatorPlatformOperatingSystem{
+			includeList = append(includeList, &sdk.PlatformConditionEvaluatorPlatform{
+				Os: &sdk.PlatformConditionEvaluatorPlatformOperatingSystem{
 					Expression: expr,
 					Type:       getMapString(value, "os_type"),
 				},
@@ -418,7 +414,7 @@ func buildAccessPolicyPlatformInclude(d *schema.ResourceData) []*okta.PlatformCo
 	return includeList
 }
 
-func flattenAccessPolicyPlatformInclude(platform *okta.PlatformPolicyRuleCondition) *schema.Set {
+func flattenAccessPolicyPlatformInclude(platform *sdk.PlatformPolicyRuleCondition) *schema.Set {
 	var flattened []interface{}
 	if platform != nil && platform.Include != nil {
 		for _, v := range platform.Include {

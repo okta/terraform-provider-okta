@@ -1,16 +1,13 @@
 package okta
 
 import (
-	"context"
 	"fmt"
-	"net/http"
 	"os"
 	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 type checkUpstream func(string) (bool, error)
@@ -22,8 +19,7 @@ func ensureResourceExists(name string, checkUpstream checkUpstream) resource.Tes
 		if !ok {
 			return missingErr
 		}
-		ID := rs.Primary.ID
-		exist, err := checkUpstream(ID)
+		exist, err := checkUpstream(rs.Primary.ID)
 		if err != nil {
 			return err
 		} else if !exist {
@@ -39,13 +35,12 @@ func createCheckResourceDestroy(typeName string, checkUpstream checkUpstream) re
 			if rs.Type != typeName {
 				continue
 			}
-			ID := rs.Primary.ID
-			exists, err := checkUpstream(ID)
+			exists, err := checkUpstream(rs.Primary.ID)
 			if err != nil {
 				return err
 			}
 			if exists {
-				return fmt.Errorf("resource still exists, ID: %s", ID)
+				return fmt.Errorf("resource still exists, ID: %s", rs.Primary.ID)
 			}
 		}
 		return nil
@@ -73,36 +68,6 @@ func condenseError(errorList []error) error {
 		}
 	}
 	return fmt.Errorf("series of errors occurred: %s", strings.Join(msgList, ", "))
-}
-
-type roundTripFunc func(req *http.Request) *http.Response
-
-func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
-	return f(req), nil
-}
-
-func newTestHttpClient(fn roundTripFunc) *http.Client {
-	return &http.Client{
-		Transport: fn,
-	}
-}
-
-func newTestOktaClientWithResponse(response roundTripFunc) (context.Context, *okta.Client, error) {
-	ctx := context.Background()
-
-	h := newTestHttpClient(response)
-
-	oktaCtx, c, err := okta.NewClient(
-		ctx,
-		okta.WithOrgUrl("https://foo.okta.com"),
-		okta.WithToken("f0oT0k3n"),
-		okta.WithHttpClientPtr(h),
-	)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return oktaCtx, c, nil
 }
 
 const (

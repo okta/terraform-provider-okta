@@ -6,8 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
 func dataSourceEmailTemplates() *schema.Resource {
@@ -32,7 +31,7 @@ func dataSourceEmailTemplatesRead(ctx context.Context, d *schema.ResourceData, m
 	brandID, ok := d.GetOk("brand_id")
 	if ok {
 		logger(m).Info("reading brand by ID", "id", brandID.(string))
-		brand, _, err = getOktaClientFromMetadata(m).Brand.GetBrand(ctx, brandID.(string))
+		brand, _, err = getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrand(ctx, brandID.(string)).Execute()
 		if err != nil {
 			return diag.Errorf("failed to get brand for email templates: %v", err)
 		}
@@ -40,16 +39,15 @@ func dataSourceEmailTemplatesRead(ctx context.Context, d *schema.ResourceData, m
 		return diag.Errorf("brand_id required for email templates: %v", err)
 	}
 
-	qp := &query.Params{Limit: defaultPaginationLimit}
-	templates, err := collectEmailTempates(ctx, getOktaClientFromMetadata(m), brand, qp)
+	templates, err := collectEmailTempates(ctx, getOktaV3ClientFromMetadata(m), brand)
 	if err != nil {
 		return diag.Errorf("failed to list email templates: %v", err)
 	}
 
-	d.SetId(fmt.Sprintf("email_templates-%s", brand.Id))
+	d.SetId(fmt.Sprintf("email_templates-%s", brand.GetId()))
 	arr := make([]interface{}, len(templates))
 	for i, template := range templates {
-		rawMap := flattenEmailTemplate(template)
+		rawMap := flattenEmailTemplate(&template)
 		arr[i] = rawMap
 	}
 	emailTemplatesDataSource := &schema.Resource{
@@ -60,14 +58,14 @@ func dataSourceEmailTemplatesRead(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func collectEmailTempates(ctx context.Context, client *okta.Client, brand *okta.Brand, qp *query.Params) ([]*okta.EmailTemplate, error) {
-	templates, resp, err := client.Brand.ListEmailTemplates(ctx, brand.Id, qp)
+func collectEmailTempates(ctx context.Context, client *okta.APIClient, brand *okta.Brand) ([]okta.EmailTemplate, error) {
+	templates, resp, err := client.CustomizationApi.ListEmailTemplates(ctx, brand.GetId()).Limit(int32(defaultPaginationLimit)).Execute()
 	if err != nil {
 		return nil, err
 	}
 	for resp.HasNextPage() {
-		var nextTemplates []*okta.EmailTemplate
-		resp, err = resp.Next(ctx, &nextTemplates)
+		var nextTemplates []okta.EmailTemplate
+		resp, err = resp.Next(&nextTemplates)
 		if err != nil {
 			return nil, err
 		}

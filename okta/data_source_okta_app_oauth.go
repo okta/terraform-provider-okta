@@ -8,14 +8,14 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceAppOauth() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppOauthRead,
-		Schema: buildSchema(skipUsersAndGroupsSchema, map[string]*schema.Schema{
+		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
 				Optional:      true,
@@ -135,26 +135,12 @@ func dataSourceAppOauth() *schema.Resource {
 				Computed:    true,
 				Description: "Discoverable resources related to the app",
 			},
-			"groups": {
-				Type:        schema.TypeSet,
-				Computed:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "Groups associated with the application",
-				Deprecated:  "The `groups` field is now deprecated for the data source `okta_app_oauth`, please replace all uses of this with: `okta_app_group_assignments`",
-			},
-			"users": {
-				Type:        schema.TypeSet,
-				Computed:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "Users associated with the application",
-				Deprecated:  "The `users` field is now deprecated for the data source `okta_app_oauth`, please replace all uses of this with: `okta_app_user_assignments`",
-			},
 			"wildcard_redirect": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "Indicates if the client is allowed to use wildcard matching of redirect_uris",
 			},
-		}),
+		},
 	}
 }
 
@@ -163,13 +149,13 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.Errorf("invalid OAuth app filters: %v", err)
 	}
-	var app *okta.OpenIdConnectApplication
+	var app *sdk.OpenIdConnectApplication
 	if filters.ID != "" {
-		respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, filters.ID, okta.NewOpenIdConnectApplication(), nil)
+		respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, filters.ID, sdk.NewOpenIdConnectApplication(), nil)
 		if err != nil {
 			return diag.Errorf("failed get app by ID: %v", err)
 		}
-		app = respApp.(*okta.OpenIdConnectApplication)
+		app = respApp.(*sdk.OpenIdConnectApplication)
 	} else {
 		re := getOktaClientFromMetadata(m).GetRequestExecutor()
 		qp := &query.Params{Limit: 1, Filter: filters.Status, Q: filters.getQ()}
@@ -177,7 +163,7 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 		if err != nil {
 			return diag.Errorf("failed to list OAuth apps: %v", err)
 		}
-		var appList []*okta.OpenIdConnectApplication
+		var appList []*sdk.OpenIdConnectApplication
 		_, err = re.Do(ctx, req, &appList)
 		if err != nil {
 			return diag.Errorf("failed to list OAuth apps: %v", err)
@@ -190,10 +176,6 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 		}
 		logger(m).Info("found multiple OAuth applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
-	}
-	err = setAppUsersIDsAndGroupsIDs(ctx, d, getOktaClientFromMetadata(m), app.Id)
-	if err != nil {
-		return diag.Errorf("failed to list OAuth's app groups and users: %v", err)
 	}
 
 	d.SetId(app.Id)
@@ -264,7 +246,7 @@ func getCurrentlyActiveClientSecret(ctx context.Context, m interface{}, appId st
 
 	// There can only be two client secrets. Regardless, choose the latest created active secret.
 	var secretValue string
-	var secret *okta.ClientSecret
+	var secret *sdk.ClientSecret
 	for _, s := range secrets {
 		if secret == nil && s.Status == "ACTIVE" {
 			secret = s

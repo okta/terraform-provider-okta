@@ -6,23 +6,21 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccThreatInsightSettings(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(threatInsightSettings)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(threatInsightSettings, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", threatInsightSettings)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaThreatInsightSettingsDestroy(),
+		CheckDestroy:      checkOktaThreatInsightSettingsDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -44,8 +42,7 @@ func TestAccThreatInsightSettings(t *testing.T) {
 
 // TestAccThreatInsightSettingsNetworkZoneOrdering https://github.com/okta/terraform-provider-okta/issues/1221
 func TestAccThreatInsightSettingsNetworkZoneOrdering(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(threatInsightSettings)
+	mgr := newFixtureManager(threatInsightSettings, t.Name())
 	resourceName := fmt.Sprintf("%s.test", threatInsightSettings)
 	config := `
 	resource "okta_network_zone" "a" {
@@ -72,14 +69,14 @@ func TestAccThreatInsightSettingsNetworkZoneOrdering(t *testing.T) {
 		#depends_on = [okta_network_zone.a, okta_network_zone.b, okta_network_zone.b]
 	}
 	`
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaThreatInsightSettingsDestroy(),
+		CheckDestroy:      checkOktaThreatInsightSettingsDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "action", "block"),
 					resource.TestCheckResourceAttr(resourceName, "network_excludes.#", "3"),
@@ -89,23 +86,22 @@ func TestAccThreatInsightSettingsNetworkZoneOrdering(t *testing.T) {
 	})
 }
 
-func checkOktaThreatInsightSettingsDestroy() resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		for _, rs := range s.RootModule().Resources {
-			if rs.Type != threatInsightSettings {
-				continue
-			}
-			conf, _, err := getOktaClientFromMetadata(testAccProvider.Meta()).ThreatInsightConfiguration.GetCurrentConfiguration(context.Background())
-			if err != nil {
-				return fmt.Errorf("failed to get threat insight configuration: %v", err)
-			}
-			if len(conf.ExcludeZones) > 0 {
-				return errors.New("excluded zones list should be empty")
-			}
-			if conf.Action != "none" {
-				return errors.New("action should be 'none'")
-			}
+func checkOktaThreatInsightSettingsDestroy(s *terraform.State) error {
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != threatInsightSettings {
+			continue
 		}
-		return nil
+		client := oktaClientForTest()
+		conf, _, err := client.ThreatInsightConfiguration.GetCurrentConfiguration(context.Background())
+		if err != nil {
+			return fmt.Errorf("failed to get threat insight configuration: %v", err)
+		}
+		if len(conf.ExcludeZones) > 0 {
+			return errors.New("excluded zones list should be empty")
+		}
+		if conf.Action != "none" {
+			return errors.New("action should be 'none'")
+		}
 	}
+	return nil
 }

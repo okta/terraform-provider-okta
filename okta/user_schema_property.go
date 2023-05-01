@@ -7,17 +7,16 @@ import (
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 var (
 	userSchemaSchema = map[string]*schema.Schema{
 		"array_type": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			ValidateDiagFunc: elemInSlice([]string{"string", "number", "integer", "boolean", "reference"}),
-			Description:      "Subschema array type: string, number, integer, reference. Type field must be an array.",
-			ForceNew:         true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Subschema array type: string, number, integer, reference. Type field must be an array.",
+			ForceNew:    true,
 		},
 		"array_enum": {
 			Type:        schema.TypeList,
@@ -50,16 +49,14 @@ var (
 			Description: "Custom Subschema description",
 		},
 		"min_length": {
-			Type:             schema.TypeInt,
-			Optional:         true,
-			Description:      "Subschema of type string minimum length",
-			ValidateDiagFunc: intAtLeast(1),
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Description: "Subschema of type string minimum length",
 		},
 		"max_length": {
-			Type:             schema.TypeInt,
-			Optional:         true,
-			Description:      "Subschema of type string maximum length",
-			ValidateDiagFunc: intAtLeast(1),
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Description: "Subschema of type string maximum length",
 		},
 		"enum": {
 			Type:          schema.TypeList,
@@ -101,12 +98,11 @@ var (
 			ForceNew:    true,
 		},
 		"unique": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Description:      "Subschema unique restriction",
-			ValidateDiagFunc: elemInSlice([]string{"UNIQUE_VALIDATED", "NOT_UNIQUE"}),
-			ConflictsWith:    []string{"one_of", "enum", "array_type"},
-			ForceNew:         true,
+			Type:          schema.TypeString,
+			Optional:      true,
+			Description:   "Subschema unique restriction",
+			ConflictsWith: []string{"one_of", "enum", "array_type"},
+			ForceNew:      true,
 		},
 	}
 
@@ -123,18 +119,16 @@ var (
 			Description: "Subschema title (display name)",
 		},
 		"type": {
-			Type:             schema.TypeString,
-			Required:         true,
-			ValidateDiagFunc: elemInSlice([]string{"string", "boolean", "number", "integer", "array", "object"}),
-			Description:      "Subschema type: string, boolean, number, integer, array, or object",
-			ForceNew:         true,
+			Type:        schema.TypeString,
+			Required:    true,
+			Description: "Subschema type: string, boolean, number, integer, array, or object",
+			ForceNew:    true,
 		},
 		"permissions": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			ValidateDiagFunc: elemInSlice([]string{"HIDE", "READ_ONLY", "READ_WRITE"}),
-			Description:      "SubSchema permissions: HIDE, READ_ONLY, or READ_WRITE.",
-			Default:          "READ_ONLY",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "SubSchema permissions: HIDE, READ_ONLY, or READ_WRITE.",
+			Default:     "READ_ONLY",
 		},
 		"required": {
 			Type:        schema.TypeBool,
@@ -145,11 +139,10 @@ var (
 
 	userTypeSchema = map[string]*schema.Schema{
 		"user_type": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Description:      "Custom subschema user type",
-			Default:          "default",
-			ValidateDiagFunc: stringAtLeast(7),
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Custom subschema user type",
+			Default:     "default",
 		},
 	}
 
@@ -163,7 +156,7 @@ var (
 	}
 )
 
-func syncCustomUserSchema(d *schema.ResourceData, subschema *okta.UserSchemaAttribute) error {
+func syncCustomUserSchema(d *schema.ResourceData, subschema *sdk.UserSchemaAttribute) error {
 	syncBaseUserSchema(d, subschema)
 	_ = d.Set("description", subschema.Description)
 	if subschema.MinLengthPtr != nil {
@@ -201,7 +194,7 @@ func syncCustomUserSchema(d *schema.ResourceData, subschema *okta.UserSchemaAttr
 	})
 }
 
-func syncBaseUserSchema(d *schema.ResourceData, subschema *okta.UserSchemaAttribute) {
+func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSchemaAttribute) {
 	_ = d.Set("title", subschema.Title)
 	_ = d.Set("type", subschema.Type)
 	_ = d.Set("required", subschema.Required)
@@ -226,18 +219,18 @@ func syncBaseUserSchema(d *schema.ResourceData, subschema *okta.UserSchemaAttrib
 	}
 }
 
-func getNullableMaster(d *schema.ResourceData) *okta.UserSchemaAttributeMaster {
+func getNullableMaster(d *schema.ResourceData) *sdk.UserSchemaAttributeMaster {
 	v, ok := d.GetOk("master")
 	if !ok {
 		return nil
 	}
-	usm := &okta.UserSchemaAttributeMaster{Type: v.(string)}
+	usm := &sdk.UserSchemaAttributeMaster{Type: v.(string)}
 	if v.(string) == "OVERRIDE" {
 		mop, ok := d.Get("master_override_priority").([]interface{})
 		if ok && len(mop) > 0 {
-			props := make([]*okta.UserSchemaAttributeMasterPriority, len(mop))
+			props := make([]*sdk.UserSchemaAttributeMasterPriority, len(mop))
 			for i := range mop {
-				props[i] = &okta.UserSchemaAttributeMasterPriority{
+				props[i] = &sdk.UserSchemaAttributeMasterPriority{
 					Type:  d.Get(fmt.Sprintf("master_override_priority.%d.type", i)).(string),
 					Value: d.Get(fmt.Sprintf("master_override_priority.%d.value", i)).(string),
 				}
@@ -250,7 +243,7 @@ func getNullableMaster(d *schema.ResourceData) *okta.UserSchemaAttributeMaster {
 
 var errInvalidElemFormat = errors.New("element type does not match the value provided in 'array_type' or 'type'")
 
-func buildNullableItems(d *schema.ResourceData) (*okta.UserSchemaAttributeItems, error) {
+func buildNullableItems(d *schema.ResourceData) (*sdk.UserSchemaAttributeItems, error) {
 	at, ok := d.GetOk("array_type")
 	if !ok {
 		return nil, nil
@@ -258,7 +251,7 @@ func buildNullableItems(d *schema.ResourceData) (*okta.UserSchemaAttributeItems,
 	arrayOneOf, okArrayOneOf := d.GetOk("array_one_of")
 	arrayEnum, okArrayEnum := d.GetOk("array_enum")
 
-	u := &okta.UserSchemaAttributeItems{
+	u := &sdk.UserSchemaAttributeItems{
 		Type: at.(string),
 	}
 	if !okArrayOneOf && !okArrayEnum {
@@ -277,11 +270,11 @@ func buildNullableItems(d *schema.ResourceData) (*okta.UserSchemaAttributeItems,
 	return u, nil
 }
 
-func buildOneOf(ae []interface{}, elemType string) ([]*okta.UserSchemaAttributeEnum, error) {
-	oneOf := make([]*okta.UserSchemaAttributeEnum, len(ae))
+func buildOneOf(ae []interface{}, elemType string) ([]*sdk.UserSchemaAttributeEnum, error) {
+	oneOf := make([]*sdk.UserSchemaAttributeEnum, len(ae))
 	for i := range ae {
 		valueMap := ae[i].(map[string]interface{})
-		oneOf[i] = &okta.UserSchemaAttributeEnum{
+		oneOf[i] = &sdk.UserSchemaAttributeEnum{
 			Title: valueMap["title"].(string),
 		}
 		c := valueMap["const"].(string)
@@ -290,7 +283,7 @@ func buildOneOf(ae []interface{}, elemType string) ([]*okta.UserSchemaAttributeE
 	return oneOf, nil
 }
 
-func flattenOneOf(oneOf []*okta.UserSchemaAttributeEnum) []interface{} {
+func flattenOneOf(oneOf []*sdk.UserSchemaAttributeEnum) []interface{} {
 	result := make([]interface{}, len(oneOf))
 	for i, v := range oneOf {
 		of := map[string]interface{}{
@@ -302,24 +295,24 @@ func flattenOneOf(oneOf []*okta.UserSchemaAttributeEnum) []interface{} {
 	return result
 }
 
-func buildUserCustomSchemaAttribute(d *schema.ResourceData) (*okta.UserSchemaAttribute, error) {
+func buildUserCustomSchemaAttribute(d *schema.ResourceData) (*sdk.UserSchemaAttribute, error) {
 	items, err := buildNullableItems(d)
 	if err != nil {
 		return nil, err
 	}
-	var oneOf []*okta.UserSchemaAttributeEnum
+	var oneOf []*sdk.UserSchemaAttributeEnum
 	if rawOneOf, ok := d.GetOk("one_of"); ok {
 		oneOf, err = buildOneOf(rawOneOf.([]interface{}), d.Get("type").(string))
 		if err != nil {
 			return nil, err
 		}
 	}
-	attribute := &okta.UserSchemaAttribute{
+	attribute := &sdk.UserSchemaAttribute{
 		Title:       d.Get("title").(string),
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
 		Required:    boolPtr(d.Get("required").(bool)),
-		Permissions: []*okta.UserSchemaAttributePermission{
+		Permissions: []*sdk.UserSchemaAttributePermission{
 			{
 				Action:    d.Get("permissions").(string),
 				Principal: "SELF",
@@ -345,12 +338,12 @@ func buildUserCustomSchemaAttribute(d *schema.ResourceData) (*okta.UserSchemaAtt
 	return attribute, nil
 }
 
-func buildUserBaseSchemaAttribute(d *schema.ResourceData) *okta.UserSchemaAttribute {
-	userSchemaAttribute := &okta.UserSchemaAttribute{
+func buildUserBaseSchemaAttribute(d *schema.ResourceData) *sdk.UserSchemaAttribute {
+	userSchemaAttribute := &sdk.UserSchemaAttribute{
 		Master: getNullableMaster(d),
 		Title:  d.Get("title").(string),
 		Type:   d.Get("type").(string),
-		Permissions: []*okta.UserSchemaAttributePermission{
+		Permissions: []*sdk.UserSchemaAttributePermission{
 			{
 				Action:    d.Get("permissions").(string),
 				Principal: "SELF",
@@ -368,18 +361,18 @@ func buildUserBaseSchemaAttribute(d *schema.ResourceData) *okta.UserSchemaAttrib
 }
 
 func buildBaseUserSchema(d *schema.ResourceData) []byte {
-	us := &okta.UserSchema{
-		Definitions: &okta.UserSchemaDefinitions{
-			Base: &okta.UserSchemaBase{
+	us := &sdk.UserSchema{
+		Definitions: &sdk.UserSchemaDefinitions{
+			Base: &sdk.UserSchemaBase{
 				Id: "#base",
-				Properties: map[string]*okta.UserSchemaAttribute{
+				Properties: map[string]*sdk.UserSchemaAttribute{
 					d.Get("index").(string): buildUserBaseSchemaAttribute(d),
 				},
 				Type: "object",
 			},
 		},
 	}
-	type localIDX okta.UserSchema
+	type localIDX sdk.UserSchema
 	m, _ := json.Marshal((*localIDX)(us))
 	if d.Get("index").(string) != "login" {
 		return m
@@ -395,12 +388,12 @@ func buildBaseUserSchema(d *schema.ResourceData) []byte {
 	return m
 }
 
-func buildCustomUserSchema(index string, schema *okta.UserSchemaAttribute) *okta.UserSchema {
-	return &okta.UserSchema{
-		Definitions: &okta.UserSchemaDefinitions{
-			Custom: &okta.UserSchemaPublic{
+func buildCustomUserSchema(index string, schema *sdk.UserSchemaAttribute) *sdk.UserSchema {
+	return &sdk.UserSchema{
+		Definitions: &sdk.UserSchemaDefinitions{
+			Custom: &sdk.UserSchemaPublic{
 				Id: "#custom",
-				Properties: map[string]*okta.UserSchemaAttribute{
+				Properties: map[string]*sdk.UserSchemaAttribute{
 					index: schema,
 				},
 				Type: "object",
@@ -409,14 +402,14 @@ func buildCustomUserSchema(index string, schema *okta.UserSchemaAttribute) *okta
 	}
 }
 
-func userSchemaCustomAttribute(s *okta.UserSchema, index string) *okta.UserSchemaAttribute {
+func userSchemaCustomAttribute(s *sdk.UserSchema, index string) *sdk.UserSchemaAttribute {
 	if s == nil || s.Definitions == nil || s.Definitions.Custom == nil {
 		return nil
 	}
 	return s.Definitions.Custom.Properties[index]
 }
 
-func userSchemaBaseAttribute(s *okta.UserSchema, index string) *okta.UserSchemaAttribute {
+func userSchemaBaseAttribute(s *sdk.UserSchema, index string) *sdk.UserSchemaAttribute {
 	if s == nil || s.Definitions == nil || s.Definitions.Base == nil {
 		return nil
 	}
@@ -426,7 +419,7 @@ func userSchemaBaseAttribute(s *okta.UserSchema, index string) *okta.UserSchemaA
 // retypeUserSchemaPropertyEnums takes a schema and ensures the enums in its
 // UserSchemaAttribute(s) have the correct golang type values instead of the
 // strings limitation due to the TF SDK.
-func retypeUserSchemaPropertyEnums(schema *okta.UserSchema) {
+func retypeUserSchemaPropertyEnums(schema *sdk.UserSchema) {
 	if schema.Definitions != nil && schema.Definitions.Base != nil {
 		retypeUserPropertiesEnum(schema.Definitions.Base.Properties)
 	}
@@ -437,7 +430,7 @@ func retypeUserSchemaPropertyEnums(schema *okta.UserSchema) {
 
 // stringifyUserSchemaPropertyEnums takes a schema and ensures the enums in its
 // UserSchemaAttribute(s) have string values to satisfy the TF schema
-func stringifyUserSchemaPropertyEnums(schema *okta.UserSchema) {
+func stringifyUserSchemaPropertyEnums(schema *sdk.UserSchema) {
 	if schema.Definitions != nil && schema.Definitions.Base != nil {
 		stringifyUserPropertiesEnum(schema.Definitions.Base.Properties)
 	}
@@ -446,7 +439,7 @@ func stringifyUserSchemaPropertyEnums(schema *okta.UserSchema) {
 	}
 }
 
-func retypeUserPropertiesEnum(properties map[string]*okta.UserSchemaAttribute) {
+func retypeUserPropertiesEnum(properties map[string]*sdk.UserSchemaAttribute) {
 	for _, val := range properties {
 		if val == nil {
 			continue
@@ -466,7 +459,7 @@ func retypeUserPropertiesEnum(properties map[string]*okta.UserSchemaAttribute) {
 	}
 }
 
-func stringifyUserPropertiesEnum(properties map[string]*okta.UserSchemaAttribute) {
+func stringifyUserPropertiesEnum(properties map[string]*sdk.UserSchemaAttribute) {
 	for _, val := range properties {
 		if val != nil && val.Enum != nil {
 			stringifyEnumSlice(val.Type, &val.Enum)
@@ -505,10 +498,10 @@ func stringifyEnumSlice(elemType string, enum *[]interface{}) {
 	}
 }
 
-func retypeOneOfSlice(elemType string, enum []*okta.UserSchemaAttributeEnum) []*okta.UserSchemaAttributeEnum {
-	result := make([]*okta.UserSchemaAttributeEnum, len(enum))
+func retypeOneOfSlice(elemType string, enum []*sdk.UserSchemaAttributeEnum) []*sdk.UserSchemaAttributeEnum {
+	result := make([]*sdk.UserSchemaAttributeEnum, len(enum))
 	for i, val := range enum {
-		ae := okta.UserSchemaAttributeEnum{}
+		ae := sdk.UserSchemaAttributeEnum{}
 		if val != nil {
 			ae.Title = val.Title
 			if val.Const != nil {
@@ -523,7 +516,7 @@ func retypeOneOfSlice(elemType string, enum []*okta.UserSchemaAttributeEnum) []*
 	return result
 }
 
-func stringifyOneOfSlice(elemType string, enum *[]*okta.UserSchemaAttributeEnum) {
+func stringifyOneOfSlice(elemType string, enum *[]*sdk.UserSchemaAttributeEnum) {
 	if enum == nil {
 		return
 	}

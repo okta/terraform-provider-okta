@@ -22,11 +22,10 @@ func resourcePolicyProfileEnrollment() *schema.Resource {
 				Description: "Name of the policy",
 			},
 			"status": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
-				Description:      "Status of the policy",
-				Default:          statusActive,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Status of the policy",
+				Default:     statusActive,
 			},
 		},
 	}
@@ -37,7 +36,7 @@ func resourcePolicyProfileEnrollmentCreate(ctx context.Context, d *schema.Resour
 		return resourceOIEOnlyFeatureError(policyProfileEnrollment)
 	}
 
-	policy, _, err := getSupplementFromMetadata(m).CreatePolicy(ctx, buildPolicyProfileEnrollment(d))
+	policy, _, err := getAPISupplementFromMetadata(m).CreatePolicy(ctx, buildPolicyProfileEnrollment(d))
 	if err != nil {
 		return diag.Errorf("failed to create profile enrollment policy: %v", err)
 	}
@@ -74,7 +73,7 @@ func resourcePolicyProfileEnrollmentUpdate(ctx context.Context, d *schema.Resour
 		return resourceOIEOnlyFeatureError(policyProfileEnrollment)
 	}
 
-	_, _, err := getSupplementFromMetadata(m).UpdatePolicy(ctx, d.Id(), buildPolicyProfileEnrollment(d))
+	_, _, err := getAPISupplementFromMetadata(m).UpdatePolicy(ctx, d.Id(), buildPolicyProfileEnrollment(d))
 	if err != nil {
 		return diag.Errorf("failed to update profile enrollment policy: %v", err)
 	}
@@ -105,7 +104,7 @@ func resourcePolicyProfileEnrollmentDelete(ctx context.Context, d *schema.Resour
 }
 
 // build profile enrollment policy from schema data
-func buildPolicyProfileEnrollment(d *schema.ResourceData) sdk.Policy {
+func buildPolicyProfileEnrollment(d *schema.ResourceData) sdk.SdkPolicy {
 	policy := sdk.ProfileEnrollmentPolicy()
 	policy.Name = d.Get("name").(string)
 	policy.Status = d.Get("status").(string)

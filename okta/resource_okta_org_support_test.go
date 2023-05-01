@@ -6,19 +6,17 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccOktaOrgSupport(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", orgSupport)
-	mgr := newFixtureManager(orgSupport)
-	config := mgr.GetFixtures("standard.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("extended.tf", ri, t)
+	mgr := newFixtureManager(orgSupport, t.Name())
+	config := mgr.GetFixtures("standard.tf", t)
+	updatedConfig := mgr.GetFixtures("extended.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -46,7 +44,8 @@ func checkSupportDestroy(s *terraform.State) error {
 		if rs.Type != orgSupport {
 			continue
 		}
-		support, _, err := getOktaClientFromMetadata(testAccProvider.Meta()).OrgSetting.GetOrgOktaSupportSettings(context.Background())
+		client := oktaClientForTest()
+		support, _, err := client.OrgSetting.GetOrgOktaSupportSettings(context.Background())
 		if err != nil {
 			return err
 		}

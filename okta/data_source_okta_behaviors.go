@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceBehaviors() *schema.Resource {
@@ -58,7 +58,7 @@ func dataSourceBehaviorsRead(ctx context.Context, d *schema.ResourceData, m inte
 	if ok {
 		qp.Q = q.(string)
 	}
-	behaviors, _, err := getSupplementFromMetadata(m).ListBehaviors(ctx, qp)
+	behaviors, _, err := getAPISupplementFromMetadata(m).ListBehaviors(ctx, qp)
 	if err != nil {
 		return diag.Errorf("failed to list behaviors: %v", err)
 	}

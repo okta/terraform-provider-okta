@@ -6,27 +6,17 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func authServerExists(id string) (bool, error) {
-	server, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).AuthorizationServer.GetAuthorizationServer(context.Background(), id)
-	if resp != nil && resp.StatusCode == http.StatusNotFound {
-		return false, nil
-	}
-	return server != nil && server.Id != "" && err == nil, err
-}
-
 func TestAccOktaAuthServer_crud(t *testing.T) {
-	ri := acctest.RandInt()
+	mgr := newFixtureManager(authServer, t.Name())
 	resourceName := fmt.Sprintf("%s.sun_also_rises", authServer)
-	name := buildResourceName(ri)
-	mgr := newFixtureManager(authServer)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	name := buildResourceName(mgr.Seed)
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -57,18 +47,17 @@ func TestAccOktaAuthServer_crud(t *testing.T) {
 }
 
 func TestAccOktaAuthServer_fullStack(t *testing.T) {
-	ri := acctest.RandInt()
-	name := buildResourceName(ri)
+	mgr := newFixtureManager(authServer, t.Name())
+	name := buildResourceName(mgr.Seed)
 	resourceName := fmt.Sprintf("%s.test", authServer)
 	claimName := fmt.Sprintf("%s.test", authServerClaim)
 	ruleName := fmt.Sprintf("%s.test", authServerPolicyRule)
 	policyName := fmt.Sprintf("%s.test", authServerPolicy)
 	scopeName := fmt.Sprintf("%s.test", authServerScope)
-	mgr := newFixtureManager(authServer)
-	config := mgr.GetFixtures("full_stack.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("full_stack_with_client.tf", ri, t)
+	config := mgr.GetFixtures("full_stack.tf", t)
+	updatedConfig := mgr.GetFixtures("full_stack_with_client.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -110,14 +99,13 @@ func TestAccOktaAuthServer_fullStack(t *testing.T) {
 }
 
 func TestAccOktaAuthServer_gh299(t *testing.T) {
-	ri := acctest.RandInt()
-	name := buildResourceName(ri)
+	mgr := newFixtureManager(authServer, t.Name())
+	name := buildResourceName(mgr.Seed)
 	resourceName := fmt.Sprintf("%s.test", authServer)
 	resource2Name := fmt.Sprintf("%s.test1", authServer)
-	mgr := newFixtureManager(authServer)
-	config := mgr.GetFixtures("dependency.tf", ri, t)
+	config := mgr.GetFixtures("dependency.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -138,4 +126,13 @@ func TestAccOktaAuthServer_gh299(t *testing.T) {
 			},
 		},
 	})
+}
+
+func authServerExists(id string) (bool, error) {
+	client := oktaClientForTest()
+	server, resp, err := client.AuthorizationServer.GetAuthorizationServer(context.Background(), id)
+	if resp != nil && resp.StatusCode == http.StatusNotFound {
+		return false, nil
+	}
+	return server != nil && server.Id != "" && err == nil, err
 }

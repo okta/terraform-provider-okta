@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-
-	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 type HotpFactorProfile struct {
@@ -24,7 +22,7 @@ type HotpFactorProfileSettings struct {
 	HmacAlgorithm               string `json:"hmacAlgorithm"`
 }
 
-func (m *APISupplement) GetHotpFactorProfile(ctx context.Context, id string) (*HotpFactorProfile, *okta.Response, error) {
+func (m *APISupplement) GetHotpFactorProfile(ctx context.Context, id string) (*HotpFactorProfile, *Response, error) {
 	url := fmt.Sprintf("/api/v1/org/factors/hotp/profiles/%v", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -38,7 +36,7 @@ func (m *APISupplement) GetHotpFactorProfile(ctx context.Context, id string) (*H
 	return profile, resp, nil
 }
 
-func (m *APISupplement) CreateHotpFactorProfile(ctx context.Context, body HotpFactorProfile) (*HotpFactorProfile, *okta.Response, error) {
+func (m *APISupplement) CreateHotpFactorProfile(ctx context.Context, body HotpFactorProfile) (*HotpFactorProfile, *Response, error) {
 	url := "/api/v1/org/factors/hotp/profiles"
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
 	if err != nil {
@@ -52,7 +50,7 @@ func (m *APISupplement) CreateHotpFactorProfile(ctx context.Context, body HotpFa
 	return profile, resp, nil
 }
 
-func (m *APISupplement) UpdateHotpFactorProfile(ctx context.Context, id string, body HotpFactorProfile) (*HotpFactorProfile, *okta.Response, error) {
+func (m *APISupplement) UpdateHotpFactorProfile(ctx context.Context, id string, body HotpFactorProfile) (*HotpFactorProfile, *Response, error) {
 	url := fmt.Sprintf("/api/v1/org/factors/hotp/profiles/%v", id)
 	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
 	if err != nil {
@@ -66,7 +64,7 @@ func (m *APISupplement) UpdateHotpFactorProfile(ctx context.Context, id string, 
 	return profile, resp, nil
 }
 
-func (m *APISupplement) DeleteHotpFactorProfile(ctx context.Context, id string) (*okta.Response, error) {
+func (m *APISupplement) DeleteHotpFactorProfile(ctx context.Context, id string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/org/factors/hotp/profiles/%v", id)
 	req, err := m.RequestExecutor.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {

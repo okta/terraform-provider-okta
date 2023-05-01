@@ -3,16 +3,14 @@ package okta
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaDataSourceIdpSocial_read(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(idpSocial)
-	preConfig := mgr.GetFixtures("basic.tf", ri, t)
-	config := mgr.GetFixtures("datasource.tf", ri, t)
-	resource.Test(t, resource.TestCase{
+	mgr := newFixtureManager(idpSocial, t.Name())
+	preConfig := mgr.GetFixtures("basic.tf", t)
+	config := mgr.GetFixtures("datasource.tf", t)
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,

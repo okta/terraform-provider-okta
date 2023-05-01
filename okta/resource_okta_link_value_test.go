@@ -6,18 +6,16 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccOktaLinkValue(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(linkValue)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(linkValue, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", linkValue)
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -44,14 +42,15 @@ func checkLinkValueDestroy(s *terraform.State) error {
 		if rs.Type != linkValue {
 			continue
 		}
-		lo, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).LinkedObject.GetLinkedObjectDefinition(context.Background(), rs.Primary.Attributes["primary_name"])
+		client := oktaClientForTest()
+		lo, resp, err := client.LinkedObject.GetLinkedObjectDefinition(context.Background(), rs.Primary.Attributes["primary_name"])
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			return nil
 		} else if err != nil {
 			return err
 		}
 		puID := rs.Primary.Attributes["primary_user_id"]
-		los, resp, err := getOktaClientFromMetadata(testAccProvider.Meta()).User.GetLinkedObjectsForUser(context.Background(), puID, lo.Associated.Name, nil)
+		los, resp, err := client.User.GetLinkedObjectsForUser(context.Background(), puID, lo.Associated.Name, nil)
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			return nil
 		} else if err != nil {

@@ -24,11 +24,10 @@ func resourceCaptcha() *schema.Resource {
 				Description: "Name of the CAPTCHA",
 			},
 			"type": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ForceNew:         true,
-				ValidateDiagFunc: elemInSlice([]string{"HCAPTCHA", "RECAPTCHA_V2"}),
-				Description:      "Captcha type",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "Captcha type",
 			},
 			"site_key": {
 				Type:        schema.TypeString,
@@ -50,7 +49,7 @@ func resourceCaptchaCreate(ctx context.Context, d *schema.ResourceData, m interf
 		return resourceOIEOnlyFeatureError(captcha)
 	}
 
-	captcha, _, err := getSupplementFromMetadata(m).CreateCaptcha(ctx, buildCaptcha(d))
+	captcha, _, err := getAPISupplementFromMetadata(m).CreateCaptcha(ctx, buildCaptcha(d))
 	if err != nil {
 		return diag.Errorf("failed to create CAPTCHA: %v", err)
 	}
@@ -63,7 +62,7 @@ func resourceCaptchaRead(ctx context.Context, d *schema.ResourceData, m interfac
 		return resourceOIEOnlyFeatureError(captcha)
 	}
 
-	captcha, resp, err := getSupplementFromMetadata(m).GetCaptcha(ctx, d.Id())
+	captcha, resp, err := getAPISupplementFromMetadata(m).GetCaptcha(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to find CAPTCHA: %v", err)
 	}
@@ -82,7 +81,7 @@ func resourceCaptchaUpdate(ctx context.Context, d *schema.ResourceData, m interf
 		return resourceOIEOnlyFeatureError(captcha)
 	}
 
-	_, _, err := getSupplementFromMetadata(m).UpdateCaptcha(ctx, d.Id(), buildCaptcha(d))
+	_, _, err := getAPISupplementFromMetadata(m).UpdateCaptcha(ctx, d.Id(), buildCaptcha(d))
 	if err != nil {
 		return diag.Errorf("failed to update CAPTCHA: %v", err)
 	}
@@ -95,7 +94,7 @@ func resourceCaptchaDelete(ctx context.Context, d *schema.ResourceData, m interf
 	}
 
 	logger(m).Info("deleting Captcha", "name", d.Get("name").(string))
-	_, err := getSupplementFromMetadata(m).DeleteCaptcha(ctx, d.Id())
+	_, err := getAPISupplementFromMetadata(m).DeleteCaptcha(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete CAPTCHA: %v", err)
 	}

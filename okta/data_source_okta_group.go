@@ -8,8 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceGroup() *schema.Resource {
@@ -26,10 +26,9 @@ func dataSourceGroup() *schema.Resource {
 				Optional: true,
 			},
 			"type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Type of the group. When specified in the terraform resource, will act as a filter when searching for the group",
-				ValidateDiagFunc: elemInSlice([]string{"OKTA_GROUP", "APP_GROUP", "BUILT_IN"}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Type of the group. When specified in the terraform resource, will act as a filter when searching for the group",
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -71,7 +70,7 @@ func dataSourceGroupRead(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 func findGroup(ctx context.Context, name string, d *schema.ResourceData, m interface{}, isEveryone bool) diag.Diagnostics {
-	var group *okta.Group
+	var group *sdk.Group
 	groupID, ok := d.GetOk("id")
 	if ok {
 		respGroup, _, err := getOktaClientFromMetadata(m).Group.GetGroup(ctx, groupID.(string))

@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceIdpSaml() *schema.Resource {
@@ -24,30 +24,22 @@ func resourceIdpSaml() *schema.Resource {
 				Computed: true,
 			},
 			"acs_binding": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"HTTP-POST", "HTTP-REDIRECT"}),
-				Deprecated:       "This property will be removed in the future, as it can only be set to 'HTTP-POST'",
-				DiffSuppressFunc: func(string, string, string, *schema.ResourceData) bool {
-					return true
-				},
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"acs_type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Default:          "INSTANCE",
-				ValidateDiagFunc: elemInSlice([]string{"INSTANCE", "ORG"}),
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "INSTANCE",
 			},
 			"sso_url": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"sso_binding": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{postBindingAlias, redirectBindingAlias}),
-				Default:          postBindingAlias,
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  postBindingAlias,
 			},
 			"sso_destination": {
 				Type:     schema.TypeString,
@@ -123,6 +115,7 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		return nil
 	}
 	_ = d.Set("name", idp.Name)
+	_ = d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
 	_ = d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
 	if idp.Policy.MaxClockSkewPtr != nil {
 		_ = d.Set("max_clock_skew", *idp.Policy.MaxClockSkewPtr)
@@ -185,47 +178,47 @@ func resourceIdpSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	return resourceIdpSamlRead(ctx, d, m)
 }
 
-func buildIdPSaml(d *schema.ResourceData) (okta.IdentityProvider, error) {
+func buildIdPSaml(d *schema.ResourceData) (sdk.IdentityProvider, error) {
 	if d.Get("subject_match_type").(string) != "CUSTOM_ATTRIBUTE" &&
 		len(d.Get("subject_match_attribute").(string)) > 0 {
-		return okta.IdentityProvider{}, errors.New("you can only provide 'subject_match_attribute' with 'subject_match_type' set to 'CUSTOM_ATTRIBUTE'")
+		return sdk.IdentityProvider{}, errors.New("you can only provide 'subject_match_attribute' with 'subject_match_type' set to 'CUSTOM_ATTRIBUTE'")
 	}
-	idp := okta.IdentityProvider{
+	idp := sdk.IdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       saml2Idp,
 		IssuerMode: d.Get("issuer_mode").(string),
-		Policy: &okta.IdentityProviderPolicy{
+		Policy: &sdk.IdentityProviderPolicy{
 			AccountLink:  buildPolicyAccountLink(d),
 			Provisioning: buildIdPProvisioning(d),
-			Subject: &okta.PolicySubject{
+			Subject: &sdk.PolicySubject{
 				Filter:         d.Get("subject_filter").(string),
 				Format:         convertInterfaceToStringSet(d.Get("subject_format")),
 				MatchType:      d.Get("subject_match_type").(string),
 				MatchAttribute: d.Get("subject_match_attribute").(string),
-				UserNameTemplate: &okta.PolicyUserNameTemplate{
+				UserNameTemplate: &sdk.PolicyUserNameTemplate{
 					Template: d.Get("username_template").(string),
 				},
 			},
 			MaxClockSkewPtr: int64Ptr(d.Get("max_clock_skew").(int)),
 		},
-		Protocol: &okta.Protocol{
+		Protocol: &sdk.Protocol{
 			Algorithms: buildAlgorithms(d),
-			Endpoints: &okta.ProtocolEndpoints{
-				Acs: &okta.ProtocolEndpoint{
+			Endpoints: &sdk.ProtocolEndpoints{
+				Acs: &sdk.ProtocolEndpoint{
 					// ACS endpoint can only be HTTP-POST
 					// https://developer.okta.com/docs/reference/api/idps/#assertion-consumer-service-acs-endpoint-object
 					Binding: "HTTP-POST",
 					Type:    d.Get("acs_type").(string),
 				},
-				Sso: &okta.ProtocolEndpoint{
+				Sso: &sdk.ProtocolEndpoint{
 					Binding:     d.Get("sso_binding").(string),
 					Destination: d.Get("sso_destination").(string),
 					Url:         d.Get("sso_url").(string),
 				},
 			},
 			Type: saml2Idp,
-			Credentials: &okta.IdentityProviderCredentials{
-				Trust: &okta.IdentityProviderCredentialsTrust{
+			Credentials: &sdk.IdentityProviderCredentials{
+				Trust: &sdk.IdentityProviderCredentialsTrust{
 					Issuer:   d.Get("issuer").(string),
 					Kid:      d.Get("kid").(string),
 					Audience: d.Get("audience").(string),
@@ -239,7 +232,7 @@ func buildIdPSaml(d *schema.ResourceData) (okta.IdentityProvider, error) {
 	return idp, nil
 }
 
-func syncIdpSamlAlgo(d *schema.ResourceData, alg *okta.ProtocolAlgorithms) {
+func syncIdpSamlAlgo(d *schema.ResourceData, alg *sdk.ProtocolAlgorithms) {
 	if alg != nil {
 		if alg.Request != nil && alg.Request.Signature != nil {
 			_ = d.Set("request_signature_algorithm", alg.Request.Signature.Algorithm)

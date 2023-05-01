@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -20,18 +19,16 @@ func resourcePolicySignOnRule() *schema.Resource {
 		Importer:      createPolicyRuleImporter(),
 		Schema: buildRuleSchema(map[string]*schema.Schema{
 			"authtype": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ANY", "RADIUS", "LDAP_INTERFACE"}),
-				Description:      "Authentication entrypoint: ANY, RADIUS or LDAP_INTERFACE",
-				Default:          "ANY",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Authentication entrypoint: ANY, RADIUS or LDAP_INTERFACE",
+				Default:     "ANY",
 			},
 			"access": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ALLOW", "DENY", "CHALLENGE"}),
-				Description:      "Allow or deny access based on the rule conditions: ALLOW, DENY or CHALLENGE.",
-				Default:          "ALLOW",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Allow or deny access based on the rule conditions: ALLOW, DENY or CHALLENGE.",
+				Default:     "ALLOW",
 			},
 			"mfa_required": {
 				Type:        schema.TypeBool,
@@ -40,10 +37,9 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Default:     false,
 			},
 			"mfa_prompt": { // mfa_require must be true
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"DEVICE", "SESSION", "ALWAYS"}),
-				Description:      "Prompt for MFA based on the device used, a factor session lifetime, or every sign-on attempt: DEVICE, SESSION or ALWAYS",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Prompt for MFA based on the device used, a factor session lifetime, or every sign-on attempt: DEVICE, SESSION or ALWAYS",
 			},
 			"mfa_remember_device": {
 				Type:        schema.TypeBool,
@@ -75,11 +71,10 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Default:     false,
 			},
 			"risc_level": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"", "ANY", "LOW", "MEDIUM", "HIGH"}),
-				Description:      "Risc level: ANY, LOW, MEDIUM or HIGH",
-				Default:          "ANY",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Risc level: ANY, LOW, MEDIUM or HIGH",
+				Default:     "ANY",
 			},
 			"behaviors": {
 				Type:        schema.TypeSet,
@@ -88,11 +83,10 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"primary_factor": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Computed:         true,
-				Description:      "Primary factor.",
-				ValidateDiagFunc: elemInSlice([]string{"PASSWORD_IDP", "PASSWORD_IDP_ANY_FACTOR"}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				Description: "Primary factor.",
 			},
 			"factor_sequence": {
 				Type:     schema.TypeList,
@@ -131,11 +125,10 @@ func resourcePolicySignOnRule() *schema.Resource {
 				},
 			},
 			"identity_provider": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"ANY", "OKTA", "SPECIFIC_IDP"}),
-				Description:      "Apply rule based on the IdP used: ANY, OKTA or SPECIFIC_IDP.",
-				Default:          "ANY",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Apply rule based on the IdP used: ANY, OKTA or SPECIFIC_IDP.",
+				Default:     "ANY",
 			},
 			"identity_provider_ids": { // identity_provider must be SPECIFIC_IDP
 				Type:        schema.TypeList,
@@ -260,15 +253,15 @@ func resourcePolicySignOnRuleDelete(ctx context.Context, d *schema.ResourceData,
 }
 
 // Build Policy Sign On Rule from resource data
-func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
+func buildSignOnPolicyRule(d *schema.ResourceData) sdk.SdkPolicyRule {
 	template := sdk.SignOnPolicyRule()
 	template.Name = d.Get("name").(string)
 	template.Status = d.Get("status").(string)
 	if priority, ok := d.GetOk("priority"); ok {
 		template.Priority = int64(priority.(int))
 	}
-	template.Conditions = &okta.PolicyRuleConditions{
-		AuthContext: &okta.PolicyRuleAuthContextCondition{
+	template.Conditions = &sdk.PolicyRuleConditions{
+		AuthContext: &sdk.PolicyRuleAuthContextCondition{
 			AuthType: d.Get("authtype").(string),
 		},
 		Network: buildPolicyNetworkCondition(d),
@@ -277,7 +270,7 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 
 	provider, ok := d.GetOk("identity_provider")
 	if ok {
-		template.Conditions.IdentityProvider = &okta.IdentityProviderPolicyRuleCondition{
+		template.Conditions.IdentityProvider = &sdk.IdentityProviderPolicyRuleCondition{
 			Provider: provider.(string),
 			IdpIds:   convertInterfaceToStringArr(d.Get("identity_provider_ids")),
 		}
@@ -285,24 +278,24 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 
 	bi, ok := d.GetOk("behaviors")
 	if ok {
-		template.Conditions.Risk = &okta.RiskPolicyRuleCondition{
+		template.Conditions.Risk = &sdk.RiskPolicyRuleCondition{
 			Behaviors: convertInterfaceToStringSetNullable(bi),
 		}
 	}
 	ri, ok := d.GetOk("risc_level")
 	if ok {
-		template.Conditions.RiskScore = &okta.RiskScorePolicyRuleCondition{
+		template.Conditions.RiskScore = &sdk.RiskScorePolicyRuleCondition{
 			Level: ri.(string),
 		}
 	}
-	template.Actions = sdk.PolicyRuleActions{
-		SignOn: &sdk.SignOnPolicyRuleSignOnActions{
+	template.Actions = sdk.SdkPolicyRuleActions{
+		SignOn: &sdk.SdkSignOnPolicyRuleSignOnActions{
 			Access:                  d.Get("access").(string),
 			FactorLifetime:          int64(d.Get("mfa_lifetime").(int)),
 			FactorPromptMode:        d.Get("mfa_prompt").(string),
 			RememberDeviceByDefault: boolPtr(d.Get("mfa_remember_device").(bool)),
 			RequireFactor:           boolPtr(d.Get("mfa_required").(bool)),
-			Session: &okta.OktaSignOnPolicyRuleSignonSessionActions{
+			Session: &sdk.OktaSignOnPolicyRuleSignonSessionActions{
 				MaxSessionIdleMinutesPtr:     int64Ptr(d.Get("session_idle").(int)),
 				MaxSessionLifetimeMinutesPtr: int64Ptr(d.Get("session_lifetime").(int)),
 				UsePersistentCookie:          boolPtr(d.Get("session_persistent").(bool)),
@@ -317,11 +310,11 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 	if len(factorSeq) == 0 {
 		return template
 	}
-	template.Actions.SignOn.Challenge = &sdk.SignOnPolicyRuleSignOnActionsChallenge{}
-	chain := make([]sdk.SignOnPolicyRuleSignOnActionsChallengeChain, len(factorSeq))
+	template.Actions.SignOn.Challenge = &sdk.SdkSignOnPolicyRuleSignOnActionsChallenge{}
+	chain := make([]sdk.SdkSignOnPolicyRuleSignOnActionsChallengeChain, len(factorSeq))
 	for i := range factorSeq {
-		chain[i] = sdk.SignOnPolicyRuleSignOnActionsChallengeChain{
-			Criteria: []sdk.SignOnPolicyRuleSignOnActionsChallengeChainCriteria{
+		chain[i] = sdk.SdkSignOnPolicyRuleSignOnActionsChallengeChain{
+			Criteria: []sdk.SdkSignOnPolicyRuleSignOnActionsChallengeChainCriteria{
 				{
 					Provider:   d.Get(fmt.Sprintf("factor_sequence.%d.primary_criteria_provider", i)).(string),
 					FactorType: d.Get(fmt.Sprintf("factor_sequence.%d.primary_criteria_factor_type", i)).(string),
@@ -329,9 +322,9 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.PolicyRule {
 			},
 		}
 		secondaryCriteria := d.Get(fmt.Sprintf("factor_sequence.%d.secondary_criteria", i)).([]interface{})
-		chain[i].Next = make([]sdk.SignOnPolicyRuleSignOnActionsChallengeChainNext, 1)
+		chain[i].Next = make([]sdk.SdkSignOnPolicyRuleSignOnActionsChallengeChainNext, 1)
 		for j := range secondaryCriteria {
-			chain[i].Next[0].Criteria = append(chain[i].Next[0].Criteria, sdk.SignOnPolicyRuleSignOnActionsChallengeChainCriteria{
+			chain[i].Next[0].Criteria = append(chain[i].Next[0].Criteria, sdk.SdkSignOnPolicyRuleSignOnActionsChallengeChainCriteria{
 				Provider:   d.Get(fmt.Sprintf("factor_sequence.%d.secondary_criteria.%d.provider", i, j)).(string),
 				FactorType: d.Get(fmt.Sprintf("factor_sequence.%d.secondary_criteria.%d.factor_type", i, j)).(string),
 			})

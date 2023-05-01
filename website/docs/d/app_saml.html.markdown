@@ -31,10 +31,6 @@ data "okta_app_saml" "example" {
 - `label_prefix` - (Optional) Label prefix of the app to retrieve, conflicts with `label` and `id`. This will tell the
   provider to do a `starts with` query as opposed to an `equals` query.
 
-- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync. Default is `false`.
-
-- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync. Default is `false`.
-
 ## Attributes Reference
 
 - `accessibility_error_redirect_url` - Custom error page URL.
@@ -127,6 +123,3 @@ data "okta_app_saml" "example" {
 - `user_name_template_type` - Username template type.
 
 - `user_name_template` - Username template.
-
-- `users` - List of users IDs assigned to the application.
-  - `DEPRECATED`: Please replace all usage of this field with the data source `okta_app_user_assignments`.

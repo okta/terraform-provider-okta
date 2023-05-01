@@ -5,19 +5,17 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaProfileMapping_crud(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", profileMapping)
-	mgr := newFixtureManager(profileMapping)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
-	preventDelete := mgr.GetFixtures("prevent_delete.tf", ri, t)
+	mgr := newFixtureManager(profileMapping, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
+	preventDelete := mgr.GetFixtures("prevent_delete.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -45,7 +43,8 @@ func TestAccOktaProfileMapping_crud(t *testing.T) {
 	})
 }
 
-func doesOktaProfileExist(id string) (bool, error) {
-	_, response, err := getSupplementFromMetadata(testAccProvider.Meta()).GetEmailTemplate(context.Background(), id)
+func doesOktaProfileExist(profileID string) (bool, error) {
+	client := apiSupplementForTest()
+	_, response, err := client.GetEmailTemplate(context.Background(), profileID)
 	return doesResourceExist(response, err)
 }

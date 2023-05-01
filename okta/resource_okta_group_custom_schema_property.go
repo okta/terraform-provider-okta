@@ -11,7 +11,7 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceGroupCustomSchemaProperty() *schema.Resource {
@@ -28,18 +28,15 @@ func resourceGroupCustomSchemaProperty() *schema.Resource {
 			userSchemaSchema,
 			map[string]*schema.Schema{
 				"scope": {
-					Type:             schema.TypeString,
-					Optional:         true,
-					Default:          "NONE",
-					ValidateDiagFunc: elemInSlice([]string{"SELF", "NONE", ""}),
-				},
-				"master": {
 					Type:     schema.TypeString,
 					Optional: true,
-					// Accepting an empty value to allow for zero value (when provisioning is off)
-					ValidateDiagFunc: elemInSlice([]string{"PROFILE_MASTER", "OKTA", "OVERRIDE", ""}),
-					Description:      "SubSchema profile manager, if not set it will inherit its setting.",
-					Default:          "PROFILE_MASTER",
+					Default:  "NONE",
+				},
+				"master": {
+					Type:        schema.TypeString,
+					Optional:    true,
+					Description: "SubSchema profile manager, if not set it will inherit its setting.",
+					Default:     "PROFILE_MASTER",
 				},
 				"master_override_priority": {
 					Type:        schema.TypeList,
@@ -109,8 +106,8 @@ func resourceGroupSchemaRead(ctx context.Context, d *schema.ResourceData, m inte
 	return nil
 }
 
-func alterCustomGroupSchema(ctx context.Context, m interface{}, index string, schema *okta.GroupSchema, isDeleteOperation bool) (*okta.GroupSchemaAttribute, error) {
-	var schemaAttribute *okta.GroupSchemaAttribute
+func alterCustomGroupSchema(ctx context.Context, m interface{}, index string, schema *sdk.GroupSchema, isDeleteOperation bool) (*sdk.GroupSchemaAttribute, error) {
+	var schemaAttribute *sdk.GroupSchemaAttribute
 
 	bOff := backoff.NewExponentialBackOff()
 	bOff.MaxElapsedTime = time.Second * 120
@@ -162,12 +159,12 @@ func resourceGroupSchemaDelete(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func buildCustomGroupSchema(index string, schema *okta.GroupSchemaAttribute) *okta.GroupSchema {
-	return &okta.GroupSchema{
-		Definitions: &okta.GroupSchemaDefinitions{
-			Custom: &okta.GroupSchemaCustom{
+func buildCustomGroupSchema(index string, schema *sdk.GroupSchemaAttribute) *sdk.GroupSchema {
+	return &sdk.GroupSchema{
+		Definitions: &sdk.GroupSchemaDefinitions{
+			Custom: &sdk.GroupSchemaCustom{
 				Id: "#custom",
-				Properties: map[string]*okta.GroupSchemaAttribute{
+				Properties: map[string]*sdk.GroupSchemaAttribute{
 					index: schema,
 				},
 				Type: "object",
@@ -176,7 +173,7 @@ func buildCustomGroupSchema(index string, schema *okta.GroupSchemaAttribute) *ok
 	}
 }
 
-func syncCustomGroupSchema(d *schema.ResourceData, subschema *okta.GroupSchemaAttribute) error {
+func syncCustomGroupSchema(d *schema.ResourceData, subschema *sdk.GroupSchemaAttribute) error {
 	syncBaseGroupSchema(d, subschema)
 	_ = d.Set("description", subschema.Description)
 	if subschema.MinLengthPtr != nil {
@@ -214,7 +211,7 @@ func syncCustomGroupSchema(d *schema.ResourceData, subschema *okta.GroupSchemaAt
 	})
 }
 
-func syncBaseGroupSchema(d *schema.ResourceData, subschema *okta.GroupSchemaAttribute) {
+func syncBaseGroupSchema(d *schema.ResourceData, subschema *sdk.GroupSchemaAttribute) {
 	_ = d.Set("title", subschema.Title)
 	_ = d.Set("type", subschema.Type)
 	_ = d.Set("required", subschema.Required)
@@ -236,24 +233,24 @@ func syncBaseGroupSchema(d *schema.ResourceData, subschema *okta.GroupSchemaAttr
 	}
 }
 
-func buildGroupCustomSchemaAttribute(d *schema.ResourceData) (*okta.GroupSchemaAttribute, error) {
+func buildGroupCustomSchemaAttribute(d *schema.ResourceData) (*sdk.GroupSchemaAttribute, error) {
 	items, err := buildNullableItems(d)
 	if err != nil {
 		return nil, err
 	}
-	var oneOf []*okta.UserSchemaAttributeEnum
+	var oneOf []*sdk.UserSchemaAttributeEnum
 	if rawOneOf, ok := d.GetOk("one_of"); ok {
 		oneOf, err = buildOneOf(rawOneOf.([]interface{}), d.Get("type").(string))
 		if err != nil {
 			return nil, err
 		}
 	}
-	attribute := &okta.GroupSchemaAttribute{
+	attribute := &sdk.GroupSchemaAttribute{
 		Title:       d.Get("title").(string),
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
 		Required:    boolPtr(d.Get("required").(bool)),
-		Permissions: []*okta.UserSchemaAttributePermission{
+		Permissions: []*sdk.UserSchemaAttributePermission{
 			{
 				Action:    d.Get("permissions").(string),
 				Principal: "SELF",
@@ -279,7 +276,7 @@ func buildGroupCustomSchemaAttribute(d *schema.ResourceData) (*okta.GroupSchemaA
 	return attribute, nil
 }
 
-func groupSchemaCustomAttribute(s *okta.GroupSchema, index string) *okta.GroupSchemaAttribute {
+func groupSchemaCustomAttribute(s *sdk.GroupSchema, index string) *sdk.GroupSchemaAttribute {
 	if s == nil || s.Definitions == nil || s.Definitions.Custom == nil {
 		return nil
 	}
@@ -289,7 +286,7 @@ func groupSchemaCustomAttribute(s *okta.GroupSchema, index string) *okta.GroupSc
 // retypeGroupSchemaPropertyEnums takes a schema and ensures the enums in its
 // GroupSchemaAttribute(s) have the correct golang type values instead of the
 // strings limitation due to the TF SDK.
-func retypeGroupSchemaPropertyEnums(schema *okta.GroupSchema) {
+func retypeGroupSchemaPropertyEnums(schema *sdk.GroupSchema) {
 	if schema.Definitions != nil && schema.Definitions.Base != nil {
 		retypeGroupPropertiesEnum(schema.Definitions.Base.Properties)
 	}
@@ -300,7 +297,7 @@ func retypeGroupSchemaPropertyEnums(schema *okta.GroupSchema) {
 
 // stringifyGroupSchemaPropertyEnums takes a schema and ensures the enums in its
 // GroupSchemaAttribute(s) have string values to satisfy the TF schema
-func stringifyGroupSchemaPropertyEnums(schema *okta.GroupSchema) {
+func stringifyGroupSchemaPropertyEnums(schema *sdk.GroupSchema) {
 	if schema.Definitions != nil && schema.Definitions.Base != nil {
 		stringifyGroupPropertiesEnum(schema.Definitions.Base.Properties)
 	}
@@ -309,7 +306,7 @@ func stringifyGroupSchemaPropertyEnums(schema *okta.GroupSchema) {
 	}
 }
 
-func retypeGroupPropertiesEnum(properties map[string]*okta.GroupSchemaAttribute) {
+func retypeGroupPropertiesEnum(properties map[string]*sdk.GroupSchemaAttribute) {
 	for _, val := range properties {
 		if val == nil {
 			continue
@@ -329,7 +326,7 @@ func retypeGroupPropertiesEnum(properties map[string]*okta.GroupSchemaAttribute)
 	}
 }
 
-func stringifyGroupPropertiesEnum(properties map[string]*okta.GroupSchemaAttribute) {
+func stringifyGroupPropertiesEnum(properties map[string]*sdk.GroupSchemaAttribute) {
 	for _, val := range properties {
 		if val != nil && val.Enum != nil {
 			stringifyEnumSlice(val.Type, &val.Enum)

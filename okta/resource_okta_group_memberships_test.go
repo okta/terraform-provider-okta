@@ -5,19 +5,16 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccResourceOktaGroupMemberships_crud(t *testing.T) {
-	ri := acctest.RandInt()
+	mgr := newFixtureManager(groupMemberships, t.Name())
+	start := mgr.GetFixtures("basic.tf", t)
+	update := mgr.GetFixtures("basic_update.tf", t)
+	remove := mgr.GetFixtures("basic_removal.tf", t)
 
-	mgr := newFixtureManager(groupMemberships)
-	start := mgr.GetFixtures("basic.tf", ri, t)
-	update := mgr.GetFixtures("basic_update.tf", ri, t)
-	remove := mgr.GetFixtures("basic_removal.tf", ri, t)
-
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -38,7 +35,7 @@ func TestAccResourceOktaGroupMemberships_crud(t *testing.T) {
 
 // TestAccResourceOktaGroupMemberships_Issue1072 addresses https://github.com/okta/terraform-provider-okta/issues/1072
 func TestAccResourceOktaGroupMemberships_Issue1072(t *testing.T) {
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -69,7 +66,7 @@ resource "okta_group_memberships" "test" {
 // https://github.com/okta/terraform-provider-okta/issues/1149
 // https://github.com/okta/terraform-provider-okta/issues/1155
 func TestAccResourceOktaGroupMemberships_ClassicBehavior(t *testing.T) {
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -109,7 +106,7 @@ func TestAccResourceOktaGroupMemberships_ClassicBehavior(t *testing.T) {
 // https://github.com/okta/terraform-provider-okta/issues/1149
 // https://github.com/okta/terraform-provider-okta/issues/1155
 func TestAccResourceOktaGroupMemberships_TrackAllUsersBehavior(t *testing.T) {
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -271,11 +268,10 @@ resource "okta_group" "test" {
 	}
 
 	config := fmt.Sprintf(strFmt, args...)
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(groupMemberships)
-	config = mgr.ConfigReplace(config, ri)
+	mgr := newFixtureManager(groupMemberships, t.Name())
+	config = mgr.ConfigReplace(config)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,

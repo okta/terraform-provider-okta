@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceAppSwa() *schema.Resource {
@@ -41,10 +41,9 @@ func resourceAppSwa() *schema.Resource {
 				Description: "Login username field",
 			},
 			"url": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Login URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Login URL",
 			},
 			"url_regex": {
 				Type:        schema.TypeString,
@@ -80,10 +79,6 @@ func resourceAppSwaCreate(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.Errorf("failed to create SWA application: %v", err)
 	}
 	d.SetId(app.Id)
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for SWA application: %v", err)
-	}
 	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for SWA application: %v", err)
@@ -92,7 +87,7 @@ func resourceAppSwaCreate(ctx context.Context, d *schema.ResourceData, m interfa
 }
 
 func resourceAppSwaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := okta.NewSwaApplication()
+	app := sdk.NewSwaApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get SWA application: %v", err)
@@ -114,10 +109,6 @@ func resourceAppSwaRead(ctx context.Context, d *schema.ResourceData, m interface
 	_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
-	err = syncGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to sync groups and users for SWA application: %v", err)
-	}
 	return nil
 }
 
@@ -131,10 +122,6 @@ func resourceAppSwaUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
 		return diag.Errorf("failed to set SWA application status: %v", err)
-	}
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for SWA application: %v", err)
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
@@ -155,17 +142,17 @@ func resourceAppSwaDelete(ctx context.Context, d *schema.ResourceData, m interfa
 	return nil
 }
 
-func buildAppSwa(d *schema.ResourceData) *okta.SwaApplication {
+func buildAppSwa(d *schema.ResourceData) *sdk.SwaApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
-	app := okta.NewSwaApplication()
+	app := sdk.NewSwaApplication()
 	app.Label = d.Get("label").(string)
 	name := d.Get("preconfigured_app").(string)
 	if name != "" {
 		app.Name = name
 		app.SignOnMode = "AUTO_LOGIN" // in case pre-configured app has more than one sign-on modes
 	}
-	app.Settings = &okta.SwaApplicationSettings{
-		App: &okta.SwaApplicationSettingsApplication{
+	app.Settings = &sdk.SwaApplicationSettings{
+		App: &sdk.SwaApplicationSettingsApplication{
 			ButtonField:   d.Get("button_field").(string),
 			UsernameField: d.Get("username_field").(string),
 			PasswordField: d.Get("password_field").(string),
@@ -178,7 +165,7 @@ func buildAppSwa(d *schema.ResourceData) *okta.SwaApplication {
 	}
 	app.Visibility = buildAppVisibility(d)
 	app.Accessibility = buildAppAccessibility(d)
-	app.Credentials = &okta.SchemeApplicationCredentials{
+	app.Credentials = &sdk.SchemeApplicationCredentials{
 		UserNameTemplate: buildUserNameTemplate(d),
 	}
 	return app

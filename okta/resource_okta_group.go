@@ -10,10 +10,9 @@ import (
 	"time"
 
 	"github.com/cenkalti/backoff/v4"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceGroup() *schema.Resource {
@@ -32,9 +31,6 @@ func resourceGroup() *schema.Resource {
 					return nil, errors.New("invalid format used for import ID, format must be 'group_id' or 'group_id/skip_users'")
 				}
 				d.SetId(importID[0])
-				if !isValidSkipArg(importID[1]) {
-					return nil, fmt.Errorf("'%s' is invalid value to be used as part of import ID, it can only be 'skip_users'", importID[1])
-				}
 				_ = d.Set(importID[1], true)
 				return []*schema.ResourceData{d}, nil
 			},
@@ -50,19 +46,6 @@ func resourceGroup() *schema.Resource {
 				Optional:    true,
 				Description: "Group description",
 			},
-			"users": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "Users associated with the group. This can also be done per user.",
-				Deprecated:  "The `users` field is now deprecated for the resource `okta_group`, please replace all uses of this with: `okta_group_memberships`",
-			},
-			"skip_users": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Description: "Ignore users sync. This is a temporary solution until 'users' field is supported in this resource",
-				Default:     false,
-			},
 			"custom_profile_attributes": {
 				Type:             schema.TypeString,
 				Optional:         true,
@@ -74,11 +57,11 @@ func resourceGroup() *schema.Resource {
 						return true
 					}
 
-					var oldCustomAttrs okta.GroupProfileMap
+					var oldCustomAttrs sdk.GroupProfileMap
 					_ = json.Unmarshal([]byte(old), &oldCustomAttrs)
 					oldCustomAttrs = normalizeGroupProfile(oldCustomAttrs)
 
-					var newCustomAttrs okta.GroupProfileMap
+					var newCustomAttrs sdk.GroupProfileMap
 					_ = json.Unmarshal([]byte(new), &newCustomAttrs)
 					newCustomAttrs = normalizeGroupProfile(newCustomAttrs)
 
@@ -113,11 +96,6 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interfac
 		return diag.FromErr(err)
 	}
 	d.SetId(responseGroup.Id)
-	skipUsers := d.Get("skip_users").(bool)
-	err = updateGroupUsers(ctx, d, m, skipUsers)
-	if err != nil {
-		return diag.Errorf("failed to update group users on group create: %v", err)
-	}
 
 	return resourceGroupRead(ctx, d, m)
 }
@@ -128,7 +106,6 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get group: %v", err)
 	}
-	skipUsers := d.Get("skip_users").(bool)
 
 	if g == nil {
 		d.SetId("")
@@ -146,12 +123,6 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{
 		_ = d.Set("custom_profile_attributes", customProfileStr)
 	}
 
-	err = syncGroupUsers(ctx, d, m, skipUsers)
-	if err != nil {
-		return diag.Errorf("failed to get group users: %v", err)
-	}
-	_ = d.Set("skip_users", skipUsers)
-
 	return nil
 }
 
@@ -161,11 +132,6 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 	_, _, err := getOktaClientFromMetadata(m).Group.UpdateGroup(ctx, d.Id(), *group)
 	if err != nil {
 		return diag.Errorf("failed to update group: %v", err)
-	}
-	skipUsers := d.Get("skip_users").(bool)
-	err = updateGroupUsers(ctx, d, m, skipUsers)
-	if err != nil {
-		return diag.Errorf("failed to update group users on group update: %v", err)
 	}
 	return resourceGroupRead(ctx, d, m)
 }
@@ -179,49 +145,8 @@ func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, m interfac
 	return nil
 }
 
-func syncGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}, skipUsers bool) error {
-	// temp solution until 'users' field is supported
-	if skipUsers {
-		return nil
-	}
-
-	// Only sync when the user opts in by outlining users in the group config
-	if _, exists := d.GetOk("users"); !exists {
-		return nil
-	}
-
-	userIDList, err := listGroupUserIDs(ctx, m, d.Id())
-	if err != nil {
-		return err
-	}
-	return d.Set("users", convertStringSliceToSet(userIDList))
-}
-
-func updateGroupUsers(ctx context.Context, d *schema.ResourceData, m interface{}, skipUsers bool) error {
-	// temp solution until 'users' field is supported
-	if d.Get("skip_users").(bool) {
-		return nil
-	}
-
-	if !d.HasChange("users") {
-		return nil
-	}
-
-	client := getOktaClientFromMetadata(m)
-	oldGM, newGM := d.GetChange("users")
-	oldSet := oldGM.(*schema.Set)
-	newSet := newGM.(*schema.Set)
-	usersToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
-	usersToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
-	err := addGroupMembers(ctx, client, d.Id(), usersToAdd)
-	if err != nil {
-		return err
-	}
-	return removeGroupMembers(ctx, client, d.Id(), usersToRemove)
-}
-
-func buildGroup(d *schema.ResourceData) *okta.Group {
-	var customAttrs okta.GroupProfileMap
+func buildGroup(d *schema.ResourceData) *sdk.Group {
+	var customAttrs sdk.GroupProfileMap
 	if rawAttrs, ok := d.GetOk("custom_profile_attributes"); ok {
 		str := rawAttrs.(string)
 
@@ -229,8 +154,8 @@ func buildGroup(d *schema.ResourceData) *okta.Group {
 		_ = json.Unmarshal([]byte(str), &customAttrs)
 	}
 
-	return &okta.Group{
-		Profile: &okta.GroupProfile{
+	return &sdk.Group{
+		Profile: &sdk.GroupProfile{
 			Name:            d.Get("name").(string),
 			Description:     d.Get("description").(string),
 			GroupProfileMap: normalizeGroupProfile(customAttrs),

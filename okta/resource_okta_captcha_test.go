@@ -5,17 +5,15 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaCaptcha(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(captcha)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(captcha, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", captcha)
-	resource.Test(
+	oktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
@@ -25,7 +23,7 @@ func TestAccOktaCaptcha(t *testing.T) {
 				{
 					Config: config,
 					Check: resource.ComposeTestCheckFunc(
-						resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+						resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 						resource.TestCheckResourceAttr(resourceName, "type", "HCAPTCHA"),
 						resource.TestCheckResourceAttr(resourceName, "site_key", "random_key"),
 					),
@@ -33,7 +31,7 @@ func TestAccOktaCaptcha(t *testing.T) {
 				{
 					Config: updated,
 					Check: resource.ComposeTestCheckFunc(
-						resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)+"_updated"),
+						resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)+"_updated"),
 						resource.TestCheckResourceAttr(resourceName, "type", "HCAPTCHA"),
 						resource.TestCheckResourceAttr(resourceName, "site_key", "random_key_updated")),
 				},
@@ -42,6 +40,7 @@ func TestAccOktaCaptcha(t *testing.T) {
 }
 
 func doesCaptchaExist(id string) (bool, error) {
-	_, response, err := getSupplementFromMetadata(testAccProvider.Meta()).GetCaptcha(context.Background(), id)
+	client := apiSupplementForTest()
+	_, response, err := client.GetCaptcha(context.Background(), id)
 	return doesResourceExist(response, err)
 }

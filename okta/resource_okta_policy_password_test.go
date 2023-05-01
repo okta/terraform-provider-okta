@@ -6,20 +6,18 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccOktaPolicyPassword_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(policyPassword)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(policyPassword, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyPassword)
 
 	// NOTE needs the "Security Question" authenticator enabled on the org
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -29,7 +27,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test Password Policy"),
 					resource.TestCheckResourceAttr(resourceName, "password_history_count", "5"),
@@ -39,7 +37,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test Password Policy Updated"),
 					resource.TestCheckResourceAttr(resourceName, "password_min_length", "12"),
@@ -68,7 +66,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 				RefreshState: true,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test Password Policy Updated"),
 					resource.TestCheckResourceAttr(resourceName, "password_min_length", "12"),
@@ -96,16 +94,15 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 	})
 }
 
-func ensurePolicyExists(name string) resource.TestCheckFunc {
+func ensurePolicyExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		missingErr := fmt.Errorf("resource not found: %s", name)
-		rs, ok := s.RootModule().Resources[name]
+		missingErr := fmt.Errorf("resource not found: %s", resourceName)
+		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return missingErr
 		}
 
-		ID := rs.Primary.ID
-		exist, err := doesPolicyExistsUpstream(ID)
+		exist, err := doesPolicyExistsUpstream(rs.Primary.ID)
 		if err != nil {
 			return err
 		} else if !exist {
@@ -123,22 +120,22 @@ func createPolicyCheckDestroy(policyType string) func(*terraform.State) error {
 				continue
 			}
 
-			ID := rs.Primary.ID
-			exists, err := doesPolicyExistsUpstream(ID)
+			exists, err := doesPolicyExistsUpstream(rs.Primary.ID)
 			if err != nil {
 				return err
 			}
 
 			if exists {
-				return fmt.Errorf("policy still exists, ID: %s", ID)
+				return fmt.Errorf("policy still exists, ID: %s", rs.Primary.ID)
 			}
 		}
 		return nil
 	}
 }
 
-func doesPolicyExistsUpstream(id string) (bool, error) {
-	policy, resp, err := getSupplementFromMetadata(testAccProvider.Meta()).GetPolicy(context.Background(), id)
+func doesPolicyExistsUpstream(policyID string) (bool, error) {
+	client := apiSupplementForTest()
+	policy, resp, err := client.GetPolicy(context.Background(), policyID)
 	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return false, nil
 	} else if err != nil {

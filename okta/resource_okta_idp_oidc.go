@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceIdpOidc() *schema.Resource {
@@ -38,10 +38,9 @@ func resourceIdpOidc() *schema.Resource {
 				Required: true,
 			},
 			"protocol_type": {
-				Type:             schema.TypeString,
-				Default:          "OIDC",
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"OIDC", "OAUTH2"}),
+				Type:     schema.TypeString,
+				Default:  "OIDC",
+				Optional: true,
 			},
 			"client_id": {
 				Type:     schema.TypeString,
@@ -53,20 +52,14 @@ func resourceIdpOidc() *schema.Resource {
 				Sensitive: true,
 			},
 			"issuer_url": {
-				Type:             schema.TypeString,
-				Required:         true,
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"issuer_mode": {
 				Type:        schema.TypeString,
 				Description: "Indicates whether Okta uses the original Okta org domain URL, custom domain URL, or dynamic. See Identity Provider attributes - issuerMode - https://developer.okta.com/docs/reference/api/idps/#identity-provider-attributes",
-				ValidateDiagFunc: elemInSlice([]string{
-					"CUSTOM_URL",
-					"DYNAMIC",
-					"ORG_URL",
-				}),
-				Default:  "ORG_URL",
-				Optional: true,
+				Default:     "ORG_URL",
+				Optional:    true,
 			},
 			"max_clock_skew": {
 				Type:     schema.TypeInt,
@@ -173,39 +166,39 @@ func resourceIdpUpdate(ctx context.Context, d *schema.ResourceData, m interface{
 	return resourceIdpRead(ctx, d, m)
 }
 
-func buildIdPOidc(d *schema.ResourceData) (okta.IdentityProvider, error) {
+func buildIdPOidc(d *schema.ResourceData) (sdk.IdentityProvider, error) {
 	if d.Get("subject_match_type").(string) != "CUSTOM_ATTRIBUTE" &&
 		len(d.Get("subject_match_attribute").(string)) > 0 {
-		return okta.IdentityProvider{}, errors.New("you can only provide 'subject_match_attribute' with 'subject_match_type' set to 'CUSTOM_ATTRIBUTE'")
+		return sdk.IdentityProvider{}, errors.New("you can only provide 'subject_match_attribute' with 'subject_match_type' set to 'CUSTOM_ATTRIBUTE'")
 	}
-	idp := okta.IdentityProvider{
+	idp := sdk.IdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       "OIDC",
 		IssuerMode: d.Get("issuer_mode").(string),
-		Policy: &okta.IdentityProviderPolicy{
+		Policy: &sdk.IdentityProviderPolicy{
 			AccountLink:     buildPolicyAccountLink(d),
 			MaxClockSkewPtr: int64Ptr(d.Get("max_clock_skew").(int)),
 			Provisioning:    buildIdPProvisioning(d),
-			Subject: &okta.PolicySubject{
+			Subject: &sdk.PolicySubject{
 				MatchType:      d.Get("subject_match_type").(string),
 				MatchAttribute: d.Get("subject_match_attribute").(string),
-				UserNameTemplate: &okta.PolicyUserNameTemplate{
+				UserNameTemplate: &sdk.PolicyUserNameTemplate{
 					Template: d.Get("username_template").(string),
 				},
 			},
 		},
-		Protocol: &okta.Protocol{
+		Protocol: &sdk.Protocol{
 			Algorithms: buildAlgorithms(d),
 			Endpoints:  buildProtocolEndpoints(d),
 			Scopes:     convertInterfaceToStringSet(d.Get("scopes")),
 			Type:       d.Get("protocol_type").(string),
-			Credentials: &okta.IdentityProviderCredentials{
-				Client: &okta.IdentityProviderCredentialsClient{
+			Credentials: &sdk.IdentityProviderCredentials{
+				Client: &sdk.IdentityProviderCredentialsClient{
 					ClientId:     d.Get("client_id").(string),
 					ClientSecret: d.Get("client_secret").(string),
 				},
 			},
-			Issuer: &okta.ProtocolEndpoint{
+			Issuer: &sdk.ProtocolEndpoint{
 				Url: d.Get("issuer_url").(string),
 			},
 		},
@@ -216,7 +209,7 @@ func buildIdPOidc(d *schema.ResourceData) (okta.IdentityProvider, error) {
 	return idp, nil
 }
 
-func syncIdpOidcAlgo(d *schema.ResourceData, alg *okta.ProtocolAlgorithms) {
+func syncIdpOidcAlgo(d *schema.ResourceData, alg *sdk.ProtocolAlgorithms) {
 	if alg != nil {
 		if alg.Request != nil && alg.Request.Signature != nil {
 			_ = d.Set("request_signature_algorithm", alg.Request.Signature.Algorithm)

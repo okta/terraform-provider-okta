@@ -4,18 +4,16 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaDataSourceUserType_read(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("data.%s.test", userType)
-	mgr := newFixtureManager(userType)
-	createUserType := mgr.GetFixtures("okta_user_type.tf", ri, t)
-	config := mgr.GetFixtures("datasource.tf", ri, t)
+	mgr := newFixtureManager(userType, t.Name())
+	createUserType := mgr.GetFixtures("okta_user_type.tf", t)
+	config := mgr.GetFixtures("datasource.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,

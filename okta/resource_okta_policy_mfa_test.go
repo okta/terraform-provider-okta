@@ -4,19 +4,17 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 // Note: at least one factor (e.g. `okta_otp`) should be enabled before running this test.
 func TestAccOktaMfaPolicy_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(policyMfa)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(policyMfa, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyMfa)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -26,7 +24,7 @@ func TestAccOktaMfaPolicy_crud(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy"),
 					resource.TestCheckResourceAttr(resourceName, "okta_email.enroll", "REQUIRED"),
@@ -37,7 +35,7 @@ func TestAccOktaMfaPolicy_crud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)+"_new"),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)+"_new"),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy Updated"),
 					resource.TestCheckResourceAttr(resourceName, "okta_email.enroll", "REQUIRED"),
@@ -52,8 +50,7 @@ func TestAccOktaMfaPolicy_crud(t *testing.T) {
 // TestAccOktaMfaPolicy_PR_1210 deals with testing
 // https://github.com/okta/terraform-provider-okta/pull/1210
 func TestAccOktaMfaPolicy_PR_1210(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(policyMfa)
+	mgr := newFixtureManager(policyMfa, t.Name())
 	config := `
 data "okta_group" "all" {
   name = "Everyone"
@@ -82,17 +79,17 @@ resource "okta_policy_mfa" "test" {
 	`
 	resourceName := fmt.Sprintf("%s.test", policyMfa)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testOIEOnlyAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createPolicyCheckDestroy(policyMfa),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy"),
 					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
@@ -108,8 +105,7 @@ resource "okta_policy_mfa" "test" {
 // https://github.com/okta/terraform-provider-okta/issues/1176
 // Which is similar to PRs 1427/1210
 func TestAccOktaMfaPolicy_Issue_1176(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(policyMfa)
+	mgr := newFixtureManager(policyMfa, t.Name())
 	config := `
 data "okta_group" "all" {
   name = "Everyone"
@@ -137,17 +133,17 @@ resource "okta_policy_mfa" "test" {
 	`
 	resourceName := fmt.Sprintf("%s.test", policyMfa)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testOIEOnlyAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      createPolicyCheckDestroy(policyMfa),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy"),
 					resource.TestCheckResourceAttr(resourceName, "okta_otp.enroll", "OPTIONAL"),

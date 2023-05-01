@@ -5,7 +5,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -17,16 +16,6 @@ func resourceAuthServerPolicy() *schema.Resource {
 		DeleteContext: resourceAuthServerPolicyDelete,
 		Importer:      createNestedResourceImporter([]string{"auth_server_id", "id"}),
 		Schema: map[string]*schema.Schema{
-			"type": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     sdk.OauthAuthorizationPolicyType,
-				Description: "Auth server policy type, unlikely this will be anything other then the default",
-				Deprecated:  "Policy type can only be of value 'OAUTH_AUTHORIZATION_POLICY', so this will be removed in the future, or set as 'Computed' value",
-				DiffSuppressFunc: func(string, string, string, *schema.ResourceData) bool {
-					return true
-				},
-			},
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -115,15 +104,15 @@ func resourceAuthServerPolicyDelete(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func buildAuthServerPolicy(d *schema.ResourceData) okta.AuthorizationServerPolicy {
-	return okta.AuthorizationServerPolicy{
+func buildAuthServerPolicy(d *schema.ResourceData) sdk.AuthorizationServerPolicy {
+	return sdk.AuthorizationServerPolicy{
 		Name:        d.Get("name").(string),
 		Type:        sdk.OauthAuthorizationPolicyType,
 		Status:      d.Get("status").(string),
 		PriorityPtr: int64Ptr(d.Get("priority").(int)),
 		Description: d.Get("description").(string),
-		Conditions: &okta.PolicyRuleConditions{
-			Clients: &okta.ClientPolicyCondition{
+		Conditions: &sdk.PolicyRuleConditions{
+			Clients: &sdk.ClientPolicyCondition{
 				Include: convertInterfaceToStringSet(d.Get("client_whitelist")),
 			},
 		},

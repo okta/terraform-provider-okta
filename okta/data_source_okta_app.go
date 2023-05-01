@@ -6,13 +6,13 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func dataSourceApp() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppRead,
-		Schema: buildSchema(skipUsersAndGroupsSchema, map[string]*schema.Schema{
+		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
 				Optional:      true,
@@ -61,7 +61,7 @@ func dataSourceApp() *schema.Resource {
 				Description: "Users associated with the application",
 				Deprecated:  "The `users` field is now deprecated for the data source `okta_app`, please replace all uses of this with: `okta_app_user_assignments`",
 			},
-		}),
+		},
 	}
 }
 
@@ -70,13 +70,13 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 	if err != nil {
 		return diag.Errorf("invalid app filters: %v", err)
 	}
-	var app *okta.Application
+	var app *sdk.Application
 	if filters.ID != "" {
-		respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, filters.ID, okta.NewApplication(), nil)
+		respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, filters.ID, sdk.NewApplication(), nil)
 		if err != nil {
 			return diag.Errorf("failed get app by ID: %v", err)
 		}
-		app = respApp.(*okta.Application)
+		app = respApp.(*sdk.Application)
 	} else {
 		appList, err := listApps(ctx, getOktaClientFromMetadata(m), filters, 1)
 		if err != nil {
@@ -104,10 +104,6 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 			}
 			app = appList[0]
 		}
-	}
-	err = setAppUsersIDsAndGroupsIDs(ctx, d, getOktaClientFromMetadata(m), app.Id)
-	if err != nil {
-		return diag.Errorf("failed to list app's groups and users: %v", err)
 	}
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)

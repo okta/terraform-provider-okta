@@ -87,9 +87,6 @@ The following arguments are supported:
   `"urn:ietf:params:oauth:grant-type:saml2-bearer"` (*Early Access Property*), `"urn:ietf:params:oauth:grant-type:token-exchange"` (*Early Access Property*),
   `"interaction_code"` (*OIE only*).
 
-- `groups` - (Optional) The groups assigned to the application. It is recommended not to use this and instead use `okta_app_group_assignment`.
-  - `DEPRECATED`: Please replace usage with the `okta_app_group_assignments` (or `okta_app_group_assignment`) resource.
-
 - `groups_claim` - (Optional) Groups claim for an OpenID Connect client application. **IMPORTANT**: this field is available only when using api token in the provider config.
   - `type` - (Required) Groups claim type. Valid values: `"FILTER"`, `"EXPRESSION"`.
   - `filter_type` - (Optional) Groups claim filter. Can only be set if type is `"FILTER"`. Valid values: `"EQUALS"`, `"STARTS_WITH"`, `"CONTAINS"`, `"REGEX"`.
@@ -151,10 +148,6 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
     the OAuth 2.0 authorization code grant.
     See: https://developer.okta.com/docs/reference/api/apps/#add-oauth-2-0-client-application
 
-- `skip_groups` - (Optional) Indicator that allows the app to skip `groups` sync (it's also can be provided during import). Default is `false`.
-
-- `skip_users` - (Optional) Indicator that allows the app to skip `users` sync (it's also can be provided during import). Default is `false`.
-
 - `status` - (Optional) The status of the application, by default, it is `"ACTIVE"`.
 
 - `token_endpoint_auth_method` - (Optional) Requested authentication method for
@@ -179,9 +172,6 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 - `user_name_template_type` - (Optional) Username template type. Default: `"BUILT_IN"`.
 
-- `users` - (Optional) The users assigned to the application. It is recommended not to use this and instead use `okta_app_user`.
-  - `DEPRECATED`: Please replace usage with the `okta_app_user` resource.
-
 - `wildcard_redirect` - (Optional) *Early Access Property*. Indicates if the client is allowed to use wildcard matching of `redirect_uris`. Valid values: `"DISABLED"`, `"SUBDOMAIN"`. Default value is `"DISABLED"`.
 
 ## Attributes Reference
@@ -202,11 +192,11 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 The `timeouts` block allows you to specify custom [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions: 
 
-- `create` - Create timeout if syncing users/groups (default 1 hour).
+- `create` - Create timeout (default 1 hour).
 
-- `update` - Update timeout if syncing users/groups (default 1 hour).
+- `update` - Update timeout (default 1 hour).
 
-- `read` - Read timeout if syncing users/groups (default 1 hour).
+- `read` - Read timeout (default 1 hour).
 
 ## Import
 
@@ -214,16 +204,6 @@ An OIDC Application can be imported via the Okta ID.
 
 ```
 $ terraform import okta_app_oauth.example &#60;app id&#62;
-```
-
-It's also possible to import app without groups or/and users. In this case ID may look like this:
-
-```
-$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_users
-
-$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_users/skip_groups
-
-$ terraform import okta_app_basic_auth.example &#60;app id&#62;/skip_groups
 ```
 
 ## Etc.

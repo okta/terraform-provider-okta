@@ -59,7 +59,6 @@ const (
 	brands                        = "okta_brands"
 	captcha                       = "okta_captcha"
 	captchaOrgWideSettings        = "okta_captcha_org_wide_settings"
-	defaultPolicies               = "okta_default_policies"
 	defaultPolicy                 = "okta_default_policy"
 	domain                        = "okta_domain"
 	domainCertificate             = "okta_domain_certificate"
@@ -76,10 +75,8 @@ const (
 	factorTotp                    = "okta_factor_totp"
 	group                         = "okta_group"
 	groupEveryone                 = "okta_everyone_group"
-	groupMembership               = "okta_group_membership"
 	groupMemberships              = "okta_group_memberships"
 	groupRole                     = "okta_group_role"
-	groupRoles                    = "okta_group_roles"
 	groupRule                     = "okta_group_rule"
 	groups                        = "okta_groups"
 	groupSchemaProperty           = "okta_group_schema_property"
@@ -112,7 +109,6 @@ const (
 	resourceSet                   = "okta_resource_set"
 	roleSubscription              = "okta_role_subscription"
 	securityNotificationEmails    = "okta_security_notification_emails"
-	templateEmail                 = "okta_template_email"
 	templateSms                   = "okta_template_sms"
 	theme                         = "okta_theme"
 	themes                        = "okta_themes"
@@ -134,8 +130,6 @@ const (
 // Provider establishes a client connection to an okta site
 // determined by its schema string values
 func Provider() *schema.Provider {
-	deprecatedPolicies := dataSourceDefaultPolicy()
-	deprecatedPolicies.DeprecationMessage = "This data source will be deprecated in favor of okta_default_policy or okta_policy data sources."
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"org_name": {
@@ -221,7 +215,7 @@ func Provider() *schema.Provider {
 				Type:             schema.TypeInt,
 				Optional:         true,
 				Default:          5,
-				ValidateDiagFunc: intAtMost(100), // Have to cut it off somewhere right?
+				ValidateDiagFunc: intAtMost(100),
 				Description:      "maximum number of retries to attempt before erroring out.",
 			},
 			"parallelism": {
@@ -301,10 +295,8 @@ func Provider() *schema.Provider {
 			factor:                        resourceFactor(),
 			factorTotp:                    resourceFactorTOTP(),
 			group:                         resourceGroup(),
-			groupMembership:               resourceGroupMembership(),
 			groupMemberships:              resourceGroupMemberships(),
 			groupRole:                     resourceGroupRole(),
-			groupRoles:                    resourceGroupRoles(),
 			groupRule:                     resourceGroupRule(),
 			groupSchemaProperty:           resourceGroupCustomSchemaProperty(),
 			idpOidc:                       resourceIdpOidc(),
@@ -334,7 +326,6 @@ func Provider() *schema.Provider {
 			resourceSet:                   resourceResourceSet(),
 			roleSubscription:              resourceRoleSubscription(),
 			securityNotificationEmails:    resourceSecurityNotificationEmails(),
-			templateEmail:                 resourceTemplateEmail(),
 			templateSms:                   resourceTemplateSms(),
 			theme:                         resourceTheme(),
 			threatInsightSettings:         resourceThreatInsightSettings(),
@@ -346,30 +337,6 @@ func Provider() *schema.Provider {
 			userGroupMemberships:          resourceUserGroupMemberships(),
 			userSchemaProperty:            resourceUserCustomSchemaProperty(),
 			userType:                      resourceUserType(),
-
-			// The day I realized I was naming stuff wrong :'-(
-			"okta_idp":                       deprecateIncorrectNaming(resourceIdpOidc(), idpOidc),
-			"okta_saml_idp":                  deprecateIncorrectNaming(resourceIdpSaml(), idpSaml),
-			"okta_saml_idp_signing_key":      deprecateIncorrectNaming(resourceIdpSigningKey(), idpSamlKey),
-			"okta_social_idp":                deprecateIncorrectNaming(resourceIdpSocial(), idpSocial),
-			"okta_bookmark_app":              deprecateIncorrectNaming(resourceAppBookmark(), appBookmark),
-			"okta_saml_app":                  deprecateIncorrectNaming(resourceAppSaml(), appSaml),
-			"okta_oauth_app":                 deprecateIncorrectNaming(resourceAppOAuth(), appOAuth),
-			"okta_oauth_app_redirect_uri":    deprecateIncorrectNaming(resourceAppOAuthRedirectURI(), appOAuthRedirectURI),
-			"okta_auto_login_app":            deprecateIncorrectNaming(resourceAppAutoLogin(), appAutoLogin),
-			"okta_secure_password_store_app": deprecateIncorrectNaming(resourceAppSecurePasswordStore(), appSecurePasswordStore),
-			"okta_three_field_app":           deprecateIncorrectNaming(resourceAppThreeField(), appThreeField),
-			"okta_swa_app":                   deprecateIncorrectNaming(resourceAppSwa(), appSwa),
-			"okta_password_policy":           deprecateIncorrectNaming(resourcePolicyPassword(), policyPassword),
-			"okta_signon_policy":             deprecateIncorrectNaming(resourcePolicySignOn(), policySignOn),
-			"okta_signon_policy_rule":        deprecateIncorrectNaming(resourcePolicySignOnRule(), policyRuleSignOn),
-			"okta_password_policy_rule":      deprecateIncorrectNaming(resourcePolicyPasswordRule(), policyRulePassword),
-			"okta_mfa_policy":                deprecateIncorrectNaming(resourcePolicyMfa(), policyMfa),
-			"okta_mfa_policy_rule":           deprecateIncorrectNaming(resourcePolicyMfaRule(), policyRuleMfa),
-			"okta_app_user_schema":           deprecateIncorrectNaming(resourceAppUserSchemaProperty(), appUserSchemaProperty),
-			"okta_app_user_base_schema":      deprecateIncorrectNaming(resourceAppUserBaseSchemaProperty(), appUserBaseSchemaProperty),
-			"okta_user_schema":               deprecateIncorrectNaming(resourceUserCustomSchemaProperty(), userSchemaProperty),
-			"okta_user_base_schema":          deprecateIncorrectNaming(resourceUserBaseSchemaProperty(), userBaseSchemaProperty),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			app:                      dataSourceApp(),
@@ -394,7 +361,6 @@ func Provider() *schema.Provider {
 			emailCustomizations:      dataSourceEmailCustomizations(),
 			emailTemplate:            dataSourceEmailTemplate(),
 			emailTemplates:           dataSourceEmailTemplates(),
-			defaultPolicies:          deprecatedPolicies,
 			defaultPolicy:            dataSourceDefaultPolicy(),
 			group:                    dataSourceGroup(),
 			groupEveryone:            dataSourceEveryoneGroup(),
@@ -417,11 +383,6 @@ func Provider() *schema.Provider {
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
-}
-
-func deprecateIncorrectNaming(d *schema.Resource, newResource string) *schema.Resource {
-	d.DeprecationMessage = fmt.Sprintf("Resource is deprecated due to a correction in naming conventions, please use '%s' instead.", newResource)
-	return d
 }
 
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
@@ -452,13 +413,9 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(config.scopes) == 0 {
 		config.scopes = strings.Split(v, ",")
 	}
+
 	if err := config.loadAndValidate(ctx); err != nil {
 		return nil, diag.Errorf("[ERROR] invalid configuration: %v", err)
-	}
-
-	// Discover if the Okta Org is Classic or OIE
-	if org, _, err := config.supplementClient.GetWellKnownOktaOrganization(ctx); err == nil {
-		config.classicOrg = (org.Pipeline == "v1") // v1 == Classic, idx == OIE
 	}
 
 	return &config, nil

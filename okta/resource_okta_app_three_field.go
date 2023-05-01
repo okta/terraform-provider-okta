@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceAppThreeField() *schema.Resource {
@@ -49,10 +49,9 @@ func resourceAppThreeField() *schema.Resource {
 				Description: "Value for extra form field",
 			},
 			"url": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "Login URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Login URL",
 			},
 			"url_regex": {
 				Type:        schema.TypeString,
@@ -60,17 +59,9 @@ func resourceAppThreeField() *schema.Resource {
 				Description: "A regex that further restricts URL to the specified regex",
 			},
 			"credentials_scheme": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "EDIT_USERNAME_AND_PASSWORD",
-				ValidateDiagFunc: elemInSlice(
-					[]string{
-						"EDIT_USERNAME_AND_PASSWORD",
-						"ADMIN_SETS_CREDENTIALS",
-						"EDIT_PASSWORD_ONLY",
-						"EXTERNAL_PASSWORD_SYNC",
-						"SHARED_USERNAME_AND_PASSWORD",
-					}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "EDIT_USERNAME_AND_PASSWORD",
 				Description: "Application credentials scheme",
 			},
 			"reveal_password": {
@@ -108,10 +99,6 @@ func resourceAppThreeFieldCreate(ctx context.Context, d *schema.ResourceData, m 
 		return diag.Errorf("failed to create three field application: %v", err)
 	}
 	d.SetId(app.Id)
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for three field application: %v", err)
-	}
 	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for three field application: %v", err)
@@ -120,7 +107,7 @@ func resourceAppThreeFieldCreate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceAppThreeFieldRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := okta.NewSwaThreeFieldApplication()
+	app := sdk.NewSwaThreeFieldApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get three field application: %v", err)
@@ -145,10 +132,6 @@ func resourceAppThreeFieldRead(ctx context.Context, d *schema.ResourceData, m in
 	_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
-	err = syncGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to sync groups and users for three field application: %v", err)
-	}
 	return nil
 }
 
@@ -162,10 +145,6 @@ func resourceAppThreeFieldUpdate(ctx context.Context, d *schema.ResourceData, m 
 	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
 		return diag.Errorf("failed to set three field application status: %v", err)
-	}
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for three field application: %v", err)
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
@@ -186,12 +165,12 @@ func resourceAppThreeFieldDelete(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func buildAppThreeField(d *schema.ResourceData) *okta.SwaThreeFieldApplication {
-	app := okta.NewSwaThreeFieldApplication()
+func buildAppThreeField(d *schema.ResourceData) *sdk.SwaThreeFieldApplication {
+	app := sdk.NewSwaThreeFieldApplication()
 	app.Label = d.Get("label").(string)
 
-	app.Settings = &okta.SwaThreeFieldApplicationSettings{
-		App: &okta.SwaThreeFieldApplicationSettingsApplication{
+	app.Settings = &sdk.SwaThreeFieldApplicationSettings{
+		App: &sdk.SwaThreeFieldApplicationSettingsApplication{
 			TargetURL:          d.Get("url").(string),
 			ButtonSelector:     d.Get("button_selector").(string),
 			UserNameSelector:   d.Get("username_selector").(string),

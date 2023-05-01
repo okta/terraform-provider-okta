@@ -4,16 +4,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func TestAccOktaPolicyRuleProfileEnrollment(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(policyRuleProfileEnrollment)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(policyRuleProfileEnrollment, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleProfileEnrollment)
 
 	// NOTE: teardownConfig is a hack so that the okta_policy_profile_enrollment
@@ -42,7 +40,7 @@ resource "okta_group" "test" {
 }
 `
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -75,7 +73,7 @@ resource "okta_group" "test" {
 				),
 			},
 			{
-				Config: mgr.ConfigReplace(teardownConfig, ri),
+				Config: mgr.ConfigReplace(teardownConfig),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("okta_group.test", "name"),
 				),
@@ -89,8 +87,7 @@ resource "okta_group" "test" {
 // https://developer.okta.com/docs/reference/api/policy/#profile-enrollment-action-object
 // https://github.com/okta/terraform-provider-okta/issues/1213
 func TestAccOktaPolicyRuleProfileEnrollment_Issue1213(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(policyRuleProfileEnrollment)
+	mgr := newFixtureManager(policyRuleProfileEnrollment, t.Name())
 	resourceName := fmt.Sprintf("%s.test", policyRuleProfileEnrollment)
 	config := `
 resource "okta_policy_profile_enrollment" "test" {
@@ -126,14 +123,14 @@ resource "okta_policy_rule_profile_enrollment" "test" {
     required = true
   }
 }`
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSecurePasswordStore, createDoesAppExist(okta.NewSecurePasswordStoreApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "unknown_user_action", "REGISTER"),
 					resource.TestCheckResourceAttr(resourceName, "email_verification", "false"),

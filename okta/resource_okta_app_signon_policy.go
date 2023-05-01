@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAppSignOnPolicy() *schema.Resource {
@@ -30,8 +30,8 @@ func resourceAppSignOnPolicy() *schema.Resource {
 	}
 }
 
-func buildAccessPoilicy(d *schema.ResourceData) okta.Policies {
-	accessPolicy := okta.NewAccessPolicy()
+func buildAccessPoilicy(d *schema.ResourceData) sdk.Policies {
+	accessPolicy := sdk.NewAccessPolicy()
 	accessPolicy.Name = d.Get("name").(string)
 	accessPolicy.Description = d.Get("description").(string)
 	return accessPolicy
@@ -50,7 +50,7 @@ func resourceAppSignOnPolicyCreate(ctx context.Context, d *schema.ResourceData, 
 	if err != nil {
 		return diag.Errorf("failed to create authentication policy: %v", err)
 	}
-	id := responsePolicy.(*okta.AccessPolicy).Id
+	id := responsePolicy.(*sdk.AccessPolicy).Id
 	d.SetId(id)
 	return resourceAppSignOnPolicyRead(ctx, d, m)
 }
@@ -61,7 +61,7 @@ func resourceAppSignOnPolicyRead(ctx context.Context, d *schema.ResourceData, m 
 	}
 
 	logger(m).Info("reading authentication policy", "id", d.Id(), "name", d.Get("name").(string))
-	policy := &okta.Policy{}
+	policy := &sdk.Policy{}
 	authenticationPolicy, resp, err := getOktaClientFromMetadata(m).Policy.GetPolicy(ctx, d.Id(), policy, nil)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get authentication policy: %v", err)
@@ -70,7 +70,7 @@ func resourceAppSignOnPolicyRead(ctx context.Context, d *schema.ResourceData, m 
 		d.SetId("")
 		return nil
 	}
-	policyFromServer := authenticationPolicy.(*okta.Policy)
+	policyFromServer := authenticationPolicy.(*sdk.Policy)
 	d.SetId(policyFromServer.Id)
 	d.Set("name", policyFromServer.Name)
 	d.Set("description", policyFromServer.Description)

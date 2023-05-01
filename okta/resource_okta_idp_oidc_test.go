@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -12,22 +11,21 @@ import (
 // Classic and OIE orgs.
 // Org needs "Core", "Single Sign-On", "Universal Directory" SKUs in Workforce Identity
 func TestAccOktaIdpOidc_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(idpOidc)
-	config := mgr.GetFixtures("generic_oidc.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("generic_oidc_updated.tf", ri, t)
+	mgr := newFixtureManager(idpOidc, t.Name())
+	config := mgr.GetFixtures("generic_oidc.tf", t)
+	updatedConfig := mgr.GetFixtures("generic_oidc_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", idpOidc)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpOidc, createDoesIdpExist()),
+		CheckDestroy:      createCheckResourceDestroy(idpOidc, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "authorization_url", "https://idp.example.com/authorize"),
 					resource.TestCheckResourceAttr(resourceName, "authorization_binding", "HTTP-REDIRECT"),
 					resource.TestCheckResourceAttr(resourceName, "token_url", "https://idp.example.com/token"),
@@ -40,6 +38,7 @@ func TestAccOktaIdpOidc_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "client_secret", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
 					resource.TestCheckResourceAttr(resourceName, "issuer_url", "https://id.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "username_template", "idpuser.email"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "request_signature_algorithm", "HS256"),
 					resource.TestCheckResourceAttr(resourceName, "request_signature_scope", "REQUEST"),
 				),
@@ -47,7 +46,7 @@ func TestAccOktaIdpOidc_crud(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "authorization_url", "https://idp.example.com/authorize2"),
 					resource.TestCheckResourceAttr(resourceName, "authorization_binding", "HTTP-REDIRECT"),
 					resource.TestCheckResourceAttr(resourceName, "token_url", "https://idp.example.com/token2"),
@@ -60,6 +59,7 @@ func TestAccOktaIdpOidc_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "client_secret", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
 					resource.TestCheckResourceAttr(resourceName, "issuer_url", "https://id.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "username_template", "idpuser.email"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "request_signature_algorithm", "HS256"),
 					resource.TestCheckResourceAttr(resourceName, "request_signature_scope", "REQUEST"),
 				),
@@ -92,20 +92,19 @@ resource "okta_idp_oidc" "test" {
   request_signature_scope = "REQUEST"
 }`
 
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(idpOidc)
+	mgr := newFixtureManager(idpOidc, t.Name())
 	resourceName := fmt.Sprintf("%s.test", idpOidc)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpOidc, createDoesIdpExist()),
+		CheckDestroy:      createCheckResourceDestroy(idpOidc, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "authorization_url", "https://idp.example.com/authorize"),
 					resource.TestCheckResourceAttr(resourceName, "authorization_binding", "HTTP-REDIRECT"),
 					resource.TestCheckResourceAttr(resourceName, "token_url", "https://idp.example.com/token"),

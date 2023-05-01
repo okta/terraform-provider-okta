@@ -5,18 +5,16 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaAuthServerPolicyRule_create(t *testing.T) {
-	ri := acctest.RandInt()
 	resourceName := fmt.Sprintf("%s.test", authServerPolicyRule)
-	mgr := newFixtureManager(authServerPolicyRule)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(authServerPolicyRule, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -70,9 +68,8 @@ resource "okta_auth_server_policy" "test" {
   auth_server_id   = okta_auth_server.test.id
 }
 %s`, strings.Join(testPolicyRules, ""))
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(authServerPolicyRule)
-	resource.Test(
+	mgr := newFixtureManager(authServerPolicyRule, t.Name())
+	oktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
@@ -80,7 +77,7 @@ resource "okta_auth_server_policy" "test" {
 			CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
 			Steps: []resource.TestStep{
 				{
-					Config: mgr.ConfigReplace(config, ri),
+					Config: mgr.ConfigReplace(config),
 					Check: resource.ComposeTestCheckFunc(
 						// Just check if policy rule 09 exists. We only care
 						// about reproducing then fixing the 500 bug. If we make

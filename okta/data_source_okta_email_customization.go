@@ -50,12 +50,12 @@ func dataSourceEmailCustomizationRead(ctx context.Context, d *schema.ResourceDat
 		return diag.Errorf("customization_id required for email customization")
 	}
 
-	customization, _, err := getOktaClientFromMetadata(m).Brand.GetEmailTemplateCustomization(ctx, brandID.(string), templateName.(string), customizationId.(string))
+	customization, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.GetEmailCustomization(ctx, brandID.(string), templateName.(string), customizationId.(string)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get email template: %v", err)
 	}
 
-	d.SetId(fmt.Sprintf("email_customization-%s-%s-%s", customization.Id, templateName.(string), brandID.(string)))
+	d.SetId(fmt.Sprintf("email_customization-%s-%s-%s", customization.GetId(), templateName.(string), brandID.(string)))
 	rawMap := flattenEmailCustomization(customization)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {

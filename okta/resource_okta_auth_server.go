@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAuthServer() *schema.Resource {
@@ -38,11 +38,10 @@ func resourceAuthServer() *schema.Resource {
 				Computed: true,
 			},
 			"credentials_rotation_mode": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"AUTO", "MANUAL"}),
-				Default:          "AUTO",
-				Description:      "Credential rotation mode, in many cases you cannot set this to MANUAL, the API will ignore the value and you will get a perpetual diff. This should rarely be used.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "AUTO",
+				Description: "Credential rotation mode, in many cases you cannot set this to MANUAL, the API will ignore the value and you will get a perpetual diff. This should rarely be used.",
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -58,11 +57,10 @@ func resourceAuthServer() *schema.Resource {
 				Description: "allows you to use a custom issuer URL",
 			},
 			"issuer_mode": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				ValidateDiagFunc: elemInSlice([]string{"CUSTOM_URL", "ORG_URL", "DYNAMIC"}),
-				Default:          "ORG_URL",
-				Description:      "*Early Access Property*. Indicates which value is specified in the issuer of the tokens that a Custom Authorization Server returns: the original Okta org domain URL or a custom domain URL",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "ORG_URL",
+				Description: "*Early Access Property*. Indicates which value is specified in the issuer of the tokens that a Custom Authorization Server returns: the original Okta org domain URL or a custom domain URL",
 			},
 		},
 	}
@@ -164,11 +162,11 @@ func resourceAuthServerDelete(ctx context.Context, d *schema.ResourceData, m int
 	return nil
 }
 
-func buildAuthServer(d *schema.ResourceData) *okta.AuthorizationServer {
-	return &okta.AuthorizationServer{
+func buildAuthServer(d *schema.ResourceData) *sdk.AuthorizationServer {
+	return &sdk.AuthorizationServer{
 		Audiences: convertInterfaceToStringSet(d.Get("audiences")),
-		Credentials: &okta.AuthorizationServerCredentials{
-			Signing: &okta.AuthorizationServerCredentialsSigningConfig{
+		Credentials: &sdk.AuthorizationServerCredentials{
+			Signing: &sdk.AuthorizationServerCredentialsSigningConfig{
 				RotationMode: d.Get("credentials_rotation_mode").(string),
 			},
 		},

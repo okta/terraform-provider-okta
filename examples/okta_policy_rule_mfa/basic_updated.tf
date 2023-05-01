@@ -23,5 +23,4 @@ resource "okta_app_oauth" "test" {
   grant_types    = ["authorization_code"]
   redirect_uris  = ["http://localhost:8000"]
   response_types = ["code"]
-  skip_groups    = true
 }

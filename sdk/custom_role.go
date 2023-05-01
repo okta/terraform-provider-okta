@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 type ListCustomRolesResponse struct {
@@ -22,7 +21,7 @@ type CustomRole struct {
 }
 
 // ListCustomRoles Gets all customRoles based on the query params
-func (m *APISupplement) ListCustomRoles(ctx context.Context, qp *query.Params) (*ListCustomRolesResponse, *okta.Response, error) {
+func (m *APISupplement) ListCustomRoles(ctx context.Context, qp *query.Params) (*ListCustomRolesResponse, *Response, error) {
 	url := "/api/v1/iam/roles"
 	if qp != nil {
 		url += qp.String()
@@ -41,7 +40,7 @@ func (m *APISupplement) ListCustomRoles(ctx context.Context, qp *query.Params) (
 }
 
 // GetCustomRole gets customRole by ID
-func (m *APISupplement) GetCustomRole(ctx context.Context, roleIdOrLabel string) (*CustomRole, *okta.Response, error) {
+func (m *APISupplement) GetCustomRole(ctx context.Context, roleIdOrLabel string) (*CustomRole, *Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/roles/%s", roleIdOrLabel)
 	re := m.cloneRequestExecutor()
 	req, err := re.NewRequest(http.MethodGet, url, nil)
@@ -57,7 +56,7 @@ func (m *APISupplement) GetCustomRole(ctx context.Context, roleIdOrLabel string)
 }
 
 // CreateCustomRole creates customRole
-func (m *APISupplement) CreateCustomRole(ctx context.Context, body CustomRole) (*CustomRole, *okta.Response, error) {
+func (m *APISupplement) CreateCustomRole(ctx context.Context, body CustomRole) (*CustomRole, *Response, error) {
 	url := "/api/v1/iam/roles"
 	re := m.cloneRequestExecutor()
 	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
@@ -73,7 +72,7 @@ func (m *APISupplement) CreateCustomRole(ctx context.Context, body CustomRole) (
 }
 
 // UpdateCustomRole updates customRole
-func (m *APISupplement) UpdateCustomRole(ctx context.Context, roleIdOrLabel string, body CustomRole) (*CustomRole, *okta.Response, error) {
+func (m *APISupplement) UpdateCustomRole(ctx context.Context, roleIdOrLabel string, body CustomRole) (*CustomRole, *Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/roles/%s", roleIdOrLabel)
 	re := m.cloneRequestExecutor()
 	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
@@ -89,7 +88,7 @@ func (m *APISupplement) UpdateCustomRole(ctx context.Context, roleIdOrLabel stri
 }
 
 // DeleteCustomRole deletes customRole by ID
-func (m *APISupplement) DeleteCustomRole(ctx context.Context, roleIdOrLabel string) (*okta.Response, error) {
+func (m *APISupplement) DeleteCustomRole(ctx context.Context, roleIdOrLabel string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/roles/%s", roleIdOrLabel)
 	re := m.cloneRequestExecutor()
 	req, err := re.NewRequest(http.MethodDelete, url, nil)

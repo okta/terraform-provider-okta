@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAppOAuthRedirectURI() *schema.Resource {
@@ -24,10 +24,9 @@ func resourceAppOAuthRedirectURI() *schema.Resource {
 				ForceNew: true,
 			},
 			"uri": {
-				Required:         true,
-				Type:             schema.TypeString,
-				Description:      "Redirect URI to append to Okta OIDC application.",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Required:    true,
+				Type:        schema.TypeString,
+				Description: "Redirect URI to append to Okta OIDC application.",
 			},
 		},
 	}
@@ -57,7 +56,7 @@ func resourceAppOAuthRedirectURIDelete(ctx context.Context, d *schema.ResourceDa
 	oktaMutexKV.Lock(appID)
 	defer oktaMutexKV.Unlock(appID)
 
-	app := okta.NewOpenIdConnectApplication()
+	app := sdk.NewOpenIdConnectApplication()
 	err := fetchAppByID(ctx, appID, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get application: %v", err)
@@ -83,7 +82,7 @@ func appendRedirectURI(ctx context.Context, d *schema.ResourceData, m interface{
 	oktaMutexKV.Lock(appID)
 	defer oktaMutexKV.Unlock(appID)
 
-	app := okta.NewOpenIdConnectApplication()
+	app := sdk.NewOpenIdConnectApplication()
 	if err := fetchAppByID(ctx, appID, m, app); err != nil {
 		return err
 	}

@@ -4,9 +4,8 @@ import (
 	"context"
 )
 
-func createDoesIdpExist() func(string) (bool, error) {
-	return func(id string) (bool, error) {
-		_, response, err := getOktaClientFromMetadata(testAccProvider.Meta()).IdentityProvider.GetIdentityProvider(context.Background(), id)
-		return doesResourceExist(response, err)
-	}
+func createDoesIdpExist(id string) (bool, error) {
+	client := oktaClientForTest()
+	_, response, err := client.IdentityProvider.GetIdentityProvider(context.Background(), id)
+	return doesResourceExist(response, err)
 }

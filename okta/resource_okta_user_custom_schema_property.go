@@ -11,7 +11,7 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceUserCustomSchemaProperty() *schema.Resource {
@@ -42,18 +42,16 @@ func resourceUserCustomSchemaProperty() *schema.Resource {
 			userPatternSchema,
 			map[string]*schema.Schema{
 				"scope": {
-					Type:             schema.TypeString,
-					Optional:         true,
-					Default:          "NONE",
-					ValidateDiagFunc: elemInSlice([]string{"SELF", "NONE", ""}),
+					Type:     schema.TypeString,
+					Optional: true,
+					Default:  "NONE",
 				},
 				"master": {
 					Type:     schema.TypeString,
 					Optional: true,
 					// Accepting an empty value to allow for zero value (when provisioning is off)
-					ValidateDiagFunc: elemInSlice([]string{"PROFILE_MASTER", "OKTA", "OVERRIDE", ""}),
-					Description:      "SubSchema profile manager, if not set it will inherit its setting.",
-					Default:          "PROFILE_MASTER",
+					Description: "SubSchema profile manager, if not set it will inherit its setting.",
+					Default:     "PROFILE_MASTER",
 				},
 				"master_override_priority": {
 					Type:        schema.TypeList,
@@ -92,10 +90,9 @@ func resourceUserCustomSchemaProperty() *schema.Resource {
 func resourceUserSchemaResourceV0() *schema.Resource {
 	return &schema.Resource{Schema: buildSchema(userBaseSchemaSchema, userSchemaSchema, map[string]*schema.Schema{
 		"scope": {
-			Type:             schema.TypeString,
-			Optional:         true,
-			Default:          "NONE",
-			ValidateDiagFunc: elemInSlice([]string{"SELF", "NONE", ""}),
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "NONE",
 		},
 	})}
 }
@@ -145,12 +142,12 @@ func resourceUserSchemaRead(ctx context.Context, d *schema.ResourceData, m inter
 	return nil
 }
 
-func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index string, schema *okta.UserSchema, isDeleteOperation bool) (*okta.UserSchemaAttribute, error) {
+func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index string, schema *sdk.UserSchema, isDeleteOperation bool) (*sdk.UserSchemaAttribute, error) {
 	typeSchemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(m), userType)
 	if err != nil {
 		return nil, err
 	}
-	var schemaAttribute *okta.UserSchemaAttribute
+	var schemaAttribute *sdk.UserSchemaAttribute
 
 	bOff := backoff.NewExponentialBackOff()
 	bOff.MaxElapsedTime = time.Second * 120

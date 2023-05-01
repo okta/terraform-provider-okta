@@ -5,19 +5,17 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccDataSourceOktaUser_read(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
-	baseConfig := mgr.GetFixtures("datasource.tf", ri, t)
-	createUserConfig := mgr.GetFixtures("datasource_create_user.tf", ri, t)
+	mgr := newFixtureManager(user, t.Name())
+	baseConfig := mgr.GetFixtures("datasource.tf", t)
+	createUserConfig := mgr.GetFixtures("datasource_create_user.tf", t)
 
 	// NOTE: eliminated previous flapping issues when delay_read_seconds was added to okta_user
 	// TF_ACC=1 go test -tags unit -mod=readonly -test.v -run ^TestAccOktaDataSourceUser_read$
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
@@ -40,12 +38,6 @@ func TestAccDataSourceOktaUser_read(t *testing.T) {
 					resource.TestCheckResourceAttr("data.okta_user.read_by_id", "first_name", "TestAcc"),
 					resource.TestCheckResourceAttr("data.okta_user.read_by_id", "last_name", "Smith"),
 
-					resource.TestCheckResourceAttrSet("data.okta_user.read_by_id_with_skip", "id"),
-					resource.TestCheckResourceAttrSet("data.okta_user.read_by_id_with_skip", "skip_groups"),
-					resource.TestCheckResourceAttrSet("data.okta_user.read_by_id_with_skip", "skip_roles"),
-					resource.TestCheckResourceAttr("data.okta_user.read_by_id_with_skip", "skip_groups", "true"),
-					resource.TestCheckResourceAttr("data.okta_user.read_by_id_with_skip", "skip_roles", "true"),
-
 					resource.TestCheckResourceAttrSet("data.okta_user.compound_search", "id"),
 					resource.TestCheckResourceAttrSet("data.okta_user.compound_search", "compound_search_operator"),
 					resource.TestCheckResourceAttr("data.okta_user.compound_search", "compound_search_operator", "or"),
@@ -64,15 +56,14 @@ func TestAccDataSourceOktaUser_read(t *testing.T) {
 
 // TestAccDataSourceOktaUser_SkipAdminRoles pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUser_SkipAdminRoles(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
-	resource.Test(t, resource.TestCase{
+	mgr := newFixtureManager(user, t.Name())
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(false, true), ri),
+				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(false, true)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckNoResourceAttr("data.okta_user.test", "admin_roles.#"),          // skipped
 					resource.TestCheckNoResourceAttr("data.okta_user.test", "roles.#"),                // skipped
@@ -85,15 +76,14 @@ func TestAccDataSourceOktaUser_SkipAdminRoles(t *testing.T) {
 
 // TestAccDataSourceOktaUser_SkipGroups pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUser_SkipGroups(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
-	resource.Test(t, resource.TestCase{
+	mgr := newFixtureManager(user, t.Name())
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(true, false), ri),
+				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(true, false)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_user.test", "admin_roles.#", "2"),       // SUPER_ADMIN, APP_ADMIN
 					resource.TestCheckResourceAttr("data.okta_user.test", "roles.#", "2"),             // SUPER_ADMIN, APP_ADMIN
@@ -106,15 +96,14 @@ func TestAccDataSourceOktaUser_SkipGroups(t *testing.T) {
 
 // TestAccDataSourceOktaUser_SkipGroupsSkipRoles pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUser_SkipGroupsSkipRoles(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
-	resource.Test(t, resource.TestCase{
+	mgr := newFixtureManager(user, t.Name())
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(true, true), ri),
+				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(true, true)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_user.test", "admin_roles.#", "0"),       // skipped
 					resource.TestCheckResourceAttr("data.okta_user.test", "roles.#", "0"),             // skipped
@@ -127,17 +116,16 @@ func TestAccDataSourceOktaUser_SkipGroupsSkipRoles(t *testing.T) {
 
 // TestAccDataSourceOktaUser_NoSkips pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUser_NoSkips(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(user)
+	mgr := newFixtureManager(user, t.Name())
 	allAdminRolesRegexp, _ := regexp.Compile("APP_ADMIN, SUPER_ADMIN")
 	allGroupMembershipsRegexp, _ := regexp.Compile("00g[a-z,A-Z,0-9]{17}, 00g[a-z,A-Z,0-9]{17}")
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(false, false), ri),
+				Config: mgr.ConfigReplace(testOktaUserRolesGroupsConfig(false, false)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_user.test", "admin_roles.#", "2"),       // SUPER_ADMIN, APP_ADMIN
 					resource.TestCheckResourceAttr("data.okta_user.test", "roles.#", "2"),             // SUPER_ADMIN, APP_ADMIN

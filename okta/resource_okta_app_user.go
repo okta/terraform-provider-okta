@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAppUser() *schema.Resource {
@@ -87,12 +87,12 @@ func resourceAppUser() *schema.Resource {
 }
 
 func resourceAppUserCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var app *okta.AutoLoginApplication
-	respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), okta.NewAutoLoginApplication(), nil)
+	var app *sdk.AutoLoginApplication
+	respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), sdk.NewAutoLoginApplication(), nil)
 	if err != nil {
 		return diag.Errorf("failed to get application by ID: %v", err)
 	}
-	app = respApp.(*okta.AutoLoginApplication)
+	app = respApp.(*sdk.AutoLoginApplication)
 	un := d.Get("username").(string)
 	if app.Credentials != nil && app.Credentials.Scheme == "SHARED_USERNAME_AND_PASSWORD" {
 		if un != "" {
@@ -118,12 +118,12 @@ func resourceAppUserCreate(ctx context.Context, d *schema.ResourceData, m interf
 }
 
 func resourceAppUserUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var app *okta.AutoLoginApplication
-	respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), okta.NewAutoLoginApplication(), nil)
+	var app *sdk.AutoLoginApplication
+	respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), sdk.NewAutoLoginApplication(), nil)
 	if err != nil {
 		return diag.Errorf("failed to get application by ID: %v", err)
 	}
-	app = respApp.(*okta.AutoLoginApplication)
+	app = respApp.(*sdk.AutoLoginApplication)
 	un := d.Get("username").(string)
 	if app.Credentials != nil && app.Credentials.Scheme == "SHARED_USERNAME_AND_PASSWORD" {
 		if un != "" {
@@ -149,8 +149,8 @@ func resourceAppUserUpdate(ctx context.Context, d *schema.ResourceData, m interf
 }
 
 func resourceAppUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var app *okta.AutoLoginApplication
-	respApp, resp, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), okta.NewAutoLoginApplication(), nil)
+	var app *sdk.AutoLoginApplication
+	respApp, resp, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), sdk.NewAutoLoginApplication(), nil)
 	if is404(resp) {
 		d.SetId("")
 		return nil
@@ -158,7 +158,7 @@ func resourceAppUserRead(ctx context.Context, d *schema.ResourceData, m interfac
 	if err != nil {
 		return diag.Errorf("failed to get application by ID: %v", err)
 	}
-	app = respApp.(*okta.AutoLoginApplication)
+	app = respApp.(*sdk.AutoLoginApplication)
 	if app.Credentials != nil && app.Credentials.Scheme == "SHARED_USERNAME_AND_PASSWORD" {
 		_ = d.Set("has_shared_username", true)
 	} else {
@@ -206,18 +206,18 @@ func resourceAppUserDelete(ctx context.Context, d *schema.ResourceData, m interf
 	return nil
 }
 
-func getAppUser(d *schema.ResourceData) *okta.AppUser {
+func getAppUser(d *schema.ResourceData) *sdk.AppUser {
 	var profile interface{}
 
 	rawProfile := d.Get("profile").(string)
 	// JSON is already validated
 	_ = json.Unmarshal([]byte(rawProfile), &profile)
 
-	return &okta.AppUser{
+	return &sdk.AppUser{
 		Id: d.Get("user_id").(string),
-		Credentials: &okta.AppUserCredentials{
+		Credentials: &sdk.AppUserCredentials{
 			UserName: d.Get("username").(string),
-			Password: &okta.AppUserPasswordCredential{
+			Password: &sdk.AppUserPasswordCredential{
 				Value: d.Get("password").(string),
 			},
 		},

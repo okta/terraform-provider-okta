@@ -4,39 +4,37 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 // Test creation of a simple AWS SWA app. The preconfigured apps are created by name.
 func TestAccAppSwaApplication_preconfig(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSwa)
-	config := mgr.GetFixtures("preconfig.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("preconfig_updated.tf", ri, t)
+	mgr := newFixtureManager(appSwa, t.Name())
+	config := mgr.GetFixtures("preconfig.tf", t)
+	updatedConfig := mgr.GetFixtures("preconfig_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSwa)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(okta.NewSwaApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSwaApplication())),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSwaApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),
@@ -47,23 +45,22 @@ func TestAccAppSwaApplication_preconfig(t *testing.T) {
 
 // Test creation of a custom SAML app.
 func TestAccAppSwaApplication_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSwa)
-	config := mgr.GetFixtures("custom.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("custom_updated.tf", ri, t)
+	mgr := newFixtureManager(appSwa, t.Name())
+	config := mgr.GetFixtures("custom.tf", t)
+	updatedConfig := mgr.GetFixtures("custom_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSwa)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(okta.NewSwaApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSwaApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "button_field", "btn-login"),
 					resource.TestCheckResourceAttr(resourceName, "password_field", "txtbox-password"),
 					resource.TestCheckResourceAttr(resourceName, "username_field", "txtbox-username"),
@@ -73,8 +70,8 @@ func TestAccAppSwaApplication_crud(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSwaApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://example.com/login-updated.html"),
 					resource.TestCheckResourceAttr(resourceName, "button_field", "btn-login-updated"),
@@ -87,8 +84,7 @@ func TestAccAppSwaApplication_crud(t *testing.T) {
 }
 
 func TestAccAppSwaApplication_timeouts(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appSwa)
+	mgr := newFixtureManager(appSwa, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appSwa)
 	config := `
 resource "okta_app_swa" "test" {
@@ -103,16 +99,16 @@ resource "okta_app_swa" "test" {
     update = "30m"
   }
 }`
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(okta.NewSwaApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config, ri),
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewAutoLoginApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.read", "2h"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.update", "30m"),

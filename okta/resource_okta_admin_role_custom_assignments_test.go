@@ -6,17 +6,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccOktaAdminRoleCustomAssignments(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(adminRoleCustomAssignments)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updated := mgr.GetFixtures("updated.tf", ri, t)
+	mgr := newFixtureManager(adminRoleCustomAssignments, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", adminRoleCustomAssignments)
-	resource.Test(
+	oktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
@@ -40,7 +38,8 @@ func TestAccOktaAdminRoleCustomAssignments(t *testing.T) {
 }
 
 func doesAdminRoleCustomAssignmentExist(id string) (bool, error) {
+	client := apiSupplementForTest()
 	parts := strings.Split(id, "/")
-	_, response, err := getSupplementFromMetadata(testAccProvider.Meta()).GetResourceSetBinding(context.Background(), parts[0], parts[1])
+	_, response, err := client.GetResourceSetBinding(context.Background(), parts[0], parts[1])
 	return doesResourceExist(response, err)
 }

@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
 func dataSourceBrand() *schema.Resource {
@@ -30,12 +30,12 @@ func dataSourceBrandRead(ctx context.Context, d *schema.ResourceData, m interfac
 	brandID, ok := d.GetOk("brand_id")
 	if ok {
 		logger(m).Info("reading brand by ID", "id", brandID.(string))
-		brand, _, err = getOktaClientFromMetadata(m).Brand.GetBrand(ctx, brandID.(string))
+		brand, _, err = getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrand(ctx, brandID.(string)).Execute()
 		if err != nil {
 			return diag.Errorf("failed to get brand: %v", err)
 		}
 	}
-	d.SetId(brand.Id)
+	d.SetId(brand.GetId())
 	rawMap := flattenBrand(brand)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {

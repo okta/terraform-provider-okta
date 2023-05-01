@@ -5,49 +5,22 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func createPostLogoutRedirectURIExists(name string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		missingErr := fmt.Errorf("resource not found: %s", name)
-		rs, ok := s.RootModule().Resources[name]
-		if !ok {
-			return missingErr
-		}
-
-		uri := rs.Primary.ID
-		appID := rs.Primary.Attributes["app_id"]
-		client := getOktaClientFromMetadata(testAccProvider.Meta())
-		app := okta.NewOpenIdConnectApplication()
-		_, response, err := client.Application.GetApplication(context.Background(), appID, app, nil)
-
-		// We don't want to consider a 404 an error in some cases and thus the delineation
-		if response != nil && response.StatusCode == 404 {
-			return missingErr
-		} else if err != nil && contains(app.Settings.OauthClient.PostLogoutRedirectUris, uri) {
-			return nil
-		}
-
-		return err
-	}
-}
-
 func TestAccAppOAuthApplication_postLogoutRedirectCrud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appOAuthPostLogoutRedirectURI)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", ri, t)
+	mgr := newFixtureManager(appOAuthPostLogoutRedirectURI, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appOAuthPostLogoutRedirectURI)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(okta.NewOpenIdConnectApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -69,4 +42,29 @@ func TestAccAppOAuthApplication_postLogoutRedirectCrud(t *testing.T) {
 			},
 		},
 	})
+}
+
+func createPostLogoutRedirectURIExists(resourceName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		missingErr := fmt.Errorf("resource not found: %s", resourceName)
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return missingErr
+		}
+
+		uri := rs.Primary.ID
+		appID := rs.Primary.Attributes["app_id"]
+		client := oktaClientForTest()
+		app := sdk.NewOpenIdConnectApplication()
+		_, response, err := client.Application.GetApplication(context.Background(), appID, app, nil)
+
+		// We don't want to consider a 404 an error in some cases and thus the delineation
+		if response != nil && response.StatusCode == 404 {
+			return missingErr
+		} else if err != nil && contains(app.Settings.OauthClient.PostLogoutRedirectUris, uri) {
+			return nil
+		}
+
+		return err
+	}
 }

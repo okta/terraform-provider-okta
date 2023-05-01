@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceTrustedOrigin() *schema.Resource {
@@ -109,8 +109,8 @@ func resourceTrustedOriginDelete(ctx context.Context, d *schema.ResourceData, m 
 }
 
 // Creates Trusted Origin struct with the data resource provided by TF
-func buildTrustedOrigin(d *schema.ResourceData) okta.TrustedOrigin {
-	trustedOrigin := okta.TrustedOrigin{
+func buildTrustedOrigin(d *schema.ResourceData) sdk.TrustedOrigin {
+	trustedOrigin := sdk.TrustedOrigin{
 		Name:   d.Get("name").(string),
 		Origin: d.Get("origin").(string),
 	}
@@ -120,16 +120,16 @@ func buildTrustedOrigin(d *schema.ResourceData) okta.TrustedOrigin {
 		trustedOrigin.Status = statusInactive
 	}
 	resScopes := d.Get("scopes").([]interface{})
-	trustedOrigin.Scopes = make([]*okta.Scope, len(resScopes))
+	trustedOrigin.Scopes = make([]*sdk.Scope, len(resScopes))
 	for i := range resScopes {
-		trustedOrigin.Scopes[i] = &okta.Scope{
+		trustedOrigin.Scopes[i] = &sdk.Scope{
 			Type: resScopes[i].(string),
 		}
 	}
 	return trustedOrigin
 }
 
-func setTrustedOrigin(d *schema.ResourceData, to *okta.TrustedOrigin) error {
+func setTrustedOrigin(d *schema.ResourceData, to *sdk.TrustedOrigin) error {
 	scopes := make([]string, len(to.Scopes))
 	for i, scope := range to.Scopes {
 		scopes[i] = scope.Type

@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceGroups() *schema.Resource {
@@ -26,10 +26,9 @@ func dataSourceGroups() *schema.Resource {
 				Description: "Searches for groups with a supported filtering expression for all attributes except for '_embedded', '_links', and 'objectClass'",
 			},
 			"type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Type of the group. When specified in the terraform resource, will act as a filter when searching for the groups",
-				ValidateDiagFunc: elemInSlice([]string{"OKTA_GROUP", "APP_GROUP", "BUILT_IN"}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Type of the group. When specified in the terraform resource, will act as a filter when searching for the groups",
 			},
 			"groups": {
 				Type:     schema.TypeList,

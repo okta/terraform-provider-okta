@@ -6,8 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 type AddCustomRoleBindingMemberRequest struct {
@@ -26,7 +25,7 @@ type CustomRoleBindingMember struct {
 	Links       interface{} `json:"_links,omitempty"`
 }
 
-func (m *APISupplement) ListResourceSetBindingMembers(ctx context.Context, resourceSetID, customRoleID string, qp *query.Params) (*ListCustomRoleBindingMembersResponse, *okta.Response, error) {
+func (m *APISupplement) ListResourceSetBindingMembers(ctx context.Context, resourceSetID, customRoleID string, qp *query.Params) (*ListCustomRoleBindingMembersResponse, *Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/resource-sets/%s/bindings/%s/members", resourceSetID, customRoleID)
 	if qp != nil {
 		url += qp.String()
@@ -44,7 +43,7 @@ func (m *APISupplement) ListResourceSetBindingMembers(ctx context.Context, resou
 	return members, resp, nil
 }
 
-func (m *APISupplement) AddResourceSetBindingMembers(ctx context.Context, resourceSetID, customRoleID string, body AddCustomRoleBindingMemberRequest) (*okta.Response, error) {
+func (m *APISupplement) AddResourceSetBindingMembers(ctx context.Context, resourceSetID, customRoleID string, body AddCustomRoleBindingMemberRequest) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/resource-sets/%s/bindings/%s/members", resourceSetID, customRoleID)
 	re := m.cloneRequestExecutor()
 	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPatch, url, body)
@@ -54,7 +53,7 @@ func (m *APISupplement) AddResourceSetBindingMembers(ctx context.Context, resour
 	return re.Do(ctx, req, nil)
 }
 
-func (m *APISupplement) DeleteResourceSetBindingMember(ctx context.Context, resourceSetID, customRoleID, memberID string) (*okta.Response, error) {
+func (m *APISupplement) DeleteResourceSetBindingMember(ctx context.Context, resourceSetID, customRoleID, memberID string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/iam/resource-sets/%s/bindings/%s/members/%s", resourceSetID, customRoleID, memberID)
 	re := m.cloneRequestExecutor()
 	req, err := re.NewRequest(http.MethodDelete, url, nil)

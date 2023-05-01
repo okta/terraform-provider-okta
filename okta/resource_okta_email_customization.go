@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
 func resourceEmailCustomization() *schema.Resource {
@@ -31,7 +31,7 @@ func resourceEmailCustomizationCreate(ctx context.Context, d *schema.ResourceDat
 		return diag.Errorf("template name required to create email customization")
 	}
 
-	etcr := okta.EmailTemplateCustomizationRequest{}
+	etcr := okta.EmailCustomization{}
 	if language, ok := d.GetOk("language"); ok {
 		etcr.Language = language.(string)
 	}
@@ -47,18 +47,18 @@ func resourceEmailCustomizationCreate(ctx context.Context, d *schema.ResourceDat
 		etcr.Body = body.(string)
 	}
 
-	client := getOktaClientFromMetadata(m)
+	client := getOktaV3ClientFromMetadata(m)
 
 	if forceIsDefaultOnCreate(d) && *etcr.IsDefault {
-		_, _ = client.Brand.DeleteEmailTemplateCustomizations(context.Background(), brandID.(string), templateName.(string))
+		_, _ = client.CustomizationApi.DeleteAllCustomizations(context.Background(), brandID.(string), templateName.(string)).Execute()
 	}
 
-	customization, _, err := client.Brand.CreateEmailTemplateCustomization(ctx, brandID.(string), templateName.(string), etcr)
+	customization, _, err := client.CustomizationApi.CreateEmailCustomization(ctx, brandID.(string), templateName.(string)).Instance(etcr).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create email customization: %v", err)
 	}
 
-	d.SetId(customization.Id)
+	d.SetId(customization.GetId())
 	rawMap := flattenEmailCustomization(customization)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {
@@ -94,8 +94,8 @@ func resourceEmailCustomizationRead(ctx context.Context, d *schema.ResourceData,
 		return diagErr
 	}
 
-	customization, resp, err := getOktaClientFromMetadata(m).Brand.GetEmailTemplateCustomization(ctx, etcr.brandID, etcr.templateName, d.Id())
-	if err := suppressErrorOn404(resp, err); err != nil {
+	customization, resp, err := getOktaV3ClientFromMetadata(m).CustomizationApi.GetEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Execute()
+	if err := v3suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get email customization: %v", err)
 	}
 	if customization == nil {
@@ -118,7 +118,7 @@ func resourceEmailCustomizationUpdate(ctx context.Context, d *schema.ResourceDat
 		return diagErr
 	}
 
-	cr := okta.EmailTemplateCustomizationRequest{}
+	cr := okta.EmailCustomization{}
 	if language, ok := d.GetOk("language"); ok {
 		cr.Language = language.(string)
 	}
@@ -132,12 +132,12 @@ func resourceEmailCustomizationUpdate(ctx context.Context, d *schema.ResourceDat
 		cr.Body = body.(string)
 	}
 
-	customization, _, err := getOktaClientFromMetadata(m).Brand.UpdateEmailTemplateCustomization(ctx, etcr.brandID, etcr.templateName, d.Id(), cr)
+	customization, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.ReplaceEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Instance(cr).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update email customization: %v", err)
 	}
 
-	d.SetId(customization.Id)
+	d.SetId(customization.GetId())
 	rawMap := flattenEmailCustomization(customization)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {
@@ -153,15 +153,15 @@ func resourceEmailCustomizationDelete(ctx context.Context, d *schema.ResourceDat
 		return diagErr
 	}
 
-	client := getOktaClientFromMetadata(m)
+	client := getOktaV3ClientFromMetadata(m)
 	if isDefault, ok := d.GetOk("is_default"); ok {
 		if forceIsDefaultOnDestroy(d) && isDefault.(bool) {
-			_, _ = client.Brand.DeleteEmailTemplateCustomizations(context.Background(), etcr.brandID, etcr.templateName)
+			_, _ = client.CustomizationApi.DeleteAllCustomizations(context.Background(), etcr.brandID, etcr.templateName).Execute()
 			return nil
 		}
 	}
 
-	_, err := client.Brand.DeleteEmailTemplateCustomization(ctx, etcr.brandID, etcr.templateName, d.Id())
+	_, err := client.CustomizationApi.DeleteEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to delete email customization: %v", err)
 	}

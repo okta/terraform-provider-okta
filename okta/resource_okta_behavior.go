@@ -33,30 +33,26 @@ func resourceBehavior() *schema.Resource {
 				Description: "Name of the behavior",
 			},
 			"type": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "Behavior type",
-				ForceNew:         true,
-				ValidateDiagFunc: elemInSlice([]string{behaviorAnomalousLocation, behaviorAnomalousDevice, behaviorAnomalousIP, behaviorVelocity}),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Behavior type",
+				ForceNew:    true,
 			},
 			"status": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Default:          statusActive,
-				ValidateDiagFunc: elemInSlice([]string{statusActive, statusInactive}),
-				Description:      "Behavior status: ACTIVE or INACTIVE.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     statusActive,
+				Description: "Behavior status: ACTIVE or INACTIVE.",
 			},
 			"location_granularity_type": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Determines the method and level of detail used to evaluate the behavior.",
-				ValidateDiagFunc: elemInSlice([]string{"LAT_LONG", "CITY", "COUNTRY", "SUBDIVISION"}),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Determines the method and level of detail used to evaluate the behavior.",
 			},
 			"radius_from_location": {
-				Type:             schema.TypeInt,
-				Optional:         true,
-				Description:      "Radius from location (in kilometers)",
-				ValidateDiagFunc: intAtLeast(5),
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Radius from location (in kilometers)",
 			},
 			"number_of_authentications": {
 				Type:        schema.TypeInt,
@@ -64,11 +60,10 @@ func resourceBehavior() *schema.Resource {
 				Description: "The number of recent authentications used to evaluate the behavior.",
 			},
 			"velocity": {
-				Type:             schema.TypeInt,
-				Optional:         true,
-				Description:      "Velocity (in kilometers per hour).",
-				ValidateDiagFunc: intAtLeast(1),
-				ConflictsWith:    []string{"number_of_authentications", "radius_from_location", "location_granularity_type"},
+				Type:          schema.TypeInt,
+				Optional:      true,
+				Description:   "Velocity (in kilometers per hour).",
+				ConflictsWith: []string{"number_of_authentications", "radius_from_location", "location_granularity_type"},
 			},
 		},
 	}
@@ -80,7 +75,7 @@ func resourceBehaviorCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	behavior, _, err := getSupplementFromMetadata(m).CreateBehavior(ctx, buildBehavior(d))
+	behavior, _, err := getAPISupplementFromMetadata(m).CreateBehavior(ctx, buildBehavior(d))
 	if err != nil {
 		return diag.Errorf("failed to create location behavior: %v", err)
 	}
@@ -90,7 +85,7 @@ func resourceBehaviorCreate(ctx context.Context, d *schema.ResourceData, m inter
 
 func resourceBehaviorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	logger(m).Info("getting behavior", "id", d.Id())
-	behavior, resp, err := getSupplementFromMetadata(m).GetBehavior(ctx, d.Id())
+	behavior, resp, err := getAPISupplementFromMetadata(m).GetBehavior(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to find behavior: %v", err)
 	}
@@ -111,7 +106,7 @@ func resourceBehaviorUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = getSupplementFromMetadata(m).UpdateBehavior(ctx, d.Id(), buildBehavior(d))
+	_, _, err = getAPISupplementFromMetadata(m).UpdateBehavior(ctx, d.Id(), buildBehavior(d))
 	if err != nil {
 		return diag.Errorf("failed to update location behavior: %v", err)
 	}
@@ -126,7 +121,7 @@ func resourceBehaviorUpdate(ctx context.Context, d *schema.ResourceData, m inter
 
 func resourceBehaviorDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	logger(m).Info("deleting location behavior", "name", d.Get("name").(string))
-	_, err := getSupplementFromMetadata(m).DeleteBehavior(ctx, d.Id())
+	_, err := getAPISupplementFromMetadata(m).DeleteBehavior(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete location behavior: %v", err)
 	}
@@ -156,7 +151,7 @@ func buildBehavior(d *schema.ResourceData) sdk.Behavior {
 }
 
 func handleBehaviorLifecycle(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getSupplementFromMetadata(m)
+	client := getAPISupplementFromMetadata(m)
 	if d.Get("status").(string) == statusActive {
 		logger(m).Info("activating behavior", "name", d.Get("name").(string))
 		_, err := client.ActivateBehavior(ctx, d.Id())

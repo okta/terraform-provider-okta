@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
-
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func (m *APISupplement) ListEnrollmentPolicyApps(ctx context.Context, policyID string, qp *query.Params) ([]*okta.Application, *okta.Response, error) {
+func (m *APISupplement) ListEnrollmentPolicyApps(ctx context.Context, policyID string, qp *query.Params) ([]*Application, *Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%s/app", policyID)
 	if qp != nil {
 		url += qp.String()
@@ -20,7 +18,7 @@ func (m *APISupplement) ListEnrollmentPolicyApps(ctx context.Context, policyID s
 	if err != nil {
 		return nil, nil, err
 	}
-	var applications []*okta.Application
+	var applications []*Application
 	resp, err := re.Do(ctx, req, &applications)
 	if err != nil {
 		return nil, resp, err

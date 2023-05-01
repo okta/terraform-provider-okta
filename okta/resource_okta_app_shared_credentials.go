@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceAppSharedCredentials() *schema.Resource {
@@ -41,10 +41,9 @@ func resourceAppSharedCredentials() *schema.Resource {
 				Description: "Login username field",
 			},
 			"url": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Login URL",
-				ValidateDiagFunc: stringIsURL(validURLSchemes...),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Login URL",
 			},
 			"url_regex": {
 				Type:        schema.TypeString,
@@ -89,10 +88,6 @@ func resourceAppSharedCredentialsCreate(ctx context.Context, d *schema.ResourceD
 		return diag.Errorf("failed to create SWA shared credentials application: %v", err)
 	}
 	d.SetId(app.Id)
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for SWA shared credentials application: %v", err)
-	}
 	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for SWA shared credentials application: %v", err)
@@ -101,7 +96,7 @@ func resourceAppSharedCredentialsCreate(ctx context.Context, d *schema.ResourceD
 }
 
 func resourceAppSharedCredentialsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	app := okta.NewBrowserPluginApplication()
+	app := sdk.NewBrowserPluginApplication()
 	err := fetchApp(ctx, d, m, app)
 	if err != nil {
 		return diag.Errorf("failed to get SWA shared credentials application: %v", err)
@@ -126,10 +121,6 @@ func resourceAppSharedCredentialsRead(ctx context.Context, d *schema.ResourceDat
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	_ = d.Set("accessibility_login_redirect_url", app.Accessibility.LoginRedirectUrl)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
-	err = syncGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to sync groups and users for SWA shared credentials application: %v", err)
-	}
 	return nil
 }
 
@@ -143,10 +134,6 @@ func resourceAppSharedCredentialsUpdate(ctx context.Context, d *schema.ResourceD
 	err = setAppStatus(ctx, d, client, app.Status)
 	if err != nil {
 		return diag.Errorf("failed to set SWA shared credentials application status: %v", err)
-	}
-	err = handleAppGroupsAndUsers(ctx, app.Id, d, m)
-	if err != nil {
-		return diag.Errorf("failed to handle groups and users for SWA shared credentials application: %v", err)
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
@@ -167,16 +154,16 @@ func resourceAppSharedCredentialsDelete(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func buildAppSharedCredentials(d *schema.ResourceData) *okta.BrowserPluginApplication {
-	app := okta.NewBrowserPluginApplication()
+func buildAppSharedCredentials(d *schema.ResourceData) *sdk.BrowserPluginApplication {
+	app := sdk.NewBrowserPluginApplication()
 	app.Name = "template_swa"
 	name := d.Get("preconfigured_app").(string)
 	if name != "" {
 		app.Name = name
 	}
 	app.Label = d.Get("label").(string)
-	app.Settings = &okta.ApplicationSettings{
-		App: &okta.ApplicationSettingsApplication{
+	app.Settings = &sdk.ApplicationSettings{
+		App: &sdk.ApplicationSettingsApplication{
 			"buttonField":   d.Get("button_field").(string),
 			"loginUrlRegex": d.Get("url_regex").(string),
 			"passwordField": d.Get("password_field").(string),
@@ -187,9 +174,9 @@ func buildAppSharedCredentials(d *schema.ResourceData) *okta.BrowserPluginApplic
 		},
 		Notes: buildAppNotes(d),
 	}
-	app.Credentials = &okta.SchemeApplicationCredentials{
+	app.Credentials = &sdk.SchemeApplicationCredentials{
 		UserNameTemplate: buildUserNameTemplate(d),
-		Password: &okta.PasswordCredential{
+		Password: &sdk.PasswordCredential{
 			Value: d.Get("shared_password").(string),
 		},
 		Scheme:   "SHARED_USERNAME_AND_PASSWORD",

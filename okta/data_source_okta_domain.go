@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func dataSourceDomain() *schema.Resource {
@@ -87,7 +87,7 @@ func dataSourceDomainRead(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.Errorf("failed to get domains: %v", err)
 	}
 
-	var domain *okta.Domain
+	var domain *sdk.Domain
 	for _, _domain := range domains.Domains {
 		if _domain.Id == domainID {
 			domain = _domain

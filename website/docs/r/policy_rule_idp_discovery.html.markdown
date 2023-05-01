@@ -70,8 +70,6 @@ resource "okta_policy_rule_idp_discovery" "example" {
 
 The following arguments are supported:
 
-- `policyid` - (Deprecated) Policy ID.
-
 - `policy_id` - (Required) Policy ID.
 
 - `name` - (Required) Policy rule name.
@@ -152,8 +150,6 @@ user_identifier_patterns {
 ## Attributes Reference
 
 - `id` - ID of the Rule.
-
-- `policyid` - (Deprecated) Policy ID.
   
 - `policy_id` - Policy ID.
 

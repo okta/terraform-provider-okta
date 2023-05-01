@@ -4,30 +4,28 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func TestAccAppThreeFieldApplication_crud(t *testing.T) {
-	ri := acctest.RandInt()
-	mgr := newFixtureManager(appThreeField)
-	config := mgr.GetFixtures("basic.tf", ri, t)
-	updatedConfig := mgr.GetFixtures("updated.tf", ri, t)
-	updatedCreds := mgr.GetFixtures("updated_credentials.tf", ri, t)
+	mgr := newFixtureManager(appThreeField, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
+	updatedCreds := mgr.GetFixtures("updated_credentials.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appThreeField)
 
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appThreeField, createDoesAppExist(okta.NewSwaThreeFieldApplication())),
+		CheckDestroy:      createCheckResourceDestroy(appThreeField, createDoesAppExist(sdk.NewSwaThreeFieldApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaThreeFieldApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSwaThreeFieldApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "button_selector", "btn"),
 					resource.TestCheckResourceAttr(resourceName, "username_selector", "user"),
 					resource.TestCheckResourceAttr(resourceName, "password_selector", "pass"),
@@ -40,8 +38,8 @@ func TestAccAppThreeFieldApplication_crud(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaThreeFieldApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSwaThreeFieldApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "button_selector", "btn1"),
 					resource.TestCheckResourceAttr(resourceName, "username_selector", "user1"),
@@ -55,8 +53,8 @@ func TestAccAppThreeFieldApplication_crud(t *testing.T) {
 			{
 				Config: updatedCreds,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(okta.NewSwaThreeFieldApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(ri)),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSwaThreeFieldApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "button_selector", "btn1"),
 					resource.TestCheckResourceAttr(resourceName, "username_selector", "user1"),
@@ -65,7 +63,7 @@ func TestAccAppThreeFieldApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "extra_field_selector", "mfa"),
 					resource.TestCheckResourceAttr(resourceName, "extra_field_value", "mfa"),
 					resource.TestCheckResourceAttr(resourceName, "credentials_scheme", "SHARED_USERNAME_AND_PASSWORD"),
-					resource.TestCheckResourceAttr(resourceName, "shared_username", buildResourceName(ri)+"@example.com"),
+					resource.TestCheckResourceAttr(resourceName, "shared_username", buildResourceName(mgr.Seed)+"@example.com"),
 					resource.TestCheckResourceAttrSet(resourceName, "shared_password"),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 				),

@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func dataSourceNetworkZone() *schema.Resource {
@@ -74,7 +74,7 @@ func dataSourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, m in
 	}
 	var (
 		err  error
-		zone *okta.NetworkZone
+		zone *sdk.NetworkZone
 	)
 	if id != "" {
 		zone, _, err = getOktaClientFromMetadata(m).NetworkZone.GetNetworkZone(ctx, id)
@@ -101,7 +101,7 @@ func dataSourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func findNetworkZoneByName(ctx context.Context, m interface{}, name string) (*okta.NetworkZone, error) {
+func findNetworkZoneByName(ctx context.Context, m interface{}, name string) (*sdk.NetworkZone, error) {
 	client := getOktaClientFromMetadata(m)
 	zones, resp, err := client.NetworkZone.ListNetworkZones(ctx, nil)
 	if err != nil {
@@ -113,7 +113,7 @@ func findNetworkZoneByName(ctx context.Context, m interface{}, name string) (*ok
 		}
 	}
 	for {
-		var moreZones []*okta.NetworkZone
+		var moreZones []*sdk.NetworkZone
 		if resp.HasNextPage() {
 			resp, err = resp.Next(ctx, &moreZones)
 			if err != nil {
