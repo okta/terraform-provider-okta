@@ -71,7 +71,7 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 		// NOTE: validate credentials during initial config with a call to
 		// /api/v1/users/me
 		if c.apiToken != "" {
-			if _, _, err := c.oktaClient.User.GetUser(ctx, "me"); err != nil {
+			if _, _, err := client.User.GetUser(ctx, "me"); err != nil {
 				return err
 			}
 		}
