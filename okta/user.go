@@ -292,6 +292,18 @@ func listUserOnlyRoles(ctx context.Context, c *sdk.Client, userID string) (userO
 	return
 }
 
+// set all groups currently attached to the user
+func setAllGroups(ctx context.Context, d *schema.ResourceData, c *sdk.Client) error {
+	groupIDs, err := getGroupsForUser(ctx, d.Id(), c)
+	if err != nil {
+		return err
+	}
+	gids := convertStringSliceToInterfaceSlice(groupIDs)
+	return setNonPrimitives(d, map[string]interface{}{
+		"group_memberships": schema.NewSet(schema.HashString, gids),
+	})
+}
+
 func getAdminRoles(ctx context.Context, id string, c *sdk.Client) ([]interface{}, *sdk.Response, error) {
 	roleTypes := make([]interface{}, 0)
 	roles, resp, err := listUserOnlyRoles(ctx, c, id)

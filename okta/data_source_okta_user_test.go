@@ -150,9 +150,6 @@ resource "okta_user" "testAcc-replace_with_uuid" {
   last_name  = "Smith"
   login      = "testAcc-replace_with_uuid@example.com"
   email      = "testAcc-replace_with_uuid@example.com"
-  lifecycle {
-    ignore_changes = [admin_roles]
-  }
 }
 resource "okta_user_admin_roles" "test" {
   user_id     = okta_user.testAcc-replace_with_uuid.id
