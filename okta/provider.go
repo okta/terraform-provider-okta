@@ -418,6 +418,11 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		return nil, diag.Errorf("[ERROR] invalid configuration: %v", err)
 	}
 
+	// Discover if the Okta Org is Classic or OIE
+	if org, _, err := config.supplementClient.GetWellKnownOktaOrganization(ctx); err == nil {
+		config.classicOrg = (org.Pipeline == "v1") // v1 == Classic, idx == OIE
+	}
+
 	return &config, nil
 }
 
