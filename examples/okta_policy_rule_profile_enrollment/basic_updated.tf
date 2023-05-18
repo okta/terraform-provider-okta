@@ -28,6 +28,9 @@ resource "okta_policy_rule_profile_enrollment" "test" {
   unknown_user_action = "REGISTER"
   email_verification  = true
   access              = "ALLOW"
+  enroll_authenticators = [
+    "password"
+  ]
   profile_attributes {
     name     = "email"
     label    = "Email"

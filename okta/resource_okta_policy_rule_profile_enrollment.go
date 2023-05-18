@@ -65,6 +65,12 @@ func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 				Description: "Allow or deny access based on the rule conditions: ALLOW or DENY",
 				Default:     "ALLOW",
 			},
+			"enroll_authenticators": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Additional authenticator fields that can be used on the first page of user registration",
+				Elem:        schema.TypeString,
+			},
 			"profile_attributes": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -142,6 +148,9 @@ func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.Reso
 	if len(rule.Actions.ProfileEnrollment.TargetGroupIds) != 0 {
 		_ = d.Set("target_group_id", rule.Actions.ProfileEnrollment.TargetGroupIds[0])
 	}
+	if len(rule.Actions.ProfileEnrollment.EnrollAuthenticators) != 0 {
+		_ = d.Set("enroll_authenticators", rule.Actions.ProfileEnrollment.EnrollAuthenticators)
+	}
 	_ = d.Set("unknown_user_action", rule.Actions.ProfileEnrollment.UnknownUserAction)
 	_ = d.Set("ui_schema_id", rule.Actions.ProfileEnrollment.UiSchemaId)
 	_ = d.Set("email_verification", *rule.Actions.ProfileEnrollment.ActivationRequirements.EmailVerification)
@@ -204,6 +213,10 @@ func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.Sdk
 	targetGroup, ok := d.GetOk("target_group_id")
 	if ok {
 		rule.Actions.ProfileEnrollment.TargetGroupIds = []string{targetGroup.(string)}
+	}
+	enrollAuthenticators, ok := d.GetOk("enroll_authenticators")
+	if ok {
+		rule.Actions.ProfileEnrollment.EnrollAuthenticators = enrollAuthenticators.([]string)
 	}
 	pa, ok := d.GetOk("profile_attributes")
 	if !ok {
