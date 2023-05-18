@@ -15,7 +15,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-// TODU
 func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 	mgr := newFixtureManager(user, t.Name())
 	config := mgr.GetFixtures("custom_attributes.tf", t)
