@@ -15,7 +15,7 @@ import (
 func dataSourceAppOauth() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppOauthRead,
-		Schema: map[string]*schema.Schema{
+		Schema: buildSchema(skipUsersAndGroupsSchema, map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
 				Optional:      true,
@@ -140,7 +140,7 @@ func dataSourceAppOauth() *schema.Resource {
 				Computed:    true,
 				Description: "Indicates if the client is allowed to use wildcard matching of redirect_uris",
 			},
-		},
+		}),
 	}
 }
 

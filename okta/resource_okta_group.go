@@ -46,6 +46,13 @@ func resourceGroup() *schema.Resource {
 				Optional:    true,
 				Description: "Group description",
 			},
+			"skip_users": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Ignore users sync. This is a temporary solution until 'users' field is supported in all the app-like resources",
+				Default:     false,
+				Deprecated:  "Because of users has been removed, this attribute is a no op and will be removed",
+			},
 			"custom_profile_attributes": {
 				Type:             schema.TypeString,
 				Optional:         true,

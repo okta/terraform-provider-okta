@@ -15,7 +15,7 @@ import (
 func dataSourceAppSaml() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppSamlRead,
-		Schema: map[string]*schema.Schema{
+		Schema: buildSchema(skipUsersAndGroupsSchema, map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
 				Optional:      true,
@@ -279,7 +279,7 @@ func dataSourceAppSaml() *schema.Resource {
 				Computed:    true,
 				Description: "SAML Signed Request enabled",
 			},
-		},
+		}),
 	}
 }
 

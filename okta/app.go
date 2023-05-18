@@ -89,6 +89,23 @@ var (
 		},
 	}
 
+	skipUsersAndGroupsSchema = map[string]*schema.Schema{
+		"skip_users": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Ignore users sync. This is a temporary solution until 'users' field is supported in all the app-like resources",
+			Default:     false,
+			Deprecated:  "Because of users has been removed, this attribute is a no op and will be removed",
+		},
+		"skip_groups": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Ignore groups sync. This is a temporary solution until 'groups' field is supported in all the app-like resources",
+			Default:     false,
+			Deprecated:  "Because of groups has been removed, this attribute is a no op and will be removed",
+		},
+	}
+
 	appVisibilitySchema = map[string]*schema.Schema{
 		"auto_submit_toolbar": {
 			Type:        schema.TypeBool,

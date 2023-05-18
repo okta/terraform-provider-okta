@@ -12,7 +12,7 @@ import (
 func dataSourceApp() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppRead,
-		Schema: map[string]*schema.Schema{
+		Schema: buildSchema(skipUsersAndGroupsSchema, map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
 				Optional:      true,
@@ -61,7 +61,7 @@ func dataSourceApp() *schema.Resource {
 				Description: "Users associated with the application",
 				Deprecated:  "The `users` field is now deprecated for the data source `okta_app`, please replace all uses of this with: `okta_app_user_assignments`",
 			},
-		},
+		}),
 	}
 }
 
