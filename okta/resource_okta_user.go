@@ -71,6 +71,13 @@ func resourceUser() *schema.Resource {
 			},
 		},
 		Schema: map[string]*schema.Schema{
+			"skip_roles": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Do not populate user roles information (prevents additional API call)",
+				Deprecated:  "Because admin_roles has been removed, this attribute is a no op and will be removed",
+			},
 			"city": {
 				Type:        schema.TypeString,
 				Optional:    true,
