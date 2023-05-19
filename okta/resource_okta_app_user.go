@@ -76,12 +76,57 @@ func resourceAppUser() *schema.Resource {
 					return new == ""
 				},
 			},
+			"profile_attributes_to_ignore": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "List of profile keys that should be excluded from being managed by Terraform.",
+			},
 			"retain_assignment": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
 				Description: "Retain the user assignment on destroy. If set to true, the resource will be removed from state but not from the Okta app.",
 			},
+		},
+		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, v interface{}) error {
+			filteredAttributes := convertInterfaceToStringSet(d.Get("profile_attributes_to_ignore"))
+			if len(filteredAttributes) == 0 {
+				return nil
+			}
+
+			oldAttrs, newAttrs := d.GetChange("profile")
+			var oldAttrsMap map[string]interface{}
+			_ = json.Unmarshal([]byte(oldAttrs.(string)), &oldAttrsMap)
+			var newAttrsMap map[string]interface{}
+			_ = json.Unmarshal([]byte(newAttrs.(string)), &newAttrsMap)
+
+			if d.Id() == "" {
+				// This is a new app_user resource. In this case, we only have new values. We'll filter any
+				// values for newly created resources as this is a rare case. If one specifies
+				// `profile_attributes_to_ignore` and then additionally includes those fields
+				// as specified in the initial resource creation, we'll simply ignore them.
+
+				for k := range newAttrsMap {
+					if contains(filteredAttributes, k) {
+						delete(newAttrsMap, k)
+					}
+				}
+			} else {
+				// We are updating. We've already done a read from the server so the old value will now contain
+				// correct values. Thus, we update `profile` with the filtered attributes from the current old value.
+
+				for k, v := range oldAttrsMap {
+					if contains(filteredAttributes, k) {
+						newAttrsMap[k] = v
+					}
+				}
+			}
+
+			profile, _ := json.Marshal(newAttrsMap)
+			d.SetNew("profile", string(profile))
+
+			return nil
 		},
 	}
 }
@@ -145,10 +190,16 @@ func resourceAppUserUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	if err != nil {
 		return diag.Errorf("failed to update application's user: %v", err)
 	}
-	return resourceAppUserRead(ctx, d, m)
+
+	ignoredAttributes := convertInterfaceToStringSet(d.Get("profile_attributes_to_ignore"))
+	return resourceAppUserReadFilterProfile(ctx, d, m, ignoredAttributes)
 }
 
 func resourceAppUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return resourceAppUserReadFilterProfile(ctx, d, m, []string{})
+}
+
+func resourceAppUserReadFilterProfile(ctx context.Context, d *schema.ResourceData, m interface{}, ignoredAttributes []string) diag.Diagnostics {
 	var app *sdk.AutoLoginApplication
 	respApp, resp, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), sdk.NewAutoLoginApplication(), nil)
 	if is404(resp) {
@@ -179,7 +230,14 @@ func resourceAppUserRead(ctx context.Context, d *schema.ResourceData, m interfac
 	}
 	var rawProfile string
 	if u.Profile != nil {
-		p, _ := json.Marshal(u.Profile)
+		filteredProfile := make(map[string]interface{})
+		for k, v := range u.Profile.(map[string]interface{}) {
+			if !contains(ignoredAttributes, k) {
+				filteredProfile[k] = v
+			}
+		}
+
+		p, _ := json.Marshal(filteredProfile)
 		rawProfile = string(p)
 	}
 	_ = d.Set("profile", rawProfile)

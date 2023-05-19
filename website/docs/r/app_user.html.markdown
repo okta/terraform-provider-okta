@@ -40,12 +40,16 @@ The following arguments are supported:
 
 - `user_id` - (Required) User to associate the application with.
 
-- `username` - (Optional) The username to use for the app user. In case the user is assigned to the app with 
+- `username` - (Optional) The username to use for the app user. In case the user is assigned to the app with
   'SHARED_USERNAME_AND_PASSWORD' credentials scheme, this field will be computed and should not be set.
 
 - `password` - (Optional) The password to use.
 
 - `profile` - (Optional) The JSON profile of the App User.
+
+- `profile_attributes_to_ignore` - (Optional) List of profile keys that should be excluded from being managed
+  by Terraform. This is useful in situations where specific profile fields are automatically mapped to app
+  schema properties.
 
 - `retain_assignment` - (Optional) Retain the user association on destroy. If set to true, the resource will be removed from state but not from the Okta app.
 

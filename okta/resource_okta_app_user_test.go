@@ -16,6 +16,7 @@ func TestAccOktaAppUser_crud(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", t)
 	update := mgr.GetFixtures("update.tf", t)
 	basicProfile := mgr.GetFixtures("basic_profile.tf", t)
+	ignoreConfig := mgr.GetFixtures("profile_attributes_to_ignore.tf", t)
 
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -49,6 +50,16 @@ func TestAccOktaAppUser_crud(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "user_id"),
 					resource.TestCheckResourceAttr(resourceName, "username", fmt.Sprintf("testAcc_%d@example.com", mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "profile", "{\"testCustom\":\"testing\"}"),
+				),
+			},
+			{
+				Config:  ignoreConfig,
+				Destroy: false,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "user_id"),
+					resource.TestCheckResourceAttr(resourceName, "username", fmt.Sprintf("testAcc_%d@example.com", mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "profile", "{\"someAttribute\":\"testing\"}"), // Note: "testCustom" is ignored and should not be present
 				),
 			},
 			{
