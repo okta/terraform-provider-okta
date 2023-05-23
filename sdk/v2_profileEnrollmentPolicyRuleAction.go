@@ -8,6 +8,7 @@ type ProfileEnrollmentPolicyRuleAction struct {
 	TargetGroupIds             []string                                          `json:"targetGroupIds,omitempty"`
 	UiSchemaId                 string                                            `json:"uiSchemaId,omitempty"`
 	UnknownUserAction          string                                            `json:"unknownUserAction,omitempty"`
+	EnrollAuthenticators       []string                                          `json:"enrollAuthenticators,omitempty"`
 }
 
 func NewProfileEnrollmentPolicyRuleAction() *ProfileEnrollmentPolicyRuleAction {

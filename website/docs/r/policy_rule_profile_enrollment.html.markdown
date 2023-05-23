@@ -47,6 +47,9 @@ resource "okta_policy_rule_profile_enrollment" "example" {
   unknown_user_action = "REGISTER"
   email_verification  = true
   access              = "ALLOW"
+  enroll_authenticators = [
+    "password",
+  ]
   profile_attributes {
     name     = "email"
     label    = "Email"
@@ -80,6 +83,8 @@ The following arguments are supported:
 - `email_verification` - (Optional) Indicates whether email verification should occur before access is granted. Default is `true`.
 
 - `access` - (Optional) Allow or deny access based on the rule conditions. Valid values are: `"ALLOW"`, `"DENY"`. Default is `"ALLOW"`.
+- 
+- `enroll_authenticators` - (Optional) Additional authenticator fields that can be used on the first page of user registration. Valid values are: `"password"`.
 
 - `profile_attributes` - (Required) A list of attributes to prompt the user during registration or progressive profiling. Where defined on the User schema, these attributes are persisted in the User profile. Non-schema attributes may also be added, which aren't persisted to the User's profile, but are included in requests to the registration inline hook. A maximum of 10 Profile properties is supported.
     - `label` - (Required) A display-friendly label for this property
