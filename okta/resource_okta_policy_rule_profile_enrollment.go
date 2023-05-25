@@ -95,13 +95,11 @@ func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 }
 
 // resourcePolicyProfileEnrollmentRuleCreate
-
 // True create does not exist for the rule of a profile enrollment policy.
 // "This type of policy can only have one policy rule, so it's not possible to
 // create other rules. Instead, consider editing the default one to meet your
 // needs."
 // https://developer.okta.com/docs/reference/api/policy/#profile-enrollment-policy
-
 func resourcePolicyProfileEnrollmentRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	if isClassicOrg(m) {
 		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
@@ -121,7 +119,11 @@ func resourcePolicyProfileEnrollmentRuleCreate(ctx context.Context, d *schema.Re
 	if len(rules) == 0 {
 		return diag.Errorf("this policy should contain one default Catch-All rule, but it doesn't")
 	}
-	rule, _, err := getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), rules[0].Id, buildPolicyRuleProfileEnrollment(d, rules[0].Id))
+	updateRule, err := buildPolicyRuleProfileEnrollment(ctx, m, d, rules[0].Id)
+	if err != nil {
+		return diag.Errorf("failed to prepare update of existing profile enrollment policy rule: %v", err)
+	}
+	rule, _, err := getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), rules[0].Id, *updateRule)
 	if err != nil {
 		return diag.Errorf("failed to update existing profile enrollment policy rule: %v", err)
 	}
@@ -171,7 +173,11 @@ func resourcePolicyProfileEnrollmentRuleUpdate(ctx context.Context, d *schema.Re
 		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
 	}
 
-	_, _, err := getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), d.Id(), buildPolicyRuleProfileEnrollment(d, d.Id()))
+	updateRule, err := buildPolicyRuleProfileEnrollment(ctx, m, d, d.Id())
+	if err != nil {
+		return diag.Errorf("failed to prepare update profile enrollment policy rule: %v", err)
+	}
+	_, _, err = getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), d.Id(), *updateRule)
 	if err != nil {
 		return diag.Errorf("failed to update profile enrollment policy rule: %v", err)
 	}
@@ -187,36 +193,55 @@ func resourcePolicyProfileEnrollmentRuleDelete(ctx context.Context, d *schema.Re
 	return nil
 }
 
-// build profile enrollment policy rule from schema data
-func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.SdkPolicyRule {
-	rule := sdk.ProfileEnrollmentPolicyRule()
-	rule.Id = id
-	rule.Name = "Catch-all Rule" // read-only
-	rule.Priority = 99           // read-only
-	rule.System = boolPtr(true)  // read-only
-	rule.Status = statusActive
-	rule.Actions = sdk.SdkPolicyRuleActions{
-		ProfileEnrollment: &sdk.ProfileEnrollmentPolicyRuleAction{
-			Access: d.Get("access").(string),
-			ActivationRequirements: &sdk.ProfileEnrollmentPolicyRuleActivationRequirement{
-				EmailVerification: boolPtr(d.Get("email_verification").(bool)),
-			},
-			UnknownUserAction: d.Get("unknown_user_action").(string),
-			UiSchemaId:        d.Get("ui_schema_id").(string),
-		},
+// buildPolicyRuleProfileEnrollment build profile enrollment policy rule from
+// copy of existing rule
+func buildPolicyRuleProfileEnrollment(ctx context.Context, m interface{}, d *schema.ResourceData, id string) (*sdk.SdkPolicyRule, error) {
+	rule, resp, err := getAPISupplementFromMetadata(m).GetPolicyRule(ctx, d.Get("policy_id").(string), id)
+	if err = suppressErrorOn404(resp, err); err != nil {
+		return nil, err
 	}
-	hook, ok := d.GetOk("inline_hook_id")
-	if ok {
-		rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks = []*sdk.PreRegistrationInlineHook{{InlineHookId: hook.(string)}}
+
+	// API requires these attributes be set
+	updateRule := sdk.ProfileEnrollmentPolicyRule()
+	updateRule.Id = rule.Id
+	updateRule.Name = rule.Name
+	updateRule.Priority = rule.Priority
+	updateRule.System = rule.System
+	updateRule.Status = rule.Status
+
+	ruleAction := sdk.NewProfileEnrollmentPolicyRuleAction()
+	if access, ok := d.GetOk("access"); ok {
+		ruleAction.Access = access.(string)
 	}
-	targetGroup, ok := d.GetOk("target_group_id")
-	if ok {
-		rule.Actions.ProfileEnrollment.TargetGroupIds = []string{targetGroup.(string)}
+	// email verification is set on the config use it's value, else fallback to the rule copy
+	activationRequirements := sdk.NewProfileEnrollmentPolicyRuleActivationRequirement()
+	if ev, _ := d.GetOk("email_verification"); ev != nil {
+		activationRequirements.EmailVerification = boolPtr(ev.(bool))
+	} else {
+		activationRequirements.EmailVerification = ruleAction.ActivationRequirements.EmailVerification
+	}
+	ruleAction.ActivationRequirements = activationRequirements
+	if uua, ok := d.GetOk("unknown_user_action"); ok {
+		ruleAction.UnknownUserAction = uua.(string)
+	}
+	if usi, ok := d.GetOk("ui_schema_id"); ok {
+		ruleAction.UiSchemaId = usi.(string)
+	}
+	updateRule.Actions = sdk.SdkPolicyRuleActions{
+		ProfileEnrollment: ruleAction,
+	}
+
+	if hook, ok := d.GetOk("inline_hook_id"); ok {
+		updateRule.Actions.ProfileEnrollment.PreRegistrationInlineHooks = []*sdk.PreRegistrationInlineHook{{InlineHookId: hook.(string)}}
+	}
+	if targetGroup, ok := d.GetOk("target_group_id"); ok {
+		updateRule.Actions.ProfileEnrollment.TargetGroupIds = []string{targetGroup.(string)}
 	}
 	pa, ok := d.GetOk("profile_attributes")
 	if !ok {
-		return rule
+		return &updateRule, nil
 	}
+
 	attributes := make([]*sdk.ProfileEnrollmentPolicyRuleProfileAttribute, len(pa.([]interface{})))
 	for i := range pa.([]interface{}) {
 		attributes[i] = &sdk.ProfileEnrollmentPolicyRuleProfileAttribute{
@@ -225,6 +250,7 @@ func buildPolicyRuleProfileEnrollment(d *schema.ResourceData, id string) sdk.Sdk
 			Required: boolPtr(d.Get(fmt.Sprintf("profile_attributes.%d.required", i)).(bool)),
 		}
 	}
-	rule.Actions.ProfileEnrollment.ProfileAttributes = attributes
-	return rule
+	updateRule.Actions.ProfileEnrollment.ProfileAttributes = attributes
+
+	return &updateRule, nil
 }
