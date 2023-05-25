@@ -10,9 +10,10 @@ description: |-
 
 ~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
 
-This resource allows you to create and configure a Profile Enrollment Policy Rule.
-
-It is documented in the Okta public API's [Profile Enrollment Action object](https://developer.okta.com/docs/reference/api/policy/#profile-enrollment-action-object) section.
+A [profile enrollment
+policy](https://developer.okta.com/docs/reference/api/policy/#profile-enrollment-policy)
+is limited to one default rule. This resource does not create a rule for an
+enrollment policy, it allows the default policy rule to be updated.
 
 ## Example Usage
 

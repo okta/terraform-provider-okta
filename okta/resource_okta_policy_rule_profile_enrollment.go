@@ -94,6 +94,14 @@ func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 	}
 }
 
+// resourcePolicyProfileEnrollmentRuleCreate
+
+// True create does not exist for the rule of a profile enrollment policy.
+// "This type of policy can only have one policy rule, so it's not possible to
+// create other rules. Instead, consider editing the default one to meet your
+// needs."
+// https://developer.okta.com/docs/reference/api/policy/#profile-enrollment-policy
+
 func resourcePolicyProfileEnrollmentRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	if isClassicOrg(m) {
 		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
@@ -115,7 +123,7 @@ func resourcePolicyProfileEnrollmentRuleCreate(ctx context.Context, d *schema.Re
 	}
 	rule, _, err := getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), rules[0].Id, buildPolicyRuleProfileEnrollment(d, rules[0].Id))
 	if err != nil {
-		return diag.Errorf("failed to create profile enrollment policy rule: %v", err)
+		return diag.Errorf("failed to update existing profile enrollment policy rule: %v", err)
 	}
 	d.SetId(rule.Id)
 	return resourcePolicyProfileEnrollmentRuleRead(ctx, d, m)
