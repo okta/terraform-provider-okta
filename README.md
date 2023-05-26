@@ -2,7 +2,11 @@
 <br/><br/>
 
 <a href="https://terraform.io">
-    <img src="https://raw.githubusercontent.com/hashicorp/terraform-website/master/public/img/logo-text.svg" alt="Terraform logo" title="Terraform" height="50" />
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://www.datocms-assets.com/2885/1620155114-brandhcterraformprimaryattributedcolorwhite.svg">
+        <source media="(prefers-color-scheme: light)" srcset="https://www.datocms-assets.com/2885/1620155113-brandhcterraformprimaryattributedcolor.svg">
+        <img alt="Terraform logo" title="Terraform" height="50" src="https://www.datocms-assets.com/2885/1620155113-brandhcterraformprimaryattributedcolor.svg">
+    </picture>
 </a>
 
 <a href="https://www.okta.com/">
