@@ -3,9 +3,9 @@
 
 <a href="https://terraform.io">
     <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://www.datocms-assets.com/2885/1620155114-brandhcterraformprimaryattributedcolorwhite.svg">
-        <source media="(prefers-color-scheme: light)" srcset="https://www.datocms-assets.com/2885/1620155113-brandhcterraformprimaryattributedcolor.svg">
-        <img alt="Terraform logo" title="Terraform" height="50" src="https://www.datocms-assets.com/2885/1620155113-brandhcterraformprimaryattributedcolor.svg">
+        <source media="(prefers-color-scheme: dark)" srcset="readme-assets/hashicorp-terraform-dark.svg">
+        <source media="(prefers-color-scheme: light)" srcset="readme-assets/hashicorp-terraform-light.svg">
+        <img alt="Terraform logo" title="Terraform" height="50" src="readme-assets/hashicorp-terraform-dark.svg">
     </picture>
 </a>
 
