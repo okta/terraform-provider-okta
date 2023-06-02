@@ -168,7 +168,6 @@ resource "okta_app_user_schema_property" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
-
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
