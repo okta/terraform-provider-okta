@@ -201,7 +201,14 @@ func buildPolicyRuleProfileEnrollment(ctx context.Context, m interface{}, d *sch
 		return nil, err
 	}
 
-	// API requires these attributes be set
+	// Given that the Okta API is sensitive to attributes that are already set
+	// on the one rule always present on a profile enrollment policy:
+	// 1. get a current copy of the rule
+	// 2. use the copy to prepopulate vaules for the update rule
+	// 3. apply values from the resource config to the update rule
+
+	// First, API requires these attributes always be set, prepopulate with
+	// existing values
 	updateRule := sdk.ProfileEnrollmentPolicyRule()
 	updateRule.Id = rule.Id
 	updateRule.Name = rule.Name
@@ -209,34 +216,64 @@ func buildPolicyRuleProfileEnrollment(ctx context.Context, m interface{}, d *sch
 	updateRule.System = rule.System
 	updateRule.Status = rule.Status
 
+	// Additionally, only prepopulate the attributes that are already set on the
+	// current rule
+
 	ruleAction := sdk.NewProfileEnrollmentPolicyRuleAction()
+
+	// access
+	if rule.Actions.ProfileEnrollment.Access != "" {
+		ruleAction.Access = rule.Actions.ProfileEnrollment.Access
+	}
 	if access, ok := d.GetOk("access"); ok {
 		ruleAction.Access = access.(string)
 	}
-	// email verification is set on the config use it's value, else fallback to the rule copy
+
 	activationRequirements := sdk.NewProfileEnrollmentPolicyRuleActivationRequirement()
+	// email_verification is set on the config use it's value, else fallback to the rule copy
 	if ev, _ := d.GetOk("email_verification"); ev != nil {
 		activationRequirements.EmailVerification = boolPtr(ev.(bool))
 	} else {
 		activationRequirements.EmailVerification = ruleAction.ActivationRequirements.EmailVerification
 	}
+
+	// unknown_user_action
 	ruleAction.ActivationRequirements = activationRequirements
+	if rule.Actions.ProfileEnrollment.UnknownUserAction != "" {
+		ruleAction.UnknownUserAction = rule.Actions.ProfileEnrollment.UnknownUserAction
+	}
 	if uua, ok := d.GetOk("unknown_user_action"); ok {
 		ruleAction.UnknownUserAction = uua.(string)
+	}
+
+	// ui_schema_id
+	if rule.Actions.ProfileEnrollment.UiSchemaId != "" {
+		ruleAction.UiSchemaId = rule.Actions.ProfileEnrollment.UiSchemaId
 	}
 	if usi, ok := d.GetOk("ui_schema_id"); ok {
 		ruleAction.UiSchemaId = usi.(string)
 	}
+
 	updateRule.Actions = sdk.SdkPolicyRuleActions{
 		ProfileEnrollment: ruleAction,
 	}
 
+	// inline_hook_id
+	if len(rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks) != 0 {
+		updateRule.Actions.ProfileEnrollment.PreRegistrationInlineHooks = rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks
+	}
 	if hook, ok := d.GetOk("inline_hook_id"); ok {
 		updateRule.Actions.ProfileEnrollment.PreRegistrationInlineHooks = []*sdk.PreRegistrationInlineHook{{InlineHookId: hook.(string)}}
+	}
+
+	// target_group_id
+	if len(rule.Actions.ProfileEnrollment.TargetGroupIds) != 0 {
+		updateRule.Actions.ProfileEnrollment.TargetGroupIds = rule.Actions.ProfileEnrollment.TargetGroupIds
 	}
 	if targetGroup, ok := d.GetOk("target_group_id"); ok {
 		updateRule.Actions.ProfileEnrollment.TargetGroupIds = []string{targetGroup.(string)}
 	}
+
 	pa, ok := d.GetOk("profile_attributes")
 	if !ok {
 		return &updateRule, nil
