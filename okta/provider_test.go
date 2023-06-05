@@ -260,8 +260,10 @@ func TestProviderValidate(t *testing.T) {
 }
 
 // NOTE: Our VCR set up is inspired by terraform-provider-google
-var providerConfigsLock = sync.RWMutex{}
-var providerConfigs map[string]*Config
+var (
+	providerConfigsLock = sync.RWMutex{}
+	providerConfigs     map[string]*Config
+)
 
 func init() {
 	providerConfigs = make(map[string]*Config)
@@ -294,7 +296,6 @@ func oktaResourceTest(t *testing.T, c resource.TestCase) {
 			return
 		}
 		if mgr.IsPlaying() {
-
 			if !mgr.HasCassettesToPlay() {
 				t.Skipf("%q test is missing VCR cassette(s) at %q, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information about playing/recording cassettes.", t.Name(), mgr.CassettesPath)
 				return

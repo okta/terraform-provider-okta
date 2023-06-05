@@ -81,7 +81,6 @@ resource "okta_app_auto_login" "test" {
 		CheckDestroy:      createCheckResourceDestroy(appAutoLogin, createDoesAppExist(sdk.NewAutoLoginApplication())),
 		Steps: []resource.TestStep{
 			{
-
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),

@@ -69,5 +69,4 @@ func checkOktaSecurityNotificationEmailsDestroy(s *terraform.State) error {
 		}
 	}
 	return nil
-
 }
