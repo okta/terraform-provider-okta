@@ -1,13 +1,20 @@
 # Changelog
 
+## 4.0.1 (June 5, 2023)
+
+### BUG FIXES
+* Add engine check solving the classic org issue [#1559](https://github.com/okta/terraform-provider-okta/pull/1559). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Add skip users and skip group back to app datasource[#1562](https://github.com/okta/terraform-provider-okta/pull/1562). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+
 ## 4.0.0 (April 28, 2023)
 
 ### FEATURE
-* Removal of [deprecated resources, data sources, and attributes](https://github.com/okta/terraform-provider-okta/issues/1338)
-* Removal of artificial input validation, let the Okta API do the input validation
-* Fast running acceptance tests that will better block broken functionality from being published using [vcr](https://pkg.go.dev/github.com/dnaeon/go-vcr@v1.2.0)
-* Bringing in [Go Sdk v3](https://github.com/okta/okta-sdk-golang/releases/tag/v3.0.2)
-* A more consistent means of generating documentation published at the [Terraform Registry](https://registry.terraform.io/providers/okta/okta/latest/docs) using [tfplugindocs](https://github.com/hashicorp/terraform-plugin-docs)
+* Removal of [deprecated resources, data sources, and attributes](https://github.com/okta/terraform-provider-okta/issues/1338)[#1532](https://github.com/okta/terraform-provider-okta/pull/1532). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Removal of artificial input validation, let the Okta API do the input validation [#1513](https://github.com/okta/terraform-provider-okta/pull/1513). Thanks, [@monde](https://github.com/monde)!
+* Fast running acceptance tests that will better block broken functionality from being published using [vcr](https://pkg.go.dev/github.com/dnaeon/go-vcr@v1.2.0) [#1520](https://github.com/okta/terraform-provider-okta/pull/1520). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Bringing in [Go Sdk v3](https://github.com/okta/okta-sdk-golang/releases/tag/v3.0.2) [#1500](https://github.com/okta/terraform-provider-okta/pull/1500). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* A more consistent means of generating documentation published at the [Terraform Registry](https://registry.terraform.io/providers/okta/okta/latest/docs) using [tfplugindocs](https://github.com/hashicorp/terraform-plugin-docs) [#1498](https://github.com/okta/terraform-provider-okta/pull/1498). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
 
 ## 3.46.0 (April 14, 2023)
 
