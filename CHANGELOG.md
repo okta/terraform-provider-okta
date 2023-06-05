@@ -5,6 +5,7 @@
 ### BUG FIXES
 * Add engine check solving the classic org issue [#1559](https://github.com/okta/terraform-provider-okta/pull/1559). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
 * Add skip users and skip group back to app datasource[#1562](https://github.com/okta/terraform-provider-okta/pull/1562). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Correct Okta policy rule profile enrollment resource drift issue [#1572](https://github.com/okta/terraform-provider-okta/pull/1572). Thanks, [@monde](https://github.com/monde)!
 
 
 ## 4.0.0 (April 28, 2023)
