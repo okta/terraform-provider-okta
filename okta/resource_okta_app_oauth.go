@@ -774,6 +774,7 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 	for _, grant_type := range grantTypes {
 		if grant_type == refreshToken {
 			hasRefresh = true
+			break
 		}
 	}
 	if rotate, ok := d.GetOk("refresh_token_rotation"); ok {
@@ -788,13 +789,12 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 		app.Settings.OauthClient.RefreshToken = refresh
 	}
 
-	// TODU
+	// TODO: need to put a warning
 	// if !hasRefresh && refresh != nil {
 	// 	return nil, errors.New("does not have refresh grant type but refresh_token_rotation and refresh_token_leeway exist in payload")
 	// }
+	// TODO unset refresh_token_rotation, refresh_token_leeway
 
-	// TODU
-	// should we unset here refresh_token_rotation, refresh_token_leeway?
 	app.Visibility = buildAppVisibility(d)
 	app.Accessibility = buildAppAccessibility(d)
 
