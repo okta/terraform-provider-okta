@@ -1,0 +1,244 @@
+package okta
+
+import (
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v3/okta"
+)
+
+// TODU review schema resources
+func resourceEmailDomain() *schema.Resource {
+	return &schema.Resource{
+		CreateContext: resourceEmailDomainCreate,
+		ReadContext:   resourceEmailDomainRead,
+		UpdateContext: resourceEmailDomainUpdate,
+		DeleteContext: resourceEmailDomainDelete,
+		// TODU: do I need this?
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
+		// TODU write description and required/computed
+		Schema: map[string]*schema.Schema{
+			// TODU this is only required for creation
+			"brand_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "",
+			},
+			"domain": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "",
+			},
+			"display_name": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "",
+			},
+			"user_name": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "",
+			},
+			"validation_status": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "",
+			},
+			"dns_validation_records": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"fqdn": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "DNS record name",
+						},
+						"record_type": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Record type can be TXT or CNAME",
+						},
+						// // TODU
+						// "values": {
+						// 	Type:        schema.TypeList,
+						// 	Computed:    true,
+						// 	Description: "DNS record values",
+						// },
+						"expiration": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "DNS TXT record expiration",
+						},
+					},
+				},
+			},
+			"brands": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"agree_to_customer_privacy_policy": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "",
+						},
+						"custom_privacy_policy_url": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "",
+						},
+						// TODU
+						"default_app": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "",
+						},
+						// TODU
+						"email_domain_id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "",
+						},
+						// TODU
+						"id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "",
+						},
+						"is_default": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "",
+						},
+						"locale": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "",
+						},
+						"name": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "",
+						},
+						"remove_powered_by_okta": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "",
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
+func resourceEmailDomainCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	emailDomain, _, err := getOktaV3ClientFromMetadata(m).EmailDomainApi.CreateEmailDomain(ctx).EmailDomain(buildEmailDomain(d)).Execute()
+	if err != nil {
+		return diag.Errorf("failed to create email domain: %v", err)
+	}
+	d.SetId(emailDomain.GetId())
+	return resourceEmailDomainRead(ctx, d, m)
+}
+
+func resourceEmailDomainRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	// TODU should we expand brand?
+	emailDomain, resp, err := getOktaV3ClientFromMetadata(m).EmailDomainApi.GetEmailDomain(ctx, d.Id()).Execute()
+	if err := v3suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get email domain: %v", err)
+	}
+	if emailDomain == nil || emailDomain.GetValidationStatus() == "DELETED" {
+		d.SetId("")
+		return nil
+	}
+	_ = d.Set("validation_status", emailDomain.GetValidationStatus())
+	_ = d.Set("domain", emailDomain.GetDomain())
+	_ = d.Set("display_name", emailDomain.GetDisplayName())
+	_ = d.Set("user_name", emailDomain.GetUserName())
+	dnsValidation := emailDomain.GetDnsValidationRecords()
+	arr := make([]map[string]interface{}, len(dnsValidation))
+	for i := range dnsValidation {
+		arr[i] = map[string]interface{}{
+			"fqdn":        dnsValidation[i].GetFqdn(),
+			"record_type": dnsValidation[i].GetRecordType(),
+			// TODU
+			// "value":       dnsValidation[i].GetValues(),
+			"expiration": dnsValidation[i].GetExpiration(),
+		}
+	}
+	err = setNonPrimitives(d, map[string]interface{}{"dns_validation_records": arr})
+	if err != nil {
+		return diag.Errorf("failed to set DNS validation records: %v", err)
+	}
+	// TODU brand can be empty if not expand, or empty array
+	_, ok := emailDomain.GetEmbeddedOk()
+	if ok {
+		_, ok := emailDomain.Embedded.GetBrandsOk()
+		if ok {
+			brand := emailDomain.Embedded.GetBrands()
+			arr := make([]map[string]interface{}, len(brand))
+			for i := range brand {
+				arr[i] = map[string]interface{}{
+					"agree_to_customer_privacy_policy": brand[i].GetAgreeToCustomPrivacyPolicy(),
+					"custom_privacy_policy_url":        brand[i].GetCustomPrivacyPolicyUrl(),
+					"default_app":                      brand[i].GetDefaultApp(),
+					"is_default":                       brand[i].GetIsDefault(),
+					"locale":                           brand[i].GetLocale(),
+					"name":                             brand[i].GetName(),
+					"remove_powered_by_okta":           brand[i].GetRemovePoweredByOkta(),
+				}
+			}
+			err = setNonPrimitives(d, map[string]interface{}{"brands": arr})
+			if err != nil {
+				return diag.Errorf("failed to set brands: %v", err)
+			}
+		}
+	}
+	return nil
+}
+
+func resourceEmailDomainUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	_, _, err := getOktaV3ClientFromMetadata(m).EmailDomainApi.ReplaceEmailDomain(ctx, d.Id()).UpdateEmailDomain(buildUpdateEmailDomain(d)).Execute()
+	if err != nil {
+		return diag.Errorf("failed to update email domain: %v", err)
+	}
+	return resourceEmailDomainRead(ctx, d, m)
+}
+
+func resourceEmailDomainDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	emailDomain, resp, err := getOktaV3ClientFromMetadata(m).EmailDomainApi.GetEmailDomain(ctx, d.Id()).Execute()
+	if err := v3suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to get email domain: %v", err)
+	}
+	if emailDomain == nil || emailDomain.GetValidationStatus() == "DELETED" {
+		d.SetId("")
+		return nil
+	}
+	_, err = getOktaV3ClientFromMetadata(m).EmailDomainApi.DeleteEmailDomain(ctx, emailDomain.GetId()).Execute()
+	if err := v3suppressErrorOn404(resp, err); err != nil {
+		return diag.Errorf("failed to delete email domain: %v", err)
+	}
+	return nil
+}
+
+func buildEmailDomain(d *schema.ResourceData) okta.EmailDomain {
+	return okta.EmailDomain{
+		BrandId:     d.Get("brand_id").(string),
+		Domain:      d.Get("domain").(string),
+		DisplayName: d.Get("display_name").(string),
+		UserName:    d.Get("user_name").(string),
+	}
+}
+
+func buildUpdateEmailDomain(d *schema.ResourceData) okta.UpdateEmailDomain {
+	return okta.UpdateEmailDomain{
+		DisplayName: d.Get("display_name").(string),
+		UserName:    d.Get("user_name").(string),
+	}
+}
