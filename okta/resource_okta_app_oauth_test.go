@@ -91,6 +91,7 @@ func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 	mgr := newFixtureManager(appOAuth, t.Name())
 	config := mgr.GetFixtures("refresh.tf", t)
 	update := mgr.GetFixtures("refresh_update.tf", t)
+	secondUpdate := mgr.GetFixtures("refresh_second_update.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
 	oktaResourceTest(t, resource.TestCase{
@@ -107,7 +108,7 @@ func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "refresh_token_rotation", "STATIC"),
-					resource.TestCheckResourceAttr(resourceName, "refresh_token_leeway", "0"),
+					resource.TestCheckNoResourceAttr(resourceName, "refresh_token_leeway"),
 				),
 			},
 			{
@@ -117,6 +118,17 @@ func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_rotation", "ROTATE"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_leeway", "30"),
+				),
+			},
+			{
+				Config: secondUpdate,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "refresh_token_rotation", "ROTATE"),
 					resource.TestCheckResourceAttr(resourceName, "refresh_token_leeway", "30"),
 				),

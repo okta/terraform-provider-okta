@@ -139,7 +139,7 @@ resource "okta_policy_rule_profile_enrollment" "test" {
 					resource.TestCheckResourceAttr(resourceName, "profile_attributes.0.name", "email"),
 					resource.TestCheckResourceAttr(resourceName, "profile_attributes.1.name", "firstName"),
 					resource.TestCheckResourceAttr(resourceName, "profile_attributes.2.name", "lastName"),
-					resource.TestCheckResourceAttrSet(resourceName, "ui_schema_id"),
+					resource.TestCheckResourceAttr(resourceName, "ui_schema_id", "uis44fio9ifOCwJAO1d7"),
 				),
 			},
 		},
