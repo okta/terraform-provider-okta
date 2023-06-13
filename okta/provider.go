@@ -63,6 +63,8 @@ const (
 	domain                        = "okta_domain"
 	domainCertificate             = "okta_domain_certificate"
 	domainVerification            = "okta_domain_verification"
+	emailDomain                   = "okta_email_domain"
+	emailDomainVerification       = "okta_email_domain_verification"
 	emailSender                   = "okta_email_sender"
 	emailSenderVerification       = "okta_email_sender_verification"
 	emailCustomization            = "okta_email_customization"
@@ -288,6 +290,8 @@ func Provider() *schema.Provider {
 			domainCertificate:             resourceDomainCertificate(),
 			domainVerification:            resourceDomainVerification(),
 			emailCustomization:            resourceEmailCustomization(),
+			emailDomain:                   resourceEmailDomain(),
+			emailDomainVerification:       resourceEmailDomainVerification(),
 			emailSender:                   resourceEmailSender(),
 			emailSenderVerification:       resourceEmailSenderVerification(),
 			eventHook:                     resourceEventHook(),

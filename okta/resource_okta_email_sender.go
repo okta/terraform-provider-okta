@@ -64,6 +64,7 @@ func resourceEmailSender() *schema.Resource {
 				},
 			},
 		},
+		DeprecationMessage: "The api for this resource has been deprecated. Please use okta_email_domain instead",
 	}
 }
 

@@ -22,6 +22,7 @@ func resourceEmailSenderVerification() *schema.Resource {
 				Description: "Email sender ID",
 			},
 		},
+		DeprecationMessage: "The api for this resource has been deprecated. Please use okta_email_domain_verification instead",
 	}
 }
 
