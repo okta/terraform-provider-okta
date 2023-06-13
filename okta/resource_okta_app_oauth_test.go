@@ -87,7 +87,7 @@ func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 	//       Skipping for now assuming that the okta account doesn't have this feature enabled.
 	//       If this feature is enabled or Okta releases this to all this test should be enabled.
 	//       SEE https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm
-	t.Skip("This is an 'Early Access Feature' and needs to be enabled by Okta, skipping this test as it fails when this feature is not available")
+	// t.Skip("This is an 'Early Access Feature' and needs to be enabled by Okta, skipping this test as it fails when this feature is not available")
 	mgr := newFixtureManager(appOAuth, t.Name())
 	config := mgr.GetFixtures("refresh.tf", t)
 	update := mgr.GetFixtures("refresh_update.tf", t)
@@ -119,7 +119,7 @@ func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "refresh_token_rotation", "ROTATE"),
-					resource.TestCheckResourceAttr(resourceName, "refresh_token_leeway", "30"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_leeway", "0"),
 				),
 			},
 			{

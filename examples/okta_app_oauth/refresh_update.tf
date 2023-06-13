@@ -9,5 +9,4 @@ resource "okta_app_oauth" "test" {
   hide_web               = true
   auto_submit_toolbar    = false
   refresh_token_rotation = "ROTATE"
-  refresh_token_leeway   = 30
 }
