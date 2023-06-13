@@ -781,8 +781,11 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 		refresh.RotationType = rotate.(string)
 	}
 
-	if leeway, ok := d.GetOk("refresh_token_leeway"); ok {
+	leeway, ok := d.GetOk("refresh_token_leeway")
+	if ok {
 		refresh.LeewayPtr = int64Ptr(leeway.(int))
+	} else {
+		refresh.LeewayPtr = int64Ptr(0)
 	}
 
 	if hasRefresh {

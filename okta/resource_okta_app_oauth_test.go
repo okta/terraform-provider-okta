@@ -119,7 +119,7 @@ func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "refresh_token_rotation", "ROTATE"),
-					resource.TestCheckResourceAttr(resourceName, "refresh_token_leeway", "30"),
+					resource.TestCheckResourceAttr(resourceName, "refresh_token_leeway", "0"),
 				),
 			},
 			{
