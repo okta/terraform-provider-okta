@@ -8,49 +8,45 @@ import (
 	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
-// TODU review schema resources
 func resourceEmailDomain() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceEmailDomainCreate,
 		ReadContext:   resourceEmailDomainRead,
 		UpdateContext: resourceEmailDomainUpdate,
 		DeleteContext: resourceEmailDomainDelete,
-		// TODU: do I need this?
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		// TODU write description and required/computed
 		Schema: map[string]*schema.Schema{
-			// TODU this is only required for creation
 			"brand_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "",
+				Description: "Brand id",
 			},
 			"domain": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "",
+				Description: "Domain name",
 			},
 			"display_name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "",
+				Description: "Display name",
 			},
 			"user_name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "",
+				Description: "User name",
 			},
 			"validation_status": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "",
+				Description: "Status of the email domain. Values: NOT_STARTED, IN_PROGRESS, VERIFIED, COMPLETED",
 			},
 			"dns_validation_records": {
 				Type:        schema.TypeList,
 				Computed:    true,
-				Description: "",
+				Description: "TXT and cname records to be registered for the email Domain",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"fqdn": {
@@ -61,75 +57,18 @@ func resourceEmailDomain() *schema.Resource {
 						"record_type": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: "Record type can be TXT or CNAME",
+							Description: "Record type can be TXT or cname",
 						},
-						// // TODU
-						// "values": {
-						// 	Type:        schema.TypeList,
-						// 	Computed:    true,
-						// 	Description: "DNS record values",
-						// },
+						"values": {
+							Type:        schema.TypeList,
+							Computed:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Description: "DNS record values",
+						},
 						"expiration": {
 							Type:        schema.TypeString,
 							Computed:    true,
 							Description: "DNS TXT record expiration",
-						},
-					},
-				},
-			},
-			"brands": {
-				Type:        schema.TypeList,
-				Computed:    true,
-				Description: "",
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"agree_to_customer_privacy_policy": {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Description: "",
-						},
-						"custom_privacy_policy_url": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "",
-						},
-						// TODU
-						"default_app": {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Description: "",
-						},
-						// TODU
-						"email_domain_id": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "",
-						},
-						// TODU
-						"id": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "",
-						},
-						"is_default": {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Description: "",
-						},
-						"locale": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "",
-						},
-						"name": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "",
-						},
-						"remove_powered_by_okta": {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Description: "",
 						},
 					},
 				},
@@ -148,7 +87,6 @@ func resourceEmailDomainCreate(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceEmailDomainRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	// TODU should we expand brand?
 	emailDomain, resp, err := getOktaV3ClientFromMetadata(m).EmailDomainApi.GetEmailDomain(ctx, d.Id()).Execute()
 	if err := v3suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get email domain: %v", err)
@@ -167,38 +105,15 @@ func resourceEmailDomainRead(ctx context.Context, d *schema.ResourceData, m inte
 		arr[i] = map[string]interface{}{
 			"fqdn":        dnsValidation[i].GetFqdn(),
 			"record_type": dnsValidation[i].GetRecordType(),
-			// TODU
-			// "value":       dnsValidation[i].GetValues(),
-			"expiration": dnsValidation[i].GetExpiration(),
+			"expiration":  dnsValidation[i].GetExpiration(),
+		}
+		if len(dnsValidation[i].GetValues()) > 0 {
+			arr[i]["value"] = dnsValidation[i].GetValues()
 		}
 	}
 	err = setNonPrimitives(d, map[string]interface{}{"dns_validation_records": arr})
 	if err != nil {
 		return diag.Errorf("failed to set DNS validation records: %v", err)
-	}
-	// TODU brand can be empty if not expand, or empty array
-	_, ok := emailDomain.GetEmbeddedOk()
-	if ok {
-		_, ok := emailDomain.Embedded.GetBrandsOk()
-		if ok {
-			brand := emailDomain.Embedded.GetBrands()
-			arr := make([]map[string]interface{}, len(brand))
-			for i := range brand {
-				arr[i] = map[string]interface{}{
-					"agree_to_customer_privacy_policy": brand[i].GetAgreeToCustomPrivacyPolicy(),
-					"custom_privacy_policy_url":        brand[i].GetCustomPrivacyPolicyUrl(),
-					"default_app":                      brand[i].GetDefaultApp(),
-					"is_default":                       brand[i].GetIsDefault(),
-					"locale":                           brand[i].GetLocale(),
-					"name":                             brand[i].GetName(),
-					"remove_powered_by_okta":           brand[i].GetRemovePoweredByOkta(),
-				}
-			}
-			err = setNonPrimitives(d, map[string]interface{}{"brands": arr})
-			if err != nil {
-				return diag.Errorf("failed to set brands: %v", err)
-			}
-		}
 	}
 	return nil
 }
@@ -217,7 +132,6 @@ func resourceEmailDomainDelete(ctx context.Context, d *schema.ResourceData, m in
 		return diag.Errorf("failed to get email domain: %v", err)
 	}
 	if emailDomain == nil || emailDomain.GetValidationStatus() == "DELETED" {
-		d.SetId("")
 		return nil
 	}
 	_, err = getOktaV3ClientFromMetadata(m).EmailDomainApi.DeleteEmailDomain(ctx, emailDomain.GetId()).Execute()
