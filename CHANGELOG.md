@@ -1,10 +1,19 @@
 # Changelog
 
+## 4.0.2 (June 14, 2023)
+
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+* New resource `okta_email_domain` and `okta_email_domain_verification` [#1588](https://github.com/okta/terraform-provider-okta/pull/1588). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+### BUG FIXES
+* Fix the issue of refresh token could not be removed[#1586](https://github.com/okta/terraform-provider-okta/pull/1586). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix empty value in refresh_token_leeway when not set [#1596](https://github.com/okta/terraform-provider-okta/pull/1596). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
 ## 4.0.1 (June 5, 2023)
 
 ### BUG FIXES
 * Add engine check solving the classic org issue [#1559](https://github.com/okta/terraform-provider-okta/pull/1559). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
-* Add skip users and skip group back to app datasource[#1562](https://github.com/okta/terraform-provider-okta/pull/1562). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Add skip users and skip group back to app datasource [#1562](https://github.com/okta/terraform-provider-okta/pull/1562). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
 * Correct Okta policy rule profile enrollment resource drift issue [#1572](https://github.com/okta/terraform-provider-okta/pull/1572). Thanks, [@monde](https://github.com/monde)!
 
 
