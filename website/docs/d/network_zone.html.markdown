@@ -32,6 +32,8 @@ data "okta_network_zone" "example" {
 
 - `type` - Type of the Network Zone.
 
+- `status` - Network Status - can either be ACTIVE or INACTIVE only.
+
 - `dynamic_locations` - Array of locations.
 
 - `dynamic_proxy_type` - Type of proxy being controlled by this dynamic network zone.

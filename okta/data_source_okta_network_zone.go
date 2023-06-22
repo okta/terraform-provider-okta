@@ -9,6 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
+// TODU
 func dataSourceNetworkZone() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceNetworkZoneRead,
@@ -62,6 +63,11 @@ func dataSourceNetworkZone() *schema.Resource {
 				Description: "Format of each array value: a string representation of an ASN numeric value",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"status": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Network Status - can either be ACTIVE or INACTIVE only",
+			},
 		},
 	}
 }
@@ -87,6 +93,7 @@ func dataSourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, m in
 	d.SetId(zone.Id)
 	_ = d.Set("name", zone.Name)
 	_ = d.Set("type", zone.Type)
+	_ = d.Set("status", zone.Status)
 	_ = d.Set("usage", zone.Usage)
 	_ = d.Set("dynamic_proxy_type", zone.ProxyType)
 	_ = d.Set("asns", convertStringSliceToSetNullable(zone.Asns))
