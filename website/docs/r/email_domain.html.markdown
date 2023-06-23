@@ -42,7 +42,7 @@ The following arguments are supported:
 - `dns_validation_records` - TXT and CNAME records to be registered for the domain.
   - `fqdn` - DNS record name.
   - `record_type` - Record type can be TXT or cname.
-  - `value` - DNS record values
+  - `values` - DNS record values
   - `expiration ` - DNS TXT record expiration
 
 ## Import
