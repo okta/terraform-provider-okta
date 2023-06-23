@@ -18,6 +18,11 @@ var brandResourceSchema = map[string]*schema.Schema{
 		Optional:    true,
 		Description: "Brand ID - Note: Okta API for brands only reads and updates therefore the okta_brand resource needs to act as a quasi data source. Do this by setting brand_id.",
 	},
+	"name": {
+		Type:        schema.TypeString,
+		Computed:    true,
+		Description: "Brand name",
+	},
 	"agree_to_custom_privacy_policy": {
 		Type:         schema.TypeBool,
 		Optional:     true,
@@ -49,6 +54,11 @@ var brandDataSourceSchema = map[string]*schema.Schema{
 		Type:        schema.TypeString,
 		Computed:    true,
 		Description: "The ID of the Brand",
+	},
+	"name": {
+		Type:        schema.TypeString,
+		Computed:    true,
+		Description: "Brand name",
 	},
 	"custom_privacy_policy_url": {
 		Type:        schema.TypeString,
@@ -85,6 +95,7 @@ func flattenBrand(brand *okta.Brand) map[string]interface{} {
 	if brand.GetCustomPrivacyPolicyUrl() != "" {
 		attrs["custom_privacy_policy_url"] = brand.GetCustomPrivacyPolicyUrl()
 	}
+	attrs["name"] = brand.GetName()
 	links, _ := json.Marshal(brand.GetLinks())
 	attrs["links"] = string(links)
 	attrs["remove_powered_by_okta"] = false

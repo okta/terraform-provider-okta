@@ -53,6 +53,7 @@ func TestAccResourceOktaBrand_import_update(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("okta_brand.example", "id"),
 					resource.TestCheckResourceAttr("okta_brand.example", "custom_privacy_policy_url", "https://example.com/privacy-policy"),
+					resource.TestCheckResourceAttrSet("okta_brand.example", "name"),
 					resource.TestCheckResourceAttrSet("okta_brand.example", "links"),
 					resource.TestCheckResourceAttr("okta_brand.example", "remove_powered_by_okta", "false"),
 				),
@@ -63,6 +64,7 @@ func TestAccResourceOktaBrand_import_update(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("okta_brand.example", "id"),
 					resource.TestCheckResourceAttr("okta_brand.example", "custom_privacy_policy_url", "https://example.com/privacy-policy-updated"),
+					resource.TestCheckResourceAttrSet("okta_brand.example", "name"),
 					resource.TestCheckResourceAttrSet("okta_brand.example", "links"),
 					resource.TestCheckResourceAttr("okta_brand.example", "remove_powered_by_okta", "true"),
 				),
