@@ -20,6 +20,7 @@ func TestAccDataSourceOktaBrand_read(t *testing.T) {
 				Destroy: false,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_brand.example", "id"),
+					resource.TestCheckResourceAttrSet("data.okta_brand.example", "name"),
 					resource.TestCheckResourceAttrSet("data.okta_brand.example", "links"),
 				),
 			},
