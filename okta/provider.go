@@ -368,6 +368,7 @@ func Provider() *schema.Provider {
 			defaultPolicy:            dataSourceDefaultPolicy(),
 			group:                    dataSourceGroup(),
 			groupEveryone:            dataSourceEveryoneGroup(),
+			groupRule:                dataSourceGroupRule(),
 			groups:                   dataSourceGroups(),
 			idpMetadataSaml:          dataSourceIdpMetadataSaml(),
 			idpOidc:                  dataSourceIdpOidc(),
