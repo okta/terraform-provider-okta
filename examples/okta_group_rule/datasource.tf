@@ -10,6 +10,10 @@ resource "okta_group_rule" "test" {
   expression_value  = "String.startsWith(user.firstName,\"andy\")"
 }
 
-data "okta_group_rule" "test" {
+data "okta_group_rule" "test_by_id" {
   id          = okta_group_rule.test.id
+}
+
+data "okta_group_rule" "test_by_name" {
+  name          = "testAcc_replace_with_uuid"
 }

@@ -19,8 +19,8 @@ data "okta_group_rule" "test" {
 
 ## Arguments Reference
 
-- `id` - (Required) ID of the group rule to retrieve.
-
+- `id` - (Optional) The ID of the group rule to retrieve.
+- `name` - (Optional) The name of the Group Rule to retrieve.
 
 ## Attributes Reference
 
