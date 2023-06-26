@@ -355,7 +355,6 @@ func resourceAppOAuth() *schema.Resource {
 				Optional:    true,
 				Description: "Id of this apps authentication policy",
 			},
-			// TODU
 			"jwks_uri": {
 				Type:        schema.TypeString,
 				Optional:    true,
