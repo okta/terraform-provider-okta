@@ -59,11 +59,10 @@ func resourceEmailDomain() *schema.Resource {
 							Computed:    true,
 							Description: "Record type can be TXT or cname",
 						},
-						"values": {
-							Type:        schema.TypeList,
+						"value": {
+							Type:        schema.TypeString,
 							Computed:    true,
-							Elem:        &schema.Schema{Type: schema.TypeString},
-							Description: "DNS record values",
+							Description: "DNS record value",
 						},
 						"expiration": {
 							Type:        schema.TypeString,
@@ -106,9 +105,7 @@ func resourceEmailDomainRead(ctx context.Context, d *schema.ResourceData, m inte
 			"fqdn":        dnsValidation[i].GetFqdn(),
 			"record_type": dnsValidation[i].GetRecordType(),
 			"expiration":  dnsValidation[i].GetExpiration(),
-		}
-		if len(dnsValidation[i].GetValues()) > 0 {
-			arr[i]["value"] = dnsValidation[i].GetValues()
+			"value":       dnsValidation[i].GetVerificationValue(),
 		}
 	}
 	err = setNonPrimitives(d, map[string]interface{}{"dns_validation_records": arr})
