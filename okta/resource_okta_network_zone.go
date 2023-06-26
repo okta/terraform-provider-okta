@@ -53,6 +53,11 @@ func resourceNetworkZone() *schema.Resource {
 				Required:    true,
 				Description: "Type of the Network Zone - can either be IP or DYNAMIC only",
 			},
+			"status": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Network Status - can either be ACTIVE or INACTIVE only",
+			},
 			"usage": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -93,6 +98,7 @@ func resourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, m inte
 	}
 	_ = d.Set("name", zone.Name)
 	_ = d.Set("type", zone.Type)
+	_ = d.Set("status", zone.Status)
 	_ = d.Set("usage", zone.Usage)
 	_ = d.Set("dynamic_proxy_type", zone.ProxyType)
 	_ = d.Set("asns", convertStringSliceToSetNullable(zone.Asns))
@@ -149,8 +155,7 @@ func buildNetworkZone(d *schema.ResourceData) sdk.NetworkZone {
 			}
 		}
 	}
-
-	return sdk.NetworkZone{
+	networkZone := sdk.NetworkZone{
 		Asns:      convertInterfaceToStringSetNullable(d.Get("asns")),
 		Name:      d.Get("name").(string),
 		Type:      zoneType,
@@ -160,6 +165,10 @@ func buildNetworkZone(d *schema.ResourceData) sdk.NetworkZone {
 		ProxyType: proxyType,
 		Usage:     d.Get("usage").(string),
 	}
+	if status, ok := d.GetOk("status"); ok {
+		networkZone.Status = status.(string)
+	}
+	return networkZone
 }
 
 func buildAddressObjList(values *schema.Set) []*sdk.NetworkZoneAddress {
