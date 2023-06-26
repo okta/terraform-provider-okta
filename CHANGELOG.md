@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.0.3 (June 26, 2023)
+
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+* Adding `settings.oauthClient.jwks_uri` as `jwks_uri` argument on resource `okta_app_oauth` [#1608](https://github.com/okta/terraform-provider-okta/pull/1608). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Adding `name` as `name` argument on resource `okta_brand` and datasources `okta_brand` and `okta_brands` [#1605](https://github.com/okta/terraform-provider-okta/pull/1605). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Adding `status` as `status` argument on resource `okta_network_zone` and datasource `okta_network_zone` [#1602](https://github.com/okta/terraform-provider-okta/pull/1602). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+### BUG FIXES
+* Fix the issue of empty verification value in okta_email_domain [#1609](https://github.com/okta/terraform-provider-okta/pull/1609). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+
 ## 4.0.2 (June 14, 2023)
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
