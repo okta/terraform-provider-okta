@@ -286,6 +286,28 @@ func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
 	})
 }
 
+func TestAccResourceOktaAppOauth_serviceWithJWKSURI(t *testing.T) {
+	mgr := newFixtureManager(appOAuth, t.Name())
+	config := mgr.GetFixtures("service_with_jwks_uri.tf", t)
+	resourceName := fmt.Sprintf("%s.test", appOAuth)
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "jwks_uri", "https://example.com"),
+				),
+			},
+		},
+	})
+}
+
 func createDoesAppExist(app sdk.App) func(string) (bool, error) {
 	return func(id string) (bool, error) {
 		client := oktaClientForTest()
