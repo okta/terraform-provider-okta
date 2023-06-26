@@ -17,4 +17,5 @@ type OpenIdConnectApplicationSettingsClient struct {
 	ResponseTypes          []*OAuthResponseType                          `json:"response_types,omitempty"`
 	TosUri                 string                                        `json:"tos_uri,omitempty"`
 	WildcardRedirect       string                                        `json:"wildcard_redirect,omitempty"`
+	JwksUri                string                                        `json:"jwks_uri,omitempty"`
 }

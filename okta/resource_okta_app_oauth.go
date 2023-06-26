@@ -355,6 +355,11 @@ func resourceAppOAuth() *schema.Resource {
 				Optional:    true,
 				Description: "Id of this apps authentication policy",
 			},
+			"jwks_uri": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "URL reference to JWKS",
+			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(1 * time.Hour),
@@ -553,6 +558,7 @@ func setOAuthClientSettings(d *schema.ResourceData, oauthClient *sdk.OpenIdConne
 	_ = d.Set("tos_uri", oauthClient.TosUri)
 	_ = d.Set("policy_uri", oauthClient.PolicyUri)
 	_ = d.Set("login_uri", oauthClient.InitiateLoginUri)
+	_ = d.Set("jwks_uri", oauthClient.JwksUri)
 	if oauthClient.WildcardRedirect != "" {
 		_ = d.Set("wildcard_redirect", oauthClient.WildcardRedirect)
 	}
@@ -751,6 +757,7 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 				Mode:         d.Get("login_mode").(string),
 			},
 			WildcardRedirect: d.Get("wildcard_redirect").(string),
+			JwksUri:          d.Get("jwks_uri").(string),
 		},
 		Notes: buildAppNotes(d),
 		App:   buildAppSettings(d),
