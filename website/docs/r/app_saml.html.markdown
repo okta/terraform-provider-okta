@@ -325,7 +325,3 @@ A SAML App can be imported via the Okta ID.
 ```
 $ terraform import okta_app_saml.example &#60;app id&#62;
 ```
-
-It's also possible to import app without groups or/and users. In this case ID may look like this:
-
-```
