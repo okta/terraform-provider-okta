@@ -9,7 +9,6 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-// TODU
 func dataSourceNetworkZone() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceNetworkZoneRead,
