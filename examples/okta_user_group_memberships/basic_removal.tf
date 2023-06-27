@@ -3,10 +3,6 @@ resource "okta_user" "test" {
   last_name  = "Smith"
   login      = "testAcc-replace_with_uuid@example.com"
   email      = "testAcc-replace_with_uuid@example.com"
-
-  lifecycle {
-    ignore_changes = [group_memberships]
-  }
 }
 
 resource "okta_group" "test_1" {
