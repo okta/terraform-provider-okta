@@ -11,10 +11,6 @@ resource "okta_user" "test1" {
   last_name  = "Smith"
   login      = "testAcc1-replace_with_uuid@example.com"
   email      = "testAcc1-replace_with_uuid@example.com"
-
-  lifecycle {
-    ignore_changes = [group_memberships]
-  }
 }
 
 resource "okta_user" "test2" {
@@ -22,10 +18,6 @@ resource "okta_user" "test2" {
   last_name  = "Brando"
   login      = "testAcc2-replace_with_uuid@example.com"
   email      = "testAcc2-replace_with_uuid@example.com"
-
-  lifecycle {
-    ignore_changes = [group_memberships]
-  }
 }
 
 resource "okta_user" "test3" {
@@ -33,10 +25,6 @@ resource "okta_user" "test3" {
   last_name  = "Python"
   login      = "testAcc3-replace_with_uuid@example.com"
   email      = "testAcc3-replace_with_uuid@example.com"
-
-  lifecycle {
-    ignore_changes = [group_memberships]
-  }
 }
 
 resource "okta_user" "test4" {
@@ -44,10 +32,6 @@ resource "okta_user" "test4" {
   last_name  = "Jenkins"
   login      = "testAcc4-replace_with_uuid@example.com"
   email      = "testAcc4-replace_with_uuid@example.com"
-
-  lifecycle {
-    ignore_changes = [group_memberships]
-  }
 }
 
 

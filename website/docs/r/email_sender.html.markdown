@@ -8,6 +8,8 @@ description: |-
 
 # okta_email_sender
 
+~> **DEPRECATED** use `okta_email_domain` instead.
+
 This resource allows you to create and configure a custom email sender.
 
 ## Example Usage

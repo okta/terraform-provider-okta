@@ -176,30 +176,18 @@ resource "okta_user" "test_3" {
   last_name         = "Smith3"
   login             = "testAcc3-replace_with_uuid@example.com"
   email             = "testAcc3-replace_with_uuid@example.com"
-  group_memberships = [okta_group.test_b.id]
-  lifecycle {
-    ignore_changes = [group_memberships]
-  }
 }
 resource "okta_user" "test_4" {
   first_name        = "TestAcc"
   last_name         = "Smith4"
   login             = "testAcc4-replace_with_uuid@example.com"
   email             = "testAcc4-replace_with_uuid@example.com"
-  group_memberships = [okta_group.test_b.id]
-  lifecycle {
-    ignore_changes = [group_memberships]
-  }
 }
 resource "okta_user" "test_5" {
   first_name        = "TestAcc"
   last_name         = "Smith5"
   login             = "testAcc5-replace_with_uuid@example.com"
   email             = "testAcc5-replace_with_uuid@example.com"
-  group_memberships = [okta_group.test_b.id]
-  lifecycle {
-    ignore_changes = [group_memberships]
-  }
 }
 # Group A should have users 1, 2 assigned via okta_group_memberships
 resource "okta_group_memberships" "test_a_direct" {
