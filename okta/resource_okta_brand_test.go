@@ -72,3 +72,38 @@ func TestAccResourceOktaBrand_import_update(t *testing.T) {
 		},
 	})
 }
+
+func TestAccResourceOktaBrand_default_brand(t *testing.T) {
+	config := `
+resource "okta_brand" "example" {
+  brand_id = "default"
+  lifecycle {
+    ignore_changes = [
+	  agree_to_custom_privacy_policy,
+	  custom_privacy_policy_url,
+	  remove_powered_by_okta
+	]
+  }
+}
+	`
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy: func(s *terraform.State) error {
+			// brand api doens't have real delete for a brand
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				Config:             config,
+				Destroy:            false,
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet("okta_brand.example", "id"),
+					resource.TestCheckResourceAttr("okta_brand.example", "brand_id", "default"),
+				),
+			},
+		},
+	})
+}

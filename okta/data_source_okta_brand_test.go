@@ -22,6 +22,8 @@ func TestAccDataSourceOktaBrand_read(t *testing.T) {
 					resource.TestCheckResourceAttrSet("data.okta_brand.example", "id"),
 					resource.TestCheckResourceAttrSet("data.okta_brand.example", "name"),
 					resource.TestCheckResourceAttrSet("data.okta_brand.example", "links"),
+					resource.TestCheckResourceAttrSet("data.okta_brand.default", "id"),
+					resource.TestCheckResourceAttrSet("data.okta_brand.default", "links"),
 				),
 			},
 		},

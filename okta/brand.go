@@ -1,7 +1,9 @@
 package okta
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v3/okta"
@@ -104,4 +106,19 @@ func flattenBrand(brand *okta.Brand) map[string]interface{} {
 	}
 
 	return attrs
+}
+
+func getDefaultBrand(ctx context.Context, m interface{}) (*okta.Brand, error) {
+	brands, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.ListBrands(ctx).Execute()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, brand := range brands {
+		if *brand.IsDefault {
+			return &brand, nil
+		}
+	}
+
+	return nil, errors.New("failed to get default brand")
 }

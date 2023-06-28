@@ -22,14 +22,27 @@ func resourceBrand() *schema.Resource {
 }
 
 func resourceBrandCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	brandId := d.Get("brand_id").(string)
-	// check that the brand exists, create is short circuited as a reader
-	brand, resp, err := getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrand(ctx, brandId).Execute()
-	if err := v3suppressErrorOn404(resp, err); err != nil {
-		return diag.Errorf("failed to get brand %q: %v", brandId, err)
+	brandID := d.Get("brand_id").(string)
+
+	var brand *okta.Brand
+	var resp *okta.APIResponse
+	var err error
+
+	if brandID == "default" {
+		brand, err = getDefaultBrand(ctx, m)
+		if err != nil {
+			return diag.Errorf("failed to get default brand for org: %v", err)
+		}
+	} else {
+		// check that the brand exists, create is short circuited as a reader
+		brand, resp, err = getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrand(ctx, brandID).Execute()
+		if err := v3suppressErrorOn404(resp, err); err != nil {
+			return diag.Errorf("failed to get brand %q: %v", brandID, err)
+		}
 	}
-	logger(m).Info("setting brand id", "id", brandId)
-	d.SetId(brandId)
+
+	logger(m).Info("setting brand id", "id", brandID)
+	d.SetId(brandID)
 	rawMap := flattenBrand(brand)
 	err = setNonPrimitives(d, rawMap)
 	if err != nil {

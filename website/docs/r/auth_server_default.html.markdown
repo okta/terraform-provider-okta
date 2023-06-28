@@ -16,7 +16,8 @@ This resource allows you to configure Default Authorization Server.
 
 ```hcl
 resource "okta_auth_server_default" "example" {
-  name = "default"
+  audiences   = ["api://default"]
+  description = "Default Authorization Server for your Applications"
 }
 ```
 
@@ -24,7 +25,7 @@ resource "okta_auth_server_default" "example" {
 
 The following arguments are supported:
 
-- `name` - (Required) The name of the authorization server.
+- `name` - (Optional) The name of the authorization server. Not necessary but left for backwards capacity with legacy implementation.
 
 - `audiences` - (Optional) The recipients that the tokens are intended for. This becomes the `aud` claim in an access token.
 
@@ -53,5 +54,5 @@ The following arguments are supported:
 Authorization Server can be imported via the Okta ID.
 
 ```
-$ terraform import okta_auth_server_default.example &#60;auth server name&#62;
+$ terraform import okta_auth_server_default.example &#60;default&#62;
 ```

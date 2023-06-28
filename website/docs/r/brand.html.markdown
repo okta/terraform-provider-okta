@@ -8,9 +8,13 @@ description: |-
 
 # okta_brand
 
-This resource allows you to get and update an Okta [Brand](https://developer.okta.com/docs/reference/api/brands/#brand-object).
-The Okta Management API does not have a true Create or Delete for a brand. Therefore, the brand resource must be imported
-first into the terraform state before updates can be applied to the brand.
+This resource allows you to get and update an Okta
+[Brand](https://developer.okta.com/docs/reference/api/brands/#brand-object).
+The Okta Management API does not have a true Create or Delete for a brand.
+Therefore, import the brand resource by its ID into the terraform state before
+applying updates. Alternatively, the default brand can be retrieved by setting
+`brand_id` to `default` which is a fake create to shortcut having to do an
+import.
 
 ## Example Usage
 
@@ -22,11 +26,19 @@ resource "okta_brand" "example" {
   custom_privacy_policy_url      = "https://example.com/privacy-policy"
   remove_powered_by_okta         = true
 }
+
+# setting brand_id to default is equivalent to importing the default brand by its ID
+resource "okta_brand" "default" {
+  brand_id = "default"
+  agree_to_custom_privacy_policy = true
+  custom_privacy_policy_url      = "https://example.com/privacy-policy"
+  remove_powered_by_okta         = true
+}
 ```
 
 ## Argument Reference
 
-- `brand_id` - (Optional) Brand ID, used for read (faux-create)
+- `brand_id` - (Optional) Brand ID, used for read (faux-create). Setting `brand_id` to `default` is equivalent to importing the default brand by its ID.
 
 ## Attributes Reference
 
