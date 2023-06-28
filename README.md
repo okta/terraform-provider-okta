@@ -2,7 +2,11 @@
 <br/><br/>
 
 <a href="https://terraform.io">
-    <img src="https://raw.githubusercontent.com/hashicorp/terraform-website/master/public/img/logo-text.svg" alt="Terraform logo" title="Terraform" height="50" />
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="readme-assets/hashicorp-terraform-dark.svg">
+        <source media="(prefers-color-scheme: light)" srcset="readme-assets/hashicorp-terraform-light.svg">
+        <img alt="Terraform logo" title="Terraform" height="50" src="readme-assets/hashicorp-terraform-dark.svg">
+    </picture>
 </a>
 
 <a href="https://www.okta.com/">
