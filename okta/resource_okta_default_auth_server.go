@@ -2,9 +2,11 @@ package okta
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceAuthServerDefault() *schema.Resource {
@@ -52,7 +54,8 @@ func resourceAuthServerDefault() *schema.Resource {
 			},
 			"name": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Default:  "default",
 			},
 			"issuer": {
 				Type:        schema.TypeString,
@@ -101,15 +104,51 @@ func resourceAuthServerDefaultRead(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
+func getDefaultAuthServer(ctx context.Context, m interface{}, serverID string) (authServer *sdk.AuthorizationServer, err error) {
+	if serverID != "" {
+		authServer, _, err = getOktaClientFromMetadata(m).AuthorizationServer.GetAuthorizationServer(ctx, serverID)
+		return
+	}
+
+	authServers, _, err := getOktaClientFromMetadata(m).AuthorizationServer.ListAuthorizationServers(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	for _, server := range authServers {
+		if *server.Default {
+			authServer = server
+			return
+		}
+	}
+
+	return nil, fmt.Errorf("failed to find default authorization server")
+}
+
 func resourceAuthServerDefaultUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	id := d.Id()
+
+	// when id is blank this is the create case as this function is used for
+	// both create and update
 	if id == "" {
-		id = d.Get("name").(string)
+		name := d.Get("name").(string)
+		if name != "" {
+			id = name
+			// Legacy implementation allowed name to be set to something other
+			// than "default" which was to loose of a constraint. In order to
+			// not have breaking changes to existing configurations we will warn
+			// when we find this situation.
+			if name != "default" {
+				logger(m).Warn("\"name\" argument is not \"default\". Allowing this legacy behavior.")
+			}
+		}
 	}
-	authServer, _, err := getOktaClientFromMetadata(m).AuthorizationServer.GetAuthorizationServer(ctx, id)
+
+	authServer, err := getDefaultAuthServer(ctx, m, id)
 	if err != nil {
 		return diag.Errorf("failed to get default authorization server: %v", err)
 	}
+	id = authServer.Id
+
 	if status, ok := d.GetOk("status"); ok {
 		client := getOktaClientFromMetadata(m)
 		if status.(string) == statusActive && authServer.Status != statusActive {
@@ -125,10 +164,17 @@ func resourceAuthServerDefaultUpdate(ctx context.Context, d *schema.ResourceData
 			}
 		}
 	}
+
+	_name, ok := d.GetOk("name")
+	if ok {
+		authServer.Name = _name.(string)
+	}
+	if *authServer.Default && authServer.Name == "" {
+		authServer.Name = "default"
+	}
 	authServer.Audiences = convertInterfaceToStringSet(d.Get("audiences"))
 	authServer.Credentials.Signing.RotationMode = d.Get("credentials_rotation_mode").(string)
 	authServer.Description = d.Get("description").(string)
-	authServer.Name = d.Get("name").(string)
 	authServer.IssuerMode = d.Get("issuer_mode").(string)
 	_, _, err = getOktaClientFromMetadata(m).AuthorizationServer.UpdateAuthorizationServer(ctx, id, *authServer)
 	if err != nil {
