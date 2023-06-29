@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -201,6 +202,15 @@ func testAttributeJSON(name, attribute, expectedJSON string) resource.TestCheckF
 		if !eq {
 			return fmt.Errorf("attribute '%s' in '%s' expected %q, got %q", attribute, name, expectedJSON, actualJSON)
 		}
+		return nil
+	}
+}
+
+// sleepInSecondsForTest Add sleep in a test to allow for eventual consistency
+// thanks github.com/hashicorp/terraform-provider-google/google/provider_test.go
+func sleepInSecondsForTest(t int) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		time.Sleep(time.Duration(t) * time.Second)
 		return nil
 	}
 }
