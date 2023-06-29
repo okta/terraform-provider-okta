@@ -99,6 +99,7 @@ var emailCustomizationResourceSchema = map[string]*schema.Schema{
 		Type:        schema.TypeString,
 		Optional:    true,
 		Description: "Force is_default on the create and delete by deleting all email customizations. Comma separated string with values of 'create' or 'destroy' or both `create,destroy'.",
+		Deprecated:  "force_is_default is deprecated and now is a no-op in behavior. Rely upon the depends_on meta argument to force dependency of secondary templates to the default template",
 	},
 }
 

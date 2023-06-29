@@ -2,7 +2,6 @@ package okta
 
 import (
 	"context"
-	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,7 +14,7 @@ func resourceEmailCustomization() *schema.Resource {
 		ReadContext:   resourceEmailCustomizationRead,
 		UpdateContext: resourceEmailCustomizationUpdate,
 		DeleteContext: resourceEmailCustomizationDelete,
-		Importer:      createNestedResourceImporter([]string{"id", "brand_id", "template_name", "force_is_default"}),
+		Importer:      createNestedResourceImporter([]string{"id", "brand_id", "template_name"}),
 		Schema:        emailCustomizationResourceSchema,
 	}
 }
@@ -49,10 +48,6 @@ func resourceEmailCustomizationCreate(ctx context.Context, d *schema.ResourceDat
 
 	client := getOktaV3ClientFromMetadata(m)
 
-	if forceIsDefaultOnCreate(d) && *etcr.IsDefault {
-		_, _ = client.CustomizationApi.DeleteAllCustomizations(context.Background(), brandID.(string), templateName.(string)).Execute()
-	}
-
 	customization, _, err := client.CustomizationApi.CreateEmailCustomization(ctx, brandID.(string), templateName.(string)).Instance(etcr).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create email customization: %v", err)
@@ -66,26 +61,6 @@ func resourceEmailCustomizationCreate(ctx context.Context, d *schema.ResourceDat
 	}
 
 	return nil
-}
-
-func forceIsDefaultOnCreate(d *schema.ResourceData) bool {
-	return forceCreateIs("create", d)
-}
-
-func forceIsDefaultOnDestroy(d *schema.ResourceData) bool {
-	return forceCreateIs("destroy", d)
-}
-
-func forceCreateIs(action string, d *schema.ResourceData) bool {
-	if forceIsDefault, ok := d.GetOk("force_is_default"); ok {
-		values := forceIsDefault.(string)
-		for _, value := range strings.Split(values, ",") {
-			if value == action {
-				return true
-			}
-		}
-	}
-	return false
 }
 
 func resourceEmailCustomizationRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -154,14 +129,25 @@ func resourceEmailCustomizationDelete(ctx context.Context, d *schema.ResourceDat
 	}
 
 	client := getOktaV3ClientFromMetadata(m)
-	if isDefault, ok := d.GetOk("is_default"); ok {
-		if forceIsDefaultOnDestroy(d) && isDefault.(bool) {
-			_, _ = client.CustomizationApi.DeleteAllCustomizations(context.Background(), etcr.brandID, etcr.templateName).Execute()
-			return nil
+	// If this is the last customization template call the delete all endpoint
+	// as the API doesn't allow deleting the last template explicitly should the
+	// template be the default.  "Returns a 409 Conflict if the email
+	// customization to be deleted is the default."
+	// https://developer.okta.com/docs/reference/api/brands/#response-body-23
+	// Else delete the specific customization.
+	customizations, _, err := client.CustomizationApi.ListEmailCustomizations(ctx, etcr.brandID, etcr.templateName).Execute()
+	if err != nil {
+		return diag.Errorf("failed to delete email customization: %v", err)
+	}
+	if len(customizations) == 1 {
+		_, err := client.CustomizationApi.DeleteAllCustomizations(ctx, etcr.brandID, etcr.templateName).Execute()
+		if err != nil {
+			return diag.Errorf("failed to delete email customization: %v", err)
 		}
+		return nil
 	}
 
-	_, err := client.CustomizationApi.DeleteEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Execute()
+	_, err = client.CustomizationApi.DeleteEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to delete email customization: %v", err)
 	}
