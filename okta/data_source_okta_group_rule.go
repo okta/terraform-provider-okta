@@ -65,14 +65,21 @@ func dataSourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, m inte
 				return diag.Errorf("failed to get group rule by name: %v", err)
 			case len(rules) < 1:
 				return diag.Errorf("group rule with name '%s' does not exist", name)
-			case rules[0].Name != name:
-				logger(m).Warn("group rule with exact name match was not found: using partial match which contains name as a substring", "name", rules[0].Name)
 			}
-			rule = rules[0]
-		} else {
-			return diag.Errorf("config must provide 'name' or 'id' to retrieve a group rule")
+			// exact name search should only return one result, but loop through to be safe
+			for _, ruleCandidate := range rules {
+				if ruleName == ruleCandidate.Name {
+					rule = ruleCandidate
+					break
+				}
+			}
 		}
 	}
+
+	if rule == nil {
+		return diag.Errorf("config must provide 'name' or 'id' to retrieve a group rule")
+	}
+
 	d.SetId(rule.Id)
 	_ = d.Set("name", rule.Name)
 	_ = d.Set("status", rule.Status)
