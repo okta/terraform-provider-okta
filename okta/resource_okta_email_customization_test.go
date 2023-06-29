@@ -145,7 +145,7 @@ func createCheckResourceEmailCustomizationDestroy(s *terraform.State) error {
 			}
 		}
 
-		_, resp, err := client.CustomizationApi.GetEmailCustomization(ctx, brandID, templateName, ID).Execute()
+		_, resp, _ := client.CustomizationApi.GetEmailCustomization(ctx, brandID, templateName, ID).Execute()
 		if resp.StatusCode == http.StatusNotFound {
 			return nil
 		}
