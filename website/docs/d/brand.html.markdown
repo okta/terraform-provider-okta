@@ -33,6 +33,8 @@ data "okta_brand" "default" {
 
 - `id` - Brand ID
 
+- `name` - Brand name
+
 - `custom_privacy_policy_url` - Custom privacy policy URL
 
 - `links` - Link relations for this object - JSON HAL - Discoverable resources related to the brand
