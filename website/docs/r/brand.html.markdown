@@ -44,6 +44,8 @@ resource "okta_brand" "default" {
 
 - `id` - (Read-only) Brand ID
 
+- `name` - Brand name
+
 - `agree_to_custom_privacy_policy` - Is a required input flag with when changing custom_privacy_url, shouldn't be considered as a readable property
 
 - `custom_privacy_policy_url` - (Optional) Custom privacy policy URL
