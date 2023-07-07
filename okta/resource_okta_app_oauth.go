@@ -199,13 +199,6 @@ func resourceAppOAuth() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object",
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					// when pkce_required is not set in the HCL
-					if old == "true" && new == "false" {
-						return true
-					}
-					return false
-				},
 			},
 			"redirect_uris": {
 				Type:        schema.TypeList,
