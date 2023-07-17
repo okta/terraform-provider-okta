@@ -369,6 +369,23 @@ func TestAccResourceOktaAppOauth_redirect_uris(t *testing.T) {
 
 func TestAccResourceOktaAppOauth_groups_claim(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
+	mgr := newFixtureManager(appOAuth, t.Name())
+	config := `
+resource "okta_app_oauth" "test" {
+    label                      = "testAcc_replace_with_uuid"
+	type                      = "web"
+	grant_types                = ["authorization_code"]
+	redirect_uris              = ["https://example.com/"]
+	response_types             = ["code"]
+	issuer_mode                = "ORG_URL"
+	groups_claim {
+	  type        = "FILTER" # required
+	  filter_type = "REGEX"
+	  name        = "groups" # required
+	  value       = ".*" # required
+	}
+  }
+`
 
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -377,34 +394,39 @@ func TestAccResourceOktaAppOauth_groups_claim(t *testing.T) {
 		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
-				Config: `
-				resource "okta_app_oauth" "test" {
-					label                     = "Test"
-					type                      = "web"
-					grant_types                = ["authorization_code"]
-					redirect_uris              = ["https://example.com/"]
-					response_types             = ["code"]
-					issuer_mode                = "ORG_URL"
-					groups_claim {
-					  type        = "FILTER" # required
-					  filter_type = "REGEX"
-					  name        = "groups" # required
-					  value       = ".*" # required
-					}
-				  }
-				`,
+				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
-					resource.TestCheckResourceAttr(resourceName, "label", "Test"),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "web"),
 					resource.TestCheckResourceAttr(resourceName, "issuer_mode", "ORG_URL"),
+					resource.TestCheckResourceAttr(resourceName, "groups_claim.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.type", "FILTER"),
 					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.filter_type", "REGEX"),
 					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.value", ".*"),
 					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.name", "groups"),
 					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.issuer_mode", "ORG_URL"),
 				),
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import schema into state")
+					}
+					// issue 1536 check if the groups_claim is imported
+					rs := s[0]
+					if expected, ok := rs.Attributes["groups_claim.#"]; !ok || expected != "1" {
+						return errors.New("expected groups_claim to be imported")
+					}
+					if expected, ok := rs.Attributes["groups_claim.0.type"]; !ok || expected != "FILTER" {
+						return errors.New("expected imported groups_claim to have correct type")
+					}
+
+					return nil
+				},
 			},
 		},
 	})

@@ -517,13 +517,13 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	if d.Get("omit_secret").(bool) {
 		_ = d.Set("client_secret", "")
 	}
-	if _, exists := d.GetOk("groups_claim"); exists {
-		gc, err := flattenGroupsClaim(ctx, d, m)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		_ = d.Set("groups_claim", gc)
+
+	gc, err := flattenGroupsClaim(ctx, d, m)
+	if err != nil {
+		return diag.FromErr(err)
 	}
+	_ = d.Set("groups_claim", gc)
+
 	return setOAuthClientSettings(d, app.Settings.OauthClient)
 }
 
