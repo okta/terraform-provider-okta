@@ -23,7 +23,7 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(groupRule, doesGroupRuleExist),
+		CheckDestroy:      checkResourceDestroy(groupRule, doesGroupRuleExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -74,7 +74,7 @@ func TestAccOktaGroupRule_invalidHandle(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(groupRule, doesGroupRuleExist),
+		CheckDestroy:      checkResourceDestroy(groupRule, doesGroupRuleExist),
 		Steps: []resource.TestStep{
 			{
 				Config: testSetup,

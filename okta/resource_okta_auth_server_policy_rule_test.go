@@ -18,7 +18,7 @@ func TestAccOktaAuthServerPolicyRule_create(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
+		CheckDestroy:      checkResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -74,7 +74,7 @@ resource "okta_auth_server_policy" "test" {
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
+			CheckDestroy:      checkResourceDestroy(authServer, authServerExists),
 			Steps: []resource.TestStep{
 				{
 					Config: mgr.ConfigReplace(config),

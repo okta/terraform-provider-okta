@@ -16,7 +16,7 @@ func TestAccOktaPolicySignOn_defaultError(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createPolicyCheckDestroy(policySignOn),
+		CheckDestroy:      checkPolicyDestroy(policySignOn),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -39,7 +39,7 @@ func TestAccOktaPolicySignOn_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createPolicyCheckDestroy(policySignOn),
+		CheckDestroy:      checkPolicyDestroy(policySignOn),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

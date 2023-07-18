@@ -41,6 +41,9 @@ func TestAccSecurityNotificationEmails(t *testing.T) {
 }
 
 func checkOktaSecurityNotificationEmailsDestroy(s *terraform.State) error {
+	if isVCRPlayMode() {
+		return nil
+	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != securityNotificationEmails {
 			continue

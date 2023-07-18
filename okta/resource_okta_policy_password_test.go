@@ -21,7 +21,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createPolicyCheckDestroy(policyPassword),
+		CheckDestroy:      checkPolicyDestroy(policyPassword),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -113,8 +113,11 @@ func ensurePolicyExists(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func createPolicyCheckDestroy(policyType string) func(*terraform.State) error {
+func checkPolicyDestroy(policyType string) func(*terraform.State) error {
 	return func(s *terraform.State) error {
+		if isVCRPlayMode() {
+			return nil
+		}
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != policyType {
 				continue

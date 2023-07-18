@@ -18,7 +18,7 @@ func TestAccOktaSmsTemplate_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(templateSms, doesSmsTemplateExist),
+		CheckDestroy:      checkResourceDestroy(templateSms, doesSmsTemplateExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

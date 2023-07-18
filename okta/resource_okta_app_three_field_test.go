@@ -19,7 +19,7 @@ func TestAccAppThreeFieldApplication_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appThreeField, createDoesAppExist(sdk.NewSwaThreeFieldApplication())),
+		CheckDestroy:      checkResourceDestroy(appThreeField, createDoesAppExist(sdk.NewSwaThreeFieldApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

@@ -23,7 +23,7 @@ func TestAccAppSaml_conditionalRequire(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:      checkResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -42,7 +42,7 @@ func TestAccAppSaml_invalidURL(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:      checkResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -64,7 +64,7 @@ func TestAccAppSaml_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:      checkResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: allFields,
@@ -162,7 +162,7 @@ func TestAccAppSaml_preconfigured(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:      checkResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: preconfigured,
@@ -241,7 +241,7 @@ func TestAccAppSaml_inlineHook(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:      checkResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -273,7 +273,7 @@ func TestAccAppSaml_federationBroker(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -345,7 +345,7 @@ resource "okta_app_saml" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:      checkResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -371,7 +371,7 @@ func TestAccAppSaml_certdiff(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:      checkResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

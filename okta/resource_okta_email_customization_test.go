@@ -27,7 +27,7 @@ func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceEmailCustomizationDestroy,
+		CheckDestroy:      checkResourceEmailCustomizationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -117,7 +117,10 @@ func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
 	})
 }
 
-func createCheckResourceEmailCustomizationDestroy(s *terraform.State) error {
+func checkResourceEmailCustomizationDestroy(s *terraform.State) error {
+	if isVCRPlayMode() {
+		return nil
+	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != emailCustomization {
 			continue

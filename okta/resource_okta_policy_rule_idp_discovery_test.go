@@ -22,7 +22,7 @@ func TestAccOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRuleIdpDiscovery),
+		CheckDestroy:      checkRuleDestroy(policyRuleIdpDiscovery),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

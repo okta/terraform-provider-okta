@@ -19,7 +19,7 @@ func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRuleMfa),
+		CheckDestroy:      checkRuleDestroy(policyRuleMfa),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

@@ -87,6 +87,9 @@ func TestAccThreatInsightSettingsNetworkZoneOrdering(t *testing.T) {
 }
 
 func checkOktaThreatInsightSettingsDestroy(s *terraform.State) error {
+	if isVCRPlayMode() {
+		return nil
+	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != threatInsightSettings {
 			continue

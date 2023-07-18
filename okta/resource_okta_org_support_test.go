@@ -40,6 +40,9 @@ func TestAccOktaOrgSupport(t *testing.T) {
 }
 
 func checkSupportDestroy(s *terraform.State) error {
+	if isVCRPlayMode() {
+		return nil
+	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != orgSupport {
 			continue

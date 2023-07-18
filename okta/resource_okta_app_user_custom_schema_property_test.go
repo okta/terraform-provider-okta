@@ -21,7 +21,7 @@ func TestAccAppUserSchemas_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -101,7 +101,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -165,7 +165,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -229,7 +229,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -293,7 +293,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -354,7 +354,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -412,7 +412,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -473,7 +473,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -537,7 +537,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -657,7 +657,7 @@ resource "okta_app_user_schema_property" "five" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: roConfig,

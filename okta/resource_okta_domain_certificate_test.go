@@ -69,6 +69,9 @@ resource "okta_domain_certificate" "test" {
 
 func checkIsCertificate(resourceName, attribute string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
+		if isVCRPlayMode() {
+			return nil
+		}
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return fmt.Errorf("resource not found: %s", resourceName)
@@ -88,6 +91,9 @@ func checkIsCertificate(resourceName, attribute string) resource.TestCheckFunc {
 
 func checkIsPrivateKey(resourceName, attribute string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
+		if isVCRPlayMode() {
+			return nil
+		}
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return fmt.Errorf("resource not found: %s", resourceName)

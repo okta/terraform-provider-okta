@@ -20,7 +20,7 @@ func TestAccOktaAuthServer_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
+		CheckDestroy:      checkResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -61,7 +61,7 @@ func TestAccOktaAuthServer_fullStack(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
+		CheckDestroy:      checkResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -109,7 +109,7 @@ func TestAccOktaAuthServer_gh299(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
+		CheckDestroy:      checkResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

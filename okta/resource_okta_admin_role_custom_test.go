@@ -18,7 +18,7 @@ func TestAccOktaAdminRoleCustom(t *testing.T) {
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      createCheckResourceDestroy(adminRoleCustom, doesAdminRoleCustomExist),
+			CheckDestroy:      checkResourceDestroy(adminRoleCustom, doesAdminRoleCustomExist),
 			Steps: []resource.TestStep{
 				{
 					Config: config,

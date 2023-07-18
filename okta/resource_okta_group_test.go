@@ -19,7 +19,7 @@ func TestAccOktaGroup_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(group, doesGroupExist),
+		CheckDestroy:      checkResourceDestroy(group, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -46,7 +46,7 @@ func TestAccOktaGroup_customschema(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(group, doesGroupExist),
+		CheckDestroy:      checkResourceDestroy(group, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: base,
@@ -83,7 +83,7 @@ func TestAccOktaGroup_customschema_null(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(group, doesGroupExist),
+		CheckDestroy:      checkResourceDestroy(group, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: base,

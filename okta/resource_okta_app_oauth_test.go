@@ -25,7 +25,7 @@ func TestAccResourceOktaAppOauth_basic(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -98,7 +98,7 @@ func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -148,7 +148,7 @@ func TestAccResourceOktaAppOauth_serviceNative(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -189,7 +189,7 @@ func TestAccResourceOktaAppOauth_federationBroker(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -227,7 +227,7 @@ func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -270,7 +270,7 @@ func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -295,7 +295,7 @@ func TestAccResourceOktaAppOauth_serviceWithJWKSURI(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -337,7 +337,7 @@ func TestAccResourceOktaAppOauth_redirect_uris(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: `
@@ -391,7 +391,7 @@ resource "okta_app_oauth" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -453,7 +453,7 @@ resource "okta_app_oauth" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -485,7 +485,7 @@ resource "okta_app_oauth" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -839,7 +839,7 @@ func TestAccResourceOktaAppOauth_config_combinations(t *testing.T) {
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        errorCheck,
 			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+			CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 			Steps: []resource.TestStep{
 				{
 					Config: mgr.ConfigReplace(config),

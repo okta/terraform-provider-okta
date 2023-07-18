@@ -19,7 +19,7 @@ func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckTrustedOriginDestroy,
+		CheckDestroy:      checkTrustedOriginDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -35,7 +35,10 @@ func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 	})
 }
 
-func testAccCheckTrustedOriginDestroy(s *terraform.State) error {
+func checkTrustedOriginDestroy(s *terraform.State) error {
+	if isVCRPlayMode() {
+		return nil
+	}
 	client := oktaClientForTest()
 
 	for _, r := range s.RootModule().Resources {
