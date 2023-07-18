@@ -40,7 +40,7 @@ func resourcePolicyProfileEnrollmentApps() *schema.Resource {
 }
 
 func resourcePolicyProfileEnrollmentAppsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(policyProfileEnrollmentApps)
 	}
 
@@ -63,7 +63,7 @@ func resourcePolicyProfileEnrollmentAppsCreate(ctx context.Context, d *schema.Re
 }
 
 func resourcePolicyProfileEnrollmentAppsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(policyProfileEnrollmentApps)
 	}
 
@@ -81,7 +81,7 @@ func resourcePolicyProfileEnrollmentAppsRead(ctx context.Context, d *schema.Reso
 }
 
 func resourcePolicyProfileEnrollmentAppsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(policyProfileEnrollmentApps)
 	}
 
@@ -114,7 +114,7 @@ func resourcePolicyProfileEnrollmentAppsUpdate(ctx context.Context, d *schema.Re
 }
 
 func resourcePolicyProfileEnrollmentAppsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(policyProfileEnrollmentApps)
 	}
 

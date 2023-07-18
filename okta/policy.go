@@ -258,7 +258,7 @@ func syncPolicyFromUpstream(d *schema.ResourceData, policy *sdk.SdkPolicy) error
 
 func findDefaultAccessPolicy(ctx context.Context, m interface{}) (*sdk.Policy, error) {
 	// OIE only
-	if config, ok := m.(*Config); ok && config.classicOrg {
+	if isClassicOrg(ctx, m) {
 		return nil, nil
 	}
 

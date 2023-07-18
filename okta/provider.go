@@ -423,11 +423,6 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		return nil, diag.Errorf("[ERROR] invalid configuration: %v", err)
 	}
 
-	// Discover if the Okta Org is Classic or OIE
-	if org, _, err := config.supplementClient.GetWellKnownOktaOrganization(ctx); err == nil {
-		config.classicOrg = (org.Pipeline == "v1") // v1 == Classic, idx == OIE
-	}
-
 	return &config, nil
 }
 
@@ -448,8 +443,8 @@ func envDefaultSetFunc(k string, dv interface{}) schema.SchemaDefaultFunc {
 	}
 }
 
-func isClassicOrg(m interface{}) bool {
-	if config, ok := m.(*Config); ok && config.classicOrg {
+func isClassicOrg(ctx context.Context, m interface{}) bool {
+	if config, ok := m.(*Config); ok && config.IsClassicOrg(ctx) {
 		return true
 	}
 	return false
