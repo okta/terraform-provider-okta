@@ -18,7 +18,7 @@ func TestAccOktaEmailSender(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(emailSender, emailSenderExists),
+		CheckDestroy:      checkResourceDestroy(emailSender, emailSenderExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

@@ -22,7 +22,7 @@ func TestAccOktaGroupAdminRole_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(group, doesGroupExist),
+		CheckDestroy:      checkResourceDestroy(group, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

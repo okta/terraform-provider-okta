@@ -16,7 +16,7 @@ func TestAccOktaFactorTOTP(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(factorTotp, doesFactorTOTPExist),
+		CheckDestroy:      checkResourceDestroy(factorTotp, doesFactorTOTPExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

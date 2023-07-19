@@ -19,7 +19,7 @@ func TestAccAppUserBaseSchema_change(t *testing.T) {
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		// Just need to make sure the app gets cleaned up
-		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy: checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

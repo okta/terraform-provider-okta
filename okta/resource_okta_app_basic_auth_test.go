@@ -18,7 +18,7 @@ func TestAccAppBasicAuthApplication_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appBasicAuth, createDoesAppExist(sdk.NewBasicAuthApplication())),
+		CheckDestroy:      checkResourceDestroy(appBasicAuth, createDoesAppExist(sdk.NewBasicAuthApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -64,7 +64,7 @@ resource "okta_app_basic_auth" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appBasicAuth, createDoesAppExist(sdk.NewBasicAuthApplication())),
+		CheckDestroy:      checkResourceDestroy(appBasicAuth, createDoesAppExist(sdk.NewBasicAuthApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

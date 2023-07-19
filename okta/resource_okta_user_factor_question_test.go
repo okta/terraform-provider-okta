@@ -20,7 +20,7 @@ func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
 			PreCheck:          testClassicOnlyAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      createUserFactorCheckDestroy(t.Name(), userFactorQuestion),
+			CheckDestroy:      checkUserFactorDestroy(t.Name(), userFactorQuestion),
 			Steps: []resource.TestStep{
 				{
 					Config: config,
@@ -42,8 +42,11 @@ func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
 		})
 }
 
-func createUserFactorCheckDestroy(testName, factorType string) func(*terraform.State) error {
+func checkUserFactorDestroy(testName, factorType string) func(*terraform.State) error {
 	return func(s *terraform.State) error {
+		if isVCRPlayMode() {
+			return nil
+		}
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != factorType {
 				continue

@@ -18,7 +18,7 @@ func TestAccOktaMfaPolicy_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createPolicyCheckDestroy(policyMfa),
+		CheckDestroy:      checkPolicyDestroy(policyMfa),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -83,7 +83,7 @@ resource "okta_policy_mfa" "test" {
 		PreCheck:          testOIEOnlyAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createPolicyCheckDestroy(policyMfa),
+		CheckDestroy:      checkPolicyDestroy(policyMfa),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -137,7 +137,7 @@ resource "okta_policy_mfa" "test" {
 		PreCheck:          testOIEOnlyAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createPolicyCheckDestroy(policyMfa),
+		CheckDestroy:      checkPolicyDestroy(policyMfa),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

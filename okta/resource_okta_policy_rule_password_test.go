@@ -22,7 +22,7 @@ func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRulePassword),
+		CheckDestroy:      checkRuleDestroy(policyRulePassword),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -56,7 +56,7 @@ func TestAccOktaPolicyRulePassword_priorityError(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRulePassword),
+		CheckDestroy:      checkRuleDestroy(policyRulePassword),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -77,7 +77,7 @@ func TestAccOktaPolicyRulePassword_priority(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRulePassword),
+		CheckDestroy:      checkRuleDestroy(policyRulePassword),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -111,8 +111,11 @@ func ensureRuleExists(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func createRuleCheckDestroy(ruleType string) func(*terraform.State) error {
+func checkRuleDestroy(ruleType string) func(*terraform.State) error {
 	return func(s *terraform.State) error {
+		if isVCRPlayMode() {
+			return nil
+		}
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != ruleType {
 				continue

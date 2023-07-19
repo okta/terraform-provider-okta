@@ -20,7 +20,7 @@ func TestAccOktaUserType_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(userType, doesUserTypeExist),
+		CheckDestroy:      checkResourceDestroy(userType, doesUserTypeExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

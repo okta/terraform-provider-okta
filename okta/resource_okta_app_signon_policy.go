@@ -38,7 +38,7 @@ func buildAccessPoilicy(d *schema.ResourceData) sdk.Policies {
 }
 
 func resourceAppSignOnPolicyCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicy)
 	}
 
@@ -56,7 +56,7 @@ func resourceAppSignOnPolicyCreate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceAppSignOnPolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicy)
 	}
 
@@ -78,7 +78,7 @@ func resourceAppSignOnPolicyRead(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceAppSignOnPolicyUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicy)
 	}
 
@@ -93,7 +93,7 @@ func resourceAppSignOnPolicyUpdate(ctx context.Context, d *schema.ResourceData, 
 
 // resourceAppSignOnPolicyDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 func resourceAppSignOnPolicyDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicy)
 	}
 

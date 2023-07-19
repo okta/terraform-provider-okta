@@ -1021,6 +1021,9 @@ resource "okta_user_schema_property" "five" {
 }
 
 func checkOktaUserSchemasDestroy(s *terraform.State) error {
+	if isVCRPlayMode() {
+		return nil
+	}
 	for _, rs := range s.RootModule().Resources {
 		schemaUserType := "default"
 		if rs.Primary.Attributes["user_type"] != "" {

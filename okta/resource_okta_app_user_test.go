@@ -136,6 +136,9 @@ func ensureAppUserExists(resourceName string) resource.TestCheckFunc {
 }
 
 func checkAppUserDestroy(s *terraform.State) error {
+	if isVCRPlayMode() {
+		return nil
+	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != appUser {
 			continue

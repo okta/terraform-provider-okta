@@ -20,7 +20,7 @@ func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      appSignOnPolicyRuleExists,
+		CheckDestroy:      checkAppSignOnPolicyRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -72,7 +72,10 @@ func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
 	})
 }
 
-func appSignOnPolicyRuleExists(s *terraform.State) error {
+func checkAppSignOnPolicyRuleDestroy(s *terraform.State) error {
+	if isVCRPlayMode() {
+		return nil
+	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != appSignOnPolicyRule {
 			continue

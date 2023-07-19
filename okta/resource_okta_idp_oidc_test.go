@@ -20,7 +20,7 @@ func TestAccOktaIdpOidc_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpOidc, createDoesIdpExist),
+		CheckDestroy:      checkResourceDestroy(idpOidc, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -99,7 +99,7 @@ resource "okta_idp_oidc" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpOidc, createDoesIdpExist),
+		CheckDestroy:      checkResourceDestroy(idpOidc, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

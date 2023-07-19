@@ -19,7 +19,7 @@ func TestAccOktaResourceSet(t *testing.T) {
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      createCheckResourceDestroy(resourceSet, doesResourceSetExist),
+			CheckDestroy:      checkResourceDestroy(resourceSet, doesResourceSetExist),
 			Steps: []resource.TestStep{
 				{
 					Config: config,
@@ -76,7 +76,7 @@ func TestAccResrouceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      createCheckResourceDestroy(resourceSet, doesResourceSetExist),
+			CheckDestroy:      checkResourceDestroy(resourceSet, doesResourceSetExist),
 			Steps: []resource.TestStep{
 				{
 					Config: mgr.ConfigReplace(config),

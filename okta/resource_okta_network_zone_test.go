@@ -19,7 +19,7 @@ func TestAccOktaNetworkZone_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(networkZone, doesNetworkZoneExist),
+		CheckDestroy:      checkResourceDestroy(networkZone, doesNetworkZoneExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

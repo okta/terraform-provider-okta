@@ -20,7 +20,7 @@ func TestAccAppSharedCredentials_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSharedCredentials, createDoesAppExist(sdk.NewBrowserPluginApplication())),
+		CheckDestroy:      checkResourceDestroy(appSharedCredentials, createDoesAppExist(sdk.NewBrowserPluginApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -98,7 +98,7 @@ resource "okta_app_shared_credentials" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSharedCredentials, createDoesAppExist(sdk.NewBrowserPluginApplication())),
+		CheckDestroy:      checkResourceDestroy(appSharedCredentials, createDoesAppExist(sdk.NewBrowserPluginApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
