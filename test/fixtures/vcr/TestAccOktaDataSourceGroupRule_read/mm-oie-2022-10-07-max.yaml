@@ -1,1238 +1,2179 @@
 ---
-version: 1
+version: 2
 interactions:
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/
-    method: GET
-  response:
-    body: '[]'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:57 GMT
-      Link:
-      - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=50>; rel="self"
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/
-    method: GET
-  response:
-    body: '[]'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:57 GMT
-      Link:
-      - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=50>; rel="self"
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/
-    method: GET
-  response:
-    body: '[]'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:57 GMT
-      Link:
-      - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=50>; rel="self"
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/
-    method: GET
-  response:
-    body: '[]'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:57 GMT
-      Link:
-      - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=50>; rel="self"
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: |
-      {"profile":{"name":"testAcc_3778815348","description":""}}
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      Content-Type:
-      - application/json
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups
-    method: POST
-  response:
-    body: '{"id":"00g8qs3uepusR3UIA1d7","created":"2023-06-29T21:55:58.000Z","lastUpdated":"2023-06-29T21:55:58.000Z","lastMembershipUpdated":"2023-06-29T21:55:58.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3778815348","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.1a5ebe44c4244fb796c235d86b47e3bb.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.d9cfbd8a00a4feac1aa5612ba02e99c0.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7/apps"}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:58 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7
-    method: GET
-  response:
-    body: '{"id":"00g8qs3uepusR3UIA1d7","created":"2023-06-29T21:55:58.000Z","lastUpdated":"2023-06-29T21:55:58.000Z","lastMembershipUpdated":"2023-06-29T21:55:58.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3778815348","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.1a5ebe44c4244fb796c235d86b47e3bb.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.d9cfbd8a00a4feac1aa5612ba02e99c0.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7/apps"}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:58 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7
-    method: GET
-  response:
-    body: '{"id":"00g8qs3uepusR3UIA1d7","created":"2023-06-29T21:55:58.000Z","lastUpdated":"2023-06-29T21:55:58.000Z","lastMembershipUpdated":"2023-06-29T21:55:58.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3778815348","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.1a5ebe44c4244fb796c235d86b47e3bb.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.d9cfbd8a00a4feac1aa5612ba02e99c0.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7/apps"}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:58 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/
-    method: GET
-  response:
-    body: '[]'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:58 GMT
-      Link:
-      - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=50>; rel="self"
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: |
-      {"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"conditions":{"expression":{"type":"urn:okta:expression:1.0","value":"String.startsWith(user.firstName,\"andy\")"},"people":{"users":{}}},"name":"testAccOne_3778815348","type":"group_rule"}
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      Content-Type:
-      - application/json
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules
-    method: POST
-  response:
-    body: '{"type":"group_rule","id":"0pr8qs4g5oRdsGtUT1d7","status":"INACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:58 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qs4g5oRdsGtUT1d7/lifecycle/activate
-    method: POST
-  response:
-    body: ""
-    headers:
-      Date:
-      - Thu, 29 Jun 2023 21:55:58 GMT
-    status: 204 No Content
-    code: 204
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qs4g5oRdsGtUT1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qs4g5oRdsGtUT1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:58 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/
-    method: GET
-  response:
-    body: '[{"type":"group_rule","id":"0pr8qs4g5oRdsGtUT1d7","status":"ACTIVE","name":"testAccOne_3778815348","created":"2023-06-29T21:55:58.000Z","lastUpdated":"2023-06-29T21:55:58.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}]'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:58 GMT
-      Link:
-      - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=50>; rel="self"
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: |
-      {"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"conditions":{"expression":{"type":"urn:okta:expression:1.0","value":"String.startsWith(user.firstName,\"andy\")"},"people":{"users":{}}},"name":"testAccTwo_3778815348","type":"group_rule"}
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      Content-Type:
-      - application/json
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules
-    method: POST
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"INACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:58 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7/lifecycle/activate
-    method: POST
-  response:
-    body: ""
-    headers:
-      Date:
-      - Thu, 29 Jun 2023 21:55:59 GMT
-    status: 204 No Content
-    code: 204
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:59 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qs4g5oRdsGtUT1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qs4g5oRdsGtUT1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:59 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:59 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7
-    method: GET
-  response:
-    body: '{"id":"00g8qs3uepusR3UIA1d7","created":"2023-06-29T21:55:58.000Z","lastUpdated":"2023-06-29T21:55:58.000Z","lastMembershipUpdated":"2023-06-29T21:55:58.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3778815348","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.1a5ebe44c4244fb796c235d86b47e3bb.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.d9cfbd8a00a4feac1aa5612ba02e99c0.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7/apps"}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:59 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qs4g5oRdsGtUT1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qs4g5oRdsGtUT1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:59 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qs4g5oRdsGtUT1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qs4g5oRdsGtUT1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:59 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:55:59 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:00 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qs4g5oRdsGtUT1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qs4g5oRdsGtUT1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:00 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:00 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7
-    method: GET
-  response:
-    body: '{"id":"00g8qs3uepusR3UIA1d7","created":"2023-06-29T21:55:58.000Z","lastUpdated":"2023-06-29T21:55:58.000Z","lastMembershipUpdated":"2023-06-29T21:55:58.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3778815348","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.1a5ebe44c4244fb796c235d86b47e3bb.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.d9cfbd8a00a4feac1aa5612ba02e99c0.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7/apps"}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:00 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348
-    method: GET
-  response:
-    body: '[{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","created":"2023-06-29T21:55:58.000Z","lastUpdated":"2023-06-29T21:55:59.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}]'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:00 GMT
-      Link:
-      - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348>; rel="self"
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qs4g5oRdsGtUT1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qs4g5oRdsGtUT1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:00 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qs4g5oRdsGtUT1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qs4g5oRdsGtUT1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:00 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:00 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:00 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:00 GMT
-      Report-To:
-      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348
-    method: GET
-  response:
-    body: '[{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","created":"2023-06-29T21:55:58.000Z","lastUpdated":"2023-06-29T21:55:59.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}]'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:01 GMT
-      Link:
-      - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348>; rel="self"
-      Report-To:
-      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qs4g5oRdsGtUT1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qs4g5oRdsGtUT1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:01 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:01 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:01 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qs4g5oRdsGtUT1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qs4g5oRdsGtUT1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:03 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348
-    method: GET
-  response:
-    body: '[{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","created":"2023-06-29T21:55:58.000Z","lastUpdated":"2023-06-29T21:55:59.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}]'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:03 GMT
-      Link:
-      - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348>; rel="self"
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:03 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:03 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7
-    method: GET
-  response:
-    body: '{"id":"00g8qs3uepusR3UIA1d7","created":"2023-06-29T21:55:58.000Z","lastUpdated":"2023-06-29T21:55:58.000Z","lastMembershipUpdated":"2023-06-29T21:55:58.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3778815348","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.1a5ebe44c4244fb796c235d86b47e3bb.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.d9cfbd8a00a4feac1aa5612ba02e99c0.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7/apps"}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:03 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348
-    method: GET
-  response:
-    body: '[{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","created":"2023-06-29T21:55:58.000Z","lastUpdated":"2023-06-29T21:55:59.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}]'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:03 GMT
-      Link:
-      - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348>; rel="self"
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qs4g5oRdsGtUT1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qs4g5oRdsGtUT1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:04 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qs4g5oRdsGtUT1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qs4g5oRdsGtUT1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:04 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:04 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:04 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:04 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qs4g5oRdsGtUT1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qs4g5oRdsGtUT1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:04 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348
-    method: GET
-  response:
-    body: '[{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","created":"2023-06-29T21:55:58.000Z","lastUpdated":"2023-06-29T21:55:59.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}]'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:04 GMT
-      Link:
-      - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348>; rel="self"
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:04 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7
-    method: GET
-  response:
-    body: '{"type":"group_rule","id":"0pr8qsafyrEdD4iJO1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g8qs3uepusR3UIA1d7"]}},"allGroupsValid":true}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:04 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7/lifecycle/deactivate
-    method: POST
-  response:
-    body: ""
-    headers:
-      Date:
-      - Thu, 29 Jun 2023 21:56:04 GMT
-    status: 204 No Content
-    code: 204
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qsafyrEdD4iJO1d7?removeUsers=false
-    method: DELETE
-  response:
-    body: '{}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:05 GMT
-    status: 202 Accepted
-    code: 202
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qs4g5oRdsGtUT1d7/lifecycle/deactivate
-    method: POST
-  response:
-    body: ""
-    headers:
-      Date:
-      - Thu, 29 Jun 2023 21:56:05 GMT
-    status: 204 No Content
-    code: 204
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr8qs4g5oRdsGtUT1d7?removeUsers=false
-    method: DELETE
-  response:
-    body: '{}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Thu, 29 Jun 2023 21:56:05 GMT
-    status: 202 Accepted
-    code: 202
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g8qs3uepusR3UIA1d7
-    method: DELETE
-  response:
-    body: ""
-    headers:
-      Date:
-      - Thu, 29 Jun 2023 21:56:05 GMT
-    status: 204 No Content
-    code: 204
-    duration: ""
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:51 GMT
+            Link:
+                - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=50>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 152.134361ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:51 GMT
+            Link:
+                - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=50>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 82.869471ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:52 GMT
+            Link:
+                - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=50>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 64.158958ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:52 GMT
+            Link:
+                - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=50>; rel="self"
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 55.11775ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 59
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"profile":{"name":"testAcc_3778815348","description":""}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00g95tprkzpvceoNu1d7","created":"2023-07-27T19:17:52.000Z","lastUpdated":"2023-07-27T19:17:52.000Z","lastMembershipUpdated":"2023-07-27T19:17:52.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3778815348","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:52 GMT
+        status: 200 OK
+        code: 200
+        duration: 94.722972ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00g95tprkzpvceoNu1d7","created":"2023-07-27T19:17:52.000Z","lastUpdated":"2023-07-27T19:17:52.000Z","lastMembershipUpdated":"2023-07-27T19:17:52.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3778815348","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:52 GMT
+        status: 200 OK
+        code: 200
+        duration: 61.145268ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00g95tprkzpvceoNu1d7","created":"2023-07-27T19:17:52.000Z","lastUpdated":"2023-07-27T19:17:52.000Z","lastMembershipUpdated":"2023-07-27T19:17:52.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3778815348","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:52 GMT
+        status: 200 OK
+        code: 200
+        duration: 59.160782ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:52 GMT
+            Link:
+                - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=50>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 51.089177ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 262
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"conditions":{"expression":{"type":"urn:okta:expression:1.0","value":"String.startsWith(user.firstName,\"andy\")"},"people":{"users":{}}},"name":"testAccOne_3778815348","type":"group_rule"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjroyUmMrkJF1d7","status":"INACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:53 GMT
+        status: 200 OK
+        code: 200
+        duration: 91.371646ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjroyUmMrkJF1d7/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Thu, 27 Jul 2023 19:17:53 GMT
+        status: 204 No Content
+        code: 204
+        duration: 90.275ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjroyUmMrkJF1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjroyUmMrkJF1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:53 GMT
+        status: 200 OK
+        code: 200
+        duration: 65.089834ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0pr95tjroyUmMrkJF1d7","status":"ACTIVE","name":"testAccOne_3778815348","created":"2023-07-27T19:17:53.000Z","lastUpdated":"2023-07-27T19:17:53.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:53 GMT
+            Link:
+                - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=50>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 77.315778ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 262
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"conditions":{"expression":{"type":"urn:okta:expression:1.0","value":"String.startsWith(user.firstName,\"andy\")"},"people":{"users":{}}},"name":"testAccTwo_3778815348","type":"group_rule"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"INACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:53 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 92.581139ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Thu, 27 Jul 2023 19:17:53 GMT
+        status: 204 No Content
+        code: 204
+        duration: 89.547917ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:54 GMT
+        status: 200 OK
+        code: 200
+        duration: 81.523319ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjroyUmMrkJF1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjroyUmMrkJF1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:54 GMT
+        status: 200 OK
+        code: 200
+        duration: 83.642967ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:54 GMT
+        status: 200 OK
+        code: 200
+        duration: 71.882748ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00g95tprkzpvceoNu1d7","created":"2023-07-27T19:17:52.000Z","lastUpdated":"2023-07-27T19:17:52.000Z","lastMembershipUpdated":"2023-07-27T19:17:52.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3778815348","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:54 GMT
+        status: 200 OK
+        code: 200
+        duration: 70.30617ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjroyUmMrkJF1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjroyUmMrkJF1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:55 GMT
+        status: 200 OK
+        code: 200
+        duration: 63.752846ms
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjroyUmMrkJF1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjroyUmMrkJF1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:55 GMT
+        status: 200 OK
+        code: 200
+        duration: 83.752967ms
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:55 GMT
+        status: 200 OK
+        code: 200
+        duration: 64.219208ms
+    - id: 21
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:55 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 76.102994ms
+    - id: 22
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjroyUmMrkJF1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjroyUmMrkJF1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:55 GMT
+        status: 200 OK
+        code: 200
+        duration: 79.500633ms
+    - id: 23
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:55 GMT
+        status: 200 OK
+        code: 200
+        duration: 58.913958ms
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00g95tprkzpvceoNu1d7","created":"2023-07-27T19:17:52.000Z","lastUpdated":"2023-07-27T19:17:52.000Z","lastMembershipUpdated":"2023-07-27T19:17:52.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3778815348","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:56 GMT
+        status: 200 OK
+        code: 200
+        duration: 74.072423ms
+    - id: 25
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","created":"2023-07-27T19:17:53.000Z","lastUpdated":"2023-07-27T19:17:53.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:56 GMT
+            Link:
+                - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 79.532429ms
+    - id: 26
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjroyUmMrkJF1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjroyUmMrkJF1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:56 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 68.755641ms
+    - id: 27
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjroyUmMrkJF1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjroyUmMrkJF1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:56 GMT
+        status: 200 OK
+        code: 200
+        duration: 77.897281ms
+    - id: 28
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:56 GMT
+        status: 200 OK
+        code: 200
+        duration: 51.677608ms
+    - id: 29
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:56 GMT
+        status: 200 OK
+        code: 200
+        duration: 64.042918ms
+    - id: 30
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:56 GMT
+        status: 200 OK
+        code: 200
+        duration: 59.328922ms
+    - id: 31
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","created":"2023-07-27T19:17:53.000Z","lastUpdated":"2023-07-27T19:17:53.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:57 GMT
+            Link:
+                - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 66.626676ms
+    - id: 32
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjroyUmMrkJF1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjroyUmMrkJF1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:57 GMT
+        status: 200 OK
+        code: 200
+        duration: 80.870641ms
+    - id: 33
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:57 GMT
+        status: 200 OK
+        code: 200
+        duration: 64.770378ms
+    - id: 34
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:57 GMT
+        status: 200 OK
+        code: 200
+        duration: 62.685063ms
+    - id: 35
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","created":"2023-07-27T19:17:53.000Z","lastUpdated":"2023-07-27T19:17:53.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:59 GMT
+            Link:
+                - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 60.831783ms
+    - id: 36
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjroyUmMrkJF1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjroyUmMrkJF1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:59 GMT
+        status: 200 OK
+        code: 200
+        duration: 68.209098ms
+    - id: 37
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:17:59 GMT
+        status: 200 OK
+        code: 200
+        duration: 57.746979ms
+    - id: 38
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:18:00 GMT
+        status: 200 OK
+        code: 200
+        duration: 67.622551ms
+    - id: 39
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00g95tprkzpvceoNu1d7","created":"2023-07-27T19:17:52.000Z","lastUpdated":"2023-07-27T19:17:52.000Z","lastMembershipUpdated":"2023-07-27T19:17:52.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3778815348","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7/users"},"apps":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:18:00 GMT
+        status: 200 OK
+        code: 200
+        duration: 68.403074ms
+    - id: 40
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","created":"2023-07-27T19:17:53.000Z","lastUpdated":"2023-07-27T19:17:53.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:18:00 GMT
+            Link:
+                - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 80.830447ms
+    - id: 41
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjroyUmMrkJF1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjroyUmMrkJF1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:18:00 GMT
+        status: 200 OK
+        code: 200
+        duration: 64.098266ms
+    - id: 42
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjroyUmMrkJF1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjroyUmMrkJF1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:18:00 GMT
+        status: 200 OK
+        code: 200
+        duration: 63.263142ms
+    - id: 43
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:18:00 GMT
+        status: 200 OK
+        code: 200
+        duration: 64.177069ms
+    - id: 44
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:18:00 GMT
+        status: 200 OK
+        code: 200
+        duration: 58.904309ms
+    - id: 45
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:18:01 GMT
+        status: 200 OK
+        code: 200
+        duration: 53.551671ms
+    - id: 46
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","created":"2023-07-27T19:17:53.000Z","lastUpdated":"2023-07-27T19:17:53.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:18:01 GMT
+            Link:
+                - <https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules?limit=1&search=testAccTwo_3778815348>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 66.636952ms
+    - id: 47
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjroyUmMrkJF1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjroyUmMrkJF1d7","status":"ACTIVE","name":"testAccOne_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:18:01 GMT
+        status: 200 OK
+        code: 200
+        duration: 75.065151ms
+    - id: 48
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:18:01 GMT
+        status: 200 OK
+        code: 200
+        duration: 89.380584ms
+    - id: 49
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0pr95tjzey8VMLmyP1d7","status":"ACTIVE","name":"testAccTwo_3778815348","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00g95tprkzpvceoNu1d7"]}},"allGroupsValid":true}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:18:01 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 66.900343ms
+    - id: 50
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Thu, 27 Jul 2023 19:18:01 GMT
+        status: 204 No Content
+        code: 204
+        duration: 73.608513ms
+    - id: 51
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjzey8VMLmyP1d7?removeUsers=false
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:18:02 GMT
+        status: 202 Accepted
+        code: 202
+        duration: 92.238094ms
+    - id: 52
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjroyUmMrkJF1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Thu, 27 Jul 2023 19:18:02 GMT
+        status: 204 No Content
+        code: 204
+        duration: 75.027993ms
+    - id: 53
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/rules/0pr95tjroyUmMrkJF1d7?removeUsers=false
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:18:02 GMT
+        status: 202 Accepted
+        code: 202
+        duration: 77.587479ms
+    - id: 54
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/groups/00g95tprkzpvceoNu1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Thu, 27 Jul 2023 19:18:02 GMT
+        status: 204 No Content
+        code: 204
+        duration: 99.940962ms

@@ -1,322 +1,675 @@
 ---
-version: 1
+version: 2
 interactions:
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default
-    method: GET
-  response:
-    body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-06-28T19:04:49.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 28 Jun 2023 19:09:00 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: |
-      {"_links":{"claims":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims"},"deactivate":{"hints":{"allow":["POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate"},"keys":{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys"},"metadata":[{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","name":"oauth-authorization-server"},{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","name":"openid-configuration"}],"policies":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies"},"rotateKey":{"hints":{"allow":["POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate"},"scopes":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes"},"self":{"hints":{"allow":["GET","DELETE","PUT"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default"}},"audiences":["api://default"],"created":"2022-10-27T23:16:36Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","lastRotated":"2022-10-27T23:16:36Z","rotationMode":"MANUAL"}},"default":true,"description":"Default Authorization Server for your Applications","id":"aus5ysislgkVBE0FS1d7","issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","lastUpdated":"2023-06-28T19:04:49Z","name":"default","status":"ACTIVE"}
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      Content-Type:
-      - application/json
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
-    method: PUT
-  response:
-    body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-06-28T19:04:49.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 28 Jun 2023 19:09:01 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
-    method: GET
-  response:
-    body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-06-28T19:04:49.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 28 Jun 2023 19:09:01 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
-    method: GET
-  response:
-    body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-06-28T19:04:49.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 28 Jun 2023 19:09:02 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
-    method: GET
-  response:
-    body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-06-28T19:04:49.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 28 Jun 2023 19:09:03 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
-    method: GET
-  response:
-    body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-06-28T19:04:49.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 28 Jun 2023 19:09:03 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: |
-      {"_links":{"claims":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims"},"deactivate":{"hints":{"allow":["POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate"},"keys":{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys"},"metadata":[{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","name":"oauth-authorization-server"},{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","name":"openid-configuration"}],"policies":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies"},"rotateKey":{"hints":{"allow":["POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate"},"scopes":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes"},"self":{"hints":{"allow":["GET","DELETE","PUT"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default"}},"audiences":["whatever.rise.zone"],"created":"2022-10-27T23:16:36Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","lastRotated":"2022-10-27T23:16:36Z","rotationMode":"MANUAL"}},"default":true,"description":"Default Authorization Server","id":"aus5ysislgkVBE0FS1d7","issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","lastUpdated":"2023-06-28T19:04:49Z","name":"default","status":"ACTIVE"}
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      Content-Type:
-      - application/json
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
-    method: PUT
-  response:
-    body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-06-28T19:09:03.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 28 Jun 2023 19:09:04 GMT
-      Report-To:
-      - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
-    method: GET
-  response:
-    body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-06-28T19:09:03.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 28 Jun 2023 19:09:04 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
-    method: GET
-  response:
-    body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-06-28T19:09:03.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 28 Jun 2023 19:09:05 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
-    method: GET
-  response:
-    body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-06-28T19:09:03.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 28 Jun 2023 19:09:06 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
-    method: GET
-  response:
-    body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-06-28T19:09:03.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 28 Jun 2023 19:09:06 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: |
-      {"_links":{"claims":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims"},"deactivate":{"hints":{"allow":["POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate"},"keys":{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys"},"metadata":[{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","name":"oauth-authorization-server"},{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","name":"openid-configuration"}],"policies":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies"},"rotateKey":{"hints":{"allow":["POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate"},"scopes":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes"},"self":{"hints":{"allow":["GET","DELETE","PUT"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default"}},"audiences":["api://default"],"created":"2022-10-27T23:16:36Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","lastRotated":"2022-10-27T23:16:36Z","rotationMode":"MANUAL"}},"default":true,"description":"Default Authorization Server for your Applications","id":"aus5ysislgkVBE0FS1d7","issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","lastUpdated":"2023-06-28T19:09:03Z","name":"default","status":"ACTIVE"}
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      Content-Type:
-      - application/json
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
-    method: PUT
-  response:
-    body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-06-28T19:09:07.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 28 Jun 2023 19:09:07 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
-    method: GET
-  response:
-    body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-06-28T19:09:07.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 28 Jun 2023 19:09:07 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
-- request:
-    body: ""
-    form: {}
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      User-Agent:
-      - okta-sdk-golang/2.17.0 golang/go1.20.4 darwin/amd64 okta-terraform/4.0.3
-    url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
-    method: GET
-  response:
-    body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-06-28T19:09:07.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 28 Jun 2023 19:09:08 GMT
-    status: 200 OK
-    code: 200
-    duration: ""
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:02.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:05 GMT
+        status: 200 OK
+        code: 200
+        duration: 165.77197ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1873
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"_links":{"claims":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims"},"deactivate":{"hints":{"allow":["POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate"},"keys":{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys"},"metadata":[{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","name":"oauth-authorization-server"},{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","name":"openid-configuration"}],"policies":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies"},"rotateKey":{"hints":{"allow":["POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate"},"scopes":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes"},"self":{"hints":{"allow":["GET","DELETE","PUT"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default"}},"audiences":["api://default"],"created":"2022-10-27T23:16:36Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","lastRotated":"2022-10-27T23:16:36Z","rotationMode":"MANUAL"}},"default":true,"description":"Default Authorization Server for your Applications","id":"aus5ysislgkVBE0FS1d7","issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","lastUpdated":"2023-07-27T19:48:02Z","name":"default","status":"ACTIVE"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:02.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:05 GMT
+        status: 200 OK
+        code: 200
+        duration: 83.193852ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:02.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:06 GMT
+        status: 200 OK
+        code: 200
+        duration: 248.326469ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:02.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:06 GMT
+        status: 200 OK
+        code: 200
+        duration: 247.767427ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:02.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:07 GMT
+        status: 200 OK
+        code: 200
+        duration: 314.935629ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:02.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:08 GMT
+        status: 200 OK
+        code: 200
+        duration: 64.065668ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:02.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:08 GMT
+        status: 200 OK
+        code: 200
+        duration: 82.217373ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1856
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"_links":{"claims":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims"},"deactivate":{"hints":{"allow":["POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate"},"keys":{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys"},"metadata":[{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","name":"oauth-authorization-server"},{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","name":"openid-configuration"}],"policies":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies"},"rotateKey":{"hints":{"allow":["POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate"},"scopes":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes"},"self":{"hints":{"allow":["GET","DELETE","PUT"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default"}},"audiences":["whatever.rise.zone"],"created":"2022-10-27T23:16:36Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","lastRotated":"2022-10-27T23:16:36Z","rotationMode":"MANUAL"}},"default":true,"description":"Default Authorization Server","id":"aus5ysislgkVBE0FS1d7","issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","lastUpdated":"2023-07-27T19:48:02Z","name":"default","status":"ACTIVE"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:08.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:08 GMT
+        status: 200 OK
+        code: 200
+        duration: 326.154552ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:08.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:09 GMT
+        status: 200 OK
+        code: 200
+        duration: 341.962224ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:08.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:10 GMT
+        status: 200 OK
+        code: 200
+        duration: 104.959513ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:08.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:10 GMT
+        status: 200 OK
+        code: 200
+        duration: 273.361413ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:08.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:11 GMT
+        status: 200 OK
+        code: 200
+        duration: 92.570937ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server","audiences":["whatever.rise.zone"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:08.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:11 GMT
+        status: 200 OK
+        code: 200
+        duration: 79.03722ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1873
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"_links":{"claims":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims"},"deactivate":{"hints":{"allow":["POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate"},"keys":{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys"},"metadata":[{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","name":"oauth-authorization-server"},{"hints":{"allow":["GET"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","name":"openid-configuration"}],"policies":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies"},"rotateKey":{"hints":{"allow":["POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate"},"scopes":{"hints":{"allow":["GET","POST"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes"},"self":{"hints":{"allow":["GET","DELETE","PUT"]},"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default"}},"audiences":["api://default"],"created":"2022-10-27T23:16:36Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","lastRotated":"2022-10-27T23:16:36Z","rotationMode":"MANUAL"}},"default":true,"description":"Default Authorization Server for your Applications","id":"aus5ysislgkVBE0FS1d7","issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","lastUpdated":"2023-07-27T19:48:08Z","name":"default","status":"ACTIVE"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:11.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:11 GMT
+        status: 200 OK
+        code: 200
+        duration: 79.23964ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:11.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:12 GMT
+        status: 200 OK
+        code: 200
+        duration: 241.09088ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:11.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:12 GMT
+        status: 200 OK
+        code: 200
+        duration: 75.432211ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-oie-2022-10-07-max.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/aus5ysislgkVBE0FS1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"aus5ysislgkVBE0FS1d7","name":"default","description":"Default Authorization Server for your Applications","audiences":["api://default"],"issuer":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default","issuerMode":"ORG_URL","status":"ACTIVE","created":"2022-10-27T23:16:36.000Z","lastUpdated":"2023-07-27T19:48:11.000Z","credentials":{"signing":{"kid":"DlsWsSo9vNSFB7niq4OOdNUy7boDHQsY-Pb0Q1h80bo","rotationMode":"MANUAL","lastRotated":"2022-10-27T23:16:36.000Z"}},"default":true,"_links":{"rotateKey":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://mm-oie-2022-10-07-max.oktapreview.com/oauth2/default/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://mm-oie-2022-10-07-max.oktapreview.com/api/v1/authorizationServers/default/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 19:48:13 GMT
+        status: 200 OK
+        code: 200
+        duration: 259.126471ms

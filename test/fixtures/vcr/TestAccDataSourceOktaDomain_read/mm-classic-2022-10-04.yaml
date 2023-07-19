@@ -1,0 +1,550 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 62
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"certificateSourceType":"MANUAL","domain":"www.example.com"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"id":"OcD95upq2ef06X7Xk1d7","domain":"www.example.com","certificateSourceType":"MANUAL","validationStatus":"NOT_STARTED","brandId":"bnd95upq2aBOFXSVg1d7","dnsRecords":[{"recordType":"TXT","fqdn":"_oktaverification.www.example.com","values":["09008cf8ceee47e4a7da6dd1ac8b14c5"]},{"recordType":"CNAME","fqdn":"www.example.com","values":["mm-classic-2022-10-04.customdomains.oktapreview.com"]}],"_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7","hints":{"allow":["GET","DELETE","PUT"]}},"verify":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7/verify","hints":{"allow":["POST"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd95upq2aBOFXSVg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:11:09 GMT
+        status: 201 Created
+        code: 201
+        duration: 566.008346ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"OcD95upq2ef06X7Xk1d7","domain":"www.example.com","certificateSourceType":"MANUAL","validationStatus":"NOT_STARTED","brandId":"bnd95upq2aBOFXSVg1d7","dnsRecords":[{"recordType":"TXT","fqdn":"_oktaverification.www.example.com","values":["09008cf8ceee47e4a7da6dd1ac8b14c5"]},{"recordType":"CNAME","fqdn":"www.example.com","values":["mm-classic-2022-10-04.customdomains.oktapreview.com"]}],"_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7","hints":{"allow":["DELETE"]}},"verify":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7/verify","hints":{"allow":["POST"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd95upq2aBOFXSVg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:11:10 GMT
+        status: 200 OK
+        code: 200
+        duration: 69.416052ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7/verify
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"OcD95upq2ef06X7Xk1d7","domain":"www.example.com","certificateSourceType":"MANUAL","validationStatus":"FAILED_TO_VERIFY","brandId":"bnd95upq2aBOFXSVg1d7","dnsRecords":[{"recordType":"TXT","fqdn":"_oktaverification.www.example.com","values":["09008cf8ceee47e4a7da6dd1ac8b14c5"]},{"recordType":"CNAME","fqdn":"www.example.com","values":["mm-classic-2022-10-04.customdomains.oktapreview.com"]}],"_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7","hints":{"allow":["GET","DELETE"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd95upq2aBOFXSVg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:11:10 GMT
+        status: 200 OK
+        code: 200
+        duration: 491.139536ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"domains":[{"id":"OcD95upq2ef06X7Xk1d7","domain":"www.example.com","certificateSourceType":"MANUAL","validationStatus":"FAILED_TO_VERIFY","brandId":"bnd95upq2aBOFXSVg1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7","hints":{"allow":["GET","DELETE"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd95upq2aBOFXSVg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"default","domain":"mm-classic-2022-10-04.oktapreview.com","certificateSourceType":"OKTA_MANAGED","validationStatus":"COMPLETED","brandId":"bnd5ptm04rUA5HWie1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/default","hints":{"allow":["GET"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd5ptm04rUA5HWie1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:11:11 GMT
+        status: 200 OK
+        code: 200
+        duration: 64.408267ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"domains":[{"id":"OcD95upq2ef06X7Xk1d7","domain":"www.example.com","certificateSourceType":"MANUAL","validationStatus":"FAILED_TO_VERIFY","brandId":"bnd95upq2aBOFXSVg1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7","hints":{"allow":["GET","DELETE"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd95upq2aBOFXSVg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"default","domain":"mm-classic-2022-10-04.oktapreview.com","certificateSourceType":"OKTA_MANAGED","validationStatus":"COMPLETED","brandId":"bnd5ptm04rUA5HWie1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/default","hints":{"allow":["GET"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd5ptm04rUA5HWie1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:11:11 GMT
+        status: 200 OK
+        code: 200
+        duration: 67.165048ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"domains":[{"id":"OcD95upq2ef06X7Xk1d7","domain":"www.example.com","certificateSourceType":"MANUAL","validationStatus":"FAILED_TO_VERIFY","brandId":"bnd95upq2aBOFXSVg1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7","hints":{"allow":["GET","DELETE"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd95upq2aBOFXSVg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"default","domain":"mm-classic-2022-10-04.oktapreview.com","certificateSourceType":"OKTA_MANAGED","validationStatus":"COMPLETED","brandId":"bnd5ptm04rUA5HWie1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/default","hints":{"allow":["GET"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd5ptm04rUA5HWie1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:11:11 GMT
+        status: 200 OK
+        code: 200
+        duration: 71.454081ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"domains":[{"id":"OcD95upq2ef06X7Xk1d7","domain":"www.example.com","certificateSourceType":"MANUAL","validationStatus":"FAILED_TO_VERIFY","brandId":"bnd95upq2aBOFXSVg1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7","hints":{"allow":["GET","DELETE"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd95upq2aBOFXSVg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"default","domain":"mm-classic-2022-10-04.oktapreview.com","certificateSourceType":"OKTA_MANAGED","validationStatus":"COMPLETED","brandId":"bnd5ptm04rUA5HWie1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/default","hints":{"allow":["GET"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd5ptm04rUA5HWie1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:11:11 GMT
+        status: 200 OK
+        code: 200
+        duration: 74.315465ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"OcD95upq2ef06X7Xk1d7","domain":"www.example.com","certificateSourceType":"MANUAL","validationStatus":"FAILED_TO_VERIFY","brandId":"bnd95upq2aBOFXSVg1d7","dnsRecords":[{"recordType":"TXT","fqdn":"_oktaverification.www.example.com","values":["09008cf8ceee47e4a7da6dd1ac8b14c5"]},{"recordType":"CNAME","fqdn":"www.example.com","values":["mm-classic-2022-10-04.customdomains.oktapreview.com"]}],"_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7","hints":{"allow":["DELETE"]}},"verify":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7/verify","hints":{"allow":["POST"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd95upq2aBOFXSVg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:11:12 GMT
+        status: 200 OK
+        code: 200
+        duration: 116.339797ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7/verify
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"OcD95upq2ef06X7Xk1d7","domain":"www.example.com","certificateSourceType":"MANUAL","validationStatus":"FAILED_TO_VERIFY","brandId":"bnd95upq2aBOFXSVg1d7","dnsRecords":[{"recordType":"TXT","fqdn":"_oktaverification.www.example.com","values":["09008cf8ceee47e4a7da6dd1ac8b14c5"]},{"recordType":"CNAME","fqdn":"www.example.com","values":["mm-classic-2022-10-04.customdomains.oktapreview.com"]}],"_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7","hints":{"allow":["GET","DELETE"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd95upq2aBOFXSVg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:11:12 GMT
+        status: 200 OK
+        code: 200
+        duration: 470.661406ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"domains":[{"id":"OcD95upq2ef06X7Xk1d7","domain":"www.example.com","certificateSourceType":"MANUAL","validationStatus":"FAILED_TO_VERIFY","brandId":"bnd95upq2aBOFXSVg1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7","hints":{"allow":["GET","DELETE"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd95upq2aBOFXSVg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"default","domain":"mm-classic-2022-10-04.oktapreview.com","certificateSourceType":"OKTA_MANAGED","validationStatus":"COMPLETED","brandId":"bnd5ptm04rUA5HWie1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/default","hints":{"allow":["GET"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd5ptm04rUA5HWie1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:11:13 GMT
+        status: 200 OK
+        code: 200
+        duration: 58.982466ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"domains":[{"id":"OcD95upq2ef06X7Xk1d7","domain":"www.example.com","certificateSourceType":"MANUAL","validationStatus":"FAILED_TO_VERIFY","brandId":"bnd95upq2aBOFXSVg1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7","hints":{"allow":["GET","DELETE"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd95upq2aBOFXSVg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"default","domain":"mm-classic-2022-10-04.oktapreview.com","certificateSourceType":"OKTA_MANAGED","validationStatus":"COMPLETED","brandId":"bnd5ptm04rUA5HWie1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/default","hints":{"allow":["GET"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd5ptm04rUA5HWie1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:11:13 GMT
+        status: 200 OK
+        code: 200
+        duration: 66.957401ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"domains":[{"id":"OcD95upq2ef06X7Xk1d7","domain":"www.example.com","certificateSourceType":"MANUAL","validationStatus":"FAILED_TO_VERIFY","brandId":"bnd95upq2aBOFXSVg1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7","hints":{"allow":["GET","DELETE"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd95upq2aBOFXSVg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"default","domain":"mm-classic-2022-10-04.oktapreview.com","certificateSourceType":"OKTA_MANAGED","validationStatus":"COMPLETED","brandId":"bnd5ptm04rUA5HWie1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/default","hints":{"allow":["GET"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd5ptm04rUA5HWie1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:11:13 GMT
+        status: 200 OK
+        code: 200
+        duration: 59.4154ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"domains":[{"id":"OcD95upq2ef06X7Xk1d7","domain":"www.example.com","certificateSourceType":"MANUAL","validationStatus":"FAILED_TO_VERIFY","brandId":"bnd95upq2aBOFXSVg1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7","hints":{"allow":["GET","DELETE"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd95upq2aBOFXSVg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"default","domain":"mm-classic-2022-10-04.oktapreview.com","certificateSourceType":"OKTA_MANAGED","validationStatus":"COMPLETED","brandId":"bnd5ptm04rUA5HWie1d7","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/default","hints":{"allow":["GET"]}},"brand":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/brands/bnd5ptm04rUA5HWie1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:11:13 GMT
+        status: 200 OK
+        code: 200
+        duration: 60.43492ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/domains/OcD95upq2ef06X7Xk1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Thu, 27 Jul 2023 20:11:14 GMT
+        status: 204 No Content
+        code: 204
+        duration: 518.505452ms

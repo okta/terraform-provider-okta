@@ -1,0 +1,985 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"okta_question","provider":"OKTA","factorType":"question","status":"INACTIVE","_links":{"activate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question","hints":{"allow":["GET"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:19 GMT
+        status: 200 OK
+        code: 200
+        duration: 228.403353ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"okta_question","provider":"OKTA","factorType":"question","status":"ACTIVE","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question","hints":{"allow":["GET"]}},"deactivate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:20 GMT
+        status: 200 OK
+        code: 200
+        duration: 145.87389ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 190
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"credentials":{"password":{}},"profile":{"email":"john_2638759448@ledzeppelin.com","firstName":"TestAcc","lastName":"Jones","login":"john_2638759448@ledzeppelin.com","postalAddress":null}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00u95vbrqooBHUkVi1d7","status":"PROVISIONED","created":"2023-07-27T20:36:19.000Z","activated":"2023-07-27T20:36:20.000Z","statusChanged":"2023-07-27T20:36:20.000Z","lastLogin":null,"lastUpdated":"2023-07-27T20:36:20.000Z","passwordChanged":null,"type":{"id":"oty5ptm052JMcoADv1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_2638759448@ledzeppelin.com","email":"john_2638759448@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"suspend":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/suspend","method":"POST"},"schema":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7"},"resetPassword":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/reset_password","method":"POST"},"reactivate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/reactivate","method":"POST"},"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7"},"type":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7"},"deactivate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/deactivate","method":"POST"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:20 GMT
+        status: 200 OK
+        code: 200
+        duration: 669.532555ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"okta_question","provider":"OKTA","factorType":"question","status":"ACTIVE","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question","hints":{"allow":["GET"]}},"deactivate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:20 GMT
+        status: 200 OK
+        code: 200
+        duration: 78.526734ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00u95vbrqooBHUkVi1d7","status":"PROVISIONED","created":"2023-07-27T20:36:19.000Z","activated":"2023-07-27T20:36:20.000Z","statusChanged":"2023-07-27T20:36:20.000Z","lastLogin":null,"lastUpdated":"2023-07-27T20:36:20.000Z","passwordChanged":null,"type":{"id":"oty5ptm052JMcoADv1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_2638759448@ledzeppelin.com","email":"john_2638759448@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"suspend":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/suspend","method":"POST"},"schema":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7"},"resetPassword":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/reset_password","method":"POST"},"reactivate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/reactivate","method":"POST"},"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7"},"type":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7"},"deactivate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/deactivate","method":"POST"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:21 GMT
+        status: 200 OK
+        code: 200
+        duration: 99.748472ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/questions
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"question":"disliked_food","questionText":"What is the food you least liked as a child?"},{"question":"name_of_first_plush_toy","questionText":"What is the name of your first stuffed animal?"},{"question":"first_award","questionText":"What did you earn your first medal or award for?"},{"question":"favorite_security_question","questionText":"What is your favorite security question?"},{"question":"favorite_toy","questionText":"What is the toy/stuffed animal you liked the most as a kid?"},{"question":"first_computer_game","questionText":"What was the first computer game you played?"},{"question":"favorite_movie_quote","questionText":"What is your favorite movie quote?"},{"question":"first_sports_team_mascot","questionText":"What was the mascot of the first sports team you played on?"},{"question":"first_music_purchase","questionText":"What music album or song did you first purchase?"},{"question":"favorite_art_piece","questionText":"What is your favorite piece of art?"},{"question":"grandmother_favorite_desert","questionText":"What was your grandmother''s favorite dessert?"},{"question":"first_thing_cooked","questionText":"What was the first thing you learned to cook?"},{"question":"childhood_dream_job","questionText":"What was your dream job as a child?"},{"question":"place_where_significant_other_was_met","questionText":"Where did you meet your spouse/significant other?"},{"question":"favorite_vacation_location","questionText":"Where did you go for your favorite vacation?"},{"question":"new_years_two_thousand","questionText":"Where were you on New Year''s Eve in the year 2000?"},{"question":"favorite_speaker_actor","questionText":"Who is your favorite speaker/orator?"},{"question":"favorite_book_movie_character","questionText":"Who is your favorite book/movie character?"},{"question":"favorite_sports_player","questionText":"Who is your favorite sports player?"}]'
+        headers:
+            Content-Security-Policy-Report-Only:
+                - 'default-src ''self'' mm-classic-2022-10-04.oktapreview.com *.oktacdn.com; connect-src ''self'' mm-classic-2022-10-04.oktapreview.com mm-classic-2022-10-04-admin.oktapreview.com *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com mm-classic-2022-10-04.kerberos.oktapreview.com https://oinmanager.okta.com data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' mm-classic-2022-10-04.oktapreview.com *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-7nbzWwniYOuSOWPrbXp9zoB1G7RNUXZnExHJEC_n_2s'' ''self'' mm-classic-2022-10-04.oktapreview.com *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-classic-2022-10-04.oktapreview.com mm-classic-2022-10-04-admin.oktapreview.com login.okta.com; img-src ''self'' mm-classic-2022-10-04.oktapreview.com *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src ''self'' mm-classic-2022-10-04.oktapreview.com data: *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self'''
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:21 GMT
+        status: 200 OK
+        code: 200
+        duration: 87.861527ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 103
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"factorType":"question","provider":"OKTA","profile":{"answer":"meatball","question":"disliked_food"}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"ufs95vd0lbf0IpodU1d7","factorType":"question","provider":"OKTA","vendorName":"OKTA","status":"ACTIVE","created":"2023-07-27T20:36:21.000Z","lastUpdated":"2023-07-27T20:36:21.000Z","profile":{"question":"disliked_food","questionText":"What is the food you least liked as a child?"},"_links":{"questions":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/questions","hints":{"allow":["GET"]}},"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/ufs95vd0lbf0IpodU1d7","hints":{"allow":["GET","DELETE"]}},"user":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7","hints":{"allow":["GET"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:21 GMT
+        status: 200 OK
+        code: 200
+        duration: 561.403286ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/ufs95vd0lbf0IpodU1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"ufs95vd0lbf0IpodU1d7","factorType":"question","provider":"OKTA","vendorName":"OKTA","status":"ACTIVE","created":"2023-07-27T20:36:21.000Z","lastUpdated":"2023-07-27T20:36:21.000Z","profile":{"question":"disliked_food","questionText":"What is the food you least liked as a child?"},"_links":{"questions":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/questions","hints":{"allow":["GET"]}},"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/ufs95vd0lbf0IpodU1d7","hints":{"allow":["GET","DELETE"]}},"user":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7","hints":{"allow":["GET"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:22 GMT
+        status: 200 OK
+        code: 200
+        duration: 89.056255ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"okta_question","provider":"OKTA","factorType":"question","status":"ACTIVE","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question","hints":{"allow":["GET"]}},"deactivate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:23 GMT
+        status: 200 OK
+        code: 200
+        duration: 74.16189ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00u95vbrqooBHUkVi1d7","status":"PROVISIONED","created":"2023-07-27T20:36:19.000Z","activated":"2023-07-27T20:36:20.000Z","statusChanged":"2023-07-27T20:36:20.000Z","lastLogin":null,"lastUpdated":"2023-07-27T20:36:20.000Z","passwordChanged":null,"type":{"id":"oty5ptm052JMcoADv1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_2638759448@ledzeppelin.com","email":"john_2638759448@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"suspend":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/suspend","method":"POST"},"schema":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7"},"resetPassword":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/reset_password","method":"POST"},"reactivate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/reactivate","method":"POST"},"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7"},"resetFactors":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/reset_factors","method":"POST"},"type":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7"},"deactivate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/deactivate","method":"POST"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:23 GMT
+        status: 200 OK
+        code: 200
+        duration: 81.08644ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/ufs95vd0lbf0IpodU1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"ufs95vd0lbf0IpodU1d7","factorType":"question","provider":"OKTA","vendorName":"OKTA","status":"ACTIVE","created":"2023-07-27T20:36:21.000Z","lastUpdated":"2023-07-27T20:36:21.000Z","profile":{"question":"disliked_food","questionText":"What is the food you least liked as a child?"},"_links":{"questions":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/questions","hints":{"allow":["GET"]}},"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/ufs95vd0lbf0IpodU1d7","hints":{"allow":["GET","DELETE"]}},"user":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7","hints":{"allow":["GET"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:23 GMT
+        status: 200 OK
+        code: 200
+        duration: 107.462982ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"okta_question","provider":"OKTA","factorType":"question","status":"ACTIVE","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question","hints":{"allow":["GET"]}},"deactivate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:23 GMT
+        status: 200 OK
+        code: 200
+        duration: 74.15928ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00u95vbrqooBHUkVi1d7","status":"PROVISIONED","created":"2023-07-27T20:36:19.000Z","activated":"2023-07-27T20:36:20.000Z","statusChanged":"2023-07-27T20:36:20.000Z","lastLogin":null,"lastUpdated":"2023-07-27T20:36:20.000Z","passwordChanged":null,"type":{"id":"oty5ptm052JMcoADv1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_2638759448@ledzeppelin.com","email":"john_2638759448@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"suspend":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/suspend","method":"POST"},"schema":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7"},"resetPassword":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/reset_password","method":"POST"},"reactivate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/reactivate","method":"POST"},"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7"},"resetFactors":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/reset_factors","method":"POST"},"type":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7"},"deactivate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/deactivate","method":"POST"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:23 GMT
+        status: 200 OK
+        code: 200
+        duration: 114.32378ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/ufs95vd0lbf0IpodU1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"ufs95vd0lbf0IpodU1d7","factorType":"question","provider":"OKTA","vendorName":"OKTA","status":"ACTIVE","created":"2023-07-27T20:36:21.000Z","lastUpdated":"2023-07-27T20:36:21.000Z","profile":{"question":"disliked_food","questionText":"What is the food you least liked as a child?"},"_links":{"questions":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/questions","hints":{"allow":["GET"]}},"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/ufs95vd0lbf0IpodU1d7","hints":{"allow":["GET","DELETE"]}},"user":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7","hints":{"allow":["GET"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:24 GMT
+        status: 200 OK
+        code: 200
+        duration: 81.925562ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/questions
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"question":"disliked_food","questionText":"What is the food you least liked as a child?"},{"question":"name_of_first_plush_toy","questionText":"What is the name of your first stuffed animal?"},{"question":"first_award","questionText":"What did you earn your first medal or award for?"},{"question":"favorite_security_question","questionText":"What is your favorite security question?"},{"question":"favorite_toy","questionText":"What is the toy/stuffed animal you liked the most as a kid?"},{"question":"first_computer_game","questionText":"What was the first computer game you played?"},{"question":"favorite_movie_quote","questionText":"What is your favorite movie quote?"},{"question":"first_sports_team_mascot","questionText":"What was the mascot of the first sports team you played on?"},{"question":"first_music_purchase","questionText":"What music album or song did you first purchase?"},{"question":"favorite_art_piece","questionText":"What is your favorite piece of art?"},{"question":"grandmother_favorite_desert","questionText":"What was your grandmother''s favorite dessert?"},{"question":"first_thing_cooked","questionText":"What was the first thing you learned to cook?"},{"question":"childhood_dream_job","questionText":"What was your dream job as a child?"},{"question":"place_where_significant_other_was_met","questionText":"Where did you meet your spouse/significant other?"},{"question":"favorite_vacation_location","questionText":"Where did you go for your favorite vacation?"},{"question":"new_years_two_thousand","questionText":"Where were you on New Year''s Eve in the year 2000?"},{"question":"favorite_speaker_actor","questionText":"Who is your favorite speaker/orator?"},{"question":"favorite_book_movie_character","questionText":"Who is your favorite book/movie character?"},{"question":"favorite_sports_player","questionText":"Who is your favorite sports player?"}]'
+        headers:
+            Content-Security-Policy-Report-Only:
+                - 'default-src ''self'' mm-classic-2022-10-04.oktapreview.com *.oktacdn.com; connect-src ''self'' mm-classic-2022-10-04.oktapreview.com mm-classic-2022-10-04-admin.oktapreview.com *.oktacdn.com *.mixpanel.com *.mapbox.com app.pendo.io data.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com *.mtls.oktapreview.com mm-classic-2022-10-04.kerberos.oktapreview.com https://oinmanager.okta.com data:; script-src ''unsafe-inline'' ''unsafe-eval'' ''self'' mm-classic-2022-10-04.oktapreview.com *.oktacdn.com; style-src ''unsafe-inline'' ''nonce-kvRmxNA9d46cPZuEBjzYYvlPBN23wyN2wUe4vdZT_-A'' ''self'' mm-classic-2022-10-04.oktapreview.com *.oktacdn.com app.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com; frame-src ''self'' mm-classic-2022-10-04.oktapreview.com mm-classic-2022-10-04-admin.oktapreview.com login.okta.com; img-src ''self'' mm-classic-2022-10-04.oktapreview.com *.oktacdn.com *.tiles.mapbox.com *.mapbox.com app.pendo.io data.pendo.io cdn.pendo.io pendo-static-5634101834153984.storage.googleapis.com pendo-static-5391521872216064.storage.googleapis.com data: blob:; font-src ''self'' mm-classic-2022-10-04.oktapreview.com data: *.oktacdn.com fonts.gstatic.com; frame-ancestors ''self'''
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:24 GMT
+        status: 200 OK
+        code: 200
+        duration: 87.895943ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 71
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"profile":{"answer":"meatball","question":"name_of_first_plush_toy"}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/ufs95vd0lbf0IpodU1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"ufs95vd0lbf0IpodU1d7","factorType":"question","provider":"OKTA","vendorName":"OKTA","status":"ACTIVE","created":"2023-07-27T20:36:21.000Z","lastUpdated":"2023-07-27T20:36:24.000Z","profile":{"question":"name_of_first_plush_toy","questionText":"What is the name of your first stuffed animal?"},"_links":{"questions":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/questions","hints":{"allow":["GET"]}},"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/ufs95vd0lbf0IpodU1d7","hints":{"allow":["GET","DELETE"]}},"user":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7","hints":{"allow":["GET"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:24 GMT
+        status: 200 OK
+        code: 200
+        duration: 97.791356ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/ufs95vd0lbf0IpodU1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"ufs95vd0lbf0IpodU1d7","factorType":"question","provider":"OKTA","vendorName":"OKTA","status":"ACTIVE","created":"2023-07-27T20:36:21.000Z","lastUpdated":"2023-07-27T20:36:24.000Z","profile":{"question":"name_of_first_plush_toy","questionText":"What is the name of your first stuffed animal?"},"_links":{"questions":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/questions","hints":{"allow":["GET"]}},"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/ufs95vd0lbf0IpodU1d7","hints":{"allow":["GET","DELETE"]}},"user":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7","hints":{"allow":["GET"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:24 GMT
+        status: 200 OK
+        code: 200
+        duration: 84.295539ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"okta_question","provider":"OKTA","factorType":"question","status":"ACTIVE","_links":{"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question","hints":{"allow":["GET"]}},"deactivate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:25 GMT
+        status: 200 OK
+        code: 200
+        duration: 79.521546ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00u95vbrqooBHUkVi1d7","status":"PROVISIONED","created":"2023-07-27T20:36:19.000Z","activated":"2023-07-27T20:36:20.000Z","statusChanged":"2023-07-27T20:36:20.000Z","lastLogin":null,"lastUpdated":"2023-07-27T20:36:20.000Z","passwordChanged":null,"type":{"id":"oty5ptm052JMcoADv1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_2638759448@ledzeppelin.com","email":"john_2638759448@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"suspend":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/suspend","method":"POST"},"schema":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7"},"resetPassword":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/reset_password","method":"POST"},"reactivate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/reactivate","method":"POST"},"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7"},"resetFactors":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/reset_factors","method":"POST"},"type":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7"},"deactivate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/lifecycle/deactivate","method":"POST"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:25 GMT
+        status: 200 OK
+        code: 200
+        duration: 101.532572ms
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/ufs95vd0lbf0IpodU1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"ufs95vd0lbf0IpodU1d7","factorType":"question","provider":"OKTA","vendorName":"OKTA","status":"ACTIVE","created":"2023-07-27T20:36:21.000Z","lastUpdated":"2023-07-27T20:36:24.000Z","profile":{"question":"name_of_first_plush_toy","questionText":"What is the name of your first stuffed animal?"},"_links":{"questions":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/questions","hints":{"allow":["GET"]}},"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/ufs95vd0lbf0IpodU1d7","hints":{"allow":["GET","DELETE"]}},"user":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7","hints":{"allow":["GET"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:25 GMT
+        status: 200 OK
+        code: 200
+        duration: 70.760775ms
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/ufs95vd0lbf0IpodU1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Thu, 27 Jul 2023 20:36:26 GMT
+        status: 204 No Content
+        code: 204
+        duration: 378.069718ms
+    - id: 21
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"okta_question","provider":"OKTA","factorType":"question","status":"INACTIVE","_links":{"activate":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://mm-classic-2022-10-04.oktapreview.com/api/v1/org/factors/okta_question","hints":{"allow":["GET"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:26 GMT
+        status: 200 OK
+        code: 200
+        duration: 83.640928ms
+    - id: 22
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Thu, 27 Jul 2023 20:36:26 GMT
+        status: 204 No Content
+        code: 204
+        duration: 117.624408ms
+    - id: 23
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Thu, 27 Jul 2023 20:36:27 GMT
+        status: 204 No Content
+        code: 204
+        duration: 185.331871ms
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: mm-classic-2022-10-04.oktapreview.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            User-Agent:
+                - okta-sdk-golang/2.17.0 golang/go1.20.6 darwin/amd64 okta-terraform/4.1.0
+        url: https://mm-classic-2022-10-04.oktapreview.com/api/v1/users/00u95vbrqooBHUkVi1d7/factors/ufs95vd0lbf0IpodU1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"errorCode":"E0000007","errorSummary":"Not found: Resource not found: 00u95vbrqooBHUkVi1d7 (User)","errorLink":"E0000007","errorId":"oae6f23wT6MQ1KxaLlo1-VaLw","errorCauses":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 27 Jul 2023 20:36:27 GMT
+        status: 404 Not Found
+        code: 404
+        duration: 60.561013ms
