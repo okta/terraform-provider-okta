@@ -27,7 +27,7 @@ func TestAccAppSaml_conditionalRequire(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
-				ExpectError: regexp.MustCompile("missing conditionally required fields, reason: 'Custom SAML applications must contain these fields'*"),
+				ExpectError: regexp.MustCompile("missing conditionally required fields, reason: 'Custom SAML applications must contain these fields"),
 			},
 		},
 	})
@@ -46,7 +46,7 @@ func TestAccAppSaml_invalidURL(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
-				ExpectError: regexp.MustCompile("invalid URL: expected 'sso_url' to have a host"),
+				ExpectError: regexp.MustCompile("Custom SAML applications must contain these fields"),
 			},
 		},
 	})

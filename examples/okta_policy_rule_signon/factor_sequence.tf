@@ -27,6 +27,7 @@ resource "okta_network_zone" "test" {
     "3.3.4.5-3.3.4.15"
   ]
   depends_on = [okta_policy_rule_signon.test]
+  status   = "ACTIVE"
 }
 
 resource "okta_policy_rule_signon" "test" {

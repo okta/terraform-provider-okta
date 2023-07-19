@@ -50,18 +50,21 @@ func TestAccThreatInsightSettingsNetworkZoneOrdering(t *testing.T) {
 		type     = "IP"
 		gateways = ["1.2.3.4/24", "2.3.4.5-2.3.4.15"]
 		proxies  = ["2.2.3.4/24", "3.3.4.5-3.3.4.15"]
+		status   = "ACTIVE"
 	}
 	resource "okta_network_zone" "b" {
 		name     = "testAcc_replace_with_uuid-2"
 		type     = "IP"
 		gateways = ["2.2.3.4/24", "2.3.4.5-2.3.4.15"]
 		proxies  = ["3.2.3.4/24", "3.3.4.5-3.3.4.15"]
+		status   = "ACTIVE"
 	}
 	resource "okta_network_zone" "c" {
 		name     = "testAcc_replace_with_uuid-3"
 		type     = "IP"
 		gateways = ["3.2.3.4/24", "2.3.4.5-2.3.4.15"]
 		proxies  = ["4.2.3.4/24", "3.3.4.5-3.3.4.15"]
+		status   = "ACTIVE"
 	}
 	resource "okta_threat_insight_settings" "test" {
 		action           = "block"

@@ -13,6 +13,8 @@ import (
 )
 
 func TestAccOktaDomainCertificate(t *testing.T) {
+	t.Skip("This test is bespoke and has to be run by hand. We need to spend some time automating this test.")
+
 	pwd, err := os.Getwd()
 	if err != nil {
 		t.Skip("can't get working directory from OS")

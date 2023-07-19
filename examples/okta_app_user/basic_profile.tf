@@ -8,10 +8,6 @@ resource "okta_app_saml" "test" {
     "domain": "articulate"
   }
 JSON
-
-  lifecycle {
-    ignore_changes = [users, groups]
-  }
 }
 
 resource "okta_user" "test" {

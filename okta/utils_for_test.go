@@ -86,6 +86,7 @@ const (
 	ErrorCheckCannotCreateSWAThreeField = "Cannot create application instance template_swa3field"
 	ErrorCheckFFGroupMembershipRules    = "GROUP_MEMBERSHIP_RULES is not enabled"
 	ErrorCheckFFMFAPolicy               = "Missing Required Feature Flag OKTA_MFA_POLICY"
+	ErrorSelfServiceApplicationEnabled  = "Self service application assignment for organization managed apps must be enabled"
 	ErrorOnlyOIEOrgs                    = "for OIE Orgs only"
 )
 
@@ -105,6 +106,7 @@ func testAccErrorChecks(t *testing.T) resource.ErrorCheckFunc {
 			ErrorCheckCannotCreateSWAThreeField,
 			ErrorCheckFFGroupMembershipRules,
 			ErrorCheckFFMFAPolicy,
+			ErrorSelfServiceApplicationEnabled,
 		}
 		for _, message := range messages {
 			// if error check message containing matches the message it will
@@ -163,6 +165,9 @@ func errorCheckMessageContaining(t *testing.T, message string, err error) bool {
 	}
 	if message == ErrorCheckFFMFAPolicy {
 		missingFlags = append(missingFlags, "OKTA_MFA_POLICY")
+	}
+	if message == ErrorSelfServiceApplicationEnabled {
+		missingFlags = append(missingFlags, "TBD ~> SELF_SERVICE_ALL_APPS")
 	}
 	if strings.Contains(errorMessage, message) {
 		t.Skipf("Skipping test, org possibly missing flags:\n%s\nerror:\n%s", strings.Join(missingFlags, ", "), errorMessage)

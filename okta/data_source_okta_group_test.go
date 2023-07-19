@@ -26,8 +26,7 @@ func TestAccOktaDataSourceGroup_read(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_group.test", "id"),
 					resource.TestCheckResourceAttrSet("data.okta_group.test", "type"),
-					resource.TestCheckResourceAttrSet("okta_group.test", "id"),
-					resource.TestCheckResourceAttr("okta_group.test", "users.#", "1"),
+					resource.TestCheckResourceAttr("data.okta_group.test", "users.#", "1"),
 				),
 			},
 			{

@@ -6,6 +6,7 @@ resource "okta_network_zone" "test" {
   name     = "testAcc_replace_with_uuid"
   type     = "IP"
   gateways = ["34.82.0.0/15"]
+  status   = "ACTIVE"
 }
 
 resource "okta_policy_signon" "test" {
