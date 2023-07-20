@@ -392,6 +392,9 @@ func providerFactoriesForTest(mgr *vcrManager) map[string]func() (*schema.Provid
 			oldConfigureContextFunc := provider.ConfigureContextFunc
 			provider.ConfigureContextFunc = func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 				config, _diag := getCachedConfig(ctx, d, oldConfigureContextFunc, mgr)
+				if _diag.HasError() {
+					return nil, _diag
+				}
 				config.orgName = mgr.CurrentCassette
 				config.oktaClient.GetConfig().Okta.Client.OrgUrl = fmt.Sprintf("https://%v.%v", config.orgName, config.domain)
 				return config, _diag
@@ -427,7 +430,7 @@ func getCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 	transport := config.oktaClient.GetConfig().HttpClient.Transport
 
 	rec, err := recorder.NewWithOptions(&recorder.Options{
-		CassetteName:       mgr.CassettesPath,
+		CassetteName:       mgr.CassettePath(),
 		Mode:               mgr.VCRMode(),
 		SkipRequestLatency: false,
 		RealTransport:      transport,
@@ -565,7 +568,7 @@ func newVCRManager(testName string) *vcrManager {
 	return &vcrManager{
 		Name:            testName,
 		FixturesHome:    vcrFixturesHome,
-		CassettesPath:   path.Join(cassettesPath, os.Getenv("OKTA_VCR_CASSETTE")),
+		CassettesPath:   cassettesPath,
 		CurrentCassette: os.Getenv("OKTA_VCR_CASSETTE"),
 		VCRModeName:     os.Getenv("OKTA_VCR_TF_ACC"),
 	}
