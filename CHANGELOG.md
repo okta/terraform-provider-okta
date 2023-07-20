@@ -11,7 +11,7 @@
 * Flexible `okta_brand` data source and resource with `default` ID; Improve `okta_auth_server_default` [#1570](https://github.com/okta/terraform-provider-okta/pull/1570). Thanks, [@monde](https://github.com/monde)!
 * Show appropriate terraform logo for light and dark themes in README [#1574](https://github.com/okta/terraform-provider-okta/pull/1574). Thanks, [@thekbb](https://github.com/thekbb)!
 * Update the description for the `platform_include` block of `app_signon_policy_rule` to outline requirement for the `os_expression` argument to be set when `os_type` is set to `OTHER` [#1600](https://github.com/okta/terraform-provider-okta/pull/1600). Thanks, [@achuchulev](https://github.com/achuchulev)!
-* Update okta documentation [#1614](https://github.com/okta/terraform-provider-okta/pull/1614). Thanks, [@duytiennguyen-okta](https://github.com/ duytiennguyen-okta)!
+* Update okta documentation [#1614](https://github.com/okta/terraform-provider-okta/pull/1614). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
 * Fix doc typo [#1611](https://github.com/okta/terraform-provider-okta/pull/1611). Thanks, [@monde](https://github.com/monde)!
 
 ## 4.0.3 (June 26, 2023)
