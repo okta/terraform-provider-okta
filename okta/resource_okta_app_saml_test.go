@@ -367,7 +367,7 @@ func TestAccAppSaml_certdiff(t *testing.T) {
 	config2 := mgr.GetFixtures("basic_cert_file.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
-	resource.ParallelTest(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
