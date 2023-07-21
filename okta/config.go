@@ -25,17 +25,7 @@ import (
 const OktaTerraformProviderVersion = "4.2.0"
 const OktaTerraformProviderUserAgent = "okta-terraform/" + OktaTerraformProviderVersion
 
-func (adt *AddHeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	req.Header.Add("User-Agent", "Okta Terraform Provider")
-	return adt.T.RoundTrip(req)
-}
-
 type (
-	// AddHeaderTransport used to tack on default headers to outgoing requests
-	AddHeaderTransport struct {
-		T http.RoundTripper
-	}
-
 	// Config contains our provider schema values and Okta clients
 	Config struct {
 		orgName          string
