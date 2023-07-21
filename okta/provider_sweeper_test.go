@@ -43,47 +43,6 @@ type testClient struct {
 
 var testResourcePrefix = "testAcc"
 
-// TestMain overridden main testing function. Package level BeforeAll and AfterAll.
-// It also delineates between acceptance tests and unit tests
-func TestMain(m *testing.M) {
-	// TF_VAR_hostname allows the real hostname to be scripted into the config tests
-	// see examples/okta_resource_set/basic.tf
-	os.Setenv("TF_VAR_hostname", fmt.Sprintf("%s.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL")))
-
-	// NOTE: Acceptance test sweepers are necessary to prevent dangling
-	// resources.
-	// NOTE: Don't run sweepers if we are playing back VCR as nothing should be
-	// going over the wire
-	if os.Getenv("OKTA_VCR_TF_ACC") != "play" {
-		setupSweeper(adminRoleCustom, sweepCustomRoles)
-		setupSweeper("okta_*_app", sweepTestApps)
-		setupSweeper(authServer, sweepAuthServers)
-		setupSweeper(behavior, sweepBehaviors)
-		setupSweeper(emailCustomization, sweepEmailCustomization)
-		setupSweeper(groupRule, sweepGroupRules)
-		setupSweeper("okta_*_idp", sweepTestIdps)
-		setupSweeper(inlineHook, sweepInlineHooks)
-		setupSweeper(group, sweepGroups)
-		setupSweeper(groupSchemaProperty, sweepGroupCustomSchema)
-		setupSweeper(linkDefinition, sweepLinkDefinitions)
-		setupSweeper(networkZone, sweepNetworkZones)
-		setupSweeper(policyMfa, sweepMfaPolicies)
-		setupSweeper(policyPassword, sweepPasswordPolicies)
-		setupSweeper(policyRuleIdpDiscovery, sweepPolicyRuleIdpDiscovery)
-		setupSweeper(policyRuleMfa, sweepMfaPolicyRules)
-		setupSweeper(policyRulePassword, sweepPolicyRulePasswords)
-		setupSweeper(policyRuleSignOn, sweepSignOnPolicyRules)
-		setupSweeper(policySignOn, sweepAccessPolicies)
-		// setupSweeper(policySignOn, sweepSignOnPolicies)
-		setupSweeper(resourceSet, sweepResourceSets)
-		setupSweeper(user, sweepUsers)
-		setupSweeper(userSchemaProperty, sweepUserCustomSchema)
-		setupSweeper(userType, sweepUserTypes)
-	}
-
-	resource.TestMain(m)
-}
-
 func TestRunForcedSweeper(t *testing.T) {
 	if os.Getenv("OKTA_ACC_TEST_FORCE_SWEEPERS") == "" || os.Getenv("TF_ACC") == "" {
 		t.Skipf("ENV vars %q and %q must not be blank to force running of the sweepers", "OKTA_ACC_TEST_FORCE_SWEEPERS", "TF_ACC")
