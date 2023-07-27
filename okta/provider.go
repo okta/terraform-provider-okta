@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/cenkalti/backoff"
@@ -127,6 +128,9 @@ const (
 	userSecurityQuestions         = "okta_user_security_questions"
 	userType                      = "okta_user_type"
 )
+
+// oktaMutexKV is a global MutexKV for use within this plugin
+var oktaMutexKV = mutexkv.NewMutexKV()
 
 // Provider establishes a client connection to an okta site
 // determined by its schema string values
@@ -372,30 +376,23 @@ func Provider() *schema.Provider {
 	}
 }
 
+// providerConfigure is only called once when a terraform command is run but it
+// will be called many times while running different ACC tests
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	log.Printf("[INFO] Initializing Okta client")
-	config := Config{
-		orgName:        d.Get("org_name").(string),
-		domain:         d.Get("base_url").(string),
-		apiToken:       d.Get("api_token").(string),
-		accessToken:    d.Get("access_token").(string),
-		clientID:       d.Get("client_id").(string),
-		privateKey:     d.Get("private_key").(string),
-		privateKeyId:   d.Get("private_key_id").(string),
-		scopes:         convertInterfaceToStringSet(d.Get("scopes")),
-		retryCount:     d.Get("max_retries").(int),
-		parallelism:    d.Get("parallelism").(int),
-		backoff:        d.Get("backoff").(bool),
-		minWait:        d.Get("min_wait_seconds").(int),
-		maxWait:        d.Get("max_wait_seconds").(int),
-		logLevel:       d.Get("log_level").(int),
-		requestTimeout: d.Get("request_timeout").(int),
-		maxAPICapacity: d.Get("max_api_capacity").(int),
+	config := NewConfig(d)
+	if err := config.loadClients(ctx); err != nil {
+		return nil, diag.Errorf("[ERROR] failed to load sdk clients: %v", err)
 	}
 	config.timeOperations = NewProductionTimeOperations()
 
-	if httpProxy, ok := d.Get("http_proxy").(string); ok {
-		config.httpProxy = httpProxy
+	// NOTE: production runtime needs to know about VCR test environment for
+	// this one case where the validate function calls GET /api/v1/users/me to
+	// quickly verify if the operator's auth settings are correct.
+	if os.Getenv("OKTA_VCR_TF_ACC") == "" {
+		if err := config.verifyCredentials(ctx); err != nil {
+			return nil, diag.Errorf("[ERROR] failed validate configuration: %v", err)
+		}
 	}
 
 	if err := config.handlePluginDefaults(ctx); err != nil {
@@ -408,9 +405,6 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 
 	return &config, nil
 }
-
-// This is a global MutexKV for use within this plugin.
-var oktaMutexKV = mutexkv.NewMutexKV()
 
 func isClassicOrg(ctx context.Context, m interface{}) bool {
 	if config, ok := m.(*Config); ok && config.IsClassicOrg(ctx) {

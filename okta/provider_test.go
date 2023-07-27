@@ -35,6 +35,13 @@ var (
 	testAccProvidersFactories       map[string]func() (*schema.Provider, error)
 	testAccProtoV5ProviderFactories map[string]func() (tfprotov5.ProviderServer, error)
 	testAccMergeProvidersFactories  map[string]func() (tfprotov5.ProviderServer, error)
+	testSdkV3Client                 *okta.APIClient
+	testSdkV2Client                 *sdk.Client
+	testSdkSupplementClient         *sdk.APISupplement
+
+	// NOTE: Our VCR set up is inspired by terraform-provider-google
+	providerConfigsLock = sync.RWMutex{}
+	providerConfigs     map[string]*Config
 )
 
 func init() {
@@ -64,19 +71,7 @@ func init() {
 		},
 	}
 
-	// We need to be able to query the SDK with an Okta SDK golang client that
-	// is outside of the client that terraform provider creates. This is because
-	// tests may need to query the okta API for status and the Terraform SDK
-	// doesn't expose the provider's meta data where we store the provider's
-	// config until after tests have completed. Not when VCR'ing.
-	if os.Getenv("TF_ACC") != "" && os.Getenv("OKTA_VCR_TF_ACC") == "" {
-		// only set up for acceptance tests
-		config := &Config{
-			orgName: os.Getenv("OKTA_ORG_NAME"),
-			domain:  os.Getenv("OKTA_BASE_URL"),
-		}
-		config.logger = providerLogger(config)
-	}
+	providerConfigs = make(map[string]*Config)
 }
 
 // TestMain overridden main testing function. Package level BeforeAll and AfterAll.
@@ -128,93 +123,6 @@ func TestProvider(t *testing.T) {
 
 func TestProvider_impl(t *testing.T) {
 	_ = Provider()
-}
-
-func oktaConfig() (*Config, error) {
-	config := &Config{
-		orgName:        os.Getenv("OKTA_ORG_NAME"),
-		apiToken:       os.Getenv("OKTA_API_TOKEN"),
-		httpProxy:      os.Getenv("OKTA_HTTP_PROXY"),
-		clientID:       os.Getenv("OKTA_API_CLIENT_ID"),
-		privateKey:     os.Getenv("OKTA_API_PRIVATE_KEY"),
-		privateKeyId:   os.Getenv("OKTA_API_PRIVATE_KEY_ID"),
-		scopes:         strings.Split(os.Getenv("OKTA_API_SCOPES"), ","),
-		domain:         os.Getenv("OKTA_BASE_URL"),
-		parallelism:    1,
-		retryCount:     10,
-		maxWait:        30,
-		requestTimeout: 60,
-		maxAPICapacity: 80,
-	}
-	if err := config.loadAndValidate(context.Background()); err != nil {
-		return config, fmt.Errorf("error initializing Okta client: %v", err)
-	}
-	return config, nil
-}
-
-// testOIEOnlyAccPreCheck is a resource.test PreCheck function that will place a
-// logical skip of OIE tests when tests are run against a classic org.
-func testOIEOnlyAccPreCheck(t *testing.T) func() {
-	return func() {
-		err := accPreCheck()
-		if err != nil {
-			t.Fatalf("%v", err)
-		}
-
-		org := testOktaOrganization(t)
-		if org != nil {
-			return
-		}
-		// v1 == Classic, idx == OIE
-		if org.Pipeline != "idx" {
-			t.Skipf("%q test is for OIE orgs only", t.Name())
-		}
-	}
-}
-
-func testOktaOrganization(t *testing.T) *sdk.OktaOrganization {
-	// auth is not needed to call the well-known endpoint
-	resp, err := http.Get(fmt.Sprintf("https://%s.%s/.well-known/okta-organization", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL")))
-	if err != nil {
-		t.Fatalf("%v", err)
-		return nil
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		t.Fatalf("%v", err)
-		return nil
-	}
-
-	org := sdk.OktaOrganization{}
-	err = json.Unmarshal(body, &org)
-	if err != nil {
-		t.Fatalf("%v", err)
-		return nil
-	}
-
-	return &org
-}
-
-// testClassicOnlyAccPreCheck is a resource.test PreCheck function that will place a
-// logical skip of classic tests when tests are run against an OIE org.
-func testClassicOnlyAccPreCheck(t *testing.T) func() {
-	return func() {
-		err := accPreCheck()
-		if err != nil {
-			t.Fatalf("%v", err)
-		}
-
-		org := testOktaOrganization(t)
-		if org != nil {
-			return
-		}
-
-		// v1 == Classic, idx == OIE
-		if org.Pipeline != "v1" {
-			t.Skipf("%q test is for classic orgs only", t.Name())
-		}
-	}
 }
 
 func testAccPreCheck(t *testing.T) func() {
@@ -342,30 +250,25 @@ func TestProviderValidate(t *testing.T) {
 	}
 }
 
-// NOTE: Our VCR set up is inspired by terraform-provider-google
-var (
-	providerConfigsLock = sync.RWMutex{}
-	providerConfigs     map[string]*Config
-)
-
-func init() {
-	providerConfigs = make(map[string]*Config)
+func sdkV3ClientForTest() *okta.APIClient {
+	if testSdkV3Client != nil {
+		return testSdkV3Client
+	}
+	return sdkV3Client
 }
 
-// oktaClientForTest Returns the okta client to use for a given test.
-func oktaClientForTest() *sdk.Client {
-	oktaClient, _, _, _ := sharedTestClients()
-	return oktaClient
+func sdkV2ClientForTest() *sdk.Client {
+	if testSdkV2Client != nil {
+		return testSdkV2Client
+	}
+	return sdkV2Client
 }
 
-func apiSupplementForTest() *sdk.APISupplement {
-	_, apiSupplement, _, _ := sharedTestClients()
-	return apiSupplement
-}
-
-func oktaV3ClientForTest() *okta.APIClient {
-	_, _, v3Client, _ := sharedTestClients()
-	return v3Client
+func sdkSupplementClientForTest() *sdk.APISupplement {
+	if testSdkSupplementClient != nil {
+		return testSdkSupplementClient
+	}
+	return sdkSupplementClient
 }
 
 // oktaResourceTest is the entry to overriding the Terraform SDKs Acceptance
@@ -373,71 +276,76 @@ func oktaV3ClientForTest() *okta.APIClient {
 func oktaResourceTest(t *testing.T, c resource.TestCase) {
 	// plug in the VCR
 	mgr := newVCRManager(t.Name())
-	if mgr.VCREnabled() {
-		if !mgr.ValidMode() {
-			t.Fatalf("ENV variable OKTA_VCR_TF_ACC value should be %q or %q but was %q", "play", "record", mgr.VCRModeName)
-			return
-		}
-		if mgr.IsPlaying() {
-			if !mgr.HasCassettesToPlay() {
-				t.Skipf("%q test is missing VCR cassette(s) at %q, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information about playing/recording cassettes.", t.Name(), mgr.CassettesPath)
-				return
-			}
-		}
-		if mgr.IsRecording() {
-			defer closeRecorder(t, mgr)
-			if mgr.AttemptedWriteIsMissingCassetteName() {
-				t.Fatalf("%q test is attempting to write cassette to %q, but OKTA_VCR_CASSETTE ENV var is missing. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information.", t.Name(), mgr.CassettePath())
-				return
-			}
-			if mgr.AttemptedWriteOfExistingCassette() {
-				t.Skipf("%q test is attempting to write %s.yaml cassette, delete it first before attempting new write, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information.", t.Name(), mgr.CassettePath())
-				return
-			}
-		}
 
-		if mgr.IsRecording() {
-			c.ProviderFactories = providerFactoriesForTest(mgr)
-			fmt.Printf("=== VCR RECORD CASSETTE %q for %s\n", mgr.CurrentCassette, t.Name())
-			resource.Test(t, c)
-			return
-		}
-
-		if mgr.IsPlaying() {
-			cassettes := mgr.Cassettes()
-			for _, cassette := range cassettes {
-				// need to artifically set expected OKTA env vars if VCR is playing
-				// VCR re-writes the name [cassette].oktapreview.com
-				os.Setenv("OKTA_ORG_NAME", cassette)
-				os.Setenv("OKTA_BASE_URL", "oktapreview.com")
-				os.Setenv("OKTA_API_TOKEN", "token")
-				mgr.SetCurrentCassette(cassette)
-				c.ProviderFactories = providerFactoriesForTest(mgr)
-				c.CheckDestroy = nil
-				fmt.Printf("=== VCR PLAY CASSETTE %q for %s\n", cassette, t.Name())
-				resource.Test(t, c)
-			}
-			return
-		}
+	if !mgr.VCREnabled() {
+		// live ACC / non-VCR test
+		resource.Test(t, c)
+		return
 	}
 
-	resource.Test(t, c)
+	if !mgr.ValidMode() {
+		t.Fatalf("ENV variable OKTA_VCR_TF_ACC value should be %q or %q but was %q", "play", "record", mgr.VCRModeName)
+		return
+	}
+
+	// sdk client clients are set up in provider factories for test
+	if mgr.IsPlaying() {
+		if !mgr.HasCassettesToPlay() {
+			t.Skipf("%q test is missing VCR cassette(s) at %q, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information about playing/recording cassettes.", t.Name(), mgr.CassettesPath)
+			return
+		}
+
+		cassettes := mgr.Cassettes()
+		for _, cassette := range cassettes {
+			// need to artifically set expected OKTA env vars if VCR is playing
+			// VCR re-writes the name [cassette].oktapreview.com
+			os.Setenv("OKTA_ORG_NAME", cassette)
+			os.Setenv("OKTA_BASE_URL", "oktapreview.com")
+			os.Setenv("OKTA_API_TOKEN", "token")
+			mgr.SetCurrentCassette(cassette)
+			c.ProviderFactories = vcrProviderFactoriesForTest(mgr)
+			c.CheckDestroy = nil
+			fmt.Printf("=== VCR PLAY CASSETTE %q for %s\n", cassette, t.Name())
+			resource.Test(t, c)
+		}
+		return
+	}
+
+	if mgr.IsRecording() {
+		defer closeRecorder(t, mgr)
+		if mgr.AttemptedWriteIsMissingCassetteName() {
+			t.Fatalf("%q test is attempting to write cassette to %q, but OKTA_VCR_CASSETTE ENV var is missing. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information.", t.Name(), mgr.CassettePath())
+			return
+		}
+		if mgr.AttemptedWriteOfExistingCassette() {
+			t.Skipf("%q test is attempting to write %s.yaml cassette, delete it first before attempting new write, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information.", t.Name(), mgr.CassettePath())
+			return
+		}
+
+		c.ProviderFactories = vcrProviderFactoriesForTest(mgr)
+		fmt.Printf("=== VCR RECORD CASSETTE %q for %s\n", mgr.CurrentCassette, t.Name())
+		resource.Test(t, c)
+		return
+	}
 }
 
-// providerFactoriesForTest Returns the overriden the provider factories used by
-// the resource test case given the state of the VCR manager.
-func providerFactoriesForTest(mgr *vcrManager) map[string]func() (*schema.Provider, error) {
+// vcrProviderFactoriesForTest Returns the overriden provider factories used by the
+// resource test case given the state of the VCR manager.
+func vcrProviderFactoriesForTest(mgr *vcrManager) map[string]func() (*schema.Provider, error) {
 	return map[string]func() (*schema.Provider, error){
 		"okta": func() (*schema.Provider, error) {
 			provider := Provider()
 			oldConfigureContextFunc := provider.ConfigureContextFunc
 			provider.ConfigureContextFunc = func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-				config, _diag := getCachedConfig(ctx, d, oldConfigureContextFunc, mgr)
+				config, _diag := vcrCachedConfig(ctx, d, oldConfigureContextFunc, mgr)
 				if _diag.HasError() {
 					return nil, _diag
 				}
-				config.orgName = mgr.CurrentCassette
-				config.oktaClient.GetConfig().Okta.Client.OrgUrl = fmt.Sprintf("https://%v.%v", config.orgName, config.domain)
+
+				testSdkV3Client = config.oktaSDKClientV3
+				testSdkV2Client = config.oktaSDKClientV2
+				testSdkSupplementClient = config.oktaSDKsupplementClient
+
 				return config, _diag
 			}
 
@@ -449,13 +357,14 @@ func providerFactoriesForTest(mgr *vcrManager) map[string]func() (*schema.Provid
 // We need to hijack the provider's ConfigureContextFunc as it is called many
 // times during an operation which has the side effect of resetting config
 // values such as the http client that okta-sdk-golang utilizes. Instead, we
-// want to create one VCR http transport for recording and playing that the http
-// client will utilize.
-func getCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc schema.ConfigureContextFunc, mgr *vcrManager) (*Config, diag.Diagnostics) {
+// want to create one dedicated VCR http transport for each test. The dedicated
+// transport holds the API calls made specific to that test.
+func vcrCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc schema.ConfigureContextFunc, mgr *vcrManager) (*Config, diag.Diagnostics) {
 	providerConfigsLock.RLock()
-	v, ok := providerConfigs[mgr.TestAndCassetteName()]
+	v, ok := providerConfigs[mgr.TestAndCassetteNameKey()]
 	providerConfigsLock.RUnlock()
 	if ok {
+		// config is cached, proceed
 		return v, nil
 	}
 
@@ -468,7 +377,7 @@ func getCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 	config := c.(*Config)
 	config.SetTimeOperations(NewTestTimeOperations())
 
-	transport := config.oktaClient.GetConfig().HttpClient.Transport
+	transport := config.oktaSDKClientV3.GetConfig().HTTPClient.Transport
 
 	rec, err := recorder.NewWithOptions(&recorder.Options{
 		CassetteName:       mgr.CassettePath(),
@@ -476,7 +385,6 @@ func getCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 		SkipRequestLatency: false,
 		RealTransport:      transport,
 	})
-
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
@@ -558,9 +466,12 @@ func getCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 		return nil
 	}, recorder.AfterCaptureHook)
 
-	config.oktaClient.GetConfig().HttpClient.Transport = rec
+	// VCR takes over http transport duties
+	rt := http.RoundTripper(rec)
+	config.resetHttpTransport(&rt)
+
 	providerConfigsLock.Lock()
-	providerConfigs[mgr.TestAndCassetteName()] = config
+	providerConfigs[mgr.TestAndCassetteNameKey()] = config
 	providerConfigsLock.Unlock()
 	return config, nil
 }
@@ -583,13 +494,13 @@ func firstHeaderValue(name string, headers http.Header) (string, bool) {
 // closeRecorder closes the VCR recorder to save the cassette file
 func closeRecorder(t *testing.T, vcr *vcrManager) {
 	providerConfigsLock.RLock()
-	config, ok := providerConfigs[vcr.TestAndCassetteName()]
+	config, ok := providerConfigs[vcr.TestAndCassetteNameKey()]
 	providerConfigsLock.RUnlock()
 	if ok {
 		// don't record failing test runs
 		if !t.Failed() {
 			// If a test succeeds, write new seed/yaml to files
-			err := config.oktaClient.GetConfig().HttpClient.Transport.(*recorder.Recorder).Stop()
+			err := config.oktaSDKClientV2.GetConfig().HttpClient.Transport.(*recorder.Recorder).Stop()
 			if err != nil {
 				t.Error(err)
 			}
@@ -619,7 +530,9 @@ func (m *vcrManager) SetCurrentCassette(name string) {
 	m.CurrentCassette = name
 }
 
-func (m *vcrManager) TestAndCassetteName() string {
+// TestAndCassetteNameKey is intended to be used as the key for configs that
+// utilized for each test cassette.
+func (m *vcrManager) TestAndCassetteNameKey() string {
 	return fmt.Sprintf("%s-%s", m.Name, m.CurrentCassette)
 }
 
@@ -708,8 +621,4 @@ type vcrManager struct {
 	CassettesPath   string
 	CurrentCassette string
 	VCRModeName     string
-}
-
-func isVCRPlayMode() bool {
-	return os.Getenv("OKTA_VCR_TF_ACC") == "play"
 }

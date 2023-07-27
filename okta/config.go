@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v3/okta"
 	"github.com/okta/terraform-provider-okta/okta/internal/apimutex"
 	"github.com/okta/terraform-provider-okta/okta/internal/transport"
@@ -25,42 +26,91 @@ import (
 const OktaTerraformProviderVersion = "4.2.0"
 const OktaTerraformProviderUserAgent = "okta-terraform/" + OktaTerraformProviderVersion
 
+var (
+	// NOTE: Minor hack where runtime needs to know about testing environment.
+	// Global clients are convenience for testing only
+	sdkV3Client         *okta.APIClient
+	sdkV2Client         *sdk.Client
+	sdkSupplementClient *sdk.APISupplement
+)
+
 type (
 	// Config contains our provider schema values and Okta clients
 	Config struct {
-		orgName          string
-		domain           string
-		httpProxy        string
-		accessToken      string
-		apiToken         string
-		clientID         string
-		privateKey       string
-		privateKeyId     string
-		scopes           []string
-		retryCount       int
-		parallelism      int
-		backoff          bool
-		minWait          int
-		maxWait          int
-		logLevel         int
-		requestTimeout   int
-		maxAPICapacity   int // experimental
-		oktaClient       *sdk.Client
-		v3Client         *okta.APIClient
-		supplementClient *sdk.APISupplement
-		logger           hclog.Logger
-		queriedWellKnown bool
-		classicOrg       bool
-		timeOperations   TimeOperations
+		orgName                 string
+		domain                  string
+		httpProxy               string
+		accessToken             string
+		apiToken                string
+		clientID                string
+		privateKey              string
+		privateKeyId            string
+		scopes                  []string
+		retryCount              int
+		parallelism             int
+		backoff                 bool
+		minWait                 int
+		maxWait                 int
+		logLevel                int
+		requestTimeout          int
+		maxAPICapacity          int // experimental
+		oktaSDKClientV2         *sdk.Client
+		oktaSDKClientV3         *okta.APIClient
+		oktaSDKsupplementClient *sdk.APISupplement
+		logger                  hclog.Logger
+		queriedWellKnown        bool
+		classicOrg              bool
+		timeOperations          TimeOperations
 	}
 )
 
+func NewConfig(d *schema.ResourceData) *Config {
+	config := Config{
+		orgName:        d.Get("org_name").(string),
+		domain:         d.Get("base_url").(string),
+		apiToken:       d.Get("api_token").(string),
+		accessToken:    d.Get("access_token").(string),
+		clientID:       d.Get("client_id").(string),
+		privateKey:     d.Get("private_key").(string),
+		privateKeyId:   d.Get("private_key_id").(string),
+		scopes:         convertInterfaceToStringSet(d.Get("scopes")),
+		retryCount:     d.Get("max_retries").(int),
+		parallelism:    d.Get("parallelism").(int),
+		backoff:        d.Get("backoff").(bool),
+		minWait:        d.Get("min_wait_seconds").(int),
+		maxWait:        d.Get("max_wait_seconds").(int),
+		logLevel:       d.Get("log_level").(int),
+		requestTimeout: d.Get("request_timeout").(int),
+		maxAPICapacity: d.Get("max_api_capacity").(int),
+	}
+
+	if httpProxy, ok := d.Get("http_proxy").(string); ok {
+		config.httpProxy = httpProxy
+	}
+
+	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(config.scopes) == 0 {
+		config.scopes = strings.Split(v, ",")
+	}
+
+	logLevel := hclog.Level(config.logLevel)
+	if os.Getenv("TF_LOG") != "" {
+		logLevel = hclog.LevelFromString(os.Getenv("TF_LOG"))
+	}
+
+	config.logger = hclog.New(&hclog.LoggerOptions{
+		Level:      logLevel,
+		TimeFormat: "2006/01/02 03:04:05",
+	})
+
+	return &config
+}
+
 // IsClassicOrg returns true if the org is a classic org. Does lazy evaluation
-// of the well known endpoint so that VCR can record the transaction.
+// of the well known endpoint.
 func (c *Config) IsClassicOrg(ctx context.Context) bool {
 	if !c.queriedWellKnown {
 		// Discover if the Okta Org is Classic or OIE
-		org, _, err := c.supplementClient.GetWellKnownOktaOrganization(ctx)
+		org, _, err := c.oktaSDKsupplementClient.GetWellKnownOktaOrganization(ctx)
 		if err != nil {
 			c.logger.Error("error querying GET /.well-known/okta-organization", "error", err)
 			return c.classicOrg
@@ -77,42 +127,59 @@ func (c *Config) SetTimeOperations(op TimeOperations) {
 	c.timeOperations = op
 }
 
-func (c *Config) loadAndValidate(ctx context.Context) error {
-	c.logger = providerLogger(c)
+func (c *Config) resetHttpTransport(transport *http.RoundTripper) {
+	c.oktaSDKClientV3.GetConfig().HTTPClient.Transport = *transport
+	c.oktaSDKClientV2.GetConfig().HttpClient.Transport = *transport
 
+	re := c.oktaSDKClientV2.CloneRequestExecutor()
+	re.SetHTTPTransport(c.oktaSDKClientV3.GetConfig().HTTPClient.Transport)
+	c.oktaSDKsupplementClient = &sdk.APISupplement{
+		RequestExecutor: re,
+	}
+	// NOTE: global clients are convenience for testing only
+	sdkSupplementClient = c.oktaSDKsupplementClient
+}
+
+// loadClients initializes the Okta SDK clients
+func (c *Config) loadClients(ctx context.Context) error {
 	v3Client, err := oktaV3SDKClient(c)
 	if err != nil {
 		return err
 	}
-	c.v3Client = v3Client
-	// NOTE: we want to share one http client across all SDK clients
+	c.oktaSDKClientV3 = v3Client
 
 	// TODO: remove sdk client when v3 client is fully utilized within the provider
 	client, err := oktaSDKClient(c)
 	if err != nil {
 		return err
 	}
-	c.oktaClient = client
+	c.oktaSDKClientV2 = client
 
 	// TODO: remove supplement client when v3 client is fully utilized within the provider
 	re := client.CloneRequestExecutor()
-	re.SetHTTPTransport(c.v3Client.GetConfig().HTTPClient.Transport)
-	c.supplementClient = &sdk.APISupplement{
+	re.SetHTTPTransport(c.oktaSDKClientV3.GetConfig().HTTPClient.Transport)
+	c.oktaSDKsupplementClient = &sdk.APISupplement{
 		RequestExecutor: re,
 	}
 
-	// NOTE: Don't make this call when VCR is playing/recording as it will occur
-	// outsite of the VCR transport
-	if os.Getenv("OKTA_VCR_TF_ACC") == "" {
-		// NOTE: validate credentials during initial config with a call to
-		// /api/v1/users/me
-		if c.apiToken != "" {
-			if _, _, err := c.v3Client.UserApi.GetUser(ctx, "me").Execute(); err != nil {
-				return fmt.Errorf("error with v3 SDK client: %v", err)
-			}
-			if _, _, err := c.oktaClient.User.GetUser(ctx, "me"); err != nil {
-				return fmt.Errorf("error with v2 SDK client: %v", err)
-			}
+	// NOTE: global clients are convenience for testing only; however do not
+	// remove this code
+	sdkV3Client = c.oktaSDKClientV3
+	sdkV2Client = c.oktaSDKClientV2
+	sdkSupplementClient = c.oktaSDKsupplementClient
+
+	return nil
+}
+
+func (c *Config) verifyCredentials(ctx context.Context) error {
+	// NOTE: validate credentials during initial config with a call to
+	// GET /api/v1/users/me
+	if c.apiToken != "" {
+		if _, _, err := c.oktaSDKClientV3.UserApi.GetUser(ctx, "me").Execute(); err != nil {
+			return fmt.Errorf("error with v3 SDK client: %v", err)
+		}
+		if _, _, err := c.oktaSDKClientV2.User.GetUser(ctx, "me"); err != nil {
+			return fmt.Errorf("error with v2 SDK client: %v", err)
 		}
 	}
 
@@ -248,10 +315,10 @@ func providerLogger(c *Config) hclog.Logger {
 	})
 }
 
-// oktaSDKClient should be called with a primary http client that is utilezed
+// oktaSDKClient should be called with a primary http client that is utilized
 // throughout the provider
 func oktaSDKClient(c *Config) (client *sdk.Client, err error) {
-	httpClient := c.v3Client.GetConfig().HTTPClient
+	httpClient := c.oktaSDKClientV3.GetConfig().HTTPClient
 	var orgUrl string
 	var disableHTTPS bool
 	if c.httpProxy != "" {
