@@ -17,7 +17,7 @@ func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", userFactorQuestion)
 	oktaResourceTest(
 		t, resource.TestCase{
-			PreCheck:          testClassicOnlyAccPreCheck(t),
+			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      checkUserFactorDestroy(t.Name(), userFactorQuestion),
@@ -44,9 +44,6 @@ func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
 
 func checkUserFactorDestroy(testName, factorType string) func(*terraform.State) error {
 	return func(s *terraform.State) error {
-		if isVCRPlayMode() {
-			return nil
-		}
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != factorType {
 				continue
@@ -67,7 +64,7 @@ func checkUserFactorDestroy(testName, factorType string) func(*terraform.State) 
 
 func doesUserFactorExistsUpstream(userId, factorId string) (bool, error) {
 	var uf *sdk.SecurityQuestionUserFactor
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, resp, err := client.UserFactor.GetFactor(context.Background(), userId, factorId, uf)
 	return doesResourceExist(resp, err)
 }

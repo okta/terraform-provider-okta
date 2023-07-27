@@ -923,7 +923,7 @@ func testOktaUserSchemasExists(resourceName string) resource.TestCheckFunc {
 }
 
 func testUserSchemaPropertyExists(schemaUserType, index, resolutionScope string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	typeSchemaID, err := getUserTypeSchemaID(context.Background(), client, schemaUserType)
 	if err != nil {
 		return false, err
@@ -1021,9 +1021,6 @@ resource "okta_user_schema_property" "five" {
 }
 
 func checkOktaUserSchemasDestroy(s *terraform.State) error {
-	if isVCRPlayMode() {
-		return nil
-	}
 	for _, rs := range s.RootModule().Resources {
 		schemaUserType := "default"
 		if rs.Primary.Attributes["user_type"] != "" {

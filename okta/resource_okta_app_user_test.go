@@ -122,7 +122,7 @@ func ensureAppUserExists(resourceName string) resource.TestCheckFunc {
 
 		appID := rs.Primary.Attributes["app_id"]
 		userID := rs.Primary.Attributes["user_id"]
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 
 		u, _, err := client.Application.GetApplicationUser(context.Background(), appID, userID, nil)
 		if err != nil {
@@ -136,9 +136,6 @@ func ensureAppUserExists(resourceName string) resource.TestCheckFunc {
 }
 
 func checkAppUserDestroy(s *terraform.State) error {
-	if isVCRPlayMode() {
-		return nil
-	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != appUser {
 			continue
@@ -147,7 +144,7 @@ func checkAppUserDestroy(s *terraform.State) error {
 		appID := rs.Primary.Attributes["app_id"]
 		userID := rs.Primary.Attributes["user_id"]
 
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 		_, response, err := client.Application.GetApplicationUser(context.Background(), appID, userID, nil)
 		exists, err := doesResourceExist(response, err)
 		if err != nil {
@@ -178,7 +175,7 @@ func ensureAppUserRetained(appName, userName string) resource.TestCheckFunc {
 
 		appID := appRes.Primary.ID
 		userID := userRes.Primary.ID
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 
 		g, _, err := client.Application.GetApplicationUser(context.Background(), appID, userID, nil)
 		if err != nil {

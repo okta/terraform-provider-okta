@@ -113,9 +113,6 @@ func ensureRuleExists(resourceName string) resource.TestCheckFunc {
 
 func checkRuleDestroy(ruleType string) func(*terraform.State) error {
 	return func(s *terraform.State) error {
-		if isVCRPlayMode() {
-			return nil
-		}
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != ruleType {
 				continue
@@ -136,7 +133,7 @@ func checkRuleDestroy(ruleType string) func(*terraform.State) error {
 }
 
 func doesRuleExistsUpstream(policyID, ruleID string) (bool, error) {
-	client := apiSupplementForTest()
+	client := sdkSupplementClientForTest()
 	rule, resp, err := client.GetPolicyRule(context.Background(), policyID, ruleID)
 	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return false, nil

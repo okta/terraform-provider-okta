@@ -32,7 +32,7 @@ func TestAccOktaDomain(t *testing.T) {
 }
 
 func domainExists(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	domain, resp, err := client.Domain.GetDomain(context.Background(), id)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, err

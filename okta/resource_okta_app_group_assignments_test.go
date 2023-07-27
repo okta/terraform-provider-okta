@@ -66,7 +66,7 @@ func ensureAppGroupAssignmentsExist(resourceName string, groupsExpected ...strin
 		}
 
 		appID := rs.Primary.Attributes["app_id"]
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 
 		// Get all the IDs of groups we expect to be assigned
 		expectedGroupIDs := map[string]bool{}

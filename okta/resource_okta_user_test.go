@@ -356,10 +356,7 @@ func TestAccOktaUser_loginUpdates(t *testing.T) {
 }
 
 func checkUserDestroy(s *terraform.State) error {
-	if isVCRPlayMode() {
-		return nil
-	}
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	for _, r := range s.RootModule().Resources {
 		if _, resp, err := client.User.GetUser(context.Background(), r.Primary.ID); err != nil {
 			if resp != nil && resp.Response.StatusCode == http.StatusNotFound {

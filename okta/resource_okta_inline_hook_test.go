@@ -102,7 +102,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 }
 
 func inlineHookExists(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, resp, err := client.InlineHook.GetInlineHook(context.Background(), id)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, err

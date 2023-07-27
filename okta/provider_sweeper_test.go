@@ -10,6 +10,7 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/okta-sdk-golang/v3/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/okta/terraform-provider-okta/sdk/query"
@@ -36,28 +37,40 @@ func logSweptResource(kind, id, nameOrLabel string) {
 }
 
 type testClient struct {
-	oktaClient    *sdk.Client
-	apiSupplement *sdk.APISupplement
-	oktaV3Client  *okta.APIClient
+	sdkV2Client         *sdk.Client
+	sdkSupplementClient *sdk.APISupplement
+	sdkV3Client         *okta.APIClient
 }
 
 var testResourcePrefix = "testAcc"
 
+// TestRunForcedSweeper forces sweeping any tangling testAcc resources that it
+// can find.
+//
+//	go clean -testcache && \
+//	TF_LOG=warn OKTA_ACC_TEST_FORCE_SWEEPERS=1 make testacc TEST=./okta TESTARGS='-run=TestRunForcedSweeper'
 func TestRunForcedSweeper(t *testing.T) {
+	if os.Getenv("OKTA_VCR_TF_ACC") != "" {
+		t.Skip("forced sweeper is live and will never be run within VCR")
+		return
+	}
 	if os.Getenv("OKTA_ACC_TEST_FORCE_SWEEPERS") == "" || os.Getenv("TF_ACC") == "" {
 		t.Skipf("ENV vars %q and %q must not be blank to force running of the sweepers", "OKTA_ACC_TEST_FORCE_SWEEPERS", "TF_ACC")
 		return
 	}
 
-	client, apiSupplement, v3Client, err := sharedTestClients()
-	testClient := &testClient{
-		oktaClient:    client,
-		apiSupplement: apiSupplement,
-		oktaV3Client:  v3Client,
-	}
-	if err != nil {
-		t.Error(err)
+	provider := Provider()
+	c := terraform.NewResourceConfigRaw(nil)
+	diag := provider.Configure(context.TODO(), c)
+	if diag.HasError() {
+		t.Skipf("sweeper's provider configuration failed: %v", diag)
 		return
+	}
+
+	testClient := &testClient{
+		sdkV2Client:         sdkV2ClientForTest(),
+		sdkSupplementClient: sdkSupplementClientForTest(),
+		sdkV3Client:         sdkV3ClientForTest(),
 	}
 
 	sweepCustomRoles(testClient)
@@ -91,11 +104,7 @@ func setupSweeper(resourceType string, del func(*testClient) error) {
 	resource.AddTestSweepers(resourceType, &resource.Sweeper{
 		Name: resourceType,
 		F: func(_ string) error {
-			client, apiSupplement, v3Client, err := sharedTestClients()
-			if err != nil {
-				return err
-			}
-			return del(&testClient{oktaClient: client, apiSupplement: apiSupplement, oktaV3Client: v3Client})
+			return del(&testClient{sdkV2Client: sdkV2ClientForTest(), sdkSupplementClient: sdkSupplementClientForTest(), sdkV3Client: sdkV3ClientForTest()})
 		},
 	})
 }
@@ -113,48 +122,15 @@ func buildResourceNameWithPrefix(prefix string, testID int) string {
 	return prefix + "_" + strconv.Itoa(testID)
 }
 
-// sharedTestClients returns a common Okta Client for sweepers, which currently requires the original SDK and the official beta SDK
-func sharedTestClients() (*sdk.Client, *sdk.APISupplement, *okta.APIClient, error) {
-	err := accPreCheck()
-	if err != nil {
-		return nil, nil, nil, err
-	}
-	c, err := oktaConfig()
-	if err != nil {
-		return nil, nil, nil, err
-	}
-	orgURL := fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
-	_, client, err := sdk.NewClient(
-		context.Background(),
-		sdk.WithOrgUrl(orgURL),
-		sdk.WithToken(c.apiToken),
-		sdk.WithRateLimitMaxRetries(20),
-	)
-	if err != nil {
-		return client, nil, nil, err
-	}
-	api := &sdk.APISupplement{RequestExecutor: client.GetRequestExecutor()}
-	setters := []okta.ConfigSetter{
-		okta.WithOrgUrl(orgURL),
-		okta.WithCache(false),
-		okta.WithToken(c.apiToken),
-		okta.WithRateLimitMaxRetries(20),
-	}
-	config := okta.NewConfiguration(setters...)
-	v3Client := okta.NewAPIClient(config)
-
-	return client, api, v3Client, nil
-}
-
 func sweepCustomRoles(client *testClient) error {
 	var errorList []error
-	customRoles, _, err := client.apiSupplement.ListCustomRoles(context.Background(), &query.Params{Limit: defaultPaginationLimit})
+	customRoles, _, err := client.sdkSupplementClient.ListCustomRoles(context.Background(), &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return err
 	}
 	for _, role := range customRoles.Roles {
 		if !strings.HasPrefix(role.Label, "testAcc_") {
-			_, err := client.apiSupplement.DeleteCustomRole(context.Background(), role.Id)
+			_, err := client.sdkSupplementClient.DeleteCustomRole(context.Background(), role.Id)
 			if err != nil {
 				errorList = append(errorList, err)
 				continue
@@ -166,18 +142,18 @@ func sweepCustomRoles(client *testClient) error {
 }
 
 func sweepTestApps(client *testClient) error {
-	appList, err := listApps(context.Background(), client.oktaClient, &appFilters{LabelPrefix: testResourcePrefix}, defaultPaginationLimit)
+	appList, err := listApps(context.Background(), client.sdkV2Client, &appFilters{LabelPrefix: testResourcePrefix}, defaultPaginationLimit)
 	if err != nil {
 		return err
 	}
 	var warnings []string
 	for _, app := range appList {
 		warn := fmt.Sprintf("failed to sweep an application, there may be dangling resources. ID %s, label %s", app.Id, app.Label)
-		_, err := client.oktaClient.Application.DeactivateApplication(context.Background(), app.Id)
+		_, err := client.sdkV2Client.Application.DeactivateApplication(context.Background(), app.Id)
 		if err != nil {
 			warnings = append(warnings, warn)
 		}
-		resp, err := client.oktaClient.Application.DeleteApplication(context.Background(), app.Id)
+		resp, err := client.sdkV2Client.Application.DeleteApplication(context.Background(), app.Id)
 		if is404(resp) {
 			warnings = append(warnings, warn)
 			continue
@@ -193,15 +169,15 @@ func sweepTestApps(client *testClient) error {
 }
 
 func sweepAuthServers(client *testClient) error {
-	servers, _, err := client.oktaClient.AuthorizationServer.ListAuthorizationServers(context.Background(), &query.Params{Q: testResourcePrefix})
+	servers, _, err := client.sdkV2Client.AuthorizationServer.ListAuthorizationServers(context.Background(), &query.Params{Q: testResourcePrefix})
 	if err != nil {
 		return err
 	}
 	for _, s := range servers {
-		if _, err := client.oktaClient.AuthorizationServer.DeactivateAuthorizationServer(context.Background(), s.Id); err != nil {
+		if _, err := client.sdkV2Client.AuthorizationServer.DeactivateAuthorizationServer(context.Background(), s.Id); err != nil {
 			return err
 		}
-		if _, err := client.oktaClient.AuthorizationServer.DeleteAuthorizationServer(context.Background(), s.Id); err != nil {
+		if _, err := client.sdkV2Client.AuthorizationServer.DeleteAuthorizationServer(context.Background(), s.Id); err != nil {
 			return err
 		}
 		logSweptResource("authorization server", s.Id, s.Name)
@@ -211,12 +187,12 @@ func sweepAuthServers(client *testClient) error {
 
 func sweepBehaviors(client *testClient) error {
 	var errorList []error
-	behaviors, _, err := client.apiSupplement.ListBehaviors(context.Background(), &query.Params{Q: testResourcePrefix})
+	behaviors, _, err := client.sdkSupplementClient.ListBehaviors(context.Background(), &query.Params{Q: testResourcePrefix})
 	if err != nil {
 		return err
 	}
 	for _, b := range behaviors {
-		if _, err := client.apiSupplement.DeleteBehavior(context.Background(), b.ID); err != nil {
+		if _, err := client.sdkSupplementClient.DeleteBehavior(context.Background(), b.ID); err != nil {
 			errorList = append(errorList, err)
 			continue
 		}
@@ -227,12 +203,12 @@ func sweepBehaviors(client *testClient) error {
 
 func sweepEmailCustomization(client *testClient) error {
 	ctx := context.Background()
-	brands, _, err := client.oktaV3Client.CustomizationApi.ListBrands(ctx).Execute()
+	brands, _, err := client.sdkV3Client.CustomizationApi.ListBrands(ctx).Execute()
 	if err != nil {
 		return err
 	}
 	for _, brand := range brands {
-		templates, resp, err := client.oktaV3Client.CustomizationApi.ListEmailTemplates(ctx, brand.GetId()).Limit(int32(defaultPaginationLimit)).Execute()
+		templates, resp, err := client.sdkV3Client.CustomizationApi.ListEmailTemplates(ctx, brand.GetId()).Limit(int32(defaultPaginationLimit)).Execute()
 		if err != nil {
 			continue
 		}
@@ -246,7 +222,7 @@ func sweepEmailCustomization(client *testClient) error {
 		}
 
 		for _, template := range templates {
-			_, _ = client.oktaV3Client.CustomizationApi.DeleteAllCustomizations(context.Background(), brand.GetId(), template.GetName()).Execute()
+			_, _ = client.sdkV3Client.CustomizationApi.DeleteAllCustomizations(context.Background(), brand.GetId(), template.GetName()).Execute()
 		}
 	}
 
@@ -256,19 +232,19 @@ func sweepEmailCustomization(client *testClient) error {
 func sweepGroupRules(client *testClient) error {
 	var errorList []error
 	// Should never need to deal with pagination
-	rules, _, err := client.oktaClient.Group.ListGroupRules(context.Background(), &query.Params{Limit: defaultPaginationLimit})
+	rules, _, err := client.sdkV2Client.Group.ListGroupRules(context.Background(), &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return err
 	}
 
 	for _, s := range rules {
 		if s.Status == statusActive {
-			if _, err := client.oktaClient.Group.DeactivateGroupRule(context.Background(), s.Id); err != nil {
+			if _, err := client.sdkV2Client.Group.DeactivateGroupRule(context.Background(), s.Id); err != nil {
 				errorList = append(errorList, err)
 				continue
 			}
 		}
-		if _, err := client.oktaClient.Group.DeleteGroupRule(context.Background(), s.Id, nil); err != nil {
+		if _, err := client.sdkV2Client.Group.DeleteGroupRule(context.Background(), s.Id, nil); err != nil {
 			errorList = append(errorList, err)
 			continue
 		}
@@ -278,19 +254,19 @@ func sweepGroupRules(client *testClient) error {
 }
 
 func sweepTestIdps(client *testClient) error {
-	providers, _, err := client.oktaClient.IdentityProvider.ListIdentityProviders(context.Background(), &query.Params{Q: "testAcc_"})
+	providers, _, err := client.sdkV2Client.IdentityProvider.ListIdentityProviders(context.Background(), &query.Params{Q: "testAcc_"})
 	if err != nil {
 		return err
 	}
 	for _, idp := range providers {
-		_, err := client.oktaClient.IdentityProvider.DeleteIdentityProvider(context.Background(), idp.Id)
+		_, err := client.sdkV2Client.IdentityProvider.DeleteIdentityProvider(context.Background(), idp.Id)
 		if err != nil {
 			return err
 		}
 		logSweptResource("identity provider", idp.Id, idp.Name)
 
 		if idp.Type == saml2Idp {
-			_, err := client.oktaClient.IdentityProvider.DeleteIdentityProviderKey(context.Background(), idp.Protocol.Credentials.Trust.Kid)
+			_, err := client.sdkV2Client.IdentityProvider.DeleteIdentityProviderKey(context.Background(), idp.Protocol.Credentials.Trust.Kid)
 			if err != nil {
 				return err
 			}
@@ -302,7 +278,7 @@ func sweepTestIdps(client *testClient) error {
 
 func sweepInlineHooks(client *testClient) error {
 	var errorList []error
-	hooks, _, err := client.oktaClient.InlineHook.ListInlineHooks(context.Background(), nil)
+	hooks, _, err := client.sdkV2Client.InlineHook.ListInlineHooks(context.Background(), nil)
 	if err != nil {
 		return err
 	}
@@ -311,12 +287,12 @@ func sweepInlineHooks(client *testClient) error {
 			continue
 		}
 		if hook.Status == statusActive {
-			_, _, err = client.oktaClient.InlineHook.DeactivateInlineHook(context.Background(), hook.Id)
+			_, _, err = client.sdkV2Client.InlineHook.DeactivateInlineHook(context.Background(), hook.Id)
 			if err != nil {
 				errorList = append(errorList, err)
 			}
 		}
-		_, err = client.oktaClient.InlineHook.DeleteInlineHook(context.Background(), hook.Id)
+		_, err = client.sdkV2Client.InlineHook.DeleteInlineHook(context.Background(), hook.Id)
 		if err != nil {
 			errorList = append(errorList, err)
 		}
@@ -328,13 +304,13 @@ func sweepInlineHooks(client *testClient) error {
 func sweepGroups(client *testClient) error {
 	var errorList []error
 	// Should never need to deal with pagination, limit is 10,000 by default
-	groups, _, err := client.oktaClient.Group.ListGroups(context.Background(), &query.Params{Q: testResourcePrefix})
+	groups, _, err := client.sdkV2Client.Group.ListGroups(context.Background(), &query.Params{Q: testResourcePrefix})
 	if err != nil {
 		return err
 	}
 
 	for _, s := range groups {
-		if _, err := client.oktaClient.Group.DeleteGroup(context.Background(), s.Id); err != nil {
+		if _, err := client.sdkV2Client.Group.DeleteGroup(context.Background(), s.Id); err != nil {
 			errorList = append(errorList, err)
 			continue
 		}
@@ -344,14 +320,14 @@ func sweepGroups(client *testClient) error {
 }
 
 func sweepGroupCustomSchema(client *testClient) error {
-	schema, _, err := client.oktaClient.GroupSchema.GetGroupSchema(context.Background())
+	schema, _, err := client.sdkV2Client.GroupSchema.GetGroupSchema(context.Background())
 	if err != nil {
 		return err
 	}
 	for key := range schema.Definitions.Custom.Properties {
 		if strings.HasPrefix(key, testResourcePrefix) {
 			custom := buildCustomGroupSchema(key, nil)
-			_, _, err = client.oktaClient.GroupSchema.UpdateGroupSchema(context.Background(), *custom)
+			_, _, err = client.sdkV2Client.GroupSchema.UpdateGroupSchema(context.Background(), *custom)
 			if err != nil {
 				return err
 			}
@@ -363,13 +339,13 @@ func sweepGroupCustomSchema(client *testClient) error {
 
 func sweepLinkDefinitions(client *testClient) error {
 	var errorList []error
-	linkedObjects, _, err := client.oktaClient.LinkedObject.ListLinkedObjectDefinitions(context.Background())
+	linkedObjects, _, err := client.sdkV2Client.LinkedObject.ListLinkedObjectDefinitions(context.Background())
 	if err != nil {
 		return err
 	}
 	for _, object := range linkedObjects {
 		if strings.HasPrefix(object.Primary.Name, testResourcePrefix) {
-			if _, err := client.oktaClient.LinkedObject.DeleteLinkedObjectDefinition(context.Background(), object.Primary.Name); err != nil {
+			if _, err := client.sdkV2Client.LinkedObject.DeleteLinkedObjectDefinition(context.Background(), object.Primary.Name); err != nil {
 				errorList = append(errorList, err)
 				continue
 			}
@@ -381,13 +357,13 @@ func sweepLinkDefinitions(client *testClient) error {
 
 func sweepNetworkZones(client *testClient) error {
 	var errorList []error
-	zones, _, err := client.oktaClient.NetworkZone.ListNetworkZones(context.Background(), &query.Params{Limit: defaultPaginationLimit})
+	zones, _, err := client.sdkV2Client.NetworkZone.ListNetworkZones(context.Background(), &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return err
 	}
 	for _, zone := range zones {
 		if strings.HasPrefix(zone.Name, testResourcePrefix) {
-			if _, err := client.oktaClient.NetworkZone.DeleteNetworkZone(context.Background(), zone.Id); err != nil {
+			if _, err := client.sdkV2Client.NetworkZone.DeleteNetworkZone(context.Background(), zone.Id); err != nil {
 				errorList = append(errorList, err)
 				continue
 			}
@@ -431,13 +407,13 @@ func sweepSignOnPolicies(client *testClient) error {
 
 func sweepResourceSets(client *testClient) error {
 	var errorList []error
-	resourceSets, _, err := client.apiSupplement.ListResourceSets(context.Background())
+	resourceSets, _, err := client.sdkSupplementClient.ListResourceSets(context.Background())
 	if err != nil {
 		return err
 	}
 	for _, b := range resourceSets.ResourceSets {
 		if !strings.HasPrefix(b.Label, "testAcc_") {
-			if _, err := client.apiSupplement.DeleteResourceSet(context.Background(), b.Id); err != nil {
+			if _, err := client.sdkSupplementClient.DeleteResourceSet(context.Background(), b.Id); err != nil {
 				errorList = append(errorList, err)
 				continue
 			}
@@ -449,7 +425,7 @@ func sweepResourceSets(client *testClient) error {
 
 func sweepUsers(client *testClient) error {
 	var errorList []error
-	users, resp, err := client.oktaClient.User.ListUsers(context.Background(), &query.Params{Limit: 200, Q: testResourcePrefix})
+	users, resp, err := client.sdkV2Client.User.ListUsers(context.Background(), &query.Params{Limit: 200, Q: testResourcePrefix})
 	if err != nil {
 		return err
 	}
@@ -463,7 +439,7 @@ func sweepUsers(client *testClient) error {
 	}
 
 	for _, u := range users {
-		if err := ensureUserDelete(context.Background(), u.Id, u.Status, client.oktaClient); err != nil {
+		if err := ensureUserDelete(context.Background(), u.Id, u.Status, client.sdkV2Client); err != nil {
 			errorList = append(errorList, err)
 			continue
 		}
@@ -477,20 +453,20 @@ func sweepUsers(client *testClient) error {
 }
 
 func sweepUserCustomSchema(client *testClient) error {
-	userTypes, _, err := client.oktaClient.UserType.ListUserTypes(context.Background())
+	userTypes, _, err := client.sdkV2Client.UserType.ListUserTypes(context.Background())
 	if err != nil {
 		return err
 	}
 	for _, userType := range userTypes {
 		typeSchemaID := userTypeSchemaID(userType)
-		schema, _, err := client.oktaClient.UserSchema.GetUserSchema(context.Background(), typeSchemaID)
+		schema, _, err := client.sdkV2Client.UserSchema.GetUserSchema(context.Background(), typeSchemaID)
 		if err != nil {
 			return err
 		}
 		for key := range schema.Definitions.Custom.Properties {
 			if strings.HasPrefix(key, testResourcePrefix) {
 				custom := buildCustomUserSchema(key, nil)
-				_, _, err = client.oktaClient.UserSchema.UpdateUserProfile(context.Background(), typeSchemaID, *custom)
+				_, _, err = client.sdkV2Client.UserSchema.UpdateUserProfile(context.Background(), typeSchemaID, *custom)
 				if err != nil {
 					return err
 				}
@@ -502,11 +478,11 @@ func sweepUserCustomSchema(client *testClient) error {
 }
 
 func sweepUserTypes(client *testClient) error {
-	userTypeList, _, _ := client.oktaClient.UserType.ListUserTypes(context.Background())
+	userTypeList, _, _ := client.sdkV2Client.UserType.ListUserTypes(context.Background())
 	var errorList []error
 	for _, ut := range userTypeList {
 		if strings.HasPrefix(ut.Name, testResourcePrefix) {
-			if _, err := client.oktaClient.UserType.DeleteUserType(context.Background(), ut.Id); err != nil {
+			if _, err := client.sdkV2Client.UserType.DeleteUserType(context.Background(), ut.Id); err != nil {
 				errorList = append(errorList, err)
 				continue
 			}
@@ -518,14 +494,14 @@ func sweepUserTypes(client *testClient) error {
 
 func sweepPolicyByType(t string, client *testClient) error {
 	ctx := context.Background()
-	policies, _, err := client.oktaClient.Policy.ListPolicies(ctx, &query.Params{Type: t})
+	policies, _, err := client.sdkV2Client.Policy.ListPolicies(ctx, &query.Params{Type: t})
 	if err != nil {
 		return fmt.Errorf("failed to list policies in order to properly destroy: %v", err)
 	}
 	for _, _policy := range policies {
 		policy := _policy.(*sdk.Policy)
 		if strings.HasPrefix(policy.Name, testResourcePrefix) {
-			_, err = client.oktaClient.Policy.DeletePolicy(ctx, policy.Id)
+			_, err = client.sdkV2Client.Policy.DeletePolicy(ctx, policy.Id)
 			if err != nil {
 				return err
 			}
@@ -537,13 +513,13 @@ func sweepPolicyByType(t string, client *testClient) error {
 
 func sweepPolicyRulesByType(ruleType string, client *testClient) error {
 	ctx := context.Background()
-	policies, _, err := client.oktaClient.Policy.ListPolicies(ctx, &query.Params{Type: ruleType})
+	policies, _, err := client.sdkV2Client.Policy.ListPolicies(ctx, &query.Params{Type: ruleType})
 	if err != nil {
 		return fmt.Errorf("failed to list policies in order to properly destroy rules: %v", err)
 	}
 	for _, _policy := range policies {
 		policy := _policy.(*sdk.Policy)
-		rules, _, err := client.apiSupplement.ListPolicyRules(ctx, policy.Id)
+		rules, _, err := client.sdkSupplementClient.ListPolicyRules(ctx, policy.Id)
 		if err != nil {
 			return err
 		}
@@ -551,7 +527,7 @@ func sweepPolicyRulesByType(ruleType string, client *testClient) error {
 		// leaving for now, that means we only delete the rules and not the policy, we can keep it around.
 		for i := range rules {
 			if strings.HasPrefix(rules[i].Name, testResourcePrefix) {
-				_, err = client.oktaClient.Policy.DeletePolicyRule(ctx, policy.Id, rules[i].Id)
+				_, err = client.sdkV2Client.Policy.DeletePolicyRule(ctx, policy.Id, rules[i].Id)
 				if err != nil {
 					return err
 				}

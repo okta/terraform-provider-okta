@@ -54,7 +54,7 @@ func createPostLogoutRedirectURIExists(resourceName string) resource.TestCheckFu
 
 		uri := rs.Primary.ID
 		appID := rs.Primary.Attributes["app_id"]
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 		app := sdk.NewOpenIdConnectApplication()
 		_, response, err := client.Application.GetApplication(context.Background(), appID, app, nil)
 

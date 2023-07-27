@@ -95,7 +95,7 @@ func TestAccResrouceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 }
 
 func doesResourceSetExist(id string) (bool, error) {
-	client := apiSupplementForTest()
+	client := sdkSupplementClientForTest()
 	_, response, err := client.GetResourceSet(context.Background(), id)
 	return doesResourceExist(response, err)
 }

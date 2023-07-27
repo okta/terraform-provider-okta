@@ -44,16 +44,13 @@ func TestAccAppSamlAppSettings_crud(t *testing.T) {
 
 func checkAppSamlAppSettingsExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if isVCRPlayMode() {
-			return nil
-		}
 		missingErr := fmt.Errorf("resource not found: %s", resourceName)
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return missingErr
 		}
 		appID := rs.Primary.Attributes["app_id"]
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 		app := sdk.NewSamlApplication()
 		_, _, err := client.Application.GetApplication(context.Background(), appID, app, nil)
 		if err != nil {

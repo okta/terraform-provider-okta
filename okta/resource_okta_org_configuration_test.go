@@ -83,7 +83,7 @@ func teardownResetCompanyName(name *string) resource.TestCheckFunc {
 		setting := sdk.OrgSetting{
 			CompanyName: *name + " ?",
 		}
-		oktaClientForTest().OrgSetting.PartialUpdateOrgSetting(context.Background(), setting)
+		sdkV2ClientForTest().OrgSetting.PartialUpdateOrgSetting(context.Background(), setting)
 		return nil
 	}
 }
@@ -92,7 +92,7 @@ func teardownResetCompanyName(name *string) resource.TestCheckFunc {
 // back at teardown.
 func setupGetOriginalCompanyName(companyName *string) resource.TestCheckFunc {
 	return func(t *terraform.State) error {
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 		if settings, _, err := client.OrgSetting.GetOrgSettings(context.Background()); err == nil {
 			*companyName = settings.CompanyName
 		}

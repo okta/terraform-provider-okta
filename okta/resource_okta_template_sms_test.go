@@ -47,7 +47,7 @@ func TestAccOktaSmsTemplate_crud(t *testing.T) {
 }
 
 func doesSmsTemplateExist(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, response, err := client.SmsTemplate.GetSmsTemplate(context.Background(), id)
 	return doesResourceExist(response, err)
 }

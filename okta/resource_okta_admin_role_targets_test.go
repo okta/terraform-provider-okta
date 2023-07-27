@@ -56,7 +56,7 @@ func TestAccAdminRoleTargets(t *testing.T) {
 }
 
 func doesTargetExists(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	parts := strings.Split(id, "/")
 	roles, _, err := client.User.ListAssignedRolesForUser(context.Background(), parts[0], nil)
 	if err != nil {

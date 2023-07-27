@@ -80,7 +80,7 @@ resource "okta_policy_mfa" "test" {
 	resourceName := fmt.Sprintf("%s.test", policyMfa)
 
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testOIEOnlyAccPreCheck(t),
+		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkPolicyDestroy(policyMfa),
@@ -134,7 +134,7 @@ resource "okta_policy_mfa" "test" {
 	resourceName := fmt.Sprintf("%s.test", policyMfa)
 
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testOIEOnlyAccPreCheck(t),
+		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      checkPolicyDestroy(policyMfa),

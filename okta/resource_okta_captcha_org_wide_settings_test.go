@@ -45,7 +45,7 @@ func TestAccOktaCaptchaOrgWideSettings(t *testing.T) {
 }
 
 func doesCaptchaOrgWideSettingsExist(string) (bool, error) {
-	client := apiSupplementForTest()
+	client := sdkSupplementClientForTest()
 	settings, _, err := client.GetOrgWideCaptchaSettings(context.Background())
 	if err != nil {
 		return false, err

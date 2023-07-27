@@ -36,10 +36,7 @@ func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 }
 
 func checkTrustedOriginDestroy(s *terraform.State) error {
-	if isVCRPlayMode() {
-		return nil
-	}
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 
 	for _, r := range s.RootModule().Resources {
 		_, resp, err := client.TrustedOrigin.GetOrigin(context.Background(), r.Primary.ID)

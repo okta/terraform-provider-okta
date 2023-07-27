@@ -41,7 +41,7 @@ func TestAccOktaAdminRoleCustom(t *testing.T) {
 }
 
 func doesAdminRoleCustomExist(id string) (bool, error) {
-	client := apiSupplementForTest()
+	client := sdkSupplementClientForTest()
 	_, response, err := client.GetCustomRole(context.Background(), id)
 	return doesResourceExist(response, err)
 }

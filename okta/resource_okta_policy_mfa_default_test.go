@@ -70,7 +70,7 @@ resource "okta_policy_mfa_default" "test" {
 	resourceName := fmt.Sprintf("%s.test", policyMfaDefault)
 
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testOIEOnlyAccPreCheck(t),
+		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		CheckDestroy:      nil,

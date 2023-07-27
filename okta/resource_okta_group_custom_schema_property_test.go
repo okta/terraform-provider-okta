@@ -935,9 +935,6 @@ resource "okta_group_schema_property" "five" {
 }
 
 func checkOktaGroupSchemasDestroy(s *terraform.State) error {
-	if isVCRPlayMode() {
-		return nil
-	}
 	for _, rs := range s.RootModule().Resources {
 		exists, _ := testGroupSchemaPropertyExists(rs.Primary.ID)
 		if exists {
@@ -948,7 +945,7 @@ func checkOktaGroupSchemasDestroy(s *terraform.State) error {
 }
 
 func testGroupSchemaPropertyExists(index string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	gs, _, err := client.GroupSchema.GetGroupSchema(context.Background())
 	if err != nil {
 		return false, fmt.Errorf("failed to get group schema: %v", err)

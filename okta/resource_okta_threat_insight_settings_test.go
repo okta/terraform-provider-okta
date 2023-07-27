@@ -90,14 +90,11 @@ func TestAccThreatInsightSettingsNetworkZoneOrdering(t *testing.T) {
 }
 
 func checkOktaThreatInsightSettingsDestroy(s *terraform.State) error {
-	if isVCRPlayMode() {
-		return nil
-	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != threatInsightSettings {
 			continue
 		}
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 		conf, _, err := client.ThreatInsightConfiguration.GetCurrentConfiguration(context.Background())
 		if err != nil {
 			return fmt.Errorf("failed to get threat insight configuration: %v", err)

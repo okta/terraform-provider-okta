@@ -34,7 +34,7 @@ func TestAccOktaLinkDefinition(t *testing.T) {
 }
 
 func doesLinkDefinitionExist(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, response, err := client.LinkedObject.GetLinkedObjectDefinition(context.Background(), id)
 	return doesResourceExist(response, err)
 }

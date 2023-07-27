@@ -118,9 +118,6 @@ func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
 }
 
 func checkResourceEmailCustomizationDestroy(s *terraform.State) error {
-	if isVCRPlayMode() {
-		return nil
-	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != emailCustomization {
 			continue
@@ -128,7 +125,7 @@ func checkResourceEmailCustomizationDestroy(s *terraform.State) error {
 		ID := rs.Primary.ID
 		brandID := rs.Primary.Attributes["brand_id"]
 		templateName := rs.Primary.Attributes["template_name"]
-		client := oktaV3ClientForTest()
+		client := sdkV3ClientForTest()
 
 		ctx := context.Background()
 

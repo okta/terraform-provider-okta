@@ -577,7 +577,7 @@ func testAppUserSchemasExists(resourceName string) resource.TestCheckFunc {
 
 func testAppUserSchemaExists(index string) (bool, error) {
 	ids := strings.Split(index, "/")
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	schema, resp, err := client.UserSchema.GetApplicationUserSchema(context.Background(), ids[0])
 	if err != nil {
 		if resp != nil && resp.StatusCode == 404 {

@@ -55,7 +55,7 @@ func TestAccOktaNetworkZone_crud(t *testing.T) {
 }
 
 func doesNetworkZoneExist(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, response, err := client.NetworkZone.GetNetworkZone(context.Background(), id)
 	return doesResourceExist(response, err)
 }

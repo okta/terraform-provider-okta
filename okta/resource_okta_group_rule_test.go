@@ -165,7 +165,7 @@ resource "okta_group_rule" "inval" {
 }
 
 func doesGroupRuleExist(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, response, err := client.Group.GetGroupRule(context.Background(), id, nil)
 
 	return doesResourceExist(response, err)

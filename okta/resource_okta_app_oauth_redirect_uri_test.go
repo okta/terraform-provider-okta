@@ -54,7 +54,7 @@ func createRedirectURIExists(resourceName string) resource.TestCheckFunc {
 
 		uri := rs.Primary.ID
 		appID := rs.Primary.Attributes["app_id"]
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 		app := sdk.NewOpenIdConnectApplication()
 		_, response, err := client.Application.GetApplication(context.Background(), appID, app, nil)
 

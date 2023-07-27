@@ -52,7 +52,7 @@ func TestAccOktaUserType_crud(t *testing.T) {
 }
 
 func doesUserTypeExist(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, response, err := client.UserType.GetUserType(context.Background(), id)
 	return doesResourceExist(response, err)
 }

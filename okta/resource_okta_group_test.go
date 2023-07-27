@@ -118,7 +118,7 @@ func TestAccOktaGroup_customschema_null(t *testing.T) {
 }
 
 func doesGroupExist(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, response, err := client.Group.GetGroup(context.Background(), id)
 	return doesResourceExist(response, err)
 }

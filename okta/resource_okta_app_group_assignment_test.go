@@ -207,7 +207,7 @@ func ensureAppGroupAssignmentExists(resourceName string) resource.TestCheckFunc 
 
 		appID := rs.Primary.Attributes["app_id"]
 		groupID := rs.Primary.Attributes["group_id"]
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 
 		g, _, err := client.Application.GetApplicationGroupAssignment(context.Background(), appID, groupID, nil)
 		if err != nil {
@@ -236,7 +236,7 @@ func ensureAppGroupAssignmentRetained(appName, groupName string) resource.TestCh
 
 		appID := appRes.Primary.ID
 		groupID := groupRes.Primary.ID
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 
 		g, _, err := client.Application.GetApplicationGroupAssignment(context.Background(), appID, groupID, nil)
 		if err != nil {

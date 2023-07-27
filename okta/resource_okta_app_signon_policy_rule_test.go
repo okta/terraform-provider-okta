@@ -76,14 +76,11 @@ func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
 }
 
 func checkAppSignOnPolicyRuleDestroy(s *terraform.State) error {
-	if isVCRPlayMode() {
-		return nil
-	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != appSignOnPolicyRule {
 			continue
 		}
-		client := apiSupplementForTest()
+		client := sdkSupplementClientForTest()
 		rule, resp, err := client.GetAppSignOnPolicyRule(context.Background(), rs.Primary.Attributes["policy_id"], rs.Primary.ID)
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			return nil

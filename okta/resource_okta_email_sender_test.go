@@ -37,7 +37,7 @@ func TestAccOktaEmailSender(t *testing.T) {
 }
 
 func emailSenderExists(id string) (bool, error) {
-	client := apiSupplementForTest()
+	client := sdkSupplementClientForTest()
 	sender, resp, err := client.GetEmailSender(context.Background(), id)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, err

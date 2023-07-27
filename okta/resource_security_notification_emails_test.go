@@ -41,15 +41,12 @@ func TestAccSecurityNotificationEmails(t *testing.T) {
 }
 
 func checkOktaSecurityNotificationEmailsDestroy(s *terraform.State) error {
-	if isVCRPlayMode() {
-		return nil
-	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != securityNotificationEmails {
 			continue
 		}
-		supplimentClient := apiSupplementForTest()
-		oktaClient := oktaClientForTest()
+		supplimentClient := sdkSupplementClientForTest()
+		oktaClient := sdkV2ClientForTest()
 		oktaConfig := oktaClient.GetConfig()
 		token := oktaConfig.Okta.Client.Token
 		orgUrl, err := url.Parse(oktaConfig.Okta.Client.OrgUrl)

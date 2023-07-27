@@ -129,7 +129,7 @@ func TestAccOktaAuthServer_gh299(t *testing.T) {
 }
 
 func authServerExists(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	server, resp, err := client.AuthorizationServer.GetAuthorizationServer(context.Background(), id)
 	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return false, nil

@@ -310,7 +310,7 @@ func TestAccResourceOktaAppOauth_serviceWithJWKSURI(t *testing.T) {
 
 func createDoesAppExist(app sdk.App) func(string) (bool, error) {
 	return func(id string) (bool, error) {
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 		_, response, err := client.Application.GetApplication(context.Background(), id, app, &query.Params{})
 
 		// We don't want to consider a 404 an error in some cases and thus the delineation
