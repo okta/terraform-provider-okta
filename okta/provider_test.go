@@ -27,9 +27,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-var (
-	testAccProvidersFactories map[string]func() (*schema.Provider, error)
-)
+var testAccProvidersFactories map[string]func() (*schema.Provider, error)
 
 func init() {
 	provider := Provider()
