@@ -1,0 +1,19 @@
+# play VCR tests in a GH action
+name: VCR
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.20"
+
+      - name: Run VCR tests
+        run: make test-play-vcr-acc
