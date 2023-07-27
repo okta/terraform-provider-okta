@@ -843,8 +843,10 @@ func validateAppOAuth(d *schema.ResourceData) error {
 			return errors.New("'name' 'value' and in 'groups_claim' should not be empty")
 		}
 	}
-	if _, ok := d.GetOk("jwks"); !ok && d.Get("token_endpoint_auth_method").(string) == "private_key_jwt" {
-		return errors.New("'jwks' is required when 'token_endpoint_auth_method' is 'private_key_jwt'")
+	_, jwks := d.GetOk("jwks")
+	_, jwks_uri := d.GetOk("jwks_uri")
+	if !(jwks || jwks_uri) && d.Get("token_endpoint_auth_method").(string) == "private_key_jwt" {
+		return errors.New("'jwks' or 'jwks_uri' is required when 'token_endpoint_auth_method' is 'private_key_jwt'")
 	}
 	if d.Get("login_mode").(string) != "DISABLED" {
 		if d.Get("login_uri").(string) == "" {

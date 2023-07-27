@@ -57,7 +57,7 @@ func dataSourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, m inte
 	} else {
 		ruleName, nameOk := d.GetOk("name")
 		if nameOk {
-			var name = ruleName.(string)
+			name := ruleName.(string)
 			searchParams := &query.Params{Search: name, Limit: 1}
 			rules, _, err := getOktaClientFromMetadata(m).Group.ListGroupRules(ctx, searchParams)
 			switch {
