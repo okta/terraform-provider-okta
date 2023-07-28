@@ -13,6 +13,17 @@ ifdef TEST_FILTER
 	TEST_FILTER := -run $(TEST_FILTER)
 endif
 
+DEFAULT_SMOKE_TESTS?=\
+  TestAccDataSourceOktaUser_read \
+  TestAccResourceOktaUserSchema_crud
+
+ifeq ($(strip $(SMOKE_TESTS)),)
+	SMOKE_TESTS = $(DEFAULT_SMOKE_TESTS)
+endif
+
+space := $(subst ,, )
+smoke_tests := $(subst $(space),\|,$(SMOKE_TESTS))
+
 default: build
 
 dep: # Download required dependencies
@@ -43,6 +54,9 @@ testacc:
 
 test-play-vcr-acc:
 	OKTA_VCR_TF_ACC=play TF_ACC=1 go test $(TEST) -v $(TESTARGS) $(TEST_FILTER) -timeout 120m
+
+smoke-test-play-vcr-acc:
+	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -run ^$(smoke_tests)$$ ./okta
 
 test-record-vcr-acc:
 	OKTA_VCR_TF_ACC=record TF_ACC=1 go test $(TEST) -v $(TESTARGS) $(TEST_FILTER) -timeout 120m
