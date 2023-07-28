@@ -16,7 +16,7 @@ func TestAccOktaPolicyProfileEnrollment(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createPolicyCheckDestroy(policyProfileEnrollment),
+		CheckDestroy:      checkPolicyDestroy(policyProfileEnrollment),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

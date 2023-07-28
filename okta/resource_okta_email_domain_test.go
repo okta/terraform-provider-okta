@@ -17,7 +17,7 @@ func TestAccOktaEmailDomain(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(emailDomain, emailDomainExists),
+		CheckDestroy:      checkResourceDestroy(emailDomain, emailDomainExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

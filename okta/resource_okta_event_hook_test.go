@@ -23,7 +23,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(eventHook, eventHookExists),
+		CheckDestroy:      checkResourceDestroy(eventHook, eventHookExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

@@ -19,7 +19,7 @@ func TestAccAppSwaApplication_preconfig(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
+		CheckDestroy:      checkResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -54,7 +54,7 @@ func TestAccAppSwaApplication_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
+		CheckDestroy:      checkResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -103,7 +103,7 @@ resource "okta_app_swa" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
+		CheckDestroy:      checkResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

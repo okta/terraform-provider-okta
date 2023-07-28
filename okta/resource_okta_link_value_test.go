@@ -38,6 +38,9 @@ func TestAccOktaLinkValue(t *testing.T) {
 }
 
 func checkLinkValueDestroy(s *terraform.State) error {
+	if isVCRPlayMode() {
+		return nil
+	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != linkValue {
 			continue

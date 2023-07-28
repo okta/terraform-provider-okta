@@ -19,7 +19,7 @@ func TestAccAdminRoleTargets(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpOidc, doesTargetExists),
+		CheckDestroy:      checkResourceDestroy(idpOidc, doesTargetExists),
 		Steps: []resource.TestStep{
 			{
 				Config: basic,

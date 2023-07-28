@@ -22,7 +22,7 @@ func TestAccAppSamlAppSettings_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:      checkResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: preconfigured,
@@ -44,6 +44,9 @@ func TestAccAppSamlAppSettings_crud(t *testing.T) {
 
 func checkAppSamlAppSettingsExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
+		if isVCRPlayMode() {
+			return nil
+		}
 		missingErr := fmt.Errorf("resource not found: %s", resourceName)
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {

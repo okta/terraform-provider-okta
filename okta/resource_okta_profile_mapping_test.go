@@ -19,7 +19,7 @@ func TestAccOktaProfileMapping_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(profileMapping, doesOktaProfileExist),
+		CheckDestroy:      checkResourceDestroy(profileMapping, doesOktaProfileExist),
 		Steps: []resource.TestStep{
 			{
 				Config: preventDelete,

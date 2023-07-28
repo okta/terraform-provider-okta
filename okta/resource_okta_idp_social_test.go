@@ -19,7 +19,7 @@ func TestAccOktaIdpSocial_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpSocial, createDoesIdpExist),
+		CheckDestroy:      checkResourceDestroy(idpSocial, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

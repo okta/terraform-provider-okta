@@ -18,7 +18,7 @@ func TestAccOktaUserAdminRoles_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: start,

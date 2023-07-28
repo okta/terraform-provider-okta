@@ -22,7 +22,7 @@ func TestAccOktaAuthServerScope_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
+		CheckDestroy:      checkResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

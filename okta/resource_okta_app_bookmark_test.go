@@ -18,7 +18,7 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
+		CheckDestroy:      checkResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -61,7 +61,7 @@ resource "okta_app_bookmark" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
+		CheckDestroy:      checkResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -102,7 +102,7 @@ resource "okta_app_bookmark" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
+		CheckDestroy:      checkResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

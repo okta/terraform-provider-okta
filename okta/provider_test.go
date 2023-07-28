@@ -27,11 +27,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-var (
-	testAccProvidersFactories map[string]func() (*schema.Provider, error)
-	testSDKClient             *sdk.Client
-	testSupplementClient      *sdk.APISupplement
-)
+var testAccProvidersFactories map[string]func() (*schema.Provider, error)
 
 func init() {
 	provider := Provider()
@@ -45,18 +41,14 @@ func init() {
 	// is outside of the client that terraform provider creates. This is because
 	// tests may need to query the okta API for status and the Terraform SDK
 	// doesn't expose the provider's meta data where we store the provider's
-	// config until after tests have completed.
-	if os.Getenv("TF_ACC") != "" {
+	// config until after tests have completed. Not when VCR'ing.
+	if os.Getenv("TF_ACC") != "" && os.Getenv("OKTA_VCR_TF_ACC") == "" {
 		// only set up for acceptance tests
 		config := &Config{
 			orgName: os.Getenv("OKTA_ORG_NAME"),
 			domain:  os.Getenv("OKTA_BASE_URL"),
 		}
 		config.logger = providerLogger(config)
-		testSDKClient, _ = oktaSDKClient(config)
-		testSupplementClient = &sdk.APISupplement{
-			RequestExecutor: testSDKClient.CloneRequestExecutor(),
-		}
 	}
 }
 
@@ -101,16 +93,39 @@ func testOIEOnlyAccPreCheck(t *testing.T) func() {
 			t.Fatalf("%v", err)
 		}
 
-		org, _, err := testSupplementClient.GetWellKnownOktaOrganization(context.TODO())
-		if err != nil {
-			t.Fatalf("%v", err)
+		org := testOktaOrganization(t)
+		if org != nil {
+			return
 		}
-
 		// v1 == Classic, idx == OIE
 		if org.Pipeline != "idx" {
 			t.Skipf("%q test is for OIE orgs only", t.Name())
 		}
 	}
+}
+
+func testOktaOrganization(t *testing.T) *sdk.OktaOrganization {
+	// auth is not needed to call the well-known endpoint
+	resp, err := http.Get(fmt.Sprintf("https://%s.%s/.well-known/okta-organization", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL")))
+	if err != nil {
+		t.Fatalf("%v", err)
+		return nil
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("%v", err)
+		return nil
+	}
+
+	org := sdk.OktaOrganization{}
+	err = json.Unmarshal(body, &org)
+	if err != nil {
+		t.Fatalf("%v", err)
+		return nil
+	}
+
+	return &org
 }
 
 // testClassicOnlyAccPreCheck is a resource.test PreCheck function that will place a
@@ -122,9 +137,9 @@ func testClassicOnlyAccPreCheck(t *testing.T) func() {
 			t.Fatalf("%v", err)
 		}
 
-		org, _, err := testSupplementClient.GetWellKnownOktaOrganization(context.TODO())
-		if err != nil {
-			t.Fatalf("%v", err)
+		org := testOktaOrganization(t)
+		if org != nil {
+			return
 		}
 
 		// v1 == Classic, idx == OIE
@@ -613,4 +628,8 @@ type vcrManager struct {
 	CassettesPath   string
 	CurrentCassette string
 	VCRModeName     string
+}
+
+func isVCRPlayMode() bool {
+	return os.Getenv("OKTA_VCR_TF_ACC") == "play"
 }

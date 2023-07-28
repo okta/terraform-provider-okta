@@ -18,7 +18,7 @@ func TestAccAppAutoLoginApplication_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appAutoLogin, createDoesAppExist(sdk.NewAutoLoginApplication())),
+		CheckDestroy:      checkResourceDestroy(appAutoLogin, createDoesAppExist(sdk.NewAutoLoginApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -78,7 +78,7 @@ resource "okta_app_auto_login" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appAutoLogin, createDoesAppExist(sdk.NewAutoLoginApplication())),
+		CheckDestroy:      checkResourceDestroy(appAutoLogin, createDoesAppExist(sdk.NewAutoLoginApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

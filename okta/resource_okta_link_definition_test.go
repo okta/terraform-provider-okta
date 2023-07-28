@@ -16,7 +16,7 @@ func TestAccOktaLinkDefinition(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(linkDefinition, doesLinkDefinitionExist),
+		CheckDestroy:      checkResourceDestroy(linkDefinition, doesLinkDefinitionExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -95,7 +95,7 @@ resource "okta_link_definition" "five" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(linkDefinition, doesLinkDefinitionExist),
+		CheckDestroy:      checkResourceDestroy(linkDefinition, doesLinkDefinitionExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

@@ -935,6 +935,9 @@ resource "okta_group_schema_property" "five" {
 }
 
 func checkOktaGroupSchemasDestroy(s *terraform.State) error {
+	if isVCRPlayMode() {
+		return nil
+	}
 	for _, rs := range s.RootModule().Resources {
 		exists, _ := testGroupSchemaPropertyExists(rs.Primary.ID)
 		if exists {

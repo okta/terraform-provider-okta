@@ -19,7 +19,7 @@ func TestAccOktaCaptchaOrgWideSettings(t *testing.T) {
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      createCheckResourceDestroy(captchaOrgWideSettings, doesCaptchaOrgWideSettingsExist),
+			CheckDestroy:      checkResourceDestroy(captchaOrgWideSettings, doesCaptchaOrgWideSettingsExist),
 			Steps: []resource.TestStep{
 				{
 					Config: config,

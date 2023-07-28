@@ -16,7 +16,7 @@ func TestAccOktaPolicyRuleSignon_defaultErrors(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRuleSignOn),
+		CheckDestroy:      checkRuleDestroy(policyRuleSignOn),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -42,7 +42,7 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRuleSignOn),
+		CheckDestroy:      checkRuleDestroy(policyRuleSignOn),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -134,7 +134,7 @@ func TestAccOktaPolicyRuleSignon_multiple(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRuleSignOn),
+		CheckDestroy:      checkRuleDestroy(policyRuleSignOn),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

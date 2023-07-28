@@ -18,7 +18,7 @@ func TestAccResourceOktaGroupMemberships_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: start,
@@ -39,7 +39,7 @@ func TestAccResourceOktaGroupMemberships_Issue1072(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: `
@@ -70,7 +70,7 @@ func TestAccResourceOktaGroupMemberships_ClassicBehavior(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				// Before the apply the state will be:
@@ -110,7 +110,7 @@ func TestAccResourceOktaGroupMemberships_TrackAllUsersBehavior(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				// Before the apply the state will be:
@@ -263,7 +263,7 @@ resource "okta_group" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

@@ -21,7 +21,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(inlineHook, inlineHookExists),
+		CheckDestroy:      checkResourceDestroy(inlineHook, inlineHookExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

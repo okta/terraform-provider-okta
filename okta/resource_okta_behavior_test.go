@@ -19,7 +19,7 @@ func TestAccOktaBehavior(t *testing.T) {
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      createCheckResourceDestroy(behavior, doesBehaviorExist),
+			CheckDestroy:      checkResourceDestroy(behavior, doesBehaviorExist),
 			Steps: []resource.TestStep{
 				{
 					Config: config,

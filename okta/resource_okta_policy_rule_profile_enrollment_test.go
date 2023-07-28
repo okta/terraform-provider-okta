@@ -44,7 +44,7 @@ resource "okta_group" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRuleProfileEnrollment),
+		CheckDestroy:      checkRuleDestroy(policyRuleProfileEnrollment),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -127,7 +127,7 @@ resource "okta_policy_rule_profile_enrollment" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
+		CheckDestroy:      checkResourceDestroy(appSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

@@ -23,7 +23,7 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -121,7 +121,7 @@ func TestAccAppGroupAssignment_retain(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: retainAssignment,
@@ -187,7 +187,7 @@ resource "okta_app_group_assignment" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

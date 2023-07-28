@@ -24,10 +24,7 @@ func TestAccResourceOktaBrand_import_update(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: func(s *terraform.State) error {
-			// brand api doens't have real delete for a brand
-			return nil
-		},
+		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
 				Config: importConfig,
@@ -90,10 +87,7 @@ resource "okta_brand" "example" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: func(s *terraform.State) error {
-			// brand api doens't have real delete for a brand
-			return nil
-		},
+		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
 				Config:             config,

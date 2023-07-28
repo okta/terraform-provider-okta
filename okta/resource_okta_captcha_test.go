@@ -18,7 +18,7 @@ func TestAccOktaCaptcha(t *testing.T) {
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      createCheckResourceDestroy(captcha, doesCaptchaExist),
+			CheckDestroy:      checkResourceDestroy(captcha, doesCaptchaExist),
 			Steps: []resource.TestStep{
 				{
 					Config: config,

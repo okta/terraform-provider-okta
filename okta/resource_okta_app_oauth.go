@@ -510,13 +510,13 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	if d.Get("omit_secret").(bool) {
 		_ = d.Set("client_secret", "")
 	}
-	if _, exists := d.GetOk("groups_claim"); exists {
-		gc, err := flattenGroupsClaim(ctx, d, m)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		_ = d.Set("groups_claim", gc)
+
+	gc, err := flattenGroupsClaim(ctx, d, m)
+	if err != nil {
+		return diag.FromErr(err)
 	}
+	_ = d.Set("groups_claim", gc)
+
 	return setOAuthClientSettings(d, app.Settings.OauthClient)
 }
 
@@ -836,8 +836,10 @@ func validateAppOAuth(d *schema.ResourceData) error {
 			return errors.New("'name' 'value' and in 'groups_claim' should not be empty")
 		}
 	}
-	if _, ok := d.GetOk("jwks"); !ok && d.Get("token_endpoint_auth_method").(string) == "private_key_jwt" {
-		return errors.New("'jwks' is required when 'token_endpoint_auth_method' is 'private_key_jwt'")
+	_, jwks := d.GetOk("jwks")
+	_, jwks_uri := d.GetOk("jwks_uri")
+	if !(jwks || jwks_uri) && d.Get("token_endpoint_auth_method").(string) == "private_key_jwt" {
+		return errors.New("'jwks' or 'jwks_uri' is required when 'token_endpoint_auth_method' is 'private_key_jwt'")
 	}
 	if d.Get("login_mode").(string) != "DISABLED" {
 		if d.Get("login_uri").(string) == "" {

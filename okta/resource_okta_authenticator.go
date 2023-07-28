@@ -153,7 +153,7 @@ func resourceAuthenticator() *schema.Resource {
 // deactivated (soft delete). Therefore, if the authenticator already exists
 // create is just a soft import of an existing authenticator.
 func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(authenticator)
 	}
 
@@ -198,7 +198,7 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(authenticator)
 	}
 
@@ -212,7 +212,7 @@ func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(authenticator)
 	}
 
@@ -246,7 +246,7 @@ func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, m 
 // true delete. However, deactivate the authenticator as a stand in for delete.
 // Authenticators that are utilized by existing policies can not be deactivated.
 func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(authenticator)
 	}
 

@@ -408,6 +408,10 @@ func (re *RequestExecutor) NewRequest(method, url string, body interface{}) (*ht
 	return req, nil
 }
 
+func (re *RequestExecutor) SetHTTPTransport(transport http.RoundTripper) {
+	re.httpClient.Transport = transport
+}
+
 func (re *RequestExecutor) AsBinary() *RequestExecutor {
 	re.binary = true
 	return re

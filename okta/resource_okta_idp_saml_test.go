@@ -18,7 +18,7 @@ func TestAccOktaIdpSaml_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpSaml, createDoesIdpExist),
+		CheckDestroy:      checkResourceDestroy(idpSaml, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -105,7 +105,7 @@ resource "okta_idp_saml" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpSaml, createDoesIdpExist),
+		CheckDestroy:      checkResourceDestroy(idpSaml, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

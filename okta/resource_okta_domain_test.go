@@ -17,7 +17,7 @@ func TestAccOktaDomain(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(domain, domainExists),
+		CheckDestroy:      checkResourceDestroy(domain, domainExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

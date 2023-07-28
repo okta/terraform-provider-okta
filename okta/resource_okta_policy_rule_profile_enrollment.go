@@ -101,7 +101,7 @@ func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 // needs."
 // https://developer.okta.com/docs/reference/api/policy/#profile-enrollment-policy
 func resourcePolicyProfileEnrollmentRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
 	}
 
@@ -132,7 +132,7 @@ func resourcePolicyProfileEnrollmentRuleCreate(ctx context.Context, d *schema.Re
 }
 
 func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
 	}
 
@@ -169,7 +169,7 @@ func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.Reso
 }
 
 func resourcePolicyProfileEnrollmentRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
 	}
 
@@ -186,7 +186,7 @@ func resourcePolicyProfileEnrollmentRuleUpdate(ctx context.Context, d *schema.Re
 
 // You cannot delete a default rule in a policy
 func resourcePolicyProfileEnrollmentRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
 	}
 

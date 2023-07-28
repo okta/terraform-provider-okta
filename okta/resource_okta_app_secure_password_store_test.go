@@ -18,7 +18,7 @@ func TestAccAppSecurePasswordStoreApplication_credsSchemes(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
+		CheckDestroy:      checkResourceDestroy(appSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -67,7 +67,7 @@ resource "okta_app_secure_password_store" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
+		CheckDestroy:      checkResourceDestroy(appSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
