@@ -1,0 +1,24 @@
+# play specific VCR smoke tests in a GH action
+name: VCR Smoketest
+
+on:
+  workflow_dispatch:
+    smokeTests:
+      description: 'List of ACC Test name(s) separated by whitespace'
+      required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.20"
+
+      - name: Run VCR smoke tests
+        run: make smoke-test-play-vcr-acc
+        env: SMOKE_TESTS: ${{ inputs.smokeTests }}
