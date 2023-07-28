@@ -3,9 +3,10 @@ name: VCR Smoketest
 
 on:
   workflow_dispatch:
-    smokeTests:
-      description: 'List of ACC Test name(s) separated by whitespace'
-      required: false
+    inputs:
+      smokeTests:
+        description: 'List of ACC Test name(s) separated by whitespace'
+        required: false
 
 jobs:
   build:
