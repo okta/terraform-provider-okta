@@ -21,4 +21,5 @@ jobs:
 
       - name: Run VCR smoke tests
         run: make smoke-test-play-vcr-acc
-        env: SMOKE_TESTS: ${{ inputs.smokeTests }}
+        env:
+          SMOKE_TESTS: ${{ inputs.smokeTests }}
