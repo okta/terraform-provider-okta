@@ -428,13 +428,11 @@ func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{
 
 	// Okta Core can have eventual consistency issues when deactivating an app
 	// which is required before deleting the app.
-	b := backoff.NewExponentialBackOff()
-	b.MaxElapsedTime = 5 * time.Second
-
+	boc := newExponentialBackOffWithContext(ctx, 5*time.Second)
 	err := backoff.Retry(func() error {
 		_, err := client.Application.DeleteApplication(ctx, d.Id())
 		return err
-	}, b)
+	}, boc)
 
 	return err
 }

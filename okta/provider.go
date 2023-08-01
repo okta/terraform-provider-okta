@@ -7,7 +7,9 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/cenkalti/backoff"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -476,4 +478,14 @@ func resourceFuncNoOp(context.Context, *schema.ResourceData, interface{}) diag.D
 func int64Ptr(what int) *int64 {
 	result := int64(what)
 	return &result
+}
+
+// newExponentialBackOffWithContext helper to dry up creating a backoff object that is exponential and has context
+func newExponentialBackOffWithContext(ctx context.Context, maxElapsedTime time.Duration) backoff.BackOffContext {
+	bOff := backoff.NewExponentialBackOff()
+	bOff.MaxElapsedTime = maxElapsedTime
+
+	// NOTE: backoff.BackOffContext is an interface that embeds backoff.Backoff
+	// so the greater context is considered on backoff.Retry
+	return backoff.WithContext(bOff, ctx)
 }

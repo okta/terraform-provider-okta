@@ -44,9 +44,7 @@ func resourceUserGroupMembershipsCreate(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	bOff := backoff.NewExponentialBackOff()
-	bOff.MaxElapsedTime = time.Second * 10
-	bOff.InitialInterval = time.Second
+	boc := newExponentialBackOffWithContext(ctx, 10*time.Second)
 	err = backoff.Retry(func() error {
 		ok, err := checkIfUserHasGroups(ctx, client, userId, groups)
 		if err != nil {
@@ -56,7 +54,7 @@ func resourceUserGroupMembershipsCreate(ctx context.Context, d *schema.ResourceD
 			return nil
 		}
 		return fmt.Errorf("user (%s) did not have expected group memberships after multiple checks", userId)
-	}, bOff)
+	}, boc)
 	if err != nil {
 		return diag.FromErr(err)
 	}

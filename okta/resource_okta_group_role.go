@@ -113,9 +113,7 @@ func resourceGroupRoleCreate(ctx context.Context, d *schema.ResourceData, m inte
 		}
 	}
 	d.SetId(role.Id)
-	bOff := backoff.NewExponentialBackOff()
-	bOff.MaxElapsedTime = time.Second * 10
-	bOff.InitialInterval = time.Second
+	boc := newExponentialBackOffWithContext(ctx, 10*time.Second)
 	err = backoff.Retry(func() error {
 		err := resourceGroupRoleRead(ctx, d, m)
 		if err != nil {
@@ -125,7 +123,7 @@ func resourceGroupRoleCreate(ctx context.Context, d *schema.ResourceData, m inte
 			return nil
 		}
 		return fmt.Errorf("role %s was not assigned to a group %s", roleType, groupID)
-	}, bOff)
+	}, boc)
 	return diag.FromErr(err)
 }
 

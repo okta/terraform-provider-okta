@@ -108,6 +108,7 @@ func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 		return fmt.Errorf("'policy_id' field should be set")
 	}
 	var rule *sdk.SdkPolicyRule
+	boc := newExponentialBackOffWithContext(ctx, backoff.DefaultMaxElapsedTime)
 	err = backoff.Retry(func() error {
 		ruleObj, resp, err := getAPISupplementFromMetadata(m).CreatePolicyRule(ctx, policyID, template)
 		if resp.StatusCode == http.StatusInternalServerError {
@@ -118,7 +119,7 @@ func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 		}
 		rule = ruleObj
 		return nil
-	}, backoff.NewExponentialBackOff())
+	}, boc)
 	if err != nil {
 		return fmt.Errorf("failed to create policy rule: %v", err)
 	}

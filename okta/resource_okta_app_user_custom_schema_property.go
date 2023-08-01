@@ -116,9 +116,7 @@ func setAppUserSchemaProperty(ctx context.Context, d *schema.ResourceData, m int
 	if err != nil {
 		return err
 	}
-	bOff := backoff.NewExponentialBackOff()
-	bOff.MaxElapsedTime = time.Second * 30
-	bOff.InitialInterval = time.Second
+	boc := newExponentialBackOffWithContext(ctx, 30*time.Second)
 	err = backoff.Retry(func() error {
 		if err := updateAppUserSubSchemaProperty(ctx, d, m); err != nil {
 			if errors.Is(err, errInvalidElemFormat) {
@@ -135,7 +133,7 @@ func setAppUserSchemaProperty(ctx context.Context, d *schema.ResourceData, m int
 			return fmt.Errorf("application user schema property '%s' was not created/updated for '%s' app", d.Get("index").(string), d.Get("app_id").(string))
 		}
 		return nil
-	}, bOff)
+	}, boc)
 	return err
 }
 
@@ -194,9 +192,7 @@ func updateAppUserSubSchemaProperty(ctx context.Context, d *schema.ResourceData,
 	}
 	custom := buildCustomUserSchema(d.Get("index").(string), subSchema)
 	retypeUserSchemaPropertyEnums(custom)
-	bOff := backoff.NewExponentialBackOff()
-	bOff.MaxElapsedTime = time.Second * 10
-	bOff.InitialInterval = time.Second
+	boc := newExponentialBackOffWithContext(ctx, 10*time.Second)
 	err = backoff.Retry(func() error {
 		_, _, err := getOktaClientFromMetadata(m).UserSchema.
 			UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
@@ -215,7 +211,7 @@ func updateAppUserSubSchemaProperty(ctx context.Context, d *schema.ResourceData,
 			return backoff.Permanent(fmt.Errorf("failed to update custom app user schema property: %w", err))
 		}
 		return backoff.Permanent(fmt.Errorf("failed to update custom app user schema property: %w", err))
-	}, bOff)
+	}, boc)
 	return err
 }
 
