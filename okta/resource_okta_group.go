@@ -89,6 +89,9 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interfac
 	boc := newExponentialBackOffWithContext(ctx, 10*time.Second)
 	err = backoff.Retry(func() error {
 		g, resp, err := getOktaClientFromMetadata(m).Group.GetGroup(ctx, responseGroup.Id)
+		if doNotRetry(err) {
+			return backoff.Permanent(err)
+		}
 		if err := suppressErrorOn404(resp, err); err != nil {
 			return backoff.Permanent(err)
 		}

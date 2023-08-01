@@ -489,3 +489,13 @@ func newExponentialBackOffWithContext(ctx context.Context, maxElapsedTime time.D
 	// so the greater context is considered on backoff.Retry
 	return backoff.WithContext(bOff, ctx)
 }
+
+// doNotRetry helper function to flag if provider should be using backoff.Retry
+func doNotRetry(err error) bool {
+	// NOTE: here we are considering the test environment in production which is
+	// not a good practice. However in this case we don't want backoff retries
+	// executing if the provider is running in the VCR test environment when it
+	// is recording API calls. We can re-record tests that fail because of rate
+	// limiting.
+	return err != nil && os.Getenv("OKTA_VCR_TF_ACC") == "record"
+}

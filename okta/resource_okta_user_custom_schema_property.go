@@ -158,6 +158,9 @@ func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index s
 		retypeUserSchemaPropertyEnums(schema)
 		updated, resp, err := getOktaClientFromMetadata(m).UserSchema.UpdateUserProfile(ctx, typeSchemaID, *schema)
 		stringifyUserSchemaPropertyEnums(schema)
+		if doNotRetry(err) {
+			return backoff.Permanent(err)
+		}
 
 		if err != nil {
 			if resp != nil && resp.StatusCode == 500 {

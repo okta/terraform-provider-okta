@@ -31,6 +31,9 @@ func resourceDomainVerificationCreate(ctx context.Context, d *schema.ResourceDat
 	boc := newExponentialBackOffWithContext(ctx, 30*time.Second)
 	err := backoff.Retry(func() error {
 		domain, _, err := getOktaClientFromMetadata(m).Domain.VerifyDomain(ctx, d.Get("domain_id").(string))
+		if doNotRetry(err) {
+			return backoff.Permanent(err)
+		}
 		if err != nil {
 			return backoff.Permanent(fmt.Errorf("failed to verify domain: %v", err))
 		}

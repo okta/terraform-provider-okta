@@ -119,6 +119,9 @@ func setAppUserSchemaProperty(ctx context.Context, d *schema.ResourceData, m int
 	boc := newExponentialBackOffWithContext(ctx, 30*time.Second)
 	err = backoff.Retry(func() error {
 		if err := updateAppUserSubSchemaProperty(ctx, d, m); err != nil {
+			if doNotRetry(err) {
+				return backoff.Permanent(err)
+			}
 			if errors.Is(err, errInvalidElemFormat) {
 				return backoff.Permanent(err)
 			}
@@ -196,6 +199,9 @@ func updateAppUserSubSchemaProperty(ctx context.Context, d *schema.ResourceData,
 	err = backoff.Retry(func() error {
 		_, _, err := getOktaClientFromMetadata(m).UserSchema.
 			UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
+		if doNotRetry(err) {
+			return backoff.Permanent(err)
+		}
 		if err == nil {
 			return nil
 		}

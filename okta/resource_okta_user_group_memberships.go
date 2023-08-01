@@ -47,6 +47,9 @@ func resourceUserGroupMembershipsCreate(ctx context.Context, d *schema.ResourceD
 	boc := newExponentialBackOffWithContext(ctx, 10*time.Second)
 	err = backoff.Retry(func() error {
 		ok, err := checkIfUserHasGroups(ctx, client, userId, groups)
+		if doNotRetry(err) {
+			return backoff.Permanent(err)
+		}
 		if err != nil {
 			return backoff.Permanent(err)
 		}

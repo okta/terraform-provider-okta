@@ -118,6 +118,9 @@ func alterCustomGroupSchema(ctx context.Context, m interface{}, index string, sc
 		retypeGroupSchemaPropertyEnums(schema)
 		updated, resp, err := getOktaClientFromMetadata(m).GroupSchema.UpdateGroupSchema(ctx, *schema)
 		stringifyGroupSchemaPropertyEnums(schema)
+		if doNotRetry(err) {
+			return backoff.Permanent(err)
+		}
 
 		if err != nil {
 			if resp != nil && resp.StatusCode == 500 {
