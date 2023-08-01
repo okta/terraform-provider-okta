@@ -6,12 +6,15 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-retryablehttp"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/okta/okta-sdk-golang/v3/okta"
 	"github.com/okta/terraform-provider-okta/okta/internal/apimutex"
@@ -19,7 +22,8 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-const OktaTerraformProviderUserAgent = "okta-terraform/4.1.0"
+const OktaTerraformProviderVersion = "4.1.0"
+const OktaTerraformProviderUserAgent = "okta-terraform/" + OktaTerraformProviderVersion
 
 func (adt *AddHeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	req.Header.Add("User-Agent", "Okta Terraform Provider")
@@ -123,6 +127,69 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func (c *Config) handleDefaults(ctx context.Context, data *FrameworkProviderData) error {
+	var err error
+	if data.OrgName.IsNull() && os.Getenv("OKTA_ORG_NAME") != "" {
+		data.OrgName = types.StringValue(os.Getenv("OKTA_ORG_NAME"))
+	}
+	if data.AccessToken.IsNull() && os.Getenv("OKTA_ACCESS_TOKEN") != "" {
+		data.AccessToken = types.StringValue(os.Getenv("OKTA_ACCESS_TOKEN"))
+	}
+	if data.APIToken.IsNull() && os.Getenv("OKTA_API_TOKEN") != "" {
+		data.APIToken = types.StringValue(os.Getenv("OKTA_API_TOKEN"))
+	}
+	if data.ClientID.IsNull() && os.Getenv("OKTA_API_CLIENT_ID") != "" {
+		data.ClientID = types.StringValue(os.Getenv("OKTA_API_CLIENT_ID"))
+	}
+	if data.Scopes.IsNull() && os.Getenv("OKTA_API_SCOPES") != "" {
+		v := os.Getenv("OKTA_API_SCOPES")
+		scopes := strings.Split(v, ",")
+		if len(scopes) > 0 {
+			scopesTF := make([]attr.Value, 0)
+			for _, scope := range scopes {
+				scopesTF = append(scopesTF, types.StringValue(scope))
+			}
+			data.Scopes, _ = types.SetValue(types.StringType, scopesTF)
+		}
+	}
+	if data.PrivateKey.IsNull() && os.Getenv("OKTA_API_PRIVATE_KEY") != "" {
+		data.PrivateKey = types.StringValue(os.Getenv("OKTA_API_PRIVATE_KEY"))
+	}
+	if data.PrivateKeyID.IsNull() && os.Getenv("OKTA_API_PRIVATE_KEY_ID") != "" {
+		data.PrivateKeyID = types.StringValue(os.Getenv("OKTA_API_PRIVATE_KEY_ID"))
+	}
+	if data.BaseURL.IsNull() {
+		if os.Getenv("OKTA_BASE_URL") != "" {
+			data.BaseURL = types.StringValue(os.Getenv("OKTA_API_PRIVATE_KEY_ID"))
+		} else {
+			data.BaseURL = types.StringValue("okta.com")
+		}
+	}
+	if data.HTTPProxy.IsNull() && os.Getenv("OKTA_HTTP_PROXY") != "" {
+		data.HTTPProxy = types.StringValue(os.Getenv("OKTA_HTTP_PROXY"))
+	}
+	if data.MaxAPICapacity.IsNull() {
+		if os.Getenv("MAX_API_CAPACITY") != "" {
+			mac, err := strconv.ParseInt(os.Getenv("MAX_API_CAPACITY"), 10, 64)
+			if err != nil {
+				return err
+			}
+			data.MaxAPICapacity = types.Int64Value(mac)
+		} else {
+			data.MaxAPICapacity = types.Int64Value(100)
+		}
+	}
+	data.Backoff = types.BoolValue(true)
+	data.MinWaitSeconds = types.Int64Value(30)
+	data.MaxWaitSeconds = types.Int64Value(300)
+	data.MaxRetries = types.Int64Value(5)
+	data.Parallelism = types.Int64Value(1)
+	data.LogLevel = types.Int64Value(int64(hclog.Error))
+	data.RequestTimeout = types.Int64Value(0)
+
+	return err
 }
 
 func providerLogger(c *Config) hclog.Logger {
