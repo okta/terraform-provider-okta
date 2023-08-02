@@ -9,7 +9,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -433,6 +432,29 @@ func vcrCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 	})
 
 	rec.AddHook(func(i *cassette.Interaction) error {
+		// need to scrub OKTA_ORG_NAME+OKTA_BASE_URL strings and rewrite as
+		// [cassette-name].dne-okta.com so that HTTP requests that escape VCR
+		// are bad.
+
+		// test-admin.dne-okta.com
+		vcrAdminHostname := fmt.Sprintf("%s-admin.%s", mgr.CurrentCassette, TestDomainName)
+		// test.dne-okta.com
+		vcrHostname := fmt.Sprintf("%s.%s", mgr.CurrentCassette, TestDomainName)
+		// example-admin.okta.com
+		orgAdminHostname := fmt.Sprintf("%s-admin.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL"))
+		// example.okta.com
+		orgHostname := fmt.Sprintf("%s.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL"))
+
+		// test-admin
+		vcrAdminOrgName := fmt.Sprintf("%s-admin", mgr.CurrentCassette)
+		// test
+		vcrOrgName := mgr.CurrentCassette
+		// example-admin
+		adminOrgName := fmt.Sprintf("%s-admin", os.Getenv("OKTA_ORG_NAME"))
+		// example
+		orgName := os.Getenv("OKTA_ORG_NAME")
+
+		// re-write the Authorization header
 		authHeader := "Authorization"
 		if auth, ok := firstHeaderValue(authHeader, i.Request.Headers); ok {
 			i.Request.Headers.Del(authHeader)
@@ -441,7 +463,22 @@ func vcrCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 		}
 
 		// save disk space, clean up what gets written to disk
-		deleteResponseHeaders := []string{"duration", "Content-Security-Policy", "Cache-Control", "Expect-Ct", "Expires", "P3p", "Pragma", "Public-Key-Pins-Report-Only", "Server", "Set-Cookie", "Strict-Transport-Security", "Vary"}
+		i.Request.Headers.Del("User-Agent")
+		deleteResponseHeaders := []string{
+			"Cache-Control",
+			"Content-Security-Policy",
+			"Content-Security-Policy-Report-Only",
+			"duration",
+			"Expect-Ct",
+			"Expires",
+			"P3p",
+			"Pragma",
+			"Public-Key-Pins-Report-Only",
+			"Server",
+			"Set-Cookie",
+			"Strict-Transport-Security",
+			"Vary",
+		}
 		for _, header := range deleteResponseHeaders {
 			i.Response.Headers.Del(header)
 		}
@@ -453,15 +490,36 @@ func vcrCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 			}
 		}
 
-		// need to scrub OKTA_ORG_NAME+OKTA_BASE_URL strings and rewrite as
-		// [cassette-name].dne-okta.com so that HTTP requests that escape VCR
-		// are bad.
-		vcrHostname := fmt.Sprintf("%s.%s", mgr.CurrentCassette, TestDomainName)
-		i.Request.Host = vcrHostname
-		orgUrl, _ := url.Parse(i.Request.URL)
-		i.Request.URL = strings.ReplaceAll(i.Request.URL, orgUrl.Host, vcrHostname)
-		i.Response.Body = strings.ReplaceAll(i.Response.Body, orgUrl.Host, vcrHostname)
-		headerLinks := replaceHeaderValues(i.Response.Headers["Link"], orgUrl.Host, vcrHostname)
+		// replace admin based hostname before regular variations
+		// %s/example-admin.okta.com/test-admin.dne-okta.com/
+		i.Request.Host = strings.ReplaceAll(i.Request.Host, orgAdminHostname, vcrAdminHostname)
+		// %s/example.okta.com/test.dne-okta.com/
+		i.Request.Host = strings.ReplaceAll(i.Request.Host, orgHostname, vcrHostname)
+
+		// %s/example-admin.okta.com/test-admin.dne-okta.com/
+		i.Request.URL = strings.ReplaceAll(i.Request.URL, orgAdminHostname, vcrAdminHostname)
+		// %s/example.okta.com/test.dne-okta.com/
+		i.Request.URL = strings.ReplaceAll(i.Request.URL, orgHostname, vcrHostname)
+
+		// %s/example-admin.okta.com/test-admin.dne-okta.com/
+		i.Request.Body = strings.ReplaceAll(i.Request.Body, orgAdminHostname, vcrAdminHostname)
+		// %s/example.okta.com/test.dne-okta.com/
+		i.Request.Body = strings.ReplaceAll(i.Request.Body, orgHostname, vcrHostname)
+
+		// %s/example-admin/test-admin/
+		i.Request.Body = strings.ReplaceAll(i.Request.Body, adminOrgName, vcrAdminOrgName)
+		// %s/example/test/
+		i.Request.Body = strings.ReplaceAll(i.Request.Body, orgName, vcrOrgName)
+
+		// %s/example-admin/test-admin/
+		i.Response.Body = strings.ReplaceAll(i.Response.Body, adminOrgName, vcrAdminOrgName)
+		// %s/example/test/
+		i.Response.Body = strings.ReplaceAll(i.Response.Body, orgName, vcrOrgName)
+
+		// %s/example-admin.okta.com/test-admin.dne-okta.com/
+		headerLinks := replaceHeaderValues(i.Response.Headers["Link"], orgAdminHostname, vcrAdminHostname)
+		// %s/example.okta.com/test.dne-okta.com/
+		headerLinks = replaceHeaderValues(headerLinks, orgHostname, vcrHostname)
 		i.Response.Headers.Del("Link")
 		for _, val := range headerLinks {
 			i.Response.Headers.Add("Link", val)
