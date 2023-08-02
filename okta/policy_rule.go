@@ -111,7 +111,7 @@ func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 	boc := newExponentialBackOffWithContext(ctx, backoff.DefaultMaxElapsedTime)
 	err = backoff.Retry(func() error {
 		ruleObj, resp, err := getAPISupplementFromMetadata(m).CreatePolicyRule(ctx, policyID, template)
-		if doNotRetry(err) {
+		if doNotRetry(m, err) {
 			return backoff.Permanent(err)
 		}
 		if resp.StatusCode == http.StatusInternalServerError {

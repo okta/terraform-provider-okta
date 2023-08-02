@@ -65,7 +65,7 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 	err = backoff.Retry(func() error {
 		// TODO, should we wait for all users to be added to the group?
 		ok, err := checkIfGroupHasUsers(ctx, client, groupId, users)
-		if doNotRetry(err) {
+		if doNotRetry(m, err) {
 			return backoff.Permanent(err)
 		}
 		if err != nil {

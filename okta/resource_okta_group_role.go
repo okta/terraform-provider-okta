@@ -117,7 +117,7 @@ func resourceGroupRoleCreate(ctx context.Context, d *schema.ResourceData, m inte
 	err = backoff.Retry(func() error {
 		err := resourceGroupRoleRead(ctx, d, m)
 		if err != nil {
-			// NOTE: we don't need a doNotRetry(err) check because this is going
+			// NOTE: we don't need a doNotRetry(m, err) check because this is going
 			// to backoff permanently as-is
 			return backoff.Permanent(fmt.Errorf("%s", err[0].Summary))
 		}

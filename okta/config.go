@@ -57,6 +57,7 @@ type (
 		logger           hclog.Logger
 		queriedWellKnown bool
 		classicOrg       bool
+		timeOperations   TimeOperations
 	}
 )
 
@@ -76,6 +77,10 @@ func (c *Config) IsClassicOrg(ctx context.Context) bool {
 	}
 
 	return c.classicOrg
+}
+
+func (c *Config) SetTimeOperations(op TimeOperations) {
+	c.timeOperations = op
 }
 
 func (c *Config) loadAndValidate(ctx context.Context) error {
@@ -316,4 +321,47 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 		return false, nil
 	}
 	return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
+}
+
+type TimeOperations interface {
+	DoNotRetry(error) bool
+	Sleep(time.Duration)
+}
+
+type ProductionTimeOperations struct {
+}
+
+// DoNotRetry always retry in production
+func (o *ProductionTimeOperations) DoNotRetry(err error) bool {
+	return false
+}
+
+// Sleep facade to actual time.Sleep in production
+func (o *ProductionTimeOperations) Sleep(d time.Duration) {
+	time.Sleep(d)
+}
+
+// NewProductionTimeOperations new production time operations
+func NewProductionTimeOperations() TimeOperations {
+	return &ProductionTimeOperations{}
+}
+
+type TestTimeOperations struct {
+}
+
+// DoNotRetry tests do not retry when there is an error and VCR is recording
+func (o *TestTimeOperations) DoNotRetry(err error) bool {
+	return err != nil && os.Getenv("OKTA_VCR_TF_ACC") == "record"
+}
+
+// Sleep no sleeping when test is in VCR play mode
+func (o *TestTimeOperations) Sleep(d time.Duration) {
+	if os.Getenv("OKTA_VCR_TF_ACC") != "play" {
+		time.Sleep(d)
+	}
+}
+
+// NewTestTimeOperations new test time operations
+func NewTestTimeOperations() TimeOperations {
+	return &TestTimeOperations{}
 }

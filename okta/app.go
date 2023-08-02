@@ -431,7 +431,7 @@ func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{
 	boc := newExponentialBackOffWithContext(ctx, 5*time.Second)
 	err := backoff.Retry(func() error {
 		_, err := client.Application.DeleteApplication(ctx, d.Id())
-		if doNotRetry(err) {
+		if doNotRetry(m, err) {
 			return backoff.Permanent(err)
 		}
 		return err
