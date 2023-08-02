@@ -149,11 +149,7 @@ func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index s
 	}
 	var schemaAttribute *sdk.UserSchemaAttribute
 
-	bOff := backoff.NewExponentialBackOff()
-	bOff.MaxElapsedTime = time.Second * 120
-	bOff.InitialInterval = time.Second
-	bc := backoff.WithContext(bOff, ctx)
-
+	boc := newExponentialBackOffWithContext(ctx, 120*time.Second)
 	err = backoff.Retry(func() error {
 		// NOTE: Enums on the schema can be typed other than string but the
 		// Terraform SDK is staticly defined at runtime for string so we need to
@@ -162,6 +158,9 @@ func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index s
 		retypeUserSchemaPropertyEnums(schema)
 		updated, resp, err := getOktaClientFromMetadata(m).UserSchema.UpdateUserProfile(ctx, typeSchemaID, *schema)
 		stringifyUserSchemaPropertyEnums(schema)
+		if doNotRetry(m, err) {
+			return backoff.Permanent(err)
+		}
 
 		if err != nil {
 			if resp != nil && resp.StatusCode == 500 {
@@ -183,7 +182,7 @@ func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index s
 			return nil
 		}
 		return errors.New("failed to apply changes after several retries")
-	}, bc)
+	}, boc)
 	if err != nil {
 		logger(m).Error("failed to apply changes after several retries", err)
 	}

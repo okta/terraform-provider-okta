@@ -412,7 +412,7 @@ func flattenUser(u *sdk.User, filteredCustomAttributes []string) map[string]inte
 // handle setting of user status based on what the current status is because okta
 // only allows transitions to certain statuses from other statuses - consult okta User API docs for more info
 // https://developer.okta.com/docs/api/resources/users#lifecycle-operations
-func updateUserStatus(ctx context.Context, uid, desiredStatus string, c *sdk.Client) error {
+func updateUserStatus(m interface{}, ctx context.Context, uid, desiredStatus string, c *sdk.Client) error {
 	user, _, err := c.User.GetUser(ctx, uid)
 	if err != nil {
 		return fmt.Errorf("failed to get user: %v", err)
@@ -439,12 +439,12 @@ func updateUserStatus(ctx context.Context, uid, desiredStatus string, c *sdk.Cli
 	if statusErr != nil {
 		return statusErr
 	}
-	return waitForStatusTransition(ctx, uid, c)
+	return waitForStatusTransition(m, ctx, uid, c)
 }
 
 // need to wait for user.TransitioningToStatus field to be empty before allowing Terraform to continue
 // so the proper current status gets set in the state during the Read operation after a Status update
-func waitForStatusTransition(ctx context.Context, u string, c *sdk.Client) error {
+func waitForStatusTransition(m interface{}, ctx context.Context, u string, c *sdk.Client) error {
 	user, _, err := c.User.GetUser(ctx, u)
 	if err != nil {
 		return fmt.Errorf("failed to get user: %v", err)
@@ -455,7 +455,7 @@ func waitForStatusTransition(ctx context.Context, u string, c *sdk.Client) error
 		}
 
 		log.Printf("[INFO] Transitioning to status = %v; waiting for 5 more seconds...", user.TransitioningToStatus)
-		time.Sleep(5 * time.Second)
+		m.(*Config).timeOperations.Sleep(5 * time.Second)
 		user, _, err = c.User.GetUser(ctx, u)
 		if err != nil {
 			return fmt.Errorf("failed to get user: %v", err)

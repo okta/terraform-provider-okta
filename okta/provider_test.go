@@ -395,6 +395,8 @@ func getCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 	}
 
 	config := c.(*Config)
+	config.SetTimeOperations(NewTestTimeOperations())
+
 	transport := config.oktaClient.GetConfig().HttpClient.Transport
 
 	rec, err := recorder.NewAsMode(mgr.CassettePath(), mgr.VCRMode(), transport)

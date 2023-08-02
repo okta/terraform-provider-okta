@@ -58,16 +58,16 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	bOff := backoff.NewExponentialBackOff()
-	bOff.MaxElapsedTime = time.Second * 10
-	bOff.InitialInterval = time.Second
-
+	boc := newExponentialBackOffWithContext(ctx, 10*time.Second)
 	// During create the Okta service can have eventual consistency issues when
 	// adding users to a group. Use a backoff to wait for at list one user to be
 	// associated with the group.
 	err = backoff.Retry(func() error {
 		// TODO, should we wait for all users to be added to the group?
 		ok, err := checkIfGroupHasUsers(ctx, client, groupId, users)
+		if doNotRetry(m, err) {
+			return backoff.Permanent(err)
+		}
 		if err != nil {
 			return backoff.Permanent(err)
 		}
@@ -75,7 +75,7 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 			return nil
 		}
 		return fmt.Errorf("group (%s) did not have expected user memberships after multiple checks", groupId)
-	}, bOff)
+	}, boc)
 	if err != nil {
 		return diag.FromErr(err)
 	}

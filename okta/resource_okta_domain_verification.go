@@ -28,11 +28,12 @@ func resourceDomainVerification() *schema.Resource {
 }
 
 func resourceDomainVerificationCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	bOff := backoff.NewExponentialBackOff()
-	bOff.MaxElapsedTime = time.Second * 30
-	bOff.InitialInterval = time.Second
+	boc := newExponentialBackOffWithContext(ctx, 30*time.Second)
 	err := backoff.Retry(func() error {
 		domain, _, err := getOktaClientFromMetadata(m).Domain.VerifyDomain(ctx, d.Get("domain_id").(string))
+		if doNotRetry(m, err) {
+			return backoff.Permanent(err)
+		}
 		if err != nil {
 			return backoff.Permanent(fmt.Errorf("failed to verify domain: %v", err))
 		}
@@ -40,7 +41,7 @@ func resourceDomainVerificationCreate(ctx context.Context, d *schema.ResourceDat
 			return fmt.Errorf("failed to verify domain after several attempts, current validation status: %s", domain.ValidationStatus)
 		}
 		return nil
-	}, bOff)
+	}, boc)
 	if err != nil {
 		return diag.FromErr(err)
 	}

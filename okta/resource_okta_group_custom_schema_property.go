@@ -109,11 +109,7 @@ func resourceGroupSchemaRead(ctx context.Context, d *schema.ResourceData, m inte
 func alterCustomGroupSchema(ctx context.Context, m interface{}, index string, schema *sdk.GroupSchema, isDeleteOperation bool) (*sdk.GroupSchemaAttribute, error) {
 	var schemaAttribute *sdk.GroupSchemaAttribute
 
-	bOff := backoff.NewExponentialBackOff()
-	bOff.MaxElapsedTime = time.Second * 120
-	bOff.InitialInterval = time.Second
-	bc := backoff.WithContext(bOff, ctx)
-
+	boc := newExponentialBackOffWithContext(ctx, 120*time.Second)
 	err := backoff.Retry(func() error {
 		// NOTE: Enums on the schema can be typed other than string but the
 		// Terraform SDK is staticly defined at runtime for string so we need to
@@ -122,6 +118,9 @@ func alterCustomGroupSchema(ctx context.Context, m interface{}, index string, sc
 		retypeGroupSchemaPropertyEnums(schema)
 		updated, resp, err := getOktaClientFromMetadata(m).GroupSchema.UpdateGroupSchema(ctx, *schema)
 		stringifyGroupSchemaPropertyEnums(schema)
+		if doNotRetry(m, err) {
+			return backoff.Permanent(err)
+		}
 
 		if err != nil {
 			if resp != nil && resp.StatusCode == 500 {
@@ -143,7 +142,7 @@ func alterCustomGroupSchema(ctx context.Context, m interface{}, index string, sc
 			return nil
 		}
 		return errors.New("failed to apply changes after several retries")
-	}, bc)
+	}, boc)
 	if err != nil {
 		logger(m).Error("failed to apply changes after several retries", err)
 	}
