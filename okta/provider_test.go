@@ -31,6 +31,8 @@ import (
 	"gopkg.in/dnaeon/go-vcr.v3/recorder"
 )
 
+const TestDomainName = "dne-okta.com"
+
 var (
 	testAccProvidersFactories       map[string]func() (*schema.Provider, error)
 	testAccProtoV5ProviderFactories map[string]func() (tfprotov5.ProviderServer, error)
@@ -297,10 +299,10 @@ func oktaResourceTest(t *testing.T, c resource.TestCase) {
 
 		cassettes := mgr.Cassettes()
 		for _, cassette := range cassettes {
-			// need to artifically set expected OKTA env vars if VCR is playing
-			// VCR re-writes the name [cassette].oktapreview.com
+			// need to artificially set expected OKTA env vars if VCR is playing
+			// VCR re-writes the name [cassette].dne-okta.com
 			os.Setenv("OKTA_ORG_NAME", cassette)
-			os.Setenv("OKTA_BASE_URL", "oktapreview.com")
+			os.Setenv("OKTA_BASE_URL", TestDomainName)
 			os.Setenv("OKTA_API_TOKEN", "token")
 			mgr.SetCurrentCassette(cassette)
 			c.ProviderFactories = vcrProviderFactoriesForTest(mgr)
@@ -452,8 +454,10 @@ func vcrCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 		}
 
 		// need to scrub OKTA_ORG_NAME+OKTA_BASE_URL strings and rewrite as
-		// [cassette-name].oktapreview.com
-		vcrHostname := fmt.Sprintf("%s.oktapreview.com", mgr.CurrentCassette)
+		// [cassette-name].dne-okta.com so that HTTP requests that escape VCR
+		// are bad.
+		vcrHostname := fmt.Sprintf("%s.%s", mgr.CurrentCassette, TestDomainName)
+		i.Request.Host = vcrHostname
 		orgUrl, _ := url.Parse(i.Request.URL)
 		i.Request.URL = strings.ReplaceAll(i.Request.URL, orgUrl.Host, vcrHostname)
 		i.Response.Body = strings.ReplaceAll(i.Response.Body, orgUrl.Host, vcrHostname)
