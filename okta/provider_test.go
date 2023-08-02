@@ -382,7 +382,7 @@ func vcrCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 	rec, err := recorder.NewWithOptions(&recorder.Options{
 		CassetteName:       mgr.CassettePath(),
 		Mode:               mgr.VCRMode(),
-		SkipRequestLatency: false,
+		SkipRequestLatency: true, // skip how vcr will mimic the real request latency that it can record allowing for fast playback
 		RealTransport:      transport,
 	})
 	if err != nil {
