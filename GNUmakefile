@@ -13,6 +13,8 @@ ifdef TEST_FILTER
 	TEST_FILTER := -run $(TEST_FILTER)
 endif
 
+TESTARGS?=-test.v
+
 DEFAULT_SMOKE_TESTS?=\
   TestAccDataSourceOktaUser_read \
   TestAccResourceOktaUserSchema_crud
