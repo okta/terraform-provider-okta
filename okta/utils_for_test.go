@@ -216,7 +216,9 @@ func testAttributeJSON(name, attribute, expectedJSON string) resource.TestCheckF
 // thanks github.com/hashicorp/terraform-provider-google/google/provider_test.go
 func sleepInSecondsForTest(t int) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		time.Sleep(time.Duration(t) * time.Second)
+		if os.Getenv("OKTA_VCR_TF_ACC") != "play" {
+			time.Sleep(time.Duration(t) * time.Second)
+		}
 		return nil
 	}
 }

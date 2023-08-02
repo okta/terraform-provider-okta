@@ -492,6 +492,5 @@ func newExponentialBackOffWithContext(ctx context.Context, maxElapsedTime time.D
 
 // doNotRetry helper function to flag if provider should be using backoff.Retry
 func doNotRetry(m interface{}, err error) bool {
-	config := m.(*Config)
-	return config.timeOperations.DoNotRetry(err)
+	return m.(*Config).timeOperations.DoNotRetry(err)
 }
