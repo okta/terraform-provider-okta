@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceIdpSaml_read(t *testing.T) {
+func TestAccDataSourceOktaIdpSaml_read(t *testing.T) {
 	mgr := newFixtureManager(idpSaml, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	updatedConfig := mgr.GetFixtures("datasource_id.tf", t)

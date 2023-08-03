@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaGroupRule_crud(t *testing.T) {
+func TestAccResourceOktaGroupRule_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", groupRule)
 	mgr := newFixtureManager("okta_group_rule", t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
@@ -60,7 +60,7 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 	})
 }
 
-func TestAccOktaGroupRule_invalidHandle(t *testing.T) {
+func TestAccResourceOktaGroupRule_invalidHandle(t *testing.T) {
 	mgr := newFixtureManager(groupRule, t.Name())
 	groupResource := fmt.Sprintf("%s.test", group)
 	ruleResource := fmt.Sprintf("%s.inval", groupRule)

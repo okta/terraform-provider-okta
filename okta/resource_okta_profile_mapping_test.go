@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaProfileMapping_crud(t *testing.T) {
+func TestAccResourceOktaProfileMapping_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", profileMapping)
 	mgr := newFixtureManager(profileMapping, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)

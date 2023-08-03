@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccOktaTrustedOrigin_crud(t *testing.T) {
+func TestAccResourceOktaTrustedOrigin_crud(t *testing.T) {
 	mgr := newFixtureManager(trustedOrigin, t.Name())
 	config := mgr.GetFixtures("okta_trusted_origin.tf", t)
 	updatedConfig := mgr.GetFixtures("okta_trusted_origin_updated.tf", t)

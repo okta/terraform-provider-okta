@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppSecurePasswordStoreApplication_credsSchemes(t *testing.T) {
+func TestAccResourceOktaAppSecurePasswordStoreApplication_credsSchemes(t *testing.T) {
 	mgr := newFixtureManager(appSecurePasswordStore, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
@@ -47,7 +47,7 @@ func TestAccAppSecurePasswordStoreApplication_credsSchemes(t *testing.T) {
 	})
 }
 
-func TestAccAppSecurePasswordStoreApplication_timeouts(t *testing.T) {
+func TestAccResourceOktaAppSecurePasswordStoreApplication_timeouts(t *testing.T) {
 	mgr := newFixtureManager(appSecurePasswordStore, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appSecurePasswordStore)
 	config := `

@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccOktaDataSourceDefaultPolicy_readPasswordPolicy(t *testing.T) {
+func TestAccDataSourceOktaDefaultPolicy_readPasswordPolicy(t *testing.T) {
 	mgr := newFixtureManager(defaultPolicy, t.Name())
 	config := testAccDataSourceDefaultPolicy(mgr.Seed, sdk.PasswordPolicyType)
 
@@ -29,7 +29,7 @@ func TestAccOktaDataSourceDefaultPolicy_readPasswordPolicy(t *testing.T) {
 	})
 }
 
-func TestAccOktaDataSourceDefaultPolicy_readIdpPolicy(t *testing.T) {
+func TestAccDataSourceOktaDefaultPolicy_readIdpPolicy(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccDataSourceDefaultPolicy(ri, sdk.IdpDiscoveryType)
 

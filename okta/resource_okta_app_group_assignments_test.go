@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccAppGroupAssignments_crud(t *testing.T) {
+func TestAccResourceOktaAppGroupAssignments_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appGroupAssignments)
 	mgr := newFixtureManager(appGroupAssignments, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)

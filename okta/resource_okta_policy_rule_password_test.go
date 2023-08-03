@@ -12,7 +12,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
+func TestAccResourceOktaPolicyRulePassword_crud(t *testing.T) {
 	mgr := newFixtureManager(policyRulePassword, t.Name())
 	config := testOktaPolicyRulePassword(mgr.Seed)
 	updatedConfig := testOktaPolicyRulePasswordUpdated(mgr.Seed)
@@ -48,7 +48,7 @@ func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
 }
 
 // Testing the logic that errors when an invalid priority is provided
-func TestAccOktaPolicyRulePassword_priorityError(t *testing.T) {
+func TestAccResourceOktaPolicyRulePassword_priorityError(t *testing.T) {
 	mgr := newFixtureManager(policyRulePassword, t.Name())
 	config := testOktaPolicyRulePriorityError(mgr.Seed)
 
@@ -67,7 +67,7 @@ func TestAccOktaPolicyRulePassword_priorityError(t *testing.T) {
 }
 
 // Testing the successful setting of priority
-func TestAccOktaPolicyRulePassword_priority(t *testing.T) {
+func TestAccResourceOktaPolicyRulePassword_priority(t *testing.T) {
 	mgr := newFixtureManager(policyRulePassword, t.Name())
 	config := testOktaPolicyRulePriority(mgr.Seed)
 	resourceName := buildResourceFQN(policyRulePassword, mgr.Seed)

@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccOktaDomainCertificate(t *testing.T) {
+func TestAccResourceOktaDomainCertificate(t *testing.T) {
 	t.Skip("This test is bespoke and has to be run by hand. We need to spend some time automating this test.")
 
 	pwd, err := os.Getwd()

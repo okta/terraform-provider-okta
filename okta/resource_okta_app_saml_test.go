@@ -15,7 +15,7 @@ import (
 )
 
 // Ensure conditional require logic causes this plan to fail
-func TestAccAppSaml_conditionalRequire(t *testing.T) {
+func TestAccResourceOktaAppSaml_conditionalRequire(t *testing.T) {
 	ri := acctest.RandInt()
 	config := buildTestSamlConfigMissingFields(ri)
 
@@ -34,7 +34,7 @@ func TestAccAppSaml_conditionalRequire(t *testing.T) {
 }
 
 // Ensure conditional require logic causes this plan to fail
-func TestAccAppSaml_invalidURL(t *testing.T) {
+func TestAccResourceOktaAppSaml_invalidURL(t *testing.T) {
 	mgr := newFixtureManager(appSaml, t.Name())
 	config := buildTestSamlConfigMissingFields(mgr.Seed)
 
@@ -52,7 +52,7 @@ func TestAccAppSaml_invalidURL(t *testing.T) {
 	})
 }
 
-func TestAccAppSaml_crud(t *testing.T) {
+func TestAccResourceOktaAppSaml_crud(t *testing.T) {
 	mgr := newFixtureManager(appSaml, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	allFields := mgr.GetFixtures("updated.tf", t)
@@ -153,7 +153,7 @@ func TestAccAppSaml_crud(t *testing.T) {
 	})
 }
 
-func TestAccAppSaml_preconfigured(t *testing.T) {
+func TestAccResourceOktaAppSaml_preconfigured(t *testing.T) {
 	mgr := newFixtureManager(appSaml, t.Name())
 	preconfigured := mgr.GetFixtures("preconfigured.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
@@ -232,7 +232,7 @@ func areJSONStringsEqual(a, b string) bool {
 	return reflect.DeepEqual(aM, bM)
 }
 
-func TestAccAppSaml_inlineHook(t *testing.T) {
+func TestAccResourceOktaAppSaml_inlineHook(t *testing.T) {
 	mgr := newFixtureManager(appSaml, t.Name())
 	config := mgr.GetFixtures("basic_inline_hook.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
@@ -257,7 +257,7 @@ func TestAccAppSaml_inlineHook(t *testing.T) {
 }
 
 // Tests creation of service app and updates it to turn on federated broker
-func TestAccAppSaml_federationBroker(t *testing.T) {
+func TestAccResourceOktaAppSaml_federationBroker(t *testing.T) {
 	// TODO: This is an "Early Access Feature" and needs to be enabled by Okta
 	//       Skipping for now assuming that the okta account doesn't have this feature enabled.
 	//       If this feature is enabled or Okta releases this to all this test should be enabled.
@@ -361,7 +361,7 @@ resource "okta_app_saml" "test" {
 }
 
 // Test to ensure that certificate logic returns no-op / no-change upon apply and future plans
-func TestAccAppSaml_certdiff(t *testing.T) {
+func TestAccResourceOktaAppSaml_certdiff(t *testing.T) {
 	mgr := newFixtureManager(appSaml, t.Name())
 	config := mgr.GetFixtures("basic_cert_plain.tf", t)
 	config2 := mgr.GetFixtures("basic_cert_file.tf", t)

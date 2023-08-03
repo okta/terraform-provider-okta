@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceAuthServerScopes(t *testing.T) {
+func TestAccDataSourceOktaAuthServerScopes(t *testing.T) {
 	mgr := newFixtureManager(authServerScopes, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 

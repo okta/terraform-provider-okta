@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaRoleSubscription_crud(t *testing.T) {
+func TestAccResourceOktaRoleSubscription_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", roleSubscription)
 	mgr := newFixtureManager(roleSubscription, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)

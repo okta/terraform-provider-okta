@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceApp_read(t *testing.T) {
+func TestAccDataSourceOktaApp_read(t *testing.T) {
 	mgr := newFixtureManager(app, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	appCreate := buildTestApp(mgr.Seed)
@@ -50,7 +50,7 @@ resource "okta_app_oauth" "test" {
 }`, i)
 }
 
-func TestAccOktaDataSourceAppLabelTest_read(t *testing.T) {
+func TestAccDataSourceOktaAppLabelTest_read(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testLabelConfig(ri)
 

@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaEmailSender(t *testing.T) {
+func TestAccResourceOktaEmailSender(t *testing.T) {
 	t.Skip("okta_email_sender is effectively deprecated as its API has been removed")
 
 	mgr := newFixtureManager(emailSender, t.Name())

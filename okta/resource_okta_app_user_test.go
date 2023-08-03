@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccOktaAppUser_crud(t *testing.T) {
+func TestAccResourceOktaAppUser_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appUser)
 	mgr := newFixtureManager(appUser, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
@@ -77,7 +77,7 @@ func TestAccOktaAppUser_crud(t *testing.T) {
 	})
 }
 
-func TestAccOktaAppUser_retain(t *testing.T) {
+func TestAccResourceOktaAppUser_retain(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appUser)
 	appName := fmt.Sprintf("%s.test", appOAuth)
 	userName := fmt.Sprintf("%s.test", user)

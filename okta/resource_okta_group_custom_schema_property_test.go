@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccOktaGroupSchema_crud(t *testing.T) {
+func TestAccResourceOktaGroupSchema_crud(t *testing.T) {
 	mgr := newFixtureManager(groupSchemaProperty, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("basic_updated.tf", t)
@@ -94,7 +94,7 @@ func TestAccOktaGroupSchema_crud(t *testing.T) {
 	})
 }
 
-func TestAccOktaGroupSchema_arrayString(t *testing.T) {
+func TestAccResourceOktaGroupSchema_arrayString(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	mgr := newFixtureManager(groupSchemaProperty, t.Name())
 	config := mgr.GetFixtures("array_string.tf", t)

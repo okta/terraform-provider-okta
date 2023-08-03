@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaResourceSet(t *testing.T) {
+func TestAccResourceOktaResourceSet(t *testing.T) {
 	mgr := newFixtureManager(resourceSet, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
@@ -41,13 +41,13 @@ func TestAccOktaResourceSet(t *testing.T) {
 		})
 }
 
-// TestAccResrouceOktaResourceSet_Issue1097_Pagination deals with resolving a
+// TestAccResourceOktaResourceSet_Issue1097_Pagination deals with resolving a
 // pagination bug with more than 100 resources in the set
 // https://github.com/okta/terraform-provider-okta/issues/1097
 //
 // OKTA_ALLOW_LONG_RUNNING_ACC_TEST=true TF_ACC=1 \
-// go test -tags unit -mod=readonly -test.v -run ^TestAccResrouceOktaResourceSet_Issue1097_Pagination$ ./okta 2>&1
-func TestAccResrouceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
+// go test -tags unit -mod=readonly -test.v -run ^TestAccResourceOktaResourceSet_Issue1097_Pagination$ ./okta 2>&1
+func TestAccResourceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 	if !allowLongRunningACCTest(t) {
 		t.SkipNow()
 	}

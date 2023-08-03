@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccOktaUserType_crud(t *testing.T) {
+func TestAccResourceOktaUserType_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", userType)
 	mgr := newFixtureManager(userType, t.Name())
 	config := mgr.GetFixtures("okta_user_type.tf", t)

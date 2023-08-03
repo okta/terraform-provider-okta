@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaInlineHook_crud(t *testing.T) {
+func TestAccResourceOktaInlineHook_crud(t *testing.T) {
 	resourceName := "okta_inline_hook.test"
 	mgr := newFixtureManager(inlineHook, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)

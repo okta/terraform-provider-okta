@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccSecurityNotificationEmails(t *testing.T) {
+func TestAccResourceOktaSecurityNotificationEmails(t *testing.T) {
 	mgr := newFixtureManager(securityNotificationEmails, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("basic_updated.tf", t)

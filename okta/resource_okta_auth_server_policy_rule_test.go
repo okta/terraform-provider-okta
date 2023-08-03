@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaAuthServerPolicyRule_create(t *testing.T) {
+func TestAccResourceOktaAuthServerPolicyRule_create(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", authServerPolicyRule)
 	mgr := newFixtureManager(authServerPolicyRule, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
@@ -38,11 +38,11 @@ func TestAccOktaAuthServerPolicyRule_create(t *testing.T) {
 	})
 }
 
-// TestAccOktaAuthServerPolicyRule_priority_concurrency_bug is a test to
+// TestAccResourceOktaAuthServerPolicyRule_priority_concurrency_bug is a test to
 // reproduce and then fix a bug in the Okta service where it couldn't, at the
 // time, elegantly handle current API calls to either update rule create or rule
 // priority.
-func TestAccOktaAuthServerPolicyRule_priority_concurrency_bug(t *testing.T) {
+func TestAccResourceOktaAuthServerPolicyRule_priority_concurrency_bug(t *testing.T) {
 	numRules := 10
 	testPolicyRules := make([]string, numRules)
 	// Test setup makes each policy rule dependent on the one before it.

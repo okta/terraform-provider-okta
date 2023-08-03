@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccOktaPolicyPassword_crud(t *testing.T) {
+func TestAccResourceOktaPolicyPassword_crud(t *testing.T) {
 	mgr := newFixtureManager(policyPassword, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)

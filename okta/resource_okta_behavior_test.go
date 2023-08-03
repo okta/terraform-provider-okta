@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaBehavior(t *testing.T) {
+func TestAccResourceOktaBehavior(t *testing.T) {
 	mgr := newFixtureManager(behavior, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)

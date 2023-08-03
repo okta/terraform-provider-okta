@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaGroup_crud(t *testing.T) {
+func TestAccResourceOktaGroup_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", group)
 	mgr := newFixtureManager(group, t.Name())
 	config := mgr.GetFixtures("okta_group.tf", t)
@@ -35,7 +35,7 @@ func TestAccOktaGroup_crud(t *testing.T) {
 	})
 }
 
-func TestAccOktaGroup_customschema(t *testing.T) {
+func TestAccResourceOktaGroup_customschema(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", group)
 	mgr := newFixtureManager(group, t.Name())
 	base := mgr.GetFixtures("okta_group_custom_base.tf", t)
@@ -73,7 +73,10 @@ func TestAccOktaGroup_customschema(t *testing.T) {
 	})
 }
 
-func TestAccOktaGroup_customschema_null(t *testing.T) {
+func TestAccResourceOktaGroup_customschema_null(t *testing.T) {
+	if skipVCRTest(t) {
+		return
+	}
 	resourceName := fmt.Sprintf("%s.test", group)
 	mgr := newFixtureManager(group, t.Name())
 	base := mgr.GetFixtures("okta_group_custom_base.tf", t)

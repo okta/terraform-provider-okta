@@ -11,7 +11,7 @@ import (
 )
 
 // TODO unable to run the test due to conflict providerFactories between plugin and framework
-func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
+func TestAccResourceOktaAppSignOnPolicyRule(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSignOnPolicyRule)
 	mgr := newFixtureManager(appSignOnPolicyRule, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)

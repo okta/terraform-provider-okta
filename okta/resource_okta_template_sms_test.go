@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaSmsTemplate_crud(t *testing.T) {
+func TestAccResourceOktaSmsTemplate_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", templateSms)
 	mgr := newFixtureManager(templateSms, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)

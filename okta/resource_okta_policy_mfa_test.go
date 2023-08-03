@@ -8,7 +8,7 @@ import (
 )
 
 // Note: at least one factor (e.g. `okta_otp`) should be enabled before running this test.
-func TestAccOktaMfaPolicy_crud(t *testing.T) {
+func TestAccResourceOktaMfaPolicy_crud(t *testing.T) {
 	mgr := newFixtureManager(policyMfa, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
@@ -47,9 +47,9 @@ func TestAccOktaMfaPolicy_crud(t *testing.T) {
 	})
 }
 
-// TestAccOktaMfaPolicy_PR_1210 deals with testing
+// TestAccResourceOktaMfaPolicy_PR_1210 deals with testing
 // https://github.com/okta/terraform-provider-okta/pull/1210
-func TestAccOktaMfaPolicy_PR_1210(t *testing.T) {
+func TestAccResourceOktaMfaPolicy_PR_1210(t *testing.T) {
 	mgr := newFixtureManager(policyMfa, t.Name())
 	config := `
 data "okta_group" "all" {
@@ -101,10 +101,10 @@ resource "okta_policy_mfa" "test" {
 	})
 }
 
-// TestAccOktaMfaPolicy_Issue_1176 deals with testing
+// TestAccResourceOktaMfaPolicy_Issue_1176 deals with testing
 // https://github.com/okta/terraform-provider-okta/issues/1176
 // Which is similar to PRs 1427/1210
-func TestAccOktaMfaPolicy_Issue_1176(t *testing.T) {
+func TestAccResourceOktaMfaPolicy_Issue_1176(t *testing.T) {
 	mgr := newFixtureManager(policyMfa, t.Name())
 	config := `
 data "okta_group" "all" {

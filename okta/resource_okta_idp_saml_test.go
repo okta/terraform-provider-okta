@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaIdpSaml_crud(t *testing.T) {
+func TestAccResourceOktaIdpSaml_crud(t *testing.T) {
 	mgr := newFixtureManager(idpSaml, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
@@ -60,11 +60,11 @@ func TestAccOktaIdpSaml_crud(t *testing.T) {
 	})
 }
 
-// TestAccOktaIdpSaml_minimal_example was used to prove that the PR
+// TestAccResourceOktaIdpSaml_minimal_example was used to prove that the PR
 // https://github.com/okta/terraform-provider-okta/pull/1355 was correct. This
 // test would fail if the org was missing the mappings api feature. And pass if
 // the feature was enabled.
-func TestAccOktaIdpSaml_minimal_example(t *testing.T) {
+func TestAccResourceOktaIdpSaml_minimal_example(t *testing.T) {
 	mgr := newFixtureManager(idpSaml, t.Name())
 	config := `
 resource "okta_app_saml" "test" {

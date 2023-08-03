@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceAppGroupAssignments_read(t *testing.T) {
+func TestAccDataSourceOktaAppGroupAssignments_read(t *testing.T) {
 	mgr := newFixtureManager(appGroupAssignments, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 

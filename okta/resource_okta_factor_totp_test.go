@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaFactorTOTP(t *testing.T) {
+func TestAccResourceOktaFactorTOTP(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", factorTotp)
 	mgr := newFixtureManager(factorTotp, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)

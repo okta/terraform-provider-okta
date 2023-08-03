@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccOktaOrgConfiguration(t *testing.T) {
+func TestAccResourceOktaOrgConfiguration(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", orgConfiguration)
 	mgr := newFixtureManager(orgConfiguration, t.Name())
 	config := mgr.GetFixtures("standard.tf", t)

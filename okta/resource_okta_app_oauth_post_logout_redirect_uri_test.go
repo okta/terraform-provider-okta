@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppOAuthApplication_postLogoutRedirectCrud(t *testing.T) {
+func TestAccResourceOktaAppOAuthApplication_postLogoutRedirectCrud(t *testing.T) {
 	mgr := newFixtureManager(appOAuthPostLogoutRedirectURI, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)

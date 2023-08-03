@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppOAuthApplication_redirectCrud(t *testing.T) {
+func TestAccResourceOktaAppOAuthApplication_redirectCrud(t *testing.T) {
 	mgr := newFixtureManager(appOAuthRedirectURI, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)

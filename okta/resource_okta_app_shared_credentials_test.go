@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppSharedCredentials_crud(t *testing.T) {
+func TestAccResourceOktaAppSharedCredentials_crud(t *testing.T) {
 	mgr := newFixtureManager(appSharedCredentials, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
@@ -76,7 +76,7 @@ func TestAccAppSharedCredentials_crud(t *testing.T) {
 	})
 }
 
-func TestAccAppSharedCredentials_timeouts(t *testing.T) {
+func TestAccResourceOktaAppSharedCredentials_timeouts(t *testing.T) {
 	mgr := newFixtureManager(appSharedCredentials, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appSharedCredentials)
 	config := `

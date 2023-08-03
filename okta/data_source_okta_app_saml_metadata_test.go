@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceAppMetadataSaml_read(t *testing.T) {
+func TestAccDataSourceOktaAppMetadataSaml_read(t *testing.T) {
 	mgr := newFixtureManager(appMetadataSaml, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	resourceName := "data.okta_app_metadata_saml.test"

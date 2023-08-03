@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppOAuthApplication_apiScope(t *testing.T) {
+func TestAccResourceOktaAppOAuthApplication_apiScope(t *testing.T) {
 	mgr := newFixtureManager(appOAuthAPIScope, t.Name())
 	plainConfig := mgr.GetFixtures("basic.tf", t)
 	plainUpdatedConfig := mgr.GetFixtures("basic_updated.tf", t)

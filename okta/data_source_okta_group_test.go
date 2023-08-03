@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceGroup_read(t *testing.T) {
+func TestAccDataSourceOktaGroup_read(t *testing.T) {
 	mgr := newFixtureManager(group, t.Name())
 	groupCreate := mgr.GetFixtures("okta_group.tf", t)
 	config := mgr.GetFixtures("datasource.tf", t)

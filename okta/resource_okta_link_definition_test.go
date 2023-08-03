@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaLinkDefinition(t *testing.T) {
+func TestAccResourceOktaLinkDefinition(t *testing.T) {
 	mgr := newFixtureManager(linkDefinition, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", linkDefinition)

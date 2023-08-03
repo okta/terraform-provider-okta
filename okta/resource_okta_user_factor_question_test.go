@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
+func TestAccResourceOktaUserFactorQuestion_crud(t *testing.T) {
 	mgr := newFixtureManager(userFactorQuestion, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
