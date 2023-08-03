@@ -114,11 +114,11 @@ func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 		if doNotRetry(m, err) {
 			return backoff.Permanent(err)
 		}
-		if resp.StatusCode == http.StatusInternalServerError {
-			return err
-		}
 		if err != nil {
 			return backoff.Permanent(err)
+		}
+		if resp.StatusCode == http.StatusInternalServerError {
+			return err
 		}
 		rule = ruleObj
 		return nil
