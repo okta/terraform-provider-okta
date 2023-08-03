@@ -412,6 +412,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		requestTimeout: d.Get("request_timeout").(int),
 		maxAPICapacity: d.Get("max_api_capacity").(int),
 	}
+	config.timeOperations = NewProductionTimeOperations()
 
 	if httpProxy, ok := d.Get("http_proxy").(string); ok {
 		config.httpProxy = httpProxy
