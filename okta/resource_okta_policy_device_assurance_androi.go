@@ -125,7 +125,7 @@ func (r *policyDeviceAssuranceAndroidResource) Schema(_ context.Context, _ resou
 				},
 			},
 			"screenlock_type": schema.SetAttribute{
-				Description: "List of screenlock type, can be BIOMETRIC, PASSCODE",
+				Description: "List of screenlock type, can be BIOMETRIC or BIOMETRIC, PASSCODE",
 				Optional:    true,
 				ElementType: types.StringType,
 				Validators: []validator.Set{
@@ -364,20 +364,3 @@ func mapDeviceAssuranceAndroidToState(data *okta.ListDeviceAssurancePolicies200R
 	state.LastUpdatedBy = types.StringValue(string(data.DeviceAssuranceAndroidPlatform.GetLastUpdatedBy()))
 	return diags
 }
-
-// // TODU types.List
-// res := model.ScreenLockType.Elements()
-// z := make([]string, 0)
-// for _, r := range res {
-// 	z = append(z, r.String())
-// }
-// // TODU []types.String
-// z := make([]string, 0)
-// for _, r := range model.ScreenLockType {
-// 	z = append(z, r.ValueString())
-// }
-// // TODU []string
-// z := make([]string, 0)
-// for _, r := range model.ScreenLockType {
-// 	z = append(z, r)
-// }

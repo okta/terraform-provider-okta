@@ -90,7 +90,7 @@ func (r *policyDeviceAssuranceIOSResource) Schema(_ context.Context, _ resource.
 				},
 			},
 			"screenlock_type": schema.SetAttribute{
-				Description: "List of screenlock type, can be BIOMETRIC and PASSCODE",
+				Description: "List of screenlock type, can be BIOMETRIC or BIOMETRIC, PASSCODE",
 				Optional:    true,
 				ElementType: types.StringType,
 				Validators: []validator.Set{

@@ -37,7 +37,7 @@ func TestAccPolicyDeviceAssuranceIOS(t *testing.T) {
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_ios.test", "name", "test"),
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_ios.test", "os_version", "12.4.6"),
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_ios.test", "screenlock_type.#", "2"),
-					resource.TestCheckResourceAttrSet("okta_policy_device_assurance_ios.test", "jailbreak"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_ios.test", "jailbreak", "false"),
 				),
 			},
 		},
