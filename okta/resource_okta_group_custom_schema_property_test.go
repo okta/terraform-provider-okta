@@ -862,6 +862,9 @@ func TestAccResourceOktaGroupSchema_enum_string(t *testing.T) {
 // backoff in create and update for okta_group_schema_property resource is
 // operating correctly.
 func TestAccResourceOktaGroupSchema_parallel_api_calls(t *testing.T) {
+	if skipVCRTest(t) {
+		return
+	}
 	mgr := newFixtureManager(groupSchemaProperty, t.Name())
 	config := `
 resource "okta_group_schema_property" "one" {

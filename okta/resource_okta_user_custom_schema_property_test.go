@@ -948,6 +948,9 @@ func testUserSchemaPropertyExists(schemaUserType, index, resolutionScope string)
 // backoff in create and update for okta_ser_schema_property resource is
 // operating correctly.
 func TestAccResourceOktaUserSchema_parallel_api_calls(t *testing.T) {
+	if skipVCRTest(t) {
+		return
+	}
 	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	config := `
 resource "okta_user_schema_property" "one" {

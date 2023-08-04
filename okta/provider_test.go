@@ -684,3 +684,8 @@ type vcrManager struct {
 	CurrentCassette string
 	VCRModeName     string
 }
+
+func skipVCRTest(t *testing.T) bool {
+	t.Skipf("test %q is not VCR compatible", t.Name())
+	return os.Getenv("OKTA_VCR_TF_ACC") != ""
+}

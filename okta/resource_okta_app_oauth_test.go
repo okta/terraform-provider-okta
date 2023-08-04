@@ -505,6 +505,10 @@ resource "okta_app_oauth" "test" {
 //
 // https://developer.okta.com/docs/reference/api/apps/#username-template-object
 func TestAccResourceOktaAppOauth_config_combinations(t *testing.T) {
+	if skipVCRTest(t) {
+		// the way this is table tested is not friendly w/ VCR
+		return
+	}
 	mgr := newFixtureManager(appOAuth, t.Name())
 
 	cases := []struct {
