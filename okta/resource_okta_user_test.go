@@ -105,7 +105,7 @@ func TestAccResourceOktaUser_invalidCustomProfileAttribute(t *testing.T) {
 		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config:      testOktaUserConfigInvalidCustomProfileAttribute(rName),
+				Config:      testOktaUserConfigInvalidCustomProfileAttribute(mgr.SeedStr()),
 				ExpectError: regexp.MustCompile("Api validation failed: newUser"),
 			},
 		},
