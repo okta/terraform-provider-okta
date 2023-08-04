@@ -5,8 +5,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
-	"strings"
 	"time"
 
 	"github.com/cenkalti/backoff"
@@ -400,8 +398,8 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		config.httpProxy = httpProxy
 	}
 
-	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(config.scopes) == 0 {
-		config.scopes = strings.Split(v, ",")
+	if err := config.handlePluginDefaults(ctx); err != nil {
+		return nil, diag.Errorf("[ERROR] handle default configuration: %v", err)
 	}
 
 	if err := config.loadAndValidate(ctx); err != nil {

@@ -25,6 +25,7 @@ func TestAccPolicyDeviceAssuranceMacOS(t *testing.T) {
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "disk_encryption_type.#", "1"),
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "secure_hardware_present", "true"),
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "screenlock_type.#", "1"),
+					resource.TestCheckNoResourceAttr("okta_policy_device_assurance_macos.test", "tpsp_browser_version"),
 				),
 			},
 			{
@@ -35,6 +36,20 @@ func TestAccPolicyDeviceAssuranceMacOS(t *testing.T) {
 					disk_encryption_type = toset(["ALL_INTERNAL_VOLUMES"])
 					secure_hardware_present = true
 					screenlock_type = toset(["BIOMETRIC", "PASSCODE"])
+					third_party_signal_providers = true
+					tpsp_browser_version = "15393.27.0"
+					tpsp_builtin_dns_client_enabled = true
+					tpsp_chrome_remote_desktop_app_blocked = true
+					tpsp_device_enrollment_domain = "testDomain"
+					tpsp_disk_encrypted = true
+					tpsp_key_trust_level = "CHROME_BROWSER_HW_KEY"
+					tpsp_os_firewall = true
+					tpsp_os_version = "10.0.19041"
+					tpsp_password_proctection_warning_trigger = "PASSWORD_PROTECTION_OFF"
+					tpsp_realtime_url_check_mode = true
+					tpsp_safe_browsing_protection_level = "ENHANCED_PROTECTION"
+					tpsp_screen_lock_secured = true
+					tpsp_site_isolation_enabled = true
 				  }`,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "name", "test"),
@@ -42,6 +57,19 @@ func TestAccPolicyDeviceAssuranceMacOS(t *testing.T) {
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "disk_encryption_type.#", "1"),
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "secure_hardware_present", "true"),
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "screenlock_type.#", "2"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "tpsp_browser_version", "15393.27.0"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "tpsp_builtin_dns_client_enabled", "true"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "tpsp_chrome_remote_desktop_app_blocked", "true"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "tpsp_device_enrollment_domain", "testDomain"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "tpsp_disk_encrypted", "true"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "tpsp_key_trust_level", "CHROME_BROWSER_HW_KEY"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "tpsp_os_firewall", "true"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "tpsp_os_version", "10.0.19041"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "tpsp_password_proctection_warning_trigger", "PASSWORD_PROTECTION_OFF"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "tpsp_realtime_url_check_mode", "true"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "tpsp_safe_browsing_protection_level", "ENHANCED_PROTECTION"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "tpsp_screen_lock_secured", "true"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "tpsp_site_isolation_enabled", "true"),
 				),
 			},
 		},

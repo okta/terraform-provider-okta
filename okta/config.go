@@ -129,7 +129,61 @@ func (c *Config) loadAndValidate(ctx context.Context) error {
 	return nil
 }
 
-func (c *Config) handleDefaults(ctx context.Context, data *FrameworkProviderData) error {
+func (c *Config) handlePluginDefaults(ctx context.Context) error {
+	var err error
+	if c.orgName == "" && os.Getenv("OKTA_ORG_NAME") != "" {
+		c.orgName = os.Getenv("OKTA_ORG_NAME")
+	}
+	if c.accessToken == "" && os.Getenv("OKTA_ACCESS_TOKEN") != "" {
+		c.accessToken = os.Getenv("OKTA_ACCESS_TOKEN")
+	}
+	if c.apiToken == "" && os.Getenv("OKTA_API_TOKEN") != "" {
+		c.apiToken = os.Getenv("OKTA_API_TOKEN")
+	}
+	if c.clientID == "" && os.Getenv("OKTA_API_CLIENT_ID") != "" {
+		c.clientID = os.Getenv("OKTA_API_CLIENT_ID")
+	}
+	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(c.scopes) == 0 {
+		c.scopes = strings.Split(v, ",")
+	}
+	if c.privateKey == "" && os.Getenv("OKTA_API_PRIVATE_KEY") != "" {
+		c.privateKey = os.Getenv("OKTA_API_PRIVATE_KEY")
+	}
+	if c.privateKeyId == "" && os.Getenv("OKTA_API_PRIVATE_KEY_ID") != "" {
+		c.privateKeyId = os.Getenv("OKTA_API_PRIVATE_KEY_ID")
+	}
+	if c.domain == "" {
+		if os.Getenv("OKTA_BASE_URL") != "" {
+			c.domain = os.Getenv("OKTA_BASE_URL")
+		} else {
+			c.domain = "okta.com"
+		}
+	}
+	if c.httpProxy == "" && os.Getenv("OKTA_HTTP_PROXY") != "" {
+		c.httpProxy = os.Getenv("OKTA_HTTP_PROXY")
+	}
+	if c.maxAPICapacity == 0 {
+		if os.Getenv("MAX_API_CAPACITY") != "" {
+			mac, err := strconv.ParseInt(os.Getenv("MAX_API_CAPACITY"), 10, 64)
+			if err != nil {
+				return err
+			}
+			c.maxAPICapacity = int(mac)
+		} else {
+			c.maxAPICapacity = 100
+		}
+	}
+	c.backoff = true
+	c.minWait = 30
+	c.maxWait = 300
+	c.retryCount = 5
+	c.parallelism = 1
+	c.logLevel = int(hclog.Error)
+	c.requestTimeout = 0
+	return err
+}
+
+func (c *Config) handleFrameworkDefaults(ctx context.Context, data *FrameworkProviderData) error {
 	var err error
 	if data.OrgName.IsNull() && os.Getenv("OKTA_ORG_NAME") != "" {
 		data.OrgName = types.StringValue(os.Getenv("OKTA_ORG_NAME"))
@@ -162,7 +216,7 @@ func (c *Config) handleDefaults(ctx context.Context, data *FrameworkProviderData
 	}
 	if data.BaseURL.IsNull() {
 		if os.Getenv("OKTA_BASE_URL") != "" {
-			data.BaseURL = types.StringValue(os.Getenv("OKTA_API_PRIVATE_KEY_ID"))
+			data.BaseURL = types.StringValue(os.Getenv("OKTA_BASE_URL"))
 		} else {
 			data.BaseURL = types.StringValue("okta.com")
 		}

@@ -29,36 +29,31 @@ type policyDeviceAssuranceChromeOSResource struct {
 }
 
 type policyDeviceAssuranceChromeOSResourceModel struct {
-	ID            types.String `tfsdk:"id"`
-	Name          types.String `tfsdk:"name"`
-	Platform      types.String `tfsdk:"platform"`
-	CreateDate    types.String `tfsdk:"created_date"`
-	CreateBy      types.String `tfsdk:"created_by"`
-	LastUpdate    types.String `tfsdk:"last_update"`
-	LastUpdatedBy types.String `tfsdk:"last_updated_by"`
-	// TODU no feature access
-	ThirdPartySignalProviders thirdPartySignalProvidersChromeOS `tfsdk:"third_party_signal_providers"`
-}
-
-type thirdPartySignalProvidersChromeOS struct {
-	AllowScreenLock                   types.Bool   `tfsdk:"allow_screen_lock"`
-	BrowserVersion                    types.String `tfsdk:"browser_version, omitempty"`
-	BuiltInDNSClientEnabled           types.Bool   `tfsdk:"builtin_dns_client_enabled"`
-	ChromeRemoteDesktopAppBlocked     types.Bool   `tfsdk:"chrome_remote_desktop_app_blocked"`
-	DeviceEnrollmentDomain            types.String `tfsdk:"device_enrollment_domain"`
-	DiskEncrypted                     types.Bool   `tfsdk:"disk_encrypted"`
-	KeyTrustLevel                     types.String `tfsdk:"key_trust_level"`
-	OsFirewall                        types.Bool   `tfsdk:"os_firewall"`
-	OsVersion                         types.String `tfsdk:"os_version"`
-	PasswordProctectionWarningTrigger types.String `tfsdk:"password_proctection_warning_trigger"`
-	RealtimeURLCheckMode              types.Bool   `tfsdk:"realtime_url_check_mode"`
-	SafeBrowsingProtectionLevel       types.String `tfsdk:"safe_browsing_protection_level"`
-	ScreenLockSecured                 types.Bool   `tfsdk:"screen_lock_secured"`
-	SiteIsolationEnabled              types.Bool   `tfsdk:"site_isolation_enabled"`
+	ID                                   types.String `tfsdk:"id"`
+	Name                                 types.String `tfsdk:"name"`
+	Platform                             types.String `tfsdk:"platform"`
+	CreateDate                           types.String `tfsdk:"created_date"`
+	CreateBy                             types.String `tfsdk:"created_by"`
+	LastUpdate                           types.String `tfsdk:"last_update"`
+	LastUpdatedBy                        types.String `tfsdk:"last_updated_by"`
+	TpspAllowScreenLock                  types.Bool   `tfsdk:"tpsp_allow_screen_lock"`
+	TpspBrowserVersion                   types.String `tfsdk:"tpsp_browser_version"`
+	TpspBuiltInDNSClientEnabled          types.Bool   `tfsdk:"tpsp_builtin_dns_client_enabled"`
+	TpspChromeRemoteDesktopAppBlocked    types.Bool   `tfsdk:"tpsp_chrome_remote_desktop_app_blocked"`
+	TpspDeviceEnrollmentDomain           types.String `tfsdk:"tpsp_device_enrollment_domain"`
+	TpspDiskEncrypted                    types.Bool   `tfsdk:"tpsp_disk_encrypted"`
+	TpspKeyTrustLevel                    types.String `tfsdk:"tpsp_key_trust_level"`
+	TpspOsFirewall                       types.Bool   `tfsdk:"tpsp_os_firewall"`
+	TpspOsVersion                        types.String `tfsdk:"tpsp_os_version"`
+	TpspPasswordProtectionWarningTrigger types.String `tfsdk:"tpsp_password_proctection_warning_trigger"`
+	TpspRealtimeURLCheckMode             types.Bool   `tfsdk:"tpsp_realtime_url_check_mode"`
+	TpspSafeBrowsingProtectionLevel      types.String `tfsdk:"tpsp_safe_browsing_protection_level"`
+	TpspScreenLockSecured                types.Bool   `tfsdk:"tpsp_screen_lock_secured"`
+	TpspSiteIsolationEnabled             types.Bool   `tfsdk:"tpsp_site_isolation_enabled"`
 }
 
 func (r *policyDeviceAssuranceChromeOSResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_policy_device_assurance_chromeOS"
+	resp.TypeName = req.ProviderTypeName + "_policy_device_assurance_chromeos"
 }
 
 func (r *policyDeviceAssuranceChromeOSResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -83,43 +78,78 @@ func (r *policyDeviceAssuranceChromeOSResource) Schema(_ context.Context, _ reso
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			// // TODU no access to feature request
-			// "third_party_signal_providers": schema.ObjectAttribute{
-			// 	Description: "Settings for third-party signal providers. Required for ChromeOS platform, optional for others",
-			// 	Required:    true,
-			// 	AttributeTypes: map[string]attr.Type{
-			// 		"allow_screen_lock":                    types.BoolType,
-			// 		"browser_version":                      types.StringType,
-			// 		"builtin_dns_client_enabled":           types.BoolType,
-			// 		"chrome_remote_desktop_app_blocked":    types.BoolType,
-			// 		"device_enrollement_domain":            types.StringType,
-			// 		"disk_encrypted":                       types.BoolType,
-			// 		"key_trust_level":                      types.StringType,
-			// 		"os_firewall":                          types.BoolType,
-			// 		"os_version":                           types.StringType,
-			// 		"password_proctection_warning_trigger": types.StringType,
-			// 		"realtime_url_check_mode":              types.BoolType,
-			// 		"safe_browsing_protection_level":       types.StringType,
-			// 		"screen_lock_secured":                  types.BoolType,
-			// 		"site_isolation_enabled":               types.BoolType,
-			// 	},
-			// },
-			// "created_date": schema.StringAttribute{
-			// 	Description: "Created date",
-			// 	Computed:    true,
-			// },
-			// "created_by": schema.StringAttribute{
-			// 	Description: "Created by",
-			// 	Computed:    true,
-			// },
-			// "last_update": schema.StringAttribute{
-			// 	Description: "Last update",
-			// 	Computed:    true,
-			// },
-			// "last_updated_by": schema.StringAttribute{
-			// 	Description: "Last updated by",
-			// 	Computed:    true,
-			// },
+			"tpsp_allow_screen_lock": schema.BoolAttribute{
+				Description: "Third party signal provider allow screen lock",
+				Optional:    true,
+			},
+			"tpsp_browser_version": schema.StringAttribute{
+				Description: "Third party signal provider minimum browser version",
+				Optional:    true,
+			},
+			"tpsp_builtin_dns_client_enabled": schema.BoolAttribute{
+				Description: "Third party signal provider builtin dns client enable",
+				Optional:    true,
+			},
+			"tpsp_chrome_remote_desktop_app_blocked": schema.BoolAttribute{
+				Description: "Third party signal provider chrome remote desktop app blocked",
+				Optional:    true,
+			},
+			"tpsp_device_enrollment_domain": schema.StringAttribute{
+				Description: "Third party signal provider device enrollment domain",
+				Optional:    true,
+			},
+			"tpsp_disk_encrypted": schema.BoolAttribute{
+				Description: "Third party signal provider disk encrypted",
+				Optional:    true,
+			},
+			"tpsp_key_trust_level": schema.StringAttribute{
+				Description: "Third party signal provider key trust level",
+				Optional:    true,
+			},
+			"tpsp_os_firewall": schema.BoolAttribute{
+				Description: "Third party signal provider os firewall",
+				Optional:    true,
+			},
+			"tpsp_os_version": schema.StringAttribute{
+				Description: "Third party signal provider minimum os version",
+				Optional:    true,
+			},
+			"tpsp_password_proctection_warning_trigger": schema.StringAttribute{
+				Description: "Third party signal provider password protection warning trigger",
+				Optional:    true,
+			},
+			"tpsp_realtime_url_check_mode": schema.BoolAttribute{
+				Description: "Third party signal provider realtime url check mode",
+				Optional:    true,
+			},
+			"tpsp_safe_browsing_protection_level": schema.StringAttribute{
+				Description: "Third party signal provider safe browsing protection level",
+				Optional:    true,
+			},
+			"tpsp_screen_lock_secured": schema.BoolAttribute{
+				Description: "Third party signal provider screen lock secure",
+				Optional:    true,
+			},
+			"tpsp_site_isolation_enabled": schema.BoolAttribute{
+				Description: "Third party signal provider site isolation enabled",
+				Optional:    true,
+			},
+			"created_date": schema.StringAttribute{
+				Description: "Created date",
+				Computed:    true,
+			},
+			"created_by": schema.StringAttribute{
+				Description: "Created by",
+				Computed:    true,
+			},
+			"last_update": schema.StringAttribute{
+				Description: "Last update",
+				Computed:    true,
+			},
+			"last_updated_by": schema.StringAttribute{
+				Description: "Last updated by",
+				Computed:    true,
+			},
 		},
 	}
 }
@@ -265,19 +295,88 @@ func buildDeviceAssuranceChromeOSPolicyRequest(model policyDeviceAssuranceChrome
 	chromeOS.SetName(model.Name.ValueString())
 	chromeOS.SetPlatform(okta.PLATFORM_CHROMEOS)
 
+	var thirdPartySignalProviders okta.DeviceAssuranceChromeOSPlatformAllOfThirdPartySignalProviders
+	var dtc okta.DTCChromeOS
+	dtc.AllowScreenLock = model.TpspAllowScreenLock.ValueBoolPointer()
+	if !model.TpspBrowserVersion.IsNull() {
+		dtc.BrowserVersion = &okta.ChromeBrowserVersion{Minimum: model.TpspBrowserVersion.ValueStringPointer()}
+	}
+	dtc.BuiltInDnsClientEnabled = model.TpspBuiltInDNSClientEnabled.ValueBoolPointer()
+	dtc.ChromeRemoteDesktopAppBlocked = model.TpspChromeRemoteDesktopAppBlocked.ValueBoolPointer()
+	dtc.DeviceEnrollmentDomain = model.TpspDeviceEnrollmentDomain.ValueStringPointer()
+	dtc.DiskEncrypted = model.TpspDiskEncrypted.ValueBoolPointer()
+	if !model.TpspKeyTrustLevel.IsNull() {
+		v, err := okta.NewKeyTrustLevelOSModeFromValue(model.TpspKeyTrustLevel.ValueString())
+		if err != nil {
+			return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceChromeOSPlatform: chromeOS}, err
+		}
+		dtc.KeyTrustLevel = v
+	}
+	dtc.OsFirewall = model.TpspOsFirewall.ValueBoolPointer()
+	if !model.TpspOsVersion.IsNull() {
+		dtc.OsVersion = &okta.OSVersion{Minimum: model.TpspOsVersion.ValueStringPointer()}
+	}
+	if !model.TpspPasswordProtectionWarningTrigger.IsNull() {
+		v, err := okta.NewPasswordProtectionWarningTriggerFromValue(model.TpspPasswordProtectionWarningTrigger.ValueString())
+		if err != nil {
+			return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceChromeOSPlatform: chromeOS}, err
+		}
+		dtc.PasswordProtectionWarningTrigger = v
+	}
+	dtc.RealtimeUrlCheckMode = model.TpspRealtimeURLCheckMode.ValueBoolPointer()
+	if !model.TpspSafeBrowsingProtectionLevel.IsNull() {
+		v, err := okta.NewSafeBrowsingProtectionLevelFromValue(model.TpspSafeBrowsingProtectionLevel.ValueString())
+		if err != nil {
+			return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceChromeOSPlatform: chromeOS}, err
+		}
+		dtc.SafeBrowsingProtectionLevel = v
+	}
+	dtc.ScreenLockSecured = model.TpspScreenLockSecured.ValueBoolPointer()
+	dtc.SiteIsolationEnabled = model.TpspSiteIsolationEnabled.ValueBoolPointer()
+	thirdPartySignalProviders.SetDtc(dtc)
+	chromeOS.SetThirdPartySignalProviders(thirdPartySignalProviders)
+
 	return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceChromeOSPlatform: chromeOS}, nil
 }
 
 // Map response body to schema
 func mapDeviceAssuranceChromeOSToState(data *okta.ListDeviceAssurancePolicies200ResponseInner, state *policyDeviceAssuranceChromeOSResourceModel) diag.Diagnostics {
 	var diags diag.Diagnostics
-	state.ID = types.StringValue(data.DeviceAssuranceChromeOSPlatform.GetId())
-	state.Name = types.StringValue(data.DeviceAssuranceChromeOSPlatform.GetName())
-	state.Platform = types.StringValue(string(data.DeviceAssuranceChromeOSPlatform.GetPlatform()))
+	if data.DeviceAssuranceChromeOSPlatform == nil {
+		diags.AddError("Empty response", "ChromeOS object")
+		return diags
+	}
 
-	state.CreateDate = types.StringValue(string(data.DeviceAssuranceChromeOSPlatform.GetCreatedDate()))
-	state.CreateBy = types.StringValue(string(data.DeviceAssuranceChromeOSPlatform.GetCreatedBy()))
-	state.LastUpdate = types.StringValue(string(data.DeviceAssuranceChromeOSPlatform.GetLastUpdate()))
-	state.LastUpdatedBy = types.StringValue(string(data.DeviceAssuranceChromeOSPlatform.GetLastUpdatedBy()))
+	state.ID = types.StringPointerValue(data.DeviceAssuranceChromeOSPlatform.Id)
+	state.Name = types.StringPointerValue(data.DeviceAssuranceChromeOSPlatform.Name)
+	state.Platform = types.StringPointerValue((*string)(data.DeviceAssuranceChromeOSPlatform.Platform))
+
+	if _, ok := data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.GetDtcOk(); ok {
+		state.TpspAllowScreenLock = types.BoolPointerValue(data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.AllowScreenLock)
+		if _, ok := data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.GetBrowserVersionOk(); ok {
+			state.TpspBrowserVersion = types.StringPointerValue(data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum)
+		}
+		state.TpspBuiltInDNSClientEnabled = types.BoolPointerValue(data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.BuiltInDnsClientEnabled)
+		state.TpspChromeRemoteDesktopAppBlocked = types.BoolPointerValue(data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.ChromeRemoteDesktopAppBlocked)
+		state.TpspDeviceEnrollmentDomain = types.StringPointerValue(data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.DeviceEnrollmentDomain)
+		state.TpspDiskEncrypted = types.BoolPointerValue(data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.DiskEncrypted)
+		if _, ok := data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.GetKeyTrustLevelOk(); ok {
+			state.TpspKeyTrustLevel = types.StringPointerValue((*string)(data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.KeyTrustLevel))
+		}
+		state.TpspOsFirewall = types.BoolPointerValue(data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.OsFirewall)
+		if _, ok := data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.GetOsVersionOk(); ok {
+			state.TpspOsVersion = types.StringPointerValue(data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.OsVersion.Minimum)
+		}
+		state.TpspPasswordProtectionWarningTrigger = types.StringPointerValue((*string)(data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.PasswordProtectionWarningTrigger))
+		state.TpspRealtimeURLCheckMode = types.BoolPointerValue(data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.RealtimeUrlCheckMode)
+		state.TpspSafeBrowsingProtectionLevel = types.StringPointerValue((*string)(data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.SafeBrowsingProtectionLevel))
+		state.TpspScreenLockSecured = types.BoolPointerValue(data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.ScreenLockSecured)
+		state.TpspSiteIsolationEnabled = types.BoolPointerValue(data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.SiteIsolationEnabled)
+	}
+
+	state.CreateDate = types.StringPointerValue(data.DeviceAssuranceChromeOSPlatform.CreatedDate)
+	state.CreateBy = types.StringPointerValue(data.DeviceAssuranceChromeOSPlatform.CreatedBy)
+	state.LastUpdate = types.StringPointerValue(data.DeviceAssuranceChromeOSPlatform.LastUpdate)
+	state.LastUpdatedBy = types.StringPointerValue(data.DeviceAssuranceChromeOSPlatform.LastUpdatedBy)
 	return diags
 }

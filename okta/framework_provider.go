@@ -198,7 +198,7 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 		return
 	}
 
-	err := p.handleDefaults(ctx, &data)
+	err := p.handleFrameworkDefaults(ctx, &data)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to load default value to provider", err.Error())
 		return

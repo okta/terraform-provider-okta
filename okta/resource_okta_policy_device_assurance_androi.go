@@ -330,18 +330,18 @@ func buildDeviceAssuranceAndroidPolicyRequest(model policyDeviceAssuranceAndroid
 // Map response body to schema
 func mapDeviceAssuranceAndroidToState(data *okta.ListDeviceAssurancePolicies200ResponseInner, state *policyDeviceAssuranceAndroidResourceModel) diag.Diagnostics {
 	var diags diag.Diagnostics
-	state.ID = types.StringValue(data.DeviceAssuranceAndroidPlatform.GetId())
-	state.Name = types.StringValue(data.DeviceAssuranceAndroidPlatform.GetName())
-	state.Platform = types.StringValue(string(data.DeviceAssuranceAndroidPlatform.GetPlatform()))
+	if data.DeviceAssuranceAndroidPlatform == nil {
+		diags.AddError("Empty response", "Android object")
+		return diags
+	}
+	state.ID = types.StringPointerValue(data.DeviceAssuranceAndroidPlatform.Id)
+	state.Name = types.StringPointerValue(data.DeviceAssuranceAndroidPlatform.Name)
+	state.Platform = types.StringPointerValue((*string)(data.DeviceAssuranceAndroidPlatform.Platform))
 
-	if _, ok := data.DeviceAssuranceAndroidPlatform.GetJailbreakOk(); ok {
-		state.JailBreak = types.BoolValue(data.DeviceAssuranceAndroidPlatform.GetJailbreak())
-	}
-	if _, ok := data.DeviceAssuranceAndroidPlatform.GetSecureHardwarePresentOk(); ok {
-		state.SecureHardwarePresent = types.BoolValue(data.DeviceAssuranceAndroidPlatform.GetSecureHardwarePresent())
-	}
+	state.JailBreak = types.BoolPointerValue(data.DeviceAssuranceAndroidPlatform.Jailbreak)
+	state.SecureHardwarePresent = types.BoolPointerValue(data.DeviceAssuranceAndroidPlatform.SecureHardwarePresent)
 	if _, ok := data.DeviceAssuranceAndroidPlatform.GetOsVersionOk(); ok {
-		state.OsVersion = types.StringValue(data.DeviceAssuranceAndroidPlatform.OsVersion.GetMinimum())
+		state.OsVersion = types.StringPointerValue(data.DeviceAssuranceAndroidPlatform.OsVersion.Minimum)
 	}
 	if _, ok := data.DeviceAssuranceAndroidPlatform.DiskEncryptionType.GetIncludeOk(); ok {
 		diskEncryptionType := make([]types.String, 0)
@@ -358,9 +358,9 @@ func mapDeviceAssuranceAndroidToState(data *okta.ListDeviceAssurancePolicies200R
 		state.ScreenLockType = screenLockType
 	}
 
-	state.CreateDate = types.StringValue(string(data.DeviceAssuranceAndroidPlatform.GetCreatedDate()))
-	state.CreateBy = types.StringValue(string(data.DeviceAssuranceAndroidPlatform.GetCreatedBy()))
-	state.LastUpdate = types.StringValue(string(data.DeviceAssuranceAndroidPlatform.GetLastUpdate()))
-	state.LastUpdatedBy = types.StringValue(string(data.DeviceAssuranceAndroidPlatform.GetLastUpdatedBy()))
+	state.CreateDate = types.StringPointerValue(data.DeviceAssuranceAndroidPlatform.CreatedDate)
+	state.CreateBy = types.StringPointerValue(data.DeviceAssuranceAndroidPlatform.CreatedBy)
+	state.LastUpdate = types.StringPointerValue(data.DeviceAssuranceAndroidPlatform.LastUpdate)
+	state.LastUpdatedBy = types.StringPointerValue(data.DeviceAssuranceAndroidPlatform.LastUpdatedBy)
 	return diags
 }

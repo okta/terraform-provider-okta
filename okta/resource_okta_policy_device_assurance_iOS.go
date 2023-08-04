@@ -282,15 +282,18 @@ func buildDeviceAssuranceIOSPolicyRequest(model policyDeviceAssuranceIOSResource
 // Map response body to schema
 func mapDeviceAssuranceIOSToState(data *okta.ListDeviceAssurancePolicies200ResponseInner, state *policyDeviceAssuranceIOSResourceModel) diag.Diagnostics {
 	var diags diag.Diagnostics
-	state.ID = types.StringValue(data.DeviceAssuranceIOSPlatform.GetId())
-	state.Name = types.StringValue(data.DeviceAssuranceIOSPlatform.GetName())
-	state.Platform = types.StringValue(string(data.DeviceAssuranceIOSPlatform.GetPlatform()))
-
-	if _, ok := data.DeviceAssuranceIOSPlatform.GetJailbreakOk(); ok {
-		state.JailBreak = types.BoolValue(data.DeviceAssuranceIOSPlatform.GetJailbreak())
+	if data.DeviceAssuranceIOSPlatform == nil {
+		diags.AddError("Empty response", "iOS object")
+		return diags
 	}
+
+	state.ID = types.StringPointerValue(data.DeviceAssuranceIOSPlatform.Id)
+	state.Name = types.StringPointerValue(data.DeviceAssuranceIOSPlatform.Name)
+	state.Platform = types.StringPointerValue((*string)(data.DeviceAssuranceIOSPlatform.Platform))
+
+	state.JailBreak = types.BoolPointerValue(data.DeviceAssuranceIOSPlatform.Jailbreak)
 	if _, ok := data.DeviceAssuranceIOSPlatform.GetOsVersionOk(); ok {
-		state.OsVersion = types.StringValue(data.DeviceAssuranceIOSPlatform.OsVersion.GetMinimum())
+		state.OsVersion = types.StringPointerValue(data.DeviceAssuranceIOSPlatform.OsVersion.Minimum)
 	}
 	if _, ok := data.DeviceAssuranceIOSPlatform.ScreenLockType.GetIncludeOk(); ok {
 		screenLockType := make([]types.String, 0)
@@ -300,9 +303,9 @@ func mapDeviceAssuranceIOSToState(data *okta.ListDeviceAssurancePolicies200Respo
 		state.ScreenLockType = screenLockType
 	}
 
-	state.CreateDate = types.StringValue(string(data.DeviceAssuranceIOSPlatform.GetCreatedDate()))
-	state.CreateBy = types.StringValue(string(data.DeviceAssuranceIOSPlatform.GetCreatedBy()))
-	state.LastUpdate = types.StringValue(string(data.DeviceAssuranceIOSPlatform.GetLastUpdate()))
-	state.LastUpdatedBy = types.StringValue(string(data.DeviceAssuranceIOSPlatform.GetLastUpdatedBy()))
+	state.CreateDate = types.StringPointerValue(data.DeviceAssuranceIOSPlatform.CreatedDate)
+	state.CreateBy = types.StringPointerValue(data.DeviceAssuranceIOSPlatform.CreatedBy)
+	state.LastUpdate = types.StringPointerValue(data.DeviceAssuranceIOSPlatform.LastUpdate)
+	state.LastUpdatedBy = types.StringPointerValue(data.DeviceAssuranceIOSPlatform.LastUpdatedBy)
 	return diags
 }
