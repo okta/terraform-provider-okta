@@ -11,8 +11,7 @@ func TestAccResourceOktaPolicyDeviceAssuranceChromeOS(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: providerConfig + `
-				resource okta_policy_device_assurance_chromeos test{
+				Config: `resource okta_policy_device_assurance_chromeos test{
 					name = "z"
 				  }`,
 				Check: resource.ComposeAggregateTestCheckFunc(
@@ -20,8 +19,7 @@ func TestAccResourceOktaPolicyDeviceAssuranceChromeOS(t *testing.T) {
 				),
 			},
 			{
-				Config: providerConfig + `
-				resource okta_policy_device_assurance_chromeos test{
+				Config: `resource okta_policy_device_assurance_chromeos test{
 					name = "test"
 					tpsp_allow_screen_lock = true
 					tpsp_browser_version = "15393.27.0"

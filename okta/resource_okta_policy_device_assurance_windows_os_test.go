@@ -11,8 +11,7 @@ func TestAccResourceOktaPolicyDeviceAssuranceWindows(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: providerConfig + `
-				resource okta_policy_device_assurance_windows test{
+				Config: `resource okta_policy_device_assurance_windows test{
 					name = "test"
 					os_version = "12.4.5"
 					disk_encryption_type = toset(["ALL_INTERNAL_VOLUMES"])
@@ -29,8 +28,7 @@ func TestAccResourceOktaPolicyDeviceAssuranceWindows(t *testing.T) {
 				),
 			},
 			{
-				Config: providerConfig + `
-				resource okta_policy_device_assurance_windows test{
+				Config: `resource okta_policy_device_assurance_windows test{
 					name = "test"
 					os_version = "12.4.6"
 					disk_encryption_type = toset(["ALL_INTERNAL_VOLUMES"])

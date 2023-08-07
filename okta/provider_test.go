@@ -19,6 +19,8 @@ import (
 
 	"github.com/dnaeon/go-vcr/cassette"
 	"github.com/dnaeon/go-vcr/recorder"
+	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,7 +29,12 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-var testAccProvidersFactories map[string]func() (*schema.Provider, error)
+var (
+	testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
+		"okta": providerserver.NewProtocol6WithError(NewFWProvider("test")),
+	}
+	testAccProvidersFactories map[string]func() (*schema.Provider, error)
+)
 
 func init() {
 	provider := Provider()

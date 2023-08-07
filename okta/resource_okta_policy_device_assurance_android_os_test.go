@@ -3,24 +3,7 @@ package okta
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-framework/providerserver"
-	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-)
-
-const (
-	// providerConfig is a shared configuration to combine with the actual
-	// test configuration so the HashiCups client is properly configured.
-	// It is also possible to use the HASHICUPS_ environment variables instead,
-	// such as updating the Makefile and running the testing through that tool.
-	providerConfig = `
-`
-)
-
-var (
-	testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
-		"okta": providerserver.NewProtocol6WithError(NewFWProvider("test")),
-	}
 )
 
 func TestAccResourceOktaPolicyDeviceAssuranceAndroid(t *testing.T) {
@@ -28,8 +11,7 @@ func TestAccResourceOktaPolicyDeviceAssuranceAndroid(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: providerConfig + `
-				resource okta_policy_device_assurance_android test{
+				Config: `resource okta_policy_device_assurance_android test{
 					name = "test"
 					os_version = "12"
 					disk_encryption_type = toset(["FULL", "USER"])
@@ -46,8 +28,7 @@ func TestAccResourceOktaPolicyDeviceAssuranceAndroid(t *testing.T) {
 				),
 			},
 			{
-				Config: providerConfig + `
-				resource okta_policy_device_assurance_android test{
+				Config: `resource okta_policy_device_assurance_android test{
 					name = "test"
 					os_version = "13"
 					disk_encryption_type = toset(["FULL", "USER"])

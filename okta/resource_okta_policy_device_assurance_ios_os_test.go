@@ -11,8 +11,7 @@ func TestAccResourceOktaPolicyDeviceAssuranceIOS(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: providerConfig + `
-				resource okta_policy_device_assurance_ios test{
+				Config: `resource okta_policy_device_assurance_ios test{
 					name = "test"
 					os_version = "12.4.5"
 					jailbreak = false
@@ -26,8 +25,7 @@ func TestAccResourceOktaPolicyDeviceAssuranceIOS(t *testing.T) {
 				),
 			},
 			{
-				Config: providerConfig + `
-				resource okta_policy_device_assurance_ios test{
+				Config: `resource okta_policy_device_assurance_ios test{
 					name = "test"
 					os_version = "12.4.6"
 					jailbreak = false
