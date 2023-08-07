@@ -20,9 +20,9 @@ import (
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
-	_ resource.Resource              = &policyDeviceAssuranceAndroidResource{}
-	_ resource.ResourceWithConfigure = &policyDeviceAssuranceAndroidResource{}
-	// _ resource.ResourceWithImportState = &policyDeviceAssuranceResource{}
+	_ resource.Resource                = &policyDeviceAssuranceAndroidResource{}
+	_ resource.ResourceWithConfigure   = &policyDeviceAssuranceAndroidResource{}
+	_ resource.ResourceWithImportState = &policyDeviceAssuranceAndroidResource{}
 )
 
 func NewPolicyDeviceAssuranceAndroidResource() resource.Resource {
@@ -361,4 +361,8 @@ func mapDeviceAssuranceAndroidToState(data *okta.ListDeviceAssurancePolicies200R
 	state.LastUpdate = types.StringPointerValue(data.DeviceAssuranceAndroidPlatform.LastUpdate)
 	state.LastUpdatedBy = types.StringPointerValue(data.DeviceAssuranceAndroidPlatform.LastUpdatedBy)
 	return diags
+}
+
+func (r *policyDeviceAssuranceAndroidResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

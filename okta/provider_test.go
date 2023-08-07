@@ -20,7 +20,8 @@ import (
 	"github.com/dnaeon/go-vcr/cassette"
 	"github.com/dnaeon/go-vcr/recorder"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
-	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
+	"github.com/hashicorp/terraform-plugin-mux/tf5muxserver"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -30,17 +31,35 @@ import (
 )
 
 var (
-	testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
-		"okta": providerserver.NewProtocol6WithError(NewFWProvider("test")),
-	}
-	testAccProvidersFactories map[string]func() (*schema.Provider, error)
+	testAccProvidersFactories       map[string]func() (*schema.Provider, error)
+	testAccProtoV5ProviderFactories map[string]func() (tfprotov5.ProviderServer, error)
+	testAccMergeProvidersFactories  map[string]func() (tfprotov5.ProviderServer, error)
 )
 
 func init() {
-	provider := Provider()
+	pluginProvider := Provider()
 	testAccProvidersFactories = map[string]func() (*schema.Provider, error){
 		"okta": func() (*schema.Provider, error) {
-			return provider, nil
+			return pluginProvider, nil
+		},
+	}
+	frameworkProvider := NewFWProvider("dev")
+	testAccProtoV5ProviderFactories = map[string]func() (tfprotov5.ProviderServer, error){
+		"okta": providerserver.NewProtocol5WithError(frameworkProvider),
+	}
+	providers := []func() tfprotov5.ProviderServer{
+		// v2 plugin
+		pluginProvider.GRPCProvider,
+		// v3 plugin
+		providerserver.NewProtocol5(frameworkProvider),
+	}
+	muxServer, err := tf5muxserver.NewMuxServer(context.Background(), providers...)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+	testAccMergeProvidersFactories = map[string]func() (tfprotov5.ProviderServer, error){
+		"okta": func() (tfprotov5.ProviderServer, error) {
+			return muxServer.ProviderServer(), nil
 		},
 	}
 

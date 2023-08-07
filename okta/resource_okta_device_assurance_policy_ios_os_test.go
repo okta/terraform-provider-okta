@@ -8,7 +8,7 @@ import (
 
 func TestAccResourceOktaPolicyDeviceAssuranceIOS(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		ProtoV5ProviderFactories: testAccProtoV5ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: `resource okta_policy_device_assurance_ios test{

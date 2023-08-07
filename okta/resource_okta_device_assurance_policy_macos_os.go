@@ -20,9 +20,9 @@ import (
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
-	_ resource.Resource              = &policyDeviceAssuranceMacOSResource{}
-	_ resource.ResourceWithConfigure = &policyDeviceAssuranceMacOSResource{}
-	// _ resource.ResourceWithImportState = &policyDeviceAssuranceResource{}
+	_ resource.Resource                = &policyDeviceAssuranceMacOSResource{}
+	_ resource.ResourceWithConfigure   = &policyDeviceAssuranceMacOSResource{}
+	_ resource.ResourceWithImportState = &policyDeviceAssuranceMacOSResource{}
 )
 
 func NewPolicyDeviceAssuranceMacOSResource() resource.Resource {
@@ -478,4 +478,8 @@ func mapDeviceAssuranceMacOSToState(data *okta.ListDeviceAssurancePolicies200Res
 	state.LastUpdate = types.StringPointerValue(data.DeviceAssuranceMacOSPlatform.LastUpdate)
 	state.LastUpdatedBy = types.StringPointerValue(data.DeviceAssuranceMacOSPlatform.LastUpdatedBy)
 	return diags
+}
+
+func (r *policyDeviceAssuranceMacOSResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

@@ -18,10 +18,10 @@ func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkAppSignOnPolicyRuleDestroy,
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -33,7 +33,7 @@ func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "factor_mode", "2FA"),
 					resource.TestCheckResourceAttr(resourceName, "groups_excluded.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "groups_included.#", "0"),
-					// resource.TestCheckResourceAttr(resourceName, "device_assurances_included.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "device_assurances_included.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "user_types_excluded.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "user_types_included.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "users_excluded.#", "0"),
@@ -56,7 +56,7 @@ func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "factor_mode", "2FA"),
 					resource.TestCheckResourceAttr(resourceName, "groups_excluded.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "groups_included.#", "2"),
-					// resource.TestCheckResourceAttr(resourceName, "device_assurances_included.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "device_assurances_included.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "user_types_excluded.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "user_types_included.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "users_excluded.#", "3"),

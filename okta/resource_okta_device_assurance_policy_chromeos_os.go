@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -15,9 +16,9 @@ import (
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
-	_ resource.Resource              = &policyDeviceAssuranceChromeOSResource{}
-	_ resource.ResourceWithConfigure = &policyDeviceAssuranceChromeOSResource{}
-	// _ resource.ResourceWithImportState = &policyDeviceAssuranceResource{}
+	_ resource.Resource                = &policyDeviceAssuranceChromeOSResource{}
+	_ resource.ResourceWithConfigure   = &policyDeviceAssuranceChromeOSResource{}
+	_ resource.ResourceWithImportState = &policyDeviceAssuranceChromeOSResource{}
 )
 
 func NewPolicyDeviceAssuranceChromeOSResource() resource.Resource {
@@ -87,7 +88,7 @@ func (r *policyDeviceAssuranceChromeOSResource) Schema(_ context.Context, _ reso
 				Optional:    true,
 			},
 			"tpsp_builtin_dns_client_enabled": schema.BoolAttribute{
-				Description: "Third party signal provider builtin dns client enable",
+				Description: "Third party signal provider builtin dns client enabled",
 				Optional:    true,
 			},
 			"tpsp_chrome_remote_desktop_app_blocked": schema.BoolAttribute{
@@ -377,4 +378,8 @@ func mapDeviceAssuranceChromeOSToState(data *okta.ListDeviceAssurancePolicies200
 	state.LastUpdate = types.StringPointerValue(data.DeviceAssuranceChromeOSPlatform.LastUpdate)
 	state.LastUpdatedBy = types.StringPointerValue(data.DeviceAssuranceChromeOSPlatform.LastUpdatedBy)
 	return diags
+}
+
+func (r *policyDeviceAssuranceChromeOSResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
