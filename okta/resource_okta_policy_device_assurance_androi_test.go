@@ -23,7 +23,7 @@ var (
 	}
 )
 
-func TestAccPolicyDeviceAssuranceAndroid(t *testing.T) {
+func TestAccResourceOktaPolicyDeviceAssuranceAndroid(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
