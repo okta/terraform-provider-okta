@@ -57,6 +57,13 @@ resource "okta_network_zone" "test" {
 data "okta_user_type" "default" {
   name = "user"
 }
+# TODO unable to run the test due to conflict providerFactories between plugin and framework
+# Works fine with terraform apply
+# resource "okta_policy_device_assurance_android" "test" {
+#   name = "test"
+#   os_version = "12"
+#   jailbreak = false
+# }
 
 resource "okta_app_signon_policy_rule" "test" {
   name                        = "testAcc_replace_with_uuid_updated"
@@ -74,6 +81,9 @@ resource "okta_app_signon_policy_rule" "test" {
   groups_included             = [
     okta_group.this[0].id,
     okta_group.this[1].id
+  ]
+  device_assurances_included = [
+    okta_policy_device_assurance_android.test.id
   ]
   network_connection          = "ZONE"
   network_includes            = [

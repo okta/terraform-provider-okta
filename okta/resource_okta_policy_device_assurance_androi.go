@@ -200,7 +200,6 @@ func (r *policyDeviceAssuranceAndroidResource) Create(ctx context.Context, req r
 		return
 	}
 
-	// TODU need to do additional read?
 	resp.Diagnostics.Append(mapDeviceAssuranceAndroidToState(deviceAssurance, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -281,7 +280,6 @@ func (r *policyDeviceAssuranceAndroidResource) Update(ctx context.Context, req r
 		return
 	}
 
-	// TODU need to do additional read?
 	resp.Diagnostics.Append(mapDeviceAssuranceAndroidToState(deviceAssurance, &state)...)
 	if resp.Diagnostics.HasError() {
 		return

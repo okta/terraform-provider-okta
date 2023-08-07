@@ -197,7 +197,6 @@ func (r *policyDeviceAssuranceChromeOSResource) Create(ctx context.Context, req 
 		return
 	}
 
-	// TODU need to do additional read?
 	resp.Diagnostics.Append(mapDeviceAssuranceChromeOSToState(deviceAssurance, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -278,7 +277,6 @@ func (r *policyDeviceAssuranceChromeOSResource) Update(ctx context.Context, req 
 		return
 	}
 
-	// TODU need to do additional read?
 	resp.Diagnostics.Append(mapDeviceAssuranceChromeOSToState(deviceAssurance, &state)...)
 	if resp.Diagnostics.HasError() {
 		return

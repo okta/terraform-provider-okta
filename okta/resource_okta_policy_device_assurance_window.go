@@ -283,7 +283,6 @@ func (r *policyDeviceAssuranceWindowsResource) Create(ctx context.Context, req r
 		return
 	}
 
-	// TODU need to do additional read?
 	resp.Diagnostics.Append(mapDeviceAssuranceWindowsToState(deviceAssurance, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -364,7 +363,6 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 		return
 	}
 
-	// TODU need to do additional read?
 	resp.Diagnostics.Append(mapDeviceAssuranceWindowsToState(deviceAssurance, &state)...)
 	if resp.Diagnostics.HasError() {
 		return

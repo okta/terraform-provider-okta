@@ -253,7 +253,6 @@ func (r *policyDeviceAssuranceMacOSResource) Create(ctx context.Context, req res
 		return
 	}
 
-	// TODU need to do additional read?
 	resp.Diagnostics.Append(mapDeviceAssuranceMacOSToState(deviceAssurance, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -334,7 +333,6 @@ func (r *policyDeviceAssuranceMacOSResource) Update(ctx context.Context, req res
 		return
 	}
 
-	// TODU need to do additional read?
 	resp.Diagnostics.Append(mapDeviceAssuranceMacOSToState(deviceAssurance, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
