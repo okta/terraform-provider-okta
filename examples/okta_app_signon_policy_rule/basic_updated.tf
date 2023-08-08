@@ -58,6 +58,12 @@ data "okta_user_type" "default" {
   name = "user"
 }
 
+resource "okta_policy_device_assurance_android" "test" {
+  name = "test"
+  os_version = "12"
+  jailbreak = false
+}
+
 resource "okta_app_signon_policy_rule" "test" {
   name                        = "testAcc_replace_with_uuid_updated"
   policy_id                   = data.okta_app_signon_policy.test.id
@@ -74,6 +80,9 @@ resource "okta_app_signon_policy_rule" "test" {
   groups_included             = [
     okta_group.this[0].id,
     okta_group.this[1].id
+  ]
+  device_assurances_included = [
+    okta_policy_device_assurance_android.test.id
   ]
   network_connection          = "ZONE"
   network_includes            = [

@@ -5,12 +5,9 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
-	"strings"
 	"time"
 
 	"github.com/cenkalti/backoff"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -139,27 +136,23 @@ func Provider() *schema.Provider {
 			"org_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("OKTA_ORG_NAME", nil),
 				Description: "The organization to manage in Okta.",
 			},
 			"access_token": {
 				Type:          schema.TypeString,
 				Optional:      true,
-				DefaultFunc:   schema.EnvDefaultFunc("OKTA_ACCESS_TOKEN", nil),
 				Description:   "Bearer token granting privileges to Okta API.",
 				ConflictsWith: []string{"api_token", "client_id", "scopes", "private_key"},
 			},
 			"api_token": {
 				Type:          schema.TypeString,
 				Optional:      true,
-				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_TOKEN", nil),
 				Description:   "API Token granting privileges to Okta API.",
 				ConflictsWith: []string{"access_token", "client_id", "scopes", "private_key"},
 			},
 			"client_id": {
 				Type:          schema.TypeString,
 				Optional:      true,
-				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_CLIENT_ID", nil),
 				Description:   "API Token granting privileges to Okta API.",
 				ConflictsWith: []string{"access_token", "api_token"},
 			},
@@ -167,71 +160,60 @@ func Provider() *schema.Provider {
 				Type:          schema.TypeSet,
 				Optional:      true,
 				Elem:          &schema.Schema{Type: schema.TypeString},
-				DefaultFunc:   envDefaultSetFunc("OKTA_API_SCOPES", nil),
 				Description:   "API Token granting privileges to Okta API.",
 				ConflictsWith: []string{"access_token", "api_token"},
 			},
 			"private_key": {
 				Optional:      true,
 				Type:          schema.TypeString,
-				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_PRIVATE_KEY", nil),
 				Description:   "API Token granting privileges to Okta API.",
 				ConflictsWith: []string{"access_token", "api_token"},
 			},
 			"private_key_id": {
 				Optional:      true,
 				Type:          schema.TypeString,
-				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_PRIVATE_KEY_ID", nil),
 				Description:   "API Token Id granting privileges to Okta API.",
 				ConflictsWith: []string{"api_token"},
 			},
 			"base_url": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("OKTA_BASE_URL", "okta.com"),
 				Description: "The Okta url. (Use 'oktapreview.com' for Okta testing)",
 			},
 			"http_proxy": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("OKTA_HTTP_PROXY", ""),
 				Description: "Alternate HTTP proxy of scheme://hostname or scheme://hostname:port format",
 			},
 			"backoff": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Default:     true,
 				Description: "Use exponential back off strategy for rate limits.",
 			},
 			"min_wait_seconds": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Default:     30,
 				Description: "minimum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
 			},
 			"max_wait_seconds": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Default:     300,
 				Description: "maximum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
 			},
 			"max_retries": {
 				Type:             schema.TypeInt,
 				Optional:         true,
-				Default:          5,
 				ValidateDiagFunc: intAtMost(100),
 				Description:      "maximum number of retries to attempt before erroring out.",
 			},
 			"parallelism": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Default:     1,
 				Description: "Number of concurrent requests to make within a resource where bulk operations are not possible. Take note of https://developer.okta.com/docs/api/getting_started/rate-limits.",
 			},
 			"log_level": {
 				Type:             schema.TypeInt,
 				Optional:         true,
-				Default:          int(hclog.Error),
 				ValidateDiagFunc: intBetween(1, 5),
 				Description:      "providers log level. Minimum is 1 (TRACE), and maximum is 5 (ERROR)",
 			},
@@ -239,7 +221,6 @@ func Provider() *schema.Provider {
 				Type:             schema.TypeInt,
 				Optional:         true,
 				ValidateDiagFunc: intBetween(1, 100),
-				DefaultFunc:      schema.EnvDefaultFunc("MAX_API_CAPACITY", 100),
 				Description: "(Experimental) sets what percentage of capacity the provider can use of the total rate limit " +
 					"capacity while making calls to the Okta management API endpoints. Okta API operates in one minute buckets. " +
 					"See Okta Management API Rate Limits: https://developer.okta.com/docs/reference/rl-global-mgmt/",
@@ -247,7 +228,6 @@ func Provider() *schema.Provider {
 			"request_timeout": {
 				Type:             schema.TypeInt,
 				Optional:         true,
-				Default:          0,
 				ValidateDiagFunc: intBetween(0, 300),
 				Description:      "Timeout for single request (in seconds) which is made to Okta, the default is `0` (means no limit is set). The maximum value can be `300`.",
 			},
@@ -418,8 +398,8 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		config.httpProxy = httpProxy
 	}
 
-	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(config.scopes) == 0 {
-		config.scopes = strings.Split(v, ",")
+	if err := config.handlePluginDefaults(ctx); err != nil {
+		return nil, diag.Errorf("[ERROR] handle default configuration: %v", err)
 	}
 
 	if err := config.loadAndValidate(ctx); err != nil {
@@ -431,20 +411,6 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 
 // This is a global MutexKV for use within this plugin.
 var oktaMutexKV = mutexkv.NewMutexKV()
-
-func envDefaultSetFunc(k string, dv interface{}) schema.SchemaDefaultFunc {
-	return func() (interface{}, error) {
-		if v := os.Getenv(k); v != "" {
-			stringList := strings.Split(v, ",")
-			arr := make([]interface{}, len(stringList))
-			for i := range stringList {
-				arr[i] = stringList[i]
-			}
-			return arr, nil
-		}
-		return dv, nil
-	}
-}
 
 func isClassicOrg(ctx context.Context, m interface{}) bool {
 	if config, ok := m.(*Config); ok && config.IsClassicOrg(ctx) {
