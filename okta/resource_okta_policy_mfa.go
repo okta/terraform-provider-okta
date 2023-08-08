@@ -100,6 +100,13 @@ func buildSettings(d *schema.ResourceData) *sdk.SdkPolicySettings {
 			if enroll != nil {
 				authenticator.Enroll = &sdk.Enroll{Self: enroll.(string)}
 			}
+			constraints := rawFactor["constraints"]
+			if constraints != nil {
+				c, ok := constraints.(string)
+				if ok {
+					authenticator.Constraints = &sdk.PolicyAuthenticatorConstraints{AaguidGroups: strings.Split(c, ",")}
+				}
+			}
 			authenticators = append(authenticators, authenticator)
 		}
 
@@ -192,9 +199,16 @@ func syncFactor(d *schema.ResourceData, k string, f *sdk.PolicyFactor) {
 func syncAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.PolicyAuthenticator) {
 	for _, authenticator := range authenticators {
 		if authenticator.Key == k {
-			_ = d.Set(k, map[string]interface{}{
-				"enroll": authenticator.Enroll.Self,
-			})
+			if authenticator.Constraints != nil {
+				_ = d.Set(k, map[string]interface{}{
+					"enroll":      authenticator.Enroll.Self,
+					"constraints": strings.Join(authenticator.Constraints.AaguidGroups, ","),
+				})
+			} else {
+				_ = d.Set(k, map[string]interface{}{
+					"enroll": authenticator.Enroll.Self,
+				})
+			}
 			return
 		}
 	}
