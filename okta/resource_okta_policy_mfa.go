@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"sort"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -100,6 +101,16 @@ func buildSettings(d *schema.ResourceData) *sdk.SdkPolicySettings {
 			if enroll != nil {
 				authenticator.Enroll = &sdk.Enroll{Self: enroll.(string)}
 			}
+			constraints := rawFactor["constraints"]
+			if constraints != nil {
+				c, ok := constraints.(string)
+				if ok {
+					// NOTE: we should consider using diff suppress func if we start seeing updating issue
+					slice := strings.Split(c, ",")
+					sort.Strings(slice)
+					authenticator.Constraints = &sdk.PolicyAuthenticatorConstraints{AaguidGroups: slice}
+				}
+			}
 			authenticators = append(authenticators, authenticator)
 		}
 
@@ -192,9 +203,18 @@ func syncFactor(d *schema.ResourceData, k string, f *sdk.PolicyFactor) {
 func syncAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.PolicyAuthenticator) {
 	for _, authenticator := range authenticators {
 		if authenticator.Key == k {
-			_ = d.Set(k, map[string]interface{}{
-				"enroll": authenticator.Enroll.Self,
-			})
+			if authenticator.Constraints != nil {
+				slice := authenticator.Constraints.AaguidGroups
+				sort.Strings(slice)
+				_ = d.Set(k, map[string]interface{}{
+					"enroll":      authenticator.Enroll.Self,
+					"constraints": strings.Join(slice, ","),
+				})
+			} else {
+				_ = d.Set(k, map[string]interface{}{
+					"enroll": authenticator.Enroll.Self,
+				})
+			}
 			return
 		}
 	}
