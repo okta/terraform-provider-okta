@@ -18,11 +18,13 @@ func dataSourceGroup() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
+				Computed:      true,
 				Optional:      true,
 				ConflictsWith: []string{"name", "type"},
 			},
 			"name": {
 				Type:     schema.TypeString,
+				Computed: true,
 				Optional: true,
 			},
 			"type": {
