@@ -14,9 +14,6 @@ This resource allows you to bulk manage groups for a single user, independent of
 to manage group membership in terraform without overriding other automatic membership operations performed by group
 rules and other non-managed actions.
 
-When using this with a `okta_user` resource, you should add a lifecycle ignore for group memberships to avoid conflicts
-in desired state.
-
 ## Example Usage
 
 ```hcl
