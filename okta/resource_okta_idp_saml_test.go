@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -66,7 +65,6 @@ func TestAccOktaIdpSaml_crud(t *testing.T) {
 // test would fail if the org was missing the mappings api feature. And pass if
 // the feature was enabled.
 func TestAccOktaIdpSaml_minimal_example(t *testing.T) {
-	ri := acctest.RandInt()
 	mgr := newFixtureManager(idpSaml, t.Name())
 	config := `
 resource "okta_app_saml" "test" {
@@ -110,7 +108,7 @@ resource "okta_idp_saml" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(ri)),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "acs_type", "INSTANCE"),
 					resource.TestCheckResourceAttrSet(resourceName, "audience"),
 					resource.TestCheckResourceAttr(resourceName, "sso_url", "https://idp.example.com"),

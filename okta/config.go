@@ -22,7 +22,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-const OktaTerraformProviderVersion = "4.1.0"
+const OktaTerraformProviderVersion = "4.2.0"
 const OktaTerraformProviderUserAgent = "okta-terraform/" + OktaTerraformProviderVersion
 
 func (adt *AddHeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {

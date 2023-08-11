@@ -101,6 +101,8 @@ func resourceFactorTOTPRead(ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func resourceFactorTOTPDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	// NOTE: The publicly documented DELETE /api/v1/org/factors/hotp/profiles/{id} appears to only 501 at the present time.
+
 	_, err := getAPISupplementFromMetadata(m).DeleteHotpFactorProfile(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete TOTP factor: %v", err)

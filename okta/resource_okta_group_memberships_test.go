@@ -131,8 +131,10 @@ func TestAccResourceOktaGroupMemberships_TrackAllUsersBehavior(t *testing.T) {
 				//   okta_group_rule.group_b_to_a_rule will have run and
 				//   associated the three users from Group B to aslo be in
 				//   Group A.
-				ExpectNonEmptyPlan: true,
+
+				// ExpectNonEmptyPlan: true,
 				// Even with a read delay of 5 seconds it can take awhile for group rules to fire in turn causing this test to fail.
+
 				Config: testOktaGroupMembershipsConfig(true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("okta_group_memberships.test_a_direct", "users.#", "2"),

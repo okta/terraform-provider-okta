@@ -1,5 +1,5 @@
 resource "okta_domain" "test" {
-  name   = "example.com"
+  name   = "testAcc-replace_with_uuid.example.com"
   verify = false
 }
 

@@ -27,17 +27,6 @@ JSON
 
 ```
 
-!> **NOTE** When using this resource in conjunction with other application resources (e.g. `okta_app_oauth`) it is advisable to add the following `lifecycle` argument to the associated `app_*` resources to prevent the groups being unassigned on subsequent runs:
-
-```hcl
-resource "okta_app_oauth" "app" {
-  //...
-  lifecycle {
-     ignore_changes = [groups]
-  }
-}
-```
-
 ~> **IMPORTANT:** When the `app_group_assignment` is retained, by setting `retain_assignment` to `true`, it is no longer managed by Terraform after it is destroyed. To truly delete the assignment, you will need to remove it either through the Okta Console or API. This argument exists for the use case where the same group is assigned in multiple places in order to prevent a single destruction removing all of them.
 
 ## Argument Reference
