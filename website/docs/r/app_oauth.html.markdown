@@ -217,8 +217,21 @@ true in the resource. This causes `client_secret` to be set to blank. Remove
 `omit_secret` and run apply again. The resource will set a new `client_secret`
 for the app.
 
-### Advanced PEM and JWKS example
+### Private Keys
 
+The private key format that an Okta OAuth app expects is PKCS#8 (unencrypted).
+The operator either uploads their own private key or Okta can generate one in
+the Admin UI Panel under the apps Client Credentials. PKCS#8 format can be
+identified by a header that starts with `-----BEGIN PRIVATE KEY-----`. If the
+operator has a PKCS#1 (unencrypted) format private key (the header starts with
+`-----BEGIN RSA PRIVATE KEY-----`) they can generate a PKCS#8 format
+key with `openssl`:
+
+```
+ openssl rsa -in pkcs1.pem -out pkcs8-example.pem
+```
+
+### Advanced PEM and JWKS example
 
 ```hcl
 # This example config illustrates how Terraform can be used to generate a
