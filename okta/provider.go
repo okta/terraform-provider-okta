@@ -384,7 +384,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	if err := config.loadClients(ctx); err != nil {
 		return nil, diag.Errorf("[ERROR] failed to load sdk clients: %v", err)
 	}
-	config.timeOperations = NewProductionTimeOperations()
+	config.SetTimeOperations(NewProductionTimeOperations())
 
 	// NOTE: production runtime needs to know about VCR test environment for
 	// this one case where the validate function calls GET /api/v1/users/me to
@@ -395,15 +395,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		}
 	}
 
-	if err := config.handlePluginDefaults(ctx); err != nil {
-		return nil, diag.Errorf("[ERROR] handle default configuration: %v", err)
-	}
-
-	if err := config.loadAndValidate(ctx); err != nil {
-		return nil, diag.Errorf("[ERROR] invalid configuration: %v", err)
-	}
-
-	return &config, nil
+	return config, nil
 }
 
 func isClassicOrg(ctx context.Context, m interface{}) bool {

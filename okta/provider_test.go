@@ -52,7 +52,7 @@ func init() {
 			return pluginProvider, nil
 		},
 	}
-	frameworkProvider := NewFWProvider("dev")
+	frameworkProvider := NewFrameworkProvider("dev")
 	testAccProtoV5ProviderFactories = map[string]func() (tfprotov5.ProviderServer, error){
 		"okta": providerserver.NewProtocol5WithError(frameworkProvider),
 	}

@@ -24,7 +24,7 @@ func main() {
 		// v2 plugin
 		okta.Provider().GRPCProvider,
 		// v3 plugin
-		providerserver.NewProtocol5(okta.NewFWProvider(okta.OktaTerraformProviderVersion)),
+		providerserver.NewProtocol5(okta.NewFrameworkProvider(okta.OktaTerraformProviderVersion)),
 	}
 
 	// use the muxer

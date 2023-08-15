@@ -65,42 +65,136 @@ type (
 )
 
 func NewConfig(d *schema.ResourceData) *Config {
+	// defaults
 	config := Config{
-		orgName:        d.Get("org_name").(string),
-		domain:         d.Get("base_url").(string),
-		apiToken:       d.Get("api_token").(string),
-		accessToken:    d.Get("access_token").(string),
-		clientID:       d.Get("client_id").(string),
-		privateKey:     d.Get("private_key").(string),
-		privateKeyId:   d.Get("private_key_id").(string),
-		scopes:         convertInterfaceToStringSet(d.Get("scopes")),
-		retryCount:     d.Get("max_retries").(int),
-		parallelism:    d.Get("parallelism").(int),
-		backoff:        d.Get("backoff").(bool),
-		minWait:        d.Get("min_wait_seconds").(int),
-		maxWait:        d.Get("max_wait_seconds").(int),
-		logLevel:       d.Get("log_level").(int),
-		requestTimeout: d.Get("request_timeout").(int),
-		maxAPICapacity: d.Get("max_api_capacity").(int),
+		backoff:        true,
+		minWait:        30,
+		maxWait:        300,
+		retryCount:     5,
+		parallelism:    1,
+		logLevel:       int(hclog.Error),
+		requestTimeout: 0,
+		maxAPICapacity: 100,
+	}
+	logLevel := hclog.Level(config.logLevel)
+	if os.Getenv("TF_LOG") != "" {
+		logLevel = hclog.LevelFromString(os.Getenv("TF_LOG"))
+	}
+	config.logger = hclog.New(&hclog.LoggerOptions{
+		Level:      logLevel,
+		TimeFormat: "2006/01/02 03:04:05",
+	})
+
+	if val, ok := d.GetOk("org_name"); ok {
+		config.orgName = val.(string)
+	}
+	if config.orgName == "" && os.Getenv("OKTA_ORG_NAME") != "" {
+		config.orgName = os.Getenv("OKTA_ORG_NAME")
+	}
+
+	if val, ok := d.GetOk("base_url"); ok {
+		config.domain = val.(string)
+	}
+	if config.domain == "" {
+		if os.Getenv("OKTA_BASE_URL") != "" {
+			config.domain = os.Getenv("OKTA_BASE_URL")
+		}
+	}
+
+	if val, ok := d.GetOk("api_token"); ok {
+		config.apiToken = val.(string)
+	}
+	if config.apiToken == "" && os.Getenv("OKTA_API_TOKEN") != "" {
+		config.apiToken = os.Getenv("OKTA_API_TOKEN")
+	}
+
+	if val, ok := d.GetOk("access_token"); ok {
+		config.accessToken = val.(string)
+	}
+	if config.accessToken == "" && os.Getenv("OKTA_ACCESS_TOKEN") != "" {
+		config.accessToken = os.Getenv("OKTA_ACCESS_TOKEN")
+	}
+
+	if val, ok := d.GetOk("client_id"); ok {
+		config.clientID = val.(string)
+	}
+	if config.clientID == "" && os.Getenv("OKTA_API_CLIENT_ID") != "" {
+		config.clientID = os.Getenv("OKTA_API_CLIENT_ID")
+	}
+
+	if val, ok := d.GetOk("private_key"); ok {
+		config.privateKey = val.(string)
+	}
+	if config.privateKey == "" && os.Getenv("OKTA_API_PRIVATE_KEY") != "" {
+		config.privateKey = os.Getenv("OKTA_API_PRIVATE_KEY")
+	}
+
+	if val, ok := d.GetOk("private_key_id"); ok {
+		config.privateKeyId = val.(string)
+	}
+	if config.privateKeyId == "" && os.Getenv("OKTA_API_PRIVATE_KEY_ID") != "" {
+		config.privateKeyId = os.Getenv("OKTA_API_PRIVATE_KEY_ID")
+	}
+
+	if val, ok := d.GetOk("scopes"); ok {
+		config.scopes = convertInterfaceToStringSet(val)
+	}
+	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(config.scopes) == 0 {
+		config.scopes = strings.Split(v, ",")
+	}
+
+	if val, ok := d.GetOk("max_retries"); ok {
+		config.retryCount = val.(int)
+	}
+
+	if val, ok := d.GetOk("parallelism"); ok {
+		config.parallelism = val.(int)
+	}
+
+	if val, ok := d.GetOk("backoff"); ok {
+		config.backoff = val.(bool)
+	}
+
+	if val, ok := d.GetOk("min_wait_seconds"); ok {
+		config.minWait = val.(int)
+	}
+
+	if val, ok := d.GetOk("max_wait_seconds"); ok {
+		config.maxWait = val.(int)
+	}
+
+	if val, ok := d.GetOk("log_level"); ok {
+		config.logLevel = val.(int)
+	}
+
+	if val, ok := d.GetOk("request_timeout"); ok {
+		config.requestTimeout = val.(int)
+	}
+
+	if val, ok := d.GetOk("max_api_capacity"); ok {
+		config.maxAPICapacity = val.(int)
+	}
+	if config.maxAPICapacity == 0 {
+		if os.Getenv("MAX_API_CAPACITY") != "" {
+			mac, err := strconv.ParseInt(os.Getenv("MAX_API_CAPACITY"), 10, 64)
+			if err != nil {
+				config.logger.Error("error with max_api_capacity value", err)
+			} else {
+				config.maxAPICapacity = int(mac)
+			}
+		}
 	}
 
 	if httpProxy, ok := d.Get("http_proxy").(string); ok {
 		config.httpProxy = httpProxy
 	}
+	if config.httpProxy == "" && os.Getenv("OKTA_HTTP_PROXY") != "" {
+		config.httpProxy = os.Getenv("OKTA_HTTP_PROXY")
+	}
 
 	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(config.scopes) == 0 {
 		config.scopes = strings.Split(v, ",")
 	}
-
-	logLevel := hclog.Level(config.logLevel)
-	if os.Getenv("TF_LOG") != "" {
-		logLevel = hclog.LevelFromString(os.Getenv("TF_LOG"))
-	}
-
-	config.logger = hclog.New(&hclog.LoggerOptions{
-		Level:      logLevel,
-		TimeFormat: "2006/01/02 03:04:05",
-	})
 
 	return &config
 }
@@ -186,60 +280,6 @@ func (c *Config) verifyCredentials(ctx context.Context) error {
 	return nil
 }
 
-func (c *Config) handlePluginDefaults(ctx context.Context) error {
-	var err error
-	if c.orgName == "" && os.Getenv("OKTA_ORG_NAME") != "" {
-		c.orgName = os.Getenv("OKTA_ORG_NAME")
-	}
-	if c.accessToken == "" && os.Getenv("OKTA_ACCESS_TOKEN") != "" {
-		c.accessToken = os.Getenv("OKTA_ACCESS_TOKEN")
-	}
-	if c.apiToken == "" && os.Getenv("OKTA_API_TOKEN") != "" {
-		c.apiToken = os.Getenv("OKTA_API_TOKEN")
-	}
-	if c.clientID == "" && os.Getenv("OKTA_API_CLIENT_ID") != "" {
-		c.clientID = os.Getenv("OKTA_API_CLIENT_ID")
-	}
-	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(c.scopes) == 0 {
-		c.scopes = strings.Split(v, ",")
-	}
-	if c.privateKey == "" && os.Getenv("OKTA_API_PRIVATE_KEY") != "" {
-		c.privateKey = os.Getenv("OKTA_API_PRIVATE_KEY")
-	}
-	if c.privateKeyId == "" && os.Getenv("OKTA_API_PRIVATE_KEY_ID") != "" {
-		c.privateKeyId = os.Getenv("OKTA_API_PRIVATE_KEY_ID")
-	}
-	if c.domain == "" {
-		if os.Getenv("OKTA_BASE_URL") != "" {
-			c.domain = os.Getenv("OKTA_BASE_URL")
-		} else {
-			c.domain = "okta.com"
-		}
-	}
-	if c.httpProxy == "" && os.Getenv("OKTA_HTTP_PROXY") != "" {
-		c.httpProxy = os.Getenv("OKTA_HTTP_PROXY")
-	}
-	if c.maxAPICapacity == 0 {
-		if os.Getenv("MAX_API_CAPACITY") != "" {
-			mac, err := strconv.ParseInt(os.Getenv("MAX_API_CAPACITY"), 10, 64)
-			if err != nil {
-				return err
-			}
-			c.maxAPICapacity = int(mac)
-		} else {
-			c.maxAPICapacity = 100
-		}
-	}
-	c.backoff = true
-	c.minWait = 30
-	c.maxWait = 300
-	c.retryCount = 5
-	c.parallelism = 1
-	c.logLevel = int(hclog.Error)
-	c.requestTimeout = 0
-	return err
-}
-
 func (c *Config) handleFrameworkDefaults(ctx context.Context, data *FrameworkProviderData) error {
 	var err error
 	if data.OrgName.IsNull() && os.Getenv("OKTA_ORG_NAME") != "" {
@@ -274,8 +314,6 @@ func (c *Config) handleFrameworkDefaults(ctx context.Context, data *FrameworkPro
 	if data.BaseURL.IsNull() {
 		if os.Getenv("OKTA_BASE_URL") != "" {
 			data.BaseURL = types.StringValue(os.Getenv("OKTA_BASE_URL"))
-		} else {
-			data.BaseURL = types.StringValue("okta.com")
 		}
 	}
 	if data.HTTPProxy.IsNull() && os.Getenv("OKTA_HTTP_PROXY") != "" {
@@ -300,19 +338,15 @@ func (c *Config) handleFrameworkDefaults(ctx context.Context, data *FrameworkPro
 	data.LogLevel = types.Int64Value(int64(hclog.Error))
 	data.RequestTimeout = types.Int64Value(0)
 
-	return err
-}
-
-func providerLogger(c *Config) hclog.Logger {
-	logLevel := hclog.Level(c.logLevel)
 	if os.Getenv("TF_LOG") != "" {
-		logLevel = hclog.LevelFromString(os.Getenv("TF_LOG"))
+		data.LogLevel = types.Int64Value(int64(hclog.LevelFromString(os.Getenv("TF_LOG"))))
 	}
-
-	return hclog.New(&hclog.LoggerOptions{
-		Level:      logLevel,
+	c.logger = hclog.New(&hclog.LoggerOptions{
+		Level:      hclog.Level(data.LogLevel.ValueInt64()),
 		TimeFormat: "2006/01/02 03:04:05",
 	})
+
+	return err
 }
 
 // oktaSDKClient should be called with a primary http client that is utilized
