@@ -16,7 +16,7 @@
 
 ### IMPROVEMENTS
 
-* Data Source `okta_group`'s `name` and `id` arguments are optional and computed [#1665](https://github.com/okta/terraform-provider-okta/pull/1665). Thanks, [@MatthewJohn_1643](https://github.com/MatthewJohn_1643)!
+* Data Source `okta_group`'s `name` and `id` arguments are optional and computed [#1665](https://github.com/okta/terraform-provider-okta/pull/1665). Thanks, [@MatthewJohn](https://github.com/MatthewJohn)!
 * Improve backoff with proper context [#1658](https://github.com/okta/terraform-provider-okta/pull/1658). Thanks, [@monde](https://github.com/monde)!
 * Correct obsolete documentation; document PKCS#1 and PKCS#8 private key usage in provider config and oauth apps [#1666](https://github.com/okta/terraform-provider-okta/pull/1666). Thanks, [@monde](https://github.com/monde)!
 
