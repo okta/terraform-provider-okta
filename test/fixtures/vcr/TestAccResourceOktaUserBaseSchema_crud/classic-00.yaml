@@ -1,0 +1,865 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 231
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: '{"definitions":{"base":{"id":"#base","properties":{"firstName":{"master":{"type":"PROFILE_MASTER"},"permissions":[{"action":"READ_ONLY","principal":"SELF"}],"required":false,"title":"First name","type":"string"}},"type":"object"}}}'
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/user/default
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta user profile template with default permission settings","lastUpdated":"2023-08-16T00:07:53.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7","method":"GET"},"type":{"rel":"type","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:53 GMT
+        status: 200 OK
+        code: 200
+        duration: 185.163109ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/user/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta user profile template with default permission settings","lastUpdated":"2023-08-16T00:07:53.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7","method":"GET"},"type":{"rel":"type","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:53 GMT
+        status: 200 OK
+        code: 200
+        duration: 61.960669ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/user/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta user profile template with default permission settings","lastUpdated":"2023-08-16T00:07:53.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7","method":"GET"},"type":{"rel":"type","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:54 GMT
+        status: 200 OK
+        code: 200
+        duration: 66.228199ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/user/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta user profile template with default permission settings","lastUpdated":"2023-08-16T00:07:53.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7","method":"GET"},"type":{"rel":"type","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:54 GMT
+        status: 200 OK
+        code: 200
+        duration: 63.601675ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/user/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta user profile template with default permission settings","lastUpdated":"2023-08-16T00:07:53.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7","method":"GET"},"type":{"rel":"type","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:54 GMT
+        status: 200 OK
+        code: 200
+        duration: 57.734329ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 231
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: '{"definitions":{"base":{"id":"#base","properties":{"firstName":{"master":{"type":"PROFILE_MASTER"},"permissions":[{"action":"READ_WRITE","principal":"SELF"}],"required":true,"title":"First name","type":"string"}},"type":"object"}}}'
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/user/default
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta user profile template with default permission settings","lastUpdated":"2023-08-16T00:07:55.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","firstName","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7","method":"GET"},"type":{"rel":"type","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:55 GMT
+        status: 200 OK
+        code: 200
+        duration: 106.187129ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/user/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta user profile template with default permission settings","lastUpdated":"2023-08-16T00:07:55.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","firstName","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7","method":"GET"},"type":{"rel":"type","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:55 GMT
+        status: 200 OK
+        code: 200
+        duration: 61.751016ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/user/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta user profile template with default permission settings","lastUpdated":"2023-08-16T00:07:55.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","firstName","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7","method":"GET"},"type":{"rel":"type","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:55 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 58.032668ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/user/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta user profile template with default permission settings","lastUpdated":"2023-08-16T00:07:55.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","firstName","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7","method":"GET"},"type":{"rel":"type","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:55 GMT
+        status: 200 OK
+        code: 200
+        duration: 68.036796ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/user/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta user profile template with default permission settings","lastUpdated":"2023-08-16T00:07:55.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","firstName","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7","method":"GET"},"type":{"rel":"type","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:56 GMT
+        status: 200 OK
+        code: 200
+        duration: 59.953131ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 124
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"description":"Terraform Acceptance Test Schema User Type","displayName":"testAcc_4217169455","name":"testAcc_4217169455"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i7hhr5DqJfnXX1d7","displayName":"testAcc_4217169455","name":"testAcc_4217169455","description":"Terraform Acceptance Test Schema User Type","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","created":"2023-08-16T00:07:56.000Z","lastUpdated":"2023-08-16T00:07:56.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7hhr5DqJfnXX1d7","method":"GET"},"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:56 GMT
+        status: 200 OK
+        code: 200
+        duration: 116.015333ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i7hhr5DqJfnXX1d7","displayName":"testAcc_4217169455","name":"testAcc_4217169455","description":"Terraform Acceptance Test Schema User Type","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","created":"2023-08-16T00:07:56.000Z","lastUpdated":"2023-08-16T00:07:56.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7hhr5DqJfnXX1d7","method":"GET"},"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:56 GMT
+        status: 200 OK
+        code: 200
+        duration: 79.786624ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i7hhr5DqJfnXX1d7","displayName":"testAcc_4217169455","name":"testAcc_4217169455","description":"Terraform Acceptance Test Schema User Type","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","created":"2023-08-16T00:07:56.000Z","lastUpdated":"2023-08-16T00:07:56.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7hhr5DqJfnXX1d7","method":"GET"},"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:56 GMT
+        status: 200 OK
+        code: 200
+        duration: 70.282649ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 231
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: '{"definitions":{"base":{"id":"#base","properties":{"firstName":{"master":{"type":"PROFILE_MASTER"},"permissions":[{"action":"READ_ONLY","principal":"SELF"}],"required":false,"title":"First name","type":"string"}},"type":"object"}}}'
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/user/osc9i7hhr5DqJfnXX1d7
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/user/osc9i7hhr5DqJfnXX1d7","$schema":"http://json-schema.org/draft-04/schema#","name":"testAcc_4217169455","title":"testAcc_4217169455","description":"Terraform Acceptance Test Schema User Type","lastUpdated":"2023-08-16T00:07:56.000Z","created":"2023-08-16T00:07:56.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","lastName","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7hhr5DqJfnXX1d7","method":"GET"},"type":{"rel":"type","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:56 GMT
+        status: 200 OK
+        code: 200
+        duration: 107.567961ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i7hhr5DqJfnXX1d7","displayName":"testAcc_4217169455","name":"testAcc_4217169455","description":"Terraform Acceptance Test Schema User Type","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","created":"2023-08-16T00:07:56.000Z","lastUpdated":"2023-08-16T00:07:56.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7hhr5DqJfnXX1d7","method":"GET"},"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:56 GMT
+        status: 200 OK
+        code: 200
+        duration: 60.728894ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/user/osc9i7hhr5DqJfnXX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/user/osc9i7hhr5DqJfnXX1d7","$schema":"http://json-schema.org/draft-04/schema#","name":"testAcc_4217169455","title":"testAcc_4217169455","description":"Terraform Acceptance Test Schema User Type","lastUpdated":"2023-08-16T00:07:56.000Z","created":"2023-08-16T00:07:56.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","lastName","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7hhr5DqJfnXX1d7","method":"GET"},"type":{"rel":"type","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:56 GMT
+        status: 200 OK
+        code: 200
+        duration: 70.492234ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i7hhr5DqJfnXX1d7","displayName":"testAcc_4217169455","name":"testAcc_4217169455","description":"Terraform Acceptance Test Schema User Type","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","created":"2023-08-16T00:07:56.000Z","lastUpdated":"2023-08-16T00:07:56.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7hhr5DqJfnXX1d7","method":"GET"},"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:57 GMT
+        status: 200 OK
+        code: 200
+        duration: 57.416321ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/user/osc9i7hhr5DqJfnXX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/user/osc9i7hhr5DqJfnXX1d7","$schema":"http://json-schema.org/draft-04/schema#","name":"testAcc_4217169455","title":"testAcc_4217169455","description":"Terraform Acceptance Test Schema User Type","lastUpdated":"2023-08-16T00:07:56.000Z","created":"2023-08-16T00:07:56.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","lastName","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7hhr5DqJfnXX1d7","method":"GET"},"type":{"rel":"type","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:57 GMT
+        status: 200 OK
+        code: 200
+        duration: 68.922508ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i7hhr5DqJfnXX1d7","displayName":"testAcc_4217169455","name":"testAcc_4217169455","description":"Terraform Acceptance Test Schema User Type","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","created":"2023-08-16T00:07:56.000Z","lastUpdated":"2023-08-16T00:07:56.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7hhr5DqJfnXX1d7","method":"GET"},"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:57 GMT
+        status: 200 OK
+        code: 200
+        duration: 65.495808ms
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i7hhr5DqJfnXX1d7","displayName":"testAcc_4217169455","name":"testAcc_4217169455","description":"Terraform Acceptance Test Schema User Type","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","created":"2023-08-16T00:07:56.000Z","lastUpdated":"2023-08-16T00:07:56.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7hhr5DqJfnXX1d7","method":"GET"},"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:57 GMT
+        status: 200 OK
+        code: 200
+        duration: 75.330486ms
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/user/osc9i7hhr5DqJfnXX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/user/osc9i7hhr5DqJfnXX1d7","$schema":"http://json-schema.org/draft-04/schema#","name":"testAcc_4217169455","title":"testAcc_4217169455","description":"Terraform Acceptance Test Schema User Type","lastUpdated":"2023-08-16T00:07:56.000Z","created":"2023-08-16T00:07:56.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","lastName","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7hhr5DqJfnXX1d7","method":"GET"},"type":{"rel":"type","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:57 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 70.01651ms
+    - id: 21
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/user/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/user/default","$schema":"http://json-schema.org/draft-04/schema#","name":"user","title":"User","description":"Okta user profile template with default permission settings","lastUpdated":"2023-08-16T00:07:55.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"login":{"title":"Username","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":5,"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"firstName":{"title":"First name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"lastName":{"title":"Last name","type":"string","mutability":"READ_WRITE","scope":"NONE","minLength":1,"maxLength":50,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"middleName":{"title":"Middle name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificPrefix":{"title":"Honorific prefix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"honorificSuffix":{"title":"Honorific suffix","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"email":{"title":"Primary email","type":"string","required":true,"format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"title":{"title":"Title","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"displayName":{"title":"Display name","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"nickName":{"title":"Nickname","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"profileUrl":{"title":"Profile Url","type":"string","format":"uri","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"secondEmail":{"title":"Secondary email","type":"string","format":"email","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"mobilePhone":{"title":"Mobile phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"primaryPhone":{"title":"Primary phone","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":100,"permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"streetAddress":{"title":"Street address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"city":{"title":"City","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"state":{"title":"State","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"zipCode":{"title":"Zip code","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"countryCode":{"title":"Country code","type":"string","format":"country-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"postalAddress":{"title":"Postal Address","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"HIDE"}],"master":{"type":"PROFILE_MASTER"}},"preferredLanguage":{"title":"Preferred language","type":"string","format":"language-code","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"locale":{"title":"Locale","type":"string","format":"locale","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"timezone":{"title":"Time zone","type":"string","format":"timezone","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"userType":{"title":"User type","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"employeeNumber":{"title":"Employee number","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"costCenter":{"title":"Cost center","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"organization":{"title":"Organization","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"division":{"title":"Division","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"department":{"title":"Department","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"managerId":{"title":"ManagerId","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"manager":{"title":"Manager","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":["login","firstName","email"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc5ptm052JMcoADv1d7","method":"GET"},"type":{"rel":"type","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty5ptm052JMcoADv1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:58 GMT
+        status: 200 OK
+        code: 200
+        duration: 69.630908ms
+    - id: 22
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7hhr5DqJfnXX1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Wed, 16 Aug 2023 00:07:58 GMT
+        status: 204 No Content
+        code: 204
+        duration: 211.559105ms

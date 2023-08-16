@@ -1,0 +1,43 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 222
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"credentials":{"password":{}},"profile":{"email":"testAcc-1215177900@example.com","firstName":"TestAcc","lastName":"1215177900","login":"testAcc-1215177900@example.com","notValid":"this-isnt-valid","postalAddress":null}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/users
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"errorCode":"E0000001","errorSummary":"Api validation failed: newUser","errorLink":"E0000001","errorId":"oaeAHgjS2cOS9uNau-JdnVcEg","errorCauses":[{"errorSummary":"Property name ''notValid'' is not defined in profile"}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:49:02 GMT
+        status: 400 Bad Request
+        code: 400
+        duration: 162.154595ms

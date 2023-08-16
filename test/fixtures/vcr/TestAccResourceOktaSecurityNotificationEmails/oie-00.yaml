@@ -1,0 +1,269 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 200
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00-admin.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":true,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true}
+        form: {}
+        headers:
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00-admin.dne-okta.com/api/internal/org/settings/security-notification-settings
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":true,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true,"customizedEmailsList":[],"customizedEmailsWithReportButtonList":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:49:36 GMT
+        status: 200 OK
+        code: 200
+        duration: 3.449938485s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00-admin.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00-admin.dne-okta.com/api/internal/org/settings/security-notification-settings
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":true,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true,"customizedEmailsList":[],"customizedEmailsWithReportButtonList":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:49:38 GMT
+        status: 200 OK
+        code: 200
+        duration: 1.363681329s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00-admin.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00-admin.dne-okta.com/api/internal/org/settings/security-notification-settings
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":true,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true,"customizedEmailsList":[],"customizedEmailsWithReportButtonList":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:49:40 GMT
+        status: 200 OK
+        code: 200
+        duration: 1.404555166s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 201
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00-admin.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":false,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true}
+        form: {}
+        headers:
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00-admin.dne-okta.com/api/internal/org/settings/security-notification-settings
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":false,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true,"customizedEmailsList":[],"customizedEmailsWithReportButtonList":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:49:42 GMT
+        status: 200 OK
+        code: 200
+        duration: 2.346345921s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00-admin.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00-admin.dne-okta.com/api/internal/org/settings/security-notification-settings
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":false,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true,"customizedEmailsList":[],"customizedEmailsWithReportButtonList":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:49:44 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.015692395s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 200
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00-admin.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":true,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true}
+        form: {}
+        headers:
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00-admin.dne-okta.com/api/internal/org/settings/security-notification-settings
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":true,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true,"customizedEmailsList":[],"customizedEmailsWithReportButtonList":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:49:47 GMT
+        status: 200 OK
+        code: 200
+        duration: 3.106998699s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00-admin.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00-admin.dne-okta.com/api/internal/org/settings/security-notification-settings
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"sendEmailForNewDeviceEnabled":true,"sendEmailForFactorEnrollmentEnabled":true,"sendEmailForFactorResetEnabled":true,"sendEmailForPasswordChangedEnabled":true,"reportSuspiciousActivityEnabled":true,"customizedEmailsList":[],"customizedEmailsWithReportButtonList":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:49:49 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 2.341757573s

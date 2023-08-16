@@ -1,0 +1,305 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/.well-known/okta-organization
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"id":"00o5qwjvg8hg7YpT81d7","cell":"op3","_links":{"organization":{"href":"https://oie-00.oktapreview.com"}},"pipeline":"idx","settings":{"analyticsCollectionEnabled":false,"bugReportingEnabled":true,"omEnabled":false,"pssoEnabled":false}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:03 GMT
+        status: 200 OK
+        code: 200
+        duration: 149.412137ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 96
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"name":"testAcc_2392703879","siteKey":"random_key","secretKey":"random_key","type":"HCAPTCHA"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/captchas
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"id":"cap9i7152oi6nXF3c1d7","name":"testAcc_2392703879","siteKey":"random_key","type":"HCAPTCHA","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/captchas/cap9i7152oi6nXF3c1d7","hints":{"allow":["GET","POST","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:03 GMT
+        status: 201 Created
+        code: 201
+        duration: 107.060672ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/captchas/cap9i7152oi6nXF3c1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cap9i7152oi6nXF3c1d7","name":"testAcc_2392703879","siteKey":"random_key","type":"HCAPTCHA","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/captchas/cap9i7152oi6nXF3c1d7","hints":{"allow":["GET","POST","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:03 GMT
+        status: 200 OK
+        code: 200
+        duration: 59.103148ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/captchas/cap9i7152oi6nXF3c1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cap9i7152oi6nXF3c1d7","name":"testAcc_2392703879","siteKey":"random_key","type":"HCAPTCHA","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/captchas/cap9i7152oi6nXF3c1d7","hints":{"allow":["GET","POST","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:04 GMT
+        status: 200 OK
+        code: 200
+        duration: 68.798501ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 112
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"name":"testAcc_2392703879_updated","siteKey":"random_key_updated","secretKey":"random_key","type":"HCAPTCHA"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/captchas/cap9i7152oi6nXF3c1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cap9i7152oi6nXF3c1d7","name":"testAcc_2392703879_updated","siteKey":"random_key_updated","type":"HCAPTCHA","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/captchas/cap9i7152oi6nXF3c1d7","hints":{"allow":["GET","POST","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:04 GMT
+        status: 200 OK
+        code: 200
+        duration: 195.698069ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/captchas/cap9i7152oi6nXF3c1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cap9i7152oi6nXF3c1d7","name":"testAcc_2392703879_updated","siteKey":"random_key_updated","type":"HCAPTCHA","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/captchas/cap9i7152oi6nXF3c1d7","hints":{"allow":["GET","POST","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:05 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 247.831186ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/captchas/cap9i7152oi6nXF3c1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Tue, 15 Aug 2023 23:42:05 GMT
+        status: 204 No Content
+        code: 204
+        duration: 89.327231ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/captchas/cap9i7152oi6nXF3c1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"errorCode":"E0000007","errorSummary":"Not found: Resource not found: cap9i7152oi6nXF3c1d7 (Captcha)","errorLink":"E0000007","errorId":"oaegvuZIfhdROef2lS2EV5aVQ","errorCauses":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:05 GMT
+        status: 404 Not Found
+        code: 404
+        duration: 61.223321ms

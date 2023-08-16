@@ -1,0 +1,384 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 468
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"definitions":{"custom":{"id":"#custom","properties":{"testAcc_2078527983":{"description":"testing","items":{"enum":["one","two","three"],"oneOf":[{"const":"one","title":"string One"},{"const":"two","title":"string Two"},{"const":"three","title":"string Three"}],"type":"string"},"master":{"type":"OKTA"},"permissions":[{"action":"READ_ONLY","principal":"SELF"}],"required":false,"scope":"SELF","title":"terraform acceptance test","type":"array"}},"type":"object"}}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/group/default
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta group","description":"Okta group profile template","lastUpdated":"2023-08-16T00:03:38.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testSchema2_3124922718573590851":{"title":"TestSchema2_3124922718573590851","description":"Test bool schema","type":"boolean","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema3_3124922718573590851":{"title":"TestSchema3_3124922718573590851","description":"Test bool schema","type":"number","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema1_3124922718573590851":{"title":"TestSchema1_3124922718573590851","description":"Test string schema","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testAcc_2078527983":{"title":"terraform acceptance test","description":"testing","type":"array","mutability":"READ_WRITE","scope":"SELF","items":{"type":"string","enum":["one","two","three"],"oneOf":[{"const":"one","title":"string One"},{"const":"two","title":"string Two"},{"const":"three","title":"string Three"}]},"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"OKTA"}}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:03:38 GMT
+        status: 200 OK
+        code: 200
+        duration: 157.816985ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/group/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta group","description":"Okta group profile template","lastUpdated":"2023-08-16T00:03:38.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testSchema2_3124922718573590851":{"title":"TestSchema2_3124922718573590851","description":"Test bool schema","type":"boolean","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema3_3124922718573590851":{"title":"TestSchema3_3124922718573590851","description":"Test bool schema","type":"number","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema1_3124922718573590851":{"title":"TestSchema1_3124922718573590851","description":"Test string schema","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testAcc_2078527983":{"title":"terraform acceptance test","description":"testing","type":"array","mutability":"READ_WRITE","scope":"SELF","items":{"type":"string","enum":["one","two","three"],"oneOf":[{"const":"one","title":"string One"},{"const":"two","title":"string Two"},{"const":"three","title":"string Three"}]},"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"OKTA"}}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:03:38 GMT
+        status: 200 OK
+        code: 200
+        duration: 49.705641ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/group/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta group","description":"Okta group profile template","lastUpdated":"2023-08-16T00:03:38.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testSchema2_3124922718573590851":{"title":"TestSchema2_3124922718573590851","description":"Test bool schema","type":"boolean","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema3_3124922718573590851":{"title":"TestSchema3_3124922718573590851","description":"Test bool schema","type":"number","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema1_3124922718573590851":{"title":"TestSchema1_3124922718573590851","description":"Test string schema","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testAcc_2078527983":{"title":"terraform acceptance test","description":"testing","type":"array","mutability":"READ_WRITE","scope":"SELF","items":{"type":"string","enum":["one","two","three"],"oneOf":[{"const":"one","title":"string One"},{"const":"two","title":"string Two"},{"const":"three","title":"string Three"}]},"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"OKTA"}}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:03:39 GMT
+        status: 200 OK
+        code: 200
+        duration: 61.760169ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/group/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta group","description":"Okta group profile template","lastUpdated":"2023-08-16T00:03:38.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testSchema2_3124922718573590851":{"title":"TestSchema2_3124922718573590851","description":"Test bool schema","type":"boolean","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema3_3124922718573590851":{"title":"TestSchema3_3124922718573590851","description":"Test bool schema","type":"number","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema1_3124922718573590851":{"title":"TestSchema1_3124922718573590851","description":"Test string schema","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testAcc_2078527983":{"title":"terraform acceptance test","description":"testing","type":"array","mutability":"READ_WRITE","scope":"SELF","items":{"type":"string","enum":["one","two","three"],"oneOf":[{"const":"one","title":"string One"},{"const":"two","title":"string Two"},{"const":"three","title":"string Three"}]},"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"OKTA"}}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:03:39 GMT
+        status: 200 OK
+        code: 200
+        duration: 54.952801ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 468
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"definitions":{"custom":{"id":"#custom","properties":{"testAcc_2078527983":{"description":"testing","items":{"enum":["ONE","TWO","THREE"],"oneOf":[{"const":"ONE","title":"STRING ONE"},{"const":"TWO","title":"STRING TWO"},{"const":"THREE","title":"STRING THREE"}],"type":"string"},"master":{"type":"OKTA"},"permissions":[{"action":"READ_ONLY","principal":"SELF"}],"required":false,"scope":"SELF","title":"terraform acceptance test","type":"array"}},"type":"object"}}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/group/default
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta group","description":"Okta group profile template","lastUpdated":"2023-08-16T00:03:38.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testSchema2_3124922718573590851":{"title":"TestSchema2_3124922718573590851","description":"Test bool schema","type":"boolean","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema3_3124922718573590851":{"title":"TestSchema3_3124922718573590851","description":"Test bool schema","type":"number","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema1_3124922718573590851":{"title":"TestSchema1_3124922718573590851","description":"Test string schema","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testAcc_2078527983":{"title":"terraform acceptance test","description":"testing","type":"array","mutability":"READ_WRITE","scope":"SELF","items":{"type":"string","enum":["ONE","TWO","THREE"],"oneOf":[{"const":"ONE","title":"STRING ONE"},{"const":"TWO","title":"STRING TWO"},{"const":"THREE","title":"STRING THREE"}]},"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"OKTA"}}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:03:40 GMT
+        status: 200 OK
+        code: 200
+        duration: 79.462371ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/group/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta group","description":"Okta group profile template","lastUpdated":"2023-08-16T00:03:40.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testSchema2_3124922718573590851":{"title":"TestSchema2_3124922718573590851","description":"Test bool schema","type":"boolean","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema3_3124922718573590851":{"title":"TestSchema3_3124922718573590851","description":"Test bool schema","type":"number","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema1_3124922718573590851":{"title":"TestSchema1_3124922718573590851","description":"Test string schema","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testAcc_2078527983":{"title":"terraform acceptance test","description":"testing","type":"array","mutability":"READ_WRITE","scope":"SELF","items":{"type":"string","enum":["ONE","TWO","THREE"],"oneOf":[{"const":"ONE","title":"STRING ONE"},{"const":"TWO","title":"STRING TWO"},{"const":"THREE","title":"STRING THREE"}]},"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"OKTA"}}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:03:40 GMT
+        status: 200 OK
+        code: 200
+        duration: 70.830253ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/group/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta group","description":"Okta group profile template","lastUpdated":"2023-08-16T00:03:40.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testSchema2_3124922718573590851":{"title":"TestSchema2_3124922718573590851","description":"Test bool schema","type":"boolean","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema3_3124922718573590851":{"title":"TestSchema3_3124922718573590851","description":"Test bool schema","type":"number","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema1_3124922718573590851":{"title":"TestSchema1_3124922718573590851","description":"Test string schema","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testAcc_2078527983":{"title":"terraform acceptance test","description":"testing","type":"array","mutability":"READ_WRITE","scope":"SELF","items":{"type":"string","enum":["ONE","TWO","THREE"],"oneOf":[{"const":"ONE","title":"STRING ONE"},{"const":"TWO","title":"STRING TWO"},{"const":"THREE","title":"STRING THREE"}]},"permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"OKTA"}}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:03:40 GMT
+        status: 200 OK
+        code: 200
+        duration: 69.812068ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 101
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"definitions":{"custom":{"id":"#custom","properties":{"testAcc_2078527983":null},"type":"object"}}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/group/default
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta group","description":"Okta group profile template","lastUpdated":"2023-08-16T00:03:40.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testSchema2_3124922718573590851":{"title":"TestSchema2_3124922718573590851","description":"Test bool schema","type":"boolean","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema3_3124922718573590851":{"title":"TestSchema3_3124922718573590851","description":"Test bool schema","type":"number","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema1_3124922718573590851":{"title":"TestSchema1_3124922718573590851","description":"Test string schema","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:03:41 GMT
+        status: 200 OK
+        code: 200
+        duration: 88.725358ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/group/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta group","description":"Okta group profile template","lastUpdated":"2023-08-16T00:03:41.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testSchema2_3124922718573590851":{"title":"TestSchema2_3124922718573590851","description":"Test bool schema","type":"boolean","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema3_3124922718573590851":{"title":"TestSchema3_3124922718573590851","description":"Test bool schema","type":"number","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema1_3124922718573590851":{"title":"TestSchema1_3124922718573590851","description":"Test string schema","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:03:41 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 52.718579ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/group/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.oktapreview.com/meta/schemas/group/default","$schema":"http://json-schema.org/draft-04/schema#","name":"group","title":"Okta group","description":"Okta group profile template","lastUpdated":"2023-08-16T00:03:41.000Z","created":"2022-10-04T23:20:18.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testSchema2_3124922718573590851":{"title":"TestSchema2_3124922718573590851","description":"Test bool schema","type":"boolean","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema3_3124922718573590851":{"title":"TestSchema3_3124922718573590851","description":"Test bool schema","type":"number","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}},"testSchema1_3124922718573590851":{"title":"TestSchema1_3124922718573590851","description":"Test string schema","type":"string","mutability":"READ_WRITE","scope":"NONE","permissions":[{"principal":"SELF","action":"READ_ONLY"}],"master":{"type":"PROFILE_MASTER"}}},"required":[]},"base":{"id":"#base","type":"object","properties":{"name":{"title":"Name","description":"Name","type":"string","required":true,"mutability":"READ_WRITE","scope":"NONE","maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}},"description":{"title":"Description","description":"Description","type":"string","mutability":"READ_WRITE","scope":"NONE","maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"master":{"type":"PROFILE_MASTER"}}},"required":["name"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"_links":{"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/group/default","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:03:41 GMT
+        status: 200 OK
+        code: 200
+        duration: 57.00173ms
