@@ -316,7 +316,8 @@ func oktaResourceTest(t *testing.T, c resource.TestCase) {
 			c.CheckDestroy = nil
 			fmt.Printf("=== VCR PLAY CASSETTE %q for %s\n", cassette, t.Name())
 
-			// TODO: If we are just playing VRC should we run ParallelTest?
+			// FIXME: Once we get fully mux'd ACC tests recording with VCR
+			// revisit if we can call ParallelTest when playing.
 			resource.Test(t, c)
 		}
 		return
