@@ -292,7 +292,7 @@ func (r *policyDeviceAssuranceAndroidResource) Update(ctx context.Context, req r
 }
 
 func buildDeviceAssuranceAndroidPolicyRequest(model policyDeviceAssuranceAndroidResourceModel) (okta.ListDeviceAssurancePolicies200ResponseInner, error) {
-	var android = &okta.DeviceAssuranceAndroidPlatform{}
+	android := &okta.DeviceAssuranceAndroidPlatform{}
 	android.SetName(model.Name.ValueString())
 	android.SetPlatform(okta.PLATFORM_ANDROID)
 	if len(model.DiskEncryptionType) > 0 {

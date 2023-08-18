@@ -375,7 +375,7 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 }
 
 func buildDeviceAssuranceWindowsPolicyRequest(model policyDeviceAssuranceWindowsResourceModel) (okta.ListDeviceAssurancePolicies200ResponseInner, error) {
-	var windows = &okta.DeviceAssuranceWindowsPlatform{}
+	windows := &okta.DeviceAssuranceWindowsPlatform{}
 	windows.SetName(model.Name.ValueString())
 	windows.SetPlatform(okta.PLATFORM_WINDOWS)
 	if len(model.DiskEncryptionType) > 0 {

@@ -290,7 +290,7 @@ func (r *policyDeviceAssuranceChromeOSResource) Update(ctx context.Context, req 
 }
 
 func buildDeviceAssuranceChromeOSPolicyRequest(model policyDeviceAssuranceChromeOSResourceModel) (okta.ListDeviceAssurancePolicies200ResponseInner, error) {
-	var chromeOS = &okta.DeviceAssuranceChromeOSPlatform{}
+	chromeOS := &okta.DeviceAssuranceChromeOSPlatform{}
 	chromeOS.SetName(model.Name.ValueString())
 	chromeOS.SetPlatform(okta.PLATFORM_CHROMEOS)
 

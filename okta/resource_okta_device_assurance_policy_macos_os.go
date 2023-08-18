@@ -345,7 +345,7 @@ func (r *policyDeviceAssuranceMacOSResource) Update(ctx context.Context, req res
 }
 
 func buildDeviceAssuranceMacOSPolicyRequest(model policyDeviceAssuranceMacOSResourceModel) (okta.ListDeviceAssurancePolicies200ResponseInner, error) {
-	var macos = &okta.DeviceAssuranceMacOSPlatform{}
+	macos := &okta.DeviceAssuranceMacOSPlatform{}
 	macos.SetName(model.Name.ValueString())
 	macos.SetPlatform(okta.PLATFORM_MACOS)
 	if len(model.DiskEncryptionType) > 0 {

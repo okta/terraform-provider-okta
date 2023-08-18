@@ -23,8 +23,10 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-const OktaTerraformProviderVersion = "4.2.0"
-const OktaTerraformProviderUserAgent = "okta-terraform/" + OktaTerraformProviderVersion
+const (
+	OktaTerraformProviderVersion   = "4.2.0"
+	OktaTerraformProviderUserAgent = "okta-terraform/" + OktaTerraformProviderVersion
+)
 
 var (
 	// NOTE: Minor hack where runtime needs to know about testing environment.
@@ -540,8 +542,7 @@ type TimeOperations interface {
 	Sleep(time.Duration)
 }
 
-type ProductionTimeOperations struct {
-}
+type ProductionTimeOperations struct{}
 
 // DoNotRetry always retry in production
 func (o *ProductionTimeOperations) DoNotRetry(err error) bool {
@@ -558,8 +559,7 @@ func NewProductionTimeOperations() TimeOperations {
 	return &ProductionTimeOperations{}
 }
 
-type TestTimeOperations struct {
-}
+type TestTimeOperations struct{}
 
 // DoNotRetry tests do not retry when there is an error and VCR is recording
 func (o *TestTimeOperations) DoNotRetry(err error) bool {

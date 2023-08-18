@@ -255,7 +255,7 @@ func (r *policyDeviceAssuranceIOSResource) Update(ctx context.Context, req resou
 }
 
 func buildDeviceAssuranceIOSPolicyRequest(model policyDeviceAssuranceIOSResourceModel) (okta.ListDeviceAssurancePolicies200ResponseInner, error) {
-	var iOS = &okta.DeviceAssuranceIOSPlatform{}
+	iOS := &okta.DeviceAssuranceIOSPlatform{}
 	iOS.SetName(model.Name.ValueString())
 	iOS.SetPlatform(okta.PLATFORM_IOS)
 
