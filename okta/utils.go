@@ -316,16 +316,15 @@ func suppressErrorOn403(what string, meta interface{}, resp *sdk.Response, err e
 }
 
 func getOktaClientFromMetadata(meta interface{}) *sdk.Client {
-	return meta.(*Config).oktaClient
+	return meta.(*Config).oktaSDKClientV2
 }
 
-// TODO switch to getOktaClientFromMetadata when migration complete
 func getOktaV3ClientFromMetadata(meta interface{}) *okta.APIClient {
-	return meta.(*Config).v3Client
+	return meta.(*Config).oktaSDKClientV3
 }
 
 func getAPISupplementFromMetadata(meta interface{}) *sdk.APISupplement {
-	return meta.(*Config).supplementClient
+	return meta.(*Config).oktaSDKsupplementClient
 }
 
 func getRequestExecutor(m interface{}) *sdk.RequestExecutor {

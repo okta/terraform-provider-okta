@@ -1,0 +1,1020 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 264
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"name":"testAcc_2777345018","proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"status":"ACTIVE","type":"IP","usage":"POLICY"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/zones
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzo9i7boazyvBscDp1d7","name":"testAcc_2777345018","status":"ACTIVE","usage":"POLICY","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:30.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i7boazyvBscDp1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i7boazyvBscDp1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:30 GMT
+        status: 200 OK
+        code: 200
+        duration: 214.271851ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 156
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"locations":[{"country":"US"},{"country":"AF","region":"AF-BGL"}],"name":"testAcc_2777345018 Dynamic","status":"ACTIVE","type":"DYNAMIC","usage":"POLICY"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/zones
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"DYNAMIC","id":"nzo9i70z28ZbKOm1K1d7","name":"testAcc_2777345018 Dynamic","status":"ACTIVE","usage":"POLICY","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:30.000Z","system":false,"locations":[{"country":"AF","region":"AF-BGL"},{"country":"US","region":null}],"proxyType":null,"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:30 GMT
+        status: 200 OK
+        code: 200
+        duration: 250.442192ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i7boazyvBscDp1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzo9i7boazyvBscDp1d7","name":"testAcc_2777345018","status":"ACTIVE","usage":"POLICY","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:30.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i7boazyvBscDp1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i7boazyvBscDp1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:30 GMT
+        status: 200 OK
+        code: 200
+        duration: 54.538812ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"DYNAMIC","id":"nzo9i70z28ZbKOm1K1d7","name":"testAcc_2777345018 Dynamic","status":"ACTIVE","usage":"POLICY","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:30.000Z","system":false,"locations":[{"country":"AF","region":"AF-BGL"},{"country":"US","region":null}],"proxyType":null,"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:30 GMT
+        status: 200 OK
+        code: 200
+        duration: 52.977301ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 127
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"name":"testAcc_2777345018 Dynamic Proxy","proxyType":"TorAnonymizer","status":"ACTIVE","type":"DYNAMIC","usage":"BLOCKLIST"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/zones
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"DYNAMIC","id":"nzo9i76t88guBWzTR1d7","name":"testAcc_2777345018 Dynamic Proxy","status":"ACTIVE","usage":"BLOCKLIST","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:30.000Z","system":false,"locations":null,"proxyType":"TorAnonymizer","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i76t88guBWzTR1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i76t88guBWzTR1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:30 GMT
+        status: 200 OK
+        code: 200
+        duration: 361.231735ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i76t88guBWzTR1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"DYNAMIC","id":"nzo9i76t88guBWzTR1d7","name":"testAcc_2777345018 Dynamic Proxy","status":"ACTIVE","usage":"BLOCKLIST","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:30.000Z","system":false,"locations":null,"proxyType":"TorAnonymizer","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i76t88guBWzTR1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i76t88guBWzTR1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:30 GMT
+        status: 200 OK
+        code: 200
+        duration: 65.232712ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i76t88guBWzTR1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"DYNAMIC","id":"nzo9i76t88guBWzTR1d7","name":"testAcc_2777345018 Dynamic Proxy","status":"ACTIVE","usage":"BLOCKLIST","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:30.000Z","system":false,"locations":null,"proxyType":"TorAnonymizer","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i76t88guBWzTR1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i76t88guBWzTR1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:31 GMT
+        status: 200 OK
+        code: 200
+        duration: 54.90063ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i7boazyvBscDp1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzo9i7boazyvBscDp1d7","name":"testAcc_2777345018","status":"ACTIVE","usage":"POLICY","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:30.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i7boazyvBscDp1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i7boazyvBscDp1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:31 GMT
+        status: 200 OK
+        code: 200
+        duration: 61.131994ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"DYNAMIC","id":"nzo9i70z28ZbKOm1K1d7","name":"testAcc_2777345018 Dynamic","status":"ACTIVE","usage":"POLICY","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:30.000Z","system":false,"locations":[{"country":"AF","region":"AF-BGL"},{"country":"US","region":null}],"proxyType":null,"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:31 GMT
+        status: 200 OK
+        code: 200
+        duration: 61.378344ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i76t88guBWzTR1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"DYNAMIC","id":"nzo9i76t88guBWzTR1d7","name":"testAcc_2777345018 Dynamic Proxy","status":"ACTIVE","usage":"BLOCKLIST","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:30.000Z","system":false,"locations":null,"proxyType":"TorAnonymizer","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i76t88guBWzTR1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i76t88guBWzTR1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:31 GMT
+        status: 200 OK
+        code: 200
+        duration: 51.330877ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"DYNAMIC","id":"nzo9i70z28ZbKOm1K1d7","name":"testAcc_2777345018 Dynamic","status":"ACTIVE","usage":"POLICY","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:30.000Z","system":false,"locations":[{"country":"AF","region":"AF-BGL"},{"country":"US","region":null}],"proxyType":null,"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:31 GMT
+        status: 200 OK
+        code: 200
+        duration: 51.520812ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i7boazyvBscDp1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzo9i7boazyvBscDp1d7","name":"testAcc_2777345018","status":"ACTIVE","usage":"POLICY","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:30.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i7boazyvBscDp1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i7boazyvBscDp1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:31 GMT
+        status: 200 OK
+        code: 200
+        duration: 73.166789ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 184
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.10"},{"type":"CIDR","value":"1.2.3.4/24"}],"name":"testAcc_2777345018 Updated","status":"INACTIVE","type":"IP","usage":"BLOCKLIST"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i7boazyvBscDp1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzo9i7boazyvBscDp1d7","name":"testAcc_2777345018 Updated","status":"INACTIVE","usage":"BLOCKLIST","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:30.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.10"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":null,"_links":{"activate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i7boazyvBscDp1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i7boazyvBscDp1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:31 GMT
+        status: 200 OK
+        code: 200
+        duration: 75.503445ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 137
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"name":"testAcc_2777345018 Dynamic Proxy Updated","proxyType":"NotTorAnonymizer","status":"INACTIVE","type":"DYNAMIC","usage":"POLICY"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i76t88guBWzTR1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"DYNAMIC","id":"nzo9i76t88guBWzTR1d7","name":"testAcc_2777345018 Dynamic Proxy Updated","status":"INACTIVE","usage":"POLICY","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:30.000Z","system":false,"locations":null,"proxyType":"NotTorAnonymizer","_links":{"activate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i76t88guBWzTR1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i76t88guBWzTR1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:31 GMT
+        status: 200 OK
+        code: 200
+        duration: 88.820408ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 216
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"asns":["2232"],"locations":[{"country":"US"},{"country":"UA","region":"UA-26"},{"country":"AF","region":"AF-BGL"}],"name":"testAcc_2777345018 Dynamic Updated","status":"INACTIVE","type":"DYNAMIC","usage":"POLICY"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"DYNAMIC","id":"nzo9i70z28ZbKOm1K1d7","name":"testAcc_2777345018 Dynamic Updated","status":"INACTIVE","usage":"POLICY","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:30.000Z","system":false,"locations":[{"country":"UA","region":"UA-26"},{"country":"AF","region":"AF-BGL"},{"country":"US","region":null}],"proxyType":null,"asns":["2232"],"_links":{"activate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:31 GMT
+        status: 200 OK
+        code: 200
+        duration: 89.653108ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i7boazyvBscDp1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzo9i7boazyvBscDp1d7","name":"testAcc_2777345018 Updated","status":"INACTIVE","usage":"BLOCKLIST","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:31.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.10"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":null,"_links":{"activate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i7boazyvBscDp1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i7boazyvBscDp1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:32 GMT
+        status: 200 OK
+        code: 200
+        duration: 66.574584ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i76t88guBWzTR1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"DYNAMIC","id":"nzo9i76t88guBWzTR1d7","name":"testAcc_2777345018 Dynamic Proxy Updated","status":"INACTIVE","usage":"POLICY","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:31.000Z","system":false,"locations":null,"proxyType":"NotTorAnonymizer","_links":{"activate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i76t88guBWzTR1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i76t88guBWzTR1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:32 GMT
+        status: 200 OK
+        code: 200
+        duration: 59.594538ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"DYNAMIC","id":"nzo9i70z28ZbKOm1K1d7","name":"testAcc_2777345018 Dynamic Updated","status":"INACTIVE","usage":"POLICY","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:31.000Z","system":false,"locations":[{"country":"UA","region":"UA-26"},{"country":"AF","region":"AF-BGL"},{"country":"US","region":null}],"proxyType":null,"asns":["2232"],"_links":{"activate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:32 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 67.286925ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i7boazyvBscDp1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzo9i7boazyvBscDp1d7","name":"testAcc_2777345018 Updated","status":"INACTIVE","usage":"BLOCKLIST","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:31.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.10"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":null,"_links":{"activate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i7boazyvBscDp1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i7boazyvBscDp1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:32 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 51.856971ms
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i76t88guBWzTR1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"DYNAMIC","id":"nzo9i76t88guBWzTR1d7","name":"testAcc_2777345018 Dynamic Proxy Updated","status":"INACTIVE","usage":"POLICY","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:31.000Z","system":false,"locations":null,"proxyType":"NotTorAnonymizer","_links":{"activate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i76t88guBWzTR1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i76t88guBWzTR1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:32 GMT
+        status: 200 OK
+        code: 200
+        duration: 55.051608ms
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"DYNAMIC","id":"nzo9i70z28ZbKOm1K1d7","name":"testAcc_2777345018 Dynamic Updated","status":"INACTIVE","usage":"POLICY","created":"2023-08-15T23:45:30.000Z","lastUpdated":"2023-08-15T23:45:31.000Z","system":false,"locations":[{"country":"UA","region":"UA-26"},{"country":"AF","region":"AF-BGL"},{"country":"US","region":null}],"proxyType":null,"asns":["2232"],"_links":{"activate":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:32 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 74.526993ms
+    - id: 21
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i76t88guBWzTR1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Tue, 15 Aug 2023 23:45:32 GMT
+        status: 204 No Content
+        code: 204
+        duration: 55.218338ms
+    - id: 22
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i7boazyvBscDp1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Tue, 15 Aug 2023 23:45:32 GMT
+        status: 204 No Content
+        code: 204
+        duration: 74.985996ms
+    - id: 23
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Tue, 15 Aug 2023 23:45:32 GMT
+        status: 204 No Content
+        code: 204
+        duration: 76.5188ms
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i70z28ZbKOm1K1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"errorCode":"E0000007","errorSummary":"Not found: Resource not found: nzo9i70z28ZbKOm1K1d7 (NetworkZone)","errorLink":"E0000007","errorId":"oaegBd6DzOQRHOn-dmz-TAzeQ","errorCauses":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:33 GMT
+        status: 404 Not Found
+        code: 404
+        duration: 63.547389ms
+    - id: 25
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i76t88guBWzTR1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"errorCode":"E0000007","errorSummary":"Not found: Resource not found: nzo9i76t88guBWzTR1d7 (NetworkZone)","errorLink":"E0000007","errorId":"oaegD63-iYJSAm-zPJRBQlokQ","errorCauses":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:33 GMT
+        status: 404 Not Found
+        code: 404
+        duration: 54.847388ms
+    - id: 26
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzo9i7boazyvBscDp1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"errorCode":"E0000007","errorSummary":"Not found: Resource not found: nzo9i7boazyvBscDp1d7 (NetworkZone)","errorLink":"E0000007","errorId":"oaeAuvkU8f9RYu6j62kUuUlsw","errorCauses":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:33 GMT
+        status: 404 Not Found
+        code: 404
+        duration: 71.076954ms

@@ -3,6 +3,7 @@ package okta
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 
@@ -10,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppOAuthApplication_apiScope(t *testing.T) {
+func TestAccResourceOktaAppOAuthApplication_apiScope(t *testing.T) {
 	mgr := newFixtureManager(appOAuthAPIScope, t.Name())
 	plainConfig := mgr.GetFixtures("basic.tf", t)
 	plainUpdatedConfig := mgr.GetFixtures("basic_updated.tf", t)
@@ -50,7 +51,7 @@ func TestAccAppOAuthApplication_apiScope(t *testing.T) {
 }
 
 func apiScopeExists(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	scopes, _, err := client.Application.ListScopeConsentGrants(context.Background(), id, nil)
 	if err != nil {
 		return false, fmt.Errorf("failed to get application scope consent grants: %v", err)
@@ -62,15 +63,9 @@ func apiScopeExists(id string) (bool, error) {
 }
 
 func getOktaDomainName() string {
-	c, err := oktaConfig()
-	if err != nil {
-		return ""
-	}
-	domain := ""
-	if c.domain == "" {
+	domain := os.Getenv("OKTA_BASE_URL")
+	if domain == "" {
 		domain = "okta.com"
-	} else {
-		domain = c.domain
 	}
-	return fmt.Sprintf("https://%v.%v", c.orgName, domain)
+	return fmt.Sprintf("https://%v.%v", os.Getenv("OKTA_ORG_NAME"), domain)
 }

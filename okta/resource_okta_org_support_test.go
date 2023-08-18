@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccOktaOrgSupport(t *testing.T) {
+func TestAccResourceOktaOrgSupport(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", orgSupport)
 	mgr := newFixtureManager(orgSupport, t.Name())
 	config := mgr.GetFixtures("standard.tf", t)
@@ -40,14 +40,11 @@ func TestAccOktaOrgSupport(t *testing.T) {
 }
 
 func checkSupportDestroy(s *terraform.State) error {
-	if isVCRPlayMode() {
-		return nil
-	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != orgSupport {
 			continue
 		}
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 		support, _, err := client.OrgSetting.GetOrgOktaSupportSettings(context.Background())
 		if err != nil {
 			return err

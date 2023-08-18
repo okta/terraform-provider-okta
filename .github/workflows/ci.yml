@@ -34,3 +34,6 @@ jobs:
 
       - name: Test
         run: make test
+
+      - name: Run VCR smoke tests
+        run: make smoke-test-play-vcr-acc

@@ -1,0 +1,342 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 170
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"name":"Custom","template":"${org.name} code is: ${code}","translations":{"en":"${org.name} code is: ${code}","es":"${org.name} es: ${code}."},"type":"SMS_VERIFY_CODE"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/templates/sms
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cst9i75jwuplARbT61d7","name":"Custom","type":"SMS_VERIFY_CODE","template":"${org.name} code is: ${code}","created":"2023-08-15T23:47:37.000Z","lastUpdated":"2023-08-15T23:47:37.000Z","translations":{"en":"${org.name} code is: ${code}","es":"${org.name} es: ${code}."}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:47:37 GMT
+        status: 200 OK
+        code: 200
+        duration: 282.501179ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/templates/sms/cst9i75jwuplARbT61d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cst9i75jwuplARbT61d7","name":"Custom","type":"SMS_VERIFY_CODE","template":"${org.name} code is: ${code}","created":"2023-08-15T23:47:37.000Z","lastUpdated":"2023-08-15T23:47:37.000Z","translations":{"en":"${org.name} code is: ${code}","es":"${org.name} es: ${code}."}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:47:37 GMT
+        status: 200 OK
+        code: 200
+        duration: 60.606796ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/templates/sms/cst9i75jwuplARbT61d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cst9i75jwuplARbT61d7","name":"Custom","type":"SMS_VERIFY_CODE","template":"${org.name} code is: ${code}","created":"2023-08-15T23:47:37.000Z","lastUpdated":"2023-08-15T23:47:37.000Z","translations":{"en":"${org.name} code is: ${code}","es":"${org.name} es: ${code}."}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:47:37 GMT
+        status: 200 OK
+        code: 200
+        duration: 61.064313ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/templates/sms/cst9i75jwuplARbT61d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cst9i75jwuplARbT61d7","name":"Custom","type":"SMS_VERIFY_CODE","template":"${org.name} code is: ${code}","created":"2023-08-15T23:47:37.000Z","lastUpdated":"2023-08-15T23:47:37.000Z","translations":{"en":"${org.name} code is: ${code}","es":"${org.name} es: ${code}."}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:47:37 GMT
+        status: 200 OK
+        code: 200
+        duration: 57.346375ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 219
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"name":"Custom","template":"${org.name} updated code is: ${code}","translations":{"en":"${org.name} updated code is: ${code}","es":"${org.name} es: ${code}.","fr":"${org.name} est: ${code}."},"type":"SMS_VERIFY_CODE"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/templates/sms/cst9i75jwuplARbT61d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cst9i75jwuplARbT61d7","name":"Custom","type":"SMS_VERIFY_CODE","template":"${org.name} updated code is: ${code}","created":"2023-08-15T23:47:37.000Z","lastUpdated":"2023-08-15T23:47:38.000Z"}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:47:38 GMT
+        status: 200 OK
+        code: 200
+        duration: 94.201903ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/templates/sms/cst9i75jwuplARbT61d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cst9i75jwuplARbT61d7","name":"Custom","type":"SMS_VERIFY_CODE","template":"${org.name} updated code is: ${code}","created":"2023-08-15T23:47:37.000Z","lastUpdated":"2023-08-15T23:47:38.000Z","translations":{"en":"${org.name} updated code is: ${code}","fr":"${org.name} est: ${code}.","es":"${org.name} es: ${code}."}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:47:38 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 62.857178ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/templates/sms/cst9i75jwuplARbT61d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cst9i75jwuplARbT61d7","name":"Custom","type":"SMS_VERIFY_CODE","template":"${org.name} updated code is: ${code}","created":"2023-08-15T23:47:37.000Z","lastUpdated":"2023-08-15T23:47:38.000Z","translations":{"en":"${org.name} updated code is: ${code}","fr":"${org.name} est: ${code}.","es":"${org.name} es: ${code}."}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:47:38 GMT
+        status: 200 OK
+        code: 200
+        duration: 64.355334ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/templates/sms/cst9i75jwuplARbT61d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Tue, 15 Aug 2023 23:47:39 GMT
+        status: 204 No Content
+        code: 204
+        duration: 54.525232ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/templates/sms/cst9i75jwuplARbT61d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"errorCode":"E0000007","errorSummary":"Not found: Resource not found: cst9i75jwuplARbT61d7 (AppInstance)","errorLink":"E0000007","errorId":"oaeRrEzh9htRYGRB4-wRCfzCQ","errorCauses":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:47:39 GMT
+        status: 404 Not Found
+        code: 404
+        duration: 64.885778ms

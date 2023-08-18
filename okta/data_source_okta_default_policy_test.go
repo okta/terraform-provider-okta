@@ -5,12 +5,11 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccOktaDataSourceDefaultPolicy_readPasswordPolicy(t *testing.T) {
+func TestAccDataSourceOktaDefaultPolicy_readPasswordPolicy(t *testing.T) {
 	mgr := newFixtureManager(defaultPolicy, t.Name())
 	config := testAccDataSourceDefaultPolicy(mgr.Seed, sdk.PasswordPolicyType)
 
@@ -29,9 +28,9 @@ func TestAccOktaDataSourceDefaultPolicy_readPasswordPolicy(t *testing.T) {
 	})
 }
 
-func TestAccOktaDataSourceDefaultPolicy_readIdpPolicy(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testAccDataSourceDefaultPolicy(ri, sdk.IdpDiscoveryType)
+func TestAccDataSourceOktaDefaultPolicy_readIdpPolicy(t *testing.T) {
+	mgr := newFixtureManager(defaultPolicy, t.Name())
+	config := testAccDataSourceDefaultPolicy(mgr.Seed, sdk.IdpDiscoveryType)
 
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -41,7 +40,7 @@ func TestAccOktaDataSourceDefaultPolicy_readIdpPolicy(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_default_policy.default-"+strconv.Itoa(ri), "id"),
+					resource.TestCheckResourceAttrSet("data.okta_default_policy.default-"+strconv.Itoa(mgr.Seed), "id"),
 				),
 			},
 		},

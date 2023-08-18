@@ -15,9 +15,6 @@ type checkUpstream func(string) (bool, error)
 
 func ensureResourceExists(name string, checkUpstream checkUpstream) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if isVCRPlayMode() {
-			return nil
-		}
 		missingErr := fmt.Errorf("resource not found: %s", name)
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
@@ -35,9 +32,6 @@ func ensureResourceExists(name string, checkUpstream checkUpstream) resource.Tes
 
 func checkResourceDestroy(typeName string, checkUpstream checkUpstream) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if isVCRPlayMode() {
-			return nil
-		}
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != typeName {
 				continue

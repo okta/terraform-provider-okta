@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccOktaGroupSchema_crud(t *testing.T) {
+func TestAccResourceOktaGroupSchema_crud(t *testing.T) {
 	mgr := newFixtureManager(groupSchemaProperty, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("basic_updated.tf", t)
@@ -94,7 +94,7 @@ func TestAccOktaGroupSchema_crud(t *testing.T) {
 	})
 }
 
-func TestAccOktaGroupSchema_arrayString(t *testing.T) {
+func TestAccResourceOktaGroupSchema_arrayString(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	mgr := newFixtureManager(groupSchemaProperty, t.Name())
 	config := mgr.GetFixtures("array_string.tf", t)
@@ -862,6 +862,9 @@ func TestAccResourceOktaGroupSchema_enum_string(t *testing.T) {
 // backoff in create and update for okta_group_schema_property resource is
 // operating correctly.
 func TestAccResourceOktaGroupSchema_parallel_api_calls(t *testing.T) {
+	if skipVCRTest(t) {
+		return
+	}
 	mgr := newFixtureManager(groupSchemaProperty, t.Name())
 	config := `
 resource "okta_group_schema_property" "one" {
@@ -935,9 +938,6 @@ resource "okta_group_schema_property" "five" {
 }
 
 func checkOktaGroupSchemasDestroy(s *terraform.State) error {
-	if isVCRPlayMode() {
-		return nil
-	}
 	for _, rs := range s.RootModule().Resources {
 		exists, _ := testGroupSchemaPropertyExists(rs.Primary.ID)
 		if exists {
@@ -948,7 +948,7 @@ func checkOktaGroupSchemasDestroy(s *terraform.State) error {
 }
 
 func testGroupSchemaPropertyExists(index string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	gs, _, err := client.GroupSchema.GetGroupSchema(context.Background())
 	if err != nil {
 		return false, fmt.Errorf("failed to get group schema: %v", err)

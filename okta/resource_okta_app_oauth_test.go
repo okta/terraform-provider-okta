@@ -310,7 +310,7 @@ func TestAccResourceOktaAppOauth_serviceWithJWKSURI(t *testing.T) {
 
 func createDoesAppExist(app sdk.App) func(string) (bool, error) {
 	return func(id string) (bool, error) {
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 		_, response, err := client.Application.GetApplication(context.Background(), id, app, &query.Params{})
 
 		// We don't want to consider a 404 an error in some cases and thus the delineation
@@ -505,6 +505,10 @@ resource "okta_app_oauth" "test" {
 //
 // https://developer.okta.com/docs/reference/api/apps/#username-template-object
 func TestAccResourceOktaAppOauth_config_combinations(t *testing.T) {
+	if skipVCRTest(t) {
+		// the way this is table tested is not friendly w/ VCR
+		return
+	}
 	mgr := newFixtureManager(appOAuth, t.Name())
 
 	cases := []struct {

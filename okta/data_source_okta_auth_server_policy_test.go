@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceAuthServerPolicy_read(t *testing.T) {
+func TestAccDataSourceOktaAuthServerPolicy_read(t *testing.T) {
 	mgr := newFixtureManager(authServerPolicy, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	createServerWithPolicy := buildTestAuthServerWithPolicy(mgr.Seed)

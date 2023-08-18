@@ -274,7 +274,7 @@ func (r *policyDeviceAssuranceWindowsResource) Create(ctx context.Context, req r
 		return
 	}
 
-	deviceAssurance, _, err := r.v3Client.DeviceAssuranceApi.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.oktaSDKClientV3.DeviceAssuranceApi.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create device assurance",
@@ -301,7 +301,7 @@ func (r *policyDeviceAssuranceWindowsResource) Read(ctx context.Context, req res
 		return
 	}
 
-	deviceAssurance, _, err := r.v3Client.DeviceAssuranceApi.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	deviceAssurance, _, err := r.oktaSDKClientV3.DeviceAssuranceApi.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read device assurance",
@@ -328,7 +328,7 @@ func (r *policyDeviceAssuranceWindowsResource) Delete(ctx context.Context, req r
 		return
 	}
 
-	_, err := r.v3Client.DeviceAssuranceApi.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	_, err := r.oktaSDKClientV3.DeviceAssuranceApi.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete device assurance",
@@ -354,7 +354,7 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 		return
 	}
 
-	deviceAssurance, _, err := r.v3Client.DeviceAssuranceApi.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.oktaSDKClientV3.DeviceAssuranceApi.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create device assurance",
@@ -375,7 +375,7 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 }
 
 func buildDeviceAssuranceWindowsPolicyRequest(model policyDeviceAssuranceWindowsResourceModel) (okta.ListDeviceAssurancePolicies200ResponseInner, error) {
-	var windows = &okta.DeviceAssuranceWindowsPlatform{}
+	windows := &okta.DeviceAssuranceWindowsPlatform{}
 	windows.SetName(model.Name.ValueString())
 	windows.SetPlatform(okta.PLATFORM_WINDOWS)
 	if len(model.DiskEncryptionType) > 0 {

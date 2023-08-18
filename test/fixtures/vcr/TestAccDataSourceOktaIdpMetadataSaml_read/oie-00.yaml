@@ -1,0 +1,1269 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1069
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"accessibility":{"selfService":false},"credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"}},"label":"testAcc_1420601490","settings":{"app":{},"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"signOn":{"allowMultipleAcsEndpoints":false,"assertionSigned":false,"attributeStatements":[],"audience":"http://audience.com","audienceOverride":"","authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","defaultRelayState":"","destination":"http://its-about-the-journey.com","destinationOverride":"","digestAlgorithm":"SHA256","honorForceAuthn":false,"recipient":"http://here.com","recipientOverride":"","responseSigned":true,"samlSignedRequestEnabled":false,"signatureAlgorithm":"RSA_SHA256","slo":{"enabled":false},"ssoAcsUrl":"http://google.com","ssoAcsUrlOverride":"","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","subjectNameIdTemplate":"${user.userName}"}},"signOnMode":"SAML_2_0","visibility":{"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false}}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/apps?activate=true
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oa9i6xhlnlbYhcjG1d7","name":"oie-00_testacc1420601490_8","label":"testAcc_1420601490","status":"ACTIVE","lastUpdated":"2023-08-15T23:29:46.000Z","created":"2023-08-15T23:29:46.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"oie-00_testacc1420601490_8_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"VtMquzqErjDCYDmpBeHS5GYmOm_lmyLXwBVhyCcsWYc"}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":"","ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://oie-00-admin.oktapreview.com/app/oie-00_testacc1420601490_8/0oa9i6xhlnlbYhcjG1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oie-00_testacc1420601490_8_link","href":"https://oie-00.oktapreview.com/home/oie-00_testacc1420601490_8/0oa9i6xhlnlbYhcjG1d7/aln9i796ovxTsoyzF1d7","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst5qwjvlxUHivL8a1d7"},"policies":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7"},"users":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/users"},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/lifecycle/deactivate"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:46 GMT
+        status: 200 OK
+        code: 200
+        duration: 1.108819218s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/.well-known/okta-organization
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"id":"00o5qwjvg8hg7YpT81d7","cell":"op3","_links":{"organization":{"href":"https://oie-00.oktapreview.com"}},"pipeline":"idx","settings":{"analyticsCollectionEnabled":false,"bugReportingEnabled":true,"omEnabled":false,"pssoEnabled":false}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:46 GMT
+        status: 200 OK
+        code: 200
+        duration: 53.412386ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rst5qwjvkl70Eb6xw1d7","status":"ACTIVE","name":"Okta Admin Console","priority":1,"system":false,"conditions":null,"created":"2022-10-07T23:17:01.000Z","lastUpdated":"2022-10-07T23:17:01.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst5qwjvkl70Eb6xw1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst5qwjvkl70Eb6xw1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst5qwjvkl70Eb6xw1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"ACCESS_POLICY"},{"id":"rst5qwjvlvS3G1WOU1d7","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2022-10-07T23:17:01.000Z","lastUpdated":"2022-10-07T23:17:01.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"ACCESS_POLICY"},{"id":"rst7a8k7jmedunOAK1d7","status":"ACTIVE","name":"Password only","description":"Require only a password. Suggested for low risk or consumer-facing applications.","priority":1,"system":false,"conditions":null,"created":"2023-03-08T00:50:03.000Z","lastUpdated":"2023-03-08T00:50:03.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst7a8k7jmedunOAK1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst7a8k7jmedunOAK1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst7a8k7jmedunOAK1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"ACCESS_POLICY"},{"id":"rst7a8k7jpVGikvie1d7","status":"ACTIVE","name":"One factor access","description":"Allow access with any one factor. Suggested for low risk or consumer-facing applications.","priority":1,"system":false,"conditions":null,"created":"2023-03-08T00:50:03.000Z","lastUpdated":"2023-03-08T00:50:03.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst7a8k7jpVGikvie1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst7a8k7jpVGikvie1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst7a8k7jpVGikvie1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"ACCESS_POLICY"},{"id":"rst7a8k7jreNuzwcY1d7","status":"ACTIVE","name":"Seamless access based on network context","description":"Require 2FA if the user is off network. Configure your network zones to include them here.","priority":1,"system":false,"conditions":null,"created":"2023-03-08T00:50:03.000Z","lastUpdated":"2023-03-08T00:50:03.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst7a8k7jreNuzwcY1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst7a8k7jreNuzwcY1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst7a8k7jreNuzwcY1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"ACCESS_POLICY"}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:46 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY>; rel="self"
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 79.607584ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/policies/rst5qwjvlvS3G1WOU1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Tue, 15 Aug 2023 23:29:46 GMT
+        status: 204 No Content
+        code: 204
+        duration: 216.187514ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oa9i6xhlnlbYhcjG1d7","name":"oie-00_testacc1420601490_8","label":"testAcc_1420601490","status":"ACTIVE","lastUpdated":"2023-08-15T23:29:46.000Z","created":"2023-08-15T23:29:46.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"oie-00_testacc1420601490_8_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"VtMquzqErjDCYDmpBeHS5GYmOm_lmyLXwBVhyCcsWYc"}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":"","ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://oie-00-admin.oktapreview.com/app/oie-00_testacc1420601490_8/0oa9i6xhlnlbYhcjG1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oie-00_testacc1420601490_8_link","href":"https://oie-00.oktapreview.com/home/oie-00_testacc1420601490_8/0oa9i6xhlnlbYhcjG1d7/aln9i796ovxTsoyzF1d7","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst5qwjvlxUHivL8a1d7"},"policies":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7"},"users":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/users"},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/lifecycle/deactivate"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:47 GMT
+        status: 200 OK
+        code: 200
+        duration: 98.151526ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/xml
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/sso/saml/metadata?kid=VtMquzqErjDCYDmpBeHS5GYmOm_lmyLXwBVhyCcsWYc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 2331
+        uncompressed: false
+        body: |-
+            <?xml version="1.0" encoding="UTF-8"?><md:EntityDescriptor entityID="http://www.okta.com/exk9i6xhlfqLjuJS61d7" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDujCCAqKgAwIBAgIGAYn7iK5DMA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoG
+            CSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMzA4MTUyMzI4NDZaFw0zMzA4MTUyMzI5NDVa
+            MIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j
+            aXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9p
+            ZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZI
+            hvcNAQEBBQADggEPADCCAQoCggEBALECSYci9ezJHSN3ml2KOXPyAG91lLPhuq8nfCQb6Zy/ryb8
+            NRIGHsQGlplyt5oFP4V0C5nb1Ya/xWLUf/2L4dwjjnLzgZqGQhdM3CUUHFLKRuHdtjPN74AEGdyx
+            GHI8FPA+0tUOP++ASVnwNyvTQzIkXVOJrhOkKnHTCE6PC6Vtgezbd71+KWHV3U8EXeFHGZ+9+Ec8
+            BF+YPjMP8Gkty9l/P/PNWkKzc1ik5qDTz+QW/zqpBKSw0TyLVgr4sOBBzmja9RUC018J22NqSEGN
+            HZ3k84HVF8XNl9lnDkkTyfwn4fKdhHG5/alX4WScy6bSmlZLrM7NW04QceXcRD/h3yECAwEAATAN
+            BgkqhkiG9w0BAQsFAAOCAQEAVnANvJXtHdw11FOPLtNePNELbP8zcP5AVnJmTMEjW11QDSBzuN+n
+            JKpVgJCnL9vCVs/7lN5BjPbAEDg5MqtfpJEH3/L+9axyHVdHAxzs8ZF5ni5A9I0xA3zGmlNl2J5C
+            HrehRsi8Oy7ODg5DHW6q81s54j0rv+DaOnHmPvbqtKTkl7PlW3Co7zQkr5oHGR8JnZPwoNrOMV0w
+            TYOunoNKQNYaKLutn49WLIDmg9Cn2ejwc3+S1y9WDWkAIt3O9sIlxavWU7VnBvp2hp0knhyXa/4X
+            4c27N8XYJtlZPzo/rIElmwQiJ2f23s3/eU8sPF7wqlKRUKXQYgw5MRZwCIoMNQ==</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://oie-00.oktapreview.com/app/oie-00_testacc1420601490_8/exk9i6xhlfqLjuJS61d7/sso/saml"/><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://oie-00.oktapreview.com/app/oie-00_testacc1420601490_8/exk9i6xhlfqLjuJS61d7/sso/saml"/></md:IDPSSODescriptor></md:EntityDescriptor>
+        headers:
+            Content-Length:
+                - "2331"
+            Content-Type:
+                - application/xml;charset=ISO-8859-1
+            Date:
+                - Tue, 15 Aug 2023 23:29:47 GMT
+        status: 200 OK
+        code: 200
+        duration: 361.390754ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/credentials/keys
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"kty":"RSA","created":"2023-08-15T23:29:46.000Z","lastUpdated":"2023-08-15T23:29:46.000Z","expiresAt":"2033-08-15T23:29:45.000Z","kid":"VtMquzqErjDCYDmpBeHS5GYmOm_lmyLXwBVhyCcsWYc","use":"sig","x5c":["MIIDujCCAqKgAwIBAgIGAYn7iK5DMA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMzA4MTUyMzI4NDZaFw0zMzA4MTUyMzI5NDVaMIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALECSYci9ezJHSN3ml2KOXPyAG91lLPhuq8nfCQb6Zy/ryb8NRIGHsQGlplyt5oFP4V0C5nb1Ya/xWLUf/2L4dwjjnLzgZqGQhdM3CUUHFLKRuHdtjPN74AEGdyxGHI8FPA+0tUOP++ASVnwNyvTQzIkXVOJrhOkKnHTCE6PC6Vtgezbd71+KWHV3U8EXeFHGZ+9+Ec8BF+YPjMP8Gkty9l/P/PNWkKzc1ik5qDTz+QW/zqpBKSw0TyLVgr4sOBBzmja9RUC018J22NqSEGNHZ3k84HVF8XNl9lnDkkTyfwn4fKdhHG5/alX4WScy6bSmlZLrM7NW04QceXcRD/h3yECAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAVnANvJXtHdw11FOPLtNePNELbP8zcP5AVnJmTMEjW11QDSBzuN+nJKpVgJCnL9vCVs/7lN5BjPbAEDg5MqtfpJEH3/L+9axyHVdHAxzs8ZF5ni5A9I0xA3zGmlNl2J5CHrehRsi8Oy7ODg5DHW6q81s54j0rv+DaOnHmPvbqtKTkl7PlW3Co7zQkr5oHGR8JnZPwoNrOMV0wTYOunoNKQNYaKLutn49WLIDmg9Cn2ejwc3+S1y9WDWkAIt3O9sIlxavWU7VnBvp2hp0knhyXa/4X4c27N8XYJtlZPzo/rIElmwQiJ2f23s3/eU8sPF7wqlKRUKXQYgw5MRZwCIoMNQ=="],"x5t#S256":"E6FdcVGxMyq0NQBK54fv88a2KkyxsEtO5yxacTMnwGI","e":"AQAB","n":"sQJJhyL17MkdI3eaXYo5c_IAb3WUs-G6ryd8JBvpnL-vJvw1EgYexAaWmXK3mgU_hXQLmdvVhr_FYtR__Yvh3COOcvOBmoZCF0zcJRQcUspG4d22M83vgAQZ3LEYcjwU8D7S1Q4_74BJWfA3K9NDMiRdU4muE6QqcdMITo8LpW2B7Nt3vX4pYdXdTwRd4UcZn734RzwEX5g-Mw_waS3L2X8_881aQrNzWKTmoNPP5Bb_OqkEpLDRPItWCviw4EHOaNr1FQLTXwnbY2pIQY0dneTzgdUXxc2X2WcOSRPJ_Cfh8p2Ecbn9qVfhZJzLptKaVkuszs1bThBx5dxEP-HfIQ"}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:47 GMT
+        status: 200 OK
+        code: 200
+        duration: 92.682971ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1325
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"x5c":["MIIDujCCAqKgAwIBAgIGAYn7iK5DMA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEG\nA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU\nMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoG\nCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMzA4MTUyMzI4NDZaFw0zMzA4MTUyMzI5NDVa\nMIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j\naXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9p\nZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZI\nhvcNAQEBBQADggEPADCCAQoCggEBALECSYci9ezJHSN3ml2KOXPyAG91lLPhuq8nfCQb6Zy/ryb8\nNRIGHsQGlplyt5oFP4V0C5nb1Ya/xWLUf/2L4dwjjnLzgZqGQhdM3CUUHFLKRuHdtjPN74AEGdyx\nGHI8FPA+0tUOP++ASVnwNyvTQzIkXVOJrhOkKnHTCE6PC6Vtgezbd71+KWHV3U8EXeFHGZ+9+Ec8\nBF+YPjMP8Gkty9l/P/PNWkKzc1ik5qDTz+QW/zqpBKSw0TyLVgr4sOBBzmja9RUC018J22NqSEGN\nHZ3k84HVF8XNl9lnDkkTyfwn4fKdhHG5/alX4WScy6bSmlZLrM7NW04QceXcRD/h3yECAwEAATAN\nBgkqhkiG9w0BAQsFAAOCAQEAVnANvJXtHdw11FOPLtNePNELbP8zcP5AVnJmTMEjW11QDSBzuN+n\nJKpVgJCnL9vCVs/7lN5BjPbAEDg5MqtfpJEH3/L+9axyHVdHAxzs8ZF5ni5A9I0xA3zGmlNl2J5C\nHrehRsi8Oy7ODg5DHW6q81s54j0rv+DaOnHmPvbqtKTkl7PlW3Co7zQkr5oHGR8JnZPwoNrOMV0w\nTYOunoNKQNYaKLutn49WLIDmg9Cn2ejwc3+S1y9WDWkAIt3O9sIlxavWU7VnBvp2hp0knhyXa/4X\n4c27N8XYJtlZPzo/rIElmwQiJ2f23s3/eU8sPF7wqlKRUKXQYgw5MRZwCIoMNQ=="]}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/idps/credentials/keys
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"kty":"RSA","created":"2023-08-15T23:29:47.000Z","lastUpdated":"2023-08-15T23:29:47.000Z","expiresAt":"2033-08-15T23:29:45.000Z","alg":"RSA","kid":"f05611e8-ca65-4074-b48f-887a6e89c93c","use":"sig","x5c":["MIIDujCCAqKgAwIBAgIGAYn7iK5DMA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEG\nA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU\nMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoG\nCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMzA4MTUyMzI4NDZaFw0zMzA4MTUyMzI5NDVa\nMIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j\naXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9p\nZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZI\nhvcNAQEBBQADggEPADCCAQoCggEBALECSYci9ezJHSN3ml2KOXPyAG91lLPhuq8nfCQb6Zy/ryb8\nNRIGHsQGlplyt5oFP4V0C5nb1Ya/xWLUf/2L4dwjjnLzgZqGQhdM3CUUHFLKRuHdtjPN74AEGdyx\nGHI8FPA+0tUOP++ASVnwNyvTQzIkXVOJrhOkKnHTCE6PC6Vtgezbd71+KWHV3U8EXeFHGZ+9+Ec8\nBF+YPjMP8Gkty9l/P/PNWkKzc1ik5qDTz+QW/zqpBKSw0TyLVgr4sOBBzmja9RUC018J22NqSEGN\nHZ3k84HVF8XNl9lnDkkTyfwn4fKdhHG5/alX4WScy6bSmlZLrM7NW04QceXcRD/h3yECAwEAATAN\nBgkqhkiG9w0BAQsFAAOCAQEAVnANvJXtHdw11FOPLtNePNELbP8zcP5AVnJmTMEjW11QDSBzuN+n\nJKpVgJCnL9vCVs/7lN5BjPbAEDg5MqtfpJEH3/L+9axyHVdHAxzs8ZF5ni5A9I0xA3zGmlNl2J5C\nHrehRsi8Oy7ODg5DHW6q81s54j0rv+DaOnHmPvbqtKTkl7PlW3Co7zQkr5oHGR8JnZPwoNrOMV0w\nTYOunoNKQNYaKLutn49WLIDmg9Cn2ejwc3+S1y9WDWkAIt3O9sIlxavWU7VnBvp2hp0knhyXa/4X\n4c27N8XYJtlZPzo/rIElmwQiJ2f23s3/eU8sPF7wqlKRUKXQYgw5MRZwCIoMNQ=="],"x5t#S256":"E6FdcVGxMyq0NQBK54fv88a2KkyxsEtO5yxacTMnwGI","e":"AQAB","n":"sQJJhyL17MkdI3eaXYo5c_IAb3WUs-G6ryd8JBvpnL-vJvw1EgYexAaWmXK3mgU_hXQLmdvVhr_FYtR__Yvh3COOcvOBmoZCF0zcJRQcUspG4d22M83vgAQZ3LEYcjwU8D7S1Q4_74BJWfA3K9NDMiRdU4muE6QqcdMITo8LpW2B7Nt3vX4pYdXdTwRd4UcZn734RzwEX5g-Mw_waS3L2X8_881aQrNzWKTmoNPP5Bb_OqkEpLDRPItWCviw4EHOaNr1FQLTXwnbY2pIQY0dneTzgdUXxc2X2WcOSRPJ_Cfh8p2Ecbn9qVfhZJzLptKaVkuszs1bThBx5dxEP-HfIQ"}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:47 GMT
+        status: 200 OK
+        code: 200
+        duration: 81.219747ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/idps/credentials/keys/f05611e8-ca65-4074-b48f-887a6e89c93c
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"kty":"RSA","created":"2023-08-15T23:29:47.000Z","lastUpdated":"2023-08-15T23:29:47.000Z","expiresAt":"2033-08-15T23:29:45.000Z","alg":"RSA","kid":"f05611e8-ca65-4074-b48f-887a6e89c93c","use":"sig","x5c":["MIIDujCCAqKgAwIBAgIGAYn7iK5DMA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEG\nA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU\nMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoG\nCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMzA4MTUyMzI4NDZaFw0zMzA4MTUyMzI5NDVa\nMIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j\naXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9p\nZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZI\nhvcNAQEBBQADggEPADCCAQoCggEBALECSYci9ezJHSN3ml2KOXPyAG91lLPhuq8nfCQb6Zy/ryb8\nNRIGHsQGlplyt5oFP4V0C5nb1Ya/xWLUf/2L4dwjjnLzgZqGQhdM3CUUHFLKRuHdtjPN74AEGdyx\nGHI8FPA+0tUOP++ASVnwNyvTQzIkXVOJrhOkKnHTCE6PC6Vtgezbd71+KWHV3U8EXeFHGZ+9+Ec8\nBF+YPjMP8Gkty9l/P/PNWkKzc1ik5qDTz+QW/zqpBKSw0TyLVgr4sOBBzmja9RUC018J22NqSEGN\nHZ3k84HVF8XNl9lnDkkTyfwn4fKdhHG5/alX4WScy6bSmlZLrM7NW04QceXcRD/h3yECAwEAATAN\nBgkqhkiG9w0BAQsFAAOCAQEAVnANvJXtHdw11FOPLtNePNELbP8zcP5AVnJmTMEjW11QDSBzuN+n\nJKpVgJCnL9vCVs/7lN5BjPbAEDg5MqtfpJEH3/L+9axyHVdHAxzs8ZF5ni5A9I0xA3zGmlNl2J5C\nHrehRsi8Oy7ODg5DHW6q81s54j0rv+DaOnHmPvbqtKTkl7PlW3Co7zQkr5oHGR8JnZPwoNrOMV0w\nTYOunoNKQNYaKLutn49WLIDmg9Cn2ejwc3+S1y9WDWkAIt3O9sIlxavWU7VnBvp2hp0knhyXa/4X\n4c27N8XYJtlZPzo/rIElmwQiJ2f23s3/eU8sPF7wqlKRUKXQYgw5MRZwCIoMNQ=="],"x5t#S256":"E6FdcVGxMyq0NQBK54fv88a2KkyxsEtO5yxacTMnwGI","e":"AQAB","n":"sQJJhyL17MkdI3eaXYo5c_IAb3WUs-G6ryd8JBvpnL-vJvw1EgYexAaWmXK3mgU_hXQLmdvVhr_FYtR__Yvh3COOcvOBmoZCF0zcJRQcUspG4d22M83vgAQZ3LEYcjwU8D7S1Q4_74BJWfA3K9NDMiRdU4muE6QqcdMITo8LpW2B7Nt3vX4pYdXdTwRd4UcZn734RzwEX5g-Mw_waS3L2X8_881aQrNzWKTmoNPP5Bb_OqkEpLDRPItWCviw4EHOaNr1FQLTXwnbY2pIQY0dneTzgdUXxc2X2WcOSRPJ_Cfh8p2Ecbn9qVfhZJzLptKaVkuszs1bThBx5dxEP-HfIQ"}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:47 GMT
+        status: 200 OK
+        code: 200
+        duration: 87.82168ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 832
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"issuerMode":"ORG_URL","name":"testAcc_1420601490","policy":{"accountLink":{"action":"AUTO"},"maxClockSkew":0,"provisioning":{"action":"AUTO","conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}},"groups":{"action":"NONE"},"profileMaster":false},"subject":{"matchType":"USERNAME","userNameTemplate":{"template":"idpuser.email"}}},"protocol":{"algorithms":{"request":{"signature":{"algorithm":"SHA-256","scope":"REQUEST"}},"response":{"signature":{"algorithm":"SHA-256","scope":"ANY"}}},"credentials":{"trust":{"issuer":"https://idp.example.com","kid":"f05611e8-ca65-4074-b48f-887a6e89c93c"}},"endpoints":{"acs":{"binding":"HTTP-POST","type":"INSTANCE"},"sso":{"binding":"HTTP-POST","destination":"https://idp.example.com","url":"https://idp.example.com"}},"type":"SAML2"},"status":"ACTIVE","type":"SAML2"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/idps
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oa9i6y9e72DYkAFB1d7","name":"testAcc_1420601490","status":"ACTIVE","created":"2023-08-15T23:29:48.000Z","lastUpdated":"2023-08-15T23:29:48.000Z","protocol":{"type":"SAML2","endpoints":{"sso":{"url":"https://idp.example.com","binding":"HTTP-POST","destination":"https://idp.example.com"},"acs":{"binding":"HTTP-POST","type":"INSTANCE"}},"algorithms":{"request":{"signature":{"algorithm":"SHA-256","scope":"REQUEST"}},"response":{"signature":{"algorithm":"SHA-256","scope":"ANY"}}},"settings":{"nameFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified","honorPersistentNameId":false},"credentials":{"trust":{"issuer":"https://idp.example.com","audience":"https://www.okta.com/saml2/service-provider/spbmntyzirvhgjoanive","kid":"f05611e8-ca65-4074-b48f-887a6e89c93c","revocation":null,"revocationCacheLifetime":0},"signing":{"kid":"5pDX4d-UxdUyyBmYG5H04CTFky-eWrUWNP2DkZHsK6o"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0,"mapAMRClaims":false},"type":"SAML2","_links":{"metadata":{"href":"https://oie-00.oktapreview.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/metadata.xml","type":"application/xml","hints":{"allow":["GET"]}},"acs":{"href":"https://oie-00.oktapreview.com/sso/saml2/0oa9i6y9e72DYkAFB1d7","type":"application/xml","hints":{"allow":["POST"]}},"users":{"href":"https://oie-00.oktapreview.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/users","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:48 GMT
+        status: 200 OK
+        code: 200
+        duration: 980.062108ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oa9i6y9e72DYkAFB1d7","name":"testAcc_1420601490","status":"ACTIVE","created":"2023-08-15T23:29:48.000Z","lastUpdated":"2023-08-15T23:29:48.000Z","protocol":{"type":"SAML2","endpoints":{"sso":{"url":"https://idp.example.com","binding":"HTTP-POST","destination":"https://idp.example.com"},"acs":{"binding":"HTTP-POST","type":"INSTANCE"}},"algorithms":{"request":{"signature":{"algorithm":"SHA-256","scope":"REQUEST"}},"response":{"signature":{"algorithm":"SHA-256","scope":"ANY"}}},"settings":{"nameFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified","honorPersistentNameId":false},"credentials":{"trust":{"issuer":"https://idp.example.com","audience":"https://www.okta.com/saml2/service-provider/spbmntyzirvhgjoanive","kid":"f05611e8-ca65-4074-b48f-887a6e89c93c","revocation":null,"revocationCacheLifetime":0},"signing":{"kid":"5pDX4d-UxdUyyBmYG5H04CTFky-eWrUWNP2DkZHsK6o"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0,"mapAMRClaims":false},"type":"SAML2","_links":{"metadata":{"href":"https://oie-00.oktapreview.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/metadata.xml","type":"application/xml","hints":{"allow":["GET"]}},"acs":{"href":"https://oie-00.oktapreview.com/sso/saml2/0oa9i6y9e72DYkAFB1d7","type":"application/xml","hints":{"allow":["POST"]}},"users":{"href":"https://oie-00.oktapreview.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/users","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:48 GMT
+        status: 200 OK
+        code: 200
+        duration: 84.027053ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/mappings?limit=200&sourceId=0oa9i6y9e72DYkAFB1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"prm9i6y9eegCdbsk71d7","source":{"id":"0oa9i6y9e72DYkAFB1d7","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6y9e72DYkAFB1d7"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/apps/0oa9i6y9e72DYkAFB1d7/default"}}},"target":{"id":"oty5qwjvh0Vy1j8Kd1d7","name":"user","type":"user","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7"}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/mappings/prm9i6y9eegCdbsk71d7"}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:48 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/mappings?limit=200>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 110.024214ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/mappings/prm9i6y9eegCdbsk71d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"prm9i6y9eegCdbsk71d7","source":{"id":"0oa9i6y9e72DYkAFB1d7","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6y9e72DYkAFB1d7"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/apps/0oa9i6y9e72DYkAFB1d7/default"}}},"target":{"id":"oty5qwjvh0Vy1j8Kd1d7","name":"user","type":"user","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7"}}},"properties":{"firstName":{"expression":"source.firstName","pushStatus":"DONT_PUSH"},"lastName":{"expression":"source.lastName","pushStatus":"DONT_PUSH"},"email":{"expression":"source.email","pushStatus":"DONT_PUSH"},"mobilePhone":{"expression":"source.mobilePhone","pushStatus":"DONT_PUSH"},"login":{"expression":"source.userName","pushStatus":"DONT_PUSH"}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/mappings/prm9i6y9eegCdbsk71d7"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:48 GMT
+        status: 200 OK
+        code: 200
+        duration: 100.568092ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/xml
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/metadata.xml
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <md:EntityDescriptor entityID="https://www.okta.com/saml2/service-provider/spbmntyzirvhgjoanive" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="encryption"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDujCCAqKgAwIBAgIGAYO0vNK1MA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoG
+            CSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMjEwMDcyMzE1NTdaFw0zMjEwMDcyMzE2NTda
+            MIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j
+            aXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9p
+            ZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZI
+            hvcNAQEBBQADggEPADCCAQoCggEBAKTDwEYbix/NU3aDoh9Q4TdPr+L5DshJQV8Say0QgdlWVgMU
+            TDHfbBqeGz1AG1280JhQdO7A/lbR/PzBZeEj1C8Xy95M3rO9S7zV+U21gLIFdJoPTssEL8GXt6Pg
+            oa6EG2oiZWydcTtecdCAEoBdoLusrS9LJ6Nqs3Wa+mnpWeFqcSplYTAzCu03KPS30lHz/SX/NrRQ
+            RUJPPPDpHf4aTQjfvYie3ty6aH/zykGfrKIFaT3BuYzKgWnDhA6wIGuFew0P72B2L8Z290IzUwiP
+            hnEEGT74fbB3dr4vpvkznyUFLmoYVygSC9+gxzz5K+umJ4uyLe/pQ2V17nN2twkEQM8CAwEAATAN
+            BgkqhkiG9w0BAQsFAAOCAQEAVn71+TGrBCzyrlbczRzkZncZ+WE+UwRtlCHwtgot6gsSOn9riRaV
+            xJ/S3hybQhehMitrx1/z2jTKnheXR0+hYEBCjKiRekjgC0RWw7WRTZmZ0aa1UYP6Y8vSq8Q2GBvb
+            OYIh7cY2X+sIVZ/c2ua72PSMMAEc7iUKaBIdVJoEQmPGwYy/4eDVkG+S7VLmhmsbSgVQPtl7xY9/
+            j7VCxB0BVtUo+TvVPTPSVv1rBGDm4vL0a6jClIJeDU/SpyRM8BlJKA/iZLrDlnJX9wlzxZTuXZ8c
+            TsCcao0sC8+z6GM/KDSPR7q+4DbPL1KsS5lqqN7xQD0H+/qvkvzNvCDw3hOhEA==</ds:X509Certificate></ds:X509Data></ds:KeyInfo><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"/><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes192-cbc"/><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes256-cbc"/><md:EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes128-gcm"/><md:EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes256-gcm"/><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/></md:KeyDescriptor><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDujCCAqKgAwIBAgIGAYO0vNK1MA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoG
+            CSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMjEwMDcyMzE1NTdaFw0zMjEwMDcyMzE2NTda
+            MIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j
+            aXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9p
+            ZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZI
+            hvcNAQEBBQADggEPADCCAQoCggEBAKTDwEYbix/NU3aDoh9Q4TdPr+L5DshJQV8Say0QgdlWVgMU
+            TDHfbBqeGz1AG1280JhQdO7A/lbR/PzBZeEj1C8Xy95M3rO9S7zV+U21gLIFdJoPTssEL8GXt6Pg
+            oa6EG2oiZWydcTtecdCAEoBdoLusrS9LJ6Nqs3Wa+mnpWeFqcSplYTAzCu03KPS30lHz/SX/NrRQ
+            RUJPPPDpHf4aTQjfvYie3ty6aH/zykGfrKIFaT3BuYzKgWnDhA6wIGuFew0P72B2L8Z290IzUwiP
+            hnEEGT74fbB3dr4vpvkznyUFLmoYVygSC9+gxzz5K+umJ4uyLe/pQ2V17nN2twkEQM8CAwEAATAN
+            BgkqhkiG9w0BAQsFAAOCAQEAVn71+TGrBCzyrlbczRzkZncZ+WE+UwRtlCHwtgot6gsSOn9riRaV
+            xJ/S3hybQhehMitrx1/z2jTKnheXR0+hYEBCjKiRekjgC0RWw7WRTZmZ0aa1UYP6Y8vSq8Q2GBvb
+            OYIh7cY2X+sIVZ/c2ua72PSMMAEc7iUKaBIdVJoEQmPGwYy/4eDVkG+S7VLmhmsbSgVQPtl7xY9/
+            j7VCxB0BVtUo+TvVPTPSVv1rBGDm4vL0a6jClIJeDU/SpyRM8BlJKA/iZLrDlnJX9wlzxZTuXZ8c
+            TsCcao0sC8+z6GM/KDSPR7q+4DbPL1KsS5lqqN7xQD0H+/qvkvzNvCDw3hOhEA==</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat><md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://oie-00.oktapreview.com/sso/saml2/0oa9i6y9e72DYkAFB1d7" index="0" isDefault="true"/><md:AttributeConsumingService index="0"><md:ServiceName xml:lang="en">testAcc_1420601490</md:ServiceName><md:RequestedAttribute FriendlyName="First Name" Name="firstName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/><md:RequestedAttribute FriendlyName="Last Name" Name="lastName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/><md:RequestedAttribute FriendlyName="Email" Name="email" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/><md:RequestedAttribute FriendlyName="Mobile Phone" Name="mobilePhone" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/></md:AttributeConsumingService></md:SPSSODescriptor><md:Organization><md:OrganizationName xml:lang="en">oie-00</md:OrganizationName><md:OrganizationDisplayName xml:lang="en">oie-00 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?</md:OrganizationDisplayName><md:OrganizationURL xml:lang="en">https://terraform.io</md:OrganizationURL></md:Organization></md:EntityDescriptor>
+        headers:
+            Content-Disposition:
+                - attachment; filename=metadata.xml
+            Content-Type:
+                - application/octet-stream
+            Date:
+                - Tue, 15 Aug 2023 23:29:49 GMT
+        status: 200 OK
+        code: 200
+        duration: 109.364108ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/xml
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/metadata.xml
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <md:EntityDescriptor entityID="https://www.okta.com/saml2/service-provider/spbmntyzirvhgjoanive" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="encryption"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDujCCAqKgAwIBAgIGAYO0vNK1MA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoG
+            CSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMjEwMDcyMzE1NTdaFw0zMjEwMDcyMzE2NTda
+            MIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j
+            aXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9p
+            ZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZI
+            hvcNAQEBBQADggEPADCCAQoCggEBAKTDwEYbix/NU3aDoh9Q4TdPr+L5DshJQV8Say0QgdlWVgMU
+            TDHfbBqeGz1AG1280JhQdO7A/lbR/PzBZeEj1C8Xy95M3rO9S7zV+U21gLIFdJoPTssEL8GXt6Pg
+            oa6EG2oiZWydcTtecdCAEoBdoLusrS9LJ6Nqs3Wa+mnpWeFqcSplYTAzCu03KPS30lHz/SX/NrRQ
+            RUJPPPDpHf4aTQjfvYie3ty6aH/zykGfrKIFaT3BuYzKgWnDhA6wIGuFew0P72B2L8Z290IzUwiP
+            hnEEGT74fbB3dr4vpvkznyUFLmoYVygSC9+gxzz5K+umJ4uyLe/pQ2V17nN2twkEQM8CAwEAATAN
+            BgkqhkiG9w0BAQsFAAOCAQEAVn71+TGrBCzyrlbczRzkZncZ+WE+UwRtlCHwtgot6gsSOn9riRaV
+            xJ/S3hybQhehMitrx1/z2jTKnheXR0+hYEBCjKiRekjgC0RWw7WRTZmZ0aa1UYP6Y8vSq8Q2GBvb
+            OYIh7cY2X+sIVZ/c2ua72PSMMAEc7iUKaBIdVJoEQmPGwYy/4eDVkG+S7VLmhmsbSgVQPtl7xY9/
+            j7VCxB0BVtUo+TvVPTPSVv1rBGDm4vL0a6jClIJeDU/SpyRM8BlJKA/iZLrDlnJX9wlzxZTuXZ8c
+            TsCcao0sC8+z6GM/KDSPR7q+4DbPL1KsS5lqqN7xQD0H+/qvkvzNvCDw3hOhEA==</ds:X509Certificate></ds:X509Data></ds:KeyInfo><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"/><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes192-cbc"/><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes256-cbc"/><md:EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes128-gcm"/><md:EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes256-gcm"/><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/></md:KeyDescriptor><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDujCCAqKgAwIBAgIGAYO0vNK1MA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoG
+            CSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMjEwMDcyMzE1NTdaFw0zMjEwMDcyMzE2NTda
+            MIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j
+            aXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9p
+            ZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZI
+            hvcNAQEBBQADggEPADCCAQoCggEBAKTDwEYbix/NU3aDoh9Q4TdPr+L5DshJQV8Say0QgdlWVgMU
+            TDHfbBqeGz1AG1280JhQdO7A/lbR/PzBZeEj1C8Xy95M3rO9S7zV+U21gLIFdJoPTssEL8GXt6Pg
+            oa6EG2oiZWydcTtecdCAEoBdoLusrS9LJ6Nqs3Wa+mnpWeFqcSplYTAzCu03KPS30lHz/SX/NrRQ
+            RUJPPPDpHf4aTQjfvYie3ty6aH/zykGfrKIFaT3BuYzKgWnDhA6wIGuFew0P72B2L8Z290IzUwiP
+            hnEEGT74fbB3dr4vpvkznyUFLmoYVygSC9+gxzz5K+umJ4uyLe/pQ2V17nN2twkEQM8CAwEAATAN
+            BgkqhkiG9w0BAQsFAAOCAQEAVn71+TGrBCzyrlbczRzkZncZ+WE+UwRtlCHwtgot6gsSOn9riRaV
+            xJ/S3hybQhehMitrx1/z2jTKnheXR0+hYEBCjKiRekjgC0RWw7WRTZmZ0aa1UYP6Y8vSq8Q2GBvb
+            OYIh7cY2X+sIVZ/c2ua72PSMMAEc7iUKaBIdVJoEQmPGwYy/4eDVkG+S7VLmhmsbSgVQPtl7xY9/
+            j7VCxB0BVtUo+TvVPTPSVv1rBGDm4vL0a6jClIJeDU/SpyRM8BlJKA/iZLrDlnJX9wlzxZTuXZ8c
+            TsCcao0sC8+z6GM/KDSPR7q+4DbPL1KsS5lqqN7xQD0H+/qvkvzNvCDw3hOhEA==</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat><md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://oie-00.oktapreview.com/sso/saml2/0oa9i6y9e72DYkAFB1d7" index="0" isDefault="true"/><md:AttributeConsumingService index="0"><md:ServiceName xml:lang="en">testAcc_1420601490</md:ServiceName><md:RequestedAttribute FriendlyName="First Name" Name="firstName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/><md:RequestedAttribute FriendlyName="Last Name" Name="lastName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/><md:RequestedAttribute FriendlyName="Email" Name="email" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/><md:RequestedAttribute FriendlyName="Mobile Phone" Name="mobilePhone" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/></md:AttributeConsumingService></md:SPSSODescriptor><md:Organization><md:OrganizationName xml:lang="en">oie-00</md:OrganizationName><md:OrganizationDisplayName xml:lang="en">oie-00 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?</md:OrganizationDisplayName><md:OrganizationURL xml:lang="en">https://terraform.io</md:OrganizationURL></md:Organization></md:EntityDescriptor>
+        headers:
+            Content-Disposition:
+                - attachment; filename=metadata.xml
+            Content-Type:
+                - application/octet-stream
+            Date:
+                - Tue, 15 Aug 2023 23:29:49 GMT
+        status: 200 OK
+        code: 200
+        duration: 279.661644ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oa9i6xhlnlbYhcjG1d7","name":"oie-00_testacc1420601490_8","label":"testAcc_1420601490","status":"ACTIVE","lastUpdated":"2023-08-15T23:29:46.000Z","created":"2023-08-15T23:29:46.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"oie-00_testacc1420601490_8_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"VtMquzqErjDCYDmpBeHS5GYmOm_lmyLXwBVhyCcsWYc"}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":"","ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://oie-00-admin.oktapreview.com/app/oie-00_testacc1420601490_8/0oa9i6xhlnlbYhcjG1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oie-00_testacc1420601490_8_link","href":"https://oie-00.oktapreview.com/home/oie-00_testacc1420601490_8/0oa9i6xhlnlbYhcjG1d7/aln9i796ovxTsoyzF1d7","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst5qwjvlxUHivL8a1d7"},"policies":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://oie-00.oktapreview.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7"},"users":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/users"},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/lifecycle/deactivate"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:49 GMT
+        status: 200 OK
+        code: 200
+        duration: 162.120882ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/xml
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/sso/saml/metadata?kid=VtMquzqErjDCYDmpBeHS5GYmOm_lmyLXwBVhyCcsWYc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 2331
+        uncompressed: false
+        body: |-
+            <?xml version="1.0" encoding="UTF-8"?><md:EntityDescriptor entityID="http://www.okta.com/exk9i6xhlfqLjuJS61d7" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDujCCAqKgAwIBAgIGAYn7iK5DMA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoG
+            CSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMzA4MTUyMzI4NDZaFw0zMzA4MTUyMzI5NDVa
+            MIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j
+            aXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9p
+            ZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZI
+            hvcNAQEBBQADggEPADCCAQoCggEBALECSYci9ezJHSN3ml2KOXPyAG91lLPhuq8nfCQb6Zy/ryb8
+            NRIGHsQGlplyt5oFP4V0C5nb1Ya/xWLUf/2L4dwjjnLzgZqGQhdM3CUUHFLKRuHdtjPN74AEGdyx
+            GHI8FPA+0tUOP++ASVnwNyvTQzIkXVOJrhOkKnHTCE6PC6Vtgezbd71+KWHV3U8EXeFHGZ+9+Ec8
+            BF+YPjMP8Gkty9l/P/PNWkKzc1ik5qDTz+QW/zqpBKSw0TyLVgr4sOBBzmja9RUC018J22NqSEGN
+            HZ3k84HVF8XNl9lnDkkTyfwn4fKdhHG5/alX4WScy6bSmlZLrM7NW04QceXcRD/h3yECAwEAATAN
+            BgkqhkiG9w0BAQsFAAOCAQEAVnANvJXtHdw11FOPLtNePNELbP8zcP5AVnJmTMEjW11QDSBzuN+n
+            JKpVgJCnL9vCVs/7lN5BjPbAEDg5MqtfpJEH3/L+9axyHVdHAxzs8ZF5ni5A9I0xA3zGmlNl2J5C
+            HrehRsi8Oy7ODg5DHW6q81s54j0rv+DaOnHmPvbqtKTkl7PlW3Co7zQkr5oHGR8JnZPwoNrOMV0w
+            TYOunoNKQNYaKLutn49WLIDmg9Cn2ejwc3+S1y9WDWkAIt3O9sIlxavWU7VnBvp2hp0knhyXa/4X
+            4c27N8XYJtlZPzo/rIElmwQiJ2f23s3/eU8sPF7wqlKRUKXQYgw5MRZwCIoMNQ==</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://oie-00.oktapreview.com/app/oie-00_testacc1420601490_8/exk9i6xhlfqLjuJS61d7/sso/saml"/><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://oie-00.oktapreview.com/app/oie-00_testacc1420601490_8/exk9i6xhlfqLjuJS61d7/sso/saml"/></md:IDPSSODescriptor></md:EntityDescriptor>
+        headers:
+            Content-Length:
+                - "2331"
+            Content-Type:
+                - application/xml;charset=ISO-8859-1
+            Date:
+                - Tue, 15 Aug 2023 23:29:50 GMT
+        status: 200 OK
+        code: 200
+        duration: 265.00107ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/credentials/keys
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"kty":"RSA","created":"2023-08-15T23:29:46.000Z","lastUpdated":"2023-08-15T23:29:46.000Z","expiresAt":"2033-08-15T23:29:45.000Z","kid":"VtMquzqErjDCYDmpBeHS5GYmOm_lmyLXwBVhyCcsWYc","use":"sig","x5c":["MIIDujCCAqKgAwIBAgIGAYn7iK5DMA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMzA4MTUyMzI4NDZaFw0zMzA4MTUyMzI5NDVaMIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALECSYci9ezJHSN3ml2KOXPyAG91lLPhuq8nfCQb6Zy/ryb8NRIGHsQGlplyt5oFP4V0C5nb1Ya/xWLUf/2L4dwjjnLzgZqGQhdM3CUUHFLKRuHdtjPN74AEGdyxGHI8FPA+0tUOP++ASVnwNyvTQzIkXVOJrhOkKnHTCE6PC6Vtgezbd71+KWHV3U8EXeFHGZ+9+Ec8BF+YPjMP8Gkty9l/P/PNWkKzc1ik5qDTz+QW/zqpBKSw0TyLVgr4sOBBzmja9RUC018J22NqSEGNHZ3k84HVF8XNl9lnDkkTyfwn4fKdhHG5/alX4WScy6bSmlZLrM7NW04QceXcRD/h3yECAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAVnANvJXtHdw11FOPLtNePNELbP8zcP5AVnJmTMEjW11QDSBzuN+nJKpVgJCnL9vCVs/7lN5BjPbAEDg5MqtfpJEH3/L+9axyHVdHAxzs8ZF5ni5A9I0xA3zGmlNl2J5CHrehRsi8Oy7ODg5DHW6q81s54j0rv+DaOnHmPvbqtKTkl7PlW3Co7zQkr5oHGR8JnZPwoNrOMV0wTYOunoNKQNYaKLutn49WLIDmg9Cn2ejwc3+S1y9WDWkAIt3O9sIlxavWU7VnBvp2hp0knhyXa/4X4c27N8XYJtlZPzo/rIElmwQiJ2f23s3/eU8sPF7wqlKRUKXQYgw5MRZwCIoMNQ=="],"x5t#S256":"E6FdcVGxMyq0NQBK54fv88a2KkyxsEtO5yxacTMnwGI","e":"AQAB","n":"sQJJhyL17MkdI3eaXYo5c_IAb3WUs-G6ryd8JBvpnL-vJvw1EgYexAaWmXK3mgU_hXQLmdvVhr_FYtR__Yvh3COOcvOBmoZCF0zcJRQcUspG4d22M83vgAQZ3LEYcjwU8D7S1Q4_74BJWfA3K9NDMiRdU4muE6QqcdMITo8LpW2B7Nt3vX4pYdXdTwRd4UcZn734RzwEX5g-Mw_waS3L2X8_881aQrNzWKTmoNPP5Bb_OqkEpLDRPItWCviw4EHOaNr1FQLTXwnbY2pIQY0dneTzgdUXxc2X2WcOSRPJ_Cfh8p2Ecbn9qVfhZJzLptKaVkuszs1bThBx5dxEP-HfIQ"}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:50 GMT
+        status: 200 OK
+        code: 200
+        duration: 85.979661ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/idps/credentials/keys/f05611e8-ca65-4074-b48f-887a6e89c93c
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"kty":"RSA","created":"2023-08-15T23:29:47.000Z","lastUpdated":"2023-08-15T23:29:47.000Z","expiresAt":"2033-08-15T23:29:45.000Z","alg":"RSA","kid":"f05611e8-ca65-4074-b48f-887a6e89c93c","use":"sig","x5c":["MIIDujCCAqKgAwIBAgIGAYn7iK5DMA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEG\nA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU\nMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoG\nCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMzA4MTUyMzI4NDZaFw0zMzA4MTUyMzI5NDVa\nMIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j\naXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9p\nZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZI\nhvcNAQEBBQADggEPADCCAQoCggEBALECSYci9ezJHSN3ml2KOXPyAG91lLPhuq8nfCQb6Zy/ryb8\nNRIGHsQGlplyt5oFP4V0C5nb1Ya/xWLUf/2L4dwjjnLzgZqGQhdM3CUUHFLKRuHdtjPN74AEGdyx\nGHI8FPA+0tUOP++ASVnwNyvTQzIkXVOJrhOkKnHTCE6PC6Vtgezbd71+KWHV3U8EXeFHGZ+9+Ec8\nBF+YPjMP8Gkty9l/P/PNWkKzc1ik5qDTz+QW/zqpBKSw0TyLVgr4sOBBzmja9RUC018J22NqSEGN\nHZ3k84HVF8XNl9lnDkkTyfwn4fKdhHG5/alX4WScy6bSmlZLrM7NW04QceXcRD/h3yECAwEAATAN\nBgkqhkiG9w0BAQsFAAOCAQEAVnANvJXtHdw11FOPLtNePNELbP8zcP5AVnJmTMEjW11QDSBzuN+n\nJKpVgJCnL9vCVs/7lN5BjPbAEDg5MqtfpJEH3/L+9axyHVdHAxzs8ZF5ni5A9I0xA3zGmlNl2J5C\nHrehRsi8Oy7ODg5DHW6q81s54j0rv+DaOnHmPvbqtKTkl7PlW3Co7zQkr5oHGR8JnZPwoNrOMV0w\nTYOunoNKQNYaKLutn49WLIDmg9Cn2ejwc3+S1y9WDWkAIt3O9sIlxavWU7VnBvp2hp0knhyXa/4X\n4c27N8XYJtlZPzo/rIElmwQiJ2f23s3/eU8sPF7wqlKRUKXQYgw5MRZwCIoMNQ=="],"x5t#S256":"E6FdcVGxMyq0NQBK54fv88a2KkyxsEtO5yxacTMnwGI","e":"AQAB","n":"sQJJhyL17MkdI3eaXYo5c_IAb3WUs-G6ryd8JBvpnL-vJvw1EgYexAaWmXK3mgU_hXQLmdvVhr_FYtR__Yvh3COOcvOBmoZCF0zcJRQcUspG4d22M83vgAQZ3LEYcjwU8D7S1Q4_74BJWfA3K9NDMiRdU4muE6QqcdMITo8LpW2B7Nt3vX4pYdXdTwRd4UcZn734RzwEX5g-Mw_waS3L2X8_881aQrNzWKTmoNPP5Bb_OqkEpLDRPItWCviw4EHOaNr1FQLTXwnbY2pIQY0dneTzgdUXxc2X2WcOSRPJ_Cfh8p2Ecbn9qVfhZJzLptKaVkuszs1bThBx5dxEP-HfIQ"}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:50 GMT
+        status: 200 OK
+        code: 200
+        duration: 67.309416ms
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oa9i6y9e72DYkAFB1d7","name":"testAcc_1420601490","status":"ACTIVE","created":"2023-08-15T23:29:48.000Z","lastUpdated":"2023-08-15T23:29:48.000Z","protocol":{"type":"SAML2","endpoints":{"sso":{"url":"https://idp.example.com","binding":"HTTP-POST","destination":"https://idp.example.com"},"acs":{"binding":"HTTP-POST","type":"INSTANCE"}},"algorithms":{"request":{"signature":{"algorithm":"SHA-256","scope":"REQUEST"}},"response":{"signature":{"algorithm":"SHA-256","scope":"ANY"}}},"settings":{"nameFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified","honorPersistentNameId":false},"credentials":{"trust":{"issuer":"https://idp.example.com","audience":"https://www.okta.com/saml2/service-provider/spbmntyzirvhgjoanive","kid":"f05611e8-ca65-4074-b48f-887a6e89c93c","revocation":null,"revocationCacheLifetime":0},"signing":{"kid":"5pDX4d-UxdUyyBmYG5H04CTFky-eWrUWNP2DkZHsK6o"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0,"mapAMRClaims":false},"type":"SAML2","_links":{"metadata":{"href":"https://oie-00.oktapreview.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/metadata.xml","type":"application/xml","hints":{"allow":["GET"]}},"acs":{"href":"https://oie-00.oktapreview.com/sso/saml2/0oa9i6y9e72DYkAFB1d7","type":"application/xml","hints":{"allow":["POST"]}},"users":{"href":"https://oie-00.oktapreview.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/users","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:50 GMT
+        status: 200 OK
+        code: 200
+        duration: 70.004248ms
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/mappings?limit=200&sourceId=0oa9i6y9e72DYkAFB1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"prm9i6y9eegCdbsk71d7","source":{"id":"0oa9i6y9e72DYkAFB1d7","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6y9e72DYkAFB1d7"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/apps/0oa9i6y9e72DYkAFB1d7/default"}}},"target":{"id":"oty5qwjvh0Vy1j8Kd1d7","name":"user","type":"user","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7"}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/mappings/prm9i6y9eegCdbsk71d7"}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:50 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/mappings?limit=200>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 84.811744ms
+    - id: 21
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/mappings/prm9i6y9eegCdbsk71d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"prm9i6y9eegCdbsk71d7","source":{"id":"0oa9i6y9e72DYkAFB1d7","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/apps/0oa9i6y9e72DYkAFB1d7"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/apps/0oa9i6y9e72DYkAFB1d7/default"}}},"target":{"id":"oty5qwjvh0Vy1j8Kd1d7","name":"user","type":"user","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7"}}},"properties":{"firstName":{"expression":"source.firstName","pushStatus":"DONT_PUSH"},"lastName":{"expression":"source.lastName","pushStatus":"DONT_PUSH"},"email":{"expression":"source.email","pushStatus":"DONT_PUSH"},"mobilePhone":{"expression":"source.mobilePhone","pushStatus":"DONT_PUSH"},"login":{"expression":"source.userName","pushStatus":"DONT_PUSH"}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/mappings/prm9i6y9eegCdbsk71d7"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:50 GMT
+        status: 200 OK
+        code: 200
+        duration: 85.061797ms
+    - id: 22
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/xml
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/metadata.xml
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <md:EntityDescriptor entityID="https://www.okta.com/saml2/service-provider/spbmntyzirvhgjoanive" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="encryption"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDujCCAqKgAwIBAgIGAYO0vNK1MA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoG
+            CSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMjEwMDcyMzE1NTdaFw0zMjEwMDcyMzE2NTda
+            MIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j
+            aXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9p
+            ZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZI
+            hvcNAQEBBQADggEPADCCAQoCggEBAKTDwEYbix/NU3aDoh9Q4TdPr+L5DshJQV8Say0QgdlWVgMU
+            TDHfbBqeGz1AG1280JhQdO7A/lbR/PzBZeEj1C8Xy95M3rO9S7zV+U21gLIFdJoPTssEL8GXt6Pg
+            oa6EG2oiZWydcTtecdCAEoBdoLusrS9LJ6Nqs3Wa+mnpWeFqcSplYTAzCu03KPS30lHz/SX/NrRQ
+            RUJPPPDpHf4aTQjfvYie3ty6aH/zykGfrKIFaT3BuYzKgWnDhA6wIGuFew0P72B2L8Z290IzUwiP
+            hnEEGT74fbB3dr4vpvkznyUFLmoYVygSC9+gxzz5K+umJ4uyLe/pQ2V17nN2twkEQM8CAwEAATAN
+            BgkqhkiG9w0BAQsFAAOCAQEAVn71+TGrBCzyrlbczRzkZncZ+WE+UwRtlCHwtgot6gsSOn9riRaV
+            xJ/S3hybQhehMitrx1/z2jTKnheXR0+hYEBCjKiRekjgC0RWw7WRTZmZ0aa1UYP6Y8vSq8Q2GBvb
+            OYIh7cY2X+sIVZ/c2ua72PSMMAEc7iUKaBIdVJoEQmPGwYy/4eDVkG+S7VLmhmsbSgVQPtl7xY9/
+            j7VCxB0BVtUo+TvVPTPSVv1rBGDm4vL0a6jClIJeDU/SpyRM8BlJKA/iZLrDlnJX9wlzxZTuXZ8c
+            TsCcao0sC8+z6GM/KDSPR7q+4DbPL1KsS5lqqN7xQD0H+/qvkvzNvCDw3hOhEA==</ds:X509Certificate></ds:X509Data></ds:KeyInfo><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"/><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes192-cbc"/><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes256-cbc"/><md:EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes128-gcm"/><md:EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes256-gcm"/><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/></md:KeyDescriptor><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDujCCAqKgAwIBAgIGAYO0vNK1MA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoG
+            CSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMjEwMDcyMzE1NTdaFw0zMjEwMDcyMzE2NTda
+            MIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j
+            aXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9p
+            ZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZI
+            hvcNAQEBBQADggEPADCCAQoCggEBAKTDwEYbix/NU3aDoh9Q4TdPr+L5DshJQV8Say0QgdlWVgMU
+            TDHfbBqeGz1AG1280JhQdO7A/lbR/PzBZeEj1C8Xy95M3rO9S7zV+U21gLIFdJoPTssEL8GXt6Pg
+            oa6EG2oiZWydcTtecdCAEoBdoLusrS9LJ6Nqs3Wa+mnpWeFqcSplYTAzCu03KPS30lHz/SX/NrRQ
+            RUJPPPDpHf4aTQjfvYie3ty6aH/zykGfrKIFaT3BuYzKgWnDhA6wIGuFew0P72B2L8Z290IzUwiP
+            hnEEGT74fbB3dr4vpvkznyUFLmoYVygSC9+gxzz5K+umJ4uyLe/pQ2V17nN2twkEQM8CAwEAATAN
+            BgkqhkiG9w0BAQsFAAOCAQEAVn71+TGrBCzyrlbczRzkZncZ+WE+UwRtlCHwtgot6gsSOn9riRaV
+            xJ/S3hybQhehMitrx1/z2jTKnheXR0+hYEBCjKiRekjgC0RWw7WRTZmZ0aa1UYP6Y8vSq8Q2GBvb
+            OYIh7cY2X+sIVZ/c2ua72PSMMAEc7iUKaBIdVJoEQmPGwYy/4eDVkG+S7VLmhmsbSgVQPtl7xY9/
+            j7VCxB0BVtUo+TvVPTPSVv1rBGDm4vL0a6jClIJeDU/SpyRM8BlJKA/iZLrDlnJX9wlzxZTuXZ8c
+            TsCcao0sC8+z6GM/KDSPR7q+4DbPL1KsS5lqqN7xQD0H+/qvkvzNvCDw3hOhEA==</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat><md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://oie-00.oktapreview.com/sso/saml2/0oa9i6y9e72DYkAFB1d7" index="0" isDefault="true"/><md:AttributeConsumingService index="0"><md:ServiceName xml:lang="en">testAcc_1420601490</md:ServiceName><md:RequestedAttribute FriendlyName="First Name" Name="firstName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/><md:RequestedAttribute FriendlyName="Last Name" Name="lastName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/><md:RequestedAttribute FriendlyName="Email" Name="email" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/><md:RequestedAttribute FriendlyName="Mobile Phone" Name="mobilePhone" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/></md:AttributeConsumingService></md:SPSSODescriptor><md:Organization><md:OrganizationName xml:lang="en">oie-00</md:OrganizationName><md:OrganizationDisplayName xml:lang="en">oie-00 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?</md:OrganizationDisplayName><md:OrganizationURL xml:lang="en">https://terraform.io</md:OrganizationURL></md:Organization></md:EntityDescriptor>
+        headers:
+            Content-Disposition:
+                - attachment; filename=metadata.xml
+            Content-Type:
+                - application/octet-stream
+            Date:
+                - Tue, 15 Aug 2023 23:29:50 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 348.403398ms
+    - id: 23
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/xml
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/metadata.xml
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <md:EntityDescriptor entityID="https://www.okta.com/saml2/service-provider/spbmntyzirvhgjoanive" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="encryption"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDujCCAqKgAwIBAgIGAYO0vNK1MA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoG
+            CSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMjEwMDcyMzE1NTdaFw0zMjEwMDcyMzE2NTda
+            MIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j
+            aXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9p
+            ZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZI
+            hvcNAQEBBQADggEPADCCAQoCggEBAKTDwEYbix/NU3aDoh9Q4TdPr+L5DshJQV8Say0QgdlWVgMU
+            TDHfbBqeGz1AG1280JhQdO7A/lbR/PzBZeEj1C8Xy95M3rO9S7zV+U21gLIFdJoPTssEL8GXt6Pg
+            oa6EG2oiZWydcTtecdCAEoBdoLusrS9LJ6Nqs3Wa+mnpWeFqcSplYTAzCu03KPS30lHz/SX/NrRQ
+            RUJPPPDpHf4aTQjfvYie3ty6aH/zykGfrKIFaT3BuYzKgWnDhA6wIGuFew0P72B2L8Z290IzUwiP
+            hnEEGT74fbB3dr4vpvkznyUFLmoYVygSC9+gxzz5K+umJ4uyLe/pQ2V17nN2twkEQM8CAwEAATAN
+            BgkqhkiG9w0BAQsFAAOCAQEAVn71+TGrBCzyrlbczRzkZncZ+WE+UwRtlCHwtgot6gsSOn9riRaV
+            xJ/S3hybQhehMitrx1/z2jTKnheXR0+hYEBCjKiRekjgC0RWw7WRTZmZ0aa1UYP6Y8vSq8Q2GBvb
+            OYIh7cY2X+sIVZ/c2ua72PSMMAEc7iUKaBIdVJoEQmPGwYy/4eDVkG+S7VLmhmsbSgVQPtl7xY9/
+            j7VCxB0BVtUo+TvVPTPSVv1rBGDm4vL0a6jClIJeDU/SpyRM8BlJKA/iZLrDlnJX9wlzxZTuXZ8c
+            TsCcao0sC8+z6GM/KDSPR7q+4DbPL1KsS5lqqN7xQD0H+/qvkvzNvCDw3hOhEA==</ds:X509Certificate></ds:X509Data></ds:KeyInfo><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"/><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes192-cbc"/><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes256-cbc"/><md:EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes128-gcm"/><md:EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes256-gcm"/><md:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/></md:KeyDescriptor><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDujCCAqKgAwIBAgIGAYO0vNK1MA0GCSqGSIb3DQEBCwUAMIGdMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9pZS0yMDIyLTEwLTA3LW1heDEcMBoG
+            CSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0yMjEwMDcyMzE1NTdaFw0zMjEwMDcyMzE2NTda
+            MIGdMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j
+            aXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxHjAcBgNVBAMMFW1tLW9p
+            ZS0yMDIyLTEwLTA3LW1heDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZI
+            hvcNAQEBBQADggEPADCCAQoCggEBAKTDwEYbix/NU3aDoh9Q4TdPr+L5DshJQV8Say0QgdlWVgMU
+            TDHfbBqeGz1AG1280JhQdO7A/lbR/PzBZeEj1C8Xy95M3rO9S7zV+U21gLIFdJoPTssEL8GXt6Pg
+            oa6EG2oiZWydcTtecdCAEoBdoLusrS9LJ6Nqs3Wa+mnpWeFqcSplYTAzCu03KPS30lHz/SX/NrRQ
+            RUJPPPDpHf4aTQjfvYie3ty6aH/zykGfrKIFaT3BuYzKgWnDhA6wIGuFew0P72B2L8Z290IzUwiP
+            hnEEGT74fbB3dr4vpvkznyUFLmoYVygSC9+gxzz5K+umJ4uyLe/pQ2V17nN2twkEQM8CAwEAATAN
+            BgkqhkiG9w0BAQsFAAOCAQEAVn71+TGrBCzyrlbczRzkZncZ+WE+UwRtlCHwtgot6gsSOn9riRaV
+            xJ/S3hybQhehMitrx1/z2jTKnheXR0+hYEBCjKiRekjgC0RWw7WRTZmZ0aa1UYP6Y8vSq8Q2GBvb
+            OYIh7cY2X+sIVZ/c2ua72PSMMAEc7iUKaBIdVJoEQmPGwYy/4eDVkG+S7VLmhmsbSgVQPtl7xY9/
+            j7VCxB0BVtUo+TvVPTPSVv1rBGDm4vL0a6jClIJeDU/SpyRM8BlJKA/iZLrDlnJX9wlzxZTuXZ8c
+            TsCcao0sC8+z6GM/KDSPR7q+4DbPL1KsS5lqqN7xQD0H+/qvkvzNvCDw3hOhEA==</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat><md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://oie-00.oktapreview.com/sso/saml2/0oa9i6y9e72DYkAFB1d7" index="0" isDefault="true"/><md:AttributeConsumingService index="0"><md:ServiceName xml:lang="en">testAcc_1420601490</md:ServiceName><md:RequestedAttribute FriendlyName="First Name" Name="firstName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/><md:RequestedAttribute FriendlyName="Last Name" Name="lastName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/><md:RequestedAttribute FriendlyName="Email" Name="email" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/><md:RequestedAttribute FriendlyName="Mobile Phone" Name="mobilePhone" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/></md:AttributeConsumingService></md:SPSSODescriptor><md:Organization><md:OrganizationName xml:lang="en">oie-00</md:OrganizationName><md:OrganizationDisplayName xml:lang="en">oie-00 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?</md:OrganizationDisplayName><md:OrganizationURL xml:lang="en">https://terraform.io</md:OrganizationURL></md:Organization></md:EntityDescriptor>
+        headers:
+            Content-Disposition:
+                - attachment; filename=metadata.xml
+            Content-Type:
+                - application/octet-stream
+            Date:
+                - Tue, 15 Aug 2023 23:29:51 GMT
+        status: 200 OK
+        code: 200
+        duration: 272.097107ms
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oa9i6y9e72DYkAFB1d7","name":"testAcc_1420601490","status":"INACTIVE","created":"2023-08-15T23:29:48.000Z","lastUpdated":"2023-08-15T23:29:51.000Z","protocol":{"type":"SAML2","endpoints":{"sso":{"url":"https://idp.example.com","binding":"HTTP-POST","destination":"https://idp.example.com"},"acs":{"binding":"HTTP-POST","type":"INSTANCE"}},"algorithms":{"request":{"signature":{"algorithm":"SHA-256","scope":"REQUEST"}},"response":{"signature":{"algorithm":"SHA-256","scope":"ANY"}}},"settings":{"nameFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified","honorPersistentNameId":false},"credentials":{"trust":{"issuer":"https://idp.example.com","audience":"https://www.okta.com/saml2/service-provider/spbmntyzirvhgjoanive","kid":"f05611e8-ca65-4074-b48f-887a6e89c93c","revocation":null,"revocationCacheLifetime":0},"signing":{"kid":"5pDX4d-UxdUyyBmYG5H04CTFky-eWrUWNP2DkZHsK6o"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":false,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0,"mapAMRClaims":false},"type":"SAML2","_links":{"metadata":{"href":"https://oie-00.oktapreview.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/metadata.xml","type":"application/xml","hints":{"allow":["GET"]}},"acs":{"href":"https://oie-00.oktapreview.com/sso/saml2/0oa9i6y9e72DYkAFB1d7","type":"application/xml","hints":{"allow":["POST"]}},"users":{"href":"https://oie-00.oktapreview.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/users","hints":{"allow":["GET"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7/lifecycle/activate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:51 GMT
+        status: 200 OK
+        code: 200
+        duration: 150.719941ms
+    - id: 25
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/idps/0oa9i6y9e72DYkAFB1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Tue, 15 Aug 2023 23:29:51 GMT
+        status: 204 No Content
+        code: 204
+        duration: 174.496071ms
+    - id: 26
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/idps/credentials/keys/f05611e8-ca65-4074-b48f-887a6e89c93c
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Tue, 15 Aug 2023 23:29:52 GMT
+        status: 204 No Content
+        code: 204
+        duration: 60.289875ms
+    - id: 27
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:52 GMT
+        status: 200 OK
+        code: 200
+        duration: 144.1367ms
+    - id: 28
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa9i6xhlnlbYhcjG1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Tue, 15 Aug 2023 23:29:52 GMT
+        status: 204 No Content
+        code: 204
+        duration: 509.120799ms

@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceIdpOidc_read(t *testing.T) {
+func TestAccDataSourceOktaIdpOidc_read(t *testing.T) {
 	mgr := newFixtureManager(idpOidc, t.Name())
 	idpOidcConfig := mgr.GetFixtures("generic_oidc.tf", t)
 	config := mgr.GetFixtures("datasource.tf", t)

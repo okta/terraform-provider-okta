@@ -2,7 +2,6 @@ package okta
 
 import (
 	"context"
-	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
@@ -21,9 +20,13 @@ var (
 	_ provider.Provider = &FrameworkProvider{}
 )
 
-// New is a helper function to simplify provider server and testing implementation.
-func NewFWProvider(version string) provider.Provider {
-	return &FrameworkProvider{}
+// NewFrameworkProvider is a helper function to simplify provider server and
+// testing implementation.
+func NewFrameworkProvider(version string) provider.Provider {
+	return &FrameworkProvider{
+		Config:  Config{},
+		Version: version,
+	}
 }
 
 type FrameworkProvider struct {
@@ -219,18 +222,19 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 	p.parallelism = int(data.Parallelism.ValueInt64())
 	p.logLevel = int(data.LogLevel.ValueInt64())
 	p.requestTimeout = int(data.RequestTimeout.ValueInt64())
-	scopes := data.Scopes.String()
-	sanitizeScope := scopes[1 : len(scopes)-1]
-	p.scopes = strings.Split(sanitizeScope, ",")
+	for _, val := range data.Scopes.Elements() {
+		p.scopes = append(p.scopes, val.String())
+	}
+
 	if !data.HTTPProxy.IsNull() {
 		p.httpProxy = data.HTTPProxy.ValueString()
 	}
 
-	err = p.loadAndValidate(ctx)
-	if err != nil {
+	if err := p.loadClients(ctx); err != nil {
 		resp.Diagnostics.AddError("failed to load default value to provider", err.Error())
 		return
 	}
+	p.SetTimeOperations(NewProductionTimeOperations())
 
 	resp.DataSourceData = &p.Config
 	resp.ResourceData = &p.Config

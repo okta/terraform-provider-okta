@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccOktaDomainCertificate(t *testing.T) {
+func TestAccResourceOktaDomainCertificate(t *testing.T) {
 	t.Skip("This test is bespoke and has to be run by hand. We need to spend some time automating this test.")
 
 	pwd, err := os.Getwd()
@@ -71,9 +71,6 @@ resource "okta_domain_certificate" "test" {
 
 func checkIsCertificate(resourceName, attribute string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if isVCRPlayMode() {
-			return nil
-		}
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return fmt.Errorf("resource not found: %s", resourceName)
@@ -93,9 +90,6 @@ func checkIsCertificate(resourceName, attribute string) resource.TestCheckFunc {
 
 func checkIsPrivateKey(resourceName, attribute string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if isVCRPlayMode() {
-			return nil
-		}
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
 			return fmt.Errorf("resource not found: %s", resourceName)

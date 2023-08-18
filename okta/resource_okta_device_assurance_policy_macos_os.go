@@ -244,7 +244,7 @@ func (r *policyDeviceAssuranceMacOSResource) Create(ctx context.Context, req res
 		return
 	}
 
-	deviceAssurance, _, err := r.v3Client.DeviceAssuranceApi.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.oktaSDKClientV3.DeviceAssuranceApi.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create device assurance",
@@ -271,7 +271,7 @@ func (r *policyDeviceAssuranceMacOSResource) Read(ctx context.Context, req resou
 		return
 	}
 
-	deviceAssurance, _, err := r.v3Client.DeviceAssuranceApi.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	deviceAssurance, _, err := r.oktaSDKClientV3.DeviceAssuranceApi.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read device assurance",
@@ -298,7 +298,7 @@ func (r *policyDeviceAssuranceMacOSResource) Delete(ctx context.Context, req res
 		return
 	}
 
-	_, err := r.v3Client.DeviceAssuranceApi.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	_, err := r.oktaSDKClientV3.DeviceAssuranceApi.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete device assurance",
@@ -324,7 +324,7 @@ func (r *policyDeviceAssuranceMacOSResource) Update(ctx context.Context, req res
 		return
 	}
 
-	deviceAssurance, _, err := r.v3Client.DeviceAssuranceApi.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.oktaSDKClientV3.DeviceAssuranceApi.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create device assurance",
@@ -345,7 +345,7 @@ func (r *policyDeviceAssuranceMacOSResource) Update(ctx context.Context, req res
 }
 
 func buildDeviceAssuranceMacOSPolicyRequest(model policyDeviceAssuranceMacOSResourceModel) (okta.ListDeviceAssurancePolicies200ResponseInner, error) {
-	var macos = &okta.DeviceAssuranceMacOSPlatform{}
+	macos := &okta.DeviceAssuranceMacOSPlatform{}
 	macos.SetName(model.Name.ValueString())
 	macos.SetPlatform(okta.PLATFORM_MACOS)
 	if len(model.DiskEncryptionType) > 0 {

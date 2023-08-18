@@ -45,6 +45,10 @@ func newFixtureManager(resourceName, testName string) *fixtureManager {
 	}
 }
 
+func (manager *fixtureManager) SeedStr() string {
+	return fmt.Sprintf("%d", manager.Seed)
+}
+
 func (manager *fixtureManager) GetFixtures(fixtureName string, t *testing.T) string {
 	file, err := os.Open(path.Join(manager.Path, fixtureName))
 	if err != nil {

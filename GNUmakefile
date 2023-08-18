@@ -13,9 +13,32 @@ ifdef TEST_FILTER
 	TEST_FILTER := -run $(TEST_FILTER)
 endif
 
+TESTARGS?=-test.v
+
 DEFAULT_SMOKE_TESTS?=\
+  TestAccDataSourceOktaAppSaml_read \
+  TestAccDataSourceOktaApp_read \
+  TestAccDataSourceOktaGroup_read \
+  TestAccDataSourceOktaGroups_read \
+  TestAccDataSourceOktaPolicy_read \
   TestAccDataSourceOktaUser_read \
-  TestAccResourceOktaUserSchema_crud
+  TestAccResourceOktaAppAutoLoginApplication_crud \
+  TestAccResourceOktaAppBasicAuthApplication_crud \
+  TestAccResourceOktaAppBookmarkApplication_crud \
+  TestAccResourceOktaAppSaml_crud \
+  TestAccResourceOktaAppSignOnPolicy_crud \
+  TestAccResourceOktaAppSignOnPolicy_crud \
+  TestAccResourceOktaAppSwaApplication_crud \
+  TestAccResourceOktaAppThreeFieldApplication_crud \
+  TestAccResourceOktaAppUser_crud \
+  TestAccResourceOktaDefaultMFAPolicy \
+  TestAccResourceOktaGroup_crud \
+  TestAccResourceOktaMfaPolicyRule_crud \
+  TestAccResourceOktaMfaPolicy_crud \
+  TestAccResourceOktaOrgConfiguration \
+  TestAccResourceOktaPolicyRulePassword_crud \
+  TestAccResourceOktaPolicySignOn_crud \
+  TestAccResourceOktaUser_updateAllAttributes
 
 ifeq ($(strip $(SMOKE_TESTS)),)
 	SMOKE_TESTS = $(DEFAULT_SMOKE_TESTS)

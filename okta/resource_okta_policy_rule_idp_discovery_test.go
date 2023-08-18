@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
+func TestAccResourceOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 	mgr := newFixtureManager(policyRuleIdpDiscovery, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_domain.tf", t)

@@ -189,7 +189,7 @@ func (r *policyDeviceAssuranceChromeOSResource) Create(ctx context.Context, req 
 		return
 	}
 
-	deviceAssurance, _, err := r.v3Client.DeviceAssuranceApi.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.oktaSDKClientV3.DeviceAssuranceApi.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create device assurance",
@@ -216,7 +216,7 @@ func (r *policyDeviceAssuranceChromeOSResource) Read(ctx context.Context, req re
 		return
 	}
 
-	deviceAssurance, _, err := r.v3Client.DeviceAssuranceApi.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	deviceAssurance, _, err := r.oktaSDKClientV3.DeviceAssuranceApi.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read device assurance",
@@ -243,7 +243,7 @@ func (r *policyDeviceAssuranceChromeOSResource) Delete(ctx context.Context, req 
 		return
 	}
 
-	_, err := r.v3Client.DeviceAssuranceApi.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	_, err := r.oktaSDKClientV3.DeviceAssuranceApi.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete device assurance",
@@ -269,7 +269,7 @@ func (r *policyDeviceAssuranceChromeOSResource) Update(ctx context.Context, req 
 		return
 	}
 
-	deviceAssurance, _, err := r.v3Client.DeviceAssuranceApi.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.oktaSDKClientV3.DeviceAssuranceApi.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create device assurance",
@@ -290,7 +290,7 @@ func (r *policyDeviceAssuranceChromeOSResource) Update(ctx context.Context, req 
 }
 
 func buildDeviceAssuranceChromeOSPolicyRequest(model policyDeviceAssuranceChromeOSResourceModel) (okta.ListDeviceAssurancePolicies200ResponseInner, error) {
-	var chromeOS = &okta.DeviceAssuranceChromeOSPlatform{}
+	chromeOS := &okta.DeviceAssuranceChromeOSPlatform{}
 	chromeOS.SetName(model.Name.ValueString())
 	chromeOS.SetPlatform(okta.PLATFORM_CHROMEOS)
 

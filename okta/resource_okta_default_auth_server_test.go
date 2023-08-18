@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaAuthServerDefault_crud(t *testing.T) {
+func TestAccResourceOktaAuthServerDefault_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.sun_also_rises", authServerDefault)
 	mgr := newFixtureManager(authServerDefault, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
@@ -54,7 +54,7 @@ func TestAccOktaAuthServerDefault_crud(t *testing.T) {
 	})
 }
 
-func TestAccOktaAuthServerDefault_legacy_crud(t *testing.T) {
+func TestAccResourceOktaAuthServerDefault_legacy_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.sun_also_rises", authServerDefault)
 	mgr := newFixtureManager(authServerDefault, t.Name())
 	config := mgr.GetFixtures("basic_legacy.tf", t)

@@ -11,7 +11,7 @@ import (
 )
 
 // TODO unable to run the test due to conflict providerFactories between plugin and framework
-func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
+func TestAccResourceOktaAppSignOnPolicyRule(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSignOnPolicyRule)
 	mgr := newFixtureManager(appSignOnPolicyRule, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
@@ -76,14 +76,11 @@ func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
 }
 
 func checkAppSignOnPolicyRuleDestroy(s *terraform.State) error {
-	if isVCRPlayMode() {
-		return nil
-	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != appSignOnPolicyRule {
 			continue
 		}
-		client := apiSupplementForTest()
+		client := sdkSupplementClientForTest()
 		rule, resp, err := client.GetAppSignOnPolicyRule(context.Background(), rs.Primary.Attributes["policy_id"], rs.Primary.ID)
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			return nil

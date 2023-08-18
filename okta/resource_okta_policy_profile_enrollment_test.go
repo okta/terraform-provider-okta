@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaPolicyProfileEnrollment(t *testing.T) {
+func TestAccResourceOktaPolicyProfileEnrollment(t *testing.T) {
 	mgr := newFixtureManager(policyProfileEnrollment, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
