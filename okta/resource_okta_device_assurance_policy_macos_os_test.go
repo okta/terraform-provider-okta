@@ -7,7 +7,7 @@ import (
 )
 
 func TestAccResourceOktaPolicyDeviceAssuranceMacOS(t *testing.T) {
-	resource.Test(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		ProtoV5ProviderFactories: testAccProtoV5ProviderFactories,
 		Steps: []resource.TestStep{
 			{

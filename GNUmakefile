@@ -31,7 +31,6 @@ DEFAULT_SMOKE_TESTS?=\
   TestAccResourceOktaAppSwaApplication_crud \
   TestAccResourceOktaAppThreeFieldApplication_crud \
   TestAccResourceOktaAppUser_crud \
-  TestAccResourceOktaAuthServerPolicy_crud \
   TestAccResourceOktaDefaultMFAPolicy \
   TestAccResourceOktaGroup_crud \
   TestAccResourceOktaMfaPolicyRule_crud \

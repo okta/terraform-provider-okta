@@ -47,11 +47,15 @@ var (
 
 func init() {
 	pluginProvider := Provider()
+
+	// v2 provider - terraform-plugin-sdk
 	testAccProvidersFactories = map[string]func() (*schema.Provider, error){
 		"okta": func() (*schema.Provider, error) {
 			return pluginProvider, nil
 		},
 	}
+
+	// v3 provider - terraform-plugin-framework
 	frameworkProvider := NewFrameworkProvider("dev")
 	testAccProtoV5ProviderFactories = map[string]func() (tfprotov5.ProviderServer, error){
 		"okta": providerserver.NewProtocol5WithError(frameworkProvider),
@@ -62,6 +66,8 @@ func init() {
 		// v3 plugin
 		providerserver.NewProtocol5(frameworkProvider),
 	}
+
+	// mux'd provider (v2 + v3) - terraform-plugin-mux
 	muxServer, err := tf5muxserver.NewMuxServer(context.Background(), providers...)
 	if err != nil {
 		log.Fatalf(err.Error())
@@ -304,9 +310,13 @@ func oktaResourceTest(t *testing.T, c resource.TestCase) {
 			os.Setenv("OKTA_BASE_URL", TestDomainName)
 			os.Setenv("OKTA_API_TOKEN", "token")
 			mgr.SetCurrentCassette(cassette)
-			c.ProviderFactories = vcrProviderFactoriesForTest(mgr)
+			// FIXME: need to get our VCR lined up correctly tf sdk v2 and tf plugin framework
+			c.ProviderFactories = nil
+			c.ProtoV5ProviderFactories = vcrProviderFactoriesForTest(mgr)
 			c.CheckDestroy = nil
 			fmt.Printf("=== VCR PLAY CASSETTE %q for %s\n", cassette, t.Name())
+
+			// TODO: If we are just playing VRC should we run ParallelTest?
 			resource.Test(t, c)
 		}
 		return
@@ -323,26 +333,32 @@ func oktaResourceTest(t *testing.T, c resource.TestCase) {
 			return
 		}
 
-		c.ProviderFactories = vcrProviderFactoriesForTest(mgr)
+		c.ProtoV5ProviderFactories = vcrProviderFactoriesForTest(mgr)
 		fmt.Printf("=== VCR RECORD CASSETTE %q for %s\n", mgr.CurrentCassette, t.Name())
 		resource.Test(t, c)
 		return
 	}
 }
 
-// vcrProviderFactoriesForTest Returns the overriden provider factories used by the
-// resource test case given the state of the VCR manager.
-func vcrProviderFactoriesForTest(mgr *vcrManager) map[string]func() (*schema.Provider, error) {
-	return map[string]func() (*schema.Provider, error){
-		"okta": func() (*schema.Provider, error) {
+// vcrProviderFactoriesForTest Returns the overridden provider factories used by
+// the resource test case given the state of the VCR manager.  func
+// vcrProviderFactoriesForTest(mgr *vcrManager) map[string]func()
+// (*schema.Provider, error) {
+func vcrProviderFactoriesForTest(mgr *vcrManager) map[string]func() (tfprotov5.ProviderServer, error) {
+	return map[string]func() (tfprotov5.ProviderServer, error){
+		"okta": func() (tfprotov5.ProviderServer, error) {
 			provider := Provider()
+
+			// v2
 			oldConfigureContextFunc := provider.ConfigureContextFunc
 			provider.ConfigureContextFunc = func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-				config, _diag := vcrCachedConfig(ctx, d, oldConfigureContextFunc, mgr)
+				config, _diag := vcrCachedConfigV2(ctx, d, oldConfigureContextFunc, mgr)
 				if _diag.HasError() {
 					return nil, _diag
 				}
 
+				// this is needed so teardown api calls are recorded by VCR and
+				// we don't run ACC tests in parallel
 				testSdkV3Client = config.oktaSDKClientV3
 				testSdkV2Client = config.oktaSDKClientV2
 				testSdkSupplementClient = config.oktaSDKsupplementClient
@@ -350,44 +366,40 @@ func vcrProviderFactoriesForTest(mgr *vcrManager) map[string]func() (*schema.Pro
 				return config, _diag
 			}
 
-			return provider, nil
+			// v3
+			// FIXME: this needs to be cleaned up so vcr and the sdk clients are all set up in one place
+			// FIXME: need to get our VCR lined up correctly tf sdk v2 and tf plugin framework
+			// FIXME: as-is, any tests using a framework provider can't record for VCR
+			frameworkProvider := NewFrameworkProvider("dev")
+			testFrameworkProvider := frameworkProvider.(*FrameworkProvider)
+
+			// mux - v2+v3
+			providers := []func() tfprotov5.ProviderServer{
+				// v2 plugin
+				provider.GRPCProvider,
+				// v3 plugin
+				providerserver.NewProtocol5(testFrameworkProvider),
+			}
+
+			muxServer, err := tf5muxserver.NewMuxServer(context.Background(), providers...)
+			if err != nil {
+				log.Fatalf(err.Error())
+			}
+
+			return muxServer, nil
 		},
 	}
 }
 
-// We need to hijack the provider's ConfigureContextFunc as it is called many
-// times during an operation which has the side effect of resetting config
-// values such as the http client that okta-sdk-golang utilizes. Instead, we
-// want to create one dedicated VCR http transport for each test. The dedicated
-// transport holds the API calls made specific to that test.
-func vcrCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc schema.ConfigureContextFunc, mgr *vcrManager) (*Config, diag.Diagnostics) {
-	providerConfigsLock.RLock()
-	v, ok := providerConfigs[mgr.TestAndCassetteNameKey()]
-	providerConfigsLock.RUnlock()
-	if ok {
-		// config is cached, proceed
-		return v, nil
-	}
-
-	c, diags := configureFunc(ctx, d)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	config := c.(*Config)
-	config.SetTimeOperations(NewTestTimeOperations())
-
-	transport := config.oktaSDKClientV3.GetConfig().HTTPClient.Transport
-
-	rec, err := recorder.NewWithOptions(&recorder.Options{
+func newVCRRecorder(mgr *vcrManager, transport http.RoundTripper) (rec *recorder.Recorder, err error) {
+	rec, err = recorder.NewWithOptions(&recorder.Options{
 		CassetteName:       mgr.CassettePath(),
 		Mode:               mgr.VCRMode(),
 		SkipRequestLatency: true, // skip how vcr will mimic the real request latency that it can record allowing for fast playback
 		RealTransport:      transport,
 	})
 	if err != nil {
-		return nil, diag.FromErr(err)
+		return
 	}
 
 	// Defines how VCR will match requests to responses.
@@ -396,7 +408,7 @@ func vcrCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 		if !cassette.DefaultMatcher(r, i) {
 			return false
 		}
-		// TODO: there might be header inform would could to inspect to make this more precise
+		// TODO: there might be header information we could inspect to make this more precise
 		if r.Body == nil {
 			return true
 		}
@@ -527,6 +539,44 @@ func vcrCachedConfig(ctx context.Context, d *schema.ResourceData, configureFunc 
 
 		return nil
 	}, recorder.AfterCaptureHook)
+
+	return
+}
+
+func providerConfig(mgr *vcrManager) (*Config, bool) {
+	c, ok := providerConfigs[mgr.TestAndCassetteNameKey()]
+	return c, ok
+}
+
+// vcrCachedConfig V2 We need to hijack the provider's ConfigureContextFunc as
+// it is called many times during an operation which has the side effect of
+// resetting config values such as the http client that okta-sdk-golang
+// utilizes. Instead, we want to create one dedicated VCR http transport for
+// each test. The dedicated transport holds the API calls made specific to that
+// test.
+func vcrCachedConfigV2(ctx context.Context, d *schema.ResourceData, configureFunc schema.ConfigureContextFunc, mgr *vcrManager) (*Config, diag.Diagnostics) {
+	providerConfigsLock.RLock()
+	v, ok := providerConfig(mgr)
+	providerConfigsLock.RUnlock()
+	if ok {
+		// config is cached, proceed
+		return v, nil
+	}
+
+	c, diags := configureFunc(ctx, d)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	config := c.(*Config)
+	config.SetTimeOperations(NewTestTimeOperations())
+
+	transport := config.oktaSDKClientV3.GetConfig().HTTPClient.Transport
+	rec, err := newVCRRecorder(mgr, transport)
+	if err != nil {
+		return nil, diag.FromErr(err)
+	}
 
 	// VCR takes over http transport duties
 	rt := http.RoundTripper(rec)
