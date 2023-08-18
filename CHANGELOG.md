@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.3.0 (August 18, 2023)
+
+### IMPROVEMENTS
+
+* Add Import to resource `okta_app_signon_policy` [#1670](https://github.com/okta/terraform-provider-okta/pull/1670). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Enhanced VCR ACC testing allowing quick datasource and resource smoketest during release [#1650](https://github.com/okta/terraform-provider-okta/pull/1650). Thanks, [@monde](https://github.com/monde)!
+
 ## 4.2.0 (August 11, 2023)
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
