@@ -274,7 +274,7 @@ func (r *policyDeviceAssuranceAndroidResource) Update(ctx context.Context, req r
 	deviceAssurance, _, err := r.oktaSDKClientV3.DeviceAssuranceApi.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"failed to create device assurance",
+			"failed to update device assurance",
 			err.Error(),
 		)
 		return
@@ -296,9 +296,9 @@ func buildDeviceAssuranceAndroidPolicyRequest(model policyDeviceAssuranceAndroid
 	android.SetName(model.Name.ValueString())
 	android.SetPlatform(okta.PLATFORM_ANDROID)
 	if len(model.DiskEncryptionType) > 0 {
-		diskEncryptionType := make([]okta.DiskEncryptionType, 0)
+		diskEncryptionType := make([]okta.DiskEncryptionTypeAndroid, 0)
 		for _, det := range model.DiskEncryptionType {
-			v, err := okta.NewDiskEncryptionTypeFromValue(det.ValueString())
+			v, err := okta.NewDiskEncryptionTypeAndroidFromValue(det.ValueString())
 			if err != nil {
 				return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceAndroidPlatform: android}, err
 			}
@@ -308,7 +308,7 @@ func buildDeviceAssuranceAndroidPolicyRequest(model policyDeviceAssuranceAndroid
 	}
 	android.Jailbreak = model.JailBreak.ValueBoolPointer()
 	if !model.OsVersion.IsNull() {
-		android.OsVersion = &okta.OSVersion{Minimum: model.OsVersion.ValueStringPointer()}
+		android.OsVersion = &okta.OSVersionFourComponents{Minimum: model.OsVersion.ValueStringPointer()}
 	}
 	if len(model.ScreenLockType) > 0 {
 		screenlockType := make([]okta.ScreenLockType, 0)

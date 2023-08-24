@@ -90,7 +90,7 @@ var brandsDataSourceSchema = map[string]*schema.Schema{
 	},
 }
 
-func flattenBrand(brand *okta.Brand) map[string]interface{} {
+func flattenBrand(brand *okta.BrandWithEmbedded) map[string]interface{} {
 	attrs := map[string]interface{}{}
 	attrs["id"] = brand.GetId()
 	attrs["custom_privacy_policy_url"] = ""
@@ -108,7 +108,7 @@ func flattenBrand(brand *okta.Brand) map[string]interface{} {
 	return attrs
 }
 
-func getDefaultBrand(ctx context.Context, m interface{}) (*okta.Brand, error) {
+func getDefaultBrand(ctx context.Context, m interface{}) (*okta.BrandWithEmbedded, error) {
 	brands, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.ListBrands(ctx).Execute()
 	if err != nil {
 		return nil, err

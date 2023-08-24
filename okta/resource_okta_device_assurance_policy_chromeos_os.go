@@ -272,7 +272,7 @@ func (r *policyDeviceAssuranceChromeOSResource) Update(ctx context.Context, req 
 	deviceAssurance, _, err := r.oktaSDKClientV3.DeviceAssuranceApi.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"failed to create device assurance",
+			"failed to update device assurance",
 			err.Error(),
 		)
 		return
@@ -313,7 +313,7 @@ func buildDeviceAssuranceChromeOSPolicyRequest(model policyDeviceAssuranceChrome
 	}
 	dtc.OsFirewall = model.TpspOsFirewall.ValueBoolPointer()
 	if !model.TpspOsVersion.IsNull() {
-		dtc.OsVersion = &okta.OSVersion{Minimum: model.TpspOsVersion.ValueStringPointer()}
+		dtc.OsVersion = &okta.OSVersionFourComponents{Minimum: model.TpspOsVersion.ValueStringPointer()}
 	}
 	if !model.TpspPasswordProtectionWarningTrigger.IsNull() {
 		v, err := okta.NewPasswordProtectionWarningTriggerFromValue(model.TpspPasswordProtectionWarningTrigger.ValueString())

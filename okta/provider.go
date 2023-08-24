@@ -269,7 +269,6 @@ func Provider() *schema.Provider {
 			authServerPolicyRule:          resourceAuthServerPolicyRule(),
 			authServerScope:               resourceAuthServerScope(),
 			behavior:                      resourceBehavior(),
-			brand:                         resourceBrand(),
 			captcha:                       resourceCaptcha(),
 			captchaOrgWideSettings:        resourceCaptchaOrgWideSettings(),
 			domain:                        resourceDomain(),

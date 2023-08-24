@@ -237,7 +237,7 @@ func (r *policyDeviceAssuranceIOSResource) Update(ctx context.Context, req resou
 	deviceAssurance, _, err := r.oktaSDKClientV3.DeviceAssuranceApi.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"failed to create device assurance",
+			"failed to update device assurance",
 			err.Error(),
 		)
 		return
@@ -261,7 +261,7 @@ func buildDeviceAssuranceIOSPolicyRequest(model policyDeviceAssuranceIOSResource
 
 	iOS.Jailbreak = model.JailBreak.ValueBoolPointer()
 	if !model.OsVersion.IsNull() {
-		iOS.OsVersion = &okta.OSVersion{Minimum: model.OsVersion.ValueStringPointer()}
+		iOS.OsVersion = &okta.OSVersionThreeComponents{Minimum: model.OsVersion.ValueStringPointer()}
 	}
 	if len(model.ScreenLockType) > 0 {
 		screenlockType := make([]okta.ScreenLockType, 0)
