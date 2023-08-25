@@ -26,7 +26,7 @@ func dataSourceEmailTemplate() *schema.Resource {
 }
 
 func dataSourceEmailTemplateRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var brand *okta.Brand
+	var brand *okta.BrandWithEmbedded
 	var err error
 	brandID, ok := d.GetOk("brand_id")
 	if ok {

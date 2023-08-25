@@ -68,6 +68,7 @@ func resourceEmailDomain() *schema.Resource {
 							Type:        schema.TypeString,
 							Computed:    true,
 							Description: "DNS TXT record expiration",
+							Deprecated:  "This field has been removed in the newest go sdk version and has become noop",
 						},
 					},
 				},
@@ -104,7 +105,6 @@ func resourceEmailDomainRead(ctx context.Context, d *schema.ResourceData, m inte
 		arr[i] = map[string]interface{}{
 			"fqdn":        dnsValidation[i].GetFqdn(),
 			"record_type": dnsValidation[i].GetRecordType(),
-			"expiration":  dnsValidation[i].GetExpiration(),
 			"value":       dnsValidation[i].GetVerificationValue(),
 		}
 	}

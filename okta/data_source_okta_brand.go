@@ -25,7 +25,7 @@ func dataSourceBrand() *schema.Resource {
 }
 
 func dataSourceBrandRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var brand *okta.Brand
+	var brand *okta.BrandWithEmbedded
 	var err error
 	brandID := d.Get("brand_id").(string)
 

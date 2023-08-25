@@ -357,7 +357,7 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 	deviceAssurance, _, err := r.oktaSDKClientV3.DeviceAssuranceApi.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"failed to create device assurance",
+			"failed to update device assurance",
 			err.Error(),
 		)
 		return
@@ -379,18 +379,18 @@ func buildDeviceAssuranceWindowsPolicyRequest(model policyDeviceAssuranceWindows
 	windows.SetName(model.Name.ValueString())
 	windows.SetPlatform(okta.PLATFORM_WINDOWS)
 	if len(model.DiskEncryptionType) > 0 {
-		diskEncryptionType := make([]okta.DiskEncryptionType, 0)
+		diskEncryptionType := make([]okta.DiskEncryptionTypeDesktop, 0)
 		for _, det := range model.DiskEncryptionType {
-			v, err := okta.NewDiskEncryptionTypeFromValue(det.ValueString())
+			v, err := okta.NewDiskEncryptionTypeDesktopFromValue(det.ValueString())
 			if err != nil {
 				return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceWindowsPlatform: windows}, err
 			}
 			diskEncryptionType = append(diskEncryptionType, *v)
 		}
-		windows.DiskEncryptionType = &okta.DeviceAssuranceAndroidPlatformAllOfDiskEncryptionType{Include: diskEncryptionType}
+		windows.DiskEncryptionType = &okta.DeviceAssuranceMacOSPlatformAllOfDiskEncryptionType{Include: diskEncryptionType}
 	}
 	if !model.OsVersion.IsNull() {
-		windows.OsVersion = &okta.OSVersion{Minimum: model.OsVersion.ValueStringPointer()}
+		windows.OsVersion = &okta.OSVersionFourComponents{Minimum: model.OsVersion.ValueStringPointer()}
 	}
 	if len(model.ScreenLockType) > 0 {
 		screenlockType := make([]okta.ScreenLockType, 0)
@@ -426,7 +426,7 @@ func buildDeviceAssuranceWindowsPolicyRequest(model policyDeviceAssuranceWindows
 		}
 		dtc.OsFirewall = model.TpspOsFirewall.ValueBoolPointer()
 		if !model.TpspOsVersion.IsNull() {
-			dtc.OsVersion = &okta.OSVersion{Minimum: model.TpspOsVersion.ValueStringPointer()}
+			dtc.OsVersion = &okta.OSVersionFourComponents{Minimum: model.TpspOsVersion.ValueStringPointer()}
 		}
 		if !model.TpspPasswordProtectionWarningTrigger.IsNull() {
 			v, err := okta.NewPasswordProtectionWarningTriggerFromValue(model.TpspPasswordProtectionWarningTrigger.ValueString())
