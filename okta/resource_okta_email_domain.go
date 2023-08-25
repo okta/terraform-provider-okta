@@ -64,6 +64,12 @@ func resourceEmailDomain() *schema.Resource {
 							Computed:    true,
 							Description: "DNS record value",
 						},
+						"expiration": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "DNS TXT record expiration",
+							Deprecated:  "This field has been removed in the newest go sdk version and has become noop",
+						},
 					},
 				},
 			},

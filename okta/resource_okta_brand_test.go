@@ -15,6 +15,7 @@ func TestAccResourceOktaBrandCRUD(t *testing.T) {
 			{
 				Config: `resource okta_brand test{
 					name = "test"
+					locale = "en"
 				}`,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("okta_brand.test", "name", "test"),
@@ -22,7 +23,7 @@ func TestAccResourceOktaBrandCRUD(t *testing.T) {
 					resource.TestCheckNoResourceAttr("okta_brand.test", "custom_privacy_policy_url"),
 					resource.TestCheckNoResourceAttr("okta_brand.test", "email_domain_id"),
 					resource.TestCheckResourceAttr("okta_brand.test", "is_default", "false"),
-					resource.TestCheckNoResourceAttr("okta_brand.test", "locale"),
+					resource.TestCheckResourceAttr("okta_brand.test", "locale", "en"),
 					resource.TestCheckResourceAttr("okta_brand.test", "remove_powered_by_okta", "false"),
 				),
 			},

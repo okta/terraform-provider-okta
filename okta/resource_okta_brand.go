@@ -68,12 +68,10 @@ func (r *brandResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 			"email_domain_id": schema.StringAttribute{
 				Description: "Email Domain ID tied to this brand",
 				Optional:    true,
-				Computed:    true,
 			},
 			"locale": schema.StringAttribute{
 				Description: "The language specified as an IETF BCP 47 language tag",
 				Optional:    true,
-				Computed:    true,
 			},
 			"agree_to_custom_privacy_policy": schema.BoolAttribute{
 				Description: "Consent for updating the custom privacy policy URL.",
@@ -88,7 +86,6 @@ func (r *brandResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 			"custom_privacy_policy_url": schema.StringAttribute{
 				Description: "Custom privacy policy URL",
 				Optional:    true,
-				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.AlsoRequires(path.Expressions{
 						path.MatchRoot("agree_to_custom_privacy_policy"),
@@ -103,17 +100,14 @@ func (r *brandResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 			"default_app_app_instance_id": schema.StringAttribute{
 				Description: "Default app app instance id",
 				Optional:    true,
-				Computed:    true,
 			},
 			"default_app_app_link_name": schema.StringAttribute{
 				Description: "Default app app link name",
 				Optional:    true,
-				Computed:    true,
 			},
 			"default_app_classic_application_uri": schema.StringAttribute{
 				Description: "Default app classic application uri",
 				Optional:    true,
-				Computed:    true,
 			},
 			"links": schema.StringAttribute{
 				Description: "Link relations for this object - JSON HAL - Discoverable resources related to the brand",
@@ -154,7 +148,7 @@ func (r *brandResource) Create(ctx context.Context, req resource.CreateRequest, 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	reqBody, err := buildCreateBrandRequest(state)
+	createReqBody, err := buildCreateBrandRequest(state)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to build brand request",
@@ -163,7 +157,7 @@ func (r *brandResource) Create(ctx context.Context, req resource.CreateRequest, 
 		return
 	}
 
-	createdBrand, _, err := r.oktaSDKClientV3.CustomizationApi.CreateBrand(ctx).CreateBrandRequest(reqBody).Execute()
+	createdBrand, _, err := r.oktaSDKClientV3.CustomizationApi.CreateBrand(ctx).CreateBrandRequest(createReqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create brand",
@@ -172,7 +166,25 @@ func (r *brandResource) Create(ctx context.Context, req resource.CreateRequest, 
 		return
 	}
 
-	brand, _, err := r.oktaSDKClientV3.CustomizationApi.GetBrand(ctx, createdBrand.GetId()).Execute()
+	updateReqBody, err := buildUpdateBrandRequest(state)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to build brand request",
+			err.Error(),
+		)
+		return
+	}
+
+	updatedBrand, _, err := r.oktaSDKClientV3.CustomizationApi.ReplaceBrand(ctx, createdBrand.GetId()).Brand(updateReqBody).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to update brand",
+			err.Error(),
+		)
+		return
+	}
+
+	brand, _, err := r.oktaSDKClientV3.CustomizationApi.GetBrand(ctx, updatedBrand.GetId()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read brand",

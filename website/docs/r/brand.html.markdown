@@ -21,9 +21,6 @@ resource "okta_brand" "example" {
 }
 ```
 
-## Attention
-Due to the way brand api works, you will need to first create a brand with only the name, then you can update other attirbutes later. Failure to do so will cause terraform to error out
-
 ## Argument Reference
 
 - `name` - (Required) Name of the brand
