@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-// TODU update test
 func TestAccResourceOktaAuthServerScope_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", authServerScope)
 	mgr := newFixtureManager(authServerScope, t.Name())
