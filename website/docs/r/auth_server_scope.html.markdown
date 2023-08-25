@@ -41,6 +41,8 @@ The following arguments are supported:
 
 - `default` - (Optional) A default scope will be returned in an access token when the client omits the scope parameter in a token request, provided this scope is allowed as part of the access policy rule.
 
+- `optional` - (Optional) Whether the scope optional
+
 ## Attributes Reference
 
 - `id` - ID of the Auth Server Scope.
