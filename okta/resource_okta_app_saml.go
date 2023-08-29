@@ -486,10 +486,6 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		if err != nil {
 			return diag.Errorf("failed to get app's SAML metadata: %v", err)
 		}
-		var q string
-		if keyID != "" {
-			q = fmt.Sprintf("?kid=%s", keyID)
-		}
 		_ = d.Set("metadata", string(keyMetadata))
 		_ = d.Set("metadata_url", linksValue(app.Links, "metadata", "href"))
 		desc := metadataRoot.IDPSSODescriptors[0]
