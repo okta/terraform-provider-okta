@@ -491,8 +491,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 			q = fmt.Sprintf("?kid=%s", keyID)
 		}
 		_ = d.Set("metadata", string(keyMetadata))
-		_ = d.Set("metadata_url", fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata%s",
-			getOktaClientFromMetadata(m).GetConfig().Okta.Client.OrgUrl, d.Id(), q))
+		_ = d.Set("metadata_url", linksValue(app.Links, "metadata", "href"))
 		desc := metadataRoot.IDPSSODescriptors[0]
 		syncSamlEndpointBinding(d, desc.SingleSignOnServices)
 		uri := metadataRoot.EntityID
