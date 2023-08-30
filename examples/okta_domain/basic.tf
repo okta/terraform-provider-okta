@@ -1,3 +1,4 @@
 resource "okta_domain" "test" {
-  name   = "testAcc-replace_with_uuid.example.com"
+  name                    = "testAcc.example.edu"
+  certificate_source_type = "MANUAL"
 }
