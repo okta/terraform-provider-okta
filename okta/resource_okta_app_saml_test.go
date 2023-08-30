@@ -92,6 +92,7 @@ func TestAccResourceOktaAppSaml_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.0", "https://example.com"),
 					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.1", "https://okta.com"),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttrSet(resourceName, "metadata_url"),
 				),
 			},
 			{
