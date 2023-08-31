@@ -219,6 +219,10 @@ func (c *Config) IsClassicOrg(ctx context.Context) bool {
 	return c.classicOrg
 }
 
+func (c *Config) IsOAuth20Auth() bool {
+	return c.privateKey != "" || c.accessToken != ""
+}
+
 func (c *Config) SetTimeOperations(op TimeOperations) {
 	c.timeOperations = op
 }

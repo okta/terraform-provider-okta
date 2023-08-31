@@ -87,7 +87,7 @@ The following arguments are supported:
   `"urn:ietf:params:oauth:grant-type:saml2-bearer"` (*Early Access Property*), `"urn:ietf:params:oauth:grant-type:token-exchange"` (*Early Access Property*),
   `"interaction_code"` (*OIE only*).
 
-- `groups_claim` - (Optional) Groups claim for an OpenID Connect client application. **IMPORTANT**: this field is available only when using api token in the provider config.
+- `groups_claim` - (Optional) Groups claim for an OpenID Connect client application. **IMPORTANT**: this argument is ignored when Okta API authentication is done with OAuth 2.0 credentials
   - `type` - (Required) Groups claim type. Valid values: `"FILTER"`, `"EXPRESSION"`.
   - `filter_type` - (Optional) Groups claim filter. Can only be set if type is `"FILTER"`. Valid values: `"EQUALS"`, `"STARTS_WITH"`, `"CONTAINS"`, `"REGEX"`.
   - `name` - (Required) Name of the claim that will be used in the token.
