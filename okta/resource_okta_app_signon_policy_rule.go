@@ -254,7 +254,9 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 		if rule.Conditions.Device != nil {
 			_ = d.Set("device_is_managed", rule.Conditions.Device.Managed)
 			_ = d.Set("device_is_registered", rule.Conditions.Device.Registered)
-			m["device_assurances_included"] = convertStringSliceToSetNullable(rule.Conditions.Device.Assurance.Include)
+			if rule.Conditions.Device.Assurance != nil {
+				m["device_assurances_included"] = convertStringSliceToSetNullable(rule.Conditions.Device.Assurance.Include)
+			}
 		}
 		if rule.Conditions.People != nil {
 			if rule.Conditions.People.Users != nil {
