@@ -320,7 +320,7 @@ func buildCreateBrandRequest(model brandResourceModel) (okta.CreateBrandRequest,
 }
 
 func buildUpdateBrandRequest(model brandResourceModel) (okta.BrandRequest, error) {
-	var defaultApp = &okta.DefaultApp{}
+	defaultApp := &okta.DefaultApp{}
 	if !model.DefaultAppAppInstanceID.IsNull() && model.DefaultAppAppInstanceID.ValueString() != "" {
 		defaultApp.AppInstanceId = model.DefaultAppAppInstanceID.ValueStringPointer()
 		defaultApp.AppLinkName = model.DefaultAppAppLinkName.ValueStringPointer()

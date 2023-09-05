@@ -59,7 +59,9 @@ The following arguments are supported:
 
 - `always_apply` (Optional) Whether apply the changes to all users with this profile after updating or creating the these mappings.
  
-~> **WARNING**: `always_apply` is available only when using api token in the provider config.
+~> **WARNING**: `always_apply` is incompatible with OAuth 2.0 authentication and will be ignored when using that type of authentication.
+
+~> **WARNING:** `always_apply` makes use of an internal/private Okta API endpoint that could change without notice rendering this resource inoperable. 
 
 ## Attributes Reference
 
