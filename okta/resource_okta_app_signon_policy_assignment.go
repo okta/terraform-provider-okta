@@ -203,7 +203,6 @@ func (r *appSignonPolicyAssignmentResource) Update(ctx context.Context, req reso
 	}
 
 	// find the app
-	//appInnerResp, err := r.findAppSDKInnerResponse(ctx, state.AppID.ValueString())
 	_, err := r.findAppSDKInnerResponse(ctx, state.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -245,82 +244,72 @@ func (r *appSignonPolicyAssignmentResource) findAppSDKInnerResponse(ctx context.
 	return appInnerResp, err
 }
 
-func concreteAppID(src *okta.ListApplications200ResponseInner) (string, error) {
+func concreteAppID(src *okta.ListApplications200ResponseInner) (id string, err error) {
 	if src == nil {
 		return "", errors.New("list application inner response is nil")
 	}
-
-	if src.AutoLoginApplication != nil {
-		return *src.AutoLoginApplication.Id, nil
+	app := src.GetActualInstance()
+	if app == nil {
+		return "", errors.New("okta list applications response does not contain a concrete app")
 	}
 
-	if src.BasicAuthApplication != nil {
-		return *src.BasicAuthApplication.Id, nil
+	switch v := app.(type) {
+	case *okta.AutoLoginApplication:
+		id = v.GetId()
+	case *okta.BasicAuthApplication:
+		id = v.GetId()
+	case *okta.BookmarkApplication:
+		id = v.GetId()
+	case *okta.BrowserPluginApplication:
+		id = v.GetId()
+	case *okta.OpenIdConnectApplication:
+		id = v.GetId()
+	case *okta.SamlApplication:
+		id = v.GetId()
+	case *okta.SecurePasswordStoreApplication:
+		id = v.GetId()
+	case *okta.WsFederationApplication:
+		id = v.GetId()
 	}
 
-	if src.BookmarkApplication != nil {
-		return *src.BookmarkApplication.Id, nil
+	if id == "" {
+		err = fmt.Errorf("list application inner response does not contain a concrete app type %T", src)
 	}
 
-	if src.BrowserPluginApplication != nil {
-		return *src.BrowserPluginApplication.Id, nil
-	}
-
-	if src.OpenIdConnectApplication != nil {
-		return *src.OpenIdConnectApplication.Id, nil
-	}
-
-	if src.SamlApplication != nil {
-		return *src.SamlApplication.Id, nil
-	}
-
-	if src.SecurePasswordStoreApplication != nil {
-		return *src.SecurePasswordStoreApplication.Id, nil
-	}
-
-	if src.WsFederationApplication != nil {
-		return *src.WsFederationApplication.Id, nil
-	}
-
-	return "", errors.New("list application inner response does not contain a concrete app")
+	return
 }
 
-func concreteAppLinks(src *okta.ListApplications200ResponseInner) (*okta.ApplicationLinks, error) {
+func concreteAppLinks(src *okta.ListApplications200ResponseInner) (links *okta.ApplicationLinks, err error) {
 	if src == nil {
 		return nil, errors.New("list application inner response is nil")
 	}
-
-	if src.AutoLoginApplication != nil {
-		return src.AutoLoginApplication.Links, nil
+	app := src.GetActualInstance()
+	if app == nil {
+		return nil, errors.New("okta list applications response does not contain a concrete app")
 	}
 
-	if src.BasicAuthApplication != nil {
-		return src.BasicAuthApplication.Links, nil
+	switch v := app.(type) {
+	case *okta.AutoLoginApplication:
+		links, _ = v.GetLinksOk()
+	case *okta.BasicAuthApplication:
+		links, _ = v.GetLinksOk()
+	case *okta.BookmarkApplication:
+		links, _ = v.GetLinksOk()
+	case *okta.BrowserPluginApplication:
+		links, _ = v.GetLinksOk()
+	case *okta.OpenIdConnectApplication:
+		links, _ = v.GetLinksOk()
+	case *okta.SamlApplication:
+		links, _ = v.GetLinksOk()
+	case *okta.SecurePasswordStoreApplication:
+		links, _ = v.GetLinksOk()
+	case *okta.WsFederationApplication:
+		links, _ = v.GetLinksOk()
 	}
 
-	if src.BookmarkApplication != nil {
-		return src.BookmarkApplication.Links, nil
+	if links == nil {
+		err = fmt.Errorf("list application inner response does not contain a concrete app type %T", src)
 	}
 
-	if src.BrowserPluginApplication != nil {
-		return src.BrowserPluginApplication.Links, nil
-	}
-
-	if src.OpenIdConnectApplication != nil {
-		return src.OpenIdConnectApplication.Links, nil
-	}
-
-	if src.SamlApplication != nil {
-		return src.SamlApplication.Links, nil
-	}
-
-	if src.SecurePasswordStoreApplication != nil {
-		return src.SecurePasswordStoreApplication.Links, nil
-	}
-
-	if src.WsFederationApplication != nil {
-		return src.WsFederationApplication.Links, nil
-	}
-
-	return nil, errors.New("list application inner response does not contain a concrete app")
+	return
 }
