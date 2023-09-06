@@ -11,16 +11,16 @@ resource "okta_app_oauth" "test" {
   wildcard_redirect          = "DISABLED"
 }
 resource "okta_app_signon_policy" "policy_1" {
-  name        = "testAcc_SignOn_Policy_1_replace_with_uuid"
+  name        = "testAcc_Access_Policy_1_replace_with_uuid"
   description = "Policy 1"
 }
 
 resource "okta_app_signon_policy" "policy_2" {
-  name        = "testAcc_SignOn_Policy_2_replace_with_uuid"
+  name        = "testAcc_Access_Policy_2_replace_with_uuid"
   description = "Policy 2"
 }
 
-resource "okta_app_signon_policy_assignment" "test" {
+resource "okta_app_access_policy_assignment" "test" {
   app_id    = okta_app_oauth.test.id
   policy_id = okta_app_signon_policy.policy_1.id
 }

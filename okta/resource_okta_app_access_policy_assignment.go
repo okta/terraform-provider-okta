@@ -19,32 +19,32 @@ import (
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
-	_ resource.Resource                = &appSignonPolicyAssignmentResource{}
-	_ resource.ResourceWithConfigure   = &appSignonPolicyAssignmentResource{}
-	_ resource.ResourceWithImportState = &appSignonPolicyAssignmentResource{}
+	_ resource.Resource                = &appAccessPolicyAssignmentResource{}
+	_ resource.ResourceWithConfigure   = &appAccessPolicyAssignmentResource{}
+	_ resource.ResourceWithImportState = &appAccessPolicyAssignmentResource{}
 )
 
-func NewAppSignonPolicyAssignmentResource() resource.Resource {
-	return &appSignonPolicyAssignmentResource{}
+func NewAppAccessPolicyAssignmentResource() resource.Resource {
+	return &appAccessPolicyAssignmentResource{}
 }
 
-type appSignonPolicyAssignmentResource struct {
+type appAccessPolicyAssignmentResource struct {
 	*Config
 }
 
-type appSignonPolicyAssignmentResourceModel struct {
+type appAccessPolicyAssignmentResourceModel struct {
 	ID       types.String `tfsdk:"id"`
 	AppID    types.String `tfsdk:"app_id"`
 	PolicyID types.String `tfsdk:"policy_id"`
 }
 
-func (r *appSignonPolicyAssignmentResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_app_signon_policy_assignment"
+func (r *appAccessPolicyAssignmentResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_app_access_policy_assignment"
 }
 
-func (r *appSignonPolicyAssignmentResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *appAccessPolicyAssignmentResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages assignment of Signon Policy to Application",
+		Description: "Manages assignment of Access Policy to an Application",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Policy Assignment ID",
@@ -65,7 +65,7 @@ func (r *appSignonPolicyAssignmentResource) Schema(_ context.Context, _ resource
 	}
 }
 
-func (r *appSignonPolicyAssignmentResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *appAccessPolicyAssignmentResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -82,8 +82,8 @@ func (r *appSignonPolicyAssignmentResource) Configure(_ context.Context, req res
 	r.Config = p
 }
 
-func (r *appSignonPolicyAssignmentResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan appSignonPolicyAssignmentResourceModel
+func (r *appAccessPolicyAssignmentResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan appAccessPolicyAssignmentResourceModel
 
 	// read TF plan data into model
 	diags := req.Plan.Get(ctx, &plan)
@@ -133,8 +133,8 @@ func (r *appSignonPolicyAssignmentResource) Create(ctx context.Context, req reso
 	}
 }
 
-func (r *appSignonPolicyAssignmentResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state appSignonPolicyAssignmentResourceModel
+func (r *appAccessPolicyAssignmentResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state appAccessPolicyAssignmentResourceModel
 
 	// read TF plan data into model
 	diags := req.State.Get(ctx, &state)
@@ -185,8 +185,8 @@ func (r *appSignonPolicyAssignmentResource) Read(ctx context.Context, req resour
 	}
 }
 
-func (r *appSignonPolicyAssignmentResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan, state appSignonPolicyAssignmentResourceModel
+func (r *appAccessPolicyAssignmentResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan, state appAccessPolicyAssignmentResourceModel
 
 	// read TF plan data into model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
@@ -231,15 +231,15 @@ func (r *appSignonPolicyAssignmentResource) Update(ctx context.Context, req reso
 	}
 }
 
-func (r *appSignonPolicyAssignmentResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	tflog.Warn(ctx, "True delete for an okta_app_signon_policy_assignment is a no-op as this resource will not delete an app or a policy. Additionally there is not an API endpoint to remove a sign on policy from an app, only update.")
+func (r *appAccessPolicyAssignmentResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	tflog.Warn(ctx, "True delete for an okta_app_access_policy_assignment is a no-op as this resource will not delete an app or a policy. Additionally there is not an API endpoint to remove an access policy from an app, only update.")
 }
 
-func (r *appSignonPolicyAssignmentResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *appAccessPolicyAssignmentResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
-func (r *appSignonPolicyAssignmentResource) findAppSDKInnerResponse(ctx context.Context, appID string) (*okta.ListApplications200ResponseInner, error) {
+func (r *appAccessPolicyAssignmentResource) findAppSDKInnerResponse(ctx context.Context, appID string) (*okta.ListApplications200ResponseInner, error) {
 	appInnerResp, _, err := r.oktaSDKClientV3.ApplicationApi.GetApplication(ctx, appID).Execute()
 	return appInnerResp, err
 }

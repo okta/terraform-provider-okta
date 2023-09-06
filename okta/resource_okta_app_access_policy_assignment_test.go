@@ -9,8 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccResourceOktaAppSignonPolicyAssignment(t *testing.T) {
-	_resource := "okta_app_signon_policy_assignment"
+func TestAccResourceOktaAppAccessPolicyAssignment(t *testing.T) {
+	_resource := "okta_app_access_policy_assignment"
 	mgr := newFixtureManager(_resource, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)

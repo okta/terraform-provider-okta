@@ -20,7 +20,7 @@ resource "okta_app_signon_policy" "policy_2" {
   description = "Policy 2"
 }
 
-resource "okta_app_signon_policy_assignment" "test" {
+resource "okta_app_access_policy_assignment" "test" {
   app_id    = okta_app_oauth.test.id
   policy_id = okta_app_signon_policy.policy_2.id
 }
