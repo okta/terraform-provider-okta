@@ -29,6 +29,9 @@ resource "okta_brand" "example" {
 
 - `locale` - (Optional) The language specified as an IETF BCP 47 language tag
 
+
+- `name` - (Required) Name of the brand
+
 - `agree_to_custom_privacy_policy` - (Optional) Is a required input flag with when changing custom_privacy_url, shouldn't be considered as a readable property
 
 - `custom_privacy_policy_url` - (Optional) Custom privacy policy URL
