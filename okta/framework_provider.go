@@ -248,6 +248,7 @@ func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 // DataSources defines the data sources implemented in the provider.
 func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		NewAppAccessPolicyAssignmentResource,
 		NewBrandResource,
 		NewPolicyDeviceAssuranceAndroidResource,
 		NewPolicyDeviceAssuranceIOSResource,
