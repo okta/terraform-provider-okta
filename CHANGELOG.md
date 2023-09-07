@@ -1,5 +1,30 @@
 # Changelog
 
+## 4.4.0 (September 7, 2023)
+
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* New resource: `okta_app_access_policy_assignment` easily assign access/authentication/signon policy to an application - [1698](https://github.com/okta/terraform-provider-okta/pull/1698).  Thanks, [@adantop](https://github.com/adantop), [@monde](https://github.com/monde)!
+* Add `brand_id` argument to resource `okta_domain` [#1685](https://github.com/okta/terraform-provider-okta/pull/1685). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Add `optional` attribute to data source `okta_auth_server_scopes` [#1680](https://github.com/okta/terraform-provider-okta/pull/1680). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Make resource `okta_brand` fully CRUD (original API support was for read/update only) [#1677](https://github.com/okta/terraform-provider-okta/pull/1677). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+### IMPROVEMENTS
+
+* PR [1691](https://github.com/okta/terraform-provider-okta/pull/1691).  Thanks, [@monde](https://github.com/monde)!
+  * Add guards to resources `okta_profile_mapping` and `okta_app_oauth` allowing for OAuth 2.0 authentication
+  * Update clarification in docs that resources `okta_security_notification_emails` and `okta_rate_limiting` are OAuth 2.0 authentication incompatible
+
+### BUG FIXES
+
+* Fix `metadata_url` attribute parsing in resource `okta_app_saml` [#1632](https://github.com/okta/terraform-provider-okta/pull/1632). Thanks, [@arvindkrishnakumar-okta](https://github.com/arvindkrishnakumar-okta)!
+
+### PROJECT IMPROVEMENTS:
+
+* Add brand `name` attribute to resource and data source docs [#1619](https://github.com/okta/terraform-provider-okta/pull/1619). Thanks, [@thatguysimon](https://github.com/thatguysimon)!
+* Refine/improve stalebot behavior for issue triage [#1688](https://github.com/okta/terraform-provider-okta/pull/1688), [#1697](https://github.com/okta/terraform-provider-okta/pull/1697). Thanks, [@exitcode0](https://github.com/exitcode0)!
+* Improve development and upgrade sections of the README [#1679](https://github.com/okta/terraform-provider-okta/pull/1697). Thanks, [@jefftaylor-okta](https://github.com/jefftaylor-okta)!
+
 ## 4.3.0 (August 18, 2023)
 
 ### IMPROVEMENTS
