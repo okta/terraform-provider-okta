@@ -923,7 +923,7 @@ func testOktaUserSchemasExists(resourceName string) resource.TestCheckFunc {
 }
 
 func testUserSchemaPropertyExists(schemaUserType, index, resolutionScope string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	typeSchemaID, err := getUserTypeSchemaID(context.Background(), client, schemaUserType)
 	if err != nil {
 		return false, err
@@ -948,6 +948,9 @@ func testUserSchemaPropertyExists(schemaUserType, index, resolutionScope string)
 // backoff in create and update for okta_ser_schema_property resource is
 // operating correctly.
 func TestAccResourceOktaUserSchema_parallel_api_calls(t *testing.T) {
+	if skipVCRTest(t) {
+		return
+	}
 	mgr := newFixtureManager(userSchemaProperty, t.Name())
 	config := `
 resource "okta_user_schema_property" "one" {

@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppBookmarkApplication_crud(t *testing.T) {
+func TestAccResourceOktaAppBookmarkApplication_crud(t *testing.T) {
 	mgr := newFixtureManager(appBookmark, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
@@ -18,7 +18,7 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
+		CheckDestroy:      checkResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -44,7 +44,7 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 	})
 }
 
-func TestAccAppBookmarkApplication_timeouts(t *testing.T) {
+func TestAccResourceOktaAppBookmarkApplication_timeouts(t *testing.T) {
 	mgr := newFixtureManager(appBookmark, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appBookmark)
 	config := `
@@ -61,7 +61,7 @@ resource "okta_app_bookmark" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
+		CheckDestroy:      checkResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -78,7 +78,7 @@ resource "okta_app_bookmark" "test" {
 
 // TestAccAppBookmarkApplication_PR1366 Test for @jakezarobsky-8451 PR #1366
 // https://github.com/okta/terraform-provider-okta/pull/1366
-func TestAccAppBookmarkApplication_PR1366_authentication_policy(t *testing.T) {
+func TestAccResourceOktaAppBookmarkApplication_PR1366_authentication_policy(t *testing.T) {
 	mgr := newFixtureManager(appBookmark, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appBookmark)
 	config := `
@@ -102,7 +102,7 @@ resource "okta_app_bookmark" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
+		CheckDestroy:      checkResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

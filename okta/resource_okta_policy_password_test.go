@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccOktaPolicyPassword_crud(t *testing.T) {
+func TestAccResourceOktaPolicyPassword_crud(t *testing.T) {
 	mgr := newFixtureManager(policyPassword, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
@@ -21,7 +21,7 @@ func TestAccOktaPolicyPassword_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createPolicyCheckDestroy(policyPassword),
+		CheckDestroy:      checkPolicyDestroy(policyPassword),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -113,7 +113,7 @@ func ensurePolicyExists(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func createPolicyCheckDestroy(policyType string) func(*terraform.State) error {
+func checkPolicyDestroy(policyType string) func(*terraform.State) error {
 	return func(s *terraform.State) error {
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != policyType {
@@ -134,7 +134,7 @@ func createPolicyCheckDestroy(policyType string) func(*terraform.State) error {
 }
 
 func doesPolicyExistsUpstream(policyID string) (bool, error) {
-	client := apiSupplementForTest()
+	client := sdkSupplementClientForTest()
 	policy, resp, err := client.GetPolicy(context.Background(), policyID)
 	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return false, nil

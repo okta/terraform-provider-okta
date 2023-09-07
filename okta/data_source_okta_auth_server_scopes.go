@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
 func dataSourceAuthServerScopes() *schema.Resource {
@@ -56,6 +56,10 @@ func dataSourceAuthServerScopes() *schema.Resource {
 							Type:     schema.TypeBool,
 							Computed: true,
 						},
+						"optional": {
+							Type:     schema.TypeBool,
+							Computed: true,
+						},
 					},
 				},
 			},
@@ -64,14 +68,14 @@ func dataSourceAuthServerScopes() *schema.Resource {
 }
 
 func dataSourceAuthServerScopesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	scopes, _, err := getOktaClientFromMetadata(m).AuthorizationServer.ListOAuth2Scopes(ctx, d.Get("auth_server_id").(string), nil)
+	scopes, _, err := getOktaV3ClientFromMetadata(m).AuthorizationServerApi.ListOAuth2Scopes(ctx, d.Get("auth_server_id").(string)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to list auth server scopes: %v", err)
 	}
 	var s string
 	arr := make([]map[string]interface{}, len(scopes))
 	for i := range scopes {
-		s += scopes[i].Name
+		s += scopes[i].GetName()
 		arr[i] = flattenScope(scopes[i])
 	}
 	_ = d.Set("scopes", arr)
@@ -79,15 +83,16 @@ func dataSourceAuthServerScopesRead(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func flattenScope(s *sdk.OAuth2Scope) map[string]interface{} {
+func flattenScope(s okta.OAuth2Scope) map[string]interface{} {
 	return map[string]interface{}{
-		"id":               s.Id,
-		"name":             s.Name,
-		"description":      s.Description,
-		"display_name":     s.DisplayName,
-		"consent":          s.Consent,
-		"metadata_publish": s.MetadataPublish,
-		"default":          s.Default,
-		"system":           s.System,
+		"id":               s.GetId(),
+		"name":             s.GetName(),
+		"description":      s.GetDescription(),
+		"display_name":     s.GetDisplayName(),
+		"consent":          s.GetConsent(),
+		"metadata_publish": s.GetMetadataPublish(),
+		"default":          s.GetDefault(),
+		"system":           s.GetSystem(),
+		"optional":         s.GetOptional(),
 	}
 }

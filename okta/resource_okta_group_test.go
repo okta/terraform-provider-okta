@@ -9,17 +9,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaGroup_crud(t *testing.T) {
+func TestAccResourceOktaGroup_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", group)
 	mgr := newFixtureManager(group, t.Name())
 	config := mgr.GetFixtures("okta_group.tf", t)
 	updatedConfig := mgr.GetFixtures("okta_group_updated.tf", t)
 
-	resource.ParallelTest(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(group, doesGroupExist),
+		CheckDestroy:      checkResourceDestroy(group, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -35,18 +35,18 @@ func TestAccOktaGroup_crud(t *testing.T) {
 	})
 }
 
-func TestAccOktaGroup_customschema(t *testing.T) {
+func TestAccResourceOktaGroup_customschema(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", group)
 	mgr := newFixtureManager(group, t.Name())
 	base := mgr.GetFixtures("okta_group_custom_base.tf", t)
 	updated := mgr.GetFixtures("okta_group_custom_updated.tf", t)
 	removal := mgr.GetFixtures("okta_group_custom_removal.tf", t)
 
-	resource.ParallelTest(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(group, doesGroupExist),
+		CheckDestroy:      checkResourceDestroy(group, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: base,
@@ -73,17 +73,20 @@ func TestAccOktaGroup_customschema(t *testing.T) {
 	})
 }
 
-func TestAccOktaGroup_customschema_null(t *testing.T) {
+func TestAccResourceOktaGroup_customschema_null(t *testing.T) {
+	if skipVCRTest(t) {
+		return
+	}
 	resourceName := fmt.Sprintf("%s.test", group)
 	mgr := newFixtureManager(group, t.Name())
 	base := mgr.GetFixtures("okta_group_custom_base.tf", t)
 	nulls := mgr.GetFixtures("okta_group_custom_nulls.tf", t)
 	removal := mgr.GetFixtures("okta_group_custom_removal.tf", t)
 
-	resource.ParallelTest(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(group, doesGroupExist),
+		CheckDestroy:      checkResourceDestroy(group, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: base,
@@ -118,7 +121,7 @@ func TestAccOktaGroup_customschema_null(t *testing.T) {
 }
 
 func doesGroupExist(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, response, err := client.Group.GetGroup(context.Background(), id)
 	return doesResourceExist(response, err)
 }

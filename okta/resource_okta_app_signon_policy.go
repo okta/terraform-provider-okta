@@ -15,6 +15,9 @@ func resourceAppSignOnPolicy() *schema.Resource {
 		ReadContext:   resourceAppSignOnPolicyRead,
 		UpdateContext: resourceAppSignOnPolicyUpdate,
 		DeleteContext: resourceAppSignOnPolicyDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
@@ -30,7 +33,7 @@ func resourceAppSignOnPolicy() *schema.Resource {
 	}
 }
 
-func buildAccessPoilicy(d *schema.ResourceData) sdk.Policies {
+func buildAccessPolicy(d *schema.ResourceData) sdk.Policies {
 	accessPolicy := sdk.NewAccessPolicy()
 	accessPolicy.Name = d.Get("name").(string)
 	accessPolicy.Description = d.Get("description").(string)
@@ -38,12 +41,12 @@ func buildAccessPoilicy(d *schema.ResourceData) sdk.Policies {
 }
 
 func resourceAppSignOnPolicyCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicy)
 	}
 
 	logger(m).Info("creating authentication policy", "name", d.Get("name").(string))
-	policy := buildAccessPoilicy(d)
+	policy := buildAccessPolicy(d)
 	oktaClient := getOktaClientFromMetadata(m)
 
 	responsePolicy, _, err := oktaClient.Policy.CreatePolicy(ctx, policy, nil)
@@ -56,7 +59,7 @@ func resourceAppSignOnPolicyCreate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceAppSignOnPolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicy)
 	}
 
@@ -78,12 +81,12 @@ func resourceAppSignOnPolicyRead(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func resourceAppSignOnPolicyUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicy)
 	}
 
 	logger(m).Info("updating authentication policy", "id", d.Id(), "name", d.Get("name").(string))
-	policyToUpdate := buildAccessPoilicy(d)
+	policyToUpdate := buildAccessPolicy(d)
 	_, _, err := getOktaClientFromMetadata(m).Policy.UpdatePolicy(ctx, d.Id(), policyToUpdate)
 	if err != nil {
 		return diag.Errorf("failed to update authentication policy: %v", err)
@@ -93,7 +96,7 @@ func resourceAppSignOnPolicyUpdate(ctx context.Context, d *schema.ResourceData, 
 
 // resourceAppSignOnPolicyDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 func resourceAppSignOnPolicyDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicy)
 	}
 

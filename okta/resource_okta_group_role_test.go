@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaGroupAdminRole_crud(t *testing.T) {
+func TestAccResourceOktaGroupAdminRole_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", groupRole)
 	resourceName2 := fmt.Sprintf("%s.test_app", groupRole)
 	mgr := newFixtureManager(groupRole, t.Name())
@@ -22,7 +22,7 @@ func TestAccOktaGroupAdminRole_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(group, doesGroupExist),
+		CheckDestroy:      checkResourceDestroy(group, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

@@ -24,7 +24,7 @@ terraform {
   required_providers {
     okta = {
       source = "okta/okta"
-      version = "~> 4.0.3"
+      version = "~> 4.3.0"
     }
   }
 }
@@ -89,7 +89,7 @@ In addition to [generic `provider` arguments](https://www.terraform.io/docs/conf
 
 - `scopes` - (Optional) These are scopes for obtaining the API token in form of a comma separated list. It can also be sourced from the `OKTA_API_SCOPES` environment variable. `scopes` conflicts with `access_token` and `api_token`.
 
-- `private_key` - (Optional) This is the private key for obtaining the API token (can be represented by a filepath, or the key itself). It can also be sourced from the `OKTA_API_PRIVATE_KEY` environment variable. `private_key` conflicts with `access_token` and `api_token`.
+- `private_key` - (Optional) This is the private key for obtaining the API token (can be represented by a filepath, or the key itself). It can also be sourced from the `OKTA_API_PRIVATE_KEY` environment variable. `private_key` conflicts with `access_token` and `api_token`. The format of the PK is PKCS#1 unencrypted (header starts with `-----BEGIN RSA PRIVATE KEY-----`. Example converting PKCS#8 (header `-----BEGIN PRIVATE KEY-----`) to PKCS#1 `openssl pkey -in pkcs8.pem -traditional -out pkcs1.pem`
 
 - `private_key_id` - (Optional) This is the private key ID (kid) for obtaining the API token. It can also be sourced from `OKTA_API_PRIVATE_KEY_ID` environmental variable. `private_key_id` conflicts with `api_token`.
 

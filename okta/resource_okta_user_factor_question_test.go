@@ -10,17 +10,17 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
+func TestAccResourceOktaUserFactorQuestion_crud(t *testing.T) {
 	mgr := newFixtureManager(userFactorQuestion, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", userFactorQuestion)
 	oktaResourceTest(
 		t, resource.TestCase{
-			PreCheck:          testClassicOnlyAccPreCheck(t),
+			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      createUserFactorCheckDestroy(t.Name(), userFactorQuestion),
+			CheckDestroy:      checkUserFactorDestroy(t.Name(), userFactorQuestion),
 			Steps: []resource.TestStep{
 				{
 					Config: config,
@@ -42,7 +42,7 @@ func TestAccOktaUserFactorQuestion_crud(t *testing.T) {
 		})
 }
 
-func createUserFactorCheckDestroy(testName, factorType string) func(*terraform.State) error {
+func checkUserFactorDestroy(testName, factorType string) func(*terraform.State) error {
 	return func(s *terraform.State) error {
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != factorType {
@@ -64,7 +64,7 @@ func createUserFactorCheckDestroy(testName, factorType string) func(*terraform.S
 
 func doesUserFactorExistsUpstream(userId, factorId string) (bool, error) {
 	var uf *sdk.SecurityQuestionUserFactor
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, resp, err := client.UserFactor.GetFactor(context.Background(), userId, factorId, uf)
 	return doesResourceExist(resp, err)
 }

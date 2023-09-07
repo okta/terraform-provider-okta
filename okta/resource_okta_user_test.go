@@ -10,12 +10,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccOktaUser_customProfileAttributes(t *testing.T) {
+func TestAccResourceOktaUser_customProfileAttributes(t *testing.T) {
 	mgr := newFixtureManager(user, t.Name())
 	config := mgr.GetFixtures("custom_attributes.tf", t)
 	arrayAttrConfig := mgr.GetFixtures("custom_attributes_array.tf", t)
@@ -29,7 +28,7 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:  config,
@@ -97,24 +96,23 @@ func TestAccOktaUser_customProfileAttributes(t *testing.T) {
 	})
 }
 
-func TestAccOktaUser_invalidCustomProfileAttribute(t *testing.T) {
-	rName := acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
-
+func TestAccResourceOktaUser_invalidCustomProfileAttribute(t *testing.T) {
+	mgr := newFixtureManager(user, t.Name())
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config:      testOktaUserConfigInvalidCustomProfileAttribute(rName),
+				Config:      testOktaUserConfigInvalidCustomProfileAttribute(mgr.SeedStr()),
 				ExpectError: regexp.MustCompile("Api validation failed: newUser"),
 			},
 		},
 	})
 }
 
-func TestAccOktaUser_updateAllAttributes(t *testing.T) {
+func TestAccResourceOktaUser_updateAllAttributes(t *testing.T) {
 	mgr := newFixtureManager(user, t.Name())
 	config := mgr.GetFixtures("staged.tf", t)
 	updatedConfig := mgr.GetFixtures("all_attributes.tf", t)
@@ -126,7 +124,7 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -186,7 +184,7 @@ func TestAccOktaUser_updateAllAttributes(t *testing.T) {
 	})
 }
 
-func TestAccOktaUser_updateCredentials(t *testing.T) {
+func TestAccResourceOktaUser_updateCredentials(t *testing.T) {
 	mgr := newFixtureManager(user, t.Name())
 	config := mgr.GetFixtures("basic_with_credentials.tf", t)
 	minimalConfigWithCredentials := mgr.GetFixtures("basic_with_credentials_updated.tf", t)
@@ -198,7 +196,7 @@ func TestAccOktaUser_updateCredentials(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -238,7 +236,7 @@ func TestAccOktaUser_updateCredentials(t *testing.T) {
 	})
 }
 
-func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
+func TestAccResourceOktaUser_statusDeprovisioned(t *testing.T) {
 	mgr := newFixtureManager(user, t.Name())
 	statusChanged := mgr.GetFixtures("deprovisioned.tf", t)
 	config := mgr.GetFixtures("staged.tf", t)
@@ -249,7 +247,7 @@ func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -268,7 +266,7 @@ func TestAccOktaUser_statusDeprovisioned(t *testing.T) {
 	})
 }
 
-func TestAccOktaUserHashedPassword(t *testing.T) {
+func TestAccResourceOktaUserHashedPassword(t *testing.T) {
 	mgr := newFixtureManager(user, t.Name())
 	config := mgr.GetFixtures("password_hash.tf", t)
 	configUpdated := mgr.GetFixtures("password_hash_updated.tf", t)
@@ -279,7 +277,7 @@ func TestAccOktaUserHashedPassword(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -307,7 +305,7 @@ func TestAccOktaUserHashedPassword(t *testing.T) {
 	})
 }
 
-func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
+func TestAccResourceOktaUser_updateDeprovisioned(t *testing.T) {
 	mgr := newFixtureManager(user, t.Name())
 	config := mgr.GetFixtures("deprovisioned.tf", t)
 
@@ -315,7 +313,7 @@ func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -328,7 +326,7 @@ func TestAccOktaUser_updateDeprovisioned(t *testing.T) {
 	})
 }
 
-func TestAccOktaUser_loginUpdates(t *testing.T) {
+func TestAccResourceOktaUser_loginUpdates(t *testing.T) {
 	mgr := newFixtureManager(user, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedLogin := mgr.GetFixtures("login_changed.tf", t)
@@ -341,7 +339,7 @@ func TestAccOktaUser_loginUpdates(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -355,8 +353,8 @@ func TestAccOktaUser_loginUpdates(t *testing.T) {
 	})
 }
 
-func testAccCheckUserDestroy(s *terraform.State) error {
-	client := oktaClientForTest()
+func checkUserDestroy(s *terraform.State) error {
+	client := sdkV2ClientForTest()
 	for _, r := range s.RootModule().Resources {
 		if _, resp, err := client.User.GetUser(context.Background(), r.Primary.ID); err != nil {
 			if resp != nil && resp.Response.StatusCode == http.StatusNotFound {
@@ -422,7 +420,7 @@ resource "okta_user" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

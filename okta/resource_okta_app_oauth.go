@@ -336,7 +336,7 @@ func resourceAppOAuth() *schema.Resource {
 			"groups_claim": {
 				Type:        schema.TypeSet,
 				MaxItems:    1,
-				Description: "Groups claim for an OpenID Connect client application",
+				Description: "Groups claim for an OpenID Connect client application (argument is ignored when API auth is done with OAuth 2.0 credentials)",
 				Optional:    true,
 				Elem:        groupsClaimResource,
 			},
@@ -404,7 +404,7 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err := validateGrantTypes(d); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
-	if err := validateAppOAuth(d); err != nil {
+	if err := validateAppOAuth(d, m); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
 	app := buildAppOAuth(d)
@@ -434,6 +434,12 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	c := m.(*Config)
+	if c.IsOAuth20Auth() {
+		logger(m).Warn("setting groups_claim disabled with OAuth 2.0 API authentication")
+		return nil
+	}
+
 	raw, ok := d.GetOk("groups_claim")
 	if !ok {
 		return nil
@@ -458,6 +464,12 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	c := m.(*Config)
+	if c.IsOAuth20Auth() {
+		logger(m).Warn("updating groups_claim disabled with OAuth 2.0 API authentication")
+		return nil
+	}
+
 	raw, ok := d.GetOk("groups_claim")
 	if !ok {
 		return nil
@@ -517,13 +529,20 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	if d.Get("omit_secret").(bool) {
 		_ = d.Set("client_secret", "")
 	}
-	if _, exists := d.GetOk("groups_claim"); exists {
-		gc, err := flattenGroupsClaim(ctx, d, m)
-		if err != nil {
-			return diag.FromErr(err)
-		}
+
+	gc, err := flattenGroupsClaim(ctx, d, m)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	c := m.(*Config)
+	if c.IsOAuth20Auth() {
+		logger(m).Warn("reading groups_claim disabled with OAuth 2.0 API authentication")
+		return nil
+	} else {
 		_ = d.Set("groups_claim", gc)
 	}
+
 	return setOAuthClientSettings(d, app.Settings.OauthClient)
 }
 
@@ -621,7 +640,7 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	if err := validateGrantTypes(d); err != nil {
 		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
-	if err := validateAppOAuth(d); err != nil {
+	if err := validateAppOAuth(d, m); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
 	app := buildAppOAuth(d)
@@ -829,22 +848,29 @@ func validateGrantTypes(d *schema.ResourceData) error {
 	return conditionalValidator("grant_types", appType, appMap.RequiredGrantTypes, appMap.ValidGrantTypes, grantTypeList)
 }
 
-func validateAppOAuth(d *schema.ResourceData) error {
+func validateAppOAuth(d *schema.ResourceData, m interface{}) error {
 	raw, ok := d.GetOk("groups_claim")
 	if ok {
-		groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
-		if groupsClaim["type"].(string) == "EXPRESSION" && groupsClaim["filter_type"].(string) != "" {
-			return errors.New("'filter_type' in 'groups_claim' can only be set when 'type' is set to 'FILTER'")
-		}
-		if groupsClaim["type"].(string) == "FILTER" && groupsClaim["filter_type"].(string) == "" {
-			return errors.New("'filter_type' in 'groups_claim' is required when 'type' is set to 'FILTER'")
-		}
-		if groupsClaim["name"].(string) == "" || groupsClaim["value"].(string) == "" {
-			return errors.New("'name' 'value' and in 'groups_claim' should not be empty")
+		c := m.(*Config)
+		if c.IsOAuth20Auth() {
+			logger(m).Warn("groups_claim arguments are disabled with OAuth 2.0 API authentication")
+		} else {
+			groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
+			if groupsClaim["type"].(string) == "EXPRESSION" && groupsClaim["filter_type"].(string) != "" {
+				return errors.New("'filter_type' in 'groups_claim' can only be set when 'type' is set to 'FILTER'")
+			}
+			if groupsClaim["type"].(string) == "FILTER" && groupsClaim["filter_type"].(string) == "" {
+				return errors.New("'filter_type' in 'groups_claim' is required when 'type' is set to 'FILTER'")
+			}
+			if groupsClaim["name"].(string) == "" || groupsClaim["value"].(string) == "" {
+				return errors.New("'name' 'value' and in 'groups_claim' should not be empty")
+			}
 		}
 	}
-	if _, ok := d.GetOk("jwks"); !ok && d.Get("token_endpoint_auth_method").(string) == "private_key_jwt" {
-		return errors.New("'jwks' is required when 'token_endpoint_auth_method' is 'private_key_jwt'")
+	_, jwks := d.GetOk("jwks")
+	_, jwks_uri := d.GetOk("jwks_uri")
+	if !(jwks || jwks_uri) && d.Get("token_endpoint_auth_method").(string) == "private_key_jwt" {
+		return errors.New("'jwks' or 'jwks_uri' is required when 'token_endpoint_auth_method' is 'private_key_jwt'")
 	}
 	if d.Get("login_mode").(string) != "DISABLED" {
 		if d.Get("login_uri").(string) == "" {

@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaAuthServerClaimDefault(t *testing.T) {
+func TestAccResourceOktaAuthServerClaimDefault(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", authServerClaimDefault)
 	mgr := newFixtureManager(authServerClaimDefault, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
@@ -16,7 +16,7 @@ func TestAccOktaAuthServerClaimDefault(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
+		CheckDestroy:      checkResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

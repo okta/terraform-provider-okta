@@ -9,7 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaEmailSender(t *testing.T) {
+func TestAccResourceOktaEmailSender(t *testing.T) {
+	t.Skip("okta_email_sender is effectively deprecated as its API has been removed")
+
 	mgr := newFixtureManager(emailSender, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", emailSender)
@@ -18,7 +20,7 @@ func TestAccOktaEmailSender(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(emailSender, emailSenderExists),
+		CheckDestroy:      checkResourceDestroy(emailSender, emailSenderExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -35,7 +37,7 @@ func TestAccOktaEmailSender(t *testing.T) {
 }
 
 func emailSenderExists(id string) (bool, error) {
-	client := apiSupplementForTest()
+	client := sdkSupplementClientForTest()
 	sender, resp, err := client.GetEmailSender(context.Background(), id)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, err

@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaAuthServer_crud(t *testing.T) {
+func TestAccResourceOktaAuthServer_crud(t *testing.T) {
 	mgr := newFixtureManager(authServer, t.Name())
 	resourceName := fmt.Sprintf("%s.sun_also_rises", authServer)
 	name := buildResourceName(mgr.Seed)
@@ -20,7 +20,7 @@ func TestAccOktaAuthServer_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
+		CheckDestroy:      checkResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -46,7 +46,7 @@ func TestAccOktaAuthServer_crud(t *testing.T) {
 	})
 }
 
-func TestAccOktaAuthServer_fullStack(t *testing.T) {
+func TestAccResourceOktaAuthServer_fullStack(t *testing.T) {
 	mgr := newFixtureManager(authServer, t.Name())
 	name := buildResourceName(mgr.Seed)
 	resourceName := fmt.Sprintf("%s.test", authServer)
@@ -61,7 +61,7 @@ func TestAccOktaAuthServer_fullStack(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
+		CheckDestroy:      checkResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -98,7 +98,7 @@ func TestAccOktaAuthServer_fullStack(t *testing.T) {
 	})
 }
 
-func TestAccOktaAuthServer_gh299(t *testing.T) {
+func TestAccResourceOktaAuthServer_gh299(t *testing.T) {
 	mgr := newFixtureManager(authServer, t.Name())
 	name := buildResourceName(mgr.Seed)
 	resourceName := fmt.Sprintf("%s.test", authServer)
@@ -109,7 +109,7 @@ func TestAccOktaAuthServer_gh299(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
+		CheckDestroy:      checkResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -129,7 +129,7 @@ func TestAccOktaAuthServer_gh299(t *testing.T) {
 }
 
 func authServerExists(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	server, resp, err := client.AuthorizationServer.GetAuthorizationServer(context.Background(), id)
 	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return false, nil

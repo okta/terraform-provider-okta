@@ -26,7 +26,7 @@ func dataSourceEmailTemplates() *schema.Resource {
 }
 
 func dataSourceEmailTemplatesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var brand *okta.Brand
+	var brand *okta.BrandWithEmbedded
 	var err error
 	brandID, ok := d.GetOk("brand_id")
 	if ok {
@@ -58,7 +58,7 @@ func dataSourceEmailTemplatesRead(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func collectEmailTempates(ctx context.Context, client *okta.APIClient, brand *okta.Brand) ([]okta.EmailTemplate, error) {
+func collectEmailTempates(ctx context.Context, client *okta.APIClient, brand *okta.BrandWithEmbedded) ([]okta.EmailTemplate, error) {
 	templates, resp, err := client.CustomizationApi.ListEmailTemplates(ctx, brand.GetId()).Limit(int32(defaultPaginationLimit)).Execute()
 	if err != nil {
 		return nil, err

@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaAuthServerClaim_create(t *testing.T) {
+func TestAccResourceOktaAuthServerClaim_create(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", authServerClaim)
 	mgr := newFixtureManager(authServerClaim, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
@@ -17,7 +17,7 @@ func TestAccOktaAuthServerClaim_create(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
+		CheckDestroy:      checkResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -43,7 +43,7 @@ func TestAccOktaAuthServerClaim_create(t *testing.T) {
 	})
 }
 
-func TestAccOktaAuthServerClaim_groupType(t *testing.T) {
+func TestAccResourceOktaAuthServerClaim_groupType(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", authServerClaim)
 	swResourceName := fmt.Sprintf("%s.test_sw", authServerClaim)
 	mgr := newFixtureManager(authServerClaim, t.Name())
@@ -53,7 +53,7 @@ func TestAccOktaAuthServerClaim_groupType(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(authServer, authServerExists),
+		CheckDestroy:      checkResourceDestroy(authServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

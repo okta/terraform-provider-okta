@@ -13,7 +13,7 @@ var (
 	allGroupMembershipsRegexp, _ = regexp.Compile("00g[a-z,A-Z,0-9]{17}, 00g[a-z,A-Z,0-9]{17}")
 )
 
-func TestAccOktaDataSourceUsers_read(t *testing.T) {
+func TestAccDataSourceOktaUsers_read(t *testing.T) {
 	mgr := newFixtureManager(users, t.Name())
 	users := mgr.GetFixtures("users.tf", t)
 	config := mgr.GetFixtures("basic.tf", t)
@@ -53,7 +53,7 @@ func TestAccOktaDataSourceUsers_read(t *testing.T) {
 	})
 }
 
-func TestAccOktaDataSourceUsers_readWithGroupId(t *testing.T) {
+func TestAccDataSourceOktaUsers_readWithGroupId(t *testing.T) {
 	mgr := newFixtureManager(users, t.Name())
 	users := mgr.GetFixtures("users_with_group.tf", t)
 	config := mgr.GetFixtures("group.tf", t)
@@ -86,7 +86,7 @@ func TestAccOktaDataSourceUsers_readWithGroupId(t *testing.T) {
 	})
 }
 
-func TestAccOktaDataSourceUsers_readWithGroupIdIncludingGroups(t *testing.T) {
+func TestAccDataSourceOktaUsers_readWithGroupIdIncludingGroups(t *testing.T) {
 	mgr := newFixtureManager(users, t.Name())
 	users := mgr.GetFixtures("users_with_group.tf", t)
 	config := mgr.GetFixtures("group_with_groups.tf", t)

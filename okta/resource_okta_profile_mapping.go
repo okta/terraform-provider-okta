@@ -244,6 +244,12 @@ func applyMapping(ctx context.Context, d *schema.ResourceData, m interface{}, ma
 	if !d.Get("always_apply").(bool) {
 		return nil
 	}
+	c := m.(*Config)
+	if c.IsOAuth20Auth() {
+		logger(m).Warn("setting alway_apply is disabled with OAuth 2.0 API authentication")
+		return nil
+	}
+
 	source := d.Get("source_id").(string)
 	target := d.Get("target_id").(string)
 	var appID string

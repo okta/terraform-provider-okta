@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppBasicAuthApplication_crud(t *testing.T) {
+func TestAccResourceOktaAppBasicAuthApplication_crud(t *testing.T) {
 	mgr := newFixtureManager(appBasicAuth, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
@@ -18,7 +18,7 @@ func TestAccAppBasicAuthApplication_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appBasicAuth, createDoesAppExist(sdk.NewBasicAuthApplication())),
+		CheckDestroy:      checkResourceDestroy(appBasicAuth, createDoesAppExist(sdk.NewBasicAuthApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -46,7 +46,7 @@ func TestAccAppBasicAuthApplication_crud(t *testing.T) {
 	})
 }
 
-func TestAccAppBasicAuthApplication_timeouts(t *testing.T) {
+func TestAccResourceOktaAppBasicAuthApplication_timeouts(t *testing.T) {
 	mgr := newFixtureManager(appBasicAuth, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appBasicAuth)
 	config := `
@@ -64,7 +64,7 @@ resource "okta_app_basic_auth" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appBasicAuth, createDoesAppExist(sdk.NewBasicAuthApplication())),
+		CheckDestroy:      checkResourceDestroy(appBasicAuth, createDoesAppExist(sdk.NewBasicAuthApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

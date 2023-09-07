@@ -12,7 +12,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
+func TestAccResourceOktaPolicyRulePassword_crud(t *testing.T) {
 	mgr := newFixtureManager(policyRulePassword, t.Name())
 	config := testOktaPolicyRulePassword(mgr.Seed)
 	updatedConfig := testOktaPolicyRulePasswordUpdated(mgr.Seed)
@@ -22,7 +22,7 @@ func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRulePassword),
+		CheckDestroy:      checkRuleDestroy(policyRulePassword),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -48,7 +48,7 @@ func TestAccOktaPolicyRulePassword_crud(t *testing.T) {
 }
 
 // Testing the logic that errors when an invalid priority is provided
-func TestAccOktaPolicyRulePassword_priorityError(t *testing.T) {
+func TestAccResourceOktaPolicyRulePassword_priorityError(t *testing.T) {
 	mgr := newFixtureManager(policyRulePassword, t.Name())
 	config := testOktaPolicyRulePriorityError(mgr.Seed)
 
@@ -56,7 +56,7 @@ func TestAccOktaPolicyRulePassword_priorityError(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRulePassword),
+		CheckDestroy:      checkRuleDestroy(policyRulePassword),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -67,7 +67,7 @@ func TestAccOktaPolicyRulePassword_priorityError(t *testing.T) {
 }
 
 // Testing the successful setting of priority
-func TestAccOktaPolicyRulePassword_priority(t *testing.T) {
+func TestAccResourceOktaPolicyRulePassword_priority(t *testing.T) {
 	mgr := newFixtureManager(policyRulePassword, t.Name())
 	config := testOktaPolicyRulePriority(mgr.Seed)
 	resourceName := buildResourceFQN(policyRulePassword, mgr.Seed)
@@ -77,7 +77,7 @@ func TestAccOktaPolicyRulePassword_priority(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRulePassword),
+		CheckDestroy:      checkRuleDestroy(policyRulePassword),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -111,7 +111,7 @@ func ensureRuleExists(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func createRuleCheckDestroy(ruleType string) func(*terraform.State) error {
+func checkRuleDestroy(ruleType string) func(*terraform.State) error {
 	return func(s *terraform.State) error {
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != ruleType {
@@ -133,7 +133,7 @@ func createRuleCheckDestroy(ruleType string) func(*terraform.State) error {
 }
 
 func doesRuleExistsUpstream(policyID, ruleID string) (bool, error) {
-	client := apiSupplementForTest()
+	client := sdkSupplementClientForTest()
 	rule, resp, err := client.GetPolicyRule(context.Background(), policyID, ruleID)
 	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return false, nil

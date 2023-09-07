@@ -2,9 +2,6 @@
 resource "okta_group" "test" {
   name        = "testAcc_replace_with_uuid"
   description = "testing"
-  lifecycle {
-    ignore_changes = [users]
-  }
 }
 
 resource "okta_user" "test" {
@@ -12,7 +9,6 @@ resource "okta_user" "test" {
   last_name         = "Smith"
   login             = "testAcc-replace_with_uuid@example.com"
   email             = "testAcc-replace_with_uuid@example.com"
-  group_memberships = [okta_group.test.id]
 }
 
 //Usage of role

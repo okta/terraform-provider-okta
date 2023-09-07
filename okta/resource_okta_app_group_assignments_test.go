@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccAppGroupAssignments_crud(t *testing.T) {
+func TestAccResourceOktaAppGroupAssignments_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appGroupAssignments)
 	mgr := newFixtureManager(appGroupAssignments, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
@@ -23,7 +23,7 @@ func TestAccAppGroupAssignments_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -66,7 +66,7 @@ func ensureAppGroupAssignmentsExist(resourceName string, groupsExpected ...strin
 		}
 
 		appID := rs.Primary.Attributes["app_id"]
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 
 		// Get all the IDs of groups we expect to be assigned
 		expectedGroupIDs := map[string]bool{}

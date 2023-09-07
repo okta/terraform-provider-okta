@@ -12,7 +12,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppSamlAppSettings_crud(t *testing.T) {
+func TestAccResourceOktaAppSamlAppSettings_crud(t *testing.T) {
 	mgr := newFixtureManager(appSamlAppSettings, t.Name())
 	preconfigured := mgr.GetFixtures("preconfigured.tf", t)
 	updated := mgr.GetFixtures("preconfigured_updated.tf", t)
@@ -22,7 +22,7 @@ func TestAccAppSamlAppSettings_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:      checkResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: preconfigured,
@@ -50,7 +50,7 @@ func checkAppSamlAppSettingsExists(resourceName string) resource.TestCheckFunc {
 			return missingErr
 		}
 		appID := rs.Primary.Attributes["app_id"]
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 		app := sdk.NewSamlApplication()
 		_, _, err := client.Application.GetApplication(context.Background(), appID, app, nil)
 		if err != nil {

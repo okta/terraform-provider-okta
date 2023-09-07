@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccThreatInsightSettings(t *testing.T) {
+func TestAccResourceOktaThreatInsightSettings(t *testing.T) {
 	mgr := newFixtureManager(threatInsightSettings, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("basic_updated.tf", t)
@@ -40,8 +40,8 @@ func TestAccThreatInsightSettings(t *testing.T) {
 	})
 }
 
-// TestAccThreatInsightSettingsNetworkZoneOrdering https://github.com/okta/terraform-provider-okta/issues/1221
-func TestAccThreatInsightSettingsNetworkZoneOrdering(t *testing.T) {
+// TestAccResourceOktaThreatInsightSettingsNetworkZoneOrdering https://github.com/okta/terraform-provider-okta/issues/1221
+func TestAccResourceOktaThreatInsightSettingsNetworkZoneOrdering(t *testing.T) {
 	mgr := newFixtureManager(threatInsightSettings, t.Name())
 	resourceName := fmt.Sprintf("%s.test", threatInsightSettings)
 	config := `
@@ -50,18 +50,21 @@ func TestAccThreatInsightSettingsNetworkZoneOrdering(t *testing.T) {
 		type     = "IP"
 		gateways = ["1.2.3.4/24", "2.3.4.5-2.3.4.15"]
 		proxies  = ["2.2.3.4/24", "3.3.4.5-3.3.4.15"]
+		status   = "ACTIVE"
 	}
 	resource "okta_network_zone" "b" {
 		name     = "testAcc_replace_with_uuid-2"
 		type     = "IP"
 		gateways = ["2.2.3.4/24", "2.3.4.5-2.3.4.15"]
 		proxies  = ["3.2.3.4/24", "3.3.4.5-3.3.4.15"]
+		status   = "ACTIVE"
 	}
 	resource "okta_network_zone" "c" {
 		name     = "testAcc_replace_with_uuid-3"
 		type     = "IP"
 		gateways = ["3.2.3.4/24", "2.3.4.5-2.3.4.15"]
 		proxies  = ["4.2.3.4/24", "3.3.4.5-3.3.4.15"]
+		status   = "ACTIVE"
 	}
 	resource "okta_threat_insight_settings" "test" {
 		action           = "block"
@@ -91,7 +94,7 @@ func checkOktaThreatInsightSettingsDestroy(s *terraform.State) error {
 		if rs.Type != threatInsightSettings {
 			continue
 		}
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 		conf, _, err := client.ThreatInsightConfiguration.GetCurrentConfiguration(context.Background())
 		if err != nil {
 			return fmt.Errorf("failed to get threat insight configuration: %v", err)

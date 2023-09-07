@@ -7,10 +7,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-// TestAccOktaIdpOidc_crud
+// TestAccResourceOktaIdpOidc_crud
 // Classic and OIE orgs.
 // Org needs "Core", "Single Sign-On", "Universal Directory" SKUs in Workforce Identity
-func TestAccOktaIdpOidc_crud(t *testing.T) {
+func TestAccResourceOktaIdpOidc_crud(t *testing.T) {
 	mgr := newFixtureManager(idpOidc, t.Name())
 	config := mgr.GetFixtures("generic_oidc.tf", t)
 	updatedConfig := mgr.GetFixtures("generic_oidc_updated.tf", t)
@@ -20,7 +20,7 @@ func TestAccOktaIdpOidc_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpOidc, createDoesIdpExist),
+		CheckDestroy:      checkResourceDestroy(idpOidc, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -68,10 +68,10 @@ func TestAccOktaIdpOidc_crud(t *testing.T) {
 	})
 }
 
-// TestAccOktaIdpOidc_algorithm
+// TestAccResourceOktaIdpOidc_algorithm
 // Classic and OIE orgs.
 // Org needs "Core", "Single Sign-On", "Universal Directory" SKUs in Workforce Identity
-func TestAccOktaIdpOidc_algorithm(t *testing.T) {
+func TestAccResourceOktaIdpOidc_algorithm(t *testing.T) {
 	config := `
 resource "okta_idp_oidc" "test" {
   name                  = "testAcc_replace_with_uuid"
@@ -99,7 +99,7 @@ resource "okta_idp_oidc" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(idpOidc, createDoesIdpExist),
+		CheckDestroy:      checkResourceDestroy(idpOidc, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

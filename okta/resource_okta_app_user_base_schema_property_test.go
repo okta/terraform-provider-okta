@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppUserBaseSchema_change(t *testing.T) {
+func TestAccResourceOktaAppUserBaseSchema_change(t *testing.T) {
 	mgr := newFixtureManager(appUserBaseSchemaProperty, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
@@ -19,7 +19,7 @@ func TestAccAppUserBaseSchema_change(t *testing.T) {
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
 		// Just need to make sure the app gets cleaned up
-		CheckDestroy: createCheckResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy: checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

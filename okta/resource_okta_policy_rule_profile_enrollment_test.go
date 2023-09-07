@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccOktaPolicyRuleProfileEnrollment(t *testing.T) {
+func TestAccResourceOktaPolicyRuleProfileEnrollment(t *testing.T) {
 	mgr := newFixtureManager(policyRuleProfileEnrollment, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
@@ -44,7 +44,7 @@ resource "okta_group" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRuleProfileEnrollment),
+		CheckDestroy:      checkRuleDestroy(policyRuleProfileEnrollment),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -82,11 +82,11 @@ resource "okta_group" "test" {
 	})
 }
 
-// TestAccOktaPolicyRuleProfileEnrollment_Issue1213
+// TestAccResourceOktaPolicyRuleProfileEnrollment_Issue1213
 // re: uiSchemaId / ui_schema_id
 // https://developer.okta.com/docs/reference/api/policy/#profile-enrollment-action-object
 // https://github.com/okta/terraform-provider-okta/issues/1213
-func TestAccOktaPolicyRuleProfileEnrollment_Issue1213(t *testing.T) {
+func TestAccResourceOktaPolicyRuleProfileEnrollment_Issue1213(t *testing.T) {
 	mgr := newFixtureManager(policyRuleProfileEnrollment, t.Name())
 	resourceName := fmt.Sprintf("%s.test", policyRuleProfileEnrollment)
 	config := `
@@ -127,7 +127,7 @@ resource "okta_policy_rule_profile_enrollment" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
+		CheckDestroy:      checkResourceDestroy(appSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

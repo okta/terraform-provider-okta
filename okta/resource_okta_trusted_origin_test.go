@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccOktaTrustedOrigin_crud(t *testing.T) {
+func TestAccResourceOktaTrustedOrigin_crud(t *testing.T) {
 	mgr := newFixtureManager(trustedOrigin, t.Name())
 	config := mgr.GetFixtures("okta_trusted_origin.tf", t)
 	updatedConfig := mgr.GetFixtures("okta_trusted_origin_updated.tf", t)
@@ -19,7 +19,7 @@ func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckTrustedOriginDestroy,
+		CheckDestroy:      checkTrustedOriginDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -35,8 +35,8 @@ func TestAccOktaTrustedOrigin_crud(t *testing.T) {
 	})
 }
 
-func testAccCheckTrustedOriginDestroy(s *terraform.State) error {
-	client := oktaClientForTest()
+func checkTrustedOriginDestroy(s *terraform.State) error {
+	client := sdkV2ClientForTest()
 
 	for _, r := range s.RootModule().Resources {
 		_, resp, err := client.TrustedOrigin.GetOrigin(context.Background(), r.Primary.ID)

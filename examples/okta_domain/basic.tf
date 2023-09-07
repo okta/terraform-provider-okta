@@ -1,3 +1,4 @@
 resource "okta_domain" "test" {
-  name   = "example.com"
+  name                    = "testAcc.example.edu"
+  certificate_source_type = "MANUAL"
 }

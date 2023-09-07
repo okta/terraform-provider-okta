@@ -30,7 +30,7 @@ func ensureResourceExists(name string, checkUpstream checkUpstream) resource.Tes
 	}
 }
 
-func createCheckResourceDestroy(typeName string, checkUpstream checkUpstream) resource.TestCheckFunc {
+func checkResourceDestroy(typeName string, checkUpstream checkUpstream) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != typeName {
@@ -80,6 +80,7 @@ const (
 	ErrorCheckCannotCreateSWAThreeField = "Cannot create application instance template_swa3field"
 	ErrorCheckFFGroupMembershipRules    = "GROUP_MEMBERSHIP_RULES is not enabled"
 	ErrorCheckFFMFAPolicy               = "Missing Required Feature Flag OKTA_MFA_POLICY"
+	ErrorSelfServiceApplicationEnabled  = "Self service application assignment for organization managed apps must be enabled"
 	ErrorOnlyOIEOrgs                    = "for OIE Orgs only"
 )
 
@@ -99,6 +100,7 @@ func testAccErrorChecks(t *testing.T) resource.ErrorCheckFunc {
 			ErrorCheckCannotCreateSWAThreeField,
 			ErrorCheckFFGroupMembershipRules,
 			ErrorCheckFFMFAPolicy,
+			ErrorSelfServiceApplicationEnabled,
 		}
 		for _, message := range messages {
 			// if error check message containing matches the message it will
@@ -158,6 +160,9 @@ func errorCheckMessageContaining(t *testing.T, message string, err error) bool {
 	if message == ErrorCheckFFMFAPolicy {
 		missingFlags = append(missingFlags, "OKTA_MFA_POLICY")
 	}
+	if message == ErrorSelfServiceApplicationEnabled {
+		missingFlags = append(missingFlags, "TBD ~> SELF_SERVICE_ALL_APPS")
+	}
 	if strings.Contains(errorMessage, message) {
 		t.Skipf("Skipping test, org possibly missing flags:\n%s\nerror:\n%s", strings.Join(missingFlags, ", "), errorMessage)
 		return true
@@ -210,7 +215,9 @@ func testAttributeJSON(name, attribute, expectedJSON string) resource.TestCheckF
 // thanks github.com/hashicorp/terraform-provider-google/google/provider_test.go
 func sleepInSecondsForTest(t int) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		time.Sleep(time.Duration(t) * time.Second)
+		if os.Getenv("OKTA_VCR_TF_ACC") != "play" {
+			time.Sleep(time.Duration(t) * time.Second)
+		}
 		return nil
 	}
 }

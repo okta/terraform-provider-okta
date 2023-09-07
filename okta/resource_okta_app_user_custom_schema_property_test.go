@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccAppUserSchemas_crud(t *testing.T) {
+func TestAccResourceOktaAppUserSchemas_crud(t *testing.T) {
 	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
@@ -21,7 +21,7 @@ func TestAccAppUserSchemas_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -60,7 +60,7 @@ func TestAccAppUserSchemas_crud(t *testing.T) {
 	})
 }
 
-func TestAccAppUserSchemas_array_enum_number(t *testing.T) {
+func TestAccResourceOktaAppUserSchemas_array_enum_number(t *testing.T) {
 	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
@@ -101,7 +101,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -125,7 +125,7 @@ resource "okta_app_user_schema_property" "test" {
 	})
 }
 
-func TestAccAppUserSchemas_enum_number(t *testing.T) {
+func TestAccResourceOktaAppUserSchemas_enum_number(t *testing.T) {
 	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
@@ -165,7 +165,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -188,7 +188,7 @@ resource "okta_app_user_schema_property" "test" {
 	})
 }
 
-func TestAccAppUserSchemas_array_enum_integer(t *testing.T) {
+func TestAccResourceOktaAppUserSchemas_array_enum_integer(t *testing.T) {
 	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
@@ -229,7 +229,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -253,7 +253,7 @@ resource "okta_app_user_schema_property" "test" {
 	})
 }
 
-func TestAccAppUserSchemas_enum_integer(t *testing.T) {
+func TestAccResourceOktaAppUserSchemas_enum_integer(t *testing.T) {
 	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
@@ -293,7 +293,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -316,7 +316,7 @@ resource "okta_app_user_schema_property" "test" {
 	})
 }
 
-func TestAccAppUserSchemas_array_enum_boolean(t *testing.T) {
+func TestAccResourceOktaAppUserSchemas_array_enum_boolean(t *testing.T) {
 	t.Skip("The test is failing due to core issue. Similar test TestAccResourceOktaGroupSchema_array_enum_boolean has passed in the past")
 	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
@@ -354,7 +354,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -375,7 +375,7 @@ resource "okta_app_user_schema_property" "test" {
 	})
 }
 
-func TestAccAppUserSchemas_enum_boolean(t *testing.T) {
+func TestAccResourceOktaAppUserSchemas_enum_boolean(t *testing.T) {
 	t.Skip("The test is failing due to core issue. Similar test TestAccResourceOktaGroupSchema_enum_boolean has passed in the past")
 	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
@@ -412,7 +412,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -432,7 +432,7 @@ resource "okta_app_user_schema_property" "test" {
 	})
 }
 
-func TestAccAppUserSchemas_array_enum_string(t *testing.T) {
+func TestAccResourceOktaAppUserSchemas_array_enum_string(t *testing.T) {
 	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
@@ -473,7 +473,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -497,7 +497,7 @@ resource "okta_app_user_schema_property" "test" {
 	})
 }
 
-func TestAccAppUserSchemas_enum_string(t *testing.T) {
+func TestAccResourceOktaAppUserSchemas_enum_string(t *testing.T) {
 	mgr := newFixtureManager(appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
@@ -537,7 +537,7 @@ resource "okta_app_user_schema_property" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -577,7 +577,7 @@ func testAppUserSchemasExists(resourceName string) resource.TestCheckFunc {
 
 func testAppUserSchemaExists(index string) (bool, error) {
 	ids := strings.Split(index, "/")
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	schema, resp, err := client.UserSchema.GetApplicationUserSchema(context.Background(), ids[0])
 	if err != nil {
 		if resp != nil && resp.StatusCode == 404 {
@@ -592,10 +592,13 @@ func testAppUserSchemaExists(index string) (bool, error) {
 	return false, nil
 }
 
-// TestAccOktaAppUserSchemas_parallel_api_calls test coverage to ensure backoff
+// TestAccResourceOktaAppUserSchemas_parallel_api_calls test coverage to ensure backoff
 // in create, update, delete for okta_app_user_schema_property resource is
 // operating correctly.
-func TestAccOktaAppUserSchemas_parallel_api_calls(t *testing.T) {
+func TestAccResourceOktaAppUserSchemas_parallel_api_calls(t *testing.T) {
+	if skipVCRTest(t) {
+		return
+	}
 	config := `
 resource "okta_app_oauth" "test" {
 	label          = "testAcc_replace_with_uuid"
@@ -657,7 +660,7 @@ resource "okta_app_user_schema_property" "five" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
 		Steps: []resource.TestStep{
 			{
 				Config: roConfig,

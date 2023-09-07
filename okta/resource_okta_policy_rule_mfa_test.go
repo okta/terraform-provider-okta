@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
+func TestAccResourceOktaMfaPolicyRule_crud(t *testing.T) {
 	mgr := newFixtureManager(policyRuleMfa, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
@@ -19,7 +19,7 @@ func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRuleMfa),
+		CheckDestroy:      checkRuleDestroy(policyRuleMfa),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

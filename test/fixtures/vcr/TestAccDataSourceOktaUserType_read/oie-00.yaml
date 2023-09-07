@@ -1,0 +1,415 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 134
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"description":"Terraform Acceptance Test User Type","displayName":"Terraform Acceptance Test User Type","name":"testAcc_3467589678"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/meta/types/user
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i70rje5xUE67b1d7","displayName":"Terraform Acceptance Test User Type","name":"testAcc_3467589678","description":"Terraform Acceptance Test User Type","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","created":"2023-08-15T23:30:44.000Z","lastUpdated":"2023-08-15T23:30:44.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc9i70rje5xUE67b1d7","method":"GET"},"self":{"rel":"self","href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty9i70rje5xUE67b1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:30:44 GMT
+        status: 200 OK
+        code: 200
+        duration: 174.852648ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/meta/types/user/oty9i70rje5xUE67b1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i70rje5xUE67b1d7","displayName":"Terraform Acceptance Test User Type","name":"testAcc_3467589678","description":"Terraform Acceptance Test User Type","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","created":"2023-08-15T23:30:44.000Z","lastUpdated":"2023-08-15T23:30:44.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc9i70rje5xUE67b1d7","method":"GET"},"self":{"rel":"self","href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty9i70rje5xUE67b1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:30:44 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 80.715592ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/meta/types/user/oty9i70rje5xUE67b1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i70rje5xUE67b1d7","displayName":"Terraform Acceptance Test User Type","name":"testAcc_3467589678","description":"Terraform Acceptance Test User Type","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","created":"2023-08-15T23:30:44.000Z","lastUpdated":"2023-08-15T23:30:44.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc9i70rje5xUE67b1d7","method":"GET"},"self":{"rel":"self","href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty9i70rje5xUE67b1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:30:45 GMT
+        status: 200 OK
+        code: 200
+        duration: 88.976292ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/meta/types/user/oty9i70rje5xUE67b1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i70rje5xUE67b1d7","displayName":"Terraform Acceptance Test User Type","name":"testAcc_3467589678","description":"Terraform Acceptance Test User Type","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","created":"2023-08-15T23:30:44.000Z","lastUpdated":"2023-08-15T23:30:44.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc9i70rje5xUE67b1d7","method":"GET"},"self":{"rel":"self","href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty9i70rje5xUE67b1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:30:45 GMT
+        status: 200 OK
+        code: 200
+        duration: 77.368698ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/meta/types/user
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"oty5qwjvh0Vy1j8Kd1d7","displayName":"User","name":"user","description":"Okta user profile template with default permission settings","createdBy":"spr5qwjvg90YpJCBG1d7","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","created":"2022-10-07T23:16:57.000Z","lastUpdated":"2023-08-15T23:30:17.000Z","default":true,"_links":{"schema":{"rel":"schema","href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7","method":"GET"},"self":{"rel":"self","href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7","method":"GET"}}},{"id":"oty9i70rje5xUE67b1d7","displayName":"Terraform Acceptance Test User Type","name":"testAcc_3467589678","description":"Terraform Acceptance Test User Type","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","created":"2023-08-15T23:30:44.000Z","lastUpdated":"2023-08-15T23:30:44.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc9i70rje5xUE67b1d7","method":"GET"},"self":{"rel":"self","href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty9i70rje5xUE67b1d7","method":"GET"}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:30:45 GMT
+        status: 200 OK
+        code: 200
+        duration: 77.403925ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/meta/types/user
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"oty5qwjvh0Vy1j8Kd1d7","displayName":"User","name":"user","description":"Okta user profile template with default permission settings","createdBy":"spr5qwjvg90YpJCBG1d7","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","created":"2022-10-07T23:16:57.000Z","lastUpdated":"2023-08-15T23:30:17.000Z","default":true,"_links":{"schema":{"rel":"schema","href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7","method":"GET"},"self":{"rel":"self","href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7","method":"GET"}}},{"id":"oty9i70rje5xUE67b1d7","displayName":"Terraform Acceptance Test User Type","name":"testAcc_3467589678","description":"Terraform Acceptance Test User Type","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","created":"2023-08-15T23:30:44.000Z","lastUpdated":"2023-08-15T23:30:44.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc9i70rje5xUE67b1d7","method":"GET"},"self":{"rel":"self","href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty9i70rje5xUE67b1d7","method":"GET"}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:30:45 GMT
+        status: 200 OK
+        code: 200
+        duration: 61.75631ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/meta/types/user
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"oty5qwjvh0Vy1j8Kd1d7","displayName":"User","name":"user","description":"Okta user profile template with default permission settings","createdBy":"spr5qwjvg90YpJCBG1d7","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","created":"2022-10-07T23:16:57.000Z","lastUpdated":"2023-08-15T23:30:17.000Z","default":true,"_links":{"schema":{"rel":"schema","href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7","method":"GET"},"self":{"rel":"self","href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7","method":"GET"}}},{"id":"oty9i70rje5xUE67b1d7","displayName":"Terraform Acceptance Test User Type","name":"testAcc_3467589678","description":"Terraform Acceptance Test User Type","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","created":"2023-08-15T23:30:44.000Z","lastUpdated":"2023-08-15T23:30:44.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc9i70rje5xUE67b1d7","method":"GET"},"self":{"rel":"self","href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty9i70rje5xUE67b1d7","method":"GET"}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:30:46 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 58.040495ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/meta/types/user/oty9i70rje5xUE67b1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i70rje5xUE67b1d7","displayName":"Terraform Acceptance Test User Type","name":"testAcc_3467589678","description":"Terraform Acceptance Test User Type","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","created":"2023-08-15T23:30:44.000Z","lastUpdated":"2023-08-15T23:30:44.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc9i70rje5xUE67b1d7","method":"GET"},"self":{"rel":"self","href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty9i70rje5xUE67b1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:30:46 GMT
+        status: 200 OK
+        code: 200
+        duration: 80.561405ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/meta/types/user
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"oty5qwjvh0Vy1j8Kd1d7","displayName":"User","name":"user","description":"Okta user profile template with default permission settings","createdBy":"spr5qwjvg90YpJCBG1d7","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","created":"2022-10-07T23:16:57.000Z","lastUpdated":"2023-08-15T23:30:17.000Z","default":true,"_links":{"schema":{"rel":"schema","href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7","method":"GET"},"self":{"rel":"self","href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7","method":"GET"}}},{"id":"oty9i70rje5xUE67b1d7","displayName":"Terraform Acceptance Test User Type","name":"testAcc_3467589678","description":"Terraform Acceptance Test User Type","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","created":"2023-08-15T23:30:44.000Z","lastUpdated":"2023-08-15T23:30:44.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc9i70rje5xUE67b1d7","method":"GET"},"self":{"rel":"self","href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty9i70rje5xUE67b1d7","method":"GET"}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:30:46 GMT
+        status: 200 OK
+        code: 200
+        duration: 54.101853ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/meta/types/user
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"oty5qwjvh0Vy1j8Kd1d7","displayName":"User","name":"user","description":"Okta user profile template with default permission settings","createdBy":"spr5qwjvg90YpJCBG1d7","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","created":"2022-10-07T23:16:57.000Z","lastUpdated":"2023-08-15T23:30:17.000Z","default":true,"_links":{"schema":{"rel":"schema","href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7","method":"GET"},"self":{"rel":"self","href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7","method":"GET"}}},{"id":"oty9i70rje5xUE67b1d7","displayName":"Terraform Acceptance Test User Type","name":"testAcc_3467589678","description":"Terraform Acceptance Test User Type","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","created":"2023-08-15T23:30:44.000Z","lastUpdated":"2023-08-15T23:30:44.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc9i70rje5xUE67b1d7","method":"GET"},"self":{"rel":"self","href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty9i70rje5xUE67b1d7","method":"GET"}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:30:46 GMT
+        status: 200 OK
+        code: 200
+        duration: 57.320132ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/meta/types/user/oty9i70rje5xUE67b1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Tue, 15 Aug 2023 23:30:47 GMT
+        status: 204 No Content
+        code: 204
+        duration: 738.662728ms

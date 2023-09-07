@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaAdminRoleCustom(t *testing.T) {
+func TestAccResourceOktaAdminRoleCustom(t *testing.T) {
 	mgr := newFixtureManager(adminRoleCustom, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
@@ -18,7 +18,7 @@ func TestAccOktaAdminRoleCustom(t *testing.T) {
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      createCheckResourceDestroy(adminRoleCustom, doesAdminRoleCustomExist),
+			CheckDestroy:      checkResourceDestroy(adminRoleCustom, doesAdminRoleCustomExist),
 			Steps: []resource.TestStep{
 				{
 					Config: config,
@@ -41,7 +41,7 @@ func TestAccOktaAdminRoleCustom(t *testing.T) {
 }
 
 func doesAdminRoleCustomExist(id string) (bool, error) {
-	client := apiSupplementForTest()
+	client := sdkSupplementClientForTest()
 	_, response, err := client.GetCustomRole(context.Background(), id)
 	return doesResourceExist(response, err)
 }

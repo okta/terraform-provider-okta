@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaPolicyRuleSignon_defaultErrors(t *testing.T) {
+func TestAccResourceOktaPolicyRuleSignon_defaultErrors(t *testing.T) {
 	mgr := newFixtureManager(policyRuleSignOn, t.Name())
 	config := testOktaPolicyRuleSignOnDefaultErrors(mgr.Seed)
 
@@ -16,7 +16,7 @@ func TestAccOktaPolicyRuleSignon_defaultErrors(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRuleSignOn),
+		CheckDestroy:      checkRuleDestroy(policyRuleSignOn),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -26,7 +26,7 @@ func TestAccOktaPolicyRuleSignon_defaultErrors(t *testing.T) {
 	})
 }
 
-func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
+func TestAccResourceOktaPolicyRuleSignon_crud(t *testing.T) {
 	mgr := newFixtureManager(policyRuleSignOn, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
@@ -42,7 +42,7 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRuleSignOn),
+		CheckDestroy:      checkRuleDestroy(policyRuleSignOn),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -122,7 +122,7 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 	})
 }
 
-func TestAccOktaPolicyRuleSignon_multiple(t *testing.T) {
+func TestAccResourceOktaPolicyRuleSignon_multiple(t *testing.T) {
 	mgr := newFixtureManager(policyRuleSignOn, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	basicMultiple := mgr.GetFixtures("basic_multiple.tf", t)
@@ -134,7 +134,7 @@ func TestAccOktaPolicyRuleSignon_multiple(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createRuleCheckDestroy(policyRuleSignOn),
+		CheckDestroy:      checkRuleDestroy(policyRuleSignOn),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

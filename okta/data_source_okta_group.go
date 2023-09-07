@@ -18,11 +18,13 @@ func dataSourceGroup() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
+				Computed:      true,
 				Optional:      true,
 				ConflictsWith: []string{"name", "type"},
 			},
 			"name": {
 				Type:     schema.TypeString,
+				Computed: true,
 				Optional: true,
 			},
 			"type": {
@@ -60,7 +62,7 @@ func dataSourceGroupRead(ctx context.Context, d *schema.ResourceData, m interfac
 		delay, err := strconv.Atoi(n.(string))
 		if err == nil {
 			logger(m).Info("delaying group read by ", delay, " seconds")
-			time.Sleep(time.Duration(delay) * time.Second)
+			m.(*Config).timeOperations.Sleep(time.Duration(delay) * time.Second)
 		} else {
 			logger(m).Warn("group read delay value ", n, " is not an integer")
 		}

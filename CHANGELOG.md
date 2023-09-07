@@ -1,5 +1,50 @@
 # Changelog
 
+## 4.3.0 (August 18, 2023)
+
+### IMPROVEMENTS
+
+* Add Import to resource `okta_app_signon_policy` [#1670](https://github.com/okta/terraform-provider-okta/pull/1670). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Enhanced VCR ACC testing allowing quick datasource and resource smoketest during release [#1650](https://github.com/okta/terraform-provider-okta/pull/1650). Thanks, [@monde](https://github.com/monde)!
+
+## 4.2.0 (August 11, 2023)
+
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* New device assurance resources [#1659](https://github.com/okta/terraform-provider-okta/pull/1659). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+  - `okta_device_assurance_policy_android`
+  - `okta_device_assurance_policy_chromeos`
+  - `okta_device_assurance_policy_ios`
+  - `okta_device_assurance_policy_macos`
+  - `okta_device_assurance_policy_windows`
+
+* Add constraints argument for webauthn to resource `okta_policy_mfa` [#1663](https://github.com/okta/terraform-provider-okta/pull/1663). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* `jwks_uri` argument for resource `okta_app_oauth` [#1648](https://github.com/okta/terraform-provider-okta/pull/1648). Thanks, [@virgofx](https://github.com/virgofx)!
+
+### IMPROVEMENTS
+
+* Data Source `okta_group`'s `name` and `id` arguments are optional and computed [#1665](https://github.com/okta/terraform-provider-okta/pull/1665). Thanks, [@MatthewJohn](https://github.com/MatthewJohn)!
+* Improve backoff with proper context [#1658](https://github.com/okta/terraform-provider-okta/pull/1658). Thanks, [@monde](https://github.com/monde)!
+* Correct obsolete documentation; document PKCS#1 and PKCS#8 private key usage in provider config and oauth apps [#1666](https://github.com/okta/terraform-provider-okta/pull/1666). Thanks, [@monde](https://github.com/monde)!
+
+### BUG FIXES
+
+* Fix `okta_app_oauth`'s `groups_claim` can be ignored on imports [#1638](https://github.com/okta/terraform-provider-okta/pull/1638). Thanks, [@monde](https://github.com/monde)!
+
+## 4.1.0 (June 30, 2023)
+
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+* New Data Source `okta_group_rule` [#1606](https://github.com/okta/terraform-provider-okta/pull/1606), [#1617](https://github.com/okta/terraform-provider-okta/pull/1617). Thanks, [@steveAG](https://github.com/steveAG)!
+
+### IMPROVEMENTS
+
+* Improve `okta_email_customization`, correct delete bug, document and test `depends_on` best practice [#1616](https://github.com/okta/terraform-provider-okta/pull/1616). Thanks, [@monde](https://github.com/monde)!
+* Flexible `okta_brand` data source and resource with `default` ID; Improve `okta_auth_server_default` [#1570](https://github.com/okta/terraform-provider-okta/pull/1570). Thanks, [@monde](https://github.com/monde)!
+* Show appropriate terraform logo for light and dark themes in README [#1574](https://github.com/okta/terraform-provider-okta/pull/1574). Thanks, [@thekbb](https://github.com/thekbb)!
+* Update the description for the `platform_include` block of `app_signon_policy_rule` to outline requirement for the `os_expression` argument to be set when `os_type` is set to `OTHER` [#1600](https://github.com/okta/terraform-provider-okta/pull/1600). Thanks, [@achuchulev](https://github.com/achuchulev)!
+* Update okta documentation [#1614](https://github.com/okta/terraform-provider-okta/pull/1614). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix doc typo [#1611](https://github.com/okta/terraform-provider-okta/pull/1611). Thanks, [@monde](https://github.com/monde)!
+
 ## 4.0.3 (June 26, 2023)
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:

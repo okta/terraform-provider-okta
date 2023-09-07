@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
+	"time"
 
-	"github.com/hashicorp/go-hclog"
+	"github.com/cenkalti/backoff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -129,6 +129,9 @@ const (
 	userType                      = "okta_user_type"
 )
 
+// oktaMutexKV is a global MutexKV for use within this plugin
+var oktaMutexKV = mutexkv.NewMutexKV()
+
 // Provider establishes a client connection to an okta site
 // determined by its schema string values
 func Provider() *schema.Provider {
@@ -137,27 +140,23 @@ func Provider() *schema.Provider {
 			"org_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("OKTA_ORG_NAME", nil),
 				Description: "The organization to manage in Okta.",
 			},
 			"access_token": {
 				Type:          schema.TypeString,
 				Optional:      true,
-				DefaultFunc:   schema.EnvDefaultFunc("OKTA_ACCESS_TOKEN", nil),
 				Description:   "Bearer token granting privileges to Okta API.",
 				ConflictsWith: []string{"api_token", "client_id", "scopes", "private_key"},
 			},
 			"api_token": {
 				Type:          schema.TypeString,
 				Optional:      true,
-				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_TOKEN", nil),
 				Description:   "API Token granting privileges to Okta API.",
 				ConflictsWith: []string{"access_token", "client_id", "scopes", "private_key"},
 			},
 			"client_id": {
 				Type:          schema.TypeString,
 				Optional:      true,
-				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_CLIENT_ID", nil),
 				Description:   "API Token granting privileges to Okta API.",
 				ConflictsWith: []string{"access_token", "api_token"},
 			},
@@ -165,71 +164,60 @@ func Provider() *schema.Provider {
 				Type:          schema.TypeSet,
 				Optional:      true,
 				Elem:          &schema.Schema{Type: schema.TypeString},
-				DefaultFunc:   envDefaultSetFunc("OKTA_API_SCOPES", nil),
 				Description:   "API Token granting privileges to Okta API.",
 				ConflictsWith: []string{"access_token", "api_token"},
 			},
 			"private_key": {
 				Optional:      true,
 				Type:          schema.TypeString,
-				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_PRIVATE_KEY", nil),
 				Description:   "API Token granting privileges to Okta API.",
 				ConflictsWith: []string{"access_token", "api_token"},
 			},
 			"private_key_id": {
 				Optional:      true,
 				Type:          schema.TypeString,
-				DefaultFunc:   schema.EnvDefaultFunc("OKTA_API_PRIVATE_KEY_ID", nil),
 				Description:   "API Token Id granting privileges to Okta API.",
 				ConflictsWith: []string{"api_token"},
 			},
 			"base_url": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("OKTA_BASE_URL", "okta.com"),
 				Description: "The Okta url. (Use 'oktapreview.com' for Okta testing)",
 			},
 			"http_proxy": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("OKTA_HTTP_PROXY", ""),
 				Description: "Alternate HTTP proxy of scheme://hostname or scheme://hostname:port format",
 			},
 			"backoff": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Default:     true,
 				Description: "Use exponential back off strategy for rate limits.",
 			},
 			"min_wait_seconds": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Default:     30,
 				Description: "minimum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
 			},
 			"max_wait_seconds": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Default:     300,
 				Description: "maximum seconds to wait when rate limit is hit. We use exponential backoffs when backoff is enabled.",
 			},
 			"max_retries": {
 				Type:             schema.TypeInt,
 				Optional:         true,
-				Default:          5,
 				ValidateDiagFunc: intAtMost(100),
 				Description:      "maximum number of retries to attempt before erroring out.",
 			},
 			"parallelism": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Default:     1,
 				Description: "Number of concurrent requests to make within a resource where bulk operations are not possible. Take note of https://developer.okta.com/docs/api/getting_started/rate-limits.",
 			},
 			"log_level": {
 				Type:             schema.TypeInt,
 				Optional:         true,
-				Default:          int(hclog.Error),
 				ValidateDiagFunc: intBetween(1, 5),
 				Description:      "providers log level. Minimum is 1 (TRACE), and maximum is 5 (ERROR)",
 			},
@@ -237,7 +225,6 @@ func Provider() *schema.Provider {
 				Type:             schema.TypeInt,
 				Optional:         true,
 				ValidateDiagFunc: intBetween(1, 100),
-				DefaultFunc:      schema.EnvDefaultFunc("MAX_API_CAPACITY", 100),
 				Description: "(Experimental) sets what percentage of capacity the provider can use of the total rate limit " +
 					"capacity while making calls to the Okta management API endpoints. Okta API operates in one minute buckets. " +
 					"See Okta Management API Rate Limits: https://developer.okta.com/docs/reference/rl-global-mgmt/",
@@ -245,7 +232,6 @@ func Provider() *schema.Provider {
 			"request_timeout": {
 				Type:             schema.TypeInt,
 				Optional:         true,
-				Default:          0,
 				ValidateDiagFunc: intBetween(0, 300),
 				Description:      "Timeout for single request (in seconds) which is made to Okta, the default is `0` (means no limit is set). The maximum value can be `300`.",
 			},
@@ -283,7 +269,6 @@ func Provider() *schema.Provider {
 			authServerPolicyRule:          resourceAuthServerPolicyRule(),
 			authServerScope:               resourceAuthServerScope(),
 			behavior:                      resourceBehavior(),
-			brand:                         resourceBrand(),
 			captcha:                       resourceCaptcha(),
 			captchaOrgWideSettings:        resourceCaptchaOrgWideSettings(),
 			domain:                        resourceDomain(),
@@ -390,66 +375,30 @@ func Provider() *schema.Provider {
 	}
 }
 
+// providerConfigure is only called once when a terraform command is run but it
+// will be called many times while running different ACC tests
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	log.Printf("[INFO] Initializing Okta client")
-	config := Config{
-		orgName:        d.Get("org_name").(string),
-		domain:         d.Get("base_url").(string),
-		apiToken:       d.Get("api_token").(string),
-		accessToken:    d.Get("access_token").(string),
-		clientID:       d.Get("client_id").(string),
-		privateKey:     d.Get("private_key").(string),
-		privateKeyId:   d.Get("private_key_id").(string),
-		scopes:         convertInterfaceToStringSet(d.Get("scopes")),
-		retryCount:     d.Get("max_retries").(int),
-		parallelism:    d.Get("parallelism").(int),
-		backoff:        d.Get("backoff").(bool),
-		minWait:        d.Get("min_wait_seconds").(int),
-		maxWait:        d.Get("max_wait_seconds").(int),
-		logLevel:       d.Get("log_level").(int),
-		requestTimeout: d.Get("request_timeout").(int),
-		maxAPICapacity: d.Get("max_api_capacity").(int),
+	config := NewConfig(d)
+	if err := config.loadClients(ctx); err != nil {
+		return nil, diag.Errorf("[ERROR] failed to load sdk clients: %v", err)
 	}
+	config.SetTimeOperations(NewProductionTimeOperations())
 
-	if httpProxy, ok := d.Get("http_proxy").(string); ok {
-		config.httpProxy = httpProxy
-	}
-
-	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(config.scopes) == 0 {
-		config.scopes = strings.Split(v, ",")
-	}
-
-	if err := config.loadAndValidate(ctx); err != nil {
-		return nil, diag.Errorf("[ERROR] invalid configuration: %v", err)
-	}
-
-	// Discover if the Okta Org is Classic or OIE
-	if org, _, err := config.supplementClient.GetWellKnownOktaOrganization(ctx); err == nil {
-		config.classicOrg = (org.Pipeline == "v1") // v1 == Classic, idx == OIE
-	}
-
-	return &config, nil
-}
-
-// This is a global MutexKV for use within this plugin.
-var oktaMutexKV = mutexkv.NewMutexKV()
-
-func envDefaultSetFunc(k string, dv interface{}) schema.SchemaDefaultFunc {
-	return func() (interface{}, error) {
-		if v := os.Getenv(k); v != "" {
-			stringList := strings.Split(v, ",")
-			arr := make([]interface{}, len(stringList))
-			for i := range stringList {
-				arr[i] = stringList[i]
-			}
-			return arr, nil
+	// NOTE: production runtime needs to know about VCR test environment for
+	// this one case where the validate function calls GET /api/v1/users/me to
+	// quickly verify if the operator's auth settings are correct.
+	if os.Getenv("OKTA_VCR_TF_ACC") == "" {
+		if err := config.verifyCredentials(ctx); err != nil {
+			return nil, diag.Errorf("[ERROR] failed validate configuration: %v", err)
 		}
-		return dv, nil
 	}
+
+	return config, nil
 }
 
-func isClassicOrg(m interface{}) bool {
-	if config, ok := m.(*Config); ok && config.classicOrg {
+func isClassicOrg(ctx context.Context, m interface{}) bool {
+	if config, ok := m.(*Config); ok && config.IsClassicOrg(ctx) {
 		return true
 	}
 	return false
@@ -481,4 +430,19 @@ func resourceFuncNoOp(context.Context, *schema.ResourceData, interface{}) diag.D
 func int64Ptr(what int) *int64 {
 	result := int64(what)
 	return &result
+}
+
+// newExponentialBackOffWithContext helper to dry up creating a backoff object that is exponential and has context
+func newExponentialBackOffWithContext(ctx context.Context, maxElapsedTime time.Duration) backoff.BackOffContext {
+	bOff := backoff.NewExponentialBackOff()
+	bOff.MaxElapsedTime = maxElapsedTime
+
+	// NOTE: backoff.BackOffContext is an interface that embeds backoff.Backoff
+	// so the greater context is considered on backoff.Retry
+	return backoff.WithContext(bOff, ctx)
+}
+
+// doNotRetry helper function to flag if provider should be using backoff.Retry
+func doNotRetry(m interface{}, err error) bool {
+	return m.(*Config).timeOperations.DoNotRetry(err)
 }

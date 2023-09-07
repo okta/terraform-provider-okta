@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaPolicySignOn_defaultError(t *testing.T) {
+func TestAccResourceOktaPolicySignOn_defaultError(t *testing.T) {
 	mgr := newFixtureManager(policySignOn, t.Name())
 	config := testOktaPolicySignOnDefaultErrors(mgr.Seed)
 
@@ -16,7 +16,7 @@ func TestAccOktaPolicySignOn_defaultError(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createPolicyCheckDestroy(policySignOn),
+		CheckDestroy:      checkPolicyDestroy(policySignOn),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -26,7 +26,7 @@ func TestAccOktaPolicySignOn_defaultError(t *testing.T) {
 	})
 }
 
-func TestAccOktaPolicySignOn_crud(t *testing.T) {
+func TestAccResourceOktaPolicySignOn_crud(t *testing.T) {
 	mgr := newFixtureManager(policySignOn, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_inactive.tf", t)
@@ -39,7 +39,7 @@ func TestAccOktaPolicySignOn_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createPolicyCheckDestroy(policySignOn),
+		CheckDestroy:      checkPolicyDestroy(policySignOn),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

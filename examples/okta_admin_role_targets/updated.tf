@@ -1,9 +1,16 @@
 resource "okta_user" "test" {
-  admin_roles = ["APP_ADMIN", "GROUP_MEMBERSHIP_ADMIN", "HELP_DESK_ADMIN"]
   first_name  = "TestAcc"
   last_name   = "blah"
   login       = "testAcc_replace_with_uuid@example.com"
   email       = "testAcc_replace_with_uuid@example.com"
+}
+
+resource "okta_user_admin_roles" "test" {
+  user_id     = okta_user.test.id
+  admin_roles = [
+    "APP_ADMIN",
+    "GROUP_MEMBERSHIP_ADMIN"
+  ]
 }
 
 resource "okta_app_swa" "test" {
@@ -26,12 +33,12 @@ resource "okta_group" "test_2" {
 
 resource "okta_admin_role_targets" "test_app" {
   user_id   = okta_user.test.id
-  role_type = tolist(okta_user.test.admin_roles)[0]
+  role_type = "APP_ADMIN"
   apps      = ["oidc_client", "facebook"]
 }
 
 resource "okta_admin_role_targets" "test_group" {
   user_id   = okta_user.test.id
-  role_type = tolist(okta_user.test.admin_roles)[1]
+  role_type = "GROUP_MEMBERSHIP_ADMIN"
   groups    = [okta_group.test.id, okta_group.test_2.id]
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaNetworkZone_crud(t *testing.T) {
+func TestAccResourceOktaNetworkZone_crud(t *testing.T) {
 	mgr := newFixtureManager(networkZone, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
@@ -19,7 +19,7 @@ func TestAccOktaNetworkZone_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(networkZone, doesNetworkZoneExist),
+		CheckDestroy:      checkResourceDestroy(networkZone, doesNetworkZoneExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -55,7 +55,7 @@ func TestAccOktaNetworkZone_crud(t *testing.T) {
 }
 
 func doesNetworkZoneExist(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, response, err := client.NetworkZone.GetNetworkZone(context.Background(), id)
 	return doesResourceExist(response, err)
 }

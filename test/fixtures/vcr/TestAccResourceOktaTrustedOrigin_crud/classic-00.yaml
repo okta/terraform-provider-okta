@@ -1,0 +1,303 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 117
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"name":"testAcc-3481107385","origin":"https://example-3481107385.com","scopes":[{"type":"CORS"}],"status":"ACTIVE"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/trustedOrigins
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"tos9i7i7a7Nnz6iCj1d7","name":"testAcc-3481107385","origin":"https://example-3481107385.com","scopes":[{"type":"CORS"}],"status":"ACTIVE","created":"2023-08-16T00:07:44.000Z","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdated":"2023-08-16T00:07:44.000Z","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","_links":{"self":{"href":"https://classic-00.oktapreview.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:44 GMT
+        status: 200 OK
+        code: 200
+        duration: 158.110956ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"tos9i7i7a7Nnz6iCj1d7","name":"testAcc-3481107385","origin":"https://example-3481107385.com","scopes":[{"type":"CORS"}],"status":"ACTIVE","created":"2023-08-16T00:07:44.000Z","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdated":"2023-08-16T00:07:44.000Z","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","_links":{"self":{"href":"https://classic-00.oktapreview.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:45 GMT
+        status: 200 OK
+        code: 200
+        duration: 73.904229ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"tos9i7i7a7Nnz6iCj1d7","name":"testAcc-3481107385","origin":"https://example-3481107385.com","scopes":[{"type":"CORS"}],"status":"ACTIVE","created":"2023-08-16T00:07:44.000Z","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdated":"2023-08-16T00:07:44.000Z","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","_links":{"self":{"href":"https://classic-00.oktapreview.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:45 GMT
+        status: 200 OK
+        code: 200
+        duration: 56.384831ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"tos9i7i7a7Nnz6iCj1d7","name":"testAcc-3481107385","origin":"https://example-3481107385.com","scopes":[{"type":"CORS"}],"status":"INACTIVE","created":"2023-08-16T00:07:44.000Z","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdated":"2023-08-16T00:07:45.000Z","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","_links":{"activate":{"href":"https://classic-00.oktapreview.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://classic-00.oktapreview.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:45 GMT
+        status: 200 OK
+        code: 200
+        duration: 59.863095ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 140
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"name":"testAcc-3481107385","origin":"https://example2-3481107385.com","scopes":[{"type":"CORS"},{"type":"REDIRECT"}],"status":"INACTIVE"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"tos9i7i7a7Nnz6iCj1d7","name":"testAcc-3481107385","origin":"https://example2-3481107385.com","scopes":[{"type":"CORS"},{"type":"REDIRECT"}],"status":"INACTIVE","created":"2023-08-16T00:07:44.000Z","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdated":"2023-08-16T00:07:45.000Z","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","_links":{"activate":{"href":"https://classic-00.oktapreview.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://classic-00.oktapreview.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:45 GMT
+        status: 200 OK
+        code: 200
+        duration: 86.73612ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"tos9i7i7a7Nnz6iCj1d7","name":"testAcc-3481107385","origin":"https://example2-3481107385.com","scopes":[{"type":"CORS"},{"type":"REDIRECT"}],"status":"INACTIVE","created":"2023-08-16T00:07:44.000Z","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdated":"2023-08-16T00:07:45.000Z","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","_links":{"activate":{"href":"https://classic-00.oktapreview.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://classic-00.oktapreview.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:46 GMT
+        status: 200 OK
+        code: 200
+        duration: 76.324861ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Wed, 16 Aug 2023 00:07:46 GMT
+        status: 204 No Content
+        code: 204
+        duration: 66.11457ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/trustedOrigins/tos9i7i7a7Nnz6iCj1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"errorCode":"E0000007","errorSummary":"Not found: Resource not found: tos9i7i7a7Nnz6iCj1d7 (TrustedOrigin)","errorLink":"E0000007","errorId":"oaeUdUCbRkISlqMxWzfU4tzoQ","errorCauses":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:07:46 GMT
+        status: 404 Not Found
+        code: 404
+        duration: 66.794265ms

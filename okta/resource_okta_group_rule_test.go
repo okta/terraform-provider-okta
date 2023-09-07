@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaGroupRule_crud(t *testing.T) {
+func TestAccResourceOktaGroupRule_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", groupRule)
 	mgr := newFixtureManager("okta_group_rule", t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
@@ -23,7 +23,7 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(groupRule, doesGroupRuleExist),
+		CheckDestroy:      checkResourceDestroy(groupRule, doesGroupRuleExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -60,7 +60,7 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 	})
 }
 
-func TestAccOktaGroupRule_invalidHandle(t *testing.T) {
+func TestAccResourceOktaGroupRule_invalidHandle(t *testing.T) {
 	mgr := newFixtureManager(groupRule, t.Name())
 	groupResource := fmt.Sprintf("%s.test", group)
 	ruleResource := fmt.Sprintf("%s.inval", groupRule)
@@ -74,7 +74,7 @@ func TestAccOktaGroupRule_invalidHandle(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(groupRule, doesGroupRuleExist),
+		CheckDestroy:      checkResourceDestroy(groupRule, doesGroupRuleExist),
 		Steps: []resource.TestStep{
 			{
 				Config: testSetup,
@@ -165,7 +165,7 @@ resource "okta_group_rule" "inval" {
 }
 
 func doesGroupRuleExist(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, response, err := client.Group.GetGroupRule(context.Background(), id, nil)
 
 	return doesResourceExist(response, err)

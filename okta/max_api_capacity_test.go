@@ -8,6 +8,10 @@ import (
 )
 
 func TestAccMaxApiCapacity(t *testing.T) {
+	if skipVCRTest(t) {
+		return
+	}
+
 	mgr := newFixtureManager(appGroupAssignments, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 

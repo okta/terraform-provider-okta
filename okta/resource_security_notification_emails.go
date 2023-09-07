@@ -52,7 +52,7 @@ func resourceSecurityNotificationEmails() *schema.Resource {
 
 func resourceSecurityNotificationEmailsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*Config)
-	client := c.oktaClient.GetConfig().HttpClient
+	client := c.oktaSDKClientV2.GetConfig().HttpClient
 	emails, err := getAPISupplementFromMetadata(m).UpdateSecurityNotificationEmails(ctx, buildSecurityNotificationEmails(d), c.orgName, c.domain, c.apiToken, client)
 	if err != nil {
 		return diag.Errorf("failed to update security notification emails: %v", err)
@@ -68,7 +68,7 @@ func resourceSecurityNotificationEmailsCreate(ctx context.Context, d *schema.Res
 
 func resourceSecurityNotificationEmailsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*Config)
-	client := c.oktaClient.GetConfig().HttpClient
+	client := c.oktaSDKClientV2.GetConfig().HttpClient
 	emails, err := getAPISupplementFromMetadata(m).GetSecurityNotificationEmails(ctx, c.orgName, c.domain, c.apiToken, client)
 	if err != nil {
 		return diag.Errorf("failed to get security notification emails: %v", err)
@@ -84,7 +84,7 @@ func resourceSecurityNotificationEmailsRead(ctx context.Context, d *schema.Resou
 
 func resourceSecurityNotificationEmailsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*Config)
-	client := c.oktaClient.GetConfig().HttpClient
+	client := c.oktaSDKClientV2.GetConfig().HttpClient
 	_, err := getAPISupplementFromMetadata(m).UpdateSecurityNotificationEmails(ctx, buildSecurityNotificationEmails(d), c.orgName, c.domain, c.apiToken, client)
 	if err != nil {
 		return diag.Errorf("failed to update security notification emails: %v", err)
@@ -94,7 +94,7 @@ func resourceSecurityNotificationEmailsUpdate(ctx context.Context, d *schema.Res
 
 func resourceSecurityNotificationEmailsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*Config)
-	client := c.oktaClient.GetConfig().HttpClient
+	client := c.oktaSDKClientV2.GetConfig().HttpClient
 	emails := sdk.SecurityNotificationEmails{
 		SendEmailForNewDeviceEnabled:        true,
 		SendEmailForFactorEnrollmentEnabled: true,

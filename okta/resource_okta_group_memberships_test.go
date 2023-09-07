@@ -18,7 +18,7 @@ func TestAccResourceOktaGroupMemberships_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: start,
@@ -39,7 +39,7 @@ func TestAccResourceOktaGroupMemberships_Issue1072(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: `
@@ -70,7 +70,7 @@ func TestAccResourceOktaGroupMemberships_ClassicBehavior(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				// Before the apply the state will be:
@@ -110,7 +110,7 @@ func TestAccResourceOktaGroupMemberships_TrackAllUsersBehavior(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				// Before the apply the state will be:
@@ -131,8 +131,10 @@ func TestAccResourceOktaGroupMemberships_TrackAllUsersBehavior(t *testing.T) {
 				//   okta_group_rule.group_b_to_a_rule will have run and
 				//   associated the three users from Group B to aslo be in
 				//   Group A.
-				ExpectNonEmptyPlan: true,
+
+				// ExpectNonEmptyPlan: true,
 				// Even with a read delay of 5 seconds it can take awhile for group rules to fire in turn causing this test to fail.
+
 				Config: testOktaGroupMembershipsConfig(true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("okta_group_memberships.test_a_direct", "users.#", "2"),
@@ -230,8 +232,8 @@ data "okta_group" "test_b" {
 	return fmt.Sprintf("%s%s%s", prepend, clause, append)
 }
 
-// TestAccOktaGroupMembershipsIssue1119 addresses https://github.com/okta/terraform-provider-okta/issues/1119
-func TestAccOktaGroupMembershipsIssue1119(t *testing.T) {
+// TestAccResourceOktaGroupMembershipsIssue1119 addresses https://github.com/okta/terraform-provider-okta/issues/1119
+func TestAccResourceOktaGroupMembershipsIssue1119(t *testing.T) {
 	if !allowLongRunningACCTest(t) {
 		return
 	}
@@ -263,7 +265,7 @@ resource "okta_group" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      testAccCheckUserDestroy,
+		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

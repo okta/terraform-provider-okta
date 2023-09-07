@@ -111,6 +111,12 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				RequiredWith: []string{"device_is_registered"},
 				Description:  "If the device is managed. A device is managed if it's managed by a device management system. When managed is passed, registered must also be included and must be set to true.",
 			},
+			"device_assurances_included": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "List of device assurance IDs to include",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"platform_include": {
 				Type:     schema.TypeSet,
 				Elem:     platformIncludeResource,
@@ -178,7 +184,7 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 }
 
 func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
 	}
 
@@ -199,7 +205,7 @@ func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
 	}
 
@@ -248,6 +254,9 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 		if rule.Conditions.Device != nil {
 			_ = d.Set("device_is_managed", rule.Conditions.Device.Managed)
 			_ = d.Set("device_is_registered", rule.Conditions.Device.Registered)
+			if rule.Conditions.Device.Assurance != nil {
+				m["device_assurances_included"] = convertStringSliceToSetNullable(rule.Conditions.Device.Assurance.Include)
+			}
 		}
 		if rule.Conditions.People != nil {
 			if rule.Conditions.People.Users != nil {
@@ -269,7 +278,7 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
 	}
 
@@ -292,7 +301,7 @@ func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceAppSignOnPolicyRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
 	}
 
@@ -355,6 +364,21 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 			Registered: boolPtr(isRegistered.(bool)),
 		}
 	}
+	deviceAssurancesIncluded, deviceAssurancesIncludedOk := d.GetOk("device_assurances_included")
+	if deviceAssurancesIncludedOk {
+		if rule.Conditions.Device != nil {
+			rule.Conditions.Device.Assurance = &sdk.DeviceAssurancePolicyRuleCondition{
+				Include: convertInterfaceToStringSetNullable(deviceAssurancesIncluded),
+			}
+		} else {
+			rule.Conditions.Device = &sdk.DeviceAccessPolicyRuleCondition{
+				Assurance: &sdk.DeviceAssurancePolicyRuleCondition{
+					Include: convertInterfaceToStringSetNullable(deviceAssurancesIncluded),
+				},
+			}
+		}
+	}
+
 	usersExcluded, usersExcludedOk := d.GetOk("users_excluded")
 	usersIncluded, usersIncludedOk := d.GetOk("users_included")
 	if usersExcludedOk || usersIncludedOk {

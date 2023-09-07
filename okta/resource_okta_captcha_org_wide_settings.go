@@ -37,7 +37,7 @@ func resourceCaptchaOrgWideSettings() *schema.Resource {
 }
 
 func resourceCaptchaOrgWideSettingsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(captchaOrgWideSettings)
 	}
 
@@ -52,7 +52,7 @@ func resourceCaptchaOrgWideSettingsCreate(ctx context.Context, d *schema.Resourc
 }
 
 func resourceCaptchaOrgWideSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(captchaOrgWideSettings)
 	}
 
@@ -71,7 +71,7 @@ func resourceCaptchaOrgWideSettingsRead(ctx context.Context, d *schema.ResourceD
 }
 
 func resourceCaptchaOrgWideSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(captchaOrgWideSettings)
 	}
 
@@ -85,7 +85,7 @@ func resourceCaptchaOrgWideSettingsUpdate(ctx context.Context, d *schema.Resourc
 }
 
 func resourceCaptchaOrgWideSettingsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(m) {
+	if isClassicOrg(ctx, m) {
 		return resourceOIEOnlyFeatureError(captchaOrgWideSettings)
 	}
 

@@ -27,10 +27,19 @@ in form of raw markdown files.
 
 # Development Environment Setup
 
+The sections below will guide you through the requirements, upgrading, getting started, building with and contributing to
+the Okta Terraform Provider.
+
 ## Requirements
 
 - [Terraform](https://www.terraform.io/downloads.html) 0.14.0 or newer (to run acceptance tests)
 - [Go](https://golang.org/doc/install) (to build the provider plugin)
+
+## Upgrade
+
+If you have been using version 3.x of the Okta Terraform Provider, please upgrade to the latest version to take advantage of
+all the new features, fixes, and functionality. Please refer to this [Upgrade Guide](https://github.com/okta/terraform-provider-okta/issues/1338)
+for guidance on how to upgrade to version 4.x. Also, please check our [Releases](https://github.com/okta/terraform-provider-okta/releases) page for more details on major, minor, and patch updates. 
 
 ## Quick Start
 

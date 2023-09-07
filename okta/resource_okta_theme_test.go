@@ -21,10 +21,7 @@ func TestAccResourceOktaTheme_import_update(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy: func(s *terraform.State) error {
-			// theme api doens't have real delete for a theme
-			return nil
-		},
+		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
 				// this is set up only for import state test, ignore check as import.tf is for testing

@@ -10,17 +10,18 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
+// TODO unable to run the test due to conflict providerFactories between plugin and framework
+func TestAccResourceOktaAppSignOnPolicyRule(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSignOnPolicyRule)
 	mgr := newFixtureManager(appSignOnPolicyRule, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      appSignOnPolicyRuleExists,
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -32,6 +33,7 @@ func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "factor_mode", "2FA"),
 					resource.TestCheckResourceAttr(resourceName, "groups_excluded.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "groups_included.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "device_assurances_included.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "user_types_excluded.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "user_types_included.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "users_excluded.#", "0"),
@@ -54,6 +56,7 @@ func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "factor_mode", "2FA"),
 					resource.TestCheckResourceAttr(resourceName, "groups_excluded.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "groups_included.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "device_assurances_included.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "user_types_excluded.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "user_types_included.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "users_excluded.#", "3"),
@@ -72,12 +75,12 @@ func TestAccOktaAppSignOnPolicyRule(t *testing.T) {
 	})
 }
 
-func appSignOnPolicyRuleExists(s *terraform.State) error {
+func checkAppSignOnPolicyRuleDestroy(s *terraform.State) error {
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != appSignOnPolicyRule {
 			continue
 		}
-		client := apiSupplementForTest()
+		client := sdkSupplementClientForTest()
 		rule, resp, err := client.GetAppSignOnPolicyRule(context.Background(), rs.Primary.Attributes["policy_id"], rs.Primary.ID)
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			return nil

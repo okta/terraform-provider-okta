@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaSmsTemplate_crud(t *testing.T) {
+func TestAccResourceOktaSmsTemplate_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", templateSms)
 	mgr := newFixtureManager(templateSms, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
@@ -18,7 +18,7 @@ func TestAccOktaSmsTemplate_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(templateSms, doesSmsTemplateExist),
+		CheckDestroy:      checkResourceDestroy(templateSms, doesSmsTemplateExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -47,7 +47,7 @@ func TestAccOktaSmsTemplate_crud(t *testing.T) {
 }
 
 func doesSmsTemplateExist(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, response, err := client.SmsTemplate.GetSmsTemplate(context.Background(), id)
 	return doesResourceExist(response, err)
 }

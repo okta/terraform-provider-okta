@@ -13,6 +13,40 @@ ifdef TEST_FILTER
 	TEST_FILTER := -run $(TEST_FILTER)
 endif
 
+TESTARGS?=-test.v
+
+DEFAULT_SMOKE_TESTS?=\
+  TestAccDataSourceOktaAppSaml_read \
+  TestAccDataSourceOktaApp_read \
+  TestAccDataSourceOktaGroup_read \
+  TestAccDataSourceOktaGroups_read \
+  TestAccDataSourceOktaPolicy_read \
+  TestAccDataSourceOktaUser_read \
+  TestAccResourceOktaAppAutoLoginApplication_crud \
+  TestAccResourceOktaAppBasicAuthApplication_crud \
+  TestAccResourceOktaAppBookmarkApplication_crud \
+  TestAccResourceOktaAppSaml_crud \
+  TestAccResourceOktaAppSignOnPolicy_crud \
+  TestAccResourceOktaAppSignOnPolicy_crud \
+  TestAccResourceOktaAppSwaApplication_crud \
+  TestAccResourceOktaAppThreeFieldApplication_crud \
+  TestAccResourceOktaAppUser_crud \
+  TestAccResourceOktaDefaultMFAPolicy \
+  TestAccResourceOktaGroup_crud \
+  TestAccResourceOktaMfaPolicyRule_crud \
+  TestAccResourceOktaMfaPolicy_crud \
+  TestAccResourceOktaOrgConfiguration \
+  TestAccResourceOktaPolicyRulePassword_crud \
+  TestAccResourceOktaPolicySignOn_crud \
+  TestAccResourceOktaUser_updateAllAttributes
+
+ifeq ($(strip $(SMOKE_TESTS)),)
+	SMOKE_TESTS = $(DEFAULT_SMOKE_TESTS)
+endif
+
+space := $(subst ,, )
+smoke_tests := $(subst $(space),\|,$(SMOKE_TESTS))
+
 default: build
 
 dep: # Download required dependencies
@@ -32,20 +66,23 @@ clean-all:
 
 sweep:
 	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
-	go test $(TEST) -v -sweep=$(SWEEP) $(SWEEPARGS)
+	go test $(TEST) -sweep=$(SWEEP) $(SWEEPARGS)
 
 test:
 	echo $(TEST) | \
 		xargs -t -n4 go test $(TESTARGS) $(TEST_FILTER) -timeout=30s -parallel=4
 
 testacc:
-	TF_ACC=1 go test $(TEST) -v $(TESTARGS) $(TEST_FILTER) -timeout 120m
+	TF_ACC=1 go test $(TEST) $(TESTARGS) $(TEST_FILTER) -timeout 120m
 
 test-play-vcr-acc:
-	OKTA_VCR_TF_ACC=play TF_ACC=1 go test $(TEST) -v $(TESTARGS) $(TEST_FILTER) -timeout 120m
+	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m ./okta
+
+smoke-test-play-vcr-acc:
+	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m -run ^$(smoke_tests)$$ ./okta
 
 test-record-vcr-acc:
-	OKTA_VCR_TF_ACC=record TF_ACC=1 go test $(TEST) -v $(TESTARGS) $(TEST_FILTER) -timeout 120m
+	OKTA_VCR_TF_ACC=record TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m ./okta
 
 vet:
 	@echo "==> Checking source code against go vet and staticcheck"

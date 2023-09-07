@@ -3,6 +3,7 @@ resource "okta_auth_server_scope" "test" {
   description    = "test_updated"
   name           = "test:something"
   display_name   = "test display name updated"
+  optional       = true
   auth_server_id = okta_auth_server.test.id
 }
 

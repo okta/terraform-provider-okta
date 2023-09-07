@@ -33,7 +33,7 @@ func assignDefaultAuthenticationPolicy(ctx context.Context, m interface{}, appId
 	// type ACCESS_POLICY. Apps in classic orgs do not have an access policy
 	// accessible through the public API. Only by hand in the Admin UI.
 	// https://developer.okta.com/docs/reference/api/policy/#policy-object
-	if config, ok := m.(*Config); ok && config.classicOrg {
+	if isClassicOrg(ctx, m) {
 		return nil
 	}
 

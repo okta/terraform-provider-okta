@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccOktaAppUser_crud(t *testing.T) {
+func TestAccResourceOktaAppUser_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appUser)
 	mgr := newFixtureManager(appUser, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
@@ -77,7 +77,7 @@ func TestAccOktaAppUser_crud(t *testing.T) {
 	})
 }
 
-func TestAccOktaAppUser_retain(t *testing.T) {
+func TestAccResourceOktaAppUser_retain(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appUser)
 	appName := fmt.Sprintf("%s.test", appOAuth)
 	userName := fmt.Sprintf("%s.test", user)
@@ -122,7 +122,7 @@ func ensureAppUserExists(resourceName string) resource.TestCheckFunc {
 
 		appID := rs.Primary.Attributes["app_id"]
 		userID := rs.Primary.Attributes["user_id"]
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 
 		u, _, err := client.Application.GetApplicationUser(context.Background(), appID, userID, nil)
 		if err != nil {
@@ -144,7 +144,7 @@ func checkAppUserDestroy(s *terraform.State) error {
 		appID := rs.Primary.Attributes["app_id"]
 		userID := rs.Primary.Attributes["user_id"]
 
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 		_, response, err := client.Application.GetApplicationUser(context.Background(), appID, userID, nil)
 		exists, err := doesResourceExist(response, err)
 		if err != nil {
@@ -175,7 +175,7 @@ func ensureAppUserRetained(appName, userName string) resource.TestCheckFunc {
 
 		appID := appRes.Primary.ID
 		userID := userRes.Primary.ID
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 
 		g, _, err := client.Application.GetApplicationUser(context.Background(), appID, userID, nil)
 		if err != nil {

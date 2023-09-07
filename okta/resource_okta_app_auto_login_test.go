@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppAutoLoginApplication_crud(t *testing.T) {
+func TestAccResourceOktaAppAutoLoginApplication_crud(t *testing.T) {
 	mgr := newFixtureManager(appAutoLogin, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
@@ -18,7 +18,7 @@ func TestAccAppAutoLoginApplication_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appAutoLogin, createDoesAppExist(sdk.NewAutoLoginApplication())),
+		CheckDestroy:      checkResourceDestroy(appAutoLogin, createDoesAppExist(sdk.NewAutoLoginApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -61,7 +61,7 @@ func TestAccAppAutoLoginApplication_crud(t *testing.T) {
 	})
 }
 
-func TestAccAppAutoLoginApplication_timeouts(t *testing.T) {
+func TestAccResourceOktaAppAutoLoginApplication_timeouts(t *testing.T) {
 	mgr := newFixtureManager(appAutoLogin, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appAutoLogin)
 	config := `
@@ -78,7 +78,7 @@ resource "okta_app_auto_login" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appAutoLogin, createDoesAppExist(sdk.NewAutoLoginApplication())),
+		CheckDestroy:      checkResourceDestroy(appAutoLogin, createDoesAppExist(sdk.NewAutoLoginApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

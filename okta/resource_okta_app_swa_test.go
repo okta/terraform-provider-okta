@@ -9,7 +9,7 @@ import (
 )
 
 // Test creation of a simple AWS SWA app. The preconfigured apps are created by name.
-func TestAccAppSwaApplication_preconfig(t *testing.T) {
+func TestAccResourceOktaAppSwaApplication_preconfig(t *testing.T) {
 	mgr := newFixtureManager(appSwa, t.Name())
 	config := mgr.GetFixtures("preconfig.tf", t)
 	updatedConfig := mgr.GetFixtures("preconfig_updated.tf", t)
@@ -19,7 +19,7 @@ func TestAccAppSwaApplication_preconfig(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
+		CheckDestroy:      checkResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -44,7 +44,7 @@ func TestAccAppSwaApplication_preconfig(t *testing.T) {
 }
 
 // Test creation of a custom SAML app.
-func TestAccAppSwaApplication_crud(t *testing.T) {
+func TestAccResourceOktaAppSwaApplication_crud(t *testing.T) {
 	mgr := newFixtureManager(appSwa, t.Name())
 	config := mgr.GetFixtures("custom.tf", t)
 	updatedConfig := mgr.GetFixtures("custom_updated.tf", t)
@@ -54,7 +54,7 @@ func TestAccAppSwaApplication_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
+		CheckDestroy:      checkResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -83,7 +83,7 @@ func TestAccAppSwaApplication_crud(t *testing.T) {
 	})
 }
 
-func TestAccAppSwaApplication_timeouts(t *testing.T) {
+func TestAccResourceOktaAppSwaApplication_timeouts(t *testing.T) {
 	mgr := newFixtureManager(appSwa, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appSwa)
 	config := `
@@ -103,7 +103,7 @@ resource "okta_app_swa" "test" {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      createCheckResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
+		CheckDestroy:      checkResourceDestroy(appSwa, createDoesAppExist(sdk.NewSwaApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

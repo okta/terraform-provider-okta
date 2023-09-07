@@ -1,5 +1,5 @@
 resource "okta_domain" "test" {
-  name   = "www.example.com"
+  name   = "testAcc-replace_with_uuid.example.com"
 }
 
 data "okta_domain" "by-id" {
@@ -7,7 +7,7 @@ data "okta_domain" "by-id" {
 }
 
 data "okta_domain" "by-name" {
-  domain_id_or_name = "www.example.com"
+  domain_id_or_name = "testAcc-replace_with_uuid.example.com"
 
   depends_on = [
     okta_domain.test

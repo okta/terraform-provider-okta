@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaCaptcha(t *testing.T) {
+func TestAccResourceOktaCaptcha(t *testing.T) {
 	mgr := newFixtureManager(captcha, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
@@ -18,7 +18,7 @@ func TestAccOktaCaptcha(t *testing.T) {
 			PreCheck:          testAccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
 			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      createCheckResourceDestroy(captcha, doesCaptchaExist),
+			CheckDestroy:      checkResourceDestroy(captcha, doesCaptchaExist),
 			Steps: []resource.TestStep{
 				{
 					Config: config,
@@ -40,7 +40,7 @@ func TestAccOktaCaptcha(t *testing.T) {
 }
 
 func doesCaptchaExist(id string) (bool, error) {
-	client := apiSupplementForTest()
+	client := sdkSupplementClientForTest()
 	_, response, err := client.GetCaptcha(context.Background(), id)
 	return doesResourceExist(response, err)
 }
