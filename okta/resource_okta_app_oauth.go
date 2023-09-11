@@ -530,16 +530,14 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 		_ = d.Set("client_secret", "")
 	}
 
-	gc, err := flattenGroupsClaim(ctx, d, m)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
 	c := m.(*Config)
 	if c.IsOAuth20Auth() {
 		logger(m).Warn("reading groups_claim disabled with OAuth 2.0 API authentication")
-		return nil
 	} else {
+		gc, err := flattenGroupsClaim(ctx, d, m)
+		if err != nil {
+			return diag.FromErr(err)
+		}
 		_ = d.Set("groups_claim", gc)
 	}
 

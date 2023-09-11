@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.4.1 (September 11, 2023)
+
+### BUG FIXES
+
+* Missed guard on groups claim in `okta_app_oauth` for OAuth 2.0 authentication [1713](https://github.com/okta/terraform-provider-okta/pull/1713).  Thanks, [@monde](https://github.com/monde)!
+
+### IMPROVEMENTS
+
+* Update okta app oauth to clarify we support multiple jwks creation [#1704](https://github.com/okta/terraform-provider-okta/pull/1704). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
 ## 4.4.0 (September 7, 2023)
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
