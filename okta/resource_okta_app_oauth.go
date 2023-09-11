@@ -325,6 +325,16 @@ func resourceAppOAuth() *schema.Resource {
 							Optional:    true,
 							Description: "RSA Modulus",
 						},
+						"x": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "X coordinate of the elliptic curve point",
+						},
+						"y": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Y coordinate of the elliptic curve point",
+						},
 					},
 				},
 			},
