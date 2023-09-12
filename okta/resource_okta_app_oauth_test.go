@@ -266,6 +266,8 @@ func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
 	config := mgr.GetFixtures("service_with_jwks.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
 
+	ecResourceName := fmt.Sprintf("%s.test2", appOAuth)
+
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
@@ -280,6 +282,16 @@ func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.kid", "SIGNING_KEY"),
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.e", "AQAB"),
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.n", "owfoXNHcAlAVpIO41840ZU2tZraLGw3yEr3xZvAti7oEZPUKCytk88IDgH7440JOuz8GC_D6vtduWOqnEt0j0_faJnhKHgfj7DTWBOCxzSdjrM-Uyj6-e_XLFvZXzYsQvt52PnBJUV15G1W9QTjlghT_pFrW0xrTtbO1c281u1HJdPd5BeIyPb0pGbciySlx53OqGyxrAxPAt5P5h-n36HJkVsSQtNvgptLyOwWYkX50lgnh2szbJ0_O581bqkNBy9uqlnVeK1RZDQUl4mk8roWYhsx_JOgjpC3YyeXA6hHsT5xWZos_gNx98AHivNaAjzIzvyVItX2-hP0Aoscfff"),
+				),
+			},
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(ecResourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.kty", "EC"),
+					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.kid", "testing"),
+					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.x", "K37X78mXJHHldZYMzrwipjKR-YZUS2SMye0KindHp6I"),
+					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.y", "8IfvsvXWzbFWOZoVOMwgF5p46mUj3kbOVf9Fk0vVVHo"),
 				),
 			},
 		},
@@ -352,7 +364,7 @@ func TestAccResourceOktaAppOauth_redirect_uris(t *testing.T) {
 					  "https://*.example.com/"
 					]
 					response_types = ["code"]
-				  }				
+				  }
 				`,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
