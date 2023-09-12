@@ -5,10 +5,10 @@ resource "okta_group" "test" {
 }
 
 resource "okta_user" "test" {
-  first_name        = "TestAcc"
-  last_name         = "Smith"
-  login             = "testAcc-replace_with_uuid@example.com"
-  email             = "testAcc-replace_with_uuid@example.com"
+  first_name = "TestAcc"
+  last_name  = "Smith"
+  login      = "testAcc-replace_with_uuid@example.com"
+  email      = "testAcc-replace_with_uuid@example.com"
 }
 
 // Test Target Groups

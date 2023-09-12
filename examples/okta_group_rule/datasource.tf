@@ -16,9 +16,9 @@ resource "okta_group_rule" "test" {
 # a group rule search function in the Okta API
 
 data "okta_group_rule" "test_by_id" {
-  id          = okta_group_rule.test.id
+  id = okta_group_rule.test.id
 }
 
 data "okta_group_rule" "test_by_name" {
-  name          = "testAcc_replace_with_uuid"
+  name = "testAcc_replace_with_uuid"
 }

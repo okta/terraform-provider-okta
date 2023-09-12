@@ -26,5 +26,5 @@ resource "okta_policy_password" "test" {
   recovery_email_token                   = 20160
   sms_recovery                           = "ACTIVE"
   #call_recovery                          = "ACTIVE"
-  groups_included                        = [data.okta_group.all.id]
+  groups_included = [data.okta_group.all.id]
 }

@@ -18,19 +18,19 @@ resource "okta_inline_hook" "test" {
 }
 
 resource "okta_inline_hook" "twilio" {
-  name = "twillio"
+  name    = "twillio"
   version = "1.0.0"
-  type = "com.okta.telephony.provider"
+  type    = "com.okta.telephony.provider"
 
   channel = {
     version = "1.0.0"
-    uri = "https://example.com/test"
-    method = "POST"
+    uri     = "https://example.com/test"
+    method  = "POST"
   }
 
   auth = {
-    key = "Authorization"
-    type = "HEADER"
+    key   = "Authorization"
+    type  = "HEADER"
     value = "secret"
   }
 }

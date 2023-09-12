@@ -27,7 +27,7 @@ resource "okta_group" "test_4" {
 
 resource "okta_user_group_memberships" "test" {
   user_id = okta_user.test.id
-  groups  = [
+  groups = [
     okta_group.test_1.id,
   ]
 }

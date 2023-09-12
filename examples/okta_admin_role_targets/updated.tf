@@ -1,12 +1,12 @@
 resource "okta_user" "test" {
-  first_name  = "TestAcc"
-  last_name   = "blah"
-  login       = "testAcc_replace_with_uuid@example.com"
-  email       = "testAcc_replace_with_uuid@example.com"
+  first_name = "TestAcc"
+  last_name  = "blah"
+  login      = "testAcc_replace_with_uuid@example.com"
+  email      = "testAcc_replace_with_uuid@example.com"
 }
 
 resource "okta_user_admin_roles" "test" {
-  user_id     = okta_user.test.id
+  user_id = okta_user.test.id
   admin_roles = [
     "APP_ADMIN",
     "GROUP_MEMBERSHIP_ADMIN"
