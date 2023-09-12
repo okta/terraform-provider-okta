@@ -1,5 +1,5 @@
 resource "okta_event_hook" "test" {
-  name   = "testAcc_replace_with_uuid"
+  name = "testAcc_replace_with_uuid"
   events = [
     "user.lifecycle.create",
     "user.lifecycle.delete.initiated",

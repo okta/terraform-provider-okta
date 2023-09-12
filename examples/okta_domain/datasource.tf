@@ -1,5 +1,5 @@
 resource "okta_domain" "test" {
-  name   = "testAcc-replace_with_uuid.example.com"
+  name = "testAcc-replace_with_uuid.example.com"
 }
 
 data "okta_domain" "by-id" {

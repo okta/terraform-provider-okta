@@ -19,9 +19,9 @@ data "okta_users" "compound_search" {
   }
 
   search {
-    name  = "profile.email"
+    name       = "profile.email"
     comparison = "pr"
   }
 
-  depends_on = [ okta_user.test ]
+  depends_on = [okta_user.test]
 }

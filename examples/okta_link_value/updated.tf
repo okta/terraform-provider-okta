@@ -16,8 +16,8 @@ resource "okta_user" "test" {
 }
 
 resource "okta_link_value" "test" {
-  primary_name        = okta_link_definition.test.primary_name
-  primary_user_id     = okta_user.test[0].id
+  primary_name    = okta_link_definition.test.primary_name
+  primary_user_id = okta_user.test[0].id
   associated_user_ids = [
     okta_user.test[4].id,
   ]
