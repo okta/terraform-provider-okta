@@ -6,7 +6,7 @@ data "okta_policy" "test" {
 resource "okta_app_signon_policy" "test" {
   name        = "testAcc_Policy_replace_with_uuid"
   description = "Sign On Policy"
-  depends_on  = [
+  depends_on = [
     data.okta_policy.test
   ]
 }

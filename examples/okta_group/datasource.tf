@@ -21,5 +21,5 @@ data "okta_group" "test" {
   include_users = true
   name          = okta_group.test.name
 
-  depends_on = [ okta_user_group_memberships.test ]
+  depends_on = [okta_user_group_memberships.test]
 }

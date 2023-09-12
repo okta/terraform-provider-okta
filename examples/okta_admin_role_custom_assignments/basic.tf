@@ -1,5 +1,5 @@
 variable "hostname" {
-   type=string
+  type = string
 }
 
 locals {
@@ -15,7 +15,7 @@ resource "okta_admin_role_custom" "test" {
 resource "okta_resource_set" "test" {
   label       = "testAcc_replace_with_uuid"
   description = "testing, testing"
-  resources   = [
+  resources = [
     format("%s/api/v1/users", local.org_url),
     format("%s/api/v1/apps/%s", local.org_url, okta_app_swa.test.id)
   ]
@@ -24,7 +24,7 @@ resource "okta_resource_set" "test" {
 resource "okta_admin_role_custom_assignments" "test" {
   resource_set_id = okta_resource_set.test.id
   custom_role_id  = okta_admin_role_custom.test.id
-  members         = [
+  members = [
     format("%s/api/v1/users/%s", local.org_url, okta_user.test.id),
     format("%s/api/v1/groups/%s", local.org_url, okta_group.test.id)
   ]
