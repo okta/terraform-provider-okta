@@ -25,6 +25,8 @@ DEFAULT_SMOKE_TESTS?=\
   TestAccResourceOktaAppAutoLoginApplication_crud \
   TestAccResourceOktaAppBasicAuthApplication_crud \
   TestAccResourceOktaAppBookmarkApplication_crud \
+  TestAccResourceOktaAppOauth_basic \
+  TestAccResourceOktaAppOauth_serviceWithJWKS \
   TestAccResourceOktaAppSaml_crud \
   TestAccResourceOktaAppSignOnPolicy_crud \
   TestAccResourceOktaAppSignOnPolicy_crud \
