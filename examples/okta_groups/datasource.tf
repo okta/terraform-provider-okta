@@ -25,6 +25,6 @@ output "special_groups" {
 
   # Groups of type APP_GROUP have customizable profile properties and a more
   # meaningful lookup example could be done like so:
-  value = join(",", [for group in data.okta_groups.app_groups.groups : group.name 
-             if lookup(jsondecode(group.custom_profile_attributes), "some_attribute", "") == "Some Value"])
+  value = join(",", [for group in data.okta_groups.app_groups.groups : group.name
+  if lookup(jsondecode(group.custom_profile_attributes), "some_attribute", "") == "Some Value"])
 }

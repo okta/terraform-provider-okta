@@ -4,8 +4,8 @@ resource "okta_domain" "test" {
 }
 
 resource "okta_domain_certificate" "test" {
-  domain_id   = okta_domain.test.id
-  type        = "PEM"
+  domain_id = okta_domain.test.id
+  type      = "PEM"
 
   #certificate = file("cert.pem")
   certificate = <<CERT

@@ -60,33 +60,33 @@ data "okta_user_type" "default" {
 }
 
 resource "okta_policy_device_assurance_android" "test" {
-  name = "test"
+  name       = "test"
   os_version = "12"
-  jailbreak = false
+  jailbreak  = false
 }
 
 resource "okta_app_signon_policy_rule" "test" {
-  name                        = "testAcc_replace_with_uuid_updated"
-  policy_id                   = data.okta_app_signon_policy.test.id
-  access                      = "ALLOW"
-  custom_expression           = "user.status == \"ACTIVE\""
-  device_is_managed           = false
-  device_is_registered        = true
-  factor_mode                 = "2FA"
-  groups_excluded             = [
+  name                 = "testAcc_replace_with_uuid_updated"
+  policy_id            = data.okta_app_signon_policy.test.id
+  access               = "ALLOW"
+  custom_expression    = "user.status == \"ACTIVE\""
+  device_is_managed    = false
+  device_is_registered = true
+  factor_mode          = "2FA"
+  groups_excluded = [
     okta_group.this[2].id,
     okta_group.this[3].id,
     okta_group.this[4].id
   ]
-  groups_included             = [
+  groups_included = [
     okta_group.this[0].id,
     okta_group.this[1].id
   ]
   device_assurances_included = [
     okta_policy_device_assurance_android.test.id
   ]
-  network_connection          = "ZONE"
-  network_includes            = [
+  network_connection = "ZONE"
+  network_includes = [
     okta_network_zone.test.id
   ]
   platform_include {
@@ -101,18 +101,18 @@ resource "okta_app_signon_policy_rule" "test" {
     os_type = "MACOS"
     type    = "DESKTOP"
   }
-# FIXME Okta API for /api/v1/policies/{policyId}/rules/{ruleId}
-# is not returning os_expression even when it has been set throwing off the TF state.
-#  platform_include {
-#    os_expression = ".*"
-#    os_type = "OTHER"
-#    type    = "DESKTOP"
-#  }
-#  platform_include {
-#    os_expression = ".*"
-#    os_type = "OTHER"
-#    type    = "MOBILE"
-#  }
+  # FIXME Okta API for /api/v1/policies/{policyId}/rules/{ruleId}
+  # is not returning os_expression even when it has been set throwing off the TF state.
+  #  platform_include {
+  #    os_expression = ".*"
+  #    os_type = "OTHER"
+  #    type    = "DESKTOP"
+  #  }
+  #  platform_include {
+  #    os_expression = ".*"
+  #    os_type = "OTHER"
+  #    type    = "MOBILE"
+  #  }
   platform_include {
     os_type = "WINDOWS"
     type    = "DESKTOP"
@@ -125,22 +125,22 @@ resource "okta_app_signon_policy_rule" "test" {
   re_authentication_frequency = "PT43800H"
   inactivity_period           = "PT2H"
   type                        = "ASSURANCE"
-  user_types_excluded         = [
+  user_types_excluded = [
     okta_user_type.test.id
   ]
-  user_types_included         = [
+  user_types_included = [
     data.okta_user_type.default.id
   ]
-  users_excluded              = [
+  users_excluded = [
     okta_user.test[2].id,
     okta_user.test[3].id,
     okta_user.test[4].id
   ]
-  users_included              = [
+  users_included = [
     okta_user.test[0].id,
     okta_user.test[1].id
   ]
-  constraints                 = [
+  constraints = [
     jsonencode({
       "knowledge" : {
         "reauthenticateIn" : "PT2H",

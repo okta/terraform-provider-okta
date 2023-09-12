@@ -10,7 +10,7 @@ resource "okta_inline_hook" "test" {
     uri     = "https://example.com/test1"
     method  = "POST"
   }
-  auth    = {
+  auth = {
     key   = "Authorization"
     type  = "HEADER"
     value = "secret"
@@ -31,7 +31,7 @@ resource "okta_app_saml" "test" {
   honor_force_authn        = false
   authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
   inline_hook_id           = okta_inline_hook.test.id
-  depends_on               = [
+  depends_on = [
     okta_inline_hook.test
   ]
   attribute_statements {

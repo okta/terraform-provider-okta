@@ -7,9 +7,9 @@ resource "okta_brand" "example" {
 
   lifecycle {
     ignore_changes = [
-	  agree_to_custom_privacy_policy,
-	  custom_privacy_policy_url,
-	  remove_powered_by_okta
-	]
+      agree_to_custom_privacy_policy,
+      custom_privacy_policy_url,
+      remove_powered_by_okta
+    ]
   }
 }

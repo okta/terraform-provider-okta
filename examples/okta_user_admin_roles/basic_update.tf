@@ -6,7 +6,7 @@ resource "okta_user" "test" {
 }
 
 resource "okta_user_admin_roles" "test" {
-  user_id     = okta_user.test.id
+  user_id = okta_user.test.id
   admin_roles = [
     "APP_ADMIN",
     "USER_ADMIN",
