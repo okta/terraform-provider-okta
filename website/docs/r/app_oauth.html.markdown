@@ -36,13 +36,16 @@ resource "okta_app_oauth" "example" {
 
   jwks {
     kty = "RSA"
-    kid = "SIGNING_KEY"
+    kid = "SIGNING_KEY_RSA"
     e   = "AQAB"
     n   = "xyz"
   }
+
   jwks {
     kty = "EC"
-    kid = "SIGNING_KEY2"
+    kid = "SIGNING_KEY_EC"
+    x   = "K37X78mXJHHldZYMzrwipjKR-YZUS2SMye0KindHp6I"
+    y   = "8IfvsvXWzbFWOZoVOMwgF5p46mUj3kbOVf9Fk0vVVHo"
   }
 }
 ```
@@ -107,7 +110,7 @@ The following arguments are supported:
 - `issuer_mode` - (Optional) Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.
 Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
-- `jwks` - (Optional) JSON Web Key set. Multiple jwks are supported[Admin Console JWK Reference](https://developer.okta.com/docs/guides/implement-oauth-for-okta-serviceapp/main/#generate-the-jwk-in-the-admin-console)
+- `jwks` - (Optional) JSON Web Key set. Multiple jwks are supported[Admin Console JWK Reference](https://developer.okta.com/docs/guides/implement-oauth-for-okta-serviceapp/main/#generate-the-jwk-in-the-admin-console). Use kty=RSA e=[value] n=[value] for RSA jwks, and kty=EC x=[value] y=[value] for EC jwks
 
 - `jwks_uri` - (Optional) URL of the custom authorization server's JSON Web Key Set document.
 

@@ -325,6 +325,16 @@ func resourceAppOAuth() *schema.Resource {
 							Optional:    true,
 							Description: "RSA Modulus",
 						},
+						"x": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "X coordinate of the elliptic curve point",
+						},
+						"y": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Y coordinate of the elliptic curve point",
+						},
 					},
 				},
 			},
@@ -595,11 +605,21 @@ func setOAuthClientSettings(d *schema.ResourceData, oauthClient *sdk.OpenIdConne
 		jwks := oauthClient.Jwks.Keys
 		arr := make([]map[string]interface{}, len(jwks))
 		for i, jwk := range jwks {
-			arr[i] = map[string]interface{}{
-				"kty": jwk.Kty,
-				"kid": jwk.Kid,
-				"e":   jwk.E,
-				"n":   jwk.N,
+			if jwk.Kty == "RSA" && jwk.E != "" && jwk.N != "" {
+				arr[i] = map[string]interface{}{
+					"kty": jwk.Kty,
+					"kid": jwk.Kid,
+					"e":   jwk.E,
+					"n":   jwk.N,
+				}
+			}
+			if jwk.Kty == "EC" && jwk.X != "" && jwk.Y != "" {
+				arr[i] = map[string]interface{}{
+					"kty": jwk.Kty,
+					"kid": jwk.Kid,
+					"x":   jwk.X,
+					"y":   jwk.Y,
+				}
 			}
 		}
 		err := setNonPrimitives(d, map[string]interface{}{"jwks": arr})
@@ -783,12 +803,19 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 	if len(jwks) > 0 {
 		keys := make([]*sdk.JsonWebKey, len(jwks))
 		for i := range jwks {
-			keys[i] = &sdk.JsonWebKey{
+			key := &sdk.JsonWebKey{
 				Kid: d.Get(fmt.Sprintf("jwks.%d.kid", i)).(string),
 				Kty: d.Get(fmt.Sprintf("jwks.%d.kty", i)).(string),
-				E:   d.Get(fmt.Sprintf("jwks.%d.e", i)).(string),
-				N:   d.Get(fmt.Sprintf("jwks.%d.n", i)).(string),
 			}
+			if e, ok := d.Get(fmt.Sprintf("jwks.%d.e", i)).(string); ok {
+				key.E = e
+				key.N = d.Get(fmt.Sprintf("jwks.%d.n", i)).(string)
+			}
+			if x, ok := d.Get(fmt.Sprintf("jwks.%d.x", i)).(string); ok {
+				key.X = x
+				key.Y = d.Get(fmt.Sprintf("jwks.%d.y", i)).(string)
+			}
+			keys[i] = key
 		}
 		app.Settings.OauthClient.Jwks = &sdk.OpenIdConnectApplicationSettingsClientKeys{Keys: keys}
 	}
