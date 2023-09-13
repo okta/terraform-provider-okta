@@ -1,0 +1,414 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/x-www-form-urlencoded
+        url: https://dev-org-oauth-00.dne-okta.com/oauth2/v1/token?client_assertion=abc123&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&grant_type=client_credentials&scope=okta.groups.read+okta.groups.manage
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"token_type":"Bearer","expires_in":3600,"access_token":"eyJraWQiOiJKVGFSM1RQU1E5RGhha1BtdEx0c3I0ZzRsTUN2c1c0b3hQOXc5WnBZR01JIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULk5qclFScmliSG01ZmkxNGFHSHdwcDVITEFydlF4cmo0Y3NnbTFwVFh2X2MiLCJpc3MiOiJodHRwczovL2Rldi1tb25kcmFnb24ub2t0YS5jb20iLCJhdWQiOiJodHRwczovL2Rldi1tb25kcmFnb24ub2t0YS5jb20iLCJzdWIiOiIwb2FiOHV1dnZ2aWt5RzZlczVkNyIsImlhdCI6MTY5NDYzMTMxOCwiZXhwIjoxNjk0NjM0OTE4LCJjaWQiOiIwb2FiOHV1dnZ2aWt5RzZlczVkNyIsInNjcCI6WyJva3RhLmdyb3Vwcy5yZWFkIiwib2t0YS5ncm91cHMubWFuYWdlIl19.oxEunU2zM5uLXfx83lpXuMQ6Rd9qfG3ux0pWWGaJv64zo-sGUwzkend3g3MGUluPfXEWAtZzM6G8ZzSzkHo5W6pobmMs321f0jDH-kiHf-fwNpdNRLcYJl0w9ZXFglyzXK7Hy_pXqhrAT2Tob-i0OdP8mX7i9Ekh8JT0YrOQV17WN5ii21oMOZBCJrjWfQ8xieNOIGEKExVobn-FcAiCPJLMW-pXkO0Paa6zL-3df0cOPJj5WsmxH5UIqKL1SdeStqsRw6JCfhsJ6u9Ba5qWgw-Jo4jNuZlw5gHxKnDFeWyVA279eU-vTFX5IhiD5NhFvkxQbsUX-IFOV900J2dxww","scope":"okta.groups.read okta.groups.manage"}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 13 Sep 2023 18:55:18 GMT
+        status: 200 OK
+        code: 200
+        duration: 636.72496ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 74
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"profile":{"name":"testAcc_891989555","description":"testing, testing"}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+            Content-Type:
+                - application/json
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb8vjl0uGldPEbc5d7","created":"2023-09-13T18:55:19.000Z","lastUpdated":"2023-09-13T18:55:19.000Z","lastMembershipUpdated":"2023-09-13T18:55:19.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_891989555","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/users"},"apps":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 13 Sep 2023 18:55:19 GMT
+        status: 200 OK
+        code: 200
+        duration: 392.583661ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb8vjl0uGldPEbc5d7","created":"2023-09-13T18:55:19.000Z","lastUpdated":"2023-09-13T18:55:19.000Z","lastMembershipUpdated":"2023-09-13T18:55:19.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_891989555","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/users"},"apps":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 13 Sep 2023 18:55:19 GMT
+        status: 200 OK
+        code: 200
+        duration: 371.621854ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb8vjl0uGldPEbc5d7","created":"2023-09-13T18:55:19.000Z","lastUpdated":"2023-09-13T18:55:19.000Z","lastMembershipUpdated":"2023-09-13T18:55:19.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_891989555","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/users"},"apps":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 13 Sep 2023 18:55:20 GMT
+        status: 200 OK
+        code: 200
+        duration: 369.314772ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb8vjl0uGldPEbc5d7","created":"2023-09-13T18:55:19.000Z","lastUpdated":"2023-09-13T18:55:19.000Z","lastMembershipUpdated":"2023-09-13T18:55:19.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_891989555","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/users"},"apps":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 13 Sep 2023 18:55:20 GMT
+        status: 200 OK
+        code: 200
+        duration: 367.955366ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb8vjl0uGldPEbc5d7","created":"2023-09-13T18:55:19.000Z","lastUpdated":"2023-09-13T18:55:19.000Z","lastMembershipUpdated":"2023-09-13T18:55:19.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_891989555","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/users"},"apps":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 13 Sep 2023 18:55:21 GMT
+        status: 200 OK
+        code: 200
+        duration: 381.101856ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 84
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"profile":{"name":"testAcc_Different_891989555","description":"testing, testing"}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+            Content-Type:
+                - application/json
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb8vjl0uGldPEbc5d7","created":"2023-09-13T18:55:19.000Z","lastUpdated":"2023-09-13T18:55:22.000Z","lastMembershipUpdated":"2023-09-13T18:55:19.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_Different_891989555","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/users"},"apps":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 13 Sep 2023 18:55:22 GMT
+        status: 200 OK
+        code: 200
+        duration: 441.126122ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb8vjl0uGldPEbc5d7","created":"2023-09-13T18:55:19.000Z","lastUpdated":"2023-09-13T18:55:22.000Z","lastMembershipUpdated":"2023-09-13T18:55:19.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_Different_891989555","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/users"},"apps":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 13 Sep 2023 18:55:22 GMT
+        status: 200 OK
+        code: 200
+        duration: 307.05172ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb8vjl0uGldPEbc5d7","created":"2023-09-13T18:55:19.000Z","lastUpdated":"2023-09-13T18:55:22.000Z","lastMembershipUpdated":"2023-09-13T18:55:19.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_Different_891989555","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/users"},"apps":{"href":"https://dev-org-oauth-00.okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 13 Sep 2023 18:55:23 GMT
+        status: 200 OK
+        code: 200
+        duration: 283.780511ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Wed, 13 Sep 2023 18:55:23 GMT
+        status: 204 No Content
+        code: 204
+        duration: 116.148549ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb8vjl0uGldPEbc5d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"errorCode":"E0000007","errorSummary":"Not found: Resource not found: 00gb8vjl0uGldPEbc5d7 (UserGroup)","errorLink":"E0000007","errorId":"oae94XflrmkRLGFxoYcMUBBAg","errorCauses":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 13 Sep 2023 18:55:24 GMT
+        status: 404 Not Found
+        code: 404
+        duration: 459.553976ms

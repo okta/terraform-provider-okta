@@ -13,6 +13,7 @@ import (
 	"path"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"strings"
 	"sync"
 	"testing"
@@ -148,10 +149,10 @@ func accPreCheck() error {
 	token := os.Getenv("OKTA_API_TOKEN")
 	clientID := os.Getenv("OKTA_API_CLIENT_ID")
 	privateKey := os.Getenv("OKTA_API_PRIVATE_KEY")
-	privateKeyId := os.Getenv("OKTA_API_PRIVATE_KEY_IE")
+	privateKeyID := os.Getenv("OKTA_API_PRIVATE_KEY_ID")
 	scopes := os.Getenv("OKTA_API_SCOPES")
-	if token == "" && (clientID == "" || scopes == "" || privateKey == "" || privateKeyId == "") {
-		return errors.New("either OKTA_API_TOKEN or OKTA_API_CLIENT_ID, OKTA_API_SCOPES and OKTA_API_PRIVATE_KEY must be set for acceptance tests")
+	if token == "" && (clientID == "" || scopes == "" || privateKey == "" || privateKeyID == "") {
+		return errors.New("either OKTA_API_TOKEN or (OKTA_API_CLIENT_ID and OKTA_API_SCOPES and OKTA_API_PRIVATE_KEY and OKTA_API_PRIVATE_KEY_ID) must be set for acceptance tests")
 	}
 	return nil
 }
@@ -163,7 +164,6 @@ func TestProviderValidate(t *testing.T) {
 		"OKTA_API_CLIENT_ID",
 		"OKTA_API_PRIVATE_KEY",
 		"OKTA_API_PRIVATE_KEY_ID",
-		"OKTA_API_PRIVATE_KEY_IE",
 		"OKTA_API_SCOPES",
 		"OKTA_API_TOKEN",
 		"OKTA_BASE_URL",
@@ -502,6 +502,10 @@ func newVCRRecorder(mgr *vcrManager, transport http.RoundTripper) (rec *recorder
 				continue
 			}
 		}
+
+		// scrub client assertions out of token requests
+		m := regexp.MustCompile("client_assertion=[^&]+")
+		i.Request.URL = m.ReplaceAllString(i.Request.URL, "client_assertion=abc123")
 
 		// replace admin based hostname before regular variations
 		// %s/example-admin.okta.com/test-admin.dne-okta.com/
