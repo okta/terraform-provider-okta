@@ -14,9 +14,9 @@ func TestAccDataSourceOktaGroup_read(t *testing.T) {
 	configInvalid := mgr.GetFixtures("datasource_not_found.tf", t)
 
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: groupCreate,
