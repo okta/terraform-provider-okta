@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -367,6 +368,10 @@ func oktaSDKClient(c *Config) (client *sdk.Client, err error) {
 	} else {
 		orgUrl = fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
 	}
+	_, err = url.Parse(orgUrl)
+	if err != nil {
+		return nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
+	}
 
 	setters := []sdk.ConfigSetter{
 		sdk.WithOrgUrl(orgUrl),
@@ -458,6 +463,10 @@ func oktaV3SDKClient(c *Config) (client *okta.APIClient, err error) {
 		disableHTTPS = strings.HasPrefix(orgUrl, "http://")
 	} else {
 		orgUrl = fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
+	}
+	_, err = url.Parse(orgUrl)
+	if err != nil {
+		return nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
 	}
 
 	setters := []okta.ConfigSetter{
