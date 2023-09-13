@@ -14,22 +14,25 @@ func TestAccResourceOktaGroup_crud(t *testing.T) {
 	mgr := newFixtureManager(group, t.Name())
 	config := mgr.GetFixtures("okta_group.tf", t)
 	updatedConfig := mgr.GetFixtures("okta_group_updated.tf", t)
+	buildResourceName(mgr.Seed)
 
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkResourceDestroy(group, doesGroupExist),
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		CheckDestroy:             checkResourceDestroy(group, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "testAcc")),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("testAcc", mgr.Seed)),
+				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "testAccDifferent")),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("testAcc_Different", mgr.Seed)),
+				),
 			},
 		},
 	})
