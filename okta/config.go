@@ -478,6 +478,26 @@ func oktaV3SDKClient(c *Config) (client *okta.APIClient, err error) {
 		okta.WithRateLimitMaxRetries(int32(c.retryCount)),
 		okta.WithUserAgentExtra(OktaTerraformProviderUserAgent),
 	}
+	// v3 client also needs http proxy explicitly set
+	if c.httpProxy != "" {
+		_url, err := url.Parse(c.httpProxy)
+		if err != nil {
+			return nil, err
+		}
+		host := okta.WithProxyHost(_url.Hostname())
+		setters = append(setters, host)
+
+		sPort := _url.Port()
+		if sPort == "" {
+			sPort = "80"
+		}
+		iPort, err := strconv.Atoi(sPort)
+		if err != nil {
+			return nil, err
+		}
+		port := okta.WithProxyPort(int32(iPort))
+		setters = append(setters, port)
+	}
 
 	switch {
 	case c.accessToken != "":
