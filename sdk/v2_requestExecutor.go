@@ -234,7 +234,6 @@ func CreateKeySigner(privateKey, privateKeyID string) (jose.Signer, error) {
 	}
 
 	if privPem.Type == "RSA PRIVATE KEY" {
-		//func ParsePKCS1PrivateKey(der []byte) (*rsa.PrivateKey, error) {
 		parsedKey, err := x509.ParsePKCS1PrivateKey(privPem.Bytes)
 		if err != nil {
 			return nil, err
@@ -242,7 +241,6 @@ func CreateKeySigner(privateKey, privateKeyID string) (jose.Signer, error) {
 		return jose.NewSigner(jose.SigningKey{Algorithm: jose.RS256, Key: parsedKey}, signerOptions)
 	}
 	if privPem.Type == "PRIVATE KEY" {
-		// func ParsePKCS8PrivateKey(der []byte) (key any, err error) {
 		parsedKey, err := x509.ParsePKCS8PrivateKey(privPem.Bytes)
 
 		if err != nil {

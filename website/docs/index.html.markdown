@@ -30,10 +30,21 @@ terraform {
 }
 
 # Configure the Okta Provider
+#
+# NOTE: Change place holder values denoted by brackets to real values, including
+# the brackets.
+#
+# NOTE: If environment variables are utilized for provider settings the
+# corresponding variable name does not need to be set in the provider config
+# block.
+
 provider "okta" {
-  org_name  = "dev-123456"
-  base_url  = "oktapreview.com"
-  api_token = "xxxx"
+  org_name = "[ORG NAME e.g. dev-123456]"
+  base_url = "[okta.com|oktapreview.com]"
+  client_id = "[APP CLIENT_ID]"
+  private_key_id = "[PRIVATE KEY ID - KID]"
+  private_key = "[PRIVATE KEY]"
+  scopes = "[COMMA,SEPARATED,SCOPE,VALUES]"
 }
 ```
 
@@ -50,30 +61,52 @@ explained below:
 
 ### Environment variables
 
-You can provide your credentials via the `OKTA_ORG_NAME`, `OKTA_BASE_URL`, `OKTA_ACCESS_TOKEN`, `OKTA_API_TOKEN`,
-`OKTA_API_CLIENT_ID`, `OKTA_API_SCOPES` and `OKTA_API_PRIVATE_KEY` environment variables, representing your Okta
-Organization Name, Okta Base URL (i.e. `"okta.com"` or `"oktapreview.com"`), Okta Access Token, Okta API Token,
-Okta Client ID, Okta API scopes and Okta API private key respectively.
+You can provide your credentials via the `OKTA_ORG_NAME`, `OKTA_BASE_URL`,
+`OKTA_ACCESS_TOKEN`, `OKTA_API_TOKEN`, `OKTA_API_CLIENT_ID`, `OKTA_API_SCOPES`,
+`OKTA_API_PRIVATE_KEY_ID`, and `OKTA_API_PRIVATE_KEY` environment variables,
+representing your Okta Organization Name, Okta Base URL (i.e. `"okta.com"` or
+`"oktapreview.com"`), Okta Access Token, Okta API Token, Okta Client ID, Okta
+API scopes and Okta API private key respectively.
 
 ```hcl
+# provider settings established with values from environment variables
+
 provider "okta" {}
 ```
 
 Usage:
 
 ```sh
-$ export OKTA_ORG_NAME="dev-123456"
-$ export OKTA_BASE_URL="oktapreview.com"
-$ export OKTA_API_TOKEN="xxxx"
+# Change place holder values denoted by brackets to real values, including the
+# brackets.
+
+$ export OKTA_ORG_NAME="[ORG NAME e.g. dev-123456]"
+$ export OKTA_BASE_URL="[okta.com|oktapreview.com]"
+$ export OKTA_API_CLIENT_ID="[APP CLIENT_ID]"
+$ export OKTA_API_PRIVATE_KEY_ID="[PRIVATE KEY ID - KID]"
+$ export OKTA_API_PRIVATE_KEY="[PRIVATE KEY]"
+$ export OKTA_API_SCOPES="[COMMA,SEPARATED,SCOPE,VALUES]"
+
 $ terraform plan
 ```
 
 ## Argument Reference
 
-Note: `api_token` is mutually exclusive of the set `access_token`, `client_id`, `private_key`, and `scopes`. `api_token` is utilized for Okta's [SSWS Authorization Scheme](https://developer.okta.com/docs/reference/core-okta-api/#authentication) and applies to org level operations. `client_id`, `private_key`, and `scopes` are for [OAuth 2.0 client](https://developer.okta.com/docs/reference/api/apps/#add-oauth-2-0-client-application) authentication for application operations. `access_token` is used in situations where the caller has already performed the OAuth 2.0 client authentication process.
+Note: `api_token` is mutually exclusive of the set `access_token`, `client_id`,
+`private_key_id`, `private_key`, and `scopes`. `api_token` is utilized for
+Okta's [SSWS Authorization
+Scheme](https://developer.okta.com/docs/reference/core-okta-api/#authentication)
+and applies to org level operations. `client_id`, `private_key_id`,
+`private_key`, and `scopes` are for [OAuth 2.0
+client](https://developer.okta.com/docs/reference/api/apps/#add-oauth-2-0-client-application)
+authentication for application operations. `access_token` is used in situations
+where the caller has already performed the OAuth 2.0 client authentication
+process.
 
-In addition to [generic `provider` arguments](https://www.terraform.io/docs/configuration/providers.html)
-(e.g. `alias` and `version`), the following arguments are supported in the Okta `provider` block:
+In addition to [generic `provider`
+arguments](https://www.terraform.io/docs/configuration/providers.html) (e.g.
+`alias` and `version`), the following arguments are supported in the Okta
+`provider` block:
 
 - `org_name` - (Optional) This is the org name of your Okta account, for example `dev-123456.oktapreview.com` would have an org name of `dev-123456`. It must be provided, but it can also be sourced from the `OKTA_ORG_NAME` environment variable.
 
@@ -89,7 +122,7 @@ In addition to [generic `provider` arguments](https://www.terraform.io/docs/conf
 
 - `scopes` - (Optional) These are scopes for obtaining the API token in form of a comma separated list. It can also be sourced from the `OKTA_API_SCOPES` environment variable. `scopes` conflicts with `access_token` and `api_token`.
 
-- `private_key` - (Optional) This is the private key for obtaining the API token (can be represented by a filepath, or the key itself). It can also be sourced from the `OKTA_API_PRIVATE_KEY` environment variable. `private_key` conflicts with `access_token` and `api_token`. The format of the PK is PKCS#1 unencrypted (header starts with `-----BEGIN RSA PRIVATE KEY-----`. Example converting PKCS#8 (header `-----BEGIN PRIVATE KEY-----`) to PKCS#1 `openssl pkey -in pkcs8.pem -traditional -out pkcs1.pem`
+- `private_key` - (Optional) This is the private key for obtaining the API token (can be represented by a filepath, or the key itself). It can also be sourced from the `OKTA_API_PRIVATE_KEY` environment variable. `private_key` conflicts with `access_token` and `api_token`. The format of the PK is PKCS#1 unencrypted (header starts with `-----BEGIN RSA PRIVATE KEY-----` or PKCS#8 unencrypted (header starts with `-----BEGIN PRIVATE KEY-----`).
 
 - `private_key_id` - (Optional) This is the private key ID (kid) for obtaining the API token. It can also be sourced from `OKTA_API_PRIVATE_KEY_ID` environmental variable. `private_key_id` conflicts with `api_token`.
 
