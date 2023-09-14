@@ -245,7 +245,7 @@ func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 	return nil
 }
 
-// DataSources defines the data sources implemented in the provider.
+// Resources defines the resources implemented in the provider.
 func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewAppAccessPolicyAssignmentResource,
