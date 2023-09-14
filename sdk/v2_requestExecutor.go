@@ -3,6 +3,8 @@ package sdk
 import (
 	"bytes"
 	"context"
+	"crypto/ecdsa"
+	"crypto/rsa"
 	"crypto/x509"
 	"encoding/json"
 	"encoding/pem"
@@ -219,27 +221,49 @@ func (a *JWTAuth) Authorize() error {
 }
 
 func CreateKeySigner(privateKey, privateKeyID string) (jose.Signer, error) {
+	var signerOptions *jose.SignerOptions
+	if privateKeyID != "" {
+		signerOptions = (&jose.SignerOptions{}).WithHeader("kid", privateKeyID)
+	}
+
 	priv := []byte(strings.ReplaceAll(privateKey, `\n`, "\n"))
 
 	privPem, _ := pem.Decode(priv)
 	if privPem == nil {
 		return nil, errors.New("invalid private key")
 	}
-	if privPem.Type != "RSA PRIVATE KEY" {
-		return nil, fmt.Errorf("RSA private key is of the wrong type")
+
+	if privPem.Type == "RSA PRIVATE KEY" {
+		//func ParsePKCS1PrivateKey(der []byte) (*rsa.PrivateKey, error) {
+		parsedKey, err := x509.ParsePKCS1PrivateKey(privPem.Bytes)
+		if err != nil {
+			return nil, err
+		}
+		return jose.NewSigner(jose.SigningKey{Algorithm: jose.RS256, Key: parsedKey}, signerOptions)
+	}
+	if privPem.Type == "PRIVATE KEY" {
+		// func ParsePKCS8PrivateKey(der []byte) (key any, err error) {
+		parsedKey, err := x509.ParsePKCS8PrivateKey(privPem.Bytes)
+
+		if err != nil {
+			return nil, err
+		}
+		var alg jose.SignatureAlgorithm
+		switch parsedKey.(type) {
+		case *rsa.PrivateKey:
+			alg = jose.RS256
+		case *ecdsa.PrivateKey:
+			alg = jose.ES256 // TODO handle ES384 or ES512 ?
+		default:
+			// TODO are either of these also valid?
+			// ed25519.PrivateKey:
+			// *ecdh.PrivateKey
+			return nil, fmt.Errorf("private key %q is unknown pkcs#8 format type", privPem.Type)
+		}
+		return jose.NewSigner(jose.SigningKey{Algorithm: alg, Key: parsedKey}, signerOptions)
 	}
 
-	parsedKey, err := x509.ParsePKCS1PrivateKey(privPem.Bytes)
-	if err != nil {
-		return nil, err
-	}
-
-	var signerOptions *jose.SignerOptions
-	if privateKeyID != "" {
-		signerOptions = (&jose.SignerOptions{}).WithHeader("kid", privateKeyID)
-	}
-
-	return jose.NewSigner(jose.SigningKey{Algorithm: jose.RS256, Key: parsedKey}, signerOptions)
+	return nil, fmt.Errorf("private key %q is not pkcs#1 or pkcs#8 format", privPem.Type)
 }
 
 func CreateClientAssertion(orgURL, clientID string, privateKeySinger jose.Signer) (clientAssertion string, err error) {

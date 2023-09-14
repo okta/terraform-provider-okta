@@ -275,6 +275,7 @@ func (c *Config) loadClients(ctx context.Context) error {
 func (c *Config) verifyCredentials(ctx context.Context) error {
 	// NOTE: validate credentials during initial config with a call to
 	// GET /api/v1/users/me
+	// only for SSWS API token. Should we keep doing this?
 	if c.apiToken != "" {
 		if _, _, err := c.oktaSDKClientV3.UserApi.GetUser(ctx, "me").Execute(); err != nil {
 			return fmt.Errorf("error with v3 SDK client: %v", err)
