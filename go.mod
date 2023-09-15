@@ -18,6 +18,7 @@ require (
 	github.com/hashicorp/terraform-plugin-log v0.9.0
 	github.com/hashicorp/terraform-plugin-mux v0.12.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.29.0
+	github.com/hashicorp/terraform-plugin-testing v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/okta/okta-sdk-golang/v3 v3.0.14
 	github.com/patrickmn/go-cache v2.1.0+incompatible
@@ -55,7 +56,6 @@ require (
 	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/hashicorp/terraform-exec v0.19.0 // indirect
 	github.com/hashicorp/terraform-json v0.17.1 // indirect
-	github.com/hashicorp/terraform-plugin-testing v1.5.1 // indirect
 	github.com/hashicorp/terraform-registry-address v0.2.2 // indirect
 	github.com/hashicorp/terraform-svchost v0.1.1 // indirect
 	github.com/hashicorp/yamux v0.0.0-20211028200310-0bc27b27de87 // indirect
