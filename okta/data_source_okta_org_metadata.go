@@ -31,8 +31,6 @@ type OrgMetadataSettingsModel struct {
 	OmEnabled                  types.Bool `tfsdk:"om_enabled"`
 }
 
-
-
 type OrgMetadataDomainsModel struct {
 	Organization types.String `tfsdk:"organization"`
 	Alternate    types.String `tfsdk:"alternate"`
@@ -111,7 +109,22 @@ func (d *OrgMetadataDataSource) Read(ctx context.Context, req datasource.ReadReq
 
 	data.ID = types.StringValue(org.Id)
 	data.Pipeline = types.StringValue(org.Pipeline)
-	data.Settings = types.ObjectValue()
+
+	settings := &OrgMetadataSettingsModel{}
+	settingsValue, diags := types.ObjectValueFrom(ctx, data.Settings.AttributeTypes(ctx), settings)
+	if diags.HasError() {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
+	data.Settings = settingsValue
+
+	domains := &OrgMetadataDomainsModel{}
+	domainsValue, diags := types.ObjectValueFrom(ctx, data.Domains.AttributeTypes(ctx), domains)
+	if diags.HasError() {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
+	data.Domains = domainsValue
 
 	// Save data into state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
