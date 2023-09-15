@@ -22,7 +22,7 @@ import (
 func main() {
 	var debug bool
 
-	// TODO: Uses v5 protocol for now, however it's swap to v6 when a drop of support for TF versions prior to 1.0 can be made
+	// TODO: Uses v5 protocol for now, however lets swap to v6 when a drop of support for TF versions prior to 1.0 can be made
 	framework, err := tf6to5server.DowngradeServer(context.Background(), providerserver.NewProtocol6(okta.NewFrameworkProvider(okta.OktaTerraformProviderVersion)))
 	if err != nil {
 		log.Fatalf(err.Error())

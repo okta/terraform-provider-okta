@@ -58,7 +58,7 @@ func init() {
 	}
 
 	// v3 provider - terraform-plugin-framework
-	// TODO: Uses v5 protocol for now, however it's swap to v6 when a drop of support for TF versions prior to 1.0 can be made
+	// TODO: Uses v5 protocol for now, however lets swap to v6 when a drop of support for TF versions prior to 1.0 can be made
 	frameworkProvider := NewFrameworkProvider("dev")
 	framework, err := tf6to5server.DowngradeServer(context.Background(), providerserver.NewProtocol6(frameworkProvider))
 
