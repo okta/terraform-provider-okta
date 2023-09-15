@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -52,21 +51,43 @@ func (d *OrgMetadataDataSource) Schema(ctx context.Context, req datasource.Schem
 				MarkdownDescription: "The authentication pipeline of the org. idx means the org is using the Identity Engine, while v1 means the org is using the Classic authentication pipeline.",
 				Computed:            true,
 			},
-			"settings": schema.ObjectAttribute{
+		},
+		Blocks: map[string]schema.Block{
+			"settings": schema.SingleNestedBlock{
+				Description:         "The wellknown org settings (safe for public consumption).",
 				MarkdownDescription: "The wellknown org settings (safe for public consumption).",
-				Computed:            true,
-				AttributeTypes: map[string]attr.Type{
-					"analytics_collection_enabled": types.BoolType,
-					"bug_reporting_enabled":        types.BoolType,
-					"om_enabled":                   types.BoolType,
+				Attributes: map[string]schema.Attribute{
+					"analytics_collection_enabled": schema.BoolAttribute{
+						Description:         "",
+						MarkdownDescription: "",
+						Computed:            true,
+					},
+					"bug_reporting_enabled": schema.BoolAttribute{
+						Description:         "",
+						MarkdownDescription: "",
+						Computed:            true,
+					},
+					"om_enabled": schema.BoolAttribute{
+						Description:         "Whether the legacy Okta Mobile application is enabled for the org",
+						MarkdownDescription: "Whether the legacy Okta Mobile application is enabled for the org",
+						Computed:            true,
+					},
 				},
 			},
-			"domains": schema.ObjectAttribute{
+			"domains": schema.SingleNestedBlock{
+				Description:         "The URIs for the org's configured domains.",
 				MarkdownDescription: "The URIs for the org's configured domains.",
-				Computed:            true,
-				AttributeTypes: map[string]attr.Type{
-					"organization": types.StringType,
-					"alternate":    types.StringType,
+				Attributes: map[string]schema.Attribute{
+					"organization": schema.StringAttribute{
+						Description:         "Standard Org URI",
+						MarkdownDescription: "Standard Org URI",
+						Computed:            true,
+					},
+					"alternate": schema.StringAttribute{
+						Description:         "Custom Domain Org URI",
+						MarkdownDescription: "Custom Domain Org URI",
+						Computed:            true,
+					},
 				},
 			},
 		},
