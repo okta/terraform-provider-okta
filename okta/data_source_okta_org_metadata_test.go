@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccDataSourceOktaOrgMetadata(t *testing.T) {
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 testAccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
