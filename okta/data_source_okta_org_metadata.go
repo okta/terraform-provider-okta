@@ -110,7 +110,11 @@ func (d *OrgMetadataDataSource) Read(ctx context.Context, req datasource.ReadReq
 	data.ID = types.StringValue(org.Id)
 	data.Pipeline = types.StringValue(org.Pipeline)
 
-	settings := &OrgMetadataSettingsModel{}
+	settings := &OrgMetadataSettingsModel{
+		AnalyticsCollectionEnabled: types.BoolValue(org.Settings.AnalyticsCollectionEnabled),
+		BugReportingEnabled:        types.BoolValue(org.Settings.BugReportingEnabled),
+		OmEnabled:                  types.BoolValue(org.Settings.OmEnabled),
+	}
 	settingsValue, diags := types.ObjectValueFrom(ctx, data.Settings.AttributeTypes(ctx), settings)
 	if diags.HasError() {
 		resp.Diagnostics.Append(diags...)
@@ -118,7 +122,10 @@ func (d *OrgMetadataDataSource) Read(ctx context.Context, req datasource.ReadReq
 	}
 	data.Settings = settingsValue
 
-	domains := &OrgMetadataDomainsModel{}
+	domains := &OrgMetadataDomainsModel{
+		Organization: types.StringValue(org.Links.Organization.Href),
+		Alternate:    types.StringValue(org.Links.Alternate.Href),
+	}
 	domainsValue, diags := types.ObjectValueFrom(ctx, data.Domains.AttributeTypes(ctx), domains)
 	if diags.HasError() {
 		resp.Diagnostics.Append(diags...)
