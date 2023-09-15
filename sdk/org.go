@@ -6,10 +6,28 @@ import (
 )
 
 type OktaOrganization struct {
-	Id       string      `json:"id"`
-	Pipeline string      `json:"pipeline"`
-	Links    interface{} `json:"_links,omitempty"`
-	Settings interface{} `json:"settings,omitempty"`
+	Id       string                   `json:"id"`
+	Pipeline string                   `json:"pipeline"`
+	Links    OktaOrganizationLinks    `json:"_links,omitempty"`
+	Settings OktaOrganizationSettings `json:"settings,omitempty"`
+}
+
+type OktaOrganizationLinks struct {
+	Organization OktaLinksObject `json:"organization,omitempty"`
+	Alternate    OktaLinksObject `json:"alternate,omitempty"`
+}
+
+type OktaOrganizationSettings struct {
+	AnalyticsCollectionEnabled bool `json:"analyticsCollectionEnabled,omitempty"`
+	BugReportingEnabled        bool `json:"bugReportingEnabled,omitempty"`
+	OmEnabled                  bool `json:"omEnabled,omitempty"`
+}
+
+type OktaLinksObject struct {
+	Hints interface{} `json:"hints,omitempty"`
+	Href  string      `json:"href,omitempty"`
+	Name  string      `json:"name,omitempty"`
+	Type  string      `json:"type,omitempty"`
 }
 
 // GetWellKnownOktaOrganization calls GET /.well-known/okta-organization that
