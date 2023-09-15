@@ -242,7 +242,9 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 
 // DataSources defines the data sources implemented in the provider.
 func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.DataSource {
-	return nil
+	return []func() datasource.DataSource{
+		NewOrgMetadataDataSource,
+	}
 }
 
 // Resources defines the resources implemented in the provider.

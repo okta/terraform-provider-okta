@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDataSourceOktaOrgMetadata(t *testing.T) {
+func TestAccDataSourceOktaOrgMetadata_read(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 testAccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
