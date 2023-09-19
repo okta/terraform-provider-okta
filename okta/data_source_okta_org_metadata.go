@@ -41,13 +41,16 @@ func (d *OrgMetadataDataSource) Metadata(ctx context.Context, req datasource.Met
 
 func (d *OrgMetadataDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description:         "Retrieves the well-known org metadata, which includes the id, configured custom domains, authentication pipeline, and various other org settings.",
 		MarkdownDescription: "Retrieves the well-known org metadata, which includes the id, configured custom domains, authentication pipeline, and various other org settings.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
+				Description:         "The unique identifier of the Org.",
 				MarkdownDescription: "The unique identifier of the Org.",
 				Computed:            true,
 			},
 			"pipeline": schema.StringAttribute{
+				Description:         "The authentication pipeline of the org. idx means the org is using the Identity Engine, while v1 means the org is using the Classic authentication pipeline.",
 				MarkdownDescription: "The authentication pipeline of the org. idx means the org is using the Identity Engine, while v1 means the org is using the Classic authentication pipeline.",
 				Computed:            true,
 			},
