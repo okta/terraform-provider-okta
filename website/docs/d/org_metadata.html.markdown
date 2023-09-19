@@ -6,7 +6,7 @@ description: |-
   Retrieves the well-known org metadata, which includes the id, configured custom domains, authentication pipeline, and various other org settings.
 ---
 
-# okta_domain
+# okta_org_metadata
 
 Retrieves the well-known org metadata, which includes the id, configured custom domains, authentication pipeline, and various other org settings.
 
