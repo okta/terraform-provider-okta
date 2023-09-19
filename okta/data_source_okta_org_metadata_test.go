@@ -9,6 +9,8 @@ import (
 )
 
 func TestAccDataSourceOktaOrgMetadata_read(t *testing.T) {
+	mgr := newFixtureManager("okta_org_metadata", t.Name())
+
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:                 testAccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -16,7 +18,7 @@ func TestAccDataSourceOktaOrgMetadata_read(t *testing.T) {
 		Steps: []resource.TestStep{
 			// Read testing
 			{
-				Config: testAccExampleDataSourceOktaOrgMetadata,
+				Config: mgr.GetFixtures("datasource.tf", t),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_org_metadata.test", "id"),
 					resource.TestCheckResourceAttrSet("data.okta_org_metadata.test", "pipeline"),
@@ -27,7 +29,3 @@ func TestAccDataSourceOktaOrgMetadata_read(t *testing.T) {
 		},
 	})
 }
-
-const testAccExampleDataSourceOktaOrgMetadata = `
-data "okta_org_metadata" "test" {}
-`
