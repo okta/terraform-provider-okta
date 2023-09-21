@@ -27,11 +27,12 @@ func (m *APISupplement) ListClientRoles(ctx context.Context, clientID string) ([
 	var roles []*ClientRole
 
 	url := fmt.Sprintf("/oauth2/v1/clients/%s/roles", clientID)
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodGet, url, nil)
+	re := m.cloneRequestExecutor()
+	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
-	resp, err := m.RequestExecutor.Do(ctx, req, &roles)
+	resp, err := re.Do(ctx, req, &roles)
 	return roles, resp, err
 }
 
@@ -45,11 +46,12 @@ func (m *APISupplement) AssignClientRole(ctx context.Context, clientID string, a
 	var role *ClientRole
 
 	url := fmt.Sprintf("/oauth2/v1/clients/%s/roles", clientID)
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, assignment)
+	re := m.cloneRequestExecutor()
+	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, assignment)
 	if err != nil {
 		return nil, nil, err
 	}
-	resp, err := m.RequestExecutor.Do(ctx, req, &role)
+	resp, err := re.Do(ctx, req, &role)
 	return role, resp, err
 }
 
@@ -57,20 +59,22 @@ func (m *APISupplement) GetClientRole(ctx context.Context, clientID, roleID stri
 	var role *ClientRole
 
 	url := fmt.Sprintf("/oauth2/v1/clients/%s/roles/%s", clientID, roleID)
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodGet, url, nil)
+	re := m.cloneRequestExecutor()
+	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
-	resp, err := m.RequestExecutor.Do(ctx, req, &role)
+	resp, err := re.Do(ctx, req, &role)
 	return role, resp, err
 }
 
 func (m *APISupplement) UnassignClientRole(ctx context.Context, clientID, roleID string) (*Response, error) {
 	url := fmt.Sprintf("/oauth2/v1/clients/%s/roles/%s", clientID, roleID)
-	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodDelete, url, nil)
+	re := m.cloneRequestExecutor()
+	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		return nil, err
 	}
-	resp, err := m.RequestExecutor.Do(ctx, req, nil)
+	resp, err := re.Do(ctx, req, nil)
 	return resp, err
 }
