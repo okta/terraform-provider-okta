@@ -72,8 +72,8 @@ func (r *appOAuthRoleAssignmentResource) Schema(_ context.Context, _ resource.Sc
 				},
 			},
 			"type": schema.StringAttribute{
-				Description:         "Role type to assign. This can be one of the standard Okta roles, such as `HELP_DESK_ADMIN` or `CUSTOM`. Using custom requires the `resource_set` and `role` attributes to be set.",
-				MarkdownDescription: "Role type to assign. This can be one of the standard Okta roles, such as `HELP_DESK_ADMIN` or `CUSTOM`. Using custom requires the `resource_set` and `role` attributes to be set.",
+				Description:         "Role type to assign. This can be one of the standard Okta roles, such as `HELP_DESK_ADMIN`, or `CUSTOM`. Using custom requires the `resource_set` and `role` attributes to be set.",
+				MarkdownDescription: "Role type to assign. This can be one of the standard Okta roles, such as `HELP_DESK_ADMIN`, or `CUSTOM`. Using custom requires the `resource_set` and `role` attributes to be set.",
 				Required:            true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),

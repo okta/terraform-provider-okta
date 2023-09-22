@@ -71,7 +71,7 @@ The following arguments are supported:
 
 - `client_id` - (Required) Client ID for the role to be assigned to
 
-- `type` - (Required) Role type to assign. This can be one of the standard Okta roles, such as `HELP_DESK_ADMIN` or `CUSTOM`. Using custom requires the `resource_set` and `role` attributes to be set.
+- `type` - (Required) Role type to assign. This can be one of the standard Okta roles, such as `HELP_DESK_ADMIN`, or `CUSTOM`. Using custom requires the `resource_set` and `role` attributes to be set.
 
 - `resource_set` - (Optional) Resource set for the custom role to assign, must be the ID of the created resource set.
 
