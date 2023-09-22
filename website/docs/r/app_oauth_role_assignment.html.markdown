@@ -87,4 +87,6 @@ The following arguments are supported:
 
 ## Import
 
-Not implemented
+OAuth Role assignment can be imported by passing the Client ID and Role Assignment ID for the specific client role.
+
+`$ terraform import okta_app_oauth_role_assignment.test <clientID>/<roleAssignmentID>`
