@@ -10,7 +10,7 @@ func TestLogoStateFunc(t *testing.T) {
 		expected string
 	}{
 		{
-			input:    "../examples/okta_app_basic_auth/terraform_icon.png",
+			input:    "../examples/resources/okta_app_basic_auth/terraform_icon.png",
 			expected: "188b6050b43d2fbc9be327e39bf5f7849b120bb4529bcd22cde78b02ccce6777", // compare to `shasum -a 256 filepath`
 		},
 		{
