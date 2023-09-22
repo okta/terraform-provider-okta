@@ -57,15 +57,17 @@ func resourceAppUser() *schema.Resource {
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return d.Get("has_shared_username").(bool)
 				},
+				Description: "The username to use for the app user. In case the user is assigned to the app with `SHARED_USERNAME_AND_PASSWORD` credentials scheme, this field will be computed and should not be set.",
 			},
 			"has_shared_username": {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
 			"password": {
-				Type:      schema.TypeString,
-				Sensitive: true,
-				Optional:  true,
+				Type:        schema.TypeString,
+				Sensitive:   true,
+				Optional:    true,
+				Description: "The password to use.",
 			},
 			"profile": {
 				Type:             schema.TypeString,
@@ -75,6 +77,7 @@ func resourceAppUser() *schema.Resource {
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return new == ""
 				},
+				Description: "The JSON profile of the App User.",
 			},
 			"retain_assignment": {
 				Type:        schema.TypeBool,

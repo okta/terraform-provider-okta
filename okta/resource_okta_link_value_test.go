@@ -11,7 +11,7 @@ import (
 )
 
 func TestAccResourceOktaLinkValue(t *testing.T) {
-	mgr := newFixtureManager("", linkValue, t.Name())
+	mgr := newFixtureManager("resources", linkValue, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", linkValue)

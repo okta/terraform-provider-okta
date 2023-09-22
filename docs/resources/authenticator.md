@@ -34,8 +34,8 @@ description: |-
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `provider_instance_id` (String)
-- `provider_type` (String)
+- `provider_instance_id` (String) App Instance ID.
+- `provider_type` (String) Provider type. Supported value for Duo: `DUO`. Supported value for Custom App: `PUSH`
 - `type` (String) The type of Authenticator
 
 

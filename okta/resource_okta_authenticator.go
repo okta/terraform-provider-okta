@@ -135,12 +135,14 @@ func resourceAuthenticator() *schema.Resource {
 			},
 			// General Provider Attributes
 			"provider_instance_id": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "App Instance ID.",
 			},
 			"provider_type": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Provider type. Supported value for Duo: `DUO`. Supported value for Custom App: `PUSH`",
 			},
 		},
 	}

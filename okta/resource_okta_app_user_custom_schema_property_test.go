@@ -12,7 +12,7 @@ import (
 )
 
 func TestAccResourceOktaAppUserSchemas_crud(t *testing.T) {
-	mgr := newFixtureManager("", appUserSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", appUserSchemaProperty, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
@@ -61,7 +61,7 @@ func TestAccResourceOktaAppUserSchemas_crud(t *testing.T) {
 }
 
 func TestAccResourceOktaAppUserSchemas_array_enum_number(t *testing.T) {
-	mgr := newFixtureManager("", appUserSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -126,7 +126,7 @@ resource "okta_app_user_schema_property" "test" {
 }
 
 func TestAccResourceOktaAppUserSchemas_enum_number(t *testing.T) {
-	mgr := newFixtureManager("", appUserSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -189,7 +189,7 @@ resource "okta_app_user_schema_property" "test" {
 }
 
 func TestAccResourceOktaAppUserSchemas_array_enum_integer(t *testing.T) {
-	mgr := newFixtureManager("", appUserSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -254,7 +254,7 @@ resource "okta_app_user_schema_property" "test" {
 }
 
 func TestAccResourceOktaAppUserSchemas_enum_integer(t *testing.T) {
-	mgr := newFixtureManager("", appUserSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -318,7 +318,7 @@ resource "okta_app_user_schema_property" "test" {
 
 func TestAccResourceOktaAppUserSchemas_array_enum_boolean(t *testing.T) {
 	t.Skip("The test is failing due to core issue. Similar test TestAccResourceOktaGroupSchema_array_enum_boolean has passed in the past")
-	mgr := newFixtureManager("", appUserSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -377,7 +377,7 @@ resource "okta_app_user_schema_property" "test" {
 
 func TestAccResourceOktaAppUserSchemas_enum_boolean(t *testing.T) {
 	t.Skip("The test is failing due to core issue. Similar test TestAccResourceOktaGroupSchema_enum_boolean has passed in the past")
-	mgr := newFixtureManager("", appUserSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -433,7 +433,7 @@ resource "okta_app_user_schema_property" "test" {
 }
 
 func TestAccResourceOktaAppUserSchemas_array_enum_string(t *testing.T) {
-	mgr := newFixtureManager("", appUserSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -498,7 +498,7 @@ resource "okta_app_user_schema_property" "test" {
 }
 
 func TestAccResourceOktaAppUserSchemas_enum_string(t *testing.T) {
-	mgr := newFixtureManager("", appUserSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -643,7 +643,7 @@ resource "okta_app_user_schema_property" "five" {
 	permissions = "%s"
 }
 `
-	mgr := newFixtureManager("", appUserSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", appUserSchemaProperty, t.Name())
 	ro := make([]interface{}, 5)
 	for i := 0; i < 5; i++ {
 		ro[i] = "READ_ONLY"

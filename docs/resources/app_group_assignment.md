@@ -20,8 +20,8 @@ description: |-
 
 ### Optional
 
-- `priority` (Number)
-- `profile` (String)
+- `priority` (Number) Priority of group assignment.
+- `profile` (String) JSON document containing [application profile](https://developer.okta.com/docs/reference/api/apps/#profile-object)
 - `retain_assignment` (Boolean) Retain the group assignment on destroy. If set to true, the resource will be removed from state but not from the Okta app.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 

@@ -23,17 +23,17 @@ description: |-
 
 ### Optional
 
-- `access_token_lifetime_minutes` (Number)
-- `group_blacklist` (Set of String)
-- `group_whitelist` (Set of String)
-- `inline_hook_id` (String)
-- `refresh_token_lifetime_minutes` (Number)
-- `refresh_token_window_minutes` (Number)
-- `scope_whitelist` (Set of String)
+- `access_token_lifetime_minutes` (Number) Lifetime of access token. Can be set to a value between 5 and 1440 minutes. Default is `60`.
+- `group_blacklist` (Set of String) Specifies a set of Groups whose Users are to be excluded.
+- `group_whitelist` (Set of String) Specifies a set of Groups whose Users are to be included. Can be set to Group ID or to the following: `EVERYONE`.
+- `inline_hook_id` (String) The ID of the inline token to trigger.
+- `refresh_token_lifetime_minutes` (Number) Lifetime of refresh token.
+- `refresh_token_window_minutes` (Number) Window in which a refresh token can be used. It can be a value between 5 and 2628000 (5 years) minutes. Default is `10080` (7 days).`refresh_token_window_minutes` must be between `access_token_lifetime_minutes` and `refresh_token_lifetime_minutes`.
+- `scope_whitelist` (Set of String) Scopes allowed for this policy rule. They can be whitelisted by name or all can be whitelisted with ` * `
 - `status` (String)
 - `type` (String) Auth server policy rule type, unlikely this will be anything other then the default
-- `user_blacklist` (Set of String)
-- `user_whitelist` (Set of String)
+- `user_blacklist` (Set of String) Specifies a set of Users to be excluded.
+- `user_whitelist` (Set of String) Specifies a set of Users to be included.
 
 ### Read-Only
 

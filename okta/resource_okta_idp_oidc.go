@@ -21,8 +21,9 @@ func resourceIdpOidc() *schema.Resource {
 		// Note the base schema
 		Schema: buildIdpSchema(map[string]*schema.Schema{
 			"type": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Type of OIDC IdP.",
 			},
 			"authorization_url":     urlSchema,
 			"authorization_binding": bindingSchema,

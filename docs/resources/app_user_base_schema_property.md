@@ -15,7 +15,7 @@ description: |-
 
 ### Required
 
-- `app_id` (String)
+- `app_id` (String) The Application's ID the user schema property should be assigned to.
 - `index` (String) Subschema unique string identifier
 - `title` (String) Subschema title (display name)
 - `type` (String) Subschema type: string, boolean, number, integer, array, or object

@@ -15,7 +15,7 @@ description: |-
 
 ### Required
 
-- `app_id` (String)
+- `app_id` (String) OAuth application ID.
 - `uri` (String) Redirect URI to append to Okta OIDC application.
 
 ### Read-Only

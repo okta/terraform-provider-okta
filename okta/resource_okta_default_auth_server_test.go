@@ -9,7 +9,7 @@ import (
 
 func TestAccResourceOktaAuthServerDefault_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.sun_also_rises", authServerDefault)
-	mgr := newFixtureManager("", authServerDefault, t.Name())
+	mgr := newFixtureManager("resources", authServerDefault, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 
@@ -56,7 +56,7 @@ func TestAccResourceOktaAuthServerDefault_crud(t *testing.T) {
 
 func TestAccResourceOktaAuthServerDefault_legacy_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.sun_also_rises", authServerDefault)
-	mgr := newFixtureManager("", authServerDefault, t.Name())
+	mgr := newFixtureManager("resources", authServerDefault, t.Name())
 	config := mgr.GetFixtures("basic_legacy.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated_legacy.tf", t)
 

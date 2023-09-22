@@ -15,13 +15,13 @@ description: |-
 
 ### Required
 
-- `name` (String) Factor name
+- `name` (String) The TOTP name.
 
 ### Optional
 
 - `clock_drift_interval` (Number) Clock drift interval
 - `hmac_algorithm` (String) Hash-based message authentication code algorithm
-- `otp_length` (Number) Factor name
+- `otp_length` (Number) Length of the password. Default is `6`.
 - `shared_secret_encoding` (String) Shared secret encoding
 - `time_step` (Number) Time step in seconds
 

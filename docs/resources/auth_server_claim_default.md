@@ -20,15 +20,15 @@ description: |-
 
 ### Optional
 
-- `always_include_in_token` (Boolean)
-- `value` (String)
+- `always_include_in_token` (Boolean) Specifies whether to include claims in token.
+- `value` (String) The value of the claim.
 
 ### Read-Only
 
-- `claim_type` (String)
+- `claim_type` (String) Specifies whether the claim is for an access token `RESOURCE` or ID token `IDENTITY`.
 - `id` (String) The ID of this resource.
 - `scopes` (Set of String) Auth server claim list of scopes
-- `status` (String)
-- `value_type` (String)
+- `status` (String) The status of the application.
+- `value_type` (String) The type of value of the claim.
 
 

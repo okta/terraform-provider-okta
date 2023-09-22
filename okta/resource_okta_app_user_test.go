@@ -12,7 +12,7 @@ import (
 
 func TestAccResourceOktaAppUser_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appUser)
-	mgr := newFixtureManager("", appUser, t.Name())
+	mgr := newFixtureManager("resources", appUser, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	update := mgr.GetFixtures("update.tf", t)
 	basicProfile := mgr.GetFixtures("basic_profile.tf", t)
@@ -81,7 +81,7 @@ func TestAccResourceOktaAppUser_retain(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appUser)
 	appName := fmt.Sprintf("%s.test", appOAuth)
 	userName := fmt.Sprintf("%s.test", user)
-	mgr := newFixtureManager("", appUser, t.Name())
+	mgr := newFixtureManager("resources", appUser, t.Name())
 	retain := mgr.GetFixtures("retain.tf", t)
 	retainDestroy := mgr.GetFixtures("retain_destroy.tf", t)
 

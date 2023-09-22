@@ -15,7 +15,7 @@ description: |-
 
 ### Required
 
-- `app_id` (String)
+- `app_id` (String) The Application's ID the user custom schema property should be assigned to.
 - `index` (String) Subschema unique string identifier
 - `title` (String) Subschema title (display name)
 - `type` (String) Subschema type: string, boolean, number, integer, array, or object
@@ -35,7 +35,7 @@ description: |-
 - `one_of` (Block List) Custom Subschema json schemas. see: developer.okta.com/docs/api/resources/schemas#user-profile-schema-property-object (see [below for nested schema](#nestedblock--one_of))
 - `permissions` (String) SubSchema permissions: HIDE, READ_ONLY, or READ_WRITE.
 - `required` (Boolean) Whether the subschema is required
-- `scope` (String)
+- `scope` (String) determines whether an app user attribute can be set at the Personal `SELF` or Group `NONE` level. Default value is `NONE`.
 - `union` (Boolean) Allows to assign attribute's group priority
 - `unique` (String) Subschema unique restriction
 - `user_type` (String) Custom subschema user type

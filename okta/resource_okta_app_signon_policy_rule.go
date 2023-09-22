@@ -42,6 +42,7 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 					p, n := d.GetChange("priority")
 					return p == n && new == "0"
 				},
+				Description: "Priority of the rule.",
 			},
 			"groups_included": {
 				Type:        schema.TypeSet,

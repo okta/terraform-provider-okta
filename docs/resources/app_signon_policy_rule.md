@@ -34,7 +34,7 @@ description: |-
 - `network_excludes` (List of String) The zones to exclude
 - `network_includes` (List of String) The zones to include
 - `platform_include` (Block Set) (see [below for nested schema](#nestedblock--platform_include))
-- `priority` (Number)
+- `priority` (Number) Priority of the rule.
 - `re_authentication_frequency` (String) The duration after which the end user must re-authenticate, regardless of user activity. Use the ISO 8601 Period format for recurring time intervals. PT0S - Every sign-in attempt, PT43800H - Once per session
 - `status` (String) Status of the rule
 - `type` (String) The Verification Method type

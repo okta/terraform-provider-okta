@@ -6,7 +6,9 @@ description: |-
 
 # Data Source: okta_default_policy
 
-Get a Default policy from Okta.
+Use this data source to retrieve a default policy from Okta. This 
+same thing can be achieved using the `okta_policy` with default 
+names, this is simply a shortcut.
 
 ## Example Usage
 

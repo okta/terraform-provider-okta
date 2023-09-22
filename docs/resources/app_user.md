@@ -20,10 +20,10 @@ description: |-
 
 ### Optional
 
-- `password` (String, Sensitive)
-- `profile` (String)
+- `password` (String, Sensitive) The password to use.
+- `profile` (String) The JSON profile of the App User.
 - `retain_assignment` (Boolean) Retain the user assignment on destroy. If set to true, the resource will be removed from state but not from the Okta app.
-- `username` (String)
+- `username` (String) The username to use for the app user. In case the user is assigned to the app with `SHARED_USERNAME_AND_PASSWORD` credentials scheme, this field will be computed and should not be set.
 
 ### Read-Only
 

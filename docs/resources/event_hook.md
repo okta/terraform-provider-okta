@@ -15,14 +15,14 @@ description: |-
 
 ### Required
 
-- `channel` (Map of String)
-- `events` (Set of String)
-- `name` (String)
+- `channel` (Map of String) Details of the endpoint the event hook will hit.
+- `events` (Set of String) The events that will be delivered to this hook. [See here for a list of supported events](https://developer.okta.com/docs/reference/api/event-types/?q=event-hook-eligible).
+- `name` (String) The event hook display name.
 
 ### Optional
 
-- `auth` (Map of String)
-- `headers` (Block Set) (see [below for nested schema](#nestedblock--headers))
+- `auth` (Map of String) Authentication required for event hook request.
+- `headers` (Block Set) Map of headers to send along in event hook request. (see [below for nested schema](#nestedblock--headers))
 - `status` (String)
 
 ### Read-Only

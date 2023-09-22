@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccResourceOktaPolicyProfileEnrollment(t *testing.T) {
-	mgr := newFixtureManager("", policyProfileEnrollment, t.Name())
+	mgr := newFixtureManager("resources", policyProfileEnrollment, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyProfileEnrollment)

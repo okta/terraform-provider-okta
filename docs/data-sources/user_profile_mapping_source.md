@@ -8,6 +8,9 @@ description: |-
 
 Get the base user Profile Mapping source or target from Okta.
 
+-> **NOTE:** If using this resource with OAuth2 scopes, this resource 
+requires `okta.profileMappings.read` scope.
+
 ## Example Usage
 
 ```terraform

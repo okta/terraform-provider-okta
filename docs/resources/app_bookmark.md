@@ -31,7 +31,7 @@ description: |-
 - `hide_ios` (Boolean) Do not display application icon on mobile app
 - `hide_web` (Boolean) Do not display application icon to users
 - `logo` (String) Local path to logo of the application.
-- `request_integration` (Boolean)
+- `request_integration` (Boolean) Would you like Okta to add an integration for this app?
 - `status` (String) Status of application.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 

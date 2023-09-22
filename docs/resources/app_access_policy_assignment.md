@@ -15,11 +15,11 @@ Manages assignment of Access Policy to an Application
 
 ### Required
 
-- `app_id` (String) Application ID
-- `policy_id` (String) Policy ID
+- `app_id` (String) The application ID; this value is immutable and can not be updated.
+- `policy_id` (String) The access policy ID.
 
 ### Read-Only
 
-- `id` (String) Policy Assignment ID
+- `id` (String) The ID of the resource. This ID is simply the application ID.
 
 

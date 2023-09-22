@@ -17,17 +17,17 @@ description: |-
 
 - `audiences` (Set of String) Currently Okta only supports a single value here
 - `credentials_rotation_mode` (String) Credential rotation mode, in many cases you cannot set this to MANUAL, the API will ignore the value and you will get a perpetual diff. This should rarely be used.
-- `description` (String)
+- `description` (String) The description of the authorization server.
 - `issuer_mode` (String) *Early Access Property*. Indicates which value is specified in the issuer of the tokens that a Custom Authorization Server returns: the original Okta org domain URL or a custom domain URL
-- `name` (String)
+- `name` (String) The name of the authorization server. Not necessary but left for backwards capacity with legacy implementation.
 - `status` (String)
 
 ### Read-Only
 
-- `credentials_last_rotated` (String)
-- `credentials_next_rotation` (String)
+- `credentials_last_rotated` (String) The timestamp when the authorization server started to use the `kid` for signing tokens.
+- `credentials_next_rotation` (String) The timestamp when the authorization server changes the key for signing tokens. Only returned when `credentials_rotation_mode` is `AUTO`.
 - `id` (String) The ID of this resource.
 - `issuer` (String) allows you to use a custom issuer URL
-- `kid` (String)
+- `kid` (String) The ID of the JSON Web Key used for signing tokens issued by the authorization server.
 
 

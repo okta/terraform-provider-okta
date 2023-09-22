@@ -15,7 +15,7 @@ description: |-
 
 ### Required
 
-- `app_id` (String)
+- `app_id` (String) The ID of the application to assign a group to.
 - `group` (Block List, Min: 1) A group to assign to this application (see [below for nested schema](#nestedblock--group))
 
 ### Read-Only
@@ -31,7 +31,7 @@ Required:
 
 Optional:
 
-- `priority` (Number)
-- `profile` (String)
+- `priority` (Number) Priority of group assignment
+- `profile` (String) JSON document containing [application profile](https://developer.okta.com/docs/reference/api/apps/#profile-object)
 
 

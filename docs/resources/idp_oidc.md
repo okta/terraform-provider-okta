@@ -54,7 +54,7 @@ description: |-
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `type` (String)
+- `type` (String) Type of OIDC IdP.
 - `user_type_id` (String)
 
 

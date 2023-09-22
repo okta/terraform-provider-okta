@@ -27,8 +27,9 @@ func resourceAppUserSchemaProperty() *schema.Resource {
 			// userPatternSchema,
 			map[string]*schema.Schema{
 				"app_id": {
-					Type:     schema.TypeString,
-					Required: true,
+					Type:        schema.TypeString,
+					Required:    true,
+					Description: "The Application's ID the user custom schema property should be assigned to.",
 				},
 				"union": {
 					Type:          schema.TypeBool,
@@ -38,10 +39,11 @@ func resourceAppUserSchemaProperty() *schema.Resource {
 					ConflictsWith: []string{"enum"},
 				},
 				"scope": {
-					Type:     schema.TypeString,
-					Optional: true,
-					Default:  "NONE",
-					ForceNew: true, // since the `scope` is read-only attribute, the resource should be recreated
+					Type:        schema.TypeString,
+					Optional:    true,
+					Default:     "NONE",
+					ForceNew:    true, // since the `scope` is read-only attribute, the resource should be recreated
+					Description: "determines whether an app user attribute can be set at the Personal `SELF` or Group `NONE` level. Default value is `NONE`.",
 				},
 				"master": {
 					Type:        schema.TypeString,

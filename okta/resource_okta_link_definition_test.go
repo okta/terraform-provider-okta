@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccResourceOktaLinkDefinition(t *testing.T) {
-	mgr := newFixtureManager("", linkDefinition, t.Name())
+	mgr := newFixtureManager("resources", linkDefinition, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", linkDefinition)
 	oktaResourceTest(t, resource.TestCase{
@@ -47,7 +47,7 @@ func doesLinkDefinitionExist(id string) (bool, error) {
 // calling mutex in the resource to impose the equivelent of `terraform
 // -parallelism=1`
 func TestAccResourceOktaLinkDefinition_parallel_api_calls(t *testing.T) {
-	mgr := newFixtureManager("", linkDefinition, t.Name())
+	mgr := newFixtureManager("resources", linkDefinition, t.Name())
 	config := `
 resource "okta_link_definition" "one" {
 	primary_name           = "testAcc_replace_with_uuid_one"

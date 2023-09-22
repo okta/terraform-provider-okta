@@ -15,10 +15,10 @@ description: |-
 
 ### Required
 
-- `auth_server_id` (String)
-- `client_whitelist` (Set of String) Use ["ALL_CLIENTS"] when unsure.
-- `description` (String)
-- `name` (String)
+- `auth_server_id` (String) The ID of the Auth Server.
+- `client_whitelist` (Set of String) The clients to whitelist the policy for. `[ALL_CLIENTS]` is a special value that can be used to whitelist all clients, otherwise it is a list of client ids.
+- `description` (String) The description of the Auth Server Policy.
+- `name` (String) The name of the Auth Server Policy.
 - `priority` (Number) Priority of the auth server policy
 
 ### Optional

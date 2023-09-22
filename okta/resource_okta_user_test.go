@@ -15,7 +15,7 @@ import (
 )
 
 func TestAccResourceOktaUser_customProfileAttributes(t *testing.T) {
-	mgr := newFixtureManager("", user, t.Name())
+	mgr := newFixtureManager("resources", user, t.Name())
 	config := mgr.GetFixtures("custom_attributes.tf", t)
 	arrayAttrConfig := mgr.GetFixtures("custom_attributes_array.tf", t)
 	ignoreConfig := mgr.GetFixtures("custom_attributes_to_ignore.tf", t)
@@ -97,7 +97,7 @@ func TestAccResourceOktaUser_customProfileAttributes(t *testing.T) {
 }
 
 func TestAccResourceOktaUser_invalidCustomProfileAttribute(t *testing.T) {
-	mgr := newFixtureManager("", user, t.Name())
+	mgr := newFixtureManager("resources", user, t.Name())
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
@@ -113,7 +113,7 @@ func TestAccResourceOktaUser_invalidCustomProfileAttribute(t *testing.T) {
 }
 
 func TestAccResourceOktaUser_updateAllAttributes(t *testing.T) {
-	mgr := newFixtureManager("", user, t.Name())
+	mgr := newFixtureManager("resources", user, t.Name())
 	config := mgr.GetFixtures("staged.tf", t)
 	updatedConfig := mgr.GetFixtures("all_attributes.tf", t)
 	minimalConfig := mgr.GetFixtures("basic.tf", t)
@@ -185,7 +185,7 @@ func TestAccResourceOktaUser_updateAllAttributes(t *testing.T) {
 }
 
 func TestAccResourceOktaUser_updateCredentials(t *testing.T) {
-	mgr := newFixtureManager("", user, t.Name())
+	mgr := newFixtureManager("resources", user, t.Name())
 	config := mgr.GetFixtures("basic_with_credentials.tf", t)
 	minimalConfigWithCredentials := mgr.GetFixtures("basic_with_credentials_updated.tf", t)
 	minimalConfigWithCredentialsOldPassword := mgr.GetFixtures("basic_with_credentials_updated_old_password.tf", t)
@@ -237,7 +237,7 @@ func TestAccResourceOktaUser_updateCredentials(t *testing.T) {
 }
 
 func TestAccResourceOktaUser_statusDeprovisioned(t *testing.T) {
-	mgr := newFixtureManager("", user, t.Name())
+	mgr := newFixtureManager("resources", user, t.Name())
 	statusChanged := mgr.GetFixtures("deprovisioned.tf", t)
 	config := mgr.GetFixtures("staged.tf", t)
 	resourceName := fmt.Sprintf("%s.test", user)
@@ -267,7 +267,7 @@ func TestAccResourceOktaUser_statusDeprovisioned(t *testing.T) {
 }
 
 func TestAccResourceOktaUserHashedPassword(t *testing.T) {
-	mgr := newFixtureManager("", user, t.Name())
+	mgr := newFixtureManager("resources", user, t.Name())
 	config := mgr.GetFixtures("password_hash.tf", t)
 	configUpdated := mgr.GetFixtures("password_hash_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", user)
@@ -306,7 +306,7 @@ func TestAccResourceOktaUserHashedPassword(t *testing.T) {
 }
 
 func TestAccResourceOktaUser_updateDeprovisioned(t *testing.T) {
-	mgr := newFixtureManager("", user, t.Name())
+	mgr := newFixtureManager("resources", user, t.Name())
 	config := mgr.GetFixtures("deprovisioned.tf", t)
 
 	oktaResourceTest(t, resource.TestCase{
@@ -327,7 +327,7 @@ func TestAccResourceOktaUser_updateDeprovisioned(t *testing.T) {
 }
 
 func TestAccResourceOktaUser_loginUpdates(t *testing.T) {
-	mgr := newFixtureManager("", user, t.Name())
+	mgr := newFixtureManager("resources", user, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedLogin := mgr.GetFixtures("login_changed.tf", t)
 
@@ -404,7 +404,7 @@ func TestIssue1216Suppress403Errors(t *testing.T) {
 	if !orgAdminOnlyTest(t) {
 		return
 	}
-	mgr := newFixtureManager("", user, t.Name())
+	mgr := newFixtureManager("resources", user, t.Name())
 	config := `
 resource "okta_user" "test" {
   first_name = "TestAcc"

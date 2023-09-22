@@ -8,6 +8,14 @@ description: |-
 
 Get a sign-on policy for the application.
 
+~> **WARNING:** This feature is only available as a part of the 
+Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) 
+for further information.
+
+-> Inside the product a sign-on policy is referenced as an _authentication
+policy_, in the public API the policy is of type
+[`ACCESS_POLICY`](https://developer.okta.com/docs/reference/api/policy/#policy-object).
+
 ## Example Usage
 
 ```terraform

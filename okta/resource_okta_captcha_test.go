@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccResourceOktaCaptcha(t *testing.T) {
-	mgr := newFixtureManager("", captcha, t.Name())
+	mgr := newFixtureManager("resources", captcha, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", captcha)

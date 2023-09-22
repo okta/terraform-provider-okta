@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccResourceOktaAppBookmarkApplication_crud(t *testing.T) {
-	mgr := newFixtureManager("", appBookmark, t.Name())
+	mgr := newFixtureManager("resources", appBookmark, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appBookmark)
@@ -45,7 +45,7 @@ func TestAccResourceOktaAppBookmarkApplication_crud(t *testing.T) {
 }
 
 func TestAccResourceOktaAppBookmarkApplication_timeouts(t *testing.T) {
-	mgr := newFixtureManager("", appBookmark, t.Name())
+	mgr := newFixtureManager("resources", appBookmark, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appBookmark)
 	config := `
 resource "okta_app_bookmark" "test" {
@@ -79,7 +79,7 @@ resource "okta_app_bookmark" "test" {
 // TestAccAppBookmarkApplication_PR1366 Test for @jakezarobsky-8451 PR #1366
 // https://github.com/okta/terraform-provider-okta/pull/1366
 func TestAccResourceOktaAppBookmarkApplication_PR1366_authentication_policy(t *testing.T) {
-	mgr := newFixtureManager("", appBookmark, t.Name())
+	mgr := newFixtureManager("resources", appBookmark, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appBookmark)
 	config := `
 data "okta_policy" "test" {

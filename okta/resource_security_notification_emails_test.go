@@ -13,7 +13,7 @@ import (
 )
 
 func TestAccResourceOktaSecurityNotificationEmails(t *testing.T) {
-	mgr := newFixtureManager("", securityNotificationEmails, t.Name())
+	mgr := newFixtureManager("resources", securityNotificationEmails, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", securityNotificationEmails)

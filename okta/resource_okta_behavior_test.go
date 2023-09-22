@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccResourceOktaBehavior(t *testing.T) {
-	mgr := newFixtureManager("", behavior, t.Name())
+	mgr := newFixtureManager("resources", behavior, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	inactive := mgr.GetFixtures("inactive.tf", t)

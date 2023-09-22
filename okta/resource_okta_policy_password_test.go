@@ -11,7 +11,7 @@ import (
 )
 
 func TestAccResourceOktaPolicyPassword_crud(t *testing.T) {
-	mgr := newFixtureManager("", policyPassword, t.Name())
+	mgr := newFixtureManager("resources", policyPassword, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyPassword)

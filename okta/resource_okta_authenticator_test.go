@@ -9,7 +9,7 @@ import (
 
 func TestAccResourceOktaAuthenticator_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", authenticator)
-	mgr := newFixtureManager("", authenticator, t.Name())
+	mgr := newFixtureManager("resources", authenticator, t.Name())
 	config := mgr.GetFixtures("security_question.tf", t)
 	configUpdated := mgr.GetFixtures("security_question_updated.tf", t)
 

@@ -15,7 +15,7 @@ import (
 
 // Ensure conditional require logic causes this plan to fail
 func TestAccResourceOktaAppSaml_conditionalRequire(t *testing.T) {
-	mgr := newFixtureManager("", appSaml, t.Name())
+	mgr := newFixtureManager("resources", appSaml, t.Name())
 	config := buildTestSamlConfigMissingFields(mgr.Seed)
 
 	oktaResourceTest(t, resource.TestCase{
@@ -34,7 +34,7 @@ func TestAccResourceOktaAppSaml_conditionalRequire(t *testing.T) {
 
 // Ensure conditional require logic causes this plan to fail
 func TestAccResourceOktaAppSaml_invalidURL(t *testing.T) {
-	mgr := newFixtureManager("", appSaml, t.Name())
+	mgr := newFixtureManager("resources", appSaml, t.Name())
 	config := buildTestSamlConfigMissingFields(mgr.Seed)
 
 	oktaResourceTest(t, resource.TestCase{
@@ -52,7 +52,7 @@ func TestAccResourceOktaAppSaml_invalidURL(t *testing.T) {
 }
 
 func TestAccResourceOktaAppSaml_crud(t *testing.T) {
-	mgr := newFixtureManager("", appSaml, t.Name())
+	mgr := newFixtureManager("resources", appSaml, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	allFields := mgr.GetFixtures("updated.tf", t)
 	importConfig := mgr.GetFixtures("import.tf", t)
@@ -154,7 +154,7 @@ func TestAccResourceOktaAppSaml_crud(t *testing.T) {
 }
 
 func TestAccResourceOktaAppSaml_preconfigured(t *testing.T) {
-	mgr := newFixtureManager("", appSaml, t.Name())
+	mgr := newFixtureManager("resources", appSaml, t.Name())
 	preconfigured := mgr.GetFixtures("preconfigured.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
@@ -233,7 +233,7 @@ func areJSONStringsEqual(a, b string) bool {
 }
 
 func TestAccResourceOktaAppSaml_inlineHook(t *testing.T) {
-	mgr := newFixtureManager("", appSaml, t.Name())
+	mgr := newFixtureManager("resources", appSaml, t.Name())
 	config := mgr.GetFixtures("basic_inline_hook.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
@@ -264,7 +264,7 @@ func TestAccResourceOktaAppSaml_federationBroker(t *testing.T) {
 	//       SEE https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm
 	t.Skip("This is an 'Early Access Feature' and needs to be enabled by Okta, skipping this test as it fails when this feature is not available")
 
-	mgr := newFixtureManager("", appSaml, t.Name())
+	mgr := newFixtureManager("resources", appSaml, t.Name())
 	config := mgr.GetFixtures("federation_broker_off.tf", t)
 	updatedConfig := mgr.GetFixtures("federation_broker_on.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
@@ -309,7 +309,7 @@ resource "%s" "%s" {
 }
 
 func TestAccResourceOktaAppSaml_timeouts(t *testing.T) {
-	mgr := newFixtureManager("", appSaml, t.Name())
+	mgr := newFixtureManager("resources", appSaml, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 	config := `
 resource "okta_app_saml" "test" {
@@ -362,7 +362,7 @@ resource "okta_app_saml" "test" {
 
 // Test to ensure that certificate logic returns no-op / no-change upon apply and future plans
 func TestAccResourceOktaAppSaml_certdiff(t *testing.T) {
-	mgr := newFixtureManager("", appSaml, t.Name())
+	mgr := newFixtureManager("resources", appSaml, t.Name())
 	config := mgr.GetFixtures("basic_cert_plain.tf", t)
 	config2 := mgr.GetFixtures("basic_cert_file.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)

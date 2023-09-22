@@ -19,7 +19,7 @@ import (
 // with the `depends_on` meta argument.
 func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.forgot_password_en", emailCustomization)
-	mgr := newFixtureManager("", emailCustomization, t.Name())
+	mgr := newFixtureManager("resources", emailCustomization, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 

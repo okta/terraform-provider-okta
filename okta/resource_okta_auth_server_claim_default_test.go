@@ -9,7 +9,7 @@ import (
 
 func TestAccResourceOktaAuthServerClaimDefault(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", authServerClaimDefault)
-	mgr := newFixtureManager("", authServerClaimDefault, t.Name())
+	mgr := newFixtureManager("resources", authServerClaimDefault, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	oktaResourceTest(t, resource.TestCase{

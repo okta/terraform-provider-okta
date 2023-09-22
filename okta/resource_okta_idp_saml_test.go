@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccResourceOktaIdpSaml_crud(t *testing.T) {
-	mgr := newFixtureManager("", idpSaml, t.Name())
+	mgr := newFixtureManager("resources", idpSaml, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", idpSaml)
@@ -65,7 +65,7 @@ func TestAccResourceOktaIdpSaml_crud(t *testing.T) {
 // test would fail if the org was missing the mappings api feature. And pass if
 // the feature was enabled.
 func TestAccResourceOktaIdpSaml_minimal_example(t *testing.T) {
-	mgr := newFixtureManager("", idpSaml, t.Name())
+	mgr := newFixtureManager("resources", idpSaml, t.Name())
 	config := `
 resource "okta_app_saml" "test" {
 	label                    = "testAcc_replace_with_uuid"

@@ -19,9 +19,10 @@ func resourceAppOAuthRedirectURI() *schema.Resource {
 		Importer: createCustomNestedResourceImporter([]string{"app_id", "id"}, "Expecting the following format: <app_id>/<uri>"),
 		Schema: map[string]*schema.Schema{
 			"app_id": {
-				Required: true,
-				Type:     schema.TypeString,
-				ForceNew: true,
+				Required:    true,
+				Type:        schema.TypeString,
+				ForceNew:    true,
+				Description: "OAuth application ID.",
 			},
 			"uri": {
 				Required:    true,
