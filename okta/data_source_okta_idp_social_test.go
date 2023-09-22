@@ -7,7 +7,7 @@ import (
 )
 
 func TestAccDataSourceOktaIdpSocial_read(t *testing.T) {
-	mgr := newFixtureManager(idpSocial, t.Name())
+	mgr := newFixtureManager("data-sources", idpSocial, t.Name())
 	preConfig := mgr.GetFixtures("basic.tf", t)
 	config := mgr.GetFixtures("datasource.tf", t)
 	oktaResourceTest(t, resource.TestCase{

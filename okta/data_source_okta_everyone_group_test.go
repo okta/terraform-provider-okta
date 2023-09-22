@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccDataSourceOktaEveryoneGroup_read(t *testing.T) {
-	mgr := newFixtureManager(groupEveryone, t.Name())
+	mgr := newFixtureManager("data-sources", groupEveryone, t.Name())
 	config := testAccDataSourceEveryoneGroupConfig(mgr.Seed)
 
 	oktaResourceTest(t, resource.TestCase{

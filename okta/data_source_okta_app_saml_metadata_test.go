@@ -7,7 +7,7 @@ import (
 )
 
 func TestAccDataSourceOktaAppMetadataSaml_read(t *testing.T) {
-	mgr := newFixtureManager(appMetadataSaml, t.Name())
+	mgr := newFixtureManager("data-sources", appMetadataSaml, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	resourceName := "data.okta_app_metadata_saml.test"
 

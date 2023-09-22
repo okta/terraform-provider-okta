@@ -10,7 +10,7 @@ import (
 
 func TestAccResourceOktaProfileMapping_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", profileMapping)
-	mgr := newFixtureManager(profileMapping, t.Name())
+	mgr := newFixtureManager("", profileMapping, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	preventDelete := mgr.GetFixtures("prevent_delete.tf", t)

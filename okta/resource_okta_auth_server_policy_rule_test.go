@@ -10,7 +10,7 @@ import (
 
 func TestAccResourceOktaAuthServerPolicyRule_create(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", authServerPolicyRule)
-	mgr := newFixtureManager(authServerPolicyRule, t.Name())
+	mgr := newFixtureManager("", authServerPolicyRule, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 
@@ -68,7 +68,7 @@ resource "okta_auth_server_policy" "test" {
   auth_server_id   = okta_auth_server.test.id
 }
 %s`, strings.Join(testPolicyRules, ""))
-	mgr := newFixtureManager(authServerPolicyRule, t.Name())
+	mgr := newFixtureManager("", authServerPolicyRule, t.Name())
 	oktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:          testAccPreCheck(t),

@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccDataSourceOktaAppSaml_read(t *testing.T) {
-	mgr := newFixtureManager(appSaml, t.Name())
+	mgr := newFixtureManager("data-sources", appSaml, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	appCreate := buildTestAppSaml(mgr.Seed)
 

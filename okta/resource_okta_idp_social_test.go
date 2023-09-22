@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccResourceOktaIdpSocial_crud(t *testing.T) {
-	mgr := newFixtureManager(idpSocial, t.Name())
+	mgr := newFixtureManager("", idpSocial, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	disabledConf := mgr.GetFixtures("auto_provision_disabled.tf", t)
 	fbName := fmt.Sprintf("%s.facebook", idpSocial)

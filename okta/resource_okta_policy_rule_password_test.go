@@ -13,7 +13,7 @@ import (
 )
 
 func TestAccResourceOktaPolicyRulePassword_crud(t *testing.T) {
-	mgr := newFixtureManager(policyRulePassword, t.Name())
+	mgr := newFixtureManager("", policyRulePassword, t.Name())
 	config := testOktaPolicyRulePassword(mgr.Seed)
 	updatedConfig := testOktaPolicyRulePasswordUpdated(mgr.Seed)
 	resourceName := buildResourceFQN(policyRulePassword, mgr.Seed)
@@ -49,7 +49,7 @@ func TestAccResourceOktaPolicyRulePassword_crud(t *testing.T) {
 
 // Testing the logic that errors when an invalid priority is provided
 func TestAccResourceOktaPolicyRulePassword_priorityError(t *testing.T) {
-	mgr := newFixtureManager(policyRulePassword, t.Name())
+	mgr := newFixtureManager("", policyRulePassword, t.Name())
 	config := testOktaPolicyRulePriorityError(mgr.Seed)
 
 	oktaResourceTest(t, resource.TestCase{
@@ -68,7 +68,7 @@ func TestAccResourceOktaPolicyRulePassword_priorityError(t *testing.T) {
 
 // Testing the successful setting of priority
 func TestAccResourceOktaPolicyRulePassword_priority(t *testing.T) {
-	mgr := newFixtureManager(policyRulePassword, t.Name())
+	mgr := newFixtureManager("", policyRulePassword, t.Name())
 	config := testOktaPolicyRulePriority(mgr.Seed)
 	resourceName := buildResourceFQN(policyRulePassword, mgr.Seed)
 	name := buildResourceName(mgr.Seed)

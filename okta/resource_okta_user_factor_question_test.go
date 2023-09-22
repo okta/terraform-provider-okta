@@ -11,7 +11,7 @@ import (
 )
 
 func TestAccResourceOktaUserFactorQuestion_crud(t *testing.T) {
-	mgr := newFixtureManager(userFactorQuestion, t.Name())
+	mgr := newFixtureManager("", userFactorQuestion, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", userFactorQuestion)

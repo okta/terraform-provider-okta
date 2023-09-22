@@ -20,47 +20,57 @@ func dataSourceAuthServerClaims() *schema.Resource {
 				Description: "Auth server ID",
 			},
 			"claims": {
-				Type:     schema.TypeList,
-				Computed: true,
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "Collection of authorization server claims retrieved from Okta with the following properties.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "ID of the claim.",
 						},
 						"name": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Name of the claim.",
 						},
 						"scopes": {
-							Type:     schema.TypeSet,
-							Computed: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
+							Type:        schema.TypeSet,
+							Computed:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Description: "Specifies the scopes for this Claim.",
 						},
 						"status": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Status of the claim.",
 						},
 						"value": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Value of the claim.",
 						},
 						"value_type": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Specifies whether the Claim is an Okta EL expression (`EXPRESSION`), a set of groups (`GROUPS`), or a system claim (`SYSTEM`)",
 						},
 						"claim_type": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Specifies whether the Claim is for an access token (`RESOURCE`) or ID token (`IDENTITY`).",
 						},
 						"always_include_in_token": {
-							Type:     schema.TypeBool,
-							Computed: true,
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "Specifies whether to include Claims in the token.",
 						},
 					},
 				},
 			},
 		},
+		Description: "Get a list of authorization server claims from Okta.",
 	}
 }
 

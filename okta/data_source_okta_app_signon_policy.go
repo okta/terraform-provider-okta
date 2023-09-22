@@ -24,6 +24,7 @@ func dataSourceAppSignOnPolicy() *schema.Resource {
 				Description: "Policy name",
 			},
 		},
+		Description: "Get a sign-on policy for the application.",
 	}
 }
 

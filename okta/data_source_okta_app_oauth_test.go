@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccDataSourceOktaAppOauth_read(t *testing.T) {
-	mgr := newFixtureManager(appOAuth, t.Name())
+	mgr := newFixtureManager("data-sources", appOAuth, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	appCreate := buildTestAppOauth(mgr.Seed)
 

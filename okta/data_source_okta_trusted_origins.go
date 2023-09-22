@@ -55,6 +55,7 @@ func dataSourceTrustedOrigins() *schema.Resource {
 				},
 			},
 		},
+		Description: "Get List of Trusted Origins using filters.",
 	}
 }
 

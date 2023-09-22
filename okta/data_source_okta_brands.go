@@ -11,6 +11,7 @@ func dataSourceBrands() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceBrandsRead,
 		Schema:      brandsDataSourceSchema,
+		Description: "Get the brands belonging to an Okta organization.",
 	}
 }
 

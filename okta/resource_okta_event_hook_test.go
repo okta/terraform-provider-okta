@@ -14,7 +14,7 @@ import (
 
 func TestAccResourceOktaEventHook_crud(t *testing.T) {
 	resourceName := "okta_event_hook.test"
-	mgr := newFixtureManager(eventHook, t.Name())
+	mgr := newFixtureManager("", eventHook, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	activatedConfig := mgr.GetFixtures("basic_activated.tf", t)

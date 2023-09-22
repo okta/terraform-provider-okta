@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccDataSourceOktaAuthenticator_read(t *testing.T) {
-	mgr := newFixtureManager(authenticator, t.Name())
+	mgr := newFixtureManager("data-sources", authenticator, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	resourceName := fmt.Sprintf("data.%s.test", authenticator)    // security question
 	resourceName1 := fmt.Sprintf("data.%s.test_1", authenticator) // okta verify

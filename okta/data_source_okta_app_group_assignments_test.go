@@ -7,7 +7,7 @@ import (
 )
 
 func TestAccDataSourceOktaAppGroupAssignments_read(t *testing.T) {
-	mgr := newFixtureManager(appGroupAssignments, t.Name())
+	mgr := newFixtureManager("data-sources", appGroupAssignments, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
 	oktaResourceTest(t, resource.TestCase{

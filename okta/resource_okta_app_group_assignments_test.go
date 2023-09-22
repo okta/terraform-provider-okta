@@ -11,7 +11,7 @@ import (
 
 func TestAccResourceOktaAppGroupAssignments_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appGroupAssignments)
-	mgr := newFixtureManager(appGroupAssignments, t.Name())
+	mgr := newFixtureManager("", appGroupAssignments, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 

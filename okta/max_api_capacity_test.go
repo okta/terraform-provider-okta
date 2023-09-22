@@ -12,7 +12,7 @@ func TestAccMaxApiCapacity(t *testing.T) {
 		return
 	}
 
-	mgr := newFixtureManager(appGroupAssignments, t.Name())
+	mgr := newFixtureManager("data-sources", appGroupAssignments, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
 	oldApiCapacity := os.Getenv("MAX_API_CAPACITY")

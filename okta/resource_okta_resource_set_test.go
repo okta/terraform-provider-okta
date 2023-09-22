@@ -10,7 +10,7 @@ import (
 )
 
 func TestAccResourceOktaResourceSet(t *testing.T) {
-	mgr := newFixtureManager(resourceSet, t.Name())
+	mgr := newFixtureManager("", resourceSet, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resourceSet)
@@ -69,7 +69,7 @@ func TestAccResourceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 					"https://%s.%s/api/v1/groups/${group.id}"
 			]
 		}`, orgName, baseUrl)
-	mgr := newFixtureManager(resourceSet, t.Name())
+	mgr := newFixtureManager("", resourceSet, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resourceSet)
 	oktaResourceTest(
 		t, resource.TestCase{

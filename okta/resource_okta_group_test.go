@@ -11,7 +11,7 @@ import (
 
 func TestAccResourceOktaGroup_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", group)
-	mgr := newFixtureManager(group, t.Name())
+	mgr := newFixtureManager("", group, t.Name())
 	config := mgr.GetFixtures("okta_group.tf", t)
 	updatedConfig := mgr.GetFixtures("okta_group_updated.tf", t)
 	buildResourceName(mgr.Seed)
@@ -40,7 +40,7 @@ func TestAccResourceOktaGroup_crud(t *testing.T) {
 
 func TestAccResourceOktaGroup_customschema(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", group)
-	mgr := newFixtureManager(group, t.Name())
+	mgr := newFixtureManager("", group, t.Name())
 	base := mgr.GetFixtures("okta_group_custom_base.tf", t)
 	updated := mgr.GetFixtures("okta_group_custom_updated.tf", t)
 	removal := mgr.GetFixtures("okta_group_custom_removal.tf", t)
@@ -81,7 +81,7 @@ func TestAccResourceOktaGroup_customschema_null(t *testing.T) {
 		return
 	}
 	resourceName := fmt.Sprintf("%s.test", group)
-	mgr := newFixtureManager(group, t.Name())
+	mgr := newFixtureManager("", group, t.Name())
 	base := mgr.GetFixtures("okta_group_custom_base.tf", t)
 	nulls := mgr.GetFixtures("okta_group_custom_nulls.tf", t)
 	removal := mgr.GetFixtures("okta_group_custom_removal.tf", t)

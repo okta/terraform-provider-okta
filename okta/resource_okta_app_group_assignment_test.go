@@ -14,7 +14,7 @@ func TestAccResourceOktaAppGroupAssignment_crud(t *testing.T) {
 	resourceName0 := fmt.Sprintf("%s.test.0", appGroupAssignment)
 	resourceName1 := fmt.Sprintf("%s.test.1", appGroupAssignment)
 	resourceName3 := fmt.Sprintf("%s.test3", appGroupAssignment)
-	mgr := newFixtureManager(appGroupAssignment, t.Name())
+	mgr := newFixtureManager("", appGroupAssignment, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	// TF concurrency will cause this test to flap if the groups and assigned
@@ -113,7 +113,7 @@ func TestAccResourceOktaAppGroupAssignment_retain(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appGroupAssignment)
 	appName := fmt.Sprintf("%s.test", appOAuth)
 	groupName := fmt.Sprintf("%s.test", group)
-	mgr := newFixtureManager(appGroupAssignment, t.Name())
+	mgr := newFixtureManager("", appGroupAssignment, t.Name())
 	retainAssignment := mgr.GetFixtures("retain_assignment.tf", t)
 	retainAssignmentDestroy := mgr.GetFixtures("retain_assignment_destroy.tf", t)
 
@@ -145,7 +145,7 @@ func TestAccResourceOktaAppGroupAssignment_retain(t *testing.T) {
 }
 
 func TestAccResourceOktaAppGroupAssignment_timeouts(t *testing.T) {
-	mgr := newFixtureManager(appGroupAssignment, t.Name())
+	mgr := newFixtureManager("", appGroupAssignment, t.Name())
 	resourceName0 := fmt.Sprintf("%s.test.0", appGroupAssignment)
 	config := `
 resource "okta_app_oauth" "test" {

@@ -22,10 +22,12 @@ func dataSourcePolicy() *schema.Resource {
 				Required:    true,
 			},
 			"status": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Status of the policy",
 			},
 		},
+		Description: "Get a policy from Okta.",
 	}
 }
 

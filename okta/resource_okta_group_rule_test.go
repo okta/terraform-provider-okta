@@ -11,7 +11,7 @@ import (
 
 func TestAccResourceOktaGroupRule_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", groupRule)
-	mgr := newFixtureManager("okta_group_rule", t.Name())
+	mgr := newFixtureManager("", "okta_group_rule", t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	name := buildResourceName(mgr.Seed)
@@ -61,7 +61,7 @@ func TestAccResourceOktaGroupRule_crud(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupRule_invalidHandle(t *testing.T) {
-	mgr := newFixtureManager(groupRule, t.Name())
+	mgr := newFixtureManager("", groupRule, t.Name())
 	groupResource := fmt.Sprintf("%s.test", group)
 	ruleResource := fmt.Sprintf("%s.inval", groupRule)
 	testName := buildResourceName(mgr.Seed)

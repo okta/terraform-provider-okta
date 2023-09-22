@@ -73,8 +73,10 @@ func dataSourceDomain() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+				Description: "Certificate metadata for the Domain",
 			},
 		},
+		Description: "Get a domain from Okta.",
 	}
 }
 

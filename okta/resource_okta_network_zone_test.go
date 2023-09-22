@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccResourceOktaNetworkZone_crud(t *testing.T) {
-	mgr := newFixtureManager(networkZone, t.Name())
+	mgr := newFixtureManager("", networkZone, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.ip_network_zone_example", networkZone)

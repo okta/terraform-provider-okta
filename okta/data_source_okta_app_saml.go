@@ -20,16 +20,22 @@ func dataSourceAppSaml() *schema.Resource {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"label", "label_prefix"},
+				Description:   "Id of application to retrieve, conflicts with label and label_prefix.",
 			},
 			"label": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"id", "label_prefix"},
+				Description: `The label of the app to retrieve, conflicts with label_prefix and id. Label 
+				uses the ?q=<label> query parameter exposed by Okta's API. It should be noted that at this time 
+				this searches both name and label. This is used to avoid paginating through all applications.`,
 			},
 			"label_prefix": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"id", "label"},
+				Description: `Label prefix of the app to retrieve, conflicts with label and id. This will tell the
+				provider to do a starts with query as opposed to an equals query.`,
 			},
 			"active_only": {
 				Type:        schema.TypeBool,
@@ -38,12 +44,14 @@ func dataSourceAppSaml() *schema.Resource {
 				Description: "Search only ACTIVE applications.",
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Name of application.",
 			},
 			"status": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Status of application.",
 			},
 			"key_id": {
 				Type:        schema.TypeString,
@@ -280,6 +288,7 @@ func dataSourceAppSaml() *schema.Resource {
 				Description: "SAML Signed Request enabled",
 			},
 		}),
+		Description: "Get a SAML application from Okta.",
 	}
 }
 

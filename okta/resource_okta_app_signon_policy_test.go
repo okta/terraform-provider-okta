@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccResourceOktaAppSignOnPolicy_crud(t *testing.T) {
-	mgr := newFixtureManager(appSignOnPolicy, t.Name())
+	mgr := newFixtureManager("", appSignOnPolicy, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	renamedConfig := mgr.GetFixtures("basic_renamed.tf", t)
@@ -49,7 +49,7 @@ func TestAccResourceOktaAppSignOnPolicy_crud(t *testing.T) {
 }
 
 func TestAccResourceOktaAppSignOnPolicy_destroy(t *testing.T) {
-	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+	mgr := newFixtureManager("", groupSchemaProperty, t.Name())
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),

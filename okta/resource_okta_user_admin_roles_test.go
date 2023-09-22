@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccResourceOktaUserAdminRoles_crud(t *testing.T) {
-	mgr := newFixtureManager(userAdminRoles, t.Name())
+	mgr := newFixtureManager("", userAdminRoles, t.Name())
 	start := mgr.GetFixtures("basic.tf", t)
 	update := mgr.GetFixtures("basic_update.tf", t)
 	remove := mgr.GetFixtures("basic_removal.tf", t)

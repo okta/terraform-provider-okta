@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccResourceOktaAppSecurePasswordStoreApplication_credsSchemes(t *testing.T) {
-	mgr := newFixtureManager(appSecurePasswordStore, t.Name())
+	mgr := newFixtureManager("", appSecurePasswordStore, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSecurePasswordStore)
@@ -48,7 +48,7 @@ func TestAccResourceOktaAppSecurePasswordStoreApplication_credsSchemes(t *testin
 }
 
 func TestAccResourceOktaAppSecurePasswordStoreApplication_timeouts(t *testing.T) {
-	mgr := newFixtureManager(appSecurePasswordStore, t.Name())
+	mgr := newFixtureManager("", appSecurePasswordStore, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appSecurePasswordStore)
 	config := `
 resource "okta_app_secure_password_store" "test" {

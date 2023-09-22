@@ -20,16 +20,26 @@ func dataSourceAppOauth() *schema.Resource {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"label", "label_prefix"},
+				Description:   "Id of application to retrieve, conflicts with label and label_prefix.",
 			},
 			"label": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"id", "label_prefix"},
+				Description: `The label of the app to retrieve, conflicts with
+				label_prefix and id. Label uses the ?q=<label> query parameter exposed by
+				Okta's List Apps API. The API will search both name and label using that
+				query. Therefore similarily named and labeled apps may be returned in the query
+				and have the unitended result of associating the wrong app with this data
+				source. See:
+				https://developer.okta.com/docs/reference/api/apps/#list-applications`,
 			},
 			"label_prefix": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"id", "label"},
+				Description: `Label prefix of the app to retrieve, conflicts with label and id. This will tell the
+				provider to do a starts with query as opposed to an equals query.`,
 			},
 			"active_only": {
 				Type:        schema.TypeBool,
@@ -38,16 +48,19 @@ func dataSourceAppOauth() *schema.Resource {
 				Description: "Search only ACTIVE applications.",
 			},
 			"type": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The type of OAuth application.",
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Name of application.",
 			},
 			"status": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Status of application.",
 			},
 			"auto_submit_toolbar": {
 				Type:        schema.TypeBool,
@@ -141,6 +154,7 @@ func dataSourceAppOauth() *schema.Resource {
 				Description: "Indicates if the client is allowed to use wildcard matching of redirect_uris",
 			},
 		}),
+		Description: "Get a OIDC application from Okta.",
 	}
 }
 

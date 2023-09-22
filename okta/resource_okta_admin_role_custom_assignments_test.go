@@ -10,7 +10,7 @@ import (
 )
 
 func TestAccResourceOktaAdminRoleCustomAssignments(t *testing.T) {
-	mgr := newFixtureManager(adminRoleCustomAssignments, t.Name())
+	mgr := newFixtureManager("", adminRoleCustomAssignments, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", adminRoleCustomAssignments)

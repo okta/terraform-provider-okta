@@ -13,12 +13,14 @@ func dataSourceIdpMetadataSaml() *schema.Resource {
 		ReadContext: dataSourceIdpSamlMetadataRead,
 		Schema: map[string]*schema.Schema{
 			"idp_id": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The id of the IdP to retrieve metadata for.",
 			},
 			"metadata": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Raw IdP metadata.",
 			},
 			"http_post_binding": {
 				Type:        schema.TypeString,
@@ -31,20 +33,24 @@ func dataSourceIdpMetadataSaml() *schema.Resource {
 				Description: "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect location from the SAML metadata.",
 			},
 			"signing_certificate": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "SAML request signing certificate.",
 			},
 			"encryption_certificate": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "SAML request encryption certificate.",
 			},
 			"authn_request_signed": {
-				Type:     schema.TypeBool,
-				Computed: true,
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Whether authn requests are signed.",
 			},
 			"assertions_signed": {
-				Type:     schema.TypeBool,
-				Computed: true,
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Whether assertions are signed.",
 			},
 			"entity_id": {
 				Type:        schema.TypeString,
@@ -52,6 +58,7 @@ func dataSourceIdpMetadataSaml() *schema.Resource {
 				Computed:    true,
 			},
 		},
+		Description: "Get SAML IdP metadata from Okta.",
 	}
 }
 

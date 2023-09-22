@@ -22,6 +22,7 @@ func dataSourceEmailTemplate() *schema.Resource {
 			},
 			emailTemplateDataSourceSchema,
 		),
+		Description: "Get a single Email Template for a Brand belonging to an Okta organization.",
 	}
 }
 

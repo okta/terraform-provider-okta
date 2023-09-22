@@ -45,8 +45,9 @@ func dataSourceUsers() *schema.Resource {
 				},
 			},
 			"users": {
-				Type:     schema.TypeList,
-				Computed: true,
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "collection of users retrieved from Okta.",
 				Elem: &schema.Resource{
 					Schema: buildSchema(userProfileDataSchema,
 						map[string]*schema.Schema{
@@ -69,6 +70,7 @@ func dataSourceUsers() *schema.Resource {
 				Description: "Force delay of the users read by N seconds. Useful when eventual consistency of users information needs to be allowed for.",
 			},
 		},
+		Description: "Get a list of users from Okta.",
 	}
 }
 

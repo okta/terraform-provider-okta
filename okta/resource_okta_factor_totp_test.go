@@ -10,7 +10,7 @@ import (
 
 func TestAccResourceOktaFactorTOTP(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", factorTotp)
-	mgr := newFixtureManager(factorTotp, t.Name())
+	mgr := newFixtureManager("", factorTotp, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),

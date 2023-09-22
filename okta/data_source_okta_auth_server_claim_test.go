@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccDataSourceOktaAuthServerClaim(t *testing.T) {
-	mgr := newFixtureManager(authServerClaim, t.Name())
+	mgr := newFixtureManager("data-sources", authServerClaim, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	createUser := mgr.GetFixtures("datasource_create_auth_server.tf", t)
 	resourceName := fmt.Sprintf("data.%s.test", authServerClaim)

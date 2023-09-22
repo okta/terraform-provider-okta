@@ -13,7 +13,7 @@ import (
 )
 
 func TestAccResourceOktaAppSamlAppSettings_crud(t *testing.T) {
-	mgr := newFixtureManager(appSamlAppSettings, t.Name())
+	mgr := newFixtureManager("", appSamlAppSettings, t.Name())
 	preconfigured := mgr.GetFixtures("preconfigured.tf", t)
 	updated := mgr.GetFixtures("preconfigured_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSamlAppSettings)

@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccDataSourceOktaApp_read(t *testing.T) {
-	mgr := newFixtureManager(app, t.Name())
+	mgr := newFixtureManager("data-sources", app, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	appCreate := buildTestApp(mgr.Seed)
 
@@ -50,7 +50,7 @@ resource "okta_app_oauth" "test" {
 }
 
 func TestAccDataSourceOktaAppLabelTest_read(t *testing.T) {
-	mgr := newFixtureManager(app, t.Name())
+	mgr := newFixtureManager("data-sources", app, t.Name())
 	config := testLabelConfig(mgr.Seed)
 
 	oktaResourceTest(t, resource.TestCase{

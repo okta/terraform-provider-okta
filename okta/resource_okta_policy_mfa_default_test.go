@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccResourceOktaDefaultMFAPolicy(t *testing.T) {
-	mgr := newFixtureManager(policyMfaDefault, t.Name())
+	mgr := newFixtureManager("", policyMfaDefault, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyMfaDefault)
@@ -52,7 +52,7 @@ func TestAccResourceOktaDefaultMFAPolicy(t *testing.T) {
 // Panic runtime error in 3.43.0 on okta_policy_mfa_default resource #1481
 // https://github.com/okta/terraform-provider-okta/issues/1481
 func TestAccResourceOktaMfaPolicyDefault_Issue_1481(t *testing.T) {
-	mgr := newFixtureManager(policyMfaDefault, t.Name())
+	mgr := newFixtureManager("", policyMfaDefault, t.Name())
 	config := `
 resource "okta_policy_mfa_default" "test" {
   is_oie = true
