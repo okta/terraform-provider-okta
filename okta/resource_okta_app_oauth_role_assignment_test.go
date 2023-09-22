@@ -48,9 +48,27 @@ func TestAccResourceOktaAppOAuthRoleAssignment_custom(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.GetFixtures("custom.tf", t),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_app_oauth_role_assignment.test", "type", "CUSTOM"),
+					resource.TestCheckResourceAttr("okta_app_oauth_role_assignment.test", "status", "ACTIVE"),
+					resource.TestCheckResourceAttrSet("okta_app_oauth_role_assignment.test", "id"),
+					resource.TestCheckResourceAttrSet("okta_app_oauth_role_assignment.test", "client_id"),
+					resource.TestCheckResourceAttrSet("okta_app_oauth_role_assignment.test", "label"),
+					resource.TestCheckResourceAttrSet("okta_app_oauth_role_assignment.test", "role"),
+					resource.TestCheckResourceAttrSet("okta_app_oauth_role_assignment.test", "resource_set"),
+				),
 			},
 			{
 				Config: mgr.GetFixtures("custom_updated.tf", t),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_app_oauth_role_assignment.test", "type", "CUSTOM"),
+					resource.TestCheckResourceAttr("okta_app_oauth_role_assignment.test", "status", "ACTIVE"),
+					resource.TestCheckResourceAttrSet("okta_app_oauth_role_assignment.test", "id"),
+					resource.TestCheckResourceAttrSet("okta_app_oauth_role_assignment.test", "client_id"),
+					resource.TestCheckResourceAttrSet("okta_app_oauth_role_assignment.test", "label"),
+					resource.TestCheckResourceAttrSet("okta_app_oauth_role_assignment.test", "role"),
+					resource.TestCheckResourceAttrSet("okta_app_oauth_role_assignment.test", "resource_set"),
+				),
 			},
 		},
 	})
