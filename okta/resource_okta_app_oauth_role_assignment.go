@@ -3,6 +3,7 @@ package okta
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -14,6 +15,7 @@ import (
 )
 
 var _ resource.ResourceWithValidateConfig = &appOAuthRoleAssignmentResource{}
+var _ resource.ResourceWithImportState = &appOAuthRoleAssignmentResource{}
 
 func NewAppOAuthRoleAssignmentResource() resource.Resource {
 	return &appOAuthRoleAssignmentResource{}
@@ -199,4 +201,17 @@ func (r *appOAuthRoleAssignmentResource) Delete(ctx context.Context, req resourc
 		resp.Diagnostics.AddError("Unable to delete role assignment", err.Error())
 		return
 	}
+}
+
+func (r *appOAuthRoleAssignmentResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	idParts := strings.Split(req.ID, "/")
+
+	if len(idParts) != 2 || idParts[0] == "" || idParts[1] == "" {
+		resp.Diagnostics.AddError("Unexpected Import Identifier", "Expected import identifier with format <client_id>/<role_id>")
+		return
+	}
+	resp.Diagnostics.Append(resp.State.Set(ctx, &OAuthRoleAssignmentResourceModel{
+		ClientID: types.StringValue(idParts[0]),
+		ID:       types.StringValue(idParts[1]),
+	})...)
 }
