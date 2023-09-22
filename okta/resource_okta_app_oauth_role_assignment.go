@@ -116,7 +116,7 @@ func (r *appOAuthRoleAssignmentResource) ValidateConfig(ctx context.Context, req
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if data.Type.ValueString() == "CUSTOM" && (data.ResourceSet.ValueString() == "" || data.Role.ValueString() == "") {
+	if data.Type.ValueString() == "CUSTOM" && (data.ResourceSet.IsNull() || data.Role.IsNull()) {
 		resp.Diagnostics.AddAttributeError(
 			path.Root("type"),
 			"Missing attribute configuration",
