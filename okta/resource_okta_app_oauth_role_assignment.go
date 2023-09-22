@@ -55,8 +55,8 @@ func (r *appOAuthRoleAssignmentResource) Configure(_ context.Context, req resour
 
 func (r *appOAuthRoleAssignmentResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description:         "Manages assignment of OAuth Role to an Application",
-		MarkdownDescription: "Manages assignment of OAuth Role to an Application",
+		Description:         "Manages assignment of an admin role to an OAuth application",
+		MarkdownDescription: "Manages assignment of an admin role to an OAuth application",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:         "Role Assignment ID",
