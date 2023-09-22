@@ -1,9 +1,11 @@
 package okta
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccResourceOktaAppOAuthRoleAssignment_basic(t *testing.T) {
@@ -28,6 +30,13 @@ func TestAccResourceOktaAppOAuthRoleAssignment_basic(t *testing.T) {
 				ResourceName:      "okta_app_oauth_role_assignment.test",
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					r, ok := s.RootModule().Resources["okta_app_oauth_role_assignment.test"]
+					if !ok {
+						return "", fmt.Errorf("Unable to find resource: %s:", "okta_app_oauth_role_assignment.test")
+					}
+					return fmt.Sprintf("%s/%s", r.Primary.Attributes["client_id"], r.Primary.Attributes["id"]), nil
+				},
 			},
 			{
 				Config: mgr.GetFixtures("basic_updated.tf", t),
