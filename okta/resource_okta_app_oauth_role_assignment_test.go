@@ -73,3 +73,30 @@ func TestAccResourceOktaAppOAuthRoleAssignment_custom(t *testing.T) {
 		},
 	})
 }
+
+func TestAccResourceOktaAppOAuthRoleAssignment_import(t *testing.T) {
+	mgr := newFixtureManager("okta_app_oauth_role_assignment", t.Name())
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.GetFixtures("basic.tf", t),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_app_oauth_role_assignment.test", "type", "HELP_DESK_ADMIN"),
+					resource.TestCheckResourceAttr("okta_app_oauth_role_assignment.test", "status", "ACTIVE"),
+					resource.TestCheckResourceAttrSet("okta_app_oauth_role_assignment.test", "id"),
+					resource.TestCheckResourceAttrSet("okta_app_oauth_role_assignment.test", "client_id"),
+					resource.TestCheckResourceAttrSet("okta_app_oauth_role_assignment.test", "label"),
+				),
+			},
+			{
+				ResourceName:      "okta_app_oauth_role_assignment.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
