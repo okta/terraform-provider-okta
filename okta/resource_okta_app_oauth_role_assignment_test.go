@@ -1,16 +1,9 @@
 package okta
 
 import (
-	"context"
-	"errors"
-	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/okta/terraform-provider-okta/sdk"
-	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func TestAccResourceOktaAppOAuthRoleAssignment_basic(t *testing.T) {
@@ -22,12 +15,12 @@ func TestAccResourceOktaAppOAuthRoleAssignment_basic(t *testing.T) {
 		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.GetFixtures("basic.tf"),
+				Config: mgr.GetFixtures("basic.tf", t),
 			},
 			{
-				Config: mgr.GetFixtures("basic_updated.tf"),
-			}
-		}
+				Config: mgr.GetFixtures("basic_updated.tf", t),
+			},
+		},
 	})
 }
 
@@ -40,11 +33,11 @@ func TestAccResourceOktaAppOAuthRoleAssignment_custom(t *testing.T) {
 		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.GetFixtures("custom.tf"),
+				Config: mgr.GetFixtures("custom.tf", t),
 			},
 			{
-				Config: mgr.GetFixtures("custom_updated.tf"),
-			}
-		}
+				Config: mgr.GetFixtures("custom_updated.tf", t),
+			},
+		},
 	})
 }
