@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -36,21 +37,21 @@ func (r *appOAuthRoleAssignmentResource) Metadata(_ context.Context, req resourc
 	resp.TypeName = req.ProviderTypeName + "_app_oauth_role_assignment"
 }
 
-// func (r *appOAuthRoleAssignmentResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-// 	if req.ProviderData == nil {
-// 		return
-// 	}
+func (r *appOAuthRoleAssignmentResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-// 	config, ok := req.ProviderData.(*Config)
-// 	if !ok {
-// 		resp.Diagnostics.AddError(
-// 			"Unexpected Resource Configure Type",
-// 			fmt.Sprintf("Expected *Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-// 		)
-// 		return
-// 	}
-// 	r.Config = config
-// }
+	config, ok := req.ProviderData.(*Config)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Resource Configure Type",
+			fmt.Sprintf("Expected *Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+		return
+	}
+	r.Config = config
+}
 
 func (r *appOAuthRoleAssignmentResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
@@ -134,8 +135,8 @@ func (r *appOAuthRoleAssignmentResource) Create(ctx context.Context, req resourc
 
 	roleAssignmentRequest := &sdk.ClientRoleAssignment{
 		Type:        data.Type.ValueString(),
-		ResourceSet: data.ResourceSet.ValueString(),
-		Role:        data.Role.ValueString(),
+		ResourceSet: data.ResourceSet.ValueStringPointer(),
+		Role:        data.Role.ValueStringPointer(),
 	}
 
 	role, _, err := r.Config.oktaSDKsupplementClient.AssignClientRole(ctx, data.ClientID.ValueString(), roleAssignmentRequest)
@@ -144,12 +145,12 @@ func (r *appOAuthRoleAssignmentResource) Create(ctx context.Context, req resourc
 		return
 	}
 
-	data.ID = types.StringValue(role.Id)
-	data.Status = types.StringValue(role.Status)
-	data.Label = types.StringValue(role.Label)
-	data.Type = types.StringValue(role.Type)
-	data.ResourceSet = types.StringValue(role.ResourceSet)
-	data.Role = types.StringValue(role.Role)
+	data.ID = types.StringPointerValue(role.Id)
+	data.Status = types.StringPointerValue(role.Status)
+	data.Label = types.StringPointerValue(role.Label)
+	data.Type = types.StringPointerValue(role.Type)
+	data.ResourceSet = types.StringPointerValue(role.ResourceSet)
+	data.Role = types.StringPointerValue(role.Role)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -168,12 +169,12 @@ func (r *appOAuthRoleAssignmentResource) Read(ctx context.Context, req resource.
 		return
 	}
 
-	data.ID = types.StringValue(role.Id)
-	data.Status = types.StringValue(role.Status)
-	data.Label = types.StringValue(role.Label)
-	data.Type = types.StringValue(role.Type)
-	data.ResourceSet = types.StringValue(role.ResourceSet)
-	data.Role = types.StringValue(role.Role)
+	data.ID = types.StringPointerValue(role.Id)
+	data.Status = types.StringPointerValue(role.Status)
+	data.Label = types.StringPointerValue(role.Label)
+	data.Type = types.StringPointerValue(role.Type)
+	data.ResourceSet = types.StringPointerValue(role.ResourceSet)
+	data.Role = types.StringPointerValue(role.Role)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

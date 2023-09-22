@@ -11,16 +11,16 @@ import (
 type ClientRole struct {
 	Embedded       interface{} `json:"_embedded,omitempty"`
 	Links          interface{} `json:"_links,omitempty"`
-	AssignmentType string      `json:"assignmentType,omitempty"`
+	AssignmentType *string     `json:"assignmentType,omitempty"`
 	Created        *time.Time  `json:"created,omitempty"`
-	Description    string      `json:"description,omitempty"`
-	Id             string      `json:"id,omitempty"`
-	Label          string      `json:"label,omitempty"`
+	Description    *string     `json:"description,omitempty"`
+	Id             *string     `json:"id,omitempty"`
+	Label          *string     `json:"label,omitempty"`
 	LastUpdated    *time.Time  `json:"lastUpdated,omitempty"`
-	Status         string      `json:"status,omitempty"`
-	Type           string      `json:"type,omitempty"`
-	ResourceSet    string      `json:"resource-set,omitempty"`
-	Role           string      `json:"role,omitempty"`
+	Status         *string     `json:"status,omitempty"`
+	Type           *string     `json:"type,omitempty"`
+	ResourceSet    *string     `json:"resource-set,omitempty"`
+	Role           *string     `json:"role,omitempty"`
 }
 
 func (m *APISupplement) ListClientRoles(ctx context.Context, clientID string) ([]*ClientRole, *Response, error) {
@@ -37,9 +37,9 @@ func (m *APISupplement) ListClientRoles(ctx context.Context, clientID string) ([
 }
 
 type ClientRoleAssignment struct {
-	ResourceSet string `json:"resource-set,omitempty"`
-	Role        string `json:"role,omitempty"`
-	Type        string `json:"type"`
+	ResourceSet *string `json:"resource-set,omitempty"`
+	Role        *string `json:"role,omitempty"`
+	Type        string  `json:"type"`
 }
 
 func (m *APISupplement) AssignClientRole(ctx context.Context, clientID string, assignment *ClientRoleAssignment) (*ClientRole, *Response, error) {
