@@ -13,8 +13,8 @@ resource "okta_app_oauth" "test" {
   }
 }
 
-resource "okta_app_oauth" "test_ec" {
-  label                      = "test_ecAcc_replace_with_uuid"
+resource "okta_app_oauth" "test2" {
+  label                      = "test2Acc_replace_with_uuid"
   type                       = "service"
   response_types             = ["token"]
   grant_types                = ["client_credentials"]
