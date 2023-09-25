@@ -4,11 +4,11 @@
 
 ### BUG FIXES
 
-* Proper EC and RSA jwks support in resource `okta_app_oauth` [1720](https://github.com/okta/terraform-provider-okta/pull/1720). Thanks, [@tgoodsell](https://github.com/tgoodsell)!
+* Proper EC and RSA jwks support in resource `okta_app_oauth` [1720](https://github.com/okta/terraform-provider-okta/pull/1720). Thanks, [@tgoodsell-tempus](https://github.com/tgoodsell-tempus)!
 
 ### IMPROVEMENTS
 
-* Clean up example TF files formatting (`terraform fmt --recursive`) [1720](https://github.com/okta/terraform-provider-okta/pull/1720). Thanks, [@tgoodsell](https://github.com/tgoodsell)!
+* Clean up example TF files formatting (`terraform fmt --recursive`) [1720](https://github.com/okta/terraform-provider-okta/pull/1720). Thanks, [@tgoodsell-tempus](https://github.com/tgoodsell-tempus)!
 * Improve stalebot stale labels behavior [#1703](https://github.com/okta/terraform-provider-okta/pull/1703). Thanks, [@exitcode0](https://github.com/exitcode0)!
 * Guard fouled `org_name` + `base_url` or `http_proxy` values from erroring without contextual information [#1721](https://github.com/okta/terraform-provider-okta/pull/1721). Thanks, [@monde](https://github.com/monde)!
 
@@ -287,7 +287,7 @@ BUG FIXES:
 
 * Fixed `okta_app_user_schema_property` for non string enum types [#1316](https://github.com/okta/terraform-provider-okta/pull/1316). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
 * From PR [#1322](https://github.com/okta/terraform-provider-okta/pull/1322). Thanks, [@monde](https://github.com/monde)!
-  * Fixed (unreported) bug where resource `okta_org_configuration` would null out org settings 
+  * Fixed (unreported) bug where resource `okta_org_configuration` would null out org settings
   * Fixed an ACC test with resource `okta_user_schema_property` that would cause a incorrect login flow blocking out the admin
   * Fixed/improved sms template tests
   * Marked the schema enum boolean tests skip as there is an issue with the public API / monolith
