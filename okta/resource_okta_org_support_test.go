@@ -12,7 +12,7 @@ import (
 
 func TestAccResourceOktaOrgSupport(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", orgSupport)
-	mgr := newFixtureManager(orgSupport, t.Name())
+	mgr := newFixtureManager("resources", orgSupport, t.Name())
 	config := mgr.GetFixtures("standard.tf", t)
 	updatedConfig := mgr.GetFixtures("extended.tf", t)
 

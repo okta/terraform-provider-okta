@@ -28,8 +28,9 @@ func resourceAppUserBaseSchemaProperty() *schema.Resource {
 					Default:     "PROFILE_MASTER",
 				},
 				"app_id": {
-					Type:     schema.TypeString,
-					Required: true,
+					Type:        schema.TypeString,
+					Required:    true,
+					Description: "The Application's ID the user schema property should be assigned to.",
 				},
 			}),
 		SchemaVersion: 1,

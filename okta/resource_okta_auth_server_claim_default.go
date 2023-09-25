@@ -55,8 +55,9 @@ func resourceAuthServerClaimDefault() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"status": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The status of the application.",
 			},
 			"value": {
 				Type:     schema.TypeString,
@@ -64,19 +65,23 @@ func resourceAuthServerClaimDefault() *schema.Resource {
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return d.Get("name") != "sub"
 				},
+				Description: "The value of the claim.",
 			},
 			"value_type": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The type of value of the claim.",
 			},
 			"claim_type": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Specifies whether the claim is for an access token `RESOURCE` or ID token `IDENTITY`.",
 			},
 			"always_include_in_token": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Computed: true,
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+				Description: "Specifies whether to include claims in token.",
 			},
 		},
 	}

@@ -18,27 +18,33 @@ func dataSourceBehavior() *schema.Resource {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"name"},
+				Description:   "Behavior ID.",
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Behavior name.",
 			},
 			"status": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Behavior status.",
 			},
 			"type": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Behavior type.",
 			},
 			"settings": {
 				Type: schema.TypeMap,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Computed: true,
+				Computed:    true,
+				Description: "Map of behavior settings.",
 			},
 		},
+		Description: "Get a behavior by name or ID.",
 	}
 }
 

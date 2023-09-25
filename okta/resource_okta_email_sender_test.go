@@ -12,7 +12,7 @@ import (
 func TestAccResourceOktaEmailSender(t *testing.T) {
 	t.Skip("okta_email_sender is effectively deprecated as its API has been removed")
 
-	mgr := newFixtureManager(emailSender, t.Name())
+	mgr := newFixtureManager("resources", emailSender, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", emailSender)
 

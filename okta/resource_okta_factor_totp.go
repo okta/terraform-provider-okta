@@ -21,13 +21,13 @@ func resourceFactorTOTP() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Factor name",
+				Description: "The TOTP name.",
 			},
 			"otp_length": {
 				Type:        schema.TypeInt,
 				Default:     6,
 				Optional:    true,
-				Description: "Factor name",
+				Description: "Length of the password. Default is `6`.",
 				ForceNew:    true,
 			},
 			"hmac_algorithm": {

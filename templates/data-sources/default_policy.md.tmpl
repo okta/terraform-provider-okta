@@ -1,0 +1,31 @@
+---
+page_title: "{{.Type}}: {{.Name}}"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Type}}: {{.Name}}
+
+Use this data source to retrieve a default policy from Okta. This 
+same thing can be achieved using the `okta_policy` with default 
+names, this is simply a shortcut.
+
+{{ if .HasExample -}}
+
+## Example Usage
+
+{{ tffile .ExampleFile }}
+
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+{{ if .HasImport -}}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{ printf "{{codefile \"shell\" %q}}" .ImportFile }}
+
+{{- end }}

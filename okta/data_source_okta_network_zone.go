@@ -17,11 +17,13 @@ func dataSourceNetworkZone() *schema.Resource {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"name"},
+				Description:   "ID of the network zone to retrieve, conflicts with `name`.",
 			},
 			"name": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"id"},
+				Description:   "Name of the network zone to retrieve, conflicts with `id`.",
 			},
 			"dynamic_locations": {
 				Type:        schema.TypeSet,
@@ -68,6 +70,7 @@ func dataSourceNetworkZone() *schema.Resource {
 				Description: "Network Status - can either be ACTIVE or INACTIVE only",
 			},
 		},
+		Description: "Gets Okta Network Zone.",
 	}
 }
 

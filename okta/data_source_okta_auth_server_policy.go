@@ -22,13 +22,15 @@ func dataSourceAuthServerPolicy() *schema.Resource {
 				Description: "Name of the policy",
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Description of authorization server policy.",
 			},
 			"assigned_clients": {
-				Type:     schema.TypeSet,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "List of clients this policy is assigned to. `[ALL_CLIENTS]` is a special value when policy is assigned to all clients.",
 			},
 			"priority": {
 				Type:        schema.TypeInt,
@@ -36,6 +38,7 @@ func dataSourceAuthServerPolicy() *schema.Resource {
 				Description: "Priority of the auth server policy",
 			},
 		},
+		Description: "Get an authorization server policy from Okta.",
 	}
 }
 

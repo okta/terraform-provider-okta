@@ -21,6 +21,7 @@ func dataSourceBrand() *schema.Resource {
 			},
 			brandDataSourceSchema,
 		),
+		Description: "Get a single Brand from Okta.",
 	}
 }
 

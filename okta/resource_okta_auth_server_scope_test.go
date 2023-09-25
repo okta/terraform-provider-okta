@@ -12,7 +12,7 @@ import (
 
 func TestAccResourceOktaAuthServerScope_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", authServerScope)
-	mgr := newFixtureManager(authServerScope, t.Name())
+	mgr := newFixtureManager("resources", authServerScope, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	importConfig := mgr.GetFixtures("import.tf", t)

@@ -19,19 +19,22 @@ func resourceEventHook() *schema.Resource {
 		},
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "The event hook display name.",
 			},
 			"status": statusSchema,
 			"events": {
-				Type:     schema.TypeSet,
-				Required: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type:        schema.TypeSet,
+				Required:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "The events that will be delivered to this hook. [See here for a list of supported events](https://developer.okta.com/docs/reference/api/event-types/?q=event-hook-eligible).",
 			},
 			"headers": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem:     headerSchema,
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Elem:        headerSchema,
+				Description: "Map of headers to send along in event hook request.",
 			},
 			"auth": {
 				Type:     schema.TypeMap,
@@ -45,6 +48,7 @@ func resourceEventHook() *schema.Resource {
 					}
 					return false
 				},
+				Description: "Authentication required for event hook request.",
 			},
 			"channel": {
 				Type:     schema.TypeMap,
@@ -58,6 +62,7 @@ func resourceEventHook() *schema.Resource {
 					}
 					return false
 				},
+				Description: "Details of the endpoint the event hook will hit.",
 			},
 		},
 	}

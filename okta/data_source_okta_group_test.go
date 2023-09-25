@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccDataSourceOktaGroup_read(t *testing.T) {
-	mgr := newFixtureManager(group, t.Name())
+	mgr := newFixtureManager("data-sources", group, t.Name())
 	groupCreate := mgr.GetFixtures("okta_group.tf", t)
 	config := mgr.GetFixtures("datasource.tf", t)
 	configInvalid := mgr.GetFixtures("datasource_not_found.tf", t)

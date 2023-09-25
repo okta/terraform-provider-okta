@@ -10,7 +10,7 @@ import (
 
 func TestAccResourceOktaSmsTemplate_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", templateSms)
-	mgr := newFixtureManager(templateSms, t.Name())
+	mgr := newFixtureManager("resources", templateSms, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 

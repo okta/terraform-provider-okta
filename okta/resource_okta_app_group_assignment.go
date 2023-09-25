@@ -57,6 +57,7 @@ func resourceAppGroupAssignment() *schema.Resource {
 					p, n := d.GetChange("priority")
 					return p == n && new == "0"
 				},
+				Description: "Priority of group assignment.",
 			},
 			"profile": {
 				Type:             schema.TypeString,
@@ -66,6 +67,7 @@ func resourceAppGroupAssignment() *schema.Resource {
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return new == ""
 				},
+				Description: "JSON document containing [application profile](https://developer.okta.com/docs/reference/api/apps/#profile-object)",
 			},
 			"retain_assignment": {
 				Type:        schema.TypeBool,

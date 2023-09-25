@@ -11,7 +11,7 @@ import (
 // Classic and OIE orgs.
 // Org needs "Core", "Single Sign-On", "Universal Directory" SKUs in Workforce Identity
 func TestAccResourceOktaIdpOidc_crud(t *testing.T) {
-	mgr := newFixtureManager(idpOidc, t.Name())
+	mgr := newFixtureManager("resources", idpOidc, t.Name())
 	config := mgr.GetFixtures("generic_oidc.tf", t)
 	updatedConfig := mgr.GetFixtures("generic_oidc_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", idpOidc)
@@ -92,7 +92,7 @@ resource "okta_idp_oidc" "test" {
   request_signature_scope = "REQUEST"
 }`
 
-	mgr := newFixtureManager(idpOidc, t.Name())
+	mgr := newFixtureManager("resources", idpOidc, t.Name())
 	resourceName := fmt.Sprintf("%s.test", idpOidc)
 
 	oktaResourceTest(t, resource.TestCase{

@@ -15,7 +15,7 @@ const (
 )
 
 func TestAccResourceOktaUserBaseSchema_crud(t *testing.T) {
-	mgr := newFixtureManager(userBaseSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", userBaseSchemaProperty, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	nonDefault := mgr.GetFixtures("non_default_user_type.tf", t)
@@ -74,7 +74,7 @@ func TestAccResourceOktaUserBaseSchema_crud(t *testing.T) {
 }
 
 func TestAccResourceOktaUserBaseSchemaLogin_crud(t *testing.T) {
-	mgr := newFixtureManager(userBaseSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", userBaseSchemaProperty, t.Name())
 	config := mgr.GetFixtures("basic_login.tf", t)
 	updated := mgr.GetFixtures("login_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.%s", userBaseSchemaProperty, loginTestProp)

@@ -84,6 +84,7 @@ func dataSourceUser() *schema.Resource {
 				Description: "Do not populate user roles information (prevents additional API call)",
 			},
 		}),
+		Description: "Get a single users from Okta.",
 	}
 }
 

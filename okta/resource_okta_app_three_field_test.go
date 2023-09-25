@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccResourceOktaAppThreeFieldApplication_crud(t *testing.T) {
-	mgr := newFixtureManager(appThreeField, t.Name())
+	mgr := newFixtureManager("resources", appThreeField, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	updatedCreds := mgr.GetFixtures("updated_credentials.tf", t)

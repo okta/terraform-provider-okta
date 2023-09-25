@@ -20,50 +20,61 @@ func dataSourceAuthServerScopes() *schema.Resource {
 				Description: "Auth server ID",
 			},
 			"scopes": {
-				Type:     schema.TypeList,
-				Computed: true,
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "Collection of authorization server scopes retrieved from Okta with the following properties.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "ID of the Scope",
 						},
 						"name": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Name of the Scope",
 						},
 						"description": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Description of the Scope",
 						},
 						"display_name": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Name of the end user displayed in a consent dialog box",
 						},
 						"consent": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Indicates whether a consent dialog is needed for the Scope",
 						},
 						"metadata_publish": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Whether the Scope should be included in the metadata",
 						},
 						"default": {
-							Type:     schema.TypeBool,
-							Computed: true,
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "Whether the Scope is a default Scope",
 						},
 						"system": {
-							Type:     schema.TypeBool,
-							Computed: true,
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "Whether Okta created the Scope",
 						},
 						"optional": {
-							Type:     schema.TypeBool,
-							Computed: true,
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "Whether the Scope is optional",
 						},
 					},
 				},
 			},
 		},
+		Description: "Get a list of authorization server scopes from Okta.",
 	}
 }
 

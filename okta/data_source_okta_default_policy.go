@@ -20,6 +20,7 @@ func dataSourceDefaultPolicy() *schema.Resource {
 				Required:    true,
 			},
 		},
+		Description: "Get a Default policy from Okta.",
 	}
 }
 

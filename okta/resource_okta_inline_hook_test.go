@@ -10,7 +10,7 @@ import (
 
 func TestAccResourceOktaInlineHook_crud(t *testing.T) {
 	resourceName := "okta_inline_hook.test"
-	mgr := newFixtureManager(inlineHook, t.Name())
+	mgr := newFixtureManager("resources", inlineHook, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	activatedConfig := mgr.GetFixtures("basic_activated.tf", t)

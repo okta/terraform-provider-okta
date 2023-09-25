@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccResourceOktaDomain(t *testing.T) {
-	mgr := newFixtureManager(domain, t.Name())
+	mgr := newFixtureManager("resources", domain, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", domain)

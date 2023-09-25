@@ -10,7 +10,7 @@ import (
 )
 
 func TestAccResourceOktaTheme_import_update(t *testing.T) {
-	mgr := newFixtureManager(theme, t.Name())
+	mgr := newFixtureManager("resources", theme, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	importConfig := mgr.GetFixtures("import.tf", t)

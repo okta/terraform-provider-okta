@@ -9,7 +9,7 @@ import (
 
 func TestAccResourceOktaRoleSubscription_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", roleSubscription)
-	mgr := newFixtureManager(roleSubscription, t.Name())
+	mgr := newFixtureManager("resources", roleSubscription, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 
 	oktaResourceTest(t, resource.TestCase{

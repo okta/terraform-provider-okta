@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccResourceOktaAppSharedCredentials_crud(t *testing.T) {
-	mgr := newFixtureManager(appSharedCredentials, t.Name())
+	mgr := newFixtureManager("resources", appSharedCredentials, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSharedCredentials)
@@ -77,7 +77,7 @@ func TestAccResourceOktaAppSharedCredentials_crud(t *testing.T) {
 }
 
 func TestAccResourceOktaAppSharedCredentials_timeouts(t *testing.T) {
-	mgr := newFixtureManager(appSharedCredentials, t.Name())
+	mgr := newFixtureManager("resources", appSharedCredentials, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appSharedCredentials)
 	config := `
 resource "okta_app_shared_credentials" "test" {

@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccResourceOktaGroupMemberships_crud(t *testing.T) {
-	mgr := newFixtureManager(groupMemberships, t.Name())
+	mgr := newFixtureManager("resources", groupMemberships, t.Name())
 	start := mgr.GetFixtures("basic.tf", t)
 	update := mgr.GetFixtures("basic_update.tf", t)
 	remove := mgr.GetFixtures("basic_removal.tf", t)
@@ -258,7 +258,7 @@ resource "okta_group" "test" {
 	}
 
 	config := fmt.Sprintf(strFmt, args...)
-	mgr := newFixtureManager(groupMemberships, t.Name())
+	mgr := newFixtureManager("resources", groupMemberships, t.Name())
 	config = mgr.ConfigReplace(config)
 
 	oktaResourceTest(t, resource.TestCase{

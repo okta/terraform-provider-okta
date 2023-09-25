@@ -7,7 +7,7 @@ import (
 )
 
 func TestAccResourceOktaUserGroupMemberships_crud(t *testing.T) {
-	mgr := newFixtureManager(userGroupMemberships, t.Name())
+	mgr := newFixtureManager("resources", userGroupMemberships, t.Name())
 	start := mgr.GetFixtures("basic.tf", t)
 	update := mgr.GetFixtures("basic_update.tf", t)
 	remove := mgr.GetFixtures("basic_removal.tf", t)

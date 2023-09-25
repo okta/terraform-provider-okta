@@ -25,30 +25,36 @@ func dataSourceBehaviors() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Behavior ID.",
 						},
 						"name": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Behavior name.",
 						},
 						"status": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Behavior status.",
 						},
 						"type": {
-							Type:     schema.TypeString,
-							Computed: true,
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Behavior type.",
 						},
 						"settings": {
-							Type:     schema.TypeMap,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-							Computed: true,
+							Type:        schema.TypeMap,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Computed:    true,
+							Description: "Map of behavior settings.",
 						},
 					},
 				},
 			},
 		},
+		Description: "Get a behaviors by search criteria.",
 	}
 }
 

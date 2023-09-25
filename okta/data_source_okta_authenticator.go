@@ -18,16 +18,19 @@ func dataSourceAuthenticator() *schema.Resource {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"key", "name"},
+				Description:   "ID of the authenticator.",
 			},
 			"key": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"id", "name"},
+				Description:   "A human-readable string that identifies the authenticator.",
 			},
 			"name": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"id", "key"},
+				Description:   "Name of the authenticator.",
 			},
 			"settings": {
 				Type:        schema.TypeString,
@@ -35,8 +38,9 @@ func dataSourceAuthenticator() *schema.Resource {
 				Description: "Authenticator settings in JSON format",
 			},
 			"status": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Status of the Authenticator.",
 			},
 			"type": {
 				Type:        schema.TypeString,
@@ -59,19 +63,22 @@ func dataSourceAuthenticator() *schema.Resource {
 				Description: "Server host name or IP address",
 			},
 			"provider_instance_id": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "(Specific to `security_key`) App Instance ID.",
 			},
 			"provider_type": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Provider type.",
 			},
 			"provider_user_name_template": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Format expected by the provider",
+				Description: "Username template expected by the provider.",
 			},
 		},
+		Description: "Get an authenticator by key, name of ID.",
 	}
 }
 

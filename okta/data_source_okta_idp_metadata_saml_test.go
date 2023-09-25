@@ -7,7 +7,7 @@ import (
 )
 
 func TestAccDataSourceOktaIdpMetadataSaml_read(t *testing.T) {
-	mgr := newFixtureManager(idpMetadataSaml, t.Name())
+	mgr := newFixtureManager("data-sources", idpMetadataSaml, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	resourceName := "data.okta_idp_metadata_saml.test"
 

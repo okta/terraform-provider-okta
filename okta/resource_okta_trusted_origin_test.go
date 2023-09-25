@@ -10,7 +10,7 @@ import (
 )
 
 func TestAccResourceOktaTrustedOrigin_crud(t *testing.T) {
-	mgr := newFixtureManager(trustedOrigin, t.Name())
+	mgr := newFixtureManager("resources", trustedOrigin, t.Name())
 	config := mgr.GetFixtures("okta_trusted_origin.tf", t)
 	updatedConfig := mgr.GetFixtures("okta_trusted_origin_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.testAcc_%d", trustedOrigin, mgr.Seed)

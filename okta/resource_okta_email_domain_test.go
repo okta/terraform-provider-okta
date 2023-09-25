@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccResourceOktaEmailDomain(t *testing.T) {
-	mgr := newFixtureManager(emailDomain, t.Name())
+	mgr := newFixtureManager("resources", emailDomain, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", emailDomain)
 	domainName := fmt.Sprintf("testAcc-%d.example.com", mgr.Seed)

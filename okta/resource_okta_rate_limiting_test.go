@@ -9,7 +9,7 @@ import (
 
 func TestAccResourceOktaRateLimiting_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.example", rateLimiting)
-	mgr := newFixtureManager(rateLimiting, t.Name())
+	mgr := newFixtureManager("resources", rateLimiting, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 
 	oktaResourceTest(t, resource.TestCase{

@@ -10,7 +10,7 @@ import (
 )
 
 func TestAccResourceOktaAuthServer_crud(t *testing.T) {
-	mgr := newFixtureManager(authServer, t.Name())
+	mgr := newFixtureManager("resources", authServer, t.Name())
 	resourceName := fmt.Sprintf("%s.sun_also_rises", authServer)
 	name := buildResourceName(mgr.Seed)
 	config := mgr.GetFixtures("basic.tf", t)
@@ -47,7 +47,7 @@ func TestAccResourceOktaAuthServer_crud(t *testing.T) {
 }
 
 func TestAccResourceOktaAuthServer_fullStack(t *testing.T) {
-	mgr := newFixtureManager(authServer, t.Name())
+	mgr := newFixtureManager("resources", authServer, t.Name())
 	name := buildResourceName(mgr.Seed)
 	resourceName := fmt.Sprintf("%s.test", authServer)
 	claimName := fmt.Sprintf("%s.test", authServerClaim)
@@ -99,7 +99,7 @@ func TestAccResourceOktaAuthServer_fullStack(t *testing.T) {
 }
 
 func TestAccResourceOktaAuthServer_gh299(t *testing.T) {
-	mgr := newFixtureManager(authServer, t.Name())
+	mgr := newFixtureManager("resources", authServer, t.Name())
 	name := buildResourceName(mgr.Seed)
 	resourceName := fmt.Sprintf("%s.test", authServer)
 	resource2Name := fmt.Sprintf("%s.test1", authServer)

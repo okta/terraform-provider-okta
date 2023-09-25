@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccResourceOktaPolicyRuleProfileEnrollment(t *testing.T) {
-	mgr := newFixtureManager(policyRuleProfileEnrollment, t.Name())
+	mgr := newFixtureManager("resources", policyRuleProfileEnrollment, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleProfileEnrollment)
@@ -87,7 +87,7 @@ resource "okta_group" "test" {
 // https://developer.okta.com/docs/reference/api/policy/#profile-enrollment-action-object
 // https://github.com/okta/terraform-provider-okta/issues/1213
 func TestAccResourceOktaPolicyRuleProfileEnrollment_Issue1213(t *testing.T) {
-	mgr := newFixtureManager(policyRuleProfileEnrollment, t.Name())
+	mgr := newFixtureManager("resources", policyRuleProfileEnrollment, t.Name())
 	resourceName := fmt.Sprintf("%s.test", policyRuleProfileEnrollment)
 	config := `
 resource "okta_policy_profile_enrollment" "test" {

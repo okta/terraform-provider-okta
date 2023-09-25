@@ -12,7 +12,7 @@ import (
 )
 
 func TestAccResourceOktaGroupSchema_crud(t *testing.T) {
-	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", groupSchemaProperty, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("basic_updated.tf", t)
 	// unique := mgr.GetFixtures("unique.tf", t)
@@ -96,7 +96,7 @@ func TestAccResourceOktaGroupSchema_crud(t *testing.T) {
 
 func TestAccResourceOktaGroupSchema_arrayString(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
-	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", groupSchemaProperty, t.Name())
 	config := mgr.GetFixtures("array_string.tf", t)
 	updatedConfig := mgr.GetFixtures("array_string_updated.tf", t)
 	arrayEnum := mgr.GetFixtures("array_enum.tf", t)
@@ -169,7 +169,7 @@ func TestAccResourceOktaGroupSchema_arrayString(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupSchema_array_enum_number(t *testing.T) {
-	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -260,7 +260,7 @@ func TestAccResourceOktaGroupSchema_array_enum_number(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupSchema_enum_number(t *testing.T) {
-	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -347,7 +347,7 @@ func TestAccResourceOktaGroupSchema_enum_number(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupSchema_array_enum_integer(t *testing.T) {
-	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -438,7 +438,7 @@ func TestAccResourceOktaGroupSchema_array_enum_integer(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupSchema_enum_integer(t *testing.T) {
-	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -528,7 +528,7 @@ func TestAccResourceOktaGroupSchema_array_enum_boolean(t *testing.T) {
 	t.Skip("TODO deal with apparent monolith bug")
 	// TODO deal with apparent monolith bug:
 	// "the API returned an error: Array specified in enum field must match const values specified in oneOf field."
-	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -608,7 +608,7 @@ func TestAccResourceOktaGroupSchema_enum_boolean(t *testing.T) {
 	t.Skip("TODO deal with apparent monolith bug")
 	// TODO deal with apparent monolith bug:
 	// "the API returned an error: Array specified in enum field must match const values specified in oneOf field."
-	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -681,7 +681,7 @@ func TestAccResourceOktaGroupSchema_enum_boolean(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupSchema_array_enum_string(t *testing.T) {
-	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -772,7 +772,7 @@ func TestAccResourceOktaGroupSchema_array_enum_string(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupSchema_enum_string(t *testing.T) {
-	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", groupSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", groupSchemaProperty)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -865,7 +865,7 @@ func TestAccResourceOktaGroupSchema_parallel_api_calls(t *testing.T) {
 	if skipVCRTest(t) {
 		return
 	}
-	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", groupSchemaProperty, t.Name())
 	config := `
 resource "okta_group_schema_property" "one" {
 	index       = "testAcc_replace_with_uuid_one"

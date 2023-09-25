@@ -13,16 +13,19 @@ func dataSourceAppMetadataSaml() *schema.Resource {
 		ReadContext: dataSourceAppMetadataSamlRead,
 		Schema: map[string]*schema.Schema{
 			"app_id": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "The application ID.",
 			},
 			"key_id": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Certificate Key ID.",
 			},
 			"metadata": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Raw metadata of application.",
 			},
 			"http_post_binding": {
 				Type:        schema.TypeString,
@@ -35,12 +38,14 @@ func dataSourceAppMetadataSaml() *schema.Resource {
 				Description: "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect location from the SAML metadata.",
 			},
 			"certificate": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Public certificate from application metadata.",
 			},
 			"want_authn_requests_signed": {
-				Type:     schema.TypeBool,
-				Computed: true,
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Whether authn requests are signed.",
 			},
 			"entity_id": {
 				Type:        schema.TypeString,
@@ -48,6 +53,7 @@ func dataSourceAppMetadataSaml() *schema.Resource {
 				Computed:    true,
 			},
 		},
+		Description: "Get a SAML application's metadata from Okta.",
 	}
 }
 

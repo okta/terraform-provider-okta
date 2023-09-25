@@ -9,7 +9,7 @@ import (
 
 func TestAccResourceOktaAuthServerClaim_create(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", authServerClaim)
-	mgr := newFixtureManager(authServerClaim, t.Name())
+	mgr := newFixtureManager("resources", authServerClaim, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 
@@ -46,7 +46,7 @@ func TestAccResourceOktaAuthServerClaim_create(t *testing.T) {
 func TestAccResourceOktaAuthServerClaim_groupType(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", authServerClaim)
 	swResourceName := fmt.Sprintf("%s.test_sw", authServerClaim)
-	mgr := newFixtureManager(authServerClaim, t.Name())
+	mgr := newFixtureManager("resources", authServerClaim, t.Name())
 	config := mgr.GetFixtures("basic_group.tf", t)
 
 	oktaResourceTest(t, resource.TestCase{

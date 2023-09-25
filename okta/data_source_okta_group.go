@@ -21,11 +21,13 @@ func dataSourceGroup() *schema.Resource {
 				Computed:      true,
 				Optional:      true,
 				ConflictsWith: []string{"name", "type"},
+				Description:   "ID of group.",
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Computed: true,
-				Optional: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Optional:    true,
+				Description: "Name of group.",
 			},
 			"type": {
 				Type:        schema.TypeString,
@@ -33,8 +35,9 @@ func dataSourceGroup() *schema.Resource {
 				Description: "Type of the group. When specified in the terraform resource, will act as a filter when searching for the group",
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Description of group.",
 			},
 			"include_users": {
 				Type:        schema.TypeBool,
@@ -54,6 +57,7 @@ func dataSourceGroup() *schema.Resource {
 				Description: "Force delay of the group read by N seconds. Useful when eventual consistency of group information needs to be allowed for; for instance, when group rules are known to have been applied.",
 			},
 		},
+		Description: "Get a group from Okta.",
 	}
 }
 

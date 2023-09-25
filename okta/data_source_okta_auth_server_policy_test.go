@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccDataSourceOktaAuthServerPolicy_read(t *testing.T) {
-	mgr := newFixtureManager(authServerPolicy, t.Name())
+	mgr := newFixtureManager("data-sources", authServerPolicy, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	createServerWithPolicy := buildTestAuthServerWithPolicy(mgr.Seed)
 	oktaResourceTest(t, resource.TestCase{

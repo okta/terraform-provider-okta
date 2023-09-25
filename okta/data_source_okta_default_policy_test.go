@@ -10,7 +10,7 @@ import (
 )
 
 func TestAccDataSourceOktaDefaultPolicy_readPasswordPolicy(t *testing.T) {
-	mgr := newFixtureManager(defaultPolicy, t.Name())
+	mgr := newFixtureManager("data-sources", defaultPolicy, t.Name())
 	config := testAccDataSourceDefaultPolicy(mgr.Seed, sdk.PasswordPolicyType)
 
 	oktaResourceTest(t, resource.TestCase{
@@ -29,7 +29,7 @@ func TestAccDataSourceOktaDefaultPolicy_readPasswordPolicy(t *testing.T) {
 }
 
 func TestAccDataSourceOktaDefaultPolicy_readIdpPolicy(t *testing.T) {
-	mgr := newFixtureManager(defaultPolicy, t.Name())
+	mgr := newFixtureManager("data-sources", defaultPolicy, t.Name())
 	config := testAccDataSourceDefaultPolicy(mgr.Seed, sdk.IdpDiscoveryType)
 
 	oktaResourceTest(t, resource.TestCase{

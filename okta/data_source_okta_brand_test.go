@@ -7,7 +7,7 @@ import (
 )
 
 func TestAccDataSourceOktaBrand_read(t *testing.T) {
-	mgr := newFixtureManager(brand, t.Name())
+	mgr := newFixtureManager("data-sources", brand, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
 	oktaResourceTest(t, resource.TestCase{

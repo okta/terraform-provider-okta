@@ -7,7 +7,7 @@ import (
 )
 
 func TestAccDataSourceOktaIdpOidc_read(t *testing.T) {
-	mgr := newFixtureManager(idpOidc, t.Name())
+	mgr := newFixtureManager("data-sources", idpOidc, t.Name())
 	idpOidcConfig := mgr.GetFixtures("generic_oidc.tf", t)
 	config := mgr.GetFixtures("datasource.tf", t)
 	oktaResourceTest(t, resource.TestCase{

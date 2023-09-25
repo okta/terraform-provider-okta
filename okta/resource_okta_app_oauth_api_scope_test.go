@@ -12,7 +12,7 @@ import (
 )
 
 func TestAccResourceOktaAppOAuthApplication_apiScope(t *testing.T) {
-	mgr := newFixtureManager(appOAuthAPIScope, t.Name())
+	mgr := newFixtureManager("resources", appOAuthAPIScope, t.Name())
 	plainConfig := mgr.GetFixtures("basic.tf", t)
 	plainUpdatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test_app_scopes", appOAuthAPIScope)

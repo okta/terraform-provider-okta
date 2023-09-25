@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccResourceOktaPolicySignOn_defaultError(t *testing.T) {
-	mgr := newFixtureManager(policySignOn, t.Name())
+	mgr := newFixtureManager("resources", policySignOn, t.Name())
 	config := testOktaPolicySignOnDefaultErrors(mgr.Seed)
 
 	oktaResourceTest(t, resource.TestCase{
@@ -27,7 +27,7 @@ func TestAccResourceOktaPolicySignOn_defaultError(t *testing.T) {
 }
 
 func TestAccResourceOktaPolicySignOn_crud(t *testing.T) {
-	mgr := newFixtureManager(policySignOn, t.Name())
+	mgr := newFixtureManager("resources", policySignOn, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_inactive.tf", t)
 	renamedConfig := mgr.GetFixtures("basic_renamed.tf", t)

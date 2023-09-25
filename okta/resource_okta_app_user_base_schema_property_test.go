@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccResourceOktaAppUserBaseSchema_change(t *testing.T) {
-	mgr := newFixtureManager(appUserBaseSchemaProperty, t.Name())
+	mgr := newFixtureManager("resources", appUserBaseSchemaProperty, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appUserBaseSchemaProperty)

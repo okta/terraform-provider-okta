@@ -27,8 +27,9 @@ func resourceAuthServerScope() *schema.Resource {
 				Description: "Auth server ID",
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Description of the Auth Server Scope.",
 			},
 			"display_name": {
 				Type:        schema.TypeString,

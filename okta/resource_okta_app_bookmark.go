@@ -27,9 +27,10 @@ func resourceAppBookmark() *schema.Resource {
 				Required: true,
 			},
 			"request_integration": {
-				Type:     schema.TypeBool,
-				Default:  false,
-				Optional: true,
+				Type:        schema.TypeBool,
+				Default:     false,
+				Optional:    true,
+				Description: "Would you like Okta to add an integration for this app?",
 			},
 			"authentication_policy": {
 				Type:        schema.TypeString,

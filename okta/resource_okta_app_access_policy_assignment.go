@@ -47,18 +47,18 @@ func (r *appAccessPolicyAssignmentResource) Schema(_ context.Context, _ resource
 		Description: "Manages assignment of Access Policy to an Application",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Policy Assignment ID",
+				Description: "The ID of the resource. This ID is simply the application ID.",
 				Computed:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 			"app_id": schema.StringAttribute{
-				Description: "Application ID",
+				Description: "The application ID; this value is immutable and can not be updated.",
 				Required:    true,
 			},
 			"policy_id": schema.StringAttribute{
-				Description: "Policy ID",
+				Description: "The access policy ID.",
 				Required:    true,
 			},
 		},

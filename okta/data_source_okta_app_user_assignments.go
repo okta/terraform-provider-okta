@@ -26,6 +26,7 @@ func dataSourceAppUserAssignments() *schema.Resource {
 				Description: "List of user IDs assigned to the app",
 			},
 		},
+		Description: "Get a set of users assigned to an Okta application.",
 	}
 }
 

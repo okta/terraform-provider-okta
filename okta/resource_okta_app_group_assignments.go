@@ -25,9 +25,10 @@ func resourceAppGroupAssignments() *schema.Resource {
 		},
 		Schema: map[string]*schema.Schema{
 			"app_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "The ID of the application to assign a group to.",
 			},
 			"group": {
 				Type:        schema.TypeList,
@@ -48,6 +49,7 @@ func resourceAppGroupAssignments() *schema.Resource {
 								p, n := d.GetChange("priority")
 								return p == n && new == "0"
 							},
+							Description: "Priority of group assignment",
 						},
 						"profile": {
 							Type:             schema.TypeString,
@@ -60,6 +62,7 @@ func resourceAppGroupAssignments() *schema.Resource {
 							DefaultFunc: func() (interface{}, error) {
 								return "{}", nil
 							},
+							Description: "JSON document containing [application profile](https://developer.okta.com/docs/reference/api/apps/#profile-object)",
 						},
 					},
 				},

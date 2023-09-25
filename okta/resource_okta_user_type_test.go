@@ -12,7 +12,7 @@ import (
 
 func TestAccResourceOktaUserType_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", userType)
-	mgr := newFixtureManager(userType, t.Name())
+	mgr := newFixtureManager("resources", userType, t.Name())
 	config := mgr.GetFixtures("okta_user_type.tf", t)
 	updatedConfig := mgr.GetFixtures("okta_user_type_updated.tf", t)
 
