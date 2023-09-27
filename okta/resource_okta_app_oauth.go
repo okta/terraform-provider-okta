@@ -272,7 +272,7 @@ func resourceAppOAuth() *schema.Resource {
 			"refresh_token_leeway": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Default:     "0",
+				Default:     0,
 				Description: "*Early Access Property* Grace period for token rotation, required with grant types refresh_token",
 			},
 			"auto_submit_toolbar": {
@@ -653,14 +653,6 @@ func setOAuthClientSettings(d *schema.ResourceData, oauthClient *sdk.OpenIdConne
 	return nil
 }
 
-// TODU
-func prettyprint(i interface{}) {
-	b, err := json.MarshalIndent(i, "", " ")
-	if err == nil {
-		fmt.Println(string(b))
-	}
-}
-
 func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
 	if err := validateGrantTypes(d); err != nil {
@@ -670,8 +662,6 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
 	app := buildAppOAuth(d)
-	// TODU
-	prettyprint(app)
 	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
 		return diag.Errorf("failed to update OAuth application: %v", err)
@@ -845,6 +835,8 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 	leeway, ok := d.GetOk("refresh_token_leeway")
 	if ok {
 		refresh.LeewayPtr = int64Ptr(leeway.(int))
+	} else {
+		refresh.LeewayPtr = int64Ptr(0)
 	}
 
 	if hasRefresh {
