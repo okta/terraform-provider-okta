@@ -266,14 +266,14 @@ func resourceAppOAuth() *schema.Resource {
 			"refresh_token_rotation": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Computed:    true,
-				Description: "*Early Access Property* Refresh token rotation behavior",
+				Default:     "STATIC",
+				Description: "*Early Access Property* Refresh token rotation behavior, required with grant types refresh_token",
 			},
 			"refresh_token_leeway": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Computed:    true,
-				Description: "*Early Access Property* Grace period for token rotation",
+				Default:     0,
+				Description: "*Early Access Property* Grace period for token rotation, required with grant types refresh_token",
 			},
 			"auto_submit_toolbar": {
 				Type:        schema.TypeBool,
