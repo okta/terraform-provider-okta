@@ -249,10 +249,11 @@ func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewAppAccessPolicyAssignmentResource,
+		NewAppOAuthRoleAssignmentResource,
 		NewBrandResource,
 		NewPolicyDeviceAssuranceAndroidResource,
-		NewPolicyDeviceAssuranceIOSResource,
 		NewPolicyDeviceAssuranceChromeOSResource,
+		NewPolicyDeviceAssuranceIOSResource,
 		NewPolicyDeviceAssuranceMacOSResource,
 		NewPolicyDeviceAssuranceWindowsResource,
 	}
