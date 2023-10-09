@@ -1,5 +1,19 @@
 # Changelog
 
+## 4.4.3 (October 09, 2023)
+
+### BUG FIXES
+
+* Correct incorrect scope escaping in OAuth 2.0 access request for resources `okta_brand`, `okta_app_access_policy_assignment`, `okta_policy_device_assurance_*_os` [#1744](https://github.com/okta/terraform-provider-okta/pull/1744). Thanks, [@monde](https://github.com/monde)!
+* Fixed HTTP proxy not correctly established for v3 okta-sdk-client when enabled [#1724](https://github.com/okta/terraform-provider-okta/pull/1724). Thanks, [@monde](https://github.com/monde)!
+
+### IMPROVEMENTS
+
+* In resource `okta_app_oauth`, sets `refresh_token_rotation`'s default argument to `STATIC`, and sets `refresh_token_leeway`'s default argument to `0` [#1738](https://github.com/okta/terraform-provider-okta/pull/1738). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Correct attribution for `tgoodsell-tempus` [1736](https://github.com/okta/terraform-provider-okta/pull/1736). Thanks, [@tgoodsell-tempus](https://github.com/tgoodsell-tempus)!
+* Client OAuth2.0 authentication with PKCS#1 format or PKCS#8 format private key [#1725](https://github.com/okta/terraform-provider-okta/pull/1725). Thanks, [@monde](https://github.com/monde)!
+* Improve documentation production with `hashicorp/terraform-plugin-docs` [#1705](https://github.com/okta/terraform-provider-okta/pull/1705). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
 ## 4.4.2 (September 13, 2023)
 
 ### BUG FIXES
