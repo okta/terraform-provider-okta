@@ -293,6 +293,7 @@ func getAccessTokenForPrivateKey(httpClient *http.Client, orgURL, clientAssertio
 
 	tokenRequest.Header.Add("Accept", "application/json")
 	tokenRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	tokenRequest.Header.Add("User-Agent", NewUserAgent(&config{}).String())
 
 	bOff := &oktaBackoff{
 		ctx:             context.TODO(),
