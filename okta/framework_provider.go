@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -223,7 +224,9 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 	p.logLevel = int(data.LogLevel.ValueInt64())
 	p.requestTimeout = int(data.RequestTimeout.ValueInt64())
 	for _, val := range data.Scopes.Elements() {
-		p.scopes = append(p.scopes, val.String())
+		var v types.String
+		tfsdk.ValueAs(ctx, val, &v)
+		p.scopes = append(p.scopes, v.ValueString())
 	}
 
 	if !data.HTTPProxy.IsNull() {
