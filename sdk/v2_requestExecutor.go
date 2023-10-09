@@ -242,7 +242,6 @@ func CreateKeySigner(privateKey, privateKeyID string) (jose.Signer, error) {
 	}
 	if privPem.Type == "PRIVATE KEY" {
 		parsedKey, err := x509.ParsePKCS8PrivateKey(privPem.Bytes)
-
 		if err != nil {
 			return nil, err
 		}
