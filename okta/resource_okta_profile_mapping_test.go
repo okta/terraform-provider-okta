@@ -43,6 +43,7 @@ func TestAccResourceOktaProfileMapping_crud(t *testing.T) {
 	})
 }
 
+// TODO deprecated endpoint
 func doesOktaProfileExist(profileID string) (bool, error) {
 	client := sdkSupplementClientForTest()
 	_, response, err := client.GetEmailTemplate(context.Background(), profileID)
