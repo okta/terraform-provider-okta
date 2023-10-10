@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccResourceOktaAppOAuthRoleAssignment_basic(t *testing.T) {
-	mgr := newFixtureManager("okta_app_oauth_role_assignment", t.Name())
+	mgr := newFixtureManager("resources", appOAuthRoleAssignment, t.Name())
 
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:                 testAccPreCheck(t),
@@ -53,7 +53,7 @@ func TestAccResourceOktaAppOAuthRoleAssignment_basic(t *testing.T) {
 }
 
 func TestAccResourceOktaAppOAuthRoleAssignment_custom(t *testing.T) {
-	mgr := newFixtureManager("okta_app_oauth_role_assignment", t.Name())
+	mgr := newFixtureManager("resources", appOAuthRoleAssignment, t.Name())
 
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:                 testAccPreCheck(t),
