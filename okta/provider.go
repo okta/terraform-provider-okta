@@ -31,6 +31,7 @@ const (
 	appOAuthAPIScope              = "okta_app_oauth_api_scope"
 	appOAuthPostLogoutRedirectURI = "okta_app_oauth_post_logout_redirect_uri"
 	appOAuthRedirectURI           = "okta_app_oauth_redirect_uri"
+	appOAuthRoleAssignment        = "okta_app_oauth_role_assignment"
 	appSaml                       = "okta_app_saml"
 	appSamlAppSettings            = "okta_app_saml_app_settings"
 	appSecurePasswordStore        = "okta_app_secure_password_store"
