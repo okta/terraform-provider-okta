@@ -181,6 +181,11 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				Optional:    true,
 				Description: "An array that contains nested Authenticator Constraint objects that are organized by the Authenticator class",
 			},
+			"risk_score": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The risk score specifies a particular level of risk to match on.",
+			},
 		},
 	}
 }
@@ -274,6 +279,9 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 			m["user_types_excluded"] = convertStringSliceToSetNullable(rule.Conditions.UserType.Exclude)
 			m["user_types_included"] = convertStringSliceToSetNullable(rule.Conditions.UserType.Include)
 		}
+		if rule.Conditions.RiskScore != nil {
+			_ = d.Set("risk_score", rule.Conditions.RiskScore.Level)
+		}
 		_ = setNonPrimitives(d, m)
 	}
 	return nil
@@ -357,6 +365,9 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		},
 		ElCondition: &sdk.AccessPolicyRuleCustomCondition{
 			Condition: d.Get("custom_expression").(string),
+		},
+		RiskScore: &sdk.RiskScorePolicyRuleCondition{
+			Level: d.Get("risk_score").(string),
 		},
 	}
 	isRegistered, ok := d.GetOk("device_is_registered")
