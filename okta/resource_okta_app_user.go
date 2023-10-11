@@ -74,10 +74,8 @@ func resourceAppUser() *schema.Resource {
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
 				Optional:         true,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
-				Description: "The JSON profile of the App User.",
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
+				Description:      "The JSON profile of the App User.",
 			},
 			"retain_assignment": {
 				Type:        schema.TypeBool,

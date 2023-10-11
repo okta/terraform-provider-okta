@@ -176,6 +176,7 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 					Type:             schema.TypeString,
 					ValidateDiagFunc: stringIsJSON,
 					StateFunc:        normalizeDataJSON,
+					DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 				},
 				Optional:    true,
 				Description: "An array that contains nested Authenticator Constraint objects that are organized by the Authenticator class",

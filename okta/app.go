@@ -67,9 +67,7 @@ var (
 			Description:      "Displays specific appLinks for the app",
 			ValidateDiagFunc: stringIsJSON,
 			StateFunc:        normalizeDataJSON,
-			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-				return new == ""
-			},
+			DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 		},
 		"accessibility_login_redirect_url": {
 			Type:        schema.TypeString,

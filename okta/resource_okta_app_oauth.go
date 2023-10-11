@@ -299,6 +299,7 @@ func resourceAppOAuth() *schema.Resource {
 				StateFunc:        normalizeDataJSON,
 				Optional:         true,
 				Description:      "Custom JSON that represents an OAuth application's profile",
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 			},
 			"jwks": {
 				Type:     schema.TypeList,
@@ -356,9 +357,7 @@ func resourceAppOAuth() *schema.Resource {
 				Description:      "Application settings in JSON format",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 			},
 			"authentication_policy": {
 				Type:        schema.TypeString,
