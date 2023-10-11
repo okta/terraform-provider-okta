@@ -41,9 +41,7 @@ func resourceAuthenticator() *schema.Resource {
 				Description:      "Authenticator settings in JSON format",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 			},
 			"provider_json": {
 				Type:             schema.TypeString,
@@ -51,9 +49,7 @@ func resourceAuthenticator() *schema.Resource {
 				Description:      "Provider in JSON format",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 				ConflictsWith: []string{
 					// general
 					"provider_auth_port",

@@ -100,9 +100,7 @@ func resourceUser() *schema.Resource {
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
 				Description:      "JSON formatted custom attributes for a user. It must be JSON due to various types Okta allows.",
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 			},
 			"custom_profile_attributes_to_ignore": {
 				Type:        schema.TypeSet,

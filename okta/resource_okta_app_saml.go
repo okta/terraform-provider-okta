@@ -287,9 +287,7 @@ func resourceAppSaml() *schema.Resource {
 				Description:      "Application settings in JSON format",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 			},
 			"inline_hook_id": {
 				Type:        schema.TypeString,

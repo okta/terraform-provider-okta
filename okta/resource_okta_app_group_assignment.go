@@ -64,10 +64,8 @@ func resourceAppGroupAssignment() *schema.Resource {
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
 				Optional:         true,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
-				Description: "JSON document containing [application profile](https://developer.okta.com/docs/reference/api/apps/#profile-object)",
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
+				Description:      "JSON document containing [application profile](https://developer.okta.com/docs/reference/api/apps/#profile-object)",
 			},
 			"retain_assignment": {
 				Type:        schema.TypeBool,

@@ -56,9 +56,7 @@ func resourceAppGroupAssignments() *schema.Resource {
 							ValidateDiagFunc: stringIsJSON,
 							StateFunc:        normalizeDataJSON,
 							Required:         true,
-							DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-								return new == ""
-							},
+							DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 							DefaultFunc: func() (interface{}, error) {
 								return "{}", nil
 							},

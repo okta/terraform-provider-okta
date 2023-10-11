@@ -215,3 +215,118 @@ xqneNjZf70DMNAFNXG1VltldQ3hOnRML
 		t.Fatalf("certs do not match: A: %s, B: %s", cert.Issuer.CommonName, cert2.Issuer.CommonName)
 	}
 }
+
+func TestNoChangeInObjectUnmarshaledFromJSON(t *testing.T) {
+	testCases := []struct {
+		name     string
+		oldJSON  string
+		newJSON  string
+		expected bool
+	}{
+		{
+			name: "there is no change - same same",
+			oldJSON: `{
+				"one": 1,
+				"some": [
+					1,
+					"a"
+				]
+			}`,
+			newJSON: `{
+				"one": 1,
+				"some": [
+					1,
+					"a"
+				]
+			}`,
+			expected: true,
+		},
+		{
+			name: "there is no change - same objects, different string formatting",
+			oldJSON: `{
+				"one": 1,
+				"some": [
+					1,
+					"a"
+				]
+			}`,
+			newJSON:  `{ "one": 1, "some": [ 1, "a" ] }`,
+			expected: true,
+		},
+		{
+			name: "there is no change - attributes in different order ",
+			oldJSON: `{
+				"one": 1,
+				"some": [
+					1,
+					"a"
+				]
+			}`,
+			newJSON: `{
+				"some": [
+					1,
+					"a"
+				],
+				"one": 1
+			}`,
+			expected: true,
+		},
+		{
+			name: "there is change - different values",
+			oldJSON: `{
+				"one": 1,
+				"some": [
+					1,
+					"a"
+				]
+			}`,
+			newJSON: `{
+				"one": 2,
+				"some": [
+					"a",
+					1
+				]
+			}`,
+			expected: false,
+		},
+		{
+			name: "there is change - slice out of order",
+			oldJSON: `{
+				"one": 1,
+				"some": [
+					1,
+					"a"
+				]
+			}`,
+			newJSON: `{
+				"one": 1,
+				"some": [
+					"a",
+					1
+				]
+			}`,
+			expected: false,
+		},
+		{
+			name: "there is no change - new resource value will be blank",
+			oldJSON: `{
+				"one": 1,
+				"some": [
+					1,
+					"a"
+				]
+			}`,
+			newJSON:  "",
+			expected: true,
+		},
+	}
+	t.Parallel()
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := noChangeInObjectFromUnmarshaledJSON("", tc.oldJSON, tc.newJSON, nil)
+			if tc.expected != result {
+				t.Errorf("expected %+v, got %+v", tc.expected, result)
+			}
+		})
+	}
+}

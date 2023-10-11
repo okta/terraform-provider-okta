@@ -14,6 +14,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 	"unicode"
@@ -533,4 +534,24 @@ func certNormalize(certContents string) (*x509.Certificate, error) {
 		return nil, err
 	}
 	return certDecoded, nil
+}
+
+// noChangeInObjectFromUnmarshaledJSON Intended for use by a DiffSuppressFunc,
+// returns true if old and new JSONs are equivalent object representations ...
+// It is true, there is no change!  Edge chase if newJSON is blank, will also
+// return true which cover the new resource case.
+func noChangeInObjectFromUnmarshaledJSON(k, oldJSON, newJSON string, d *schema.ResourceData) bool {
+	if newJSON == "" {
+		return true
+	}
+	var oldObj map[string]any
+	var newObj map[string]any
+	if err := json.Unmarshal([]byte(oldJSON), &oldObj); err != nil {
+		return false
+	}
+	if err := json.Unmarshal([]byte(newJSON), &newObj); err != nil {
+		return false
+	}
+
+	return reflect.DeepEqual(oldObj, newObj)
 }

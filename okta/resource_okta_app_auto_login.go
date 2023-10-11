@@ -63,9 +63,7 @@ func resourceAppAutoLogin() *schema.Resource {
 				Description:      "Application settings in JSON format",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
