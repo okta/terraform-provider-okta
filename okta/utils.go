@@ -147,8 +147,7 @@ func convertInterfaceToStringArr(purportedList interface{}) []string {
 func convertInterfaceArrToStringArr(rawArr []interface{}) []string {
 	arr := make([]string, len(rawArr))
 	for i, thing := range rawArr {
-		a, ok := thing.(string)
-		if ok {
+		if a, ok := thing.(string); ok {
 			arr[i] = a
 		}
 	}
@@ -244,7 +243,6 @@ func getMapString(m map[string]interface{}, key string) string {
 		if res, ok := v.(string); ok {
 			return res
 		}
-		return ""
 	}
 	return ""
 }
