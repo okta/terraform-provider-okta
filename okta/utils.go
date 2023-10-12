@@ -147,7 +147,9 @@ func convertInterfaceToStringArr(purportedList interface{}) []string {
 func convertInterfaceArrToStringArr(rawArr []interface{}) []string {
 	arr := make([]string, len(rawArr))
 	for i, thing := range rawArr {
-		arr[i] = thing.(string)
+		if a, ok := thing.(string); ok {
+			arr[i] = a
+		}
 	}
 	return arr
 }
@@ -238,7 +240,9 @@ func ensureNotDefault(d *schema.ResourceData, t string) error {
 
 func getMapString(m map[string]interface{}, key string) string {
 	if v, ok := m[key]; ok {
-		return v.(string)
+		if res, ok := v.(string); ok {
+			return res
+		}
 	}
 	return ""
 }
