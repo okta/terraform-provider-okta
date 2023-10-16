@@ -180,9 +180,14 @@ func createCustomNestedResourceImporter(fields []string, errMessage string) *sch
 					d.SetId(parts[i])
 					continue
 				}
-				var value string
+				var value interface{}
 				if i < len(parts) {
-					value = parts[i]
+					// deal with the import parameter being a boolean "true" / "false"
+					if bValue, err := strconv.ParseBool(parts[i]); err == nil {
+						value = bValue
+					} else {
+						value = parts[i]
+					}
 				}
 				_ = d.Set(field, value)
 			}
