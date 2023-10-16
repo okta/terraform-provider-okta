@@ -3,13 +3,26 @@ package sdk
 import (
 	"context"
 	"net/http"
+
+	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
 type OktaOrganization struct {
-	Id       string      `json:"id"`
-	Pipeline string      `json:"pipeline"`
-	Links    interface{} `json:"_links,omitempty"`
-	Settings interface{} `json:"settings,omitempty"`
+	Id       string                   `json:"id"`
+	Pipeline string                   `json:"pipeline"`
+	Links    OktaOrganizationLinks    `json:"_links,omitempty"`
+	Settings OktaOrganizationSettings `json:"settings,omitempty"`
+}
+
+type OktaOrganizationLinks struct {
+	Organization okta.HrefObject `json:"organization,omitempty"`
+	Alternate    okta.HrefObject `json:"alternate,omitempty"`
+}
+
+type OktaOrganizationSettings struct {
+	AnalyticsCollectionEnabled bool `json:"analyticsCollectionEnabled,omitempty"`
+	BugReportingEnabled        bool `json:"bugReportingEnabled,omitempty"`
+	OmEnabled                  bool `json:"omEnabled,omitempty"`
 }
 
 // GetWellKnownOktaOrganization calls GET /.well-known/okta-organization that

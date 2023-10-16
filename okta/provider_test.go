@@ -21,6 +21,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
 	"github.com/hashicorp/terraform-plugin-mux/tf5muxserver"
+	"github.com/hashicorp/terraform-plugin-mux/tf6to5server"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -57,9 +58,14 @@ func init() {
 	}
 
 	// v3 provider - terraform-plugin-framework
+	// TODO: Uses v5 protocol for now, however lets swap to v6 when a drop of support for TF versions prior to 1.0 can be made
 	frameworkProvider := NewFrameworkProvider("dev")
+	framework, err := tf6to5server.DowngradeServer(context.Background(), providerserver.NewProtocol6(frameworkProvider))
+
 	testAccProtoV5ProviderFactories = map[string]func() (tfprotov5.ProviderServer, error){
-		"okta": providerserver.NewProtocol5WithError(frameworkProvider),
+		"okta": func() (tfprotov5.ProviderServer, error) {
+			return framework, err
+		},
 	}
 	providers := []func() tfprotov5.ProviderServer{
 		// v2 plugin
