@@ -18,10 +18,8 @@ func resourceGroupMemberships() *schema.Resource {
 		ReadContext:   resourceGroupMembershipsRead,
 		UpdateContext: resourceGroupMembershipsUpdate,
 		DeleteContext: resourceGroupMembershipsDelete,
-		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
-		},
-		Description: "Resource to manage a set of group memberships for a specific group.",
+		Importer:      createNestedResourceImporter([]string{"id", "track_all_users"}),
+		Description:   "Resource to manage a set of group memberships for a specific group.",
 		Schema: map[string]*schema.Schema{
 			"group_id": {
 				Type:        schema.TypeString,
@@ -48,6 +46,13 @@ func resourceGroupMemberships() *schema.Resource {
 func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	groupId := d.Get("group_id").(string)
 	users := convertInterfaceToStringSetNullable(d.Get("users"))
+	// if read is being called via import "id" will not be blank and "group_id"
+	// will be blank, so set group_id accordingly
+	if d.Id() != "" && groupId == "" {
+		groupId = d.Id()
+		d.Set("group_id", groupId)
+	}
+
 	client := getOktaClientFromMetadata(m)
 
 	if len(users) == 0 {
@@ -93,7 +98,7 @@ func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, m
 	if trackAllUsers {
 		changed, newUserIDs, err := checkIfUsersHaveChanged(ctx, client, groupId, &oldUsers)
 		if err != nil {
-			return diag.Errorf("An error occured checking user ids for group %q, error: %+v", groupId, err)
+			return diag.Errorf("An error occurred checking user ids for group %q, error: %+v", groupId, err)
 		}
 		if changed {
 			// set the new user ids if users have changed
@@ -157,7 +162,8 @@ func resourceGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData,
 // slice of returned strings will be empty.
 func checkIfUsersHaveChanged(ctx context.Context, client *sdk.Client, groupId string, users *[]string) (bool, *[]string, error) {
 	noop := []string{}
-	if users == nil || len(*users) == 0 {
+	// users slice can be sized 0 if this is a read from import
+	if users == nil {
 		return false, &noop, nil
 	}
 
