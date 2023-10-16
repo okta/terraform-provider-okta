@@ -122,7 +122,7 @@ func (d *OrgMetadataDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	org, _, err := d.config.oktaSDKsupplementClient.GetWellKnownOktaOrganization(ctx)
+	org, _, err := d.config.oktaSDKClientV3.OrgSettingApi.GetWellknownOrgMetadata(ctx).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error retrieving org metadata",
@@ -131,13 +131,23 @@ func (d *OrgMetadataDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	data.ID = types.StringValue(org.Id)
-	data.Pipeline = types.StringValue(org.Pipeline)
-
-	settings := &OrgMetadataSettingsModel{
-		AnalyticsCollectionEnabled: types.BoolValue(org.Settings.AnalyticsCollectionEnabled),
-		BugReportingEnabled:        types.BoolValue(org.Settings.BugReportingEnabled),
-		OmEnabled:                  types.BoolValue(org.Settings.OmEnabled),
+	data.ID = types.StringValue(org.GetId())
+	data.Pipeline = types.StringValue(string(org.GetPipeline()))
+	settings := &OrgMetadataSettingsModel{}
+	orgSettings, ok := org.GetSettingsOk()
+	if ok {
+		ace, ok := orgSettings.GetAnalyticsCollectionEnabledOk()
+		if ok {
+			settings.AnalyticsCollectionEnabled = types.BoolValue(*ace)
+		}
+		bre, ok := orgSettings.GetBugReportingEnabledOk()
+		if ok {
+			settings.BugReportingEnabled = types.BoolValue(*bre)
+		}
+		ome, ok := orgSettings.GetOmEnabledOk()
+		if ok {
+			settings.OmEnabled = types.BoolValue(*ome)
+		}
 	}
 	settingsValue, diags := types.ObjectValueFrom(ctx, data.Settings.AttributeTypes(ctx), settings)
 	if diags.HasError() {
@@ -146,9 +156,23 @@ func (d *OrgMetadataDataSource) Read(ctx context.Context, req datasource.ReadReq
 	}
 	data.Settings = settingsValue
 
-	domains := &OrgMetadataDomainsModel{
-		Organization: types.StringValue(org.Links.Organization.Href),
-		Alternate:    types.StringValue(org.Links.Alternate.Href),
+	domains := &OrgMetadataDomainsModel{}
+	orgLinks, ok := org.GetLinksOk()
+	if ok {
+		al, ok := orgLinks.GetAlternateOk()
+		if ok {
+			href, ok := al.GetHrefOk()
+			if ok {
+				domains.Alternate = types.StringValue(*href)
+			}
+		}
+		or, ok := orgLinks.GetOrganizationOk()
+		if ok {
+			href, ok := or.GetHrefOk()
+			if ok {
+				domains.Alternate = types.StringValue(*href)
+			}
+		}
 	}
 	domainsValue, diags := types.ObjectValueFrom(ctx, data.Domains.AttributeTypes(ctx), domains)
 	if diags.HasError() {

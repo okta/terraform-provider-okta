@@ -207,13 +207,13 @@ func NewConfig(d *schema.ResourceData) *Config {
 func (c *Config) IsClassicOrg(ctx context.Context) bool {
 	if !c.queriedWellKnown {
 		// Discover if the Okta Org is Classic or OIE
-		org, _, err := c.oktaSDKsupplementClient.GetWellKnownOktaOrganization(ctx)
+		org, _, err := c.oktaSDKClientV3.OrgSettingApi.GetWellknownOrgMetadata(ctx).Execute()
 		if err != nil {
 			c.logger.Error("error querying GET /.well-known/okta-organization", "error", err)
 			return c.classicOrg
 		}
 
-		c.classicOrg = (org.Pipeline == "v1") // v1 == Classic, idx == OIE
+		c.classicOrg = (org.GetPipeline() == "v1") // v1 == Classic, idx == OIE
 		c.queriedWellKnown = true
 	}
 
