@@ -215,10 +215,13 @@ func (r *brandResource) Read(ctx context.Context, req resource.ReadRequest, resp
 
 	if state.BrandID.ValueString() == "default" {
 		brands, _, err := r.oktaSDKClientV3.CustomizationApi.ListBrands(ctx).Execute()
-		resp.Diagnostics.AddError(
-			"failed to get list brand",
-			err.Error(),
-		)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"failed to get list brand",
+				err.Error(),
+			)
+			return
+		}
 
 		for _, brand := range brands {
 			if *brand.IsDefault {
