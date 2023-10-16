@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov5/tf5server"
 	"github.com/hashicorp/terraform-plugin-mux/tf5muxserver"
+	"github.com/hashicorp/terraform-plugin-mux/tf6to5server"
 	"github.com/okta/terraform-provider-okta/okta"
 )
 
@@ -20,11 +21,20 @@ import (
 
 func main() {
 	var debug bool
+
+	// TODO: Uses v5 protocol for now, however lets swap to v6 when a drop of support for TF versions prior to 1.0 can be made
+	framework, err := tf6to5server.DowngradeServer(context.Background(), providerserver.NewProtocol6(okta.NewFrameworkProvider(okta.OktaTerraformProviderVersion)))
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+
 	providers := []func() tfprotov5.ProviderServer{
 		// v2 plugin
 		okta.Provider().GRPCProvider,
 		// v3 plugin
-		providerserver.NewProtocol5(okta.NewFrameworkProvider(okta.OktaTerraformProviderVersion)),
+		func() tfprotov5.ProviderServer {
+			return framework
+		},
 	}
 
 	// use the muxer
