@@ -14,7 +14,6 @@ func TestAccDataSourceOktaOrgMetadata_read(t *testing.T) {
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
 		Steps: []resource.TestStep{
-			// Read testing
 			{
 				Config: mgr.GetFixtures("datasource.tf", t),
 				Check: resource.ComposeAggregateTestCheckFunc(
