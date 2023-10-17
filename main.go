@@ -36,7 +36,9 @@ func main() {
 			return framework
 		},
 	}
-
+	// At the moment, there is no way to use tf6muxserver to mux the new and old provider because the okta.Provider().GRPCProvider only return protocolv5
+	// Most likely we will have to convert all of the old provider to new provider to use v6
+	// There are constraint of using v5, such as not being able to use NestedAttributes, we have to use NestedBlock instead (see okta_org_metada)
 	// use the muxer
 	muxServer, err := tf5muxserver.NewMuxServer(context.Background(), providers...)
 	if err != nil {

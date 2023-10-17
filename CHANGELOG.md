@@ -1,5 +1,23 @@
 # Changelog
 
+## 4.5.0 (October 17, 2023)
+
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* New resource: `okta_app_oauth_role_assignment` allow the assignment of admin roles on OAuth Clients in Okta - [1756](https://github.com/okta/terraform-provider-okta/pull/1756). Thanks, [@tgoodsell-tempus](https://github.com/tgoodsell-tempus)
+* New datasource: `okta_org_metadata` [1768](https://github.com/okta/terraform-provider-okta/pull/1768). Thanks, [@tgoodsell-tempus](https://github.com/tgoodsell-tempus)
+* Add `risk_score` argument to resource `okta_app_signon_policy_rule` [#1761](https://github.com/okta/terraform-provider-okta/pull/1761). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+### BUG FIXES
+
+* Fix JSON change detection of JSON resource arguments [#1758](https://github.com/okta/terraform-provider-okta/pull/1758). Thanks, [@monde](https://github.com/monde)!
+* Fix panic issue when convertInterfaceArrToStringArr [#1760](https://github.com/okta/terraform-provider-okta/pull/1760). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix panic issue in the missing error check [#1765](https://github.com/okta/terraform-provider-okta/pull/1765). Thanks, [@monde](https://github.com/monde)!
+
+### IMPROVEMENTS
+* Add track all users argument to okta_group_memberships import [#1766](https://github.com/okta/terraform-provider-okta/pull/1766). Thanks, [@arvindkrishnakumar-okta](https://github.com/arvindkrishnakumar-okta)!
+
+
 ## 4.4.3 (October 09, 2023)
 
 ### BUG FIXES
