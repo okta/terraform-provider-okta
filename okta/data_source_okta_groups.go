@@ -69,14 +69,13 @@ func dataSourceGroups() *schema.Resource {
 }
 
 func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	qp := &query.Params{Limit: defaultPaginationLimit}
+	qp := &query.Params{Limit: 10000}
 	groupType, ok := d.GetOk("type")
 	if ok {
 		qp.Filter = fmt.Sprintf("type eq \"%s\"", groupType.(string))
 	}
 	q, ok := d.GetOk("q")
 	if ok {
-		qp.Limit = 10000
 		qp.Q = q.(string)
 	}
 	search, ok := d.GetOk("search")
