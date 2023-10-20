@@ -140,6 +140,14 @@ func resourceAuthenticator() *schema.Resource {
 				Computed:    true,
 				Description: "Provider type. Supported value for Duo: `DUO`. Supported value for Custom App: `PUSH`",
 			},
+			"aaguids": {
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Optional:    true,
+				Description: "List of aaguids, use only with Webauthn type",
+			},
 		},
 	}
 }
