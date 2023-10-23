@@ -66,10 +66,9 @@ resource "okta_group" "test" {
 					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),
 					resource.TestCheckResourceAttrSet(resourceName, "inline_hook_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "target_group_id"),
-					resource.TestCheckResourceAttr(resourceName, "profile_attributes.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "profile_attributes.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "profile_attributes.0.name", "email"),
-					resource.TestCheckResourceAttr(resourceName, "profile_attributes.1.name", "name"),
-					resource.TestCheckResourceAttr(resourceName, "profile_attributes.2.name", "t-shirt"),
+					resource.TestCheckResourceAttr(resourceName, "profile_attributes.1.name", "mobilePhone"),
 				),
 			},
 			{
