@@ -82,6 +82,8 @@ The following arguments are supported:
 
 - `access` - (Optional) Allow or deny access based on the rule conditions. Valid values are: `"ALLOW"`, `"DENY"`. Default is `"ALLOW"`.
 
+- `progressive_profiling_action` - (Optional) Enabled or disabled progressive profiling action rule conditions. Valid values are: `"ENABLED"`, `"DISABLED"`. Default is `"DISABLED"`.
+
 - `profile_attributes` - (Required) A list of attributes to prompt the user during registration or progressive profiling. Where defined on the User schema, these attributes are persisted in the User profile. Non-schema attributes may also be added, which aren't persisted to the User's profile, but are included in requests to the registration inline hook. A maximum of 10 Profile properties is supported.
     - `label` - (Required) A display-friendly label for this property
     - `name` - (Required) The name of a User Profile property
