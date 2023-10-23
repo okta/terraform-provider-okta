@@ -332,6 +332,8 @@ The following arguments are supported:
 
 - `constraints` - (Optional) - An array that contains nested Authenticator Constraint objects that are organized by the Authenticator class. Each element should be in JSON format.
 
+- `risk_scores` - (Optional) - The risk score specifies a particular level of risk to match on.
+
 ## Attributes Reference
 
 - `id` - ID of the sign-on policy rule.

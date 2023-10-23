@@ -34,13 +34,8 @@ resource "okta_policy_rule_profile_enrollment" "test" {
     required = true
   }
   profile_attributes {
-    name     = "name"
-    label    = "NameBig"
+    name     = "mobilePhone"
+    label    = "MobilePhone"
     required = true
-  }
-  profile_attributes {
-    name     = "t-shirt"
-    label    = "T-Shirt Size"
-    required = false
   }
 }
