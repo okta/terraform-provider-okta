@@ -336,6 +336,22 @@ func resourceAppOAuth() *schema.Resource {
 							Optional:    true,
 							Description: "Y coordinate of the elliptic curve point",
 						},
+						"use": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Intended use of the public key",
+						},
+						"x5c": {
+							Type:        schema.TypeSet,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Optional:    true,
+							Description: "X.509 Certificate Chain",
+						},
+						"x5t_s256": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "X.509 Certificate SHA-1 Thumbprint",
+						},
 					},
 				},
 			},
@@ -620,6 +636,17 @@ func setOAuthClientSettings(d *schema.ResourceData, oauthClient *sdk.OpenIdConne
 					"y":   jwk.Y,
 				}
 			}
+			if jwk.Use == "sig" && jwk.E != "" && jwk.N != "" && len(jwk.X5c) > 0 && jwk.X5tS256 != "" {
+				arr[i] = map[string]interface{}{
+					"kty":      jwk.Kty,
+					"kid":      jwk.Kid,
+					"use":      jwk.Use,
+					"e":        jwk.E,
+					"n":        jwk.N,
+					"x5c":      jwk.X5c,
+					"x5t_s256": jwk.X5tS256,
+				}
+			}
 		}
 		err := setNonPrimitives(d, map[string]interface{}{"jwks": arr})
 		if err != nil {
@@ -813,6 +840,15 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 			if x, ok := d.Get(fmt.Sprintf("jwks.%d.x", i)).(string); ok {
 				key.X = x
 				key.Y = d.Get(fmt.Sprintf("jwks.%d.y", i)).(string)
+			}
+			if use, ok := d.Get(fmt.Sprintf("jwks.%d.use", i)).(string); ok {
+				key.Use = use
+			}
+			if x5t_s256, ok := d.Get(fmt.Sprintf("jwks.%d.x5t#S256", i)).(string); ok {
+				key.X5tS256 = x5t_s256
+			}
+			if x5c, ok := d.Get(fmt.Sprintf("jwks.%d.x5c", i)).(string); ok {
+				key.X5c = convertInterfaceToStringSetNullable(x5c)
 			}
 			keys[i] = key
 		}

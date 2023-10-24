@@ -50,6 +50,44 @@ resource "okta_app_oauth" "example" {
 }
 ```
 
+### Create an OAuth 2.0 service app for Org2Org
+```hcl
+resource "okta_app_saml" "example" {
+  label            = "example"
+  name             = "okta_org2org"
+  signOnMode       = "SAML_2_0"
+  app_settings_json = <<JSON
+    {
+      "app": {
+        "baseUrl": "https://example.okta.com"
+      }
+    }
+JSON
+}
+
+resource "okta_app_oauth" "example" {
+  label                      = "example service app"
+  type                       = "service"
+  response_types             = ["token"]
+  grant_types                = ["client_credentials"]
+  token_endpoint_auth_method = "private_key_jwt"
+
+  dynamic "jwks" {
+    for_each = okta_app_saml.example.keys
+    content {
+      kty      = jwks.value["kty"]
+      kid      = jwks.value["kid"]
+      use      = jwks.value["use"]
+      x5c      = jwks.value["x5c"]
+      x5t_s256 = jwks.value["x5t_s256"]
+      e        = jwks.value["e"]
+      n        = jwks.value["n"]
+    }
+  }
+}
+```
+
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -110,7 +148,16 @@ The following arguments are supported:
 - `issuer_mode` - (Optional) Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.
 Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
-- `jwks` - (Optional) JSON Web Key set. Multiple jwks are supported[Admin Console JWK Reference](https://developer.okta.com/docs/guides/implement-oauth-for-okta-serviceapp/main/#generate-the-jwk-in-the-admin-console). Use kty=RSA e=[value] n=[value] for RSA jwks, and kty=EC x=[value] y=[value] for EC jwks
+- `jwks` - (Optional) JSON Web Key set. Multiple jwks are supported[Admin Console JWK Reference](https://developer.okta.com/docs/guides/implement-oauth-for-okta-serviceapp/main/#generate-the-jwk-in-the-admin-console). JWKS parameters:
+  - `kid` - (Required) Key identier
+  - `kty` - (Required) cryptographic algorithm family. Valid values are: `"RSA"` or `"EC"`
+  - `x` - (Optional) X coordinate to set when `kty = "EC"`
+  - `y` - (Optional) Y coordinate to set when `kty = "EC"`
+  - `e` - (Optional) public exponent to set when `kty = "RSA"`
+  - `n` - (Optional) modulus to set when `kty = "RSA"`
+  - `use` - (Required) use of the public key. Valid values are: `"sig"` or `"enc"`
+  - `x5c` - (Optional) Array of X.509 Certificates (base64 encoded).
+  - `x5t_s256` - (Optional) X.509 Certificate SHA-256 Thumbprint.
 
 - `jwks_uri` - (Optional) URL of the custom authorization server's JSON Web Key Set document.
 
