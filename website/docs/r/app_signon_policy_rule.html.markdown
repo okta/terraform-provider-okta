@@ -332,7 +332,7 @@ The following arguments are supported:
 
 - `constraints` - (Optional) - An array that contains nested Authenticator Constraint objects that are organized by the Authenticator class. Each element should be in JSON format.
 
-- `risk_scores` - (Optional) - The risk score specifies a particular level of risk to match on. Valid values are: `"ANY"`, `"LOW"`, `"MEDIUM"`, `"HIGH"`. Default is `"ANY"`.
+- `risk_score` - (Optional) - The risk score specifies a particular level of risk to match on. Valid values are: `"ANY"`, `"LOW"`, `"MEDIUM"`, `"HIGH"`. Default is `"ANY"`.
 
 ## Attributes Reference
 
