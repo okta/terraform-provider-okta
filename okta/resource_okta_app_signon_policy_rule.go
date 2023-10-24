@@ -184,7 +184,8 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 			"risk_score": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "The risk score specifies a particular level of risk to match on.",
+				Default:     "ANY",
+				Description: "The risk score specifies a particular level of risk to match on: ANY, LOW, MEDIUM, HIGH",
 			},
 		},
 	}
