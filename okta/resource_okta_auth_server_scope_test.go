@@ -3,6 +3,7 @@ package okta
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -71,6 +72,27 @@ func TestAccResourceOktaAuthServerScope_crud(t *testing.T) {
 					}
 					return
 				},
+			},
+			{
+				// Addresses
+				// https://github.com/okta/terraform-provider-okta/issues/1759
+				// but benefits all resource imports that are compound input by
+				// concatenating input with slashes.
+				//
+				// Before fixing 1759 this step would cause the panic
+				// experienced in 1759. Now, it illustrates the provider will
+				// error if input was incorrect as just `auth_server_id` and not
+				// the expected `auth_server_id/id`.
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("failed to find %s", resourceName)
+					}
+					return rs.Primary.Attributes["auth_server_id"], nil
+				},
+				ExpectError: regexp.MustCompile(`expected 2 import fields "auth_server_id/id", got 1 fields "(\w*)"`),
 			},
 		},
 	})
