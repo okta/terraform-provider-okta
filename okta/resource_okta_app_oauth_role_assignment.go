@@ -14,8 +14,10 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-var _ resource.ResourceWithValidateConfig = &appOAuthRoleAssignmentResource{}
-var _ resource.ResourceWithImportState = &appOAuthRoleAssignmentResource{}
+var (
+	_ resource.ResourceWithValidateConfig = &appOAuthRoleAssignmentResource{}
+	_ resource.ResourceWithImportState    = &appOAuthRoleAssignmentResource{}
+)
 
 func NewAppOAuthRoleAssignmentResource() resource.Resource {
 	return &appOAuthRoleAssignmentResource{}
