@@ -175,6 +175,9 @@ func createCustomNestedResourceImporter(fields []string, errMessage string) *sch
 	return &schema.ResourceImporter{
 		StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 			parts := strings.Split(d.Id(), "/")
+			if len(parts) != len(fields) {
+				return nil, fmt.Errorf("expected %d import fields %q, got %d fields %q", len(fields), strings.Join(fields, "/"), len(parts), d.Id())
+			}
 			for i, field := range fields {
 				if field == "id" {
 					d.SetId(parts[i])
