@@ -13,6 +13,12 @@ type ResourceSet struct {
 	Resources   []string `json:"resources,omitempty"`
 }
 
+// PatchResourceSet
+// https://developer.okta.com/docs/api/openapi/okta-management/management/tag/ResourceSet/#tag/ResourceSet/operation/addResourceSetResource
+type PatchResourceSet struct {
+	Additions []string `json:"additions,omitempty"`
+}
+
 type ListResourceSetsResponse struct {
 	ResourceSets []*ResourceSet `json:"resource-sets,omitempty"`
 }
@@ -70,6 +76,23 @@ func (m *APISupplement) UpdateResourceSet(ctx context.Context, resourceSetID str
 	url := fmt.Sprintf("/api/v1/iam/resource-sets/%s", resourceSetID)
 	re := m.cloneRequestExecutor()
 	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPut, url, body)
+	if err != nil {
+		return nil, nil, err
+	}
+	var resourceSet *ResourceSet
+	resp, err := re.Do(ctx, req, &resourceSet)
+	if err != nil {
+		return nil, resp, err
+	}
+	return resourceSet, resp, nil
+}
+
+// PatchResourceSet patches a ResourceSet with additional additions
+// https://developer.okta.com/docs/api/openapi/okta-management/management/tag/ResourceSet/#tag/ResourceSet/operation/addResourceSetResource
+func (m *APISupplement) PatchResourceSet(ctx context.Context, resourceSetID string, body PatchResourceSet) (*ResourceSet, *Response, error) {
+	url := fmt.Sprintf("/api/v1/iam/resource-sets/%s/resources", resourceSetID)
+	re := m.cloneRequestExecutor()
+	req, err := re.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPatch, url, body)
 	if err != nil {
 		return nil, nil, err
 	}
