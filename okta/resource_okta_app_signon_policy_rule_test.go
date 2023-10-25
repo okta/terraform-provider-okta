@@ -2,8 +2,10 @@ package okta
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -72,6 +74,29 @@ func TestAccResourceOktaAppSignOnPolicyRule(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "constraints.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "risk_score", "MEDIUM"),
 				),
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("failed to find app sign on policy rule %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", rs.Primary.Attributes["policy_id"], rs.Primary.Attributes["id"]), nil
+				},
+				ImportStateCheck: func(s []*terraform.InstanceState) (err error) {
+					if len(s) != 1 {
+						err = errors.New("failed to import into resource into state")
+						return
+					}
+
+					id := s[0].Attributes["id"]
+					if strings.Contains(id, "@") {
+						err = fmt.Errorf("resource id incorrectly set, %s", id)
+					}
+					return
+				},
 			},
 		},
 	})
