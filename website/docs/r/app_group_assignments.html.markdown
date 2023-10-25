@@ -30,17 +30,6 @@ resource "okta_app_group_assignments" "example" {
 
 ```
 
-!> **NOTE** It would seem that setting/updating base/custom group schema values
-was the original purpose for setting a `profile` JSON value during the [Assign
-group to
-application](https://developer.okta.com/docs/reference/api/apps/#assign-group-to-application)
-API call that will take place when the `priority` value is changed. We couldn't
-verify this works when writing a new integration test against this old feature
-and were receiving an API 400 error. This feature may work for older orgs, or
-classic orgs, but we can not guarantee for all orgs.
-
-~> **IMPORTANT:** When using `okta_app_group_assignments` it is expected to manage ALL group assignments for the target application.
-
 ## Argument Reference
 
 The following arguments are supported:
