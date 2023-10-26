@@ -293,7 +293,16 @@ func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceDa
 		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
 	}
 
-	_, _, err := getAPISupplementFromMetadata(m).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), buildAppSignOnPolicyRule(d))
+	rule := buildAppSignOnPolicyRule(d)
+	if rule.Name == "Catch-all Rule" {
+		// NOTE: small Okta API quirk, if you are updating the default policy
+		// rule you need to set the system flag true even though that can't be
+		// changed and we are calling the API with the rule's ID
+		rule.System = boolPtr(true)
+		// Conditions can't be set on the default rule either
+		rule.Conditions = nil
+	}
+	_, _, err := getAPISupplementFromMetadata(m).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), rule)
 	if err != nil {
 		return diag.Errorf("failed to create app sign on policy rule: %v", err)
 	}
@@ -355,10 +364,6 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		}
 	}
 	rule.Actions.AppSignOn.VerificationMethod.Constraints = constraints
-	// if this is a default rule, the conditions attribute is read-only.
-	if d.Get("name") == "Catch-all Rule" {
-		return rule
-	}
 	rule.Conditions = &sdk.AccessPolicyRuleConditions{
 		Network: buildPolicyNetworkCondition(d),
 		Platform: &sdk.PlatformPolicyRuleCondition{

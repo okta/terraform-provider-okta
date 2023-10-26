@@ -210,6 +210,7 @@ resource "okta_app_signon_policy_rule" "test" {
 	  })
 	]
 }`
+
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
@@ -222,6 +223,99 @@ resource "okta_app_signon_policy_rule" "test" {
 					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),
 					resource.TestCheckResourceAttr(resourceName, "re_authentication_frequency", "PT43800H"),
 					validateOktaAppSignonPolicyRuleConstraintsAreSet(resourceName, constraints),
+				),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppSignOnPolicyRule_Issue_1245_import_default_rule
+// https://github.com/okta/terraform-provider-okta/issues/1245
+// This ACC was used to find and fix the issues with importing then interacting
+// with the default rule of an okta_app_signon_policy
+func TestAccResourceOktaAppSignOnPolicyRule_Issue_1245_import_default_rule(t *testing.T) {
+	resourceName := "okta_app_signon_policy_rule.test"
+	policyName := "okta_app_signon_policy.test"
+	mgr := newFixtureManager("resources", appSignOnPolicyRule, t.Name())
+	baseConfig := `
+resource "okta_app_signon_policy" "test" {
+	name        = "testAcc_replace_with_uuid"
+	description = "Test App Signon Policy with updated Okta TF Provider"
+}`
+
+	importConfig := `
+resource "okta_app_signon_policy_rule" "test" {
+	name                        = "Catch-all Rule"
+	policy_id                   = okta_app_signon_policy.test.id
+	constraints = [
+		jsonencode({
+			possession = {
+			  deviceBound = "REQUIRED"
+			}
+	  })
+	]
+}`
+	step4Config := `
+resource "okta_app_signon_policy_rule" "test" {
+	name                        = "Catch-all Rule"
+	policy_id                   = okta_app_signon_policy.test.id
+	inactivity_period           = "PT1H"
+	re_authentication_frequency = "PT2H"
+	constraints = [
+		jsonencode({
+			possession = {
+			  deviceBound = "REQUIRED"
+			}
+	  })
+	]
+}`
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(baseConfig),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_app_signon_policy.test", "name", buildResourceName(mgr.Seed)),
+				),
+			},
+			{
+				ResourceName:       resourceName,
+				ImportState:        true,
+				ImportStatePersist: true,
+				Config:             mgr.ConfigReplace(fmt.Sprintf("%s\n%s", baseConfig, importConfig)),
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					policy, ok := s.RootModule().Resources[policyName]
+					if !ok {
+						return "", fmt.Errorf("failed to find app sign on policy%s", policyName)
+					}
+
+					policyID := policy.Primary.Attributes["id"]
+					client := sdkV2ClientForTest()
+
+					rules, _, err := client.Policy.ListPolicyRules(context.Background(), policyID)
+					if err != nil {
+						return "", err
+					}
+					if len(rules) != 1 {
+						return "", fmt.Errorf("at this point, policy %q should only have one rule, its default rule", policyID)
+					}
+					return fmt.Sprintf("%s/%s", policyID, rules[0].Id), nil
+				},
+			},
+			{
+				Config: mgr.ConfigReplace(fmt.Sprintf("%s\n%s", baseConfig, importConfig)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "Catch-all Rule"),
+				),
+			},
+			{
+				// make sure we can update some non-conditions arguments like inactivity period and reauth freq
+				Config: mgr.ConfigReplace(fmt.Sprintf("%s\n%s", baseConfig, step4Config)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "inactivity_period", "PT1H"),
+					resource.TestCheckResourceAttr(resourceName, "re_authentication_frequency", "PT2H"),
 				),
 			},
 		},
