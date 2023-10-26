@@ -2,9 +2,11 @@ package okta
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -126,8 +128,7 @@ resource "okta_app_signon_policy_rule" "test" {
 		}
 	  })
 	]
-}
-`
+}`
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
@@ -169,6 +170,64 @@ resource "okta_app_signon_policy_rule" "test" {
 	})
 }
 
+// TestAccResourceOktaAppSignOnPolicyRule_Issue_1242_possesion_constraint
+// https://github.com/okta/terraform-provider-okta/issues/1242
+// Operator had a typo in the constraint, posession and not possession. We'll
+// still keep this ACC.
+func TestAccResourceOktaAppSignOnPolicyRule_Issue_1242_possesion_constraint(t *testing.T) {
+	mgr := newFixtureManager("resources", appSignOnPolicyRule, t.Name())
+	resourceName := fmt.Sprintf("%s.test", appSignOnPolicyRule)
+	constraints := []interface{}{
+		map[string]interface{}{
+			"knowledge": map[string]interface{}{
+				"reauthenticateIn": "PT43800H",
+				"types":            []string{"password"},
+			},
+			"possession": map[string]interface{}{
+				"deviceBound": "REQUIRED",
+			},
+		},
+	}
+	config := `
+resource "okta_app_signon_policy" "test" {
+	name        = "testAcc_replace_with_uuid"
+	description = "Test App Signon Policy with updated Okta TF Provider"
+}
+resource "okta_app_signon_policy_rule" "test" {
+	policy_id                   = okta_app_signon_policy.test.id
+	name                        = "Require MFA_replace_with_uuid"
+	access                      = "ALLOW"
+	re_authentication_frequency = "PT43800H"
+	constraints = [
+		jsonencode({
+			knowledge = {
+				reauthenticateIn = "PT43800H"
+				types            = ["password"]
+			}
+			possession = {
+			  deviceBound = "REQUIRED"
+			}
+	  })
+	]
+}`
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("Require MFA", mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),
+					resource.TestCheckResourceAttr(resourceName, "re_authentication_frequency", "PT43800H"),
+					validateOktaAppSignonPolicyRuleConstraintsAreSet(resourceName, constraints),
+				),
+			},
+		},
+	})
+}
+
 func checkAppSignOnPolicyRuleDestroy(s *terraform.State) error {
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != appSignOnPolicyRule {
@@ -187,4 +246,38 @@ func checkAppSignOnPolicyRuleDestroy(s *terraform.State) error {
 		return nil
 	}
 	return nil
+}
+
+func validateOktaAppSignonPolicyRuleConstraintsAreSet(rule string, constraints []interface{}) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		missingErr := fmt.Errorf("rule not found: %s", rule)
+		ruleRS, ok := s.RootModule().Resources[rule]
+		if !ok {
+			return missingErr
+		}
+		ruleID := ruleRS.Primary.Attributes["id"]
+		policyID := ruleRS.Primary.Attributes["policy_id"]
+
+		client := sdkSupplementClientForTest()
+		r, _, err := client.GetAppSignOnPolicyRule(context.Background(), policyID, ruleID)
+		if err != nil {
+			return fmt.Errorf("API: to get policy/rule %q/%q, err: %+v", policyID, ruleID, err)
+		}
+		constraintsJSON, err := json.Marshal(r.Actions.AppSignOn.VerificationMethod.Constraints)
+		if err != nil {
+			return fmt.Errorf("unable to marshal constraints, err: %+v", err)
+		}
+		var _constraints []interface{}
+		err = json.Unmarshal([]byte(constraintsJSON), &_constraints)
+		if err != nil {
+			return fmt.Errorf("unable to unmarshal constraints, err: %+v", err)
+		}
+		expectedJSON, _ := json.Marshal(constraints)
+		// NOTE: this could be brittle comparing the string literal of the two constraints
+		if !reflect.DeepEqual(expectedJSON, constraintsJSON) {
+			return fmt.Errorf("expected constraints:\n%s\ngot:\n%s", expectedJSON, constraintsJSON)
+		}
+
+		return nil
+	}
 }
