@@ -39,6 +39,11 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 				Required:    true,
 				Description: "Auth server policy ID",
 			},
+			"system": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "The rule is the system (default) rule for its associated policy",
+			},
 			"status": statusSchema,
 			"priority": {
 				Type:        schema.TypeInt,
@@ -136,6 +141,7 @@ func resourceAuthServerPolicyRuleRead(ctx context.Context, d *schema.ResourceDat
 		d.SetId("")
 		return nil
 	}
+	_ = d.Set("system", boolFromBoolPtr(authServerPolicyRule.System))
 	_ = d.Set("name", authServerPolicyRule.Name)
 	_ = d.Set("status", authServerPolicyRule.Status)
 	if authServerPolicyRule.PriorityPtr != nil {

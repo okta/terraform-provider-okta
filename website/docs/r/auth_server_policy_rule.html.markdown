@@ -79,6 +79,8 @@ The following arguments are supported:
 
 - `type` - The type of the Auth Server Policy Rule.
 
+- `system` - The rule is the system (default) rule for its associated policy.
+
 ## Import
 
 Authorization Server Policy Rule can be imported via the Auth Server ID, Policy ID, and Policy Rule ID.
