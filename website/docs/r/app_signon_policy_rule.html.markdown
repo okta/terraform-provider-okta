@@ -338,6 +338,8 @@ The following arguments are supported:
 
 - `id` - ID of the sign-on policy rule.
 
+- `system` - Often the "Catch-all Rule" this rule is the system (default) rule for its associated policy.
+
 ## Import
 
 Okta app sign-on policy rule can be imported via the Okta ID.

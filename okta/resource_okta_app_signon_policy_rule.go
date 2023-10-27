@@ -29,6 +29,11 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				ForceNew:    true,
 				Description: "ID of the policy",
 			},
+			"system": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: `Often the "Catch-all Rule" this rule is the system (default) rule for its associated policy`,
+			},
 			"status": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -225,6 +230,7 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 		d.SetId("")
 		return nil
 	}
+	_ = d.Set("system", boolFromBoolPtr(rule.System))
 	_ = d.Set("name", rule.Name)
 	if rule.PriorityPtr != nil {
 		_ = d.Set("priority", *rule.PriorityPtr)
@@ -294,12 +300,8 @@ func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceDa
 	}
 
 	rule := buildAppSignOnPolicyRule(d)
-	if rule.Name == "Catch-all Rule" {
-		// NOTE: small Okta API quirk, if you are updating the default policy
-		// rule you need to set the system flag true even though that can't be
-		// changed and we are calling the API with the rule's ID
-		rule.System = boolPtr(true)
-		// Conditions can't be set on the default rule either
+	if boolFromBoolPtr(rule.System) {
+		// Conditions can't be set on the default/system rule
 		rule.Conditions = nil
 	}
 	_, _, err := getAPISupplementFromMetadata(m).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), rule)
@@ -353,6 +355,16 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		PriorityPtr: int64Ptr(d.Get("priority").(int)),
 		Type:        "ACCESS_POLICY",
 	}
+
+	// NOTE: Only the API read will be able to set the "system" boolean so it is
+	// ok to inspect the resource data for its presence to set the bool pointer.
+	// When buildAppSignOnPolicyRule is called from the create context the bool
+	// pointer is effectively inert (nil) and we don't need additional logic
+	// about if this is being called for create/read/update.
+	if v, ok := d.GetOk("system"); ok {
+		rule.System = boolPtr(v.(bool))
+	}
+
 	var constraints []*sdk.AccessPolicyConstraints
 	v, ok := d.GetOk("constraints")
 	if ok {
