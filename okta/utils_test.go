@@ -8,9 +8,45 @@ import (
 
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
+
+func TestRemove(t *testing.T) {
+	tests := []struct {
+		elements []string
+		toRemove string
+		expected []string
+	}{
+		{[]string{"one", "two", "three"}, "dne", []string{"one", "two", "three"}},
+		{[]string{"one", "two", "three"}, "", []string{"one", "two", "three"}},
+		{[]string{"one", "two", "three"}, "one", []string{"two", "three"}},
+		{[]string{"one", "two", "three"}, "two", []string{"one", "three"}},
+		{[]string{"one", "two", "three"}, "three", []string{"one", "two"}},
+	}
+
+	for _, test := range tests {
+		result := remove(test.elements, test.toRemove)
+		require.Equal(t, test.expected, result)
+	}
+}
+
+func TestAppendUnique(t *testing.T) {
+	tests := []struct {
+		elements []string
+		toAdd    string
+		expected []string
+	}{
+		{[]string{"one", "two"}, "one", []string{"one", "two"}},
+		{[]string{"one", "two"}, "three", []string{"one", "two", "three"}},
+	}
+
+	for _, test := range tests {
+		result := appendUnique(test.elements, test.toAdd)
+		require.Equal(t, test.expected, result)
+	}
+}
 
 func TestContainsOne(t *testing.T) {
 	testArr := []string{"1", "2", "3"}
