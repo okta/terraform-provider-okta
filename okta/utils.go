@@ -255,9 +255,18 @@ func getMapString(m map[string]interface{}, key string) string {
 	return ""
 }
 
+// boolPtr return bool pointer to b's value
 func boolPtr(b bool) (ptr *bool) {
 	ptr = &b
 	return
+}
+
+// boolFromBoolPtr if b is nil returns false, otherwise return boolean value of b
+func boolFromBoolPtr(b *bool) bool {
+	if b == nil {
+		return false
+	}
+	return *b
 }
 
 func stringPtr(s string) (ptr *string) {

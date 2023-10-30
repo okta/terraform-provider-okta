@@ -25,6 +25,7 @@ func TestAccResourceOktaAuthServerPolicyRule_create(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "name", "test"),
+					resource.TestCheckResourceAttr(resourceName, "system", "false"),
 				),
 			},
 			{
@@ -32,6 +33,7 @@ func TestAccResourceOktaAuthServerPolicyRule_create(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "name", "test_updated"),
+					resource.TestCheckResourceAttr(resourceName, "system", "false"),
 				),
 			},
 		},

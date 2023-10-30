@@ -29,6 +29,11 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				ForceNew:    true,
 				Description: "ID of the policy",
 			},
+			"system": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: `Often the "Catch-all Rule" this rule is the system (default) rule for its associated policy`,
+			},
 			"status": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -225,6 +230,7 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 		d.SetId("")
 		return nil
 	}
+	_ = d.Set("system", boolFromBoolPtr(rule.System))
 	_ = d.Set("name", rule.Name)
 	if rule.PriorityPtr != nil {
 		_ = d.Set("priority", *rule.PriorityPtr)
@@ -293,7 +299,12 @@ func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceDa
 		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
 	}
 
-	_, _, err := getAPISupplementFromMetadata(m).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), buildAppSignOnPolicyRule(d))
+	rule := buildAppSignOnPolicyRule(d)
+	if boolFromBoolPtr(rule.System) {
+		// Conditions can't be set on the default/system rule
+		rule.Conditions = nil
+	}
+	_, _, err := getAPISupplementFromMetadata(m).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), rule)
 	if err != nil {
 		return diag.Errorf("failed to create app sign on policy rule: %v", err)
 	}
@@ -344,6 +355,16 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		PriorityPtr: int64Ptr(d.Get("priority").(int)),
 		Type:        "ACCESS_POLICY",
 	}
+
+	// NOTE: Only the API read will be able to set the "system" boolean so it is
+	// ok to inspect the resource data for its presence to set the bool pointer.
+	// When buildAppSignOnPolicyRule is called from the create context the bool
+	// pointer is effectively inert (nil) and we don't need additional logic
+	// about if this is being called for create/read/update.
+	if v, ok := d.GetOk("system"); ok {
+		rule.System = boolPtr(v.(bool))
+	}
+
 	var constraints []*sdk.AccessPolicyConstraints
 	v, ok := d.GetOk("constraints")
 	if ok {
@@ -355,10 +376,6 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		}
 	}
 	rule.Actions.AppSignOn.VerificationMethod.Constraints = constraints
-	// if this is a default rule, the conditions attribute is read-only.
-	if d.Get("name") == "Catch-all Rule" {
-		return rule
-	}
 	rule.Conditions = &sdk.AccessPolicyRuleConditions{
 		Network: buildPolicyNetworkCondition(d),
 		Platform: &sdk.PlatformPolicyRuleCondition{
