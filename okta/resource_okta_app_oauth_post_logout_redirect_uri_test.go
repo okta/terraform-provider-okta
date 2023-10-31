@@ -35,8 +35,8 @@ func TestAccResourceOktaAppOAuthApplication_postLogoutRedirectCrud(t *testing.T)
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					createPostLogoutRedirectURIExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "id", "https://www.example-updated.com"),
-					resource.TestCheckResourceAttr(resourceName, "uri", "https://www.example-updated.com"),
+					resource.TestCheckResourceAttr(resourceName, "id", "https://www.google-updated.com"),
+					resource.TestCheckResourceAttr(resourceName, "uri", "https://www.google-updated.com"),
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
 				),
 			},

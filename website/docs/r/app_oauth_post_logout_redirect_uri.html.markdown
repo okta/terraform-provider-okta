@@ -10,6 +10,10 @@ description: |-
 
 This resource allows you to manage post logout redirection URI for use in redirect-based flows.
 
+~> `okta_app_oauth_post_logout_redirect_uri` has been marked deprecated and will
+be removed in the v5 release of the provider. Operators should manage the post
+logout redirect URIs for an oauth app directly on that resource.
+
 ## Example Usage
 
 ```hcl
@@ -38,7 +42,7 @@ resource "okta_app_oauth_post_logout_redirect_uri" "test" {
 
 ## Argument Reference
 
-- `app_id` - (Required) OAuth application ID.
+- `app_id` - (Required) OAuth application ID. Note: `app_id` can not be changed once set.
 
 - `uri` - (Required) Post Logout Redirect URI to append to Okta OIDC application.
 

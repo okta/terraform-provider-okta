@@ -394,6 +394,21 @@ func remove(arr []string, el string) []string {
 	return newArr
 }
 
+// appendUnique appends el to arr if el isn't already present in arr
+func appendUnique(arr []string, el string) []string {
+	found := false
+	for _, item := range arr {
+		if item == el {
+			found = true
+			break
+		}
+	}
+	if found {
+		return arr
+	}
+	return append(arr, el)
+}
+
 // The best practices states that aggregate types should have error handling (think non-primitive). This will not attempt to set nil values.
 func setNonPrimitives(d *schema.ResourceData, valueMap map[string]interface{}) error {
 	for k, v := range valueMap {

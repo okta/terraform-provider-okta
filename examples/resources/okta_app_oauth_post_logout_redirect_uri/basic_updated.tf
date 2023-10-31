@@ -12,7 +12,9 @@ resource "okta_app_oauth" "test" {
   post_logout_redirect_uris = ["https://www.example.com"]
 
 
-  // Since Okta forces us to create it with a redirect URI we have to ignore future changes, they will be detected as config drift.
+  // Ignore post logout redirect uris if you are going to manage them with the
+  // okta_app_oauth_post_logout_redirect_uri resource and not have change
+  // detection on the app for that value.
   lifecycle {
     ignore_changes = [post_logout_redirect_uris]
   }
@@ -20,5 +22,5 @@ resource "okta_app_oauth" "test" {
 
 resource "okta_app_oauth_post_logout_redirect_uri" "test" {
   app_id = okta_app_oauth.test.id
-  uri    = "https://www.example-updated.com"
+  uri    = "https://www.google-updated.com"
 }
