@@ -85,21 +85,34 @@ func findGroup(ctx context.Context, name string, d *schema.ResourceData, m inter
 		}
 		group = respGroup
 	} else {
-		searchParams := &query.Params{Q: name, Limit: 1}
+		// NOTE: Okta API query on name is effectively a starts with query, not
+		// an exact match query.
+		searchParams := &query.Params{Q: name}
+
+		// NOTE: Uncertain of the OKTA /api/v1/groups API drifted during Classic
+		// (when this data source was originally created) to OIE migration.
+		// Currently, Okta API enforces unique names on all groups regardless of
+		// type so type is essentially a meaningless parameter in OIE.
 		t, okType := d.GetOk("type")
 		if okType {
 			searchParams.Filter = fmt.Sprintf("type eq \"%s\"", t.(string))
 		}
+
 		logger(m).Info("looking for data source group", "query", searchParams.String())
 		groups, _, err := getOktaClientFromMetadata(m).Group.ListGroups(ctx, searchParams)
 		switch {
 		case err != nil:
 			return diag.Errorf("failed to query for groups: %v", err)
+		case len(groups) > 1:
+			if okType {
+				return diag.Errorf("group starting with name %q and type %q matches %d groups, select a more precise name parameter", name, d.Get("type").(string), len(groups))
+			}
+			return diag.Errorf("group starting with name %q matches %d groups, select a more precise name parameter", name, len(groups))
 		case len(groups) < 1:
 			if okType {
-				return diag.Errorf("group with name '%s' and type '%s' does not exist", name, d.Get("type").(string))
+				return diag.Errorf("group with name %q and type %q does not exist", name, d.Get("type").(string))
 			}
-			return diag.Errorf("group with name '%s' does not exist", name)
+			return diag.Errorf("group with name %q does not exist", name)
 		case groups[0].Profile.Name != name:
 			logger(m).Warn("group with exact name match was not found: using partial match which contains name as a substring", "name", groups[0].Profile.Name)
 		}
