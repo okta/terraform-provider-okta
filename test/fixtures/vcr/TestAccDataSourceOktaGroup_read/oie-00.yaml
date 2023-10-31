@@ -32,17 +32,15 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:41.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}'
+        body: '{"id":"00gayy0ungo4pJGcc1d7","created":"2023-10-31T18:40:47.000Z","lastUpdated":"2023-10-31T18:40:47.000Z","lastMembershipUpdated":"2023-10-31T18:40:47.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/apps"}}}'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:41 GMT
-            Report-To:
-                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+                - Tue, 31 Oct 2023 18:40:47 GMT
         status: 200 OK
         code: 200
-        duration: 400.53181ms
+        duration: 223.087301ms
     - id: 1
       request:
         proto: HTTP/1.1
@@ -61,7 +59,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -71,15 +69,15 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:41.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}'
+        body: '{"id":"00gayy0ungo4pJGcc1d7","created":"2023-10-31T18:40:47.000Z","lastUpdated":"2023-10-31T18:40:47.000Z","lastMembershipUpdated":"2023-10-31T18:40:47.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/apps"}}}'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:41 GMT
+                - Tue, 31 Oct 2023 18:40:47 GMT
         status: 200 OK
         code: 200
-        duration: 70.337077ms
+        duration: 65.925735ms
     - id: 2
       request:
         proto: HTTP/1.1
@@ -98,7 +96,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -108,15 +106,15 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:41.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}'
+        body: '{"id":"00gayy0ungo4pJGcc1d7","created":"2023-10-31T18:40:47.000Z","lastUpdated":"2023-10-31T18:40:47.000Z","lastMembershipUpdated":"2023-10-31T18:40:47.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/apps"}}}'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:41 GMT
+                - Tue, 31 Oct 2023 18:40:47 GMT
         status: 200 OK
         code: 200
-        duration: 74.18308ms
+        duration: 73.353742ms
     - id: 3
       request:
         proto: HTTP/1.1
@@ -135,7 +133,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -145,15 +143,15 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:41.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}'
+        body: '{"id":"00gayy0ungo4pJGcc1d7","created":"2023-10-31T18:40:47.000Z","lastUpdated":"2023-10-31T18:40:47.000Z","lastMembershipUpdated":"2023-10-31T18:40:47.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/apps"}}}'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:41 GMT
+                - Tue, 31 Oct 2023 18:40:48 GMT
         status: 200 OK
         code: 200
-        duration: 66.482983ms
+        duration: 61.182088ms
     - id: 4
       request:
         proto: HTTP/1.1
@@ -172,7 +170,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -182,93 +180,16 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:41.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}'
+        body: '{"id":"00gayy0ungo4pJGcc1d7","created":"2023-10-31T18:40:47.000Z","lastUpdated":"2023-10-31T18:40:47.000Z","lastMembershipUpdated":"2023-10-31T18:40:47.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/apps"}}}'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:42 GMT
+                - Tue, 31 Oct 2023 18:40:48 GMT
         status: 200 OK
         code: 200
-        duration: 57.062725ms
+        duration: 74.380601ms
     - id: 5
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 64
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: |
-            {"profile":{"name":"testAcc","description":"testing, testing"}}
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-            Content-Type:
-                - application/json
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7
-        method: PUT
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:42.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}'
-        headers:
-            Content-Type:
-                - application/json
-            Date:
-                - Wed, 13 Sep 2023 21:43:42 GMT
-        status: 200 OK
-        code: 200
-        duration: 78.652799ms
-    - id: 6
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:42.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}'
-        headers:
-            Content-Type:
-                - application/json
-            Date:
-                - Wed, 13 Sep 2023 21:43:42 GMT
-        status: 200 OK
-        code: 200
-        duration: 79.431286ms
-    - id: 7
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -299,15 +220,89 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00ua1vkg7euUofldZ1d7","status":"PROVISIONED","created":"2023-09-13T21:43:42.000Z","activated":"2023-09-13T21:43:43.000Z","statusChanged":"2023-09-13T21:43:43.000Z","lastLogin":null,"lastUpdated":"2023-09-13T21:43:43.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"suspend":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/suspend","method":"POST"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7"},"resetPassword":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/reset_password","method":"POST"},"reactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/reactivate","method":"POST"},"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7"},"resetFactors":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/reset_factors","method":"POST"},"type":{"href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7"},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/deactivate","method":"POST"}}}'
+        body: '{"id":"00uayy5k7jJblLDKC1d7","status":"PROVISIONED","created":"2023-10-31T18:40:48.000Z","activated":"2023-10-31T18:40:49.000Z","statusChanged":"2023-10-31T18:40:49.000Z","lastLogin":null,"lastUpdated":"2023-10-31T18:40:49.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"suspend":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/suspend","method":"POST"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7"},"resetPassword":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/reset_password","method":"POST"},"reactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/reactivate","method":"POST"},"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7"},"type":{"href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7"},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/deactivate","method":"POST"}}}'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:43 GMT
+                - Tue, 31 Oct 2023 18:40:49 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
         status: 200 OK
         code: 200
-        duration: 671.810879ms
+        duration: 352.904772ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/users/00uayy5k7jJblLDKC1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00uayy5k7jJblLDKC1d7","status":"PROVISIONED","created":"2023-10-31T18:40:48.000Z","activated":"2023-10-31T18:40:49.000Z","statusChanged":"2023-10-31T18:40:49.000Z","lastLogin":null,"lastUpdated":"2023-10-31T18:40:49.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"suspend":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/suspend","method":"POST"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7"},"resetPassword":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/reset_password","method":"POST"},"reactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/reactivate","method":"POST"},"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7"},"type":{"href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7"},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/deactivate","method":"POST"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 31 Oct 2023 18:40:49 GMT
+        status: 200 OK
+        code: 200
+        duration: 77.13126ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users/00uayy5k7jJblLDKC1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Tue, 31 Oct 2023 18:40:49 GMT
+        status: 204 No Content
+        code: 204
+        duration: 78.205888ms
     - id: 8
       request:
         proto: HTTP/1.1
@@ -326,7 +321,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/users/00ua1vkg7euUofldZ1d7
+        url: https://oie-00.dne-okta.com/api/v1/users/00uayy5k7jJblLDKC1d7/groups
         method: GET
       response:
         proto: HTTP/2.0
@@ -336,15 +331,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00ua1vkg7euUofldZ1d7","status":"PROVISIONED","created":"2023-09-13T21:43:42.000Z","activated":"2023-09-13T21:43:43.000Z","statusChanged":"2023-09-13T21:43:43.000Z","lastLogin":null,"lastUpdated":"2023-09-13T21:43:43.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"suspend":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/suspend","method":"POST"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7"},"resetPassword":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/reset_password","method":"POST"},"reactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/reactivate","method":"POST"},"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7"},"resetFactors":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/reset_factors","method":"POST"},"type":{"href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7"},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/deactivate","method":"POST"}}}'
+        body: '[{"id":"00g5qwjvgrD3WR89l1d7","created":"2022-10-07T23:16:57.000Z","lastUpdated":"2022-10-07T23:16:57.000Z","lastMembershipUpdated":"2023-10-31T18:36:25.000Z","objectClass":["okta:user_group"],"type":"BUILT_IN","profile":{"name":"Everyone","description":"All users in your organization"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/apps"}}},{"id":"00gayy0ungo4pJGcc1d7","created":"2023-10-31T18:40:47.000Z","lastUpdated":"2023-10-31T18:40:47.000Z","lastMembershipUpdated":"2023-10-31T18:40:47.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/apps"}}}]'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:43 GMT
+                - Tue, 31 Oct 2023 18:40:49 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/users/00uayy5k7jJblLDKC1d7/groups?limit=200>; rel="self"
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
         status: 200 OK
         code: 200
-        duration: 106.191768ms
+        duration: 89.377636ms
     - id: 9
       request:
         proto: HTTP/1.1
@@ -363,23 +362,25 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users/00ua1vkg7euUofldZ1d7
-        method: PUT
+        url: https://oie-00.dne-okta.com/api/v1/groups?q=testAcc_3671860054
+        method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
         transfer_encoding: []
         trailer: {}
-        content_length: 0
-        uncompressed: false
-        body: ""
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00gayy0ungo4pJGcc1d7","created":"2023-10-31T18:40:47.000Z","lastUpdated":"2023-10-31T18:40:47.000Z","lastMembershipUpdated":"2023-10-31T18:40:47.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/apps"}}}]'
         headers:
+            Content-Type:
+                - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:43 GMT
-        status: 204 No Content
-        code: 204
-        duration: 105.316828ms
+                - Tue, 31 Oct 2023 18:40:49 GMT
+        status: 200 OK
+        code: 200
+        duration: 50.372587ms
     - id: 10
       request:
         proto: HTTP/1.1
@@ -398,7 +399,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/users/00ua1vkg7euUofldZ1d7/groups
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users?limit=200
         method: GET
       response:
         proto: HTTP/2.0
@@ -408,17 +409,17 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"00g5qwjvgrD3WR89l1d7","created":"2022-10-07T23:16:57.000Z","lastUpdated":"2022-10-07T23:16:57.000Z","lastMembershipUpdated":"2023-08-21T16:08:07.000Z","objectClass":["okta:user_group"],"type":"BUILT_IN","profile":{"name":"Everyone","description":"All users in your organization"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/apps"}}},{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:42.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}]'
+        body: '[{"id":"00uayy5k7jJblLDKC1d7","status":"PROVISIONED","created":"2023-10-31T18:40:48.000Z","activated":"2023-10-31T18:40:49.000Z","statusChanged":"2023-10-31T18:40:49.000Z","lastLogin":null,"lastUpdated":"2023-10-31T18:40:49.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7"}}}]'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:43 GMT
+                - Tue, 31 Oct 2023 18:40:49 GMT
             Link:
-                - <https://oie-00.dne-okta.com/api/v1/users/00ua1vkg7euUofldZ1d7/groups?limit=200>; rel="self"
+                - <https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users?limit=200>; rel="self"
         status: 200 OK
         code: 200
-        duration: 91.315394ms
+        duration: 86.508009ms
     - id: 11
       request:
         proto: HTTP/1.1
@@ -437,7 +438,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups?limit=1&q=testAcc
+        url: https://oie-00.dne-okta.com/api/v1/groups?q=testAcc_3671860054
         method: GET
       response:
         proto: HTTP/2.0
@@ -447,15 +448,15 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:42.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}]'
+        body: '[{"id":"00gayy0ungo4pJGcc1d7","created":"2023-10-31T18:40:47.000Z","lastUpdated":"2023-10-31T18:40:47.000Z","lastMembershipUpdated":"2023-10-31T18:40:47.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/apps"}}}]'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:43 GMT
+                - Tue, 31 Oct 2023 18:40:49 GMT
         status: 200 OK
         code: 200
-        duration: 142.504241ms
+        duration: 61.225127ms
     - id: 12
       request:
         proto: HTTP/1.1
@@ -474,7 +475,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users?limit=200
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users?limit=200
         method: GET
       response:
         proto: HTTP/2.0
@@ -484,17 +485,17 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"00ua1vkg7euUofldZ1d7","status":"PROVISIONED","created":"2023-09-13T21:43:42.000Z","activated":"2023-09-13T21:43:43.000Z","statusChanged":"2023-09-13T21:43:43.000Z","lastLogin":null,"lastUpdated":"2023-09-13T21:43:43.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7"}}}]'
+        body: '[{"id":"00uayy5k7jJblLDKC1d7","status":"PROVISIONED","created":"2023-10-31T18:40:48.000Z","activated":"2023-10-31T18:40:49.000Z","statusChanged":"2023-10-31T18:40:49.000Z","lastLogin":null,"lastUpdated":"2023-10-31T18:40:49.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7"}}}]'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:43 GMT
+                - Tue, 31 Oct 2023 18:40:49 GMT
             Link:
-                - <https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users?limit=200>; rel="self"
+                - <https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users?limit=200>; rel="self"
         status: 200 OK
         code: 200
-        duration: 71.28149ms
+        duration: 63.731398ms
     - id: 13
       request:
         proto: HTTP/1.1
@@ -513,7 +514,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups?limit=1&q=testAcc
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -523,15 +524,15 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:42.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}]'
+        body: '{"id":"00gayy0ungo4pJGcc1d7","created":"2023-10-31T18:40:47.000Z","lastUpdated":"2023-10-31T18:40:47.000Z","lastMembershipUpdated":"2023-10-31T18:40:47.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/apps"}}}'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:44 GMT
+                - Tue, 31 Oct 2023 18:40:50 GMT
         status: 200 OK
         code: 200
-        duration: 66.884893ms
+        duration: 49.544627ms
     - id: 14
       request:
         proto: HTTP/1.1
@@ -550,7 +551,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users?limit=200
+        url: https://oie-00.dne-okta.com/api/v1/users/00uayy5k7jJblLDKC1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -560,17 +561,15 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"00ua1vkg7euUofldZ1d7","status":"PROVISIONED","created":"2023-09-13T21:43:42.000Z","activated":"2023-09-13T21:43:43.000Z","statusChanged":"2023-09-13T21:43:43.000Z","lastLogin":null,"lastUpdated":"2023-09-13T21:43:43.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7"}}}]'
+        body: '{"id":"00uayy5k7jJblLDKC1d7","status":"PROVISIONED","created":"2023-10-31T18:40:48.000Z","activated":"2023-10-31T18:40:49.000Z","statusChanged":"2023-10-31T18:40:49.000Z","lastLogin":null,"lastUpdated":"2023-10-31T18:40:49.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"suspend":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/suspend","method":"POST"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7"},"resetPassword":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/reset_password","method":"POST"},"reactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/reactivate","method":"POST"},"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7"},"type":{"href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7"},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/deactivate","method":"POST"}}}'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:44 GMT
-            Link:
-                - <https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users?limit=200>; rel="self"
+                - Tue, 31 Oct 2023 18:40:50 GMT
         status: 200 OK
         code: 200
-        duration: 63.182764ms
+        duration: 104.500694ms
     - id: 15
       request:
         proto: HTTP/1.1
@@ -589,7 +588,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7
+        url: https://oie-00.dne-okta.com/api/v1/users/00uayy5k7jJblLDKC1d7/groups
         method: GET
       response:
         proto: HTTP/2.0
@@ -599,15 +598,17 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:42.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}'
+        body: '[{"id":"00g5qwjvgrD3WR89l1d7","created":"2022-10-07T23:16:57.000Z","lastUpdated":"2022-10-07T23:16:57.000Z","lastMembershipUpdated":"2023-10-31T18:36:25.000Z","objectClass":["okta:user_group"],"type":"BUILT_IN","profile":{"name":"Everyone","description":"All users in your organization"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/apps"}}},{"id":"00gayy0ungo4pJGcc1d7","created":"2023-10-31T18:40:47.000Z","lastUpdated":"2023-10-31T18:40:47.000Z","lastMembershipUpdated":"2023-10-31T18:40:47.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/apps"}}}]'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:44 GMT
+                - Tue, 31 Oct 2023 18:40:50 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/users/00uayy5k7jJblLDKC1d7/groups?limit=200>; rel="self"
         status: 200 OK
         code: 200
-        duration: 65.650197ms
+        duration: 62.242769ms
     - id: 16
       request:
         proto: HTTP/1.1
@@ -626,7 +627,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/users/00ua1vkg7euUofldZ1d7
+        url: https://oie-00.dne-okta.com/api/v1/groups?q=testAcc_3671860054
         method: GET
       response:
         proto: HTTP/2.0
@@ -636,15 +637,15 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00ua1vkg7euUofldZ1d7","status":"PROVISIONED","created":"2023-09-13T21:43:42.000Z","activated":"2023-09-13T21:43:43.000Z","statusChanged":"2023-09-13T21:43:43.000Z","lastLogin":null,"lastUpdated":"2023-09-13T21:43:43.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"suspend":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/suspend","method":"POST"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7"},"resetPassword":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/reset_password","method":"POST"},"reactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/reactivate","method":"POST"},"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7"},"resetFactors":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/reset_factors","method":"POST"},"type":{"href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7"},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/deactivate","method":"POST"}}}'
+        body: '[{"id":"00gayy0ungo4pJGcc1d7","created":"2023-10-31T18:40:47.000Z","lastUpdated":"2023-10-31T18:40:47.000Z","lastMembershipUpdated":"2023-10-31T18:40:47.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/apps"}}}]'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:44 GMT
+                - Tue, 31 Oct 2023 18:40:50 GMT
         status: 200 OK
         code: 200
-        duration: 81.258929ms
+        duration: 56.136003ms
     - id: 17
       request:
         proto: HTTP/1.1
@@ -663,7 +664,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/users/00ua1vkg7euUofldZ1d7/groups
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users?limit=200
         method: GET
       response:
         proto: HTTP/2.0
@@ -673,17 +674,17 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"00g5qwjvgrD3WR89l1d7","created":"2022-10-07T23:16:57.000Z","lastUpdated":"2022-10-07T23:16:57.000Z","lastMembershipUpdated":"2023-08-21T16:08:07.000Z","objectClass":["okta:user_group"],"type":"BUILT_IN","profile":{"name":"Everyone","description":"All users in your organization"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/apps"}}},{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:42.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}]'
+        body: '[{"id":"00uayy5k7jJblLDKC1d7","status":"PROVISIONED","created":"2023-10-31T18:40:48.000Z","activated":"2023-10-31T18:40:49.000Z","statusChanged":"2023-10-31T18:40:49.000Z","lastLogin":null,"lastUpdated":"2023-10-31T18:40:49.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7"}}}]'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:44 GMT
+                - Tue, 31 Oct 2023 18:40:50 GMT
             Link:
-                - <https://oie-00.dne-okta.com/api/v1/users/00ua1vkg7euUofldZ1d7/groups?limit=200>; rel="self"
+                - <https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users?limit=200>; rel="self"
         status: 200 OK
         code: 200
-        duration: 67.438026ms
+        duration: 63.261064ms
     - id: 18
       request:
         proto: HTTP/1.1
@@ -702,7 +703,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups?limit=1&q=testAcc
+        url: https://oie-00.dne-okta.com/api/v1/groups?q=testAcc_3671860054
         method: GET
       response:
         proto: HTTP/2.0
@@ -712,15 +713,15 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:42.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}]'
+        body: '[{"id":"00gayy0ungo4pJGcc1d7","created":"2023-10-31T18:40:47.000Z","lastUpdated":"2023-10-31T18:40:47.000Z","lastMembershipUpdated":"2023-10-31T18:40:47.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/apps"}}}]'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:44 GMT
+                - Tue, 31 Oct 2023 18:40:50 GMT
         status: 200 OK
         code: 200
-        duration: 68.925153ms
+        duration: 72.931094ms
     - id: 19
       request:
         proto: HTTP/1.1
@@ -739,7 +740,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users?limit=200
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users?limit=200
         method: GET
       response:
         proto: HTTP/2.0
@@ -749,17 +750,17 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"00ua1vkg7euUofldZ1d7","status":"PROVISIONED","created":"2023-09-13T21:43:42.000Z","activated":"2023-09-13T21:43:43.000Z","statusChanged":"2023-09-13T21:43:43.000Z","lastLogin":null,"lastUpdated":"2023-09-13T21:43:43.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7"}}}]'
+        body: '[{"id":"00uayy5k7jJblLDKC1d7","status":"PROVISIONED","created":"2023-10-31T18:40:48.000Z","activated":"2023-10-31T18:40:49.000Z","statusChanged":"2023-10-31T18:40:49.000Z","lastLogin":null,"lastUpdated":"2023-10-31T18:40:49.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7"}}}]'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:44 GMT
+                - Tue, 31 Oct 2023 18:40:50 GMT
             Link:
-                - <https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users?limit=200>; rel="self"
+                - <https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users?limit=200>; rel="self"
         status: 200 OK
         code: 200
-        duration: 80.142316ms
+        duration: 66.472016ms
     - id: 20
       request:
         proto: HTTP/1.1
@@ -778,7 +779,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups?limit=1&q=testAcc
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -788,15 +789,15 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:42.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}]'
+        body: '{"id":"00gayy0ungo4pJGcc1d7","created":"2023-10-31T18:40:47.000Z","lastUpdated":"2023-10-31T18:40:47.000Z","lastMembershipUpdated":"2023-10-31T18:40:47.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/apps"}}}'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:44 GMT
+                - Tue, 31 Oct 2023 18:40:50 GMT
         status: 200 OK
         code: 200
-        duration: 70.36297ms
+        duration: 55.713263ms
     - id: 21
       request:
         proto: HTTP/1.1
@@ -815,7 +816,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users?limit=200
+        url: https://oie-00.dne-okta.com/api/v1/users/00uayy5k7jJblLDKC1d7/groups
         method: GET
       response:
         proto: HTTP/2.0
@@ -825,17 +826,17 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"00ua1vkg7euUofldZ1d7","status":"PROVISIONED","created":"2023-09-13T21:43:42.000Z","activated":"2023-09-13T21:43:43.000Z","statusChanged":"2023-09-13T21:43:43.000Z","lastLogin":null,"lastUpdated":"2023-09-13T21:43:43.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7"}}}]'
+        body: '[{"id":"00g5qwjvgrD3WR89l1d7","created":"2022-10-07T23:16:57.000Z","lastUpdated":"2022-10-07T23:16:57.000Z","lastMembershipUpdated":"2023-10-31T18:36:25.000Z","objectClass":["okta:user_group"],"type":"BUILT_IN","profile":{"name":"Everyone","description":"All users in your organization"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/apps"}}},{"id":"00gayy0ungo4pJGcc1d7","created":"2023-10-31T18:40:47.000Z","lastUpdated":"2023-10-31T18:40:47.000Z","lastMembershipUpdated":"2023-10-31T18:40:47.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00gayy0ungo4pJGcc1d7/apps"}}}]'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:44 GMT
+                - Tue, 31 Oct 2023 18:40:50 GMT
             Link:
-                - <https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users?limit=200>; rel="self"
+                - <https://oie-00.dne-okta.com/api/v1/users/00uayy5k7jJblLDKC1d7/groups?limit=200>; rel="self"
         status: 200 OK
         code: 200
-        duration: 71.295081ms
+        duration: 70.506323ms
     - id: 22
       request:
         proto: HTTP/1.1
@@ -854,7 +855,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7
+        url: https://oie-00.dne-okta.com/api/v1/users/00uayy5k7jJblLDKC1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -864,15 +865,15 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:42.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}'
+        body: '{"id":"00uayy5k7jJblLDKC1d7","status":"PROVISIONED","created":"2023-10-31T18:40:48.000Z","activated":"2023-10-31T18:40:49.000Z","statusChanged":"2023-10-31T18:40:49.000Z","lastLogin":null,"lastUpdated":"2023-10-31T18:40:49.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"suspend":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/suspend","method":"POST"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7"},"resetPassword":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/reset_password","method":"POST"},"reactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/reactivate","method":"POST"},"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7"},"type":{"href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7"},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00uayy5k7jJblLDKC1d7/lifecycle/deactivate","method":"POST"}}}'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:45 GMT
+                - Tue, 31 Oct 2023 18:40:50 GMT
         status: 200 OK
         code: 200
-        duration: 55.455427ms
+        duration: 70.833798ms
     - id: 23
       request:
         proto: HTTP/1.1
@@ -891,7 +892,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/users/00ua1vkg7euUofldZ1d7/groups
+        url: https://oie-00.dne-okta.com/api/v1/groups?filter=type+eq+%22APP_GROUP%22&q=testAcc_3671860054
         method: GET
       response:
         proto: HTTP/2.0
@@ -901,17 +902,15 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"00g5qwjvgrD3WR89l1d7","created":"2022-10-07T23:16:57.000Z","lastUpdated":"2022-10-07T23:16:57.000Z","lastMembershipUpdated":"2023-08-21T16:08:07.000Z","objectClass":["okta:user_group"],"type":"BUILT_IN","profile":{"name":"Everyone","description":"All users in your organization"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/apps"}}},{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:42.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}]'
+        body: '[]'
         headers:
             Content-Type:
                 - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:45 GMT
-            Link:
-                - <https://oie-00.dne-okta.com/api/v1/users/00ua1vkg7euUofldZ1d7/groups?limit=200>; rel="self"
+                - Tue, 31 Oct 2023 18:40:51 GMT
         status: 200 OK
         code: 200
-        duration: 71.018751ms
+        duration: 47.22086ms
     - id: 24
       request:
         proto: HTTP/1.1
@@ -930,25 +929,23 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/users/00ua1vkg7euUofldZ1d7
-        method: GET
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7/users/00uayy5k7jJblLDKC1d7
+        method: DELETE
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
         transfer_encoding: []
         trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"00ua1vkg7euUofldZ1d7","status":"PROVISIONED","created":"2023-09-13T21:43:42.000Z","activated":"2023-09-13T21:43:43.000Z","statusChanged":"2023-09-13T21:43:43.000Z","lastLogin":null,"lastUpdated":"2023-09-13T21:43:43.000Z","passwordChanged":null,"type":{"id":"oty5qwjvh0Vy1j8Kd1d7"},"profile":{"firstName":"TestAcc","lastName":"Jones","mobilePhone":null,"secondEmail":null,"login":"john_3671860054@ledzeppelin.com","email":"john_3671860054@ledzeppelin.com"},"credentials":{"provider":{"type":"OKTA","name":"OKTA"}},"_links":{"suspend":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/suspend","method":"POST"},"schema":{"href":"https://oie-00.oktapreview.com/api/v1/meta/schemas/user/osc5qwjvh0Vy1j8Kd1d7"},"resetPassword":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/reset_password","method":"POST"},"reactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/reactivate","method":"POST"},"self":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7"},"resetFactors":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/reset_factors","method":"POST"},"type":{"href":"https://oie-00.oktapreview.com/api/v1/meta/types/user/oty5qwjvh0Vy1j8Kd1d7"},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/users/00ua1vkg7euUofldZ1d7/lifecycle/deactivate","method":"POST"}}}'
+        content_length: 0
+        uncompressed: false
+        body: ""
         headers:
-            Content-Type:
-                - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:45 GMT
-        status: 200 OK
-        code: 200
-        duration: 96.231411ms
+                - Tue, 31 Oct 2023 18:40:51 GMT
+        status: 204 No Content
+        code: 204
+        duration: 69.472315ms
     - id: 25
       request:
         proto: HTTP/1.1
@@ -967,7 +964,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users/00ua1vkg7euUofldZ1d7
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gayy0ungo4pJGcc1d7
         method: DELETE
       response:
         proto: HTTP/2.0
@@ -980,50 +977,45 @@ interactions:
         body: ""
         headers:
             Date:
-                - Wed, 13 Sep 2023 21:43:45 GMT
+                - Tue, 31 Oct 2023 18:40:51 GMT
         status: 204 No Content
         code: 204
-        duration: 118.321458ms
+        duration: 95.8038ms
     - id: 26
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 75
+        content_length: 0
         transfer_encoding: []
         trailer: {}
         host: oie-00.dne-okta.com
         remote_addr: ""
         request_uri: ""
-        body: |
-            {"profile":{"name":"testAcc_3671860054","description":"testing, testing"}}
+        body: ""
         form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-            Content-Type:
-                - application/json
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7
-        method: PUT
+        url: https://oie-00.dne-okta.com/api/v1/users/00uayy5k7jJblLDKC1d7
+        method: DELETE
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
         transfer_encoding: []
         trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:45.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}'
+        content_length: 0
+        uncompressed: false
+        body: ""
         headers:
-            Content-Type:
-                - application/json
             Date:
-                - Wed, 13 Sep 2023 21:43:45 GMT
-        status: 200 OK
-        code: 200
-        duration: 79.941035ms
+                - Tue, 31 Oct 2023 18:40:51 GMT
+        status: 204 No Content
+        code: 204
+        duration: 128.871172ms
     - id: 27
       request:
         proto: HTTP/1.1
@@ -1042,7 +1034,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/users/00ua1vkg7euUofldZ1d7
+        url: https://oie-00.dne-okta.com/api/v1/users/00uayy5k7jJblLDKC1d7
         method: DELETE
       response:
         proto: HTTP/2.0
@@ -1055,151 +1047,9 @@ interactions:
         body: ""
         headers:
             Date:
-                - Wed, 13 Sep 2023 21:43:45 GMT
+                - Tue, 31 Oct 2023 18:40:51 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
         status: 204 No Content
         code: 204
-        duration: 130.307656ms
-    - id: 28
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"00ga1vmeyuR8L3HAY1d7","created":"2023-09-13T21:43:41.000Z","lastUpdated":"2023-09-13T21:43:45.000Z","lastMembershipUpdated":"2023-09-13T21:43:41.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_3671860054","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7/apps"}}}'
-        headers:
-            Content-Type:
-                - application/json
-            Date:
-                - Wed, 13 Sep 2023 21:43:45 GMT
-        status: 200 OK
-        code: 200
-        duration: 62.448186ms
-    - id: 29
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups?filter=type+eq+%22APP_GROUP%22&limit=1&q=testAcc_3671860054
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '[]'
-        headers:
-            Content-Type:
-                - application/json
-            Date:
-                - Wed, 13 Sep 2023 21:43:45 GMT
-        status: 200 OK
-        code: 200
-        duration: 60.74721ms
-    - id: 30
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/users/00ua1vkg7euUofldZ1d7
-        method: DELETE
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: 0
-        uncompressed: false
-        body: ""
-        headers:
-            Date:
-                - Wed, 13 Sep 2023 21:43:45 GMT
-        status: 204 No Content
-        code: 204
-        duration: 223.634581ms
-    - id: 31
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00ga1vmeyuR8L3HAY1d7
-        method: DELETE
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: 0
-        uncompressed: false
-        body: ""
-        headers:
-            Date:
-                - Wed, 13 Sep 2023 21:43:46 GMT
-        status: 204 No Content
-        code: 204
-        duration: 109.410774ms
+        duration: 277.570758ms

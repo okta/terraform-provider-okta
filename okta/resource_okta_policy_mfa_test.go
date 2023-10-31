@@ -15,10 +15,10 @@ func TestAccResourceOktaMfaPolicy_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", policyMfa)
 
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkPolicyDestroy(policyMfa),
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		CheckDestroy:             checkPolicyDestroy(policyMfa),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
