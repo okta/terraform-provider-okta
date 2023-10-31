@@ -36,3 +36,37 @@ func TestAccDataSourceOktaGroup_read(t *testing.T) {
 		},
 	})
 }
+
+// TestAccDataSourceOktaGroup_read_multiple_groups Checks of the group data
+// source surfaces the correct error when more than one group matches the name
+// argument.
+func TestAccDataSourceOktaGroup_read_multiple_groups(t *testing.T) {
+	mgr := newFixtureManager("data-sources", group, t.Name())
+	config := `
+resource "okta_group" "test_1" {
+  name        = "testAcc_1_replace_with_uuid"
+  description = "testing, testing"
+}
+resource "okta_group" "test_2" {
+  name        = "testAcc_2_replace_with_uuid"
+  description = "testing, testing"
+}
+data "okta_group" "test" {
+  name          = "testAcc"
+  depends_on = [okta_group.test_1, okta_group.test_2]
+}`
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				// NOTE: there might be dangling test groups on the org starting
+				// with "testAcc" so just make sure the error message is correct
+				// besides the count of groups
+				ExpectError: regexp.MustCompile(`group starting with name "testAcc" matches (\d+) groups, select a more precise name parameter`),
+			},
+		},
+	})
+}

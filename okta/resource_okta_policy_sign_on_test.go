@@ -36,10 +36,10 @@ func TestAccResourceOktaPolicySignOn_crud(t *testing.T) {
 	// NOTE can/will fail with "conditions: Invalid condition type specified: riskScore."
 	// Not sure about correct settings for this to pass.
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkPolicyDestroy(policySignOn),
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		CheckDestroy:             checkPolicyDestroy(policySignOn),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

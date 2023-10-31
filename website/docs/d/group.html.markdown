@@ -19,9 +19,13 @@ data "okta_group" "example" {
 
 ## Arguments Reference
 
-- `id` - (Optional) ID of the group. Conflicts with `"name"` and `"type"`.
+-> `id` and `name` arguments are exclusive of each other
 
-- `name` - (Optional) name of group to retrieve.
+- `id` - (Required in lieu of `name`) ID of the group. Conflicts with `"name"` and `"type"`.
+
+- `name` - (Required in lieu of `id`) name of group to retrieve. 
+
+-> Okta API treats `name` as a starts with query. Therefore a name argument "My" will match any group starting with "My" such as "My Group" and "My Office"
 
 - `type` - (Optional) type of the group to retrieve. Can only be one of `OKTA_GROUP` (Native Okta Groups), `APP_GROUP`
   (Imported App Groups), or `BUILT_IN` (Okta System Groups).
