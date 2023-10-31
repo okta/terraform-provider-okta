@@ -10,6 +10,10 @@ description: |-
 
 This resource allows you to manage redirection URI for use in redirect-based flows.
 
+~> `okta_app_oauth_redirect_uri` has been marked deprecated and will be removed
+in the v5 release of the provider. Operators should manage the redirect URIs for
+an oauth app directly on that resource.
+
 ## Example Usage
 
 ```hcl

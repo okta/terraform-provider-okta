@@ -11,6 +11,7 @@ import (
 
 func resourceAppOAuthRedirectURI() *schema.Resource {
 	return &schema.Resource{
+		DeprecationMessage: "managing the redirect URI should be done directly on an oauth app resource",
 		// NOTE: These CRUD contexts are flexible for use with resources
 		// okta_app_oauth_redirect_uri and
 		// okta_app_oauth_post_logout_redirect_uri
