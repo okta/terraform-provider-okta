@@ -1,5 +1,22 @@
 # Changelog
 
+## 4.6.0 (November 1, 2023)
+
+### IMPROVEMENTS
+
+* Add progressive_profiling_action to okta_policy_rule_profile_enrollment [#1777](https://github.com/okta/terraform-provider-okta/pull/1777). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Add system to okta_app_signon_policy_rule, okta_auth_server_policy_rule [#1788](https://github.com/okta/terraform-provider-okta/pull/1788). Thanks, [@monde](https://github.com/monde)!
+* Update okta_group search[#1794](https://github.com/okta/terraform-provider-okta/pull/1794). Thanks, [@monde](https://github.com/monde)!
+
+### BUG FIXES
+
+* Add default to risk_score to avoid breaking change [#1780](https://github.com/okta/terraform-provider-okta/pull/1780). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix incorrect drift detection and other bad behavior in okta_app_oauth_role_assignment [#1781](https://github.com/okta/terraform-provider-okta/pull/1781). Thanks, [@monde](https://github.com/monde)!
+* Implement proper error for incorrect compound import input [#1785](https://github.com/okta/terraform-provider-okta/pull/1785). Thanks, [@monde](https://github.com/monde)!
+* Fix a panic in resource okta_resource_set [#1786](https://github.com/okta/terraform-provider-okta/pull/1786). Thanks, [@monde](https://github.com/monde)!
+* Correct change detection on resources okta_app_oauth_post_logout_redirect_uri and okta_app_oauth_redirect_uri [#1793](https://github.com/okta/terraform-provider-okta/pull/1793). Thanks, [@monde](https://github.com/monde)!
+
+
 ## 4.5.0 (October 17, 2023)
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
