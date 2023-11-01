@@ -1,10 +1,13 @@
 package okta
 
 import (
+	"errors"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccResourceOktaIdpSaml_crud(t *testing.T) {
@@ -14,10 +17,10 @@ func TestAccResourceOktaIdpSaml_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", idpSaml)
 
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkResourceDestroy(idpSaml, createDoesIdpExist),
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		CheckDestroy:             checkResourceDestroy(idpSaml, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -55,6 +58,52 @@ func TestAccResourceOktaIdpSaml_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "response_signature_scope", "RESPONSE"),
 					resource.TestCheckResourceAttrSet(resourceName, "kid"),
 				),
+			},
+			{
+				// Before fixing
+				// https://github.com/okta/terraform-provider-okta/issues/1558
+				// Not all settable arguments that were from API values were
+				// being set on the read like sso_url.
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import resource into state")
+					}
+					expectedAttrs := []string{
+						"acs_binding",
+						"acs_type",
+						"audience",
+						"deprovisioned_action",
+						"issuer",
+						// "issuer_mode", not set during test
+						"kid",
+						"max_clock_skew",
+						"name",
+						"profile_master",
+						"provisioning_action",
+						"sso_binding",
+						"sso_destination",
+						"sso_url",
+						"status",
+						// "subject_filter", not set during test
+						// "subject_match_attribute", not set durting test
+						"subject_match_type",
+						"suspended_action",
+						"user_type_id",
+						"username_template",
+					}
+					notFound := []string{}
+					for _, attr := range expectedAttrs {
+						if s[0].Attributes[attr] == "" {
+							notFound = append(notFound, attr)
+						}
+					}
+					if len(notFound) > 0 {
+						return fmt.Errorf("expected attributes %s to be set during import read", strings.Join(notFound, ", "))
+					}
+					return nil
+				},
 			},
 		},
 	})

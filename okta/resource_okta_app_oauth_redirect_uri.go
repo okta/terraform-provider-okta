@@ -52,7 +52,6 @@ func resourceAppOAuthRedirectURIRead(kind string) func(ctx context.Context, d *s
 		aid, ok := d.GetOk("app_id")
 		if !ok || aid.(string) == "" {
 			return diag.Errorf("app_id not set on resource")
-
 		}
 		appID := aid.(string)
 
