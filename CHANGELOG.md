@@ -1,4 +1,10 @@
 # Changelog
+## 4.6.1 (November 2, 2023)
+
+### BUG FIXES
+
+*  Correct flaw in data source `okta_group` where name query matches multiple groups but did not consider exact match [#1799](https://github.com/okta/terraform-provider-okta/pull/1799). Thanks, [@monde](https://github.com/monde)!
+*  For resource `okta_idp_saml` set `status`, `sso_binding`, `sso_destination`, and `sso_url` during read context for proper import [#1558](https://github.com/okta/terraform-provider-okta/pull/1558). Thanks, [@monde](https://github.com/monde)!
 
 ## 4.6.0 (November 1, 2023)
 
