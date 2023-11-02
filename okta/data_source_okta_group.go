@@ -92,7 +92,8 @@ func findGroup(ctx context.Context, name string, d *schema.ResourceData, m inter
 		// NOTE: Uncertain of the OKTA /api/v1/groups API drifted during Classic
 		// (when this data source was originally created) to OIE migration.
 		// Currently, Okta API enforces unique names on all groups regardless of
-		// type so type is essentially a meaningless parameter in OIE.
+		// type so type is essentially a meaningless parameter in OIE.  There
+		// may be a case where imported groups allow duplicate names.
 		t, okType := d.GetOk("type")
 		if okType {
 			searchParams.Filter = fmt.Sprintf("type eq \"%s\"", t.(string))
@@ -100,23 +101,46 @@ func findGroup(ctx context.Context, name string, d *schema.ResourceData, m inter
 
 		logger(m).Info("looking for data source group", "query", searchParams.String())
 		groups, _, err := getOktaClientFromMetadata(m).Group.ListGroups(ctx, searchParams)
-		switch {
-		case err != nil:
+		if err != nil {
 			return diag.Errorf("failed to query for groups: %v", err)
-		case len(groups) > 1:
-			if okType {
-				return diag.Errorf("group starting with name %q and type %q matches %d groups, select a more precise name parameter", name, d.Get("type").(string), len(groups))
+		}
+		if len(groups) > 1 {
+			logger(m).Warn("data source group query matches", len(groups), "groups")
+			for _, g := range groups {
+				// exact match on name
+				if g.Profile.Name == name {
+					if okType && t.(string) == g.Type {
+						// data source has type argument so take that into consideration also
+						group = g
+						break
+					}
+					if !okType {
+						// otherwise consider name only
+						group = g
+						break
+					}
+				}
 			}
-			return diag.Errorf("group starting with name %q matches %d groups, select a more precise name parameter", name, len(groups))
-		case len(groups) < 1:
+			if group == nil {
+				if okType {
+					return diag.Errorf("group starting with name %q and type %q matches %d groups, select a more precise name parameter", name, d.Get("type").(string), len(groups))
+				}
+				return diag.Errorf("group starting with name %q matches %d groups, select a more precise name parameter", name, len(groups))
+			}
+		}
+		if len(groups) < 1 {
 			if okType {
 				return diag.Errorf("group with name %q and type %q does not exist", name, d.Get("type").(string))
 			}
 			return diag.Errorf("group with name %q does not exist", name)
-		case groups[0].Profile.Name != name:
-			logger(m).Warn("group with exact name match was not found: using partial match which contains name as a substring", "name", groups[0].Profile.Name)
 		}
-		group = groups[0]
+		if len(groups) == 1 {
+			group = groups[0]
+			if group.Profile.Name != name {
+				// keep old behavior that a fuzzy match is acceptable if query only returns one group
+				logger(m).Warn("group with exact name match was not found: using partial match which contains name as a substring", "name", group.Profile.Name)
+			}
+		}
 	}
 	d.SetId(group.Id)
 	_ = d.Set("description", group.Profile.Description)

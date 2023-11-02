@@ -1,0 +1,745 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/x-www-form-urlencoded
+        url: https://dev-org-oauth-00.dne-okta.com/oauth2/v1/token?client_assertion=abc123&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&grant_type=client_credentials&scope=okta.groups.read+okta.groups.manage+okta.users.read+okta.users.manage
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"token_type":"Bearer","expires_in":3600,"access_token":"eyJraWQiOiJESXpFaEpoV3NWZnM5U2paTGNveWY2RkZZNWtXUFRVZE9HUUF5R0xLb1FFIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULkZBX0tPSVE3NThlRTF2QUJwU2IyenlHVV94VEhERlVCWTNDRk5PUWxVMVkiLCJpc3MiOiJodHRwczovL21tLW9pZS0yMDIyLTEwLTA3LW1heC5va3RhcHJldmlldy5jb20iLCJhdWQiOiJodHRwczovL21tLW9pZS0yMDIyLTEwLTA3LW1heC5va3RhcHJldmlldy5jb20iLCJzdWIiOiIwb2FhMHh5Y2ZmaDRXUlIzcjFkNyIsImlhdCI6MTY5ODk0NjM3MywiZXhwIjoxNjk4OTQ5OTczLCJjaWQiOiIwb2FhMHh5Y2ZmaDRXUlIzcjFkNyIsInNjcCI6WyJva3RhLmdyb3Vwcy5yZWFkIiwib2t0YS5ncm91cHMubWFuYWdlIiwib2t0YS51c2Vycy5yZWFkIiwib2t0YS51c2Vycy5tYW5hZ2UiXX0.J9Mo7Y-eT5DqU1SUjNLqD871BYnIdJnBKZ0HEwYl5hAwfyNyoFFbpetj09v3_hx1O5ywYtF67spgyRU9QMR3bz1-iRVFMg7M6I_7wjtF-roQqZonR1FNpQQsksXea1QAlhfR3tpD2FHMpM6_J64nWB5mpBUSXDZ89KsCEDHIyL7JdWPlu5nYNlM547hgIiRIcC22HC0nhQ38sZc_sXTvu15Ye6rqreWuzEnFC2OtMsjOAZMTc6Guv5G-6NqNbzpwGUZZoPww8c7ZrfXXDzlPaTcUZa-avhhMckpL5zgdRLVIBX-7tWrn_mv0dgxiN4v_gnpn4qc0pjkaEDQDBD71zQ","scope":"okta.groups.read okta.groups.manage okta.users.read okta.users.manage"}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:53 GMT
+        status: 200 OK
+        code: 200
+        duration: 566.86013ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/x-www-form-urlencoded
+        url: https://dev-org-oauth-00.dne-okta.com/oauth2/v1/token?client_assertion=abc123&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&grant_type=client_credentials&scope=okta.groups.read+okta.groups.manage+okta.users.read+okta.users.manage
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"token_type":"Bearer","expires_in":3600,"access_token":"eyJraWQiOiJESXpFaEpoV3NWZnM5U2paTGNveWY2RkZZNWtXUFRVZE9HUUF5R0xLb1FFIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULlB1WVJUWklFSG5SSm9zYlEzZXo3U191LUs5ZUpTUnNpdWVzNjN2LWt5MWciLCJpc3MiOiJodHRwczovL21tLW9pZS0yMDIyLTEwLTA3LW1heC5va3RhcHJldmlldy5jb20iLCJhdWQiOiJodHRwczovL21tLW9pZS0yMDIyLTEwLTA3LW1heC5va3RhcHJldmlldy5jb20iLCJzdWIiOiIwb2FhMHh5Y2ZmaDRXUlIzcjFkNyIsImlhdCI6MTY5ODk0NjM3MywiZXhwIjoxNjk4OTQ5OTczLCJjaWQiOiIwb2FhMHh5Y2ZmaDRXUlIzcjFkNyIsInNjcCI6WyJva3RhLmdyb3Vwcy5yZWFkIiwib2t0YS5ncm91cHMubWFuYWdlIiwib2t0YS51c2Vycy5yZWFkIiwib2t0YS51c2Vycy5tYW5hZ2UiXX0.Zkdby60H3rShZpuYkBkRuXz5H5ctKyr8Q3aOv-m988tuHe16Fs6jEEeJ3HgvDjEHkxmSyepgX9XsmBMA-dhwOp4AZcXamAyEC9sAPESvyLZqOFXQKCJJfJ9VqHgmAFOQQlwtzm7RZAgTFm2ISVHSany0Gh5A3XSrBALlf_bBeO3Nk19Y5ftls17kcwTEmOabholKqvBzQcmbUjOCwO51FVSyAD05txo2Q1vcjMzHOXHkiDx86a0g6TUOTq5IOXACpEBoXPvnX9YCJYQJ74-odAVYvjsha-ZROh0uLSEyQ_peYqX0l8XeVpmcZy36i0Kd_nrViMKjAa9J_Kh7-URwmQ","scope":"okta.groups.read okta.groups.manage okta.users.read okta.users.manage"}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:53 GMT
+        status: 200 OK
+        code: 200
+        duration: 600.087458ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 77
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"profile":{"name":"testAcc_1056686360_MORE","description":"testing, more"}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+            Content-Type:
+                - application/json
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb0vlnopFJxPxqe1d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360_MORE","description":"testing, more"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:53 GMT
+        status: 200 OK
+        code: 200
+        duration: 360.912013ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 75
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"profile":{"name":"testAcc_1056686360","description":"testing, testing"}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+            Content-Type:
+                - application/json
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb0vjszjhhElJa51d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:53 GMT
+        status: 200 OK
+        code: 200
+        duration: 327.869432ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb0vlnopFJxPxqe1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb0vlnopFJxPxqe1d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360_MORE","description":"testing, more"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:54 GMT
+        status: 200 OK
+        code: 200
+        duration: 334.714003ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb0vjszjhhElJa51d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb0vjszjhhElJa51d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:54 GMT
+        status: 200 OK
+        code: 200
+        duration: 338.499864ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb0vjszjhhElJa51d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb0vjszjhhElJa51d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:54 GMT
+        status: 200 OK
+        code: 200
+        duration: 350.503507ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb0vlnopFJxPxqe1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb0vlnopFJxPxqe1d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360_MORE","description":"testing, more"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:54 GMT
+        status: 200 OK
+        code: 200
+        duration: 354.356034ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups?q=testAcc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00gaspi5z08erLaU31d7","created":"2023-10-24T23:25:28.000Z","lastUpdated":"2023-10-24T23:25:28.000Z","lastMembershipUpdated":"2023-10-24T23:25:28.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc-group-a_3796476061821142312","description":"Group A"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gaspi5z08erLaU31d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gaspi5z08erLaU31d7/apps"}}},{"id":"00gasrona9dMBu9r01d7","created":"2023-10-24T23:25:28.000Z","lastUpdated":"2023-10-24T23:25:28.000Z","lastMembershipUpdated":"2023-10-24T23:25:28.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc-group-b_3796476061821142312","description":"Group B"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gasrona9dMBu9r01d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gasrona9dMBu9r01d7/apps"}}},{"id":"00gasp9wanCAgCcKt1d7","created":"2023-10-24T23:25:28.000Z","lastUpdated":"2023-10-24T23:25:28.000Z","lastMembershipUpdated":"2023-10-24T23:25:28.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc-group-c_3796476061821142312","description":"Group C"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gasp9wanCAgCcKt1d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gasp9wanCAgCcKt1d7/apps"}}},{"id":"00gb0vjszjhhElJa51d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/apps"}}},{"id":"00gb0vlnopFJxPxqe1d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360_MORE","description":"testing, more"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/apps"}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:54 GMT
+        status: 200 OK
+        code: 200
+        duration: 72.053861ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb0vlnopFJxPxqe1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb0vlnopFJxPxqe1d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360_MORE","description":"testing, more"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:55 GMT
+        status: 200 OK
+        code: 200
+        duration: 375.205198ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb0vjszjhhElJa51d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb0vjszjhhElJa51d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:54 GMT
+        status: 200 OK
+        code: 200
+        duration: 375.205135ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups?q=testAcc_1056686360
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00gb0vjszjhhElJa51d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/apps"}}},{"id":"00gb0vlnopFJxPxqe1d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360_MORE","description":"testing, more"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/apps"}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:55 GMT
+        status: 200 OK
+        code: 200
+        duration: 335.80171ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups?q=testAcc_1056686360
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00gb0vjszjhhElJa51d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/apps"}}},{"id":"00gb0vlnopFJxPxqe1d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360_MORE","description":"testing, more"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/apps"}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:55 GMT
+        status: 200 OK
+        code: 200
+        duration: 454.736964ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups?q=testAcc_1056686360
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00gb0vjszjhhElJa51d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/apps"}}},{"id":"00gb0vlnopFJxPxqe1d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360_MORE","description":"testing, more"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/apps"}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:56 GMT
+        status: 200 OK
+        code: 200
+        duration: 343.426672ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb0vjszjhhElJa51d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb0vjszjhhElJa51d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:57 GMT
+        status: 200 OK
+        code: 200
+        duration: 326.092995ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb0vlnopFJxPxqe1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gb0vlnopFJxPxqe1d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360_MORE","description":"testing, more"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/apps"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:57 GMT
+        status: 200 OK
+        code: 200
+        duration: 356.034034ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups?q=testAcc_1056686360
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00gb0vjszjhhElJa51d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/apps"}}},{"id":"00gb0vlnopFJxPxqe1d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360_MORE","description":"testing, more"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/apps"}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:57 GMT
+        status: 200 OK
+        code: 200
+        duration: 326.398562ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups?q=testAcc_1056686360
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00gb0vjszjhhElJa51d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360","description":"testing, testing"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vjszjhhElJa51d7/apps"}}},{"id":"00gb0vlnopFJxPxqe1d7","created":"2023-11-02T17:32:53.000Z","lastUpdated":"2023-11-02T17:32:53.000Z","lastMembershipUpdated":"2023-11-02T17:32:53.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_1056686360_MORE","description":"testing, more"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/users"},"apps":{"href":"https://dev-org-oauth-00.oktapreview.com/api/v1/groups/00gb0vlnopFJxPxqe1d7/apps"}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 02 Nov 2023 17:32:57 GMT
+        status: 200 OK
+        code: 200
+        duration: 350.912587ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb0vjszjhhElJa51d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Thu, 02 Nov 2023 17:32:58 GMT
+        status: 204 No Content
+        code: 204
+        duration: 104.528154ms
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: dev-org-oauth-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - Bearer REDACTED
+        url: https://dev-org-oauth-00.dne-okta.com/api/v1/groups/00gb0vlnopFJxPxqe1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Thu, 02 Nov 2023 17:32:58 GMT
+        status: 204 No Content
+        code: 204
+        duration: 150.626522ms
