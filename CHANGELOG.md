@@ -1,4 +1,5 @@
 # Changelog
+
 ## 4.6.1 (November 2, 2023)
 
 ### BUG FIXES
@@ -22,7 +23,6 @@
 * Fix a panic in resource okta_resource_set [#1786](https://github.com/okta/terraform-provider-okta/pull/1786). Thanks, [@monde](https://github.com/monde)!
 * Correct change detection on resources okta_app_oauth_post_logout_redirect_uri and okta_app_oauth_redirect_uri [#1793](https://github.com/okta/terraform-provider-okta/pull/1793). Thanks, [@monde](https://github.com/monde)!
 
-
 ## 4.5.0 (October 17, 2023)
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
@@ -39,7 +39,6 @@
 
 ### IMPROVEMENTS
 * Add track all users argument to okta_group_memberships import [#1766](https://github.com/okta/terraform-provider-okta/pull/1766). Thanks, [@arvindkrishnakumar-okta](https://github.com/arvindkrishnakumar-okta)!
-
 
 ## 4.4.3 (October 09, 2023)
 
