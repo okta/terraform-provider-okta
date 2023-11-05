@@ -81,6 +81,7 @@ const (
 	groupMemberships              = "okta_group_memberships"
 	groupRole                     = "okta_group_role"
 	groupRule                     = "okta_group_rule"
+	groupRules                    = "okta_group_rules"
 	groups                        = "okta_groups"
 	groupSchemaProperty           = "okta_group_schema_property"
 	idpMetadataSaml               = "okta_idp_metadata_saml"
@@ -356,6 +357,7 @@ func Provider() *schema.Provider {
 			group:                    dataSourceGroup(),
 			groupEveryone:            dataSourceEveryoneGroup(),
 			groupRule:                dataSourceGroupRule(),
+			groupRules:               dataSourceGroupRules(),
 			groups:                   dataSourceGroups(),
 			idpMetadataSaml:          dataSourceIdpMetadataSaml(),
 			idpOidc:                  dataSourceIdpOidc(),
