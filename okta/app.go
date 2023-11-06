@@ -320,17 +320,6 @@ func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, a
 	return err
 }
 
-func setAppStatus(ctx context.Context, d *schema.ResourceData, client *sdk.Client, status string) error {
-	desiredStatus := d.Get("status").(string)
-	if status == desiredStatus {
-		return nil
-	}
-	if desiredStatus == statusInactive {
-		return responseErr(client.Application.DeactivateApplication(ctx, d.Id()))
-	}
-	return responseErr(client.Application.ActivateApplication(ctx, d.Id()))
-}
-
 // setAppSettings available preconfigured SAML and OAuth applications vary wildly on potential app settings, thus
 // it is a generic map. This logic simply weeds out any empty string values.
 func setAppSettings(d *schema.ResourceData, settings *sdk.ApplicationSettingsApplication) error {
@@ -470,4 +459,27 @@ func setAppKeys(d *schema.ResourceData, keys []*sdk.JsonWebKey) error {
 	}
 
 	return d.Set("keys", arr)
+}
+
+// appUpdateStatus will activate/deactivate an app based on a change in the
+// status argument. As a convenience it will signal if the caller should also
+// make other application updates.
+func appUpdateStatus(ctx context.Context, d *schema.ResourceData, m interface{}) (otherChanges bool, err error) {
+	status := d.Get("status").(string)
+	statusChanged := d.HasChange("status")
+	otherChanges = d.HasChangeExcept("status")
+	active := (status == statusActive)
+	inactive := (status == statusInactive)
+
+	if inactive && statusChanged {
+		client := getOktaClientFromMetadata(m)
+		err = responseErr(client.Application.DeactivateApplication(ctx, d.Id()))
+	}
+
+	if active && statusChanged {
+		client := getOktaClientFromMetadata(m)
+		err = responseErr(client.Application.ActivateApplication(ctx, d.Id()))
+	}
+
+	return otherChanges, err
 }

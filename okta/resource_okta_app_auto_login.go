@@ -123,15 +123,18 @@ func resourceAppAutoLoginRead(ctx context.Context, d *schema.ResourceData, m int
 }
 
 func resourceAppAutoLoginUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+	additionalChanges, err := appUpdateStatus(ctx, d, m)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if !additionalChanges {
+		return nil
+	}
+
 	app := buildAppAutoLogin(d)
-	err := updateAppByID(ctx, d.Id(), m, app)
+	err = updateAppByID(ctx, d.Id(), m, app)
 	if err != nil {
 		return diag.Errorf("failed to update auto login application: %v", err)
-	}
-	err = setAppStatus(ctx, d, client, app.Status)
-	if err != nil {
-		return diag.Errorf("failed to set auto login application status: %v", err)
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
