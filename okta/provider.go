@@ -329,6 +329,7 @@ func Provider() *schema.Provider {
 			userType:                      resourceUserType(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
+			adminRoleCustom:          dataSourceAdminRoleCustom(),
 			app:                      dataSourceApp(),
 			appGroupAssignments:      dataSourceAppGroupAssignments(),
 			appMetadataSaml:          dataSourceAppMetadataSaml(),
