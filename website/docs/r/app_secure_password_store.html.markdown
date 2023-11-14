@@ -10,6 +10,10 @@ description: |-
 
 This resource allows you to create and configure a Secure Password Store Application.
 
+-> During an apply if there is change in `status` the app will first be
+activated or deactivated in accordance with the `status` change. Then, all
+other arguments that changed will be applied.
+
 ## Example Usage
 
 ```hcl
