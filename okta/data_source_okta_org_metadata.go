@@ -170,7 +170,7 @@ func (d *OrgMetadataDataSource) Read(ctx context.Context, req datasource.ReadReq
 		if ok {
 			href, ok := or.GetHrefOk()
 			if ok {
-				domains.Alternate = types.StringValue(*href)
+				domains.Organization = types.StringValue(*href)
 			}
 		}
 	}
