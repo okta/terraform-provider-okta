@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourceOktaGroupRule_crud(t *testing.T) {
@@ -169,4 +170,26 @@ func doesGroupRuleExist(id string) (bool, error) {
 	_, response, err := client.Group.GetGroupRule(context.Background(), id, nil)
 
 	return doesResourceExist(response, err)
+}
+
+func TestAccResourceOktaGroupRule_statusIsInvalidDiffFn(t *testing.T) {
+	cases := []struct {
+		status   string
+		expected bool
+	}{
+		{
+			status:   "VALID",
+			expected: false,
+		},
+		{
+			status:   "INVALID",
+			expected: true,
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.status, func(t *testing.T) {
+			result := statusIsInvalidDiffFn(tc.status)
+			require.EqualValues(t, tc.expected, result)
+		})
+	}
 }
