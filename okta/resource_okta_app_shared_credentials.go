@@ -125,15 +125,19 @@ func resourceAppSharedCredentialsRead(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceAppSharedCredentialsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	additionalChanges, err := appUpdateStatus(ctx, d, m)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if !additionalChanges {
+		return nil
+	}
+
 	client := getOktaClientFromMetadata(m)
 	app := buildAppSharedCredentials(d)
-	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
+	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
 		return diag.Errorf("failed to update SWA shared credentials application: %v", err)
-	}
-	err = setAppStatus(ctx, d, client, app.Status)
-	if err != nil {
-		return diag.Errorf("failed to set SWA shared credentials application status: %v", err)
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)

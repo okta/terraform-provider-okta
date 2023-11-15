@@ -161,7 +161,7 @@ func errorCheckMessageContaining(t *testing.T, message string, err error) bool {
 		missingFlags = append(missingFlags, "OKTA_MFA_POLICY")
 	}
 	if message == ErrorSelfServiceApplicationEnabled {
-		missingFlags = append(missingFlags, "TBD ~> SELF_SERVICE_ALL_APPS")
+		missingFlags = append(missingFlags, "Admin UI > Applications > Self Service > User App Requests > App Catalog Settings > Allow users to add org-managed apps (enabled)")
 	}
 	if strings.Contains(errorMessage, message) {
 		t.Skipf("Skipping test, org possibly missing flags:\n%s\nerror:\n%s", strings.Join(missingFlags, ", "), errorMessage)

@@ -66,7 +66,8 @@ resource "okta_app_bookmark" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.read", "2h"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.update", "30m"),
@@ -107,7 +108,7 @@ resource "okta_app_bookmark" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),

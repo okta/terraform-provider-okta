@@ -518,14 +518,19 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	if err != nil {
 		return diag.FromErr(err)
 	}
+
+	additionalChanges, err := appUpdateStatus(ctx, d, m)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if !additionalChanges {
+		return nil
+	}
+
 	client := getOktaClientFromMetadata(m)
 	app, err := buildSamlApp(d)
 	if err != nil {
 		return diag.Errorf("failed to create SAML application: %v", err)
-	}
-	err = setAppStatus(ctx, d, client, app.Status)
-	if err != nil {
-		return diag.Errorf("failed to set SAML application status: %v", err)
 	}
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {

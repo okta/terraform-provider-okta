@@ -10,6 +10,10 @@ description: |-
 
 This resource allows you to create and configure a SAML Application.
 
+-> During an apply if there is change in `status` the app will first be
+activated or deactivated in accordance with the `status` change. Then, all
+other arguments that changed will be applied.
+
 -> If you receive the error `You do not have permission to access the feature
 you are requesting` [contact support](mailto:dev-inquiries@okta.com) and
 request feature flag `ADVANCED_SSO` be applied to your org.
