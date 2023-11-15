@@ -58,14 +58,13 @@ func resourceGroupRule() *schema.Resource {
 			},
 		},
 		CustomizeDiff: customdiff.ForceNewIf("status", func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
-			g, _, _ := getOktaClientFromMetadata(meta).Group.GetGroupRule(ctx, d.Id(), nil)
-			if g == nil {
-				return false
-			}
-			_ = d.SetNew("status", g.Status)
-			return d.Get("status").(string) == statusInvalid
+			return statusIsInvalidDiffFn(d.Get("status").(string))
 		}),
 	}
+}
+
+func statusIsInvalidDiffFn(status string) bool {
+	return status == statusInvalid
 }
 
 func resourceGroupRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
