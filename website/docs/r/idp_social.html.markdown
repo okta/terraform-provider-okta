@@ -87,14 +87,6 @@ The following arguments are supported:
 
 - `profile_master` - (Optional) Determines if the IdP should act as a source of truth for user profile attributes.
 
-- `request_signature_algorithm` - (Optional) The XML digital signature algorithm used when signing an AuthnRequest message.
-
-- `request_signature_scope` - (Optional) Specifies whether to digitally sign an AuthnRequest messages to the IdP. It can be `"REQUEST"` or `"NONE"`.
-
-- `response_signature_algorithm` - (Optional) The minimum XML digital signature algorithm allowed when verifying a SAMLResponse message or Assertion element.
-
-- `response_signature_scope` - (Optional) Specifies whether to verify a SAMLResponse message or Assertion element XML digital signature. It can be `"RESPONSE"`, `"ASSERTION"`, or `"ANY"`.
-
 - `apple_private_key` - (Optional, for Apple IdP only) The Key ID that you obtained from Apple when you created the private 
 key for the client. PrivateKey is required when resource is first created. For all consecutive updates, it can be empty/omitted 
 and keeps the existing value if it is empty/omitted. PrivateKey isn't returned when importing this resource.
