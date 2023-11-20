@@ -21,10 +21,11 @@ func resourcePolicyRuleIdpDiscovery() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			// TODU check if idp_id is required along with idp_type, that way we dont have to remove the default
 			"idp_type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "OKTA",
+				// Default:  "OKTA",
 			},
 			"app_include": {
 				Type:        schema.TypeSet,
@@ -55,6 +56,15 @@ func resourcePolicyRuleIdpDiscovery() *schema.Resource {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     userIDPatternResource,
+			},
+			// TODU default specific?
+			"selection_type": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"provider_expression": {
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 		}),
 	}
@@ -180,15 +190,28 @@ func setRuleStatus(ctx context.Context, d *schema.ResourceData, m interface{}, s
 
 // Build Policy Sign On Rule from resource data
 func buildIdpDiscoveryRule(d *schema.ResourceData) *sdk.IdpDiscoveryRule {
+	var provider *sdk.IdpDiscoveryRuleProvider
+	if idpType, ok := d.GetOk("idp_type"); ok {
+		provider = &sdk.IdpDiscoveryRuleProvider{
+			Type: idpType.(string),
+			ID:   d.Get("idp_id").(string),
+		}
+	}
+	providers := []*sdk.IdpDiscoveryRuleProvider{}
+	if provider != nil {
+		providers = append(providers, provider)
+	}
+	matchingCriteria := []*sdk.IdpMatchingCriteria{
+		{
+			ProviderExpression: d.Get("provider_expression").(string),
+		},
+	}
 	rule := &sdk.IdpDiscoveryRule{
 		Actions: &sdk.IdpDiscoveryRuleActions{
 			IDP: &sdk.IdpDiscoveryRuleIdp{
-				Providers: []*sdk.IdpDiscoveryRuleProvider{
-					{
-						Type: d.Get("idp_type").(string),
-						ID:   d.Get("idp_id").(string),
-					},
-				},
+				Providers:        providers,
+				MatchingCriteria: matchingCriteria,
+				IdpSelectionType: d.Get("selection_type").(string),
 			},
 		},
 		Conditions: &sdk.IdpDiscoveryRuleConditions{
